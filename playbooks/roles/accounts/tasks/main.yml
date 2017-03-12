@@ -1,0 +1,13 @@
+---
+
+- name: Create user account
+  user:
+    name: "{{ user.name }}"
+    comment: "{{ user.full_name }}"
+    group: "{{ user.group }}"
+    shell: "{{ user.shell }}"
+    password: "{{ user.password }}"
+  with_items:
+    - "{{ users }}"
+  loop_control:
+        loop_var: user

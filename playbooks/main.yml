@@ -1,0 +1,8 @@
+---
+# Main playbook
+
+- hosts: homebox
+  vars_files:
+    - variables.yml
+  roles:
+    - accounts

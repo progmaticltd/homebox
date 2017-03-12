@@ -1,0 +1,17 @@
+---
+
+# Default accounts example
+# Use "mkpasswd --method=sha-512" to create the password hashes
+
+- users:
+  - name: rbradbury
+    full_name: "Ray Bradbury"
+    group: users
+    shell: /bin/bash
+    password: $6$JnzyXghINJ8biG$DKX6XybsByovAjCFLZcE4P1Rwt4TvR/aN.Sjgx2XhYiBk3.d4N5IDIlqmy6OrQVCt5MmwYWA8eOCeWeVakJ710
+  - name: pkdick
+    full_name: "Philip K Dick"
+    group: users
+    shell: /bin/bash
+    password: $6$UFJODuTdpgyxO$hhRy1KisZyatY7oDwEO8EunHKFtfTqOrh08p.1.WckEFgaJn6fDfG60I6NTeF7iltjCERgBgvPqR4Bj08u76/1
+

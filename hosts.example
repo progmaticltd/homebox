@@ -1,0 +1,4 @@
+# Sample ini file for ansible
+
+[homebox]
+mybox.example.com
