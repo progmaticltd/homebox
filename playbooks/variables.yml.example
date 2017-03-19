@@ -1,17 +1,25 @@
 ---
-
-# Default accounts example
-# Use "mkpasswd --method=sha-512" to create the password hashes
-
-- users:
-  - name: rbradbury
-    full_name: "Ray Bradbury"
+# Default accounts "mkpasswd --method=sha-512" to create the password hashes
+# You can use the command 
+users:
+  - name: fleiber
+    full_name: "Fritz Leiber"
     group: users
     shell: /bin/bash
-    password: $6$JnzyXghINJ8biG$DKX6XybsByovAjCFLZcE4P1Rwt4TvR/aN.Sjgx2XhYiBk3.d4N5IDIlqmy6OrQVCt5MmwYWA8eOCeWeVakJ710
-  - name: pkdick
-    full_name: "Philip K Dick"
+    password: $6$ISiOer8DusG$9PYCMUb6cHgR8sipc.UAvL51KjGA9d645NFdr47srg6O5mbMPGe7qxJiw.wsoiIcIIPFsj2MirD5nvlWnCPZS0
+  - name: rmatheson
+    full_name: "Richard Matheson"
     group: users
     shell: /bin/bash
     password: $6$UFJODuTdpgyxO$hhRy1KisZyatY7oDwEO8EunHKFtfTqOrh08p.1.WckEFgaJn6fDfG60I6NTeF7iltjCERgBgvPqR4Bj08u76/1
+  - name: tsturgeon
+    full_name: "Theodore Sturgeon"
+    group: users
+    shell: /bin/bash
+    password: $6$WW5gdagv8Ao4t66$Dr6f9j.rTw1Mou4Cz8mJmCTmGBqiUYyM05.dSNURddKqMQJQG9xU0hKJyu0lQNs7XU37qJ9am97kBKLLg/TpV.
+
+# Webmail configuration (roundcube, http ATM)
+webmail:
+  url: webmail.goodbooks.co.uk
+  secure_port: 443
 
