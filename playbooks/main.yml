@@ -5,8 +5,9 @@
   vars_files:
     - variables.yml
   roles:
-    - packages
-    - accounts
+    # - packages
+    # - accounts
+    - certificates
     - dovecot
     - postgresql
     - nginx

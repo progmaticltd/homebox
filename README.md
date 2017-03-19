@@ -25,4 +25,5 @@ The script is actually in its embryonic state, and set up the following:
 - Install Dovecot mail server
 - Install PostgreSQL for the database
 - Install Nginx and Roundcube webmail for the frontend
+- Use LetsEncrypt for the roundcube web site
 - Configure the firewall on the box

@@ -3,28 +3,33 @@
 #
 server {
 
-    # Default port is only http for now. Need to integrate with LetsEncrypt later
+    # Webmail FQDN
     listen 80;
+    server_name {{ webmail.url }};
+
+    # Use Letsencrypt and force https
+    rewrite ^ https://$server_name$request_uri? permanent;
+}
+
+# Default server configuration
+#
+server {
+
+    # Webmail FQDN
     server_name {{ webmail.url }};
 
     # Default roundcube location on Debian
     root /var/lib/roundcube/;
     
-    # TODO: Use Letsencrypt and force https
-    # rewrite ^ https://$server_name$request_uri? permanent;
-
     # Remove useless tokens for better security feelings ;-)
     server_tokens off;
 
     # SSL configuration
-    # listen "{{ webmail.secure_port }}" ssl http2;
-    # listen [::]:"{{ webmail.secure_port }}" ssl http2;
-    # ssl_protocols TLSv1.1 TLSv1.2;
-    # listen "{{ webmail.secure_port }}" ssl;
-    # listen [::]:"{{ webmail.secure_port }}" ssl;
-    # ssl_certificate /etc/letsencrypt/live/"{{ webmail.url }}"/fullchain.pem;
-    # ssl_certificate_key /etc/letsencrypt/live/"{{ webmail.url }}"/privkey.pem;
-    # ssl_trusted_certificate /etc/letsencrypt/live/"{{ webmail.url }}"/fullchain.pem;
+    listen "{{ webmail.secure_port }}" ssl http2;
+    ssl_protocols TLSv1.1 TLSv1.2;
+    ssl_certificate /etc/letsencrypt/live/{{ webmail.url }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ webmail.url }}/privkey.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/{{ webmail.url }}/fullchain.pem;
 
     # Add index.php to the list if you are using PHP
     index index.php index.html;

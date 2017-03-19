@@ -23,3 +23,6 @@ webmail:
   url: webmail.goodbooks.co.uk
   secure_port: 443
 
+# Certificate details
+certificate:
+  email: pkdick@goodbooks.co.uk

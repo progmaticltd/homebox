@@ -1,9 +1,10 @@
 ---
 
-- name: Install dovecot packages
+- name: Install nginx packages
   apt:
     name: "{{ pkg }}"
     state: installed
+    default_release: jessie-backports
   with_items:
     - nginx-common
     - nginx-full
