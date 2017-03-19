@@ -1,0 +1,13 @@
+---
+
+- name: Install PostgreSQL database server
+  apt:
+    name: "{{ pkg }}"
+    state: installed
+  with_items:
+    - postgresql-common
+    - postgresql-client
+    - postgresql
+  loop_control:
+    loop_var: pkg
+    

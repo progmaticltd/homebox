@@ -5,4 +5,10 @@
   vars_files:
     - variables.yml
   roles:
+    - packages
     - accounts
+    - dovecot
+    - postgresql
+    - nginx
+    - roundcube
+    - security

@@ -1,0 +1,39 @@
+---
+
+- name: Install roundcube webmail
+  apt:
+    name: "{{ pkg }}"
+    state: installed
+  with_items:
+    - roundcube-pgsql
+    - roundcube-core
+    - roundcube-plugins
+    - roundcube
+    - php5-fpm
+  loop_control:
+    loop_var: pkg
+
+- name: Disable nginx default site
+  file:
+    path: '/etc/nginx/sites-enabled/default'
+    state: absent
+    force: yes
+
+- name: Create the webmail site
+  template:
+    src: ./files/webmail-site.tpl
+    dest: /etc/nginx/sites-available/roundcube.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable nginx site
+  file:
+    src: '/etc/nginx/sites-available/roundcube.conf'
+    dest: '/etc/nginx/sites-enabled/roundcube.conf'
+    state: link
+
+- name: Restart nginx
+  service:
+    name: nginx
+    state: restarted

@@ -1,0 +1,20 @@
+---
+
+- name: Configuring the firewall
+  ufw:
+    rule: limit
+    port: ssh
+    proto: tcp
+- ufw:
+    rule: allow
+    port: '{{ item }}'
+    proto: tcp
+  with_items:
+    - 80
+    - 443
+    - 25
+    - 587
+    - 143
+    - 993
+    - 110
+    - 995

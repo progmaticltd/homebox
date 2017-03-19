@@ -1,0 +1,13 @@
+---
+
+- name: Install dovecot packages
+  apt:
+    name: "{{ pkg }}"
+    state: installed
+  with_items:
+    - nginx-common
+    - nginx-full
+    - nginx
+  loop_control:
+        loop_var: pkg
+    
