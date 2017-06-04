@@ -1,3 +1,6 @@
+# Until a better integration bewwen Vagrant and Linux
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'libvirt'
+
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
@@ -69,10 +72,6 @@ Vagrant.configure("2") do |config|
   #   apt-get install -y apache2
   # SHELL
 
-  #
-  # Run Ansible from the Vagrant Host
-  config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "playbooks/main.yml"
-  end
-  
+  config.vm.synced_folder './', '/vagrant', type: '9p', disabled: false, accessmode: "squash", owner: "1000"
+
 end

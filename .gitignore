@@ -1,2 +1,8 @@
+# Host file is per user
 hosts
+
+# Variables should be customised for each user
 playbooks/variables.yml
+
+# Ignore ansible error files
+*.retry

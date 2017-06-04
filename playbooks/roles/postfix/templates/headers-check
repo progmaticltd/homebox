@@ -1,0 +1,7 @@
+# Rules to ignore headers
+/^Received.*localhost.*/ IGNORE
+/^Received.*127\.0\.0\.1.*/ IGNORE
+/^X-Sieve:.*/ IGNORE
+
+/^DKIM-Filter.*/ IGNORE
+/^User-Agent:.*/ IGNORE

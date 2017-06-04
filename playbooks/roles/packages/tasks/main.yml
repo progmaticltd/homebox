@@ -1,14 +1,20 @@
 ---
-
+- name: Initialise default repositories
+  copy:
+    src: sources.list
+    dest: /etc/apt/sources.list
+                
 - name: Update packages repositories
   apt:
     upgrade: dist
     update_cache: yes
+
 - name: Install common packages
   apt:
     name: "{{ pkg }}"
     state: installed
   with_items:
     - ufw
+    - certbot
   loop_control:
     loop_var: pkg

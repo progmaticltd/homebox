@@ -3,13 +3,50 @@
 
 - hosts: homebox
   vars_files:
-    - variables.yml
+    - variables/common.yml
   roles:
     - packages
     - accounts
+
+# Configure dovecot
+- hosts: homebox
+  vars_files:
+    - variables/common.yml
+    - variables/dovecot.yml
+  roles:
     - certificates
     - dovecot
+
+# Configure postfix
+- hosts: homebox
+  vars_files:
+    - variables/common.yml
+    - variables/postfix.yml
+  roles:
+    - certificates
+    - postfix
+
+# Configure the webmail
+- hosts: homebox
+  vars_files:
+    - variables/webmail.yml
+  roles:
+    - certificates
+
+# Configure services
+- hosts: homebox
+  vars_files:
+    - variables/common.yml
+  roles:
     - postgresql
+
+# Install the webmail, and nginx configuration
+- hosts: homebox
+  vars_files:
+    - variables/common.yml
+  roles:
     - nginx
     - roundcube
     - security
+
+###

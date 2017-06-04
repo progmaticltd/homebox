@@ -1,0 +1,18 @@
+# Virtual domain aliases
+mailer-daemon@{{ network.domain }}                    postmaster
+postmaster@{{ network.domain }}                       root
+nobody@{{ network.domain }}                           root
+hostmaster@{{ network.domain }}                       root
+usenet@{{ network.domain }}                           root
+news@{{ network.domain }}                             root
+www@{{ network.domain }}                              root
+ftp@{{ network.domain }}                              root
+abuse@{{ network.domain }}                            root
+noc@{{ network.domain }}                              root
+security@{{ network.domain }}                         root
+root@{{ network.domain }}                             {{ mail.admin.user }}
+clamav@{{ network.domain }}                           root
+admin@{{ network.domain }}                            {{ mail.admin.user }}
+contact@{{ network.domain }}                          {{ mail.admin.user }}
+masteruser@{{ network.domain }}                       {{ mail.admin.user }}
+logcheck@{{ network.domain }}                         root

@@ -1,0 +1,37 @@
+---
+
+# Install postfix packages
+- name: Install postfix packages
+  apt:
+    name: "{{ pkg }}"
+    state: installed
+  with_items:
+    - postfix
+    - postfix-cdb
+  loop_control:
+    loop_var: pkg
+    
+- name: Copy configuration template
+  register: config
+  template:
+    src: "{{ file }}"
+    dest: "/etc/postfix/{{ file }}"
+  with_items:
+    - dynamicmaps.cf
+    - headers-check
+    - internal-domains
+    - internal-senders
+    - main.cf
+    - master.cf
+    - postfix-files
+    - senders-bcc
+    - virtual
+  loop_control:
+    loop_var: file
+    
+- name: Restart postfix
+  when: config.changed
+  service:
+    name: postfix
+    state: restarted
+      
