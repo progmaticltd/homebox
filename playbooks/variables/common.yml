@@ -1,28 +1,4 @@
 ---
-# Default accounts "mkpasswd --method=sha-512" to create the password hashes
-# You can use the command 
-users:
-  - name: andre
-    full_name: "André Rodier"
-    group: users
-    shell: /bin/bash
-    password: $6$ISiOer8DusG$9PYCMUb6cHgR8sipc.UAvL51KjGA9d645NFdr47srg6O5mbMPGe7qxJiw.wsoiIcIIPFsj2MirD5nvlWnCPZS0
-  - name: mirina
-    full_name: "Mirina Rodier"
-    group: users
-    shell: /bin/bash
-    password: $6$UFJODuTdpgyxO$hhRy1KisZyatY7oDwEO8EunHKFtfTqOrh08p.1.WckEFgaJn6fDfG60I6NTeF7iltjCERgBgvPqR4Bj08u76/1
-  - name: lucile
-    full_name: "Lucile Rodier"
-    group: users
-    shell: /bin/bash
-    password: $6$WW5gdagv8Ao4t66$Dr6f9j.rTw1Mou4Cz8mJmCTmGBqiUYyM05.dSNURddKqMQJQG9xU0hKJyu0lQNs7XU37qJ9am97kBKLLg/TpV.
-  - name: alexandra
-    full_name: "Alexandra Rodier"
-    group: users
-    shell: /bin/bash
-    password: $6$K1A1GlaD9RRtn$0KWnDPtggVXVRSn/jNrLPrTPkBJXtRAMw2G4aR/TX2OoK2LJFMfd2f6Jd6waUYKLtVFH5dOaSCUWJ5AddL09M0
-
 # Webmail configuration (roundcube, http ATM)
 webmail:
   url: webmail2.rodier.me
