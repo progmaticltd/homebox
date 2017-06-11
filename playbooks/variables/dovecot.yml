@@ -1,6 +1,0 @@
----
-
-# Dovecot configuration
-certificate:
-  cn: imap2.rodier.me
-  email: andre@rodier.me

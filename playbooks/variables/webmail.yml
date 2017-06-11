@@ -1,7 +1,0 @@
----
-
-# Webmail configuration
-certificate:
-  cn: webmail2.rodier.me
-  email: andre@rodier.me
-

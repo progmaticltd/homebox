@@ -1,6 +1,0 @@
----
-
-# Postfix configuration
-certificate:
-  cn: smtp2.rodier.me
-  email: andre@rodier.me
