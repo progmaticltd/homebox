@@ -31,7 +31,7 @@
     - certificates
     - dovecot
 
-# Configure nginx web server
+# Configure nginx web server, especially the HTTPS
 - hosts: homebox
   vars_files:
     - variables/webmail.yml
@@ -49,6 +49,7 @@
 - hosts: homebox
   vars_files:
     - variables/common.yml
+    - variables/webmail.yml
   roles:
     - nginx
     - roundcube

@@ -25,8 +25,9 @@ mynetworks = 127.0.0.0/8
 
 readme_directory = /usr/share/doc/postfix
 
-# Always BCC to automatically copy to the sent folder
-sender_bcc_maps = hash:/etc/postfix/senders-bcc
+# Always BCC to automatically copy to the sent folder.
+# Requires a server rule that places the email into the sent folder as well
+# sender_bcc_maps = hash:/etc/postfix/senders-bcc
 
 # Bounce configuration
 # notify_classes = resource, software
@@ -121,5 +122,6 @@ recipient_delimiter = +
 # 64Mb max message size
 message_size_limit = 67108864
 
-# Allow accents in email addresses (Postfix 3.1)
+# Allow accents in email addresses
+# Wait Postfix 3.1 on Debian Stretch
 # smtputf8_enable = yes
