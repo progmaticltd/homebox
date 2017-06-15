@@ -10,7 +10,6 @@
     password: "{{ user.password | password_hash('sha512') }}"
     groups: "mail"
   with_items:
-    - "{{ users }}"
-  loop_control:
+    - "{{ users }}"  loop_control:
     loop_var: user
 

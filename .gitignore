@@ -6,4 +6,7 @@ playbooks/variables/*.yml
 !playbooks/variables/.example.yml
 
 # Ignore ansible error files
-*.retry
+*.retry.vscode
+
+# Ignore editors files
+.vscode
