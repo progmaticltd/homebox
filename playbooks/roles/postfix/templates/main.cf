@@ -1,0 +1,127 @@
+# See /usr/share/postfix/main.cf.dist for a commented, more complete version
+
+
+# Debian specific:  Specifying a file name will cause the first
+# line of that file to be used as the name.  The Debian default
+# is /etc/mailname.
+#myorigin = /etc/mailname
+
+smtpd_banner = $myhostname ESMTP $mail_name
+biff = no
+
+# Network parameters
+inet_interfaces = all
+inet_protocols = ipv4
+html_directory = /usr/share/doc/postfix/html
+
+# appending .domain is the MUA's job.
+append_dot_mydomain = no
+
+# Uncomment the next line to generate "delayed mail" warnings
+delay_warning_time = 1h
+
+# Trusted IP addresses
+mynetworks = 127.0.0.0/8
+
+readme_directory = /usr/share/doc/postfix
+
+# Always BCC to automatically copy to the sent folder.
+# Requires a server rule that places the email into the sent folder as well
+# sender_bcc_maps = hash:/etc/postfix/senders-bcc
+
+# Bounce configuration
+# notify_classes = resource, software
+double_bounce_sender = postmaster@{{ network.domain }}
+notify_classes = delay, resource, software
+bounce_notice_recipient =  {{ mail.admin.email }}
+masquerade_domains = {{ network.domain }} {{ network.smtp }}
+
+#masquerade_exceptions = root, mailer-daemon
+
+# TLS parameters
+smtpd_tls_cert_file=/etc/letsencrypt/live/{{ certificate.cn }}/cert.pem
+smtpd_tls_key_file=/etc/letsencrypt/live/{{ certificate.cn }}/privkey.pem
+
+smtpd_use_tls=yes
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+
+# When using rspamd milter
+smtpd_milters = inet:localhost:12301,inet:localhost:9900,inet:localhost:54321
+milter_protocol = 6
+milter_mail_macros = i {mail_addr} {client_addr} {client_name} {auth_authen}
+
+# Use opendkim
+milter_default_action = accept
+milter_protocol = 6
+#smtpd_milters = local:/opendkim/opendkim.sock
+#non_smtpd_milters = local:/opendkim/opendkim.sock22
+
+# DKIM & OpenDMARC
+# non_smtpd_milters = inet:localhost:12301,inet:localhost:9900,inet:localhost:54321
+
+smtpd_client_restrictions =
+        permit_mynetworks,
+        permit_sasl_authenticated
+        permit
+
+# content_filter = amavis:[127.0.0.1]:10024
+
+# See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for
+# information on enabling SSL in the smtp client.
+
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_auth_enable = yes
+
+# On Debian Wheezy path must be relative and queue_directory defined
+queue_directory = /var/spool/postfix
+
+smtpd_relay_restrictions =
+        permit_mynetworks
+        permit_sasl_authenticated
+        reject_unauth_destination
+
+smtpd_recipient_restrictions =
+    permit_sasl_authenticated
+    check_sender_access hash:/etc/postfix/internal-senders
+    permit_mynetworks
+    reject_unauth_destination
+
+smtpd_restriction_classes =
+    internal_only
+
+internal_only =
+    check_recipient_access hash:/etc/postfix/internal-domains
+    reject
+
+local_recipient_maps = proxy:unix:passwd.byname $alias_maps
+
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+
+mydestination = {{ network.hostname }}, localhost.{{network.domain}}, localhost
+relayhost =
+
+# Do not authorise the vrfy SMTP command
+disable_vrfy_command = yes
+
+
+# Cleanup headers of sent emails
+smtp_header_checks = pcre:/etc/postfix/headers-check
+
+
+mailbox_command = /usr/lib/dovecot/deliver -f "$SENDER" -a "$RECIPIENT" -d "$USER"
+
+mailbox_size_limit = 0
+recipient_delimiter = +
+
+# 64Mb max message size
+message_size_limit = 67108864
+
+# Allow accents in email addresses
+# Wait Postfix 3.1 on Debian Stretch
+# smtputf8_enable = yes

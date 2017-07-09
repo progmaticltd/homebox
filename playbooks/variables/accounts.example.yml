@@ -1,0 +1,16 @@
+
+# The password is stored in cleartext in this file, and encrypted using Ansible password_hash
+# Copy this file into accounts.yml to create your accounts
+
+users:
+  - name: john
+    full_name: "John Doe"
+    group: users
+    shell: /bin/bash
+    password: "vju5zPEGsB2L"
+  - name: jane
+    full_name: "Jane Doe"
+    group: users
+    shell: /bin/bash
+    password: "WKdTrtbpcqgq"
+

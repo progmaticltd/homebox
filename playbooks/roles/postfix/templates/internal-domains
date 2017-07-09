@@ -1,0 +1,2 @@
+# /etc/postfix/internal-domains
+{{network.domain}}   OK

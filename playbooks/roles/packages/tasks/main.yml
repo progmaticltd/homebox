@@ -1,14 +1,31 @@
 ---
 
+# Initialise the packages repository to a standard,
+# including backports, contrib and non-free software
+- name: Initialise default repositories
+  copy:
+    src: sources.list
+    dest: /etc/apt/sources.list
+                
 - name: Update packages repositories
+  register: packages_cache
   apt:
-    upgrade: dist
+    cache_valid_time: 14400 # 4h before considering cache obsolete
     update_cache: yes
+
+- name: Upgrade the distribution
+  when: packages_cache.changed
+  apt:
+    upgrade: yes
+
+# Install the most required packages
 - name: Install common packages
   apt:
     name: "{{ pkg }}"
     state: installed
+    default_release: jessie-backports
   with_items:
     - ufw
+    - certbot
   loop_control:
     loop_var: pkg

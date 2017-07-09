@@ -1,18 +1,8 @@
 ---
 
-
-- name: Install packages required for certificates creation
-  apt:
-    name: "{{ pkg }}"
-    state: installed
-    default_release: jessie-backports
-  with_items:
-    - certbot
-  loop_control:
-    loop_var: pkg
-    
+# The certbot package need to be installed
 - name: Create the certificate
   command:
-    /usr/bin/certbot certonly --non-interactive --standalone --domain "{{ webmail.url }}" --email "{{ certificate.email }}" --agree-tos
+    /usr/bin/certbot certonly --non-interactive --standalone --domain "{{ certificate.cn }}" --email "{{ certificate.email }}" --agree-tos
   args:
-    creates: "/etc/letsencrypt/live/{{ webmail.url }}/cert.pem"
+    creates: "/etc/letsencrypt/live/{{ certificate.cn }}/cert.pem"

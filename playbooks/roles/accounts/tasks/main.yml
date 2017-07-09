@@ -1,14 +1,15 @@
 ---
 
-- name: Create user account
+# Create Unix user accounts
+- name: Create all the user accounts
   user:
     name: "{{ user.name }}"
     comment: "{{ user.full_name }}"
     group: "{{ user.group }}"
     shell: "{{ user.shell }}"
-    password: "{{ user.password }}"
+    password: "{{ user.password | password_hash('sha512') }}"
     groups: "mail"
   with_items:
-    - "{{ users }}"
-  loop_control:
+    - "{{ users }}"  loop_control:
     loop_var: user
+

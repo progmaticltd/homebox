@@ -1,0 +1,3 @@
+# /etc/postfix/internal-senders
+# These users cannot send emails outside. Useful for a family
+# user@example.com  internal_only
