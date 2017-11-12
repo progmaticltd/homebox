@@ -1,0 +1,433 @@
+#### Contents of the preconfiguration file (for stretch)
+### Localization
+
+# The values can also be preseeded individually for greater flexibility.
+d-i debian-installer/language string {{ locale.id }}:{{ locale.language }}
+d-i debian-installer/country string {{ locale.country }}
+d-i debian-installer/locale string {{ locale.id }}.{{ locale.charset }}
+
+# Optionally specify additional locales to be generated.
+# d-i localechooser/supported-locales multiselect en_GB.UTF-8
+
+# Keyboard selection.
+d-i console-keymaps-at/keymap select {{ locale.keymap }}
+d-i keyboard-configuration/xkb-keymap select {{ locale.keymap }}
+d-i keyboard-configuration/variant select
+d-i keyboard-configuration/toggle select No toggling
+
+# Do not scan for another CD
+d-i apt-setup/use_mirror boolean false
+d-i apt-setup/cdrom/set-first boolean false
+d-i apt-setup/cdrom/set-next boolean false   
+d-i apt-setup/cdrom/set-failed boolean false
+
+### Network configuration
+# Disable network configuration entirely. This is useful for cdrom
+# installations on non-networked devices where the network questions,
+# warning and long timeouts are a nuisance.
+d-i netcfg/enable boolean true
+
+# The network interface to use to access internet
+d-i netcfg/choose_interface select auto
+
+# If not detected, use this:
+# d-i netcfg/choose_interface select {{ network.main.iface }}
+
+# To set a different link detection timeout (default is 3 seconds).
+# Values are interpreted as seconds.
+#d-i netcfg/link_wait_timeout string 10
+
+# If you have a slow dhcp server and the installer times out waiting for
+# it, this might be useful.
+#d-i netcfg/dhcp_timeout string 60
+#d-i netcfg/dhcpv6_timeout string 60
+
+# If you prefer to configure the network manually, uncomment this line and
+# the static network configuration below.
+# d-i netcfg/disable_autoconfig boolean true
+
+# Any hostname and domain names assigned from dhcp take precedence over
+# values set here. However, setting the values still prevents the questions
+# from being shown, even if values come from dhcp.
+d-i netcfg/get_hostname string {{ system.hostname }}
+d-i netcfg/get_domain string {{ network.main.domain }}
+
+# If you want to force a hostname, regardless of what either the DHCP
+# server returns or what the reverse DNS entry for the IP is, uncomment
+# and adjust the following line.
+d-i netcfg/hostname string {{ system.hostname }}
+
+# Disable that annoying WEP key dialog.
+d-i netcfg/wireless_wep string
+
+# The wacky dhcp hostname that some ISPs use as a password of sorts.
+d-i netcfg/dhcp_hostname string {{ system.hostname }}
+
+# If non-free firmware is needed for the network or other hardware, you can
+# configure the installer to always try to load it, without prompting. Or
+# change to false to disable asking.
+#d-i hw-detect/load_firmware boolean true
+
+### Mirror settings
+# If you select ftp, the mirror/country string does not need to be set.
+#d-i mirror/protocol string ftp
+d-i mirror/country string manual
+d-i mirror/http/hostname string {{ repo.main }}
+d-i mirror/http/directory string /debian
+d-i mirror/http/proxy string {{ network.main.proxy }}
+
+# Suite to install.
+#d-i mirror/suite string testing
+# Suite to use for loading installer components (optional).
+#d-i mirror/udeb/suite string testing
+
+### Account setup
+# Only create a root account
+d-i passwd/root-login boolean true
+d-i passwd/make-user boolean false
+
+# Root password, either in clear text
+d-i passwd/root-password password homebox
+d-i passwd/root-password-again password homebox
+# or encrypted using a crypt(3)  hash.
+#d-i passwd/root-password-crypted password [crypt(3) hash]
+
+# To create a normal user account (disabled for now)
+# d-i passwd/user-fullname string HomeBox Administrator
+# d-i passwd/username string homebox
+
+# Normal user's password, either in clear text
+# d-i passwd/user-password password respect-my-privacy
+# d-i passwd/user-password-again password respect-my-privacy
+
+# or encrypted using a crypt(3) hash.
+#d-i passwd/user-password-crypted password [crypt(3) hash]
+# Create the first user with the specified UID instead of the default.
+#d-i passwd/user-uid string 1010
+
+# The user account will be added to some standard initial groups. To
+# override that, use this.
+# d-i passwd/user-default-groups string audio cdrom video
+
+### Clock and time zone setup
+# Controls whether or not the hardware clock is set to UTC.
+d-i clock-setup/utc boolean true
+
+# You may set this to any valid setting for $TZ; see the contents of
+# /usr/share/zoneinfo/ for valid values.
+d-i time/zone string {{ time.zone }}
+
+# Controls whether to use NTP to set the clock during the install
+d-i clock-setup/ntp boolean true
+
+# Use the firewall NTP server
+d-i clock-setup/ntp-server string  ntp.{{ network.main.domain }}
+
+### Partitioning
+# Alternatively, you may specify a disk to partition. If the system has only
+d-i partman-auto/method string raid
+
+# Use the first two disks
+d-i partman-auto/disk string /dev/{{ system.hw.disks[0].name }} /dev/{{ system.hw.disks[1].name }}
+
+## Partitioning using RAID
+d-i partman-auto-raid/recipe string     \
+        1 2 0 ext3 /boot                \
+                /dev/{{ system.hw.disks[0].name }}1#/dev/{{ system.hw.disks[1].name }}1     \
+        .                               \
+        1 2 0 lvm -                     \
+                /dev/{{ system.hw.disks[0].name }}2#/dev/{{ system.hw.disks[1].name }}2     \
+        .
+
+# Partman installer
+partman-base partman/confirm boolean true
+partman-base partman/confirm_nochanges boolean true
+partman-base partman/confirm_nooverwrite boolean true
+
+# In the expert_recipe, there is a stanza for each RAID partition
+# and each LVM partition.
+# The RAID partitions are tagged as "lvmignore", while
+# the LVM logical volumes as "defaultignore" and "lvmok".
+# The RAID partition containing the LVM volumes must be made big
+# enough to hold them all.
+# Note that in the example shown here the mountpoint for /boot
+# (which is not encapsulated within LVM) is specified in the
+# partman-auto-raid recipe, rather than in the corresponding 
+# raid partition definition below.
+d-i partman-auto/expert_recipe string                        \
+        multiraid ::                                         \
+                128 100 256 raid                             \
+                        $lvmignore{ }                        \
+                        $primary{ }                          \
+                        method{ raid }                       \
+			$bootable{ }                         \
+                        mountpoint{ /boot }                  \
+                .                                            \
+                900 32768 -1 raid                            \
+                        $lvmignore{ }                        \
+                        $primary{ }                          \
+                        method{ raid }                       \
+                .                                            \
+                1024 1024 2048 ext3                          \
+                        $defaultignore{ }                    \
+                        $lvmok{ }                            \
+                        method{ format }                     \
+                        format{ }                            \
+                        use_filesystem{ }                    \
+                        filesystem{ ext3 }                   \
+                        mountpoint{ / }                      \
+                        lv_name{ system }                    \
+                        label{ system }                      \
+                .                                            \
+                2048 8192 8192 ext4                          \
+                        $defaultignore{ }                    \
+                        $lvmok{ }                            \
+                        method{ format }                     \
+                        format{ }                            \
+                        use_filesystem{ }                    \
+                        filesystem{ ext4 }                   \
+                        mountpoint{ /tmp }                   \
+			options/nodev{ nodev }               \
+                        lv_name{ tmp }                       \
+                        label{ tmp }                         \
+                .                                            \
+                2048 4096 4096 ext4                          \
+                        $defaultignore{ }                    \
+                        $lvmok{ }                            \
+                        method{ format }                     \
+                        format{ }                            \
+                        use_filesystem{ }                    \
+                        filesystem{ ext4 }                   \
+                        mountpoint{ /usr }                   \
+                        lv_name{ usr }                       \
+                        label{ usr }                         \
+                .                                            \
+                512 1024 1024 ext4                           \
+                        $defaultignore{ }                    \
+                        $lvmok{ }                            \
+                        method{ format }                     \
+                        format{ }                            \
+                        use_filesystem{ }                    \
+                        filesystem{ ext4 }                   \
+                        mountpoint{ /opt }                   \
+                        lv_name{ opt }                       \
+                        label{ opt }                         \
+                .                                            \
+                4096 4096 8192 btrfs                         \
+                        $defaultignore{ }                    \
+                        $lvmok{ }                            \
+                        method{ format }                     \
+                        format{ }                            \
+                        use_filesystem{ }                    \
+                        filesystem{ btrfs }                  \
+                        mountpoint{ /home }                  \
+                        lv_name{ home }                      \
+                        label{ home }                        \
+                .                                            \
+                8192 8192 200% linux-swap                    \
+                        $defaultignore{ }                    \
+                        $lvmok{ }                            \
+                        method{ swap }                       \
+                        format{ }                            \
+                        lv_name{ swap }                      \
+                .                                            \
+                8192 16384 16384 ext4                        \
+                        $defaultignore{ }                    \
+                        $lvmok{ }                            \
+                        method{ format }                     \
+                        format{ }                            \
+                        use_filesystem{ }                    \
+                        filesystem{ ext4 }                   \
+                        mountpoint{ /var }                   \
+			options/noatime{ noatime }           \
+			options/nodiratime{ nodiratime }     \
+                        lv_name{ var }                       \
+                        label{ var }                         \
+                .                                            \
+                32768 32768 -1 ext4                          \
+                        $defaultignore{ }                    \
+                        $lvmok{ }                            \
+                        lv_name{ reserved }                  \
+                .
+
+# This makes partman automatically partition without confirmation, provided
+# that you told it what to do using one of the methods above.
+d-i partman-partitioning/confirm_write_new_label boolean true
+partman-partitioning partman-partitioning/confirm_new_label boolean true
+
+d-i partman/confirm_write_new_label boolean true
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm_nochanges boolean true
+
+# The same applies to pre-existing software RAID array:
+d-i partman-md/device_remove_md boolean true
+d-i partman-md/confirm boolean true
+d-i partman-md/confirm_nochanges boolean true
+d-i partman-md/confirm_nooverwrite boolean true
+partman-md partman-md/confirm boolean true
+partman-md partman-md/confirm_nochanges boolean true
+
+# And the same goes for the confirmation to write the lvm partitions.
+d-i partman-lvm/device_remove_lvm boolean true
+d-i partman-lvm/confirm boolean true
+d-i partman-lvm/confirm_nochanges boolean true
+d-i partman-lvm/confirm_nooverwrite boolean true
+partman-lvm partman-lvm/confirm boolean true
+partman-lvm partman-lvm/confirm_nochanges boolean true
+
+
+# When making the logical volumes, only 75% of the available disk space will be used.
+# FIXME: This does not seem to work
+d-i partman-auto-lvm/guided_size string 75%
+
+# Allow to boot even if the array is degraded
+d-i mdadm/boot_degraded boolean true
+
+# For additional information see the file partman-auto-raid-recipe.txt
+# included in the 'debian-installer' package or available from D-I source
+# repository.
+
+## Controlling how partitions are mounted
+# The default is to mount by UUID, but you can also choose "traditional" to
+# use traditional device names, or "label" to try filesystem labels before
+# falling back to UUIDs.
+# d-i partman/mount_style select uuid
+d-i partman/mount_style select label
+
+### Base system installation
+# Configure APT to not install recommended packages by default. Use of this
+# option can result in an incomplete system and should only be used by very
+# experienced users.
+d-i base-installer/install-recommends boolean false
+
+# The kernel image (meta) package to be installed; "none" can be used if no
+# kernel is to be installed.
+d-i base-installer/kernel/image string linux-image-amd64
+
+### Apt setup
+# You can choose to install non-free and contrib software.
+d-i apt-setup/non-free boolean true
+d-i apt-setup/contrib boolean true
+d-i apt-setup/use_mirror boolean true
+
+# Select which update services to use; define the mirrors to be used.
+# Values shown below are the normal defaults.
+d-i apt-setup/services-select multiselect security, updates, backports
+d-i apt-setup/security_host string {{ repo.security }}
+
+# Additional repositories, local[0-9] available
+#d-i apt-setup/local0/repository string \
+#       http://local.server/debian stable main
+#d-i apt-setup/local0/comment string local server
+# Enable deb-src lines
+#d-i apt-setup/local0/source boolean true
+# URL to the public key of the local repository; you must provide a key or
+# apt will complain about the unauthenticated repository and so the
+# sources.list line will be left commented out
+#d-i apt-setup/local0/key string http://local.server/key
+
+# By default the installer requires that repositories be authenticated
+# using a known gpg key. This setting can be used to disable that
+# authentication. Warning: Insecure, not recommended.
+#d-i debian-installer/allow_unauthenticated boolean true
+
+### Package selection
+tasksel tasksel/first multiselect standard, ssh-server
+
+# Individual additional packages to install
+d-i pkgsel/include string mc tmux vim zsh aptitude unattended-upgrades net-tools
+
+# Whether to upgrade packages after debootstrap.
+# Allowed values: none, safe-upgrade, full-upgrade
+# d-i pkgsel/upgrade select safe-upgrade
+d-i pkgsel/upgrade select safe-upgrade
+
+# Some versions of the installer can report back on what software you have
+# installed, and what software you use. The default is not to report back,
+# but sending reports helps the project determine what software is most
+# popular and include it on CDs.
+popularity-contest popularity-contest/participate boolean false
+
+### Boot loader installation
+# This is fairly safe to set, it makes grub install automatically to the MBR
+# if no other operating system is detected on the machine.
+d-i grub-installer/only_debian boolean true
+
+# Force non UEFI installation
+d-i partman-efi/non_efi_system boolean false
+
+# This one makes grub-installer install to the MBR if it also finds some other
+# OS, which is less safe as it might not be able to boot that other OS.
+d-i grub-installer/with_other_os boolean true
+
+# Due notably to potential USB sticks, the location of the MBR can not be
+# determined safely in general, so this needs to be specified:
+d-i grub-installer/bootdev string /dev/{{ system.hw.disks[0].name }} /dev/{{ system.hw.disks[1].name }}
+
+# Optional password for grub, either in clear text
+#d-i grub-installer/password password r00tme
+#d-i grub-installer/password-again password r00tme
+# or encrypted using an MD5 hash, see grub-md5-crypt(8).
+#d-i grub-installer/password-crypted password [MD5 hash]
+
+# Add additional boot parameters for the installed system
+# Allow to boot in degraded mode
+d-i debian-installer/add-kernel-opts string mdadm=true
+
+### Finishing up the installation
+# During installations from serial console, the regular virtual consoles
+# (VT1-VT6) are normally disabled in /etc/inittab. Uncomment the next
+# line to prevent this.
+#d-i finish-install/keep-consoles boolean true
+
+# Avoid that last message about the install being complete.
+d-i finish-install/reboot_in_progress note
+
+# This will prevent the installer from ejecting the CD during the reboot,
+# which is useful in some situations.
+# d-i cdrom-detect/eject boolean false
+
+# This is how to make the installer shutdown when finished, but not
+# reboot into the installed system.
+#d-i debian-installer/exit/halt boolean true
+# This will power off the machine instead of just halting it.
+d-i debian-installer/exit/poweroff boolean true
+
+### Preseeding other packages
+# Depending on what software you choose to install, or if things go wrong
+# during the installation process, it's possible that other questions may
+# be asked. You can preseed those too, of course. To get a list of every
+# possible question that could be asked during an install, do an
+# installation, and then run these commands:
+#   debconf-get-selections --installer > file
+#   debconf-get-selections >> file
+
+
+#### Advanced options
+### Running custom commands during the installation
+# d-i preseeding is inherently not secure. Nothing in the installer checks
+# for attempts at buffer overflows or other exploits of the values of a
+# preconfiguration file like this one. Only use preconfiguration files from
+# trusted locations! To drive that home, and because it's generally useful,
+# here's a way to run any shell command you'd like inside the installer,
+# automatically.
+
+# This first command is run as early as possible, just after
+# preseeding is read.
+#d-i preseed/early_command string anna-install some-udeb
+# This command is run immediately before the partitioner starts. It may be
+# useful to apply dynamic partitioner preseeding that depends on the state
+# of the disks (which may not be visible when preseed/early_command runs).
+#d-i partman/early_command \
+#       string debconf-set partman-auto/disk "$(list-devices disk | head -n1)"
+
+# This command is run just before the install finishes, but when there is
+# still a usable /target directory. You can chroot to /target and use it
+# directly, or use the apt-install and in-target commands to easily install
+# packages and run commands in the target system.
+# Extract the miscellaneous files
+d-i preseed/late_command string -C /target -zxf /cdrom/simple-cdd/misc.tgz
+ 
+

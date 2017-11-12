@@ -1,0 +1,9 @@
+---
+
+# Create an ISO image for the installation
+
+- hosts: cdbuilder
+  vars_files:
+    - ../../variables/common.yml
+  roles:
+    - build-iso

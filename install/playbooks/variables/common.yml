@@ -1,0 +1,15 @@
+# Common variables to the whole system
+
+# Network related
+network:
+  smtp: smtp2.example.com
+  imap: imap2.example.com
+  hostname: mail2.example.com
+  domain: example.com
+
+# Email related
+mail:
+  admin:
+    name: "John Doe"
+    email: admin@example.com
+    user: "john"
