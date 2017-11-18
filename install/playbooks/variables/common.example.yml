@@ -13,3 +13,17 @@ mail:
     name: "John Doe"
     email: admin@example.com
     user: "john"
+
+# LDAP configuration
+ldap:
+  organization:
+    domain: example.com
+    suffix: dc=example,dc=com
+  users:
+    dn: ou=users,dc=example,dc=com
+  admin:
+    dn: cn=admin,dc=example,dc=com
+    desc: administrator account
+    password: homebox
+    
+
