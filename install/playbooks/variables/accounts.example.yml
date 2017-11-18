@@ -22,3 +22,11 @@ users:
     shell: /bin/bash
     mail: 'jane.doe@example.com'
     password: "Tlwril!8"
+
+posix_groups:
+  - gid: std_users
+    description: Standard users
+    gidNumber: 1000
+  - gid: administrators
+    description: Administrators
+    gidNumber: 2000

@@ -18,9 +18,11 @@ mail:
 ldap:
   organization:
     domain: example.com
-    suffix: dc=example,dc=com
+    base: dc=example,dc=com
   users:
     dn: ou=users,dc=example,dc=com
+  groups:
+    dn: ou=groups,dc=example,dc=com
   admin:
     dn: cn=admin,dc=example,dc=com
     desc: administrator account
