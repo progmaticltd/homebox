@@ -2,11 +2,11 @@
 hosts
 
 # Variables should be customised for each users, but keep the examples
-playbooks/variables/*.yml
-!playbooks/variables/.example.yml
+install/playbooks/variables/*.yml
+!install/playbooks/variables/.example.yml
 
 # Ignore ansible error files
-*.retry.vscode
+*.retry
 
 # Ignore editors files
 .vscode

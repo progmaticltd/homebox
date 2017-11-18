@@ -23,7 +23,6 @@
   apt:
     name: "{{ pkg }}"
     state: installed
-    default_release: jessie-backports
   with_items:
     - ufw
     - certbot

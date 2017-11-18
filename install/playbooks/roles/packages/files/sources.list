@@ -1,14 +1,14 @@
 # Main repository
-deb http://httpredir.debian.org/debian/ jessie main non-free contrib
-deb-src http://httpredir.debian.org/debian/ jessie main non-free contrib
+deb http://httpredir.debian.org/debian/ stretch main non-free contrib
+deb-src http://httpredir.debian.org/debian/ stretch main non-free contrib
 
-deb http://security.debian.org/ jessie/updates main contrib non-free
-deb-src http://security.debian.org/ jessie/updates main contrib non-free
+deb http://security.debian.org/ stretch/updates main contrib non-free
+deb-src http://security.debian.org/ stretch/updates main contrib non-free
 
-# jessie-updates, previously known as 'volatile'
-deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+# stretch-updates, previously known as 'volatile'
+deb http://httpredir.debian.org/debian/ stretch-updates main contrib non-free
+deb-src http://httpredir.debian.org/debian/ stretch-updates main contrib non-free
 
-# jessie-backports, previously on backports.debian.org
-deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+# stretch-backports, previously on backports.debian.org
+deb http://httpredir.debian.org/debian/ stretch-backports main contrib non-free
+deb-src http://httpredir.debian.org/debian/ stretch-backports main contrib non-free

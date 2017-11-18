@@ -1,15 +1,74 @@
 ---
 
+# Pre-configure the LDAP sever before instaling
+- name: Configure the LDAP administration account
+  tags: ldap
+  debconf:
+    name: slapd
+    question: '{{ item }}'
+    value: '{{ ldap.admin.password }}'
+    vtype: string
+  with_items:
+    - slapd/password1
+    - slapd/password2
+
+- name: Configure the LDAP organization
+  tags: ldap
+  debconf:
+    name: slapd
+    question: shared/organization
+    value: '{{ ldap.organization.domain }}'
+    vtype: string
+
+# Install LDAP server
+- name: Install the required packages
+  tags: ldap
+  apt:
+    name: '{{ item }}'
+    state: installed
+  with_items:
+    - slapd
+    - python-ldap
+
+- name: Make sure we have a parent entry for users
+  tags: ldap
+  ldap_entry:
+    dn: '{{ ldap.users.dn }}'
+    objectClass: organizationalUnit
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw:  '{{ ldap.admin.password }}'
+    state: present
+
 # Create Unix user accounts
 - name: Create all the user accounts
-  user:
-    name: "{{ user.name }}"
-    comment: "{{ user.full_name }}"
-    group: "{{ user.group }}"
-    shell: "{{ user.shell }}"
-    password: "{{ user.password | password_hash('sha512') }}"
-    groups: "mail"
+  tags: ldap
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw:  '{{ ldap.admin.password }}'
+    dn: 'cn={{ user.uid }},{{ ldap.users.dn }}'
+    attributes:
+      uid: '{{ user.uid }}'
+      givenName: '{{ user.first_name }}'
+      sn: '{{ user.last_name }}'
+      cn:  '{{ user.first_name }} {{ user.last_name }}'
+      userPassword: '{{ user.password | password_hash("sha512") }}'
+      homeDirectory: '/home/{{ user.group }}/{{ user.uid }}'
+      loginShell: '{{ user.shell }}'
+      uidNumber: '{{ user.uidNumber }}'
+      gidNumber: '{{ user.gidNumber }}'
+      mail: '{{ user.mail }}'
+      shadowMin: 0
+      shadowMax: 999999
+      shadowWarning: 7
+      shadowInactive: -1
+      shadowFlag: 0
+    objectClass:
+      - top
+      - person
+      - posixAccount
+      - shadowAccount
+      - inetOrgPerson
   with_items:
-    - "{{ users }}"  loop_control:
+    - '{{ users }}'
+  loop_control:
     loop_var: user
-
