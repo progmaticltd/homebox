@@ -1,7 +1,7 @@
 ---
 # Common variables for the project
 system:
-  hostname: homebox
+  hostname: mail
   version: 9.2
   arch: amd64
   hw:
@@ -13,7 +13,7 @@ system:
 
 network:
   main:
-    domain: office.pm
+    domain: homebox.space
     proxy: 'http://proxy.office.pm:3128/'
     iface: eth0
 

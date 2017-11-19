@@ -2,7 +2,13 @@
 
 # The certbot package need to be installed
 - name: Create the certificate
-  command:
-    /usr/bin/certbot certonly --non-interactive --standalone --domain "{{ certificate.cn }}" --email "{{ certificate.email }}" --agree-tos
+  tags: cert
+  command: >-
+    /usr/bin/certbot certonly
+    --non-interactive
+    --standalone
+    --domain "{{ certificate.cn }}"
+    --email "{{ certificate.email }}"
+    --agree-tos
   args:
     creates: "/etc/letsencrypt/live/{{ certificate.cn }}/cert.pem"
