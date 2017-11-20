@@ -1,0 +1,1 @@
+mail._domainkey.{{ network.domain }} {{ network.domain }}:mail:/etc/postfix/dkim/mail.private 

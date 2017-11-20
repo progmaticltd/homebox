@@ -1,0 +1,84 @@
+---
+
+- name: Install opendkim packages for mail signing
+  tags: dkim
+  apt:
+    name: "{{ pkg }}"
+    state: installed
+  with_items:
+    - opendkim
+    - opendkim-tools
+  loop_control:
+    loop_var: pkg
+    
+- name: Create directory to install the keys
+  tags: dkim
+  file:
+    path: /etc/postfix/dkim/
+    state: directory
+    group: opendkim
+    mode: u=rwx,g=rx,o=
+
+- name: Run the command to create the keys
+  tags: dkim
+  register: keys
+  command: >-
+    opendkim-genkey -D /etc/postfix/dkim/ -d '{{ network.domain }}' -s mail
+  args:
+    creates: /etc/postfix/dkim/mail.txt
+
+- name: Set the default permissions
+  tags: dkim
+  file:
+    path: '{{ path }}'
+    mode: u=rw,g=r,o=
+    group: opendkim
+  with_items:
+    - /etc/postfix/dkim/mail.private
+    - /etc/postfix/dkim/mail.txt
+  loop_control:
+    loop_var: path
+
+- name: Update the configuration file
+  tags: dkim
+  lineinfile:
+    path: /etc/opendkim.conf
+    line: '{{ line }}'
+    state: present
+  with_items:
+    - 'KeyTable file:/etc/postfix/dkim/keytable'
+    - 'SigningTable file:/etc/postfix/dkim/signingtable'
+    - 'Socket inet:8891@localhost'
+  loop_control:
+    loop_var: line
+
+- name: Update the configuration file for the socket
+  register: config1
+  tags: dkim
+  lineinfile:
+    path: /etc/default/opendkim
+    line: '{{ line }}'
+    state: present
+  with_items:
+    - 'SOCKET="inet:8891@localhost"'
+  loop_control:
+    loop_var: line
+
+- name: Create the keys and signing table
+  register: config2
+  tags: dkim
+  template:
+    src: '{{ file }}'
+    dest: '/etc/postfix/dkim/{{ file }}'
+  with_items:
+    - keytable
+    - signingtable
+  loop_control:
+    loop_var: file
+
+- name: Restart opendkim if necessary
+  tags: dkim
+  when: config1.changed or config2.changed or keys.changed
+  service:
+    name: opendkim
+    state: restarted

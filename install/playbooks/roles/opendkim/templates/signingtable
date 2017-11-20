@@ -1,0 +1,5 @@
+# Domain {{ network.domain }}
+{{ network.domain }} mail._domainkey.{{ network.domain }}
+
+# You can specify multiple domains
+# Example.net www._domainkey.example.net 

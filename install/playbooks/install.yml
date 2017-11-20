@@ -22,6 +22,6 @@
     - variables/postfix.yml
   roles:
     - certificates
-    - dovecot
+    - opwendkim
     - postfix
 

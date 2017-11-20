@@ -12,6 +12,16 @@
     - postfix-pcre
     - postfix-ldap
     - sasl2-bin
+  loop_control:
+    loop_var: pkg
+    
+- name: Install postfix packages for local administration
+  tags: postfix
+  when: options.local_admin == true
+  apt:
+    name: "{{ pkg }}"
+    state: installed
+  with_items:
     - pfqueue
     - bsd-mailx
   loop_control:
@@ -25,11 +35,6 @@
     dest: "/etc/postfix/{{ file }}"
   with_items:
     - main.cf
-    # - headers-check
-    # - internal-domains
-    # - internal-senders
-    # - senders-bcc
-    # - virtual
   loop_control:
     loop_var: file
     
@@ -37,10 +42,10 @@
   tags: postfix
   when: config.changed
   service:
-    name: postfix
+    name: '{{ service }}'
     state: restarted
   with_items:
     - postfix
     - postfix@-
   loop_control:
-    loop_var: pkg
+    loop_var: service
