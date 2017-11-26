@@ -32,6 +32,7 @@
   with_items:
     - slapd
     - python-ldap
+    - python-passlib
 
 - name: Make sure we have a parent entry for users
   tags: ldap
@@ -68,19 +69,32 @@
   loop_control:
     loop_var: group
 
-# Create Unix user accounts
+# Create LDAP user accounts
+- name: Remove previous users
+  tags: ldap,clean
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw:  '{{ ldap.admin.password }}'
+    dn: 'cn={{ user.uid }},{{ ldap.users.dn }}'
+    state: absent
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
 - name: Create all the user accounts
   tags: ldap
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw:  '{{ ldap.admin.password }}'
     dn: 'cn={{ user.uid }},{{ ldap.users.dn }}'
+    state: present
     attributes:
       uid: '{{ user.uid }}'
       givenName: '{{ user.first_name }}'
       sn: '{{ user.last_name }}'
-      cn:  '{{ user.first_name }} {{ user.last_name }}'
-      userPassword: '{{ user.password }}'
+      # userPassword: "{{ user.password | password_hash('ldap_md5_crypt') }}"
+      userPassword: "{{ user.password }}"
       homeDirectory: '/home/{{ user.group }}/{{ user.uid }}'
       loginShell: '{{ user.shell }}'
       uidNumber: '{{ user.uidNumber }}'
@@ -107,7 +121,7 @@
   debconf:
     name: libnss-ldap
     question: 'libnss-ldapd/nsswitch'
-    value: 'passwd, group'
+    value: 'passwd, group, shadow'
     vtype: multiselect
 
 - name: Install the required packages for interactive login
@@ -118,9 +132,11 @@
     state: installed
   with_items:
     - libnss-ldapd
+    - libpam-ldapd
 
 - name: Update the ldap configuration file    
   when: options.accounts.login == true
+  register: config
   tags: ldap
   replace:
     path: /etc/nslcd.conf
@@ -133,9 +149,11 @@
       value: 'base {{ ldap.organization.base }}'
     - regex: '^#?scope .*'
       value: 'scope sub'
+    - regex: '^#?\s?rootpwmoddn .*'
+      value: 'rootpwmoddn {{ ldap.admin.dn }}'
 
 - name: Restart the nslcd service
-  when: options.accounts.login == true
+  when: config.changed
   tags: ldap
   service:
     name: nslcd

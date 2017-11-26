@@ -1,39 +1,74 @@
 ---
 
 - name: Install roundcube webmail
+  tags: roundcube
   apt:
     name: "{{ pkg }}"
     state: installed
   with_items:
+    - postgresql
     - roundcube-pgsql
     - roundcube-core
     - roundcube-plugins
     - roundcube
-    - php5-fpm
+    - php-fpm
+    - nginx
+    - makepasswd
+    - haveged             # speed up password generation
   loop_control:
     loop_var: pkg
 
 - name: Disable nginx default site
+  tags: roundcube
   file:
     path: '/etc/nginx/sites-enabled/default'
     state: absent
     force: yes
 
 - name: Create the webmail site
+  tags: roundcube
+  register: config
   template:
-    src: ./files/webmail-site.tpl
+    src: webmail-site.tpl
     dest: /etc/nginx/sites-available/roundcube.conf
     owner: root
     group: root
     mode: 0644
 
+- name: Copy roundcube configuration
+  tags: roundcube
+  template:
+    src: webmail-site.tpl
+    dest: /etc/nginx/sites-available/roundcube.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Create a session key for roundcube
+  tags: roundcube
+  shell: makepasswd --chars=24
+  register: makepasswd
+
+- name: Copy nginx site configuration
+  tags: roundcube
+  template:
+    src: config.inc.php
+    dest: /etc/roundcube/config.inc.php
+    owner: root
+    group: root
+    mode: 0644
+
 - name: Enable nginx site
+  tags: roundcube
   file:
     src: '/etc/nginx/sites-available/roundcube.conf'
     dest: '/etc/nginx/sites-enabled/roundcube.conf'
     state: link
 
+
 - name: Restart nginx
+  tags: roundcube
+  when: config.changed
   service:
     name: nginx
     state: restarted

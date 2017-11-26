@@ -1,5 +1,15 @@
 ---
 
+- name: Install ACL package
+  tags: cert
+  apt:
+    name: "{{ pkg }}"
+    state: installed
+  with_items:
+    - acl
+  loop_control:
+    loop_var: pkg
+
 # The certbot package need to be installed
 - name: Create the certificate
   tags: cert
@@ -12,3 +22,21 @@
     --agree-tos
   args:
     creates: "/etc/letsencrypt/live/{{ certificate.cn }}/cert.pem"
+
+- name: Allow a program to access the certificate directory
+  tags: cert
+  when: '"{{ certificate.readby }}" != ""'
+  acl:
+    path: '{{ path }}'
+    entity: '{{ certificate.readby }}'
+    etype: user
+    permissions: rx
+    state: present
+  with_items:
+    - /etc/letsencrypt/archive
+    - /etc/letsencrypt/live
+  loop_control:
+    loop_var: path
+
+    
+    

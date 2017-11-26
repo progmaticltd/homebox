@@ -14,6 +14,12 @@
     - sasl2-bin
   loop_control:
     loop_var: pkg
+
+- name: Ensure the imap server FQDN resolves to localhost
+  tags: postfix
+  lineinfile:
+    path: /etc/hosts
+    line: '127.0.0.1    {{ ldap.hostname }}'
     
 - name: Install postfix packages for local administration
   tags: postfix
@@ -35,6 +41,7 @@
     dest: "/etc/postfix/{{ file }}"
   with_items:
     - main.cf
+    - ldap-aliases.cf
   loop_control:
     loop_var: file
     
@@ -49,3 +56,10 @@
     - postfix@-
   loop_control:
     loop_var: service
+
+- name: Ensure the SMTP server FQDN resolves to localhost
+  tags: postfix
+  lineinfile:
+    path: /etc/hosts
+    line: '127.0.0.1    {{ network.smtp }}'
+    

@@ -1,0 +1,5 @@
+
+# Basic LDAP settings for postfix
+server_host = {{ ldap.hostname }}
+search_base = {{ ldap.organization.base }}
+

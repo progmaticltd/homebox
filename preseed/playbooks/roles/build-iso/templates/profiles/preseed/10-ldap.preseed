@@ -1,0 +1,27 @@
+# LDAP configuration
+
+# Administrator password
+slapd   slapd/password1 password homebox
+slapd   slapd/password2 password homebox
+
+# slapd   slapd/internal/generated_adminpw        password
+# slapd   slapd/internal/adminpw  password
+
+# Potentially unsafe slapd access control configuration
+slapd   slapd/unsafe_selfwrite_acl      note
+slapd   shared/organization             string  dc{{ network.main.domain }}
+slapd   slapd/domain                    string  dc{{ network.main.domain }}
+slapd   slapd/backend                   select  MDB
+slapd   slapd/upgrade_slapcat_failure   error
+
+# Do you want the database to be removed when slapd is purged?
+slapd   slapd/purge_database    boolean false
+
+#slapd   slapd/password_mismatch note
+#slapd   slapd/dump_database     select  when needed
+#slapd   slapd/dump_database_destdir     string  /var/backups/slapd-VERSION
+#slapd   slapd/invalid_config    boolean true
+#slapd   slapd/move_old_database boolean true
+#slapd   slapd/no_configuration  boolean false
+#slapd   slapd/ppolicy_schema_needs_update       select  abort installation
+

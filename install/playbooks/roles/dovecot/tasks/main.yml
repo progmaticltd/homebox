@@ -13,9 +13,38 @@
     - dovecot-pop3d
     - dovecot-managesieved
     - dovecot-sieve
-#    - dovecot-solr
+    - dovecot-ldap
   loop_control:
     loop_var: pkg
+
+# Activate SSL on the imap server
+- name: Activate SSL configuration
+  tags: dovecot
+  replace:
+    path: /etc/dovecot/conf.d/10-ssl.conf
+    regexp: '{{ line.regexp }}'
+    replace: '{{ line.replace }}'
+  with_items:
+    - '{{ config.ssl }}'
+  loop_control:
+    loop_var: line
+
+- name: Activate LDAP configuration
+  tags: dovecot
+  replace:
+    path: /etc/dovecot/dovecot-ldap.conf.ext
+    regexp: '{{ line.regexp }}'
+    replace: '{{ line.replace }}'
+  with_items:
+    - '{{ config.ldap }}'
+  loop_control:
+    loop_var: line
+
+- name: Ensure the imap server FQDN resolves to localhost
+  tags: dovecot
+  lineinfile:
+    path: /etc/hosts
+    line: '127.0.0.1    {{ network.imap }}'
     
 # - name: Create indexes and control directory
 #   file:
@@ -30,64 +59,7 @@
 #   loop_control:
 #     loop_var: dir
     
-# - name: Copy configuration template
-#   register: config
-#   template:
-#     src: "{{ file }}"
-#     dest: "/etc/dovecot/{{ file }}"
-#   with_items:
-#     - dovecot.conf
-#     - dovecot-dict-auth.conf.ext
-#     - dovecot-dict-sql.conf.ext
-#     - dovecot-ldap.conf.ext
-#     - dovecot-sql.conf.ext
-#   loop_control:
-#     loop_var: file
-    
-# - name: Copy configuration template
-#   register: config
-#   template:
-#     src: "conf.d/{{ file }}"
-#     dest: "/etc/dovecot/conf.d/{{ file }}"
-#   with_items:
-#     - 10-auth.conf
-#     - 10-director.conf
-#     - 10-logging.conf
-#     - 10-logging.conf.ucf-dist
-#     - 10-mail.conf
-#     - 10-mail.conf.ucf-dist
-#     - 10-master.conf
-#     - 10-ssl.conf
-#     - 10-tcpwrapper.conf
-#     - 15-lda.conf
-#     - 15-mailboxes.conf
-#     - 15-mailboxes.conf.ucf-dist
-#     - 20-imap.conf
-#     - 20-imap.conf.ucf-dist
-#     - 20-lmtp.conf
-#     - 20-lmtp.conf.ucf-dist
-#     - 20-managesieve.conf
-#     - 20-pop3.conf
-#     - 20-pop3.conf.ucf-dist
-#     - 90-acl.conf
-#     - 90-plugin.conf
-#     - 90-quota.conf
-#     - 90-sieve.conf
-#     - 90-sieve.conf.ucf-dist
-#     - 90-sieve-extprograms.conf
-#     - auth-checkpassword.conf.ext
-#     - auth-deny.conf.ext
-#     - auth-dict.conf.ext
-#     - auth-ldap.conf.ext
-#     - auth-master.conf.ext
-#     - auth-passwdfile.conf.ext
-#     - auth-sql.conf.ext
-#     - auth-static.conf.ext
-#     - auth-system.conf.ext
-#     - auth-vpopmail.conf.ext
-#   loop_control:
-#     loop_var: file
-    
+
 # - name: Restart dovecot
 #   when: config.changed
 #   service:

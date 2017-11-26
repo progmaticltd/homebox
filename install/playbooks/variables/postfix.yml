@@ -4,3 +4,4 @@
 certificate:
   cn: smtp.homebox.space
   email: admin@homebox.space
+  readby: postfix
