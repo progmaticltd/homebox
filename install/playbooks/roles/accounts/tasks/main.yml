@@ -52,6 +52,18 @@
     bind_pw: '{{ ldap.admin.password }}'
     state: present
 
+- name: Remove old groups if presents
+  tags: ldap,clean
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw:  '{{ ldap.admin.password }}'
+    dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
+    state: absent
+  with_items:
+    - '{{ posix_groups }}'
+  loop_control:
+    loop_var: group
+
 - name: Create all the group accounts
   tags: ldap
   ldap_entry:
@@ -111,6 +123,15 @@
       - posixAccount
       - shadowAccount
       - inetOrgPerson
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Add all users to the mail group
+  user:
+    name: '{{ user.uid }}'
+    groups: mail
   with_items:
     - '{{ users }}'
   loop_control:

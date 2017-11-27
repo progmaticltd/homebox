@@ -73,8 +73,7 @@ $config['des_key'] = '{{ makepasswd.stdout }}';
 
 // List of active plugins (in plugins/ directory)
 // Debian: install roundcube-plugins first to have any
-$config['plugins'] = array(
-);
+$config['plugins'] = {{ webmail.plugins | list | regex_replace("(\[|, )u'", "\\1'") }};
 
 // skin name: folder from skins/
 $config['skin'] = 'larry';
@@ -83,3 +82,33 @@ $config['skin'] = 'larry';
 // Debian: spellshecking needs additional packages to be installed, or calling external APIs
 //         see defaults.inc.php for additional informations
 $config['enable_spellcheck'] = false;
+
+# Auto-complete address books
+$rcmail_config['autocomplete_addressbooks'] = ['sql', 'users'];
+
+
+$config['ldap_public']['users'] = [
+    'name'              => 'Users',
+    'hosts'             => ['localhost'],
+    'port'              => 389,
+    'user_specific'     => false,
+    'writeable'         => false,
+    'scope'             => 'sub',
+    'base_dn'           => '{{ ldap.organization.base }}',
+    'bind_dn'           => '{{ ldap.admin.dn }}',
+    'bind_pass'         => '{{ ldap.admin.password }}',
+    'name_field'        => 'cn',
+    'email_field'       => 'mail',
+    'surname_field'     => 'sn',
+    'firstname_field'   => 'givenName',
+    'sort' => 'sn',
+    'filter'            => '(mail=*)',
+    'search_fields'     => ['mail', 'cn', 'givenName', 'sn'],
+    'global_search'     => true,
+    'fuzzy_search'      => true,
+    'groups'            => [
+        'base_dn'         => '{{ ldap.groups.dn }}',
+        'filter'          => '(objectClass=postixGroup)',
+        'object_classes'  => ['top', 'postixGroup'],
+    ],
+];

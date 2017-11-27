@@ -12,6 +12,10 @@
     - roundcube-plugins
     - roundcube
     - php-fpm
+    - php-ldap
+    - php-net-sieve
+    - php-net-ldap2
+    - php-net-ldap3       # For LDAP address book
     - nginx
     - makepasswd
     - haveged             # speed up password generation
@@ -49,14 +53,32 @@
   shell: makepasswd --chars=24
   register: makepasswd
 
-- name: Copy nginx site configuration
+- name: Copy roundcube configuration
   tags: roundcube
   template:
-    src: config.inc.php
-    dest: /etc/roundcube/config.inc.php
+    src: '{{ file }}'
+    dest: '/etc/roundcube/{{ file }}'
     owner: root
     group: root
-    mode: 0644
+    mode: 0644 
+  with_items:
+    - config.inc.php
+  loop_control:
+    loop_var: file
+
+- name: Copy roundcube plugins configuration
+  tags: roundcube
+  template:
+    src: '{{ file }}.php'
+    dest: '/etc/roundcube/plugins/{{ file }}/config.inc.php'
+    owner: root
+    group: root
+    mode: 0644 
+  with_items:
+    - password
+    - new_user_identity
+  loop_control:
+    loop_var: file
 
 - name: Enable nginx site
   tags: roundcube
@@ -72,3 +94,4 @@
   service:
     name: nginx
     state: restarted
+
