@@ -1,3 +1,8 @@
+# LDAP certificate
+certificate:
+  cn: 'ldap.{{ network.domain }}'          # Will be used for the LDAP server certificate
+  email: 'admin@{{ network.domain }}'      # Administrator email address
+  readby: openldap
 
 # The password is stored in cleartext in this file, and encrypted using Ansible password_hash
 # Copy this file into accounts.yml to create your accounts

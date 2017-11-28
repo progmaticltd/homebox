@@ -13,6 +13,7 @@
     - variables/accounts.yml
   roles:
     - accounts
+    - certificates
 
 
 # Install and configure postfix
