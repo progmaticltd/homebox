@@ -25,7 +25,6 @@
 
 - name: Allow a program to access the certificate directory
   tags: cert
-  when: '"{{ certificate.readby }}" != ""'
   acl:
     path: '{{ path }}'
     entity: '{{ certificate.readby }}'

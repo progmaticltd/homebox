@@ -4,4 +4,40 @@
 certificate:
   cn: webmail.example.com      # Will be used to create the URL
   email: admin@example.com     # The registered email address
+  readby: www-data
 
+
+webmail:
+  url: '{{ certificate.cn }}'
+  secure_port: 443
+  title: 'Roundcube Webmail ({{ ldap.organization.domain }})'
+  plugins:
+    - password
+    - archive
+    - markasjunk
+    - newmail_notifier
+    - autologon
+    - subscriptions_option
+    - emoticons
+    - new_user_identity
+    - managesieve
+
+# Available plugins:
+# - new_user_dialog
+# - additional_message_headers
+# - acl
+# - database_attachments
+# - debug_logger
+# - enigma
+# - filesystem_attachments
+# - help
+# - hide_blockquote
+# - http_authentication
+# - jqueryui
+# - show_additional_headers
+# - squirrelmail_usercopy
+# - userinfo
+# - vcard_attachments
+# - virtuser_file
+# - virtuser_query
+# - zipdownload

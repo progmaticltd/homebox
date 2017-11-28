@@ -25,7 +25,14 @@
     regexp: '{{ line.regexp }}'
     replace: '{{ line.replace }}'
   with_items:
-    - '{{ config.ssl }}'
+   - regexp: '^#?ssl = no'
+     replace: 'ssl = yes'
+   - regexp: '#?ssl_cert =.*'
+     replace: 'ssl_cert = </etc/letsencrypt/live/{{ certificate.cn }}/cert.pem'
+   - regexp: '#?ssl_key =.*'
+     replace: 'ssl_key = </etc/letsencrypt/live/{{ certificate.cn }}/privkey.pem'
+   - regexp: '#?ssl_ca =.*'
+     replace: 'ssl_ca = </etc/letsencrypt/live/{{ certificate.cn }}/fullchain.pem'
   loop_control:
     loop_var: line
 
@@ -36,7 +43,12 @@
     regexp: '{{ line.regexp }}'
     replace: '{{ line.replace }}'
   with_items:
-    - '{{ config.ldap }}'
+   - regexp: '^#?hosts =.*'
+     replace: 'hosts = 127.0.0.1:389'
+   - regexp: '^#?base =.*'
+     replace: 'base = {{ ldap.organization.base }}'
+   - regexp: '^#?scope = .*'
+     replace: 'scope = subtree'
   loop_control:
     loop_var: line
 

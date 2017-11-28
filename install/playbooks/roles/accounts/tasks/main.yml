@@ -163,6 +163,7 @@
     path: /etc/nslcd.conf
     regexp: '{{ item.regex }}'
     replace: '{{ item.value }}'
+    mode: 0600
   with_items:
     - regex: '^#?uri ldap.?://.*'
       value: 'uri ldap://127.0.0.1:389/'
@@ -172,6 +173,8 @@
       value: 'scope sub'
     - regex: '^#?\s?rootpwmoddn .*'
       value: 'rootpwmoddn {{ ldap.admin.dn }}'
+    - regex: '^#?\s?rootpwmodpw .*'
+      value: 'rootpwmodpw {{ ldap.admin.password }}'
 
 - name: Restart the nslcd service
   when: config.changed

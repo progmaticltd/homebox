@@ -2,8 +2,8 @@
 
 # Webmail configuration
 certificate:
-  cn: webmail.homebox.space      # Will be used to create the URL
-  email: admin@homebox.space     # The registered email address
+  cn: 'webmail.{{ network.domain }}'          # Will be used for the SMTP server certificate
+  email: 'admin@{{ network.domain }}'         # Administrator email address
   readby: www-data
 
 
@@ -20,22 +20,24 @@ webmail:
     - subscriptions_option
     - emoticons
     - new_user_identity
-    # - new_user_dialog
-    # - additional_message_headers
-    # - managesieve
-    # - acl
-    # - database_attachments
-    # - debug_logger
-    # - enigma
-    # - filesystem_attachments
-    # - help
-    # - hide_blockquote
-    # - http_authentication
-    # - jqueryui
-    # - show_additional_headers
-    # - squirrelmail_usercopy
-    # - userinfo
-    # - vcard_attachments
-    # - virtuser_file
-    # - virtuser_query
-    # - zipdownload
+    - managesieve
+
+# Available plugins:
+# - new_user_dialog
+# - additional_message_headers
+# - acl
+# - database_attachments
+# - debug_logger
+# - enigma
+# - filesystem_attachments
+# - help
+# - hide_blockquote
+# - http_authentication
+# - jqueryui
+# - show_additional_headers
+# - squirrelmail_usercopy
+# - userinfo
+# - vcard_attachments
+# - virtuser_file
+# - virtuser_query
+# - zipdownload

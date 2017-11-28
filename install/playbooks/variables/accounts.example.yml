@@ -11,7 +11,7 @@ users:
     last_name: Doe
     group: users
     shell: /bin/bash
-    mail: 'john.doe@example.com'
+    mail: 'john.doe@{{ }}'
     password: "xIlm*uu7"
   - uid: janedoe
     uidNumber: 1002
