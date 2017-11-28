@@ -11,7 +11,7 @@ users:
     last_name: Doe
     group: users
     shell: /bin/bash
-    mail: 'john.doe@{{ }}'
+    mail: 'john.doe@{{ network.domain }}'
     password: "xIlm*uu7"
   - uid: janedoe
     uidNumber: 1002
@@ -20,13 +20,15 @@ users:
     last_name: Doe
     group: users
     shell: /bin/bash
-    mail: 'jane.doe@example.com'
+    mail: 'jane.doe@{{ network.domain }}'
     password: "Tlwril!8"
 
 posix_groups:
   - gid: std_users
     description: Standard users
     gidNumber: 1000
+    mail: 'users@{{ network.domain }}'
   - gid: administrators
     description: Administrators
     gidNumber: 2000
+    mail: 'admin@{{ network.domain }}'
