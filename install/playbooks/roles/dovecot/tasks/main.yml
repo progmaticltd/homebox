@@ -17,6 +17,12 @@
   loop_control:
     loop_var: pkg
 
+- name: Ensure the imap server FQDN resolves to localhost
+  tags: dovecot
+  lineinfile:
+    path: /etc/hosts
+    line: '127.0.0.1    {{ network.imap }}'
+
 # Activate SSL on the imap server
 - name: Activate SSL configuration
   tags: dovecot
@@ -52,29 +58,15 @@
   loop_control:
     loop_var: line
 
-- name: Ensure the imap server FQDN resolves to localhost
+- name: Activate dovecot authentication
   tags: dovecot
-  lineinfile:
-    path: /etc/hosts
-    line: '127.0.0.1    {{ network.imap }}'
-    
-# - name: Create indexes and control directory
-#   file:
-#     path: "/var/vmail/{{ dir }}"
-#     state: directory
-#     owner: dovecot
-#     group: users
-#     mode: 0775
-#   with_items:
-#     - indexes
-#     - control
-#   loop_control:
-#     loop_var: dir
-    
+  template:
+    src: 10-master.conf
+    dest: /etc/dovecot/conf.d/10-master.conf
 
-# - name: Restart dovecot
-#   when: config.changed
-#   service:
-#     name: dovecot
-#     state: restarted
+- name: Restart the dovecot mail server
+  tags: dovecot
+  service:
+    name: dovecot
+    state: restarted
       

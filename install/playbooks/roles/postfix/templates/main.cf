@@ -28,10 +28,21 @@ smtpd_use_tls=yes
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 
+# Authentication via SASL
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+broken_sasl_auth_clients = yes
+smtpd_sasl_security_options = noanonymous
+smptd_sasl_tls_security_options = noanonymous
+
 # See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for
 # information on enabling SSL in the smtp client.
+smtpd_relay_restrictions =
+    permit_mynetworks
+    permit_sasl_authenticated
+    defer_unauth_destination
 
-smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
 myhostname = {{ network.hostname }}
 
 alias_maps = hash:/etc/aliases, ldap:/etc/postfix/ldap-aliases.cf

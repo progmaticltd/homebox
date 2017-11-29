@@ -105,7 +105,6 @@
       uid: '{{ user.uid }}'
       givenName: '{{ user.first_name }}'
       sn: '{{ user.last_name }}'
-      # userPassword: "{{ user.password | password_hash('ldap_md5_crypt') }}"
       userPassword: "{{ user.password }}"
       homeDirectory: '/home/{{ user.group }}/{{ user.uid }}'
       loginShell: '{{ user.shell }}'
