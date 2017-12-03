@@ -3,23 +3,27 @@
 # Initialise the packages repository to a standard,
 # including backports, contrib and non-free software
 - name: Initialise default repositories
-  copy:
+  tags: apt
+  template:
     src: sources.list
     dest: /etc/apt/sources.list
                 
 - name: Update packages repositories
+  tags: apt
   register: packages_cache
   apt:
     cache_valid_time: 14400 # 4h before considering cache obsolete
     update_cache: yes
 
 - name: Upgrade the distribution
+  tags: apt
   when: packages_cache.changed
   apt:
     upgrade: yes
 
 # Install the most required packages
 - name: Install common packages
+  tags: apt
   apt:
     name: "{{ pkg }}"
     state: installed

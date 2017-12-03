@@ -1,5 +1,9 @@
 # Common variables to the whole system
 
+# System related
+system:
+  release: stretch
+
 # Network related
 network:
   smtp: smtp.example.com
