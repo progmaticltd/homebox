@@ -23,7 +23,7 @@
   args:
     creates: "/etc/letsencrypt/live/{{ certificate.cn }}/cert.pem"
 
-- name: Allow a program to access the certificate directory
+- name: Allow to access the certificate directory
   tags: cert
   acl:
     path: '{{ path }}'

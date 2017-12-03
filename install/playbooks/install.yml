@@ -22,9 +22,9 @@
     - variables/common.yml
     - variables/postfix.yml
   roles:
-    - certificates
     - opendkim
     - postfix
+    - certificates
 
 # Install and configure postfix
 - hosts: homebox
@@ -32,8 +32,8 @@
     - variables/common.yml
     - variables/dovecot.yml
   roles:
-    - certificates
     - dovecot
+    - certificates
 
 # Install a basic webmail
 - hosts: homebox
@@ -41,6 +41,6 @@
     - variables/common.yml
     - variables/webmail.yml
   roles:
-    - certificates
     - roundcube
+    - certificates
 

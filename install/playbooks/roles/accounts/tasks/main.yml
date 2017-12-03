@@ -5,33 +5,48 @@
   tags: ldap
   debconf:
     name: slapd
-    question: '{{ item }}'
-    value: '{{ ldap.admin.password }}'
-    vtype: string
+    question: '{{ conf.question }}'
+    value: '{{ conf.value }}'
+    vtype: '{{ conf.type }}'
   with_items:
-    - slapd/password1
-    - slapd/password2
-    - slapd/internal/adminpw
-    - slapd/internal/generated_adminpw
-
-- name: Configure the LDAP administration account
-  tags: ldap
-  debconf:
-    name: slapd
-    question: slapd/purge_database
-    value: true
-    vtype: string
-
-- name: Configure the LDAP organization
-  tags: ldap
-  debconf:
-    name: slapd
-    question: '{{ item }}'
-    value: '{{ ldap.organization.domain }}'
-    vtype: string
-  with_items:
-    - shared/organization
-    - slapd/domain
+    - question: slapd/password1
+      value: '{{ ldap.admin.password }}'
+      type: password
+    - question: slapd/password2
+      value: '{{ ldap.admin.password }}'
+      type: password
+    - question: slapd/internal/adminpw
+      value: '{{ ldap.admin.password }}'
+      type: password
+    - question: slapd/internal/generated_adminpw
+      value: '{{ ldap.admin.password }}'
+      type: password
+    - question: slapd/purge_database
+      value: true
+      type: boolean
+    - question: slapd/invalid_config
+      value: false
+      type: boolean
+    - question: shared/organization
+      value: '{{ ldap.organization.domain }}'
+      type: string
+    - question: slapd/domain
+      value: '{{ ldap.organization.domain }}'
+      type: string
+    - question: slapd/backend
+      value: 'MDB'
+      type: select
+    - question: slapd/move_old_database
+      value: true
+      type: boolean
+    - question: slapd/unsafe_selfwrite_acl
+      value: false
+      type: boolean
+    - question: slapd/password_mismatch
+      value: false
+      type: boolean
+  loop_control:
+    loop_var: conf
 
 # Install LDAP server
 - name: Install the required packages
@@ -43,36 +58,61 @@
     - slapd
     - python-ldap
     - python-passlib
+    - ldapscripts
 
+- name: Configure the ldap server for SSL / TLS
+  tags: ldap
+  template:
+    src: default-slapd
+    dest: /etc/default/slapd
+  
+- name: Copy the ldap ssl config on the server before running it
+  tags: ldap
+  template:
+    src: ssl-config.ldif
+    dest: /tmp/ssl-config.ldif
+
+- name: Modify the configuration
+  tags: ldap
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /tmp/ssl-config.ldif
+
+- name: Copy the client configuration
+  tags: ldap
+  template:
+    src: ldap.conf
+    dest: /etc/ldap/ldap.conf
+
+# Users and groups creation
 - name: Make sure we have a parent entry for users
   tags: ldap
   ldap_entry:
-    dn: '{{ ldap.users.dn }}'
-    objectClass: organizationalUnit
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ ldap.admin.password }}'
+    dn: '{{ ldap.users.dn }}'
+    objectClass: organizationalUnit
     state: present
 
 - name: Make sure we have a parent entry for groups
   tags: ldap
   ldap_entry:
-    dn: '{{ ldap.groups.dn }}'
-    objectClass: organizationalUnit
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ ldap.admin.password }}'
+    dn: '{{ ldap.groups.dn }}'
+    objectClass: organizationalUnit
     state: present
 
-- name: Remove old groups if presents
-  tags: ldap,clean
-  ldap_entry:
-    bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw:  '{{ ldap.admin.password }}'
-    dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
-    state: absent
-  with_items:
-    - '{{ posix_groups }}'
-  loop_control:
-    loop_var: group
+# TODO: Move this to another file / role
+# - name: Remove old groups if presents
+#   tags: ldap,clean
+#   ldap_entry:
+#     bind_dn: '{{ ldap.admin.dn }}'
+#     bind_pw:  '{{ ldap.admin.password }}'
+#     dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
+#     state: absent
+#   with_items:
+#     - '{{ posix_groups }}'
+#   loop_control:
+#     loop_var: group
 
 - name: Create all the group accounts
   tags: ldap
@@ -91,18 +131,19 @@
   loop_control:
     loop_var: group
 
+# TODO: Move this to another file / role
 # Create LDAP user accounts
-- name: Remove previous users
-  tags: ldap,clean
-  ldap_entry:
-    bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw:  '{{ ldap.admin.password }}'
-    dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
-    state: absent
-  with_items:
-    - '{{ users }}'
-  loop_control:
-    loop_var: user
+# - name: Remove previous users
+#   tags: ldap,clean
+#   ldap_entry:
+#     bind_dn: '{{ ldap.admin.dn }}'
+#     bind_pw:  '{{ ldap.admin.password }}'
+#     dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
+#     state: absent
+#   with_items:
+#     - '{{ users }}'
+#   loop_control:
+#     loop_var: user
 
 - name: Create all the user accounts
   tags: ldap
@@ -168,22 +209,10 @@
   when: options.accounts.login == true
   register: config
   tags: ldap
-  replace:
-    path: /etc/nslcd.conf
-    regexp: '{{ item.regex }}'
-    replace: '{{ item.value }}'
+  template:
+    src: nslcd.conf
+    dest: /etc/nslcd.conf
     mode: 0600
-  with_items:
-    - regex: '^#?uri ldap.?://.*'
-      value: 'uri ldap://127.0.0.1:389/'
-    - regex: '^#?base .*'
-      value: 'base {{ ldap.organization.base }}'
-    - regex: '^#?scope .*'
-      value: 'scope sub'
-    - regex: '^#?\s?rootpwmoddn .*'
-      value: 'rootpwmoddn {{ ldap.admin.dn }}'
-    - regex: '^#?\s?rootpwmodpw .*'
-      value: 'rootpwmodpw {{ ldap.admin.password }}'
 
 - name: Restart the nslcd service
   when: config.changed

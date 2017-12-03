@@ -44,18 +44,6 @@
     - ldap-aliases.cf
   loop_control:
     loop_var: file
-    
-- name: Restart postfix
-  tags: postfix
-  when: config.changed
-  service:
-    name: '{{ service }}'
-    state: restarted
-  with_items:
-    - postfix
-    - postfix@-
-  loop_control:
-    loop_var: service
 
 - name: Ensure the SMTP server FQDN resolves to localhost
   tags: postfix

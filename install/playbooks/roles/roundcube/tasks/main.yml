@@ -87,11 +87,3 @@
     dest: '/etc/nginx/sites-enabled/roundcube.conf'
     state: link
 
-
-- name: Restart nginx
-  tags: roundcube
-  when: config.changed
-  service:
-    name: nginx
-    state: restarted
-
