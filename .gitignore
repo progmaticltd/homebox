@@ -5,6 +5,9 @@ hosts
 install/playbooks/variables/*.yml
 !install/playbooks/variables/.example.yml
 
+# Same for the hosts file
+config/hosts.yml
+
 # Ignore ansible error files
 *.retry
 
