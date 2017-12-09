@@ -6,6 +6,13 @@
     - variables/common.yml
   roles:
     - packages
+    - system-prepare
+    
+- hosts: homebox
+  vars_files:
+    - ../../variables/common.yml
+  roles:
+    - dns-gandi-update
 
 - hosts: homebox
   vars_files:

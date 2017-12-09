@@ -1,0 +1,8 @@
+---
+
+- name: Create a homebox directory to store any specific configuration
+  tags: system-prepare
+  file:
+    path: /etc/homebox
+    state: directory
+    mode: 0755
