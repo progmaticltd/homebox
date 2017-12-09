@@ -13,8 +13,8 @@ system:
 
 network:
   main:
-    domain: homebox.space
-    proxy: 'http://proxy.office.pm:3128/'
+    domain: example.com
+    proxy: 'http://proxy.example.com:3128/'
     iface: eth0
 
 # Country and locales definition

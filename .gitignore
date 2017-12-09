@@ -3,7 +3,11 @@ hosts
 
 # Variables should be customised for each users, but keep the examples
 install/playbooks/variables/*.yml
-!install/playbooks/variables/.example.yml
+!install/playbooks/variables/*.example.yml
+
+# Variables should be customised for each users, but keep the examples
+variables/*.yml
+!variables/*.example.yml
 
 # Same for the hosts file
 config/hosts.yml
