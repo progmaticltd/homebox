@@ -12,9 +12,8 @@
     - variables/common.yml
     - variables/accounts.yml
   roles:
-    - accounts
     - certificates
-
+    - accounts
 
 # Install and configure postfix
 - hosts: homebox
@@ -22,18 +21,18 @@
     - variables/common.yml
     - variables/postfix.yml
   roles:
+    - certificates
     - opendkim
     - postfix
-    - certificates
 
-# Install and configure postfix
+# Install and configure dovecot
 - hosts: homebox
   vars_files:
     - variables/common.yml
     - variables/dovecot.yml
   roles:
-    - dovecot
     - certificates
+    - dovecot
 
 # Install a basic webmail
 - hosts: homebox
@@ -41,6 +40,6 @@
     - variables/common.yml
     - variables/webmail.yml
   roles:
-    - roundcube
     - certificates
+    - roundcube
 

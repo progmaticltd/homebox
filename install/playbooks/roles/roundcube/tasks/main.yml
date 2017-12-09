@@ -22,6 +22,26 @@
   loop_control:
     loop_var: pkg
 
+################################################################################
+# At this point, the certificates should have been created already #############
+# in order to have SSL and TLS encryption activated.                           #
+- name: Allow slapd and nslcd daemons to access the certificate directories
+  tags: ldap,ssl
+  vars:
+    details:
+      - [ /etc/letsencrypt/archive, /etc/letsencrypt/live ]
+      - [ www-data ]
+  acl:
+    path: '{{ item[0] }}'
+    entity: '{{ item[1] }}'
+    etype: user
+    permissions: rx
+    state: present
+  with_nested: '{{ details }}'
+
+#                                                                              #
+# End of TLS / SSL Configuration ###############################################
+
 - name: Disable nginx default site
   tags: roundcube
   file:
