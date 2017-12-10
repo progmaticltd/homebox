@@ -1,6 +1,52 @@
 
-# HomeBox
 A set of Ansible scripts to setup your personal mail server (and more) for your home...
+
+# Table of contents
+
+* [Introduction](#introduction)
+* [Folders:](#folders)
+* [Preseed folder](#preseed-folder)
+   * [1. Create the hosts.yml configuration](#1-create-the-hostsyml-configuration)
+   * [1. Setup SSH authentication:](#1-setup-ssh-authentication)
+   * [2. Customisation:](#2-customisation)
+   * [3. Build the ISO image](#3-build-the-iso-image)
+   * [4. Use a physical server or a VM to run the Debian installer.](#4-use-a-physical-server-or-a-vm-to-run-the-debian-installer)
+* [Mail server installation](#mail-server-installation)
+   * [Copy the example files to create your basic setup](#copy-the-example-files-to-create-your-basic-setup)
+   * [Run the Ansible scripts to setup your email server](#run-the-ansible-scripts-to-setup-your-email-server)
+* [What do you need for production usage?](#what-do-you-need-for-production-usage)
+   * [Basic requirements](#basic-requirements)
+   * [Automatic update of the DNS entries](#automatic-update-of-the-dns-entries)
+
+## Introduction
+This project has been created for those who simply want to host their emails at home,
+and don't want to manage the full installation process manually, from scratch.
+
+It is made to be unobtrusive, standard compliant, robust, extensible and automatic
+
+- Unobtrusive: The base distribution (Debian) is only slightly modified. Once installed, you can use it normally, and install the packages you want.
+- Standard compliant: For instance, the system not only generate the DKIM records, it publish them for you on Gandi DNS server!
+- Robust: the DNS records update script is very safe, and you can run it in test mode. In this mode, the new zone version will be created, but not activated. If there is no change to your DNS record, the new version will be deleted.
+- Extensible: By using LDAP for user authentications, you can use other software, like nextcloud, gitlab or even an OpenVPN server, without having to remember more passwords.
+- Automatic: Most tasks are automated. Even the external IP address detection and DNS update process. In theory, you could use this with a dynamic IP address.
+
+__Notes__:
+
+- This is a work in progress and a project I am maintaining on my spare time. Although I am trying to be very careful, there might be some errors. In this case, just fill a bug report, or take part.
+- I am privileging stability over features. The master branch should stay stable for production.
+- This is a work in progress, some features are missing, although the current version can be installed. Postfix and Dovecot are actually configured at the simplest level
+- I haven't added the firewall rules yet
+
+__TODO__:
+
+I am planning to add / test the following features, in *almost* no particular order:
+
+- DMARC: Records publication and DMARC implementation
+- Automatic configuration for Thunderbird and Outlook
+- Add a caldav / carddav server (Any that works with LDAP authentication)
+- Add a jabber server (Any that works with LDAP authentication)
+- Add optional components (e.g. [Gogs](https://gogs.io/), [openvpn](https://openvpn.net/), [Syncthing](https://syncthing.net/), etc)
+- Test other mail systems, like Cyrus, Sogo, etc.
 
 ## Folders:
 - config: Ansible hosts file Configuration.
@@ -66,12 +112,12 @@ This will also add the server to your known_hosts file
 Run the following code to create your custom files
 
 ```
-cd install/playbook/variables
-cp accounts.example.yml accounts.yml
-cp common.example.yml common.yml
-cp dovecot.example.yml dovecot.yml
-cp postfix.example.yml postfix.yml
-cp webmail.example.yml webmail.yml
+  cd install/playbook/variables
+  cp accounts.example.yml accounts.yml
+  cp common.example.yml common.yml
+  cp dovecot.example.yml dovecot.yml
+  cp postfix.example.yml postfix.yml
+  cp webmail.example.yml webmail.yml
 ```
 
 File contents
@@ -130,7 +176,8 @@ Here what to do to obtain an API key:
 
 Your API key will be activated on the test platform.
 
-#### Notes:
+__Notes:__
+
 - The initial creation of DNS records for certificate generation should take some time, I am working on a solution.
 - DNS automatic update is actually limited to Gandi, but it should be easy to add more.
 
