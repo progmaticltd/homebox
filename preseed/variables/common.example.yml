@@ -1,8 +1,31 @@
 ---
-# Common variables for the project
+# Example file to create an ISO image installer with Debian preseed.
+
+# 1. Setup SSH authentication:
+# Copy your public key in "preseed/misc/root/.ssh/authorized_key".
+# This key will be copied into the /root/.ssh/authorized_keys for you to connect to your linux server
+
+# 2. Customisation:
+# Copy this file to common.yml, and modify the values accordingly
+# You can use a dedicated Linux machine as an ISO image builder, or use your workstation.
+# Associated with libvirt, and snapshots, it can be used as a development environment for the mail server.
+
+# 3. Build the ISO image
+# Example of a command to run to build the ISO image
+# ansible-playbook -v -i ../config/hosts.yml playbooks/build-cd.yml
+# This will create the ISO images in /tmp folder. Use the DVD one for automatic installation.
+
+# 4. Use a physical server or a VM to run the Debian installer.
+# The whole installation should be automatic, with LVM and software RAID
+# For LVM, there is a volume called "reserved" you can remove. This will let
+# you resize the other volumes according to your needs.
+
+# 5. See the documentation and the Ansible scripts into the install folder to install the mail server platform.
+
+# System configuration: We use Software RAID, with two drives
 system:
   hostname: mail
-  version: 9.2
+  version: 9.3
   arch: amd64
   hw:
     disks:
@@ -11,6 +34,7 @@ system:
       - name: vdb
         size: 500G
 
+# The proxy is optional. When specified, it is used to configure apt
 network:
   main:
     domain: example.com
@@ -41,18 +65,13 @@ time:
   ntp: true
 
 # Accounts informations
+# You can choose a strong password here,
+# You can also delete the root password, lock the account,
+# and connect to your machine only using SSH
 accounts:
-  root_password: homebox
+  root_password: H0meb0x
 
 # Personalise the CD imgage
 cdimage:
   profiles: ''
-
-
-# Gandi is the only supported DNS provider for now
-# The key should be 24 characters long (see https://v4.gandi.net/admin/api_key)
-dns:
-  gandi:
-    handle: JD777-GANDI
-    key: PasteYourGandiKeyHere
 

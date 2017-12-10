@@ -19,4 +19,4 @@ config/hosts.yml
 .vscode
 
 # Ignore the authorized_keys file when building the ISO image
-misc/root/.ssh/authorized_key
+preseed/misc/root/.ssh/authorized_key

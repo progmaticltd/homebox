@@ -73,13 +73,13 @@
 - name: Copy the files that need to be on the CD/DVD image
   tags: preseed
   copy:
-    src: ../../../../misc
+    src: ../../../misc
     dest: /tmp/homebox
 
 # TODO: Dynamicall add the version number
 - name: Copy the logo in the temporary folder for the installer
   copy:
-    src: ../../logos/logo-small.png
+    src: ../logos/logo-small.png
     dest: /tmp/homebox/splash.png
   
 # Run the script to create the iso images
@@ -91,14 +91,14 @@
     
 - name: Move the iso image to the appropriate folder
   copy:
-    src: /tmp/homebox/images/debian-9.2-amd64-DVD-1.iso
+    src: "/tmp/homebox/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso"
     dest: "/var/lib/libvirt/images/{{ system.hostname }}-install.iso"
     remote_src: true
 
 # Run the script to create the iso images
 - name: Remove the file
   file:
-    path: /tmp/homebox/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso
+    path: '/tmp/homebox/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
     state: absent
     
 # Clean up
