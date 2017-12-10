@@ -325,8 +325,10 @@ def main(args):
         manager.WriteSPFRecords('@', args.spfPolicy)
         
         # Create the DKIM record
-        manager.WriteDKIMRecord(dkimSelector, dkimPublicKey)
+        if dkimPublicKey != None and dkimSelector != None:
+            manager.WriteDKIMRecord(dkimSelector, dkimPublicKey)
 
+        # TODO: Create DMARC records
 
         # Roll back if the new created zone is the same as the current one
         # even in testing mode
