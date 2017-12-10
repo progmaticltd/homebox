@@ -4,6 +4,6 @@
 
 - hosts: cdbuilder
   vars_files:
-    - ../../variables/common.yml
+    - ../variables/common.yml
   roles:
     - build-iso

@@ -1,13 +1,13 @@
 # Host file is per user
 hosts
 
-# Variables should be customised for each users, but keep the examples
+# Variables used for the Debian preseed generation
+preseed/variables/*.yml
+!preseed/variables/*.example.yml
+
+# Variables Used for Ansible deployment
 install/playbooks/variables/*.yml
 !install/playbooks/variables/*.example.yml
-
-# Variables should be customised for each users, but keep the examples
-variables/*.yml
-!variables/*.example.yml
 
 # Same for the hosts file
 config/hosts.yml
