@@ -48,9 +48,10 @@
 # To parse the initial configuration file
 from configparser import ConfigParser
 
-import json, datetime, urllib, urllib.request, sys, argparse
-
+# To send requests to Gandi API
 import xmlrpc.client
+
+import json, sys, argparse
 
 import logging
 
@@ -88,9 +89,14 @@ class GandiDomainManager(object):
         provider = config.get('main', 'provider')
         if provider != 'gandi':
             raise "This only works with gandi"
-    
+
+        # Display the domain the part of the key in debug mode
         self.domain_name = config.get('main', 'domain')
         self.apikey = config.get('gandi', 'key')
+        logging.debug("Initialising with domain '{0}' and key '{1}".format(
+            self.domain_name,
+            self.apikey[0:4] + "*" * 20
+        ))
     
         # Create the 'homebox' zone if not exists yet, or get it
         zoneID = "homebox-{0}".format(self.domain_name)
@@ -153,11 +159,10 @@ class GandiDomainManager(object):
             import re
             currentValue = re.sub("[^a-zA-Z0-9]*", "", current['value'])
             newValue = re.sub("[^a-zA-Z0-9]*", "", new['value'])
-            print("Current: '{0}'".format(currentValue))
-            print("New: '{0}'".format(newValue))
             diff = newValue != currentValue
 
         return diff
+
 
     # Write records methods
     def WriteRecord(self, name, details):
@@ -244,6 +249,7 @@ class GandiDomainManager(object):
             'ttl': self.defaultTTL
         })
         
+
     # Versions management methods
     def ActivateNewVersion(self):
         """Activate the new version"""
@@ -263,6 +269,7 @@ class GandiDomainManager(object):
         if self.newVersionCreated:
             self.api.domain.zone.version.delete(self.apikey, self.zone_id, self.zone_version)
 
+
 def main(args):
     try:
         logging.basicConfig(
@@ -278,6 +285,7 @@ def main(args):
         if args.ip != None:
             external_ip = args.ip
         else:
+            import json, urllib, urllib.request
             data = json.loads(urllib.request.urlopen("http://ip.jsontest.com/").read().decode("utf-8"))
             external_ip = data["ip"]
     

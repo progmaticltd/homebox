@@ -43,3 +43,15 @@ options:
   local_admin: true
 
 
+# Email related
+mail:
+  admin:
+    name: "John Doe"
+    email: jdoe@example.com
+    user: jdoe
+
+# For automatic DNS update
+dns:
+  gandi:
+    handle: JD123-GANDI
+    key: zaNGbUVIvi1KbYb6PPMdiQLh    # Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh

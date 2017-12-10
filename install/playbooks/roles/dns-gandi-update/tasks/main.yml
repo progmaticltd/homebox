@@ -3,32 +3,39 @@
 - name: Create the DNS config into /etc/homebox
   tags: dns,gandi
   ini_file:
-    path: /etc/homebox/dns-config.ini
+    path: '/etc/homebox/{{ network.domain }}.ini'
     section: main
     option: provider
     value: gandi
     mode: 0600
 
-- name: add the keys into the DNS config
+- name: Add the keys into the DNS config
   tags: dns,gandi
   ini_file:
-    path: /etc/homebox/dns-config.ini
+    path: '/etc/homebox/{{ network.domain }}.ini'
     section: gandi
     option: key
     value: '{{ dns.gandi.key }}'
 
-- name: add the domain into the DNS config
+- name: Add the domain into the DNS config
   tags: dns,gandi
   ini_file:
-    path: /etc/homebox/dns-config.ini
+    path: '/etc/homebox/{{ network.domain }}.ini'
     section: main
     option: domain
-    value: '{{ network.main.domain }}'
+    value: '{{ network.domain }}'
 
-- name: add the dns management script
+- name: Copy the dns management script
   tags: dns,gandi
   copy:
     src: dns-gandi.py
     dest: /usr/local/sbin/dns-gandi
     mode: 0700
   
+- name: Run the the dns management script
+  tags: dns,gandi
+  shell: >-
+    /usr/local/sbin/dns-gandi
+    --config /etc/homebox/{{ network.domain }}.ini
+    --log-file /var/log/dns-update-gandi.log
+    --log-level DEBUG

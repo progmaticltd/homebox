@@ -10,12 +10,6 @@
     
 - hosts: homebox
   vars_files:
-    - ../../variables/common.yml
-  roles:
-    - dns-gandi-update
-
-- hosts: homebox
-  vars_files:
     - variables/common.yml
     - variables/accounts.yml
   roles:
@@ -31,6 +25,13 @@
     - certificates
     - opendkim
     - postfix
+
+# Update Gandi DNS, especially the DKIM record
+- hosts: homebox
+  vars_files:
+    - variables/common.yml
+  roles:
+    - dns-gandi-update
 
 # Install and configure dovecot
 - hosts: homebox
