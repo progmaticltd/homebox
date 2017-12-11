@@ -21,6 +21,7 @@
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
 - name: Allow slapd and nslcd daemons to access the certificate directories
+  when: system.ssl == 'letsencrypt'
   tags: ldap,ssl
   vars:
     details:
@@ -45,6 +46,7 @@
 
 # Activate SSL on the imap server
 - name: Activate SSL configuration
+  when: system.ssl == 'letsencrypt'
   tags: dovecot
   replace:
     path: /etc/dovecot/conf.d/10-ssl.conf

@@ -21,12 +21,14 @@ readme_directory = no
 compatibility_level = 2
 
 # TLS parameters
+{% if system.ssl == 'letsencrypt' %}
 smtpd_tls_cert_file=/etc/letsencrypt/live/{{ certificate.cn }}/cert.pem
 smtpd_tls_key_file=/etc/letsencrypt/live/{{ certificate.cn }}/privkey.pem
 smtpd_tls_CAfile=/etc/letsencrypt/live/{{ certificate.cn }}/fullchain.pem
 smtpd_use_tls=yes
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+{% endif %}
 
 # Authentication via SASL
 smtpd_sasl_auth_enable = yes

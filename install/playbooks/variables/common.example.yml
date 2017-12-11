@@ -3,6 +3,7 @@
 # System related
 system:
   release: stretch
+  ssl: letsencrypt
 
 # Network related
 network:

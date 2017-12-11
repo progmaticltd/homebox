@@ -3,6 +3,7 @@
 # The certbot package need to be installed
 - name: Create the certificate
   tags: cert
+  when: system.ssl == 'letsencrypt'
   command: >-
     /usr/bin/certbot certonly
     --non-interactive
@@ -11,7 +12,7 @@
     --email "{{ certificate.email }}"
     --agree-tos
   args:
-    creates: "/etc/letsencrypt/live/{{ certificate.cn }}/cert.pem"
+    creates: "/etc/'letsencrypt'/live/{{ certificate.cn }}/cert.pem"
 
     
     

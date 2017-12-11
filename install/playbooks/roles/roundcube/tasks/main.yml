@@ -26,6 +26,7 @@
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
 - name: Allow slapd and nslcd daemons to access the certificate directories
+  when: system.ssl == 'letsencrypt'
   tags: ldap,ssl
   vars:
     details:
@@ -107,3 +108,8 @@
     dest: '/etc/nginx/sites-enabled/roundcube.conf'
     state: link
 
+- name: Restart nginx if needed
+  when: config.changed
+  service:
+    name: nginx
+    state: restarted

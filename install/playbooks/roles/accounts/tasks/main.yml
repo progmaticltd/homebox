@@ -65,10 +65,11 @@
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
 - name: Allow slapd and nslcd daemons to access the certificate directories
+  when: system.ssl == 'letsencrypt'
   tags: ldap,ssl
   vars:
     details:
-      - [ /etc/letsencrypt/archive, /etc/letsencrypt/live ]
+      - [ /etc/'letsencrypt'/archive, /etc/'letsencrypt'/live ]
       - [ openldap, nslcd ]
   acl:
     path: '{{ item[0] }}'
@@ -79,12 +80,14 @@
   with_nested: '{{ details }}'
 
 - name: Configure the ldap server for SSL / TLS
+  when: system.ssl == 'letsencrypt'
   tags: ldap,ssl
   template:
     src: default-slapd
     dest: /etc/default/slapd
   
 - name: Copy the ldap ssl config on the server before running it
+  when: system.ssl == 'letsencrypt'
   tags: ldap,ssl
   register: ldap_ssl
   template:
@@ -92,8 +95,8 @@
     dest: /tmp/ssl-config.ldif
 
 - name: Modify the configuration if not already done
+  when: system.ssl == 'letsencrypt' and ldap_ssl.changed
   tags: ldap,ssl
-  when: ldap_ssl.changed
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /tmp/ssl-config.ldif
 #                                                                              #
 # End of TLS / SSL Configuration ###############################################
