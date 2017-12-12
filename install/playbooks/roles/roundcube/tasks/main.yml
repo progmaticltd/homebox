@@ -10,6 +10,7 @@
     - roundcube-pgsql
     - roundcube-core
     - roundcube-plugins
+    - roundcube-plugins-extra
     - roundcube
     - php-fpm
     - php-ldap

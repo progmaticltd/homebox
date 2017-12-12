@@ -21,6 +21,8 @@ webmail:
     - emoticons
     - new_user_identity
     - managesieve
+    - contextmenu
+    - markasjunk2
 
 # Available plugins:
 # - new_user_dialog

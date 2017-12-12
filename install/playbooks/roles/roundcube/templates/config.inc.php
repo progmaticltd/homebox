@@ -32,8 +32,11 @@ include_once("/etc/roundcube/debian-db-roundcube.php");
 // %d - domain (http hostname $_SERVER['HTTP_HOST'] without the first part)
 // %s - domain name after the '@' from e-mail address provided at login screen
 // For example %n = mail.domain.tld, %t = domain.tld
+{% if system.ssl != False %}
 $config['default_host'] = 'tls://{{ network.imap }}';
-
+{% else %}
+$config['default_host'] = 'imap://{{ network.imap }}/';
+{% endif %}
 // SMTP server host (for sending mails).
 // To use SSL/TLS connection, enter hostname with prefix ssl:// or tls://
 // If left blank, the PHP mail() function is used
@@ -44,7 +47,11 @@ $config['default_host'] = 'tls://{{ network.imap }}';
 // %d - domain (http hostname $_SERVER['HTTP_HOST'] without the first part)
 // %z - IMAP domain (IMAP hostname without the first part)
 // For example %n = mail.domain.tld, %t = domain.tld
+{% if system.ssl != False %}
 $config['smtp_server'] = 'tls://{{ network.smtp }}';
+{% else %}
+$config['smtp_server'] = '{{ network.smtp }}';
+{% endif %}
 
 // SMTP port (default is 25; use 587 for STARTTLS or 465 for the
 // deprecated SSL over SMTP (aka SMTPS))
@@ -52,11 +59,11 @@ $config['smtp_port'] = 25;
 
 // SMTP username (if required) if you use %u as the username Roundcube
 // will use the current username for login
-$config['smtp_user'] = '';
+$config['smtp_user'] = '%u';
 
 // SMTP password (if required) if you use %p as the password Roundcube
 // will use the current user's password for login
-$config['smtp_pass'] = '';
+$config['smtp_pass'] = '%p';
 
 // provide an URL where a user can get support for this Roundcube installation
 // PLEASE DO NOT LINK TO THE ROUNDCUBE.NET WEBSITE HERE!
@@ -109,6 +116,6 @@ $config['ldap_public']['users'] = [
     'groups'            => [
         'base_dn'         => '{{ ldap.groups.dn }}',
         'filter'          => '(objectClass=postixGroup)',
-        'object_classes'  => ['top', 'postixGroup'],
-    ],
+        'object_classes'  => [ 'top', 'postixGroup' ]
+    ]
 ];
