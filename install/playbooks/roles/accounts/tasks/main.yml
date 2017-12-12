@@ -107,6 +107,19 @@
     src: ldap.conf
     dest: /etc/ldap/ldap.conf
 
+# # Activate password policies
+- name: Load password policy module into the OLC database
+  tags: ldap
+  register: ldap_config
+  template:
+    src: ldap-config.ldif
+    dest: /tmp/ldap-config.ldif
+    
+- name: Modify the configuration if not already done
+  when: ldap_config.changed
+  tags: ldap
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /tmp/ldap-config.ldif
+
 # Users and groups creation
 - name: Make sure we have a parent entry for users
   tags: ldap
