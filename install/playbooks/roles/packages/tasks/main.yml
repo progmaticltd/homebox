@@ -29,6 +29,7 @@
     state: installed
   with_items:
     - ufw
+    - rsync
   loop_control:
     loop_var: pkg
 

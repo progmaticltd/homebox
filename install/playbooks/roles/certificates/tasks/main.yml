@@ -1,5 +1,15 @@
 ---
 
+- name: If the certificates have been generated before, copy them on the remote machine
+  tags: sync
+  synchronize:
+    src: ../../../certificates/
+    dest: /etc
+    rsync_opts:
+      - '--no-motd'
+      - '--checksum'
+      - '--exclude=readme.md'
+
 - name: Check if nginx has been already installed
   tags: cert
   register: stat_result
@@ -34,4 +44,9 @@
     name: nginx
     state: started
 
-    
+- name: Copy the certificates on your local machine
+  tags: sync
+  synchronize:
+    mode: pull
+    src: /etc/letsencrypt
+    dest: ../../../certificates/

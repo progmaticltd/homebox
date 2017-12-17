@@ -20,3 +20,7 @@ config/hosts.yml
 
 # Ignore the authorized_keys file when building the ISO image
 preseed/misc/root/.ssh/authorized_key
+
+# Letsencrypt Certificates archives.
+See the file "certificates/readme.md" for details
+certificates/letsencrypt
