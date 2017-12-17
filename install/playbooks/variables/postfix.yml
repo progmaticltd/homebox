@@ -1,7 +1,0 @@
----
-
-# Postfix configuration
-certificate:
-  cn: 'smtp.{{ network.domain }}'          # Will be used for the SMTP server certificate
-  email: 'admin@{{ network.domain }}'      # Administrator email address
-  readby: postfix
