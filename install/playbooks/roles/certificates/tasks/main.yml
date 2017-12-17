@@ -1,7 +1,7 @@
 ---
 
 - name: If the certificates have been generated before, copy them on the remote machine
-  tags: sync
+  tags: cert
   synchronize:
     src: ../../../certificates/
     dest: /etc
@@ -45,7 +45,7 @@
     state: started
 
 - name: Copy the certificates on your local machine
-  tags: sync
+  tags: cert
   synchronize:
     mode: pull
     src: /etc/letsencrypt
