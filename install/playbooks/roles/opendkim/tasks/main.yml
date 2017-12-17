@@ -2,6 +2,7 @@
 
 - name: Install opendkim packages for mail signing
   tags: dkim
+  notify: Restart opendkim
   apt:
     name: "{{ pkg }}"
     state: installed
@@ -16,6 +17,10 @@
   synchronize:
     src: ../../../backup/dkim-keys/
     dest: /etc/postfix
+    mode: push
+    owner: no
+    group: no
+    perms: yes
     rsync_opts:
       - '--no-motd'
       - '--checksum'
@@ -23,6 +28,7 @@
 
 - name: Create directory to install the keys
   tags: dkim
+  notify: Restart opendkim
   file:
     path: /etc/postfix/dkim/
     state: directory
@@ -31,6 +37,7 @@
 
 - name: Run the command to create the keys
   tags: dkim
+  notify: Restart opendkim
   register: keys
   command: >-
     opendkim-genkey
@@ -48,21 +55,24 @@
     mode: pull
     src: /etc/postfix/dkim
     dest: ../../../backup/dkim-keys/
+    perms: yes
 
 - name: Set the default permissions
   tags: dkim
+  notify: Restart opendkim
   file:
     path: '{{ path }}'
     mode: u=rw,g=r,o=
     group: opendkim
   with_items:
-    - /etc/postfix/dkim/mail.private
-    - /etc/postfix/dkim/mail.txt
+    - '/etc/postfix/dkim/{{ dkim.selector }}.private'
+    - '/etc/postfix/dkim/{{ dkim.selector }}.txt'
   loop_control:
     loop_var: path
 
 - name: Update the configuration file
   tags: dkim
+  notify: Restart opendkim
   lineinfile:
     path: /etc/opendkim.conf
     line: '{{ line }}'
@@ -75,8 +85,8 @@
     loop_var: line
 
 - name: Update the configuration file for the socket
-  register: config1
   tags: dkim
+  notify: Restart opendkim
   lineinfile:
     path: /etc/default/opendkim
     line: '{{ line }}'
@@ -87,8 +97,8 @@
     loop_var: line
 
 - name: Create the keys and signing table
-  register: config2
   tags: dkim
+  notify: Restart opendkim
   template:
     src: '{{ file }}'
     dest: '/etc/postfix/dkim/{{ file }}'
@@ -98,10 +108,4 @@
   loop_control:
     loop_var: file
 
-- name: Restart opendkim if necessary
-  tags: dkim
-  when: config1.changed or config2.changed or keys.changed
-  service:
-    name: opendkim
-    state: restarted
 

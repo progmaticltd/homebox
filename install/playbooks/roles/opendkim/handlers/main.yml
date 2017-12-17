@@ -1,0 +1,7 @@
+---
+
+- name: Restart opendkim
+  tags: dkim
+  service:
+    name: opendkim
+    state: restarted

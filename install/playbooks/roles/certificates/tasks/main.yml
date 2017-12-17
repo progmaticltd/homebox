@@ -5,6 +5,9 @@
   synchronize:
     src: ../../../backup/certificates/
     dest: /etc
+    owner: no
+    group: no
+    perms: yes
     rsync_opts:
       - '--no-motd'
       - '--checksum'
@@ -35,7 +38,7 @@
     --email "{{ certificate.email }}"
     --agree-tos
   args:
-    creates: "/etc/'letsencrypt'/live/{{ certificate.cn }}/cert.pem"
+    creates: "/etc/letsencrypt/live/{{ certificate.cn }}/cert.pem"
     
 - name: Restart the nginx server if installed
   when: stat_result.stat["exists"] == True
@@ -50,3 +53,4 @@
     mode: pull
     src: /etc/letsencrypt
     dest: ../../../backup/certificates/
+    perms: yes

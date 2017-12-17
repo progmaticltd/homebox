@@ -3,6 +3,7 @@
 # Install postfix packages
 - name: Install postfix packages
   tags: postfix
+  notify: Restart postfix
   apt:
     name: "{{ pkg }}"
     state: installed
@@ -19,8 +20,9 @@
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
 - name: Allow postfix to access the certificate directories
-  when: system.ssl == 'letsencrypt'
   tags: ldap,ssl
+  notify: Restart postfix
+  when: system.ssl == 'letsencrypt'
   vars:
     details:
       - [ /etc/letsencrypt/archive, /etc/letsencrypt/live ]
@@ -44,6 +46,7 @@
     
 - name: Install postfix packages for local administration
   tags: postfix
+  notify: Restart postfix
   when: options.local_admin == true
   apt:
     name: "{{ pkg }}"
@@ -56,7 +59,7 @@
     
 - name: Copy configuration template
   tags: postfix
-  register: config
+  notify: Restart postfix
   template:
     src: "{{ file }}"
     dest: "/etc/postfix/{{ file }}"

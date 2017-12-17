@@ -1,1 +1,1 @@
-mail._domainkey.{{ network.domain }} {{ network.domain }}:mail:/etc/postfix/dkim/mail.private 
+{{ dkim.selector }}._domainkey.{{ network.domain }} {{ network.domain }}:{{ dkim.selector }}:/etc/postfix/dkim/{{ dkim.selector }}.private 

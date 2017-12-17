@@ -27,8 +27,9 @@
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
 - name: Allow slapd and nslcd daemons to access the certificate directories
-  when: system.ssl == 'letsencrypt'
   tags: ldap,ssl
+  notify: Restart nginx
+  when: system.ssl == 'letsencrypt'
   vars:
     details:
       - [ /etc/letsencrypt/archive, /etc/letsencrypt/live ]
@@ -46,6 +47,7 @@
 
 - name: Disable nginx default site
   tags: roundcube
+  notify: Restart nginx
   file:
     path: '/etc/nginx/sites-enabled/default'
     state: absent
@@ -53,7 +55,7 @@
 
 - name: Create the webmail site
   tags: roundcube
-  register: config
+  notify: Restart nginx
   template:
     src: webmail-site.tpl
     dest: /etc/nginx/sites-available/roundcube.conf
@@ -63,6 +65,7 @@
 
 - name: Copy roundcube configuration
   tags: roundcube
+  notify: Restart nginx
   template:
     src: webmail-site.tpl
     dest: /etc/nginx/sites-available/roundcube.conf
@@ -72,11 +75,13 @@
 
 - name: Create a session key for roundcube
   tags: roundcube
+  notify: Restart nginx
   shell: makepasswd --chars=24
   register: makepasswd
 
 - name: Copy roundcube configuration
   tags: roundcube
+  notify: Restart nginx
   template:
     src: '{{ file }}'
     dest: '/etc/roundcube/{{ file }}'
@@ -90,6 +95,7 @@
 
 - name: Copy roundcube plugins configuration
   tags: roundcube
+  notify: Restart nginx
   template:
     src: '{{ file }}.php'
     dest: '/etc/roundcube/plugins/{{ file }}/config.inc.php'
@@ -104,13 +110,8 @@
 
 - name: Enable nginx site
   tags: roundcube
+  notify: Restart nginx
   file:
     src: '/etc/nginx/sites-available/roundcube.conf'
     dest: '/etc/nginx/sites-enabled/roundcube.conf'
     state: link
-
-- name: Restart nginx if needed
-  when: config.changed
-  service:
-    name: nginx
-    state: restarted
