@@ -1,0 +1,48 @@
+---
+
+- name: Create the autoconfiguration directory
+  tags: autoconfig
+  file:
+    path: '/var/www/autoconfig/mail/'
+    state: directory
+
+- name: Copy autoconfig XML template
+  tags: autoconfig
+  template:
+    src: config-v1.1.xml
+    dest: /var/www/autoconfig/mail/config-v1.1.xml
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Create the autoconfig site
+  tags: autoconfig
+  register: config
+  template:
+    src: autoconfig.conf
+    dest: /etc/nginx/sites-available/autoconfig.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy autoconfig configuration
+  tags: autoconfig
+  template:
+    src: autoconfig.conf
+    dest: /etc/nginx/sites-available/autoconfig.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable nginx site
+  tags: autoconfig
+  file:
+    src: '/etc/nginx/sites-available/autoconfig.conf'
+    dest: '/etc/nginx/sites-enabled/autoconfig.conf'
+    state: link
+
+- name: Restart nginx if needed
+  when: config.changed
+  service:
+    name: nginx
+    state: restarted

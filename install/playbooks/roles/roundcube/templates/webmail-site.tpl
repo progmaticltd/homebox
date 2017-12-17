@@ -38,8 +38,6 @@ server {
     # Add index.php to the list if you are using PHP
     index index.php index.html;
 
-    server_name "{{ webmail.url }}";
-
     # Do not use a favicon
     location ~ ^/favicon.ico$ {
         root /var/www/default/;

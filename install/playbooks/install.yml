@@ -50,4 +50,5 @@
   roles:
     - certificates
     - roundcube
+    - autoconfig
 

@@ -69,7 +69,7 @@
   tags: ldap,ssl
   vars:
     details:
-      - [ /etc/'letsencrypt'/archive, /etc/'letsencrypt'/live ]
+      - [ /etc/letsencrypt/archive, /etc/letsencrypt/live ]
       - [ openldap, nslcd ]
   acl:
     path: '{{ item[0] }}'

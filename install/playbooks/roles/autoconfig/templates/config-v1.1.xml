@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<clientConfig version="1.1">
+  <emailProvider id="{{ network.domain }}">
+    <domain>{{ network.domain }}</domain>
+    <displayName>Homebox - {{ network.domain }}</displayName>
+    <displayShortName>{{ network.domain }}</displayShortName>
+    <!-- IMAP -->
+    <incomingServer type="imap">
+      <hostname>imap.{{ network.domain }}</hostname>
+      <port>993</port>
+      <socketType>SSL</socketType>
+      <username>%EMAILLOCALPART%</username>
+      <authentication>password-cleartext</authentication>
+    </incomingServer>
+    <incomingServer type="imap">
+      <hostname>imap.{{ network.domain }}</hostname>
+      <port>143</port>
+      <socketType>STARTTLS</socketType>
+      <username>%EMAILLOCALPART%</username>
+      <authentication>password-cleartext</authentication>
+    </incomingServer>
+    <!-- POP3 -->
+    <incomingServer type="pop3">
+      <hostname>pop3.{{ network.domain }}</hostname>
+      <port>995</port>
+      <socketType>SSL</socketType>
+      <username>%EMAILLOCALPART%</username>
+      <authentication>password-cleartext</authentication>
+    </incomingServer>
+    <incomingServer type="pop3">
+      <hostname>pop3.{{ network.domain }}</hostname>
+      <port>110</port>
+      <socketType>STARTTLS</socketType>
+      <username>%EMAILLOCALPART%</username>
+      <authentication>password-cleartext</authentication>
+    </incomingServer>
+    <!-- SMTP -->
+    <outgoingServer type="smtp">
+      <hostname>smtp.{{ network.domain }}</hostname>
+      <port>465</port>
+      <socketType>SSL</socketType>
+      <username>%EMAILLOCALPART%</username>
+      <authentication>password-cleartext</authentication>
+    </outgoingServer>
+    <outgoingServer type="smtp">
+      <hostname>smtp.{{ network.domain }}</hostname>
+      <port>587</port>
+      <socketType>TLS</socketType>
+      <username>%EMAILLOCALPART%</username>
+      <authentication>password-cleartext</authentication>
+    </outgoingServer>
+  </emailProvider>
+</clientConfig>

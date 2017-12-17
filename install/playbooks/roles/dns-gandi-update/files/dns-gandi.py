@@ -315,6 +315,7 @@ def main(args):
         manager.WriteARecord('main', external_ip)
         manager.WriteCNameRecord('webmail', 'main')
         manager.WriteCNameRecord('imap', 'main')
+        manager.WriteCNameRecord('pop3', 'main')
         manager.WriteCNameRecord('smtp', 'main')
         manager.WriteCNameRecord('ldap', 'main')
 

@@ -1,5 +1,18 @@
 ---
 
+- name: Check if nginx has been already installed
+  tags: cert
+  register: stat_result
+  stat:
+    path: /usr/sbin/nginx
+
+- name: Stop the nginx server if installed
+  when: stat_result.stat["exists"] == True
+  tags: cert
+  service:
+    name: nginx
+    state: stopped
+
 # The certbot package need to be installed
 - name: Create the certificate
   tags: cert
@@ -13,6 +26,12 @@
     --agree-tos
   args:
     creates: "/etc/'letsencrypt'/live/{{ certificate.cn }}/cert.pem"
-
     
+- name: Restart the nginx server if installed
+  when: stat_result.stat["exists"] == True
+  tags: cert
+  service:
+    name: nginx
+    state: started
+
     
