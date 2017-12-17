@@ -180,4 +180,5 @@ __Notes:__
 
 - The initial creation of DNS records for certificate generation should take some time, I am working on a solution.
 - DNS automatic update is actually limited to Gandi, but it should be easy to add more.
+- Once the script has been run, the backup folder contains your certificates and DKIM public keys. If you are rebuilding your server from scratch, the same certificates and keys will be used.
 
