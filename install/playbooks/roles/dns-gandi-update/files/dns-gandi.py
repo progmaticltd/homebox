@@ -296,15 +296,27 @@ def main(args):
         if args.dkimPublicKey:
             with open(args.dkimPublicKey) as dkimFile:
                 dkimContent = dkimFile.read()
+
             # Extract the selector name
             end = dkimContent.find('.')
             dkimSelector = dkimContent[0:end]
+
             # Extract the record content
-            begin = dkimContent.find('(')
-            end = 1 + dkimContent.find(')')
+            begin = 1 + dkimContent.find('(')
+            end = dkimContent.find(')')
             dkimPublicKey = dkimContent[begin:end]
+
+            # Remove the extra characters before sending the request to store the value
+            import re
+            pattern = re.compile('(^\s|\s$)')
+            dkimPublicKey = pattern.sub('', dkimPublicKey)
+            pattern = re.compile('[\t\n]+')
+            dkimPublicKey = pattern.sub('', dkimPublicKey)
+
+            # Debug / Info
             logging.info("Found DKIM record: '{0}'".format(dkimSelector))
-        
+            logging.debug("DKIM public key record: '{0}'".format(dkimPublicKey))
+
         # Create a new 'homebox' zone version
         manager.CreateNewVersion()
 

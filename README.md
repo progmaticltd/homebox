@@ -141,9 +141,9 @@ The script is actually doing following:
 - Create the user and group accounts in the directory.
 - Integrate the LDAP accounts into the system using pam_ldap and nslcd (optional).
 - Install Postfix mail transfer agent, with a dedicted SSL certificate.
-- Create a 2048 bits DKIM key, and publish the associated DNS record.
+- Create a DKIM key, and publish the associated DNS record.
 - Update the SPF records with your external IP address.
-- Install Dovecot mail server, with a dedicted SSL certificate for IMAP.
+- Install Dovecot mail server, with a dedicated SSL certificate for IMAP.
 - Install PostgreSQL for the database.
 - Install Roundcube with nginx, and create a dedicated SSL certificate for the webmail.
 
@@ -152,6 +152,8 @@ The certificates are generated using LetsEncrypt service, with one for each serv
   - postfix: smtp.example.com
   - dovecot: imap.example.com
   - the webmail: webmail.example.com
+  
+The generated certificates and DKIM keys will be automatically saved on your local computer, into the backup folder. This folder is ignored by git. If you restart the installation from scratch using a new server, these certificates and DKIM keys will be used, so you do not end up requesting more certificates or updating your DNS server more than necessary.
 
 ## What do you need for production usage?
 ### Basic requirements

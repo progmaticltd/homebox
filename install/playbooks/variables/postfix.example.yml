@@ -10,4 +10,4 @@ certificate:
 dkim:
   key_size: 1024
   selector: main
-  note: 'main DKIM key for the domain {{ network.domain }}'
+  note: main DKIM key for the domain {{ network.domain }}
