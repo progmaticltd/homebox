@@ -209,15 +209,16 @@ class GandiDomainManager(object):
         })
         return self.zone_version
 
-    def WriteSPFRecords(self, name, spfPolicy):
+    def WriteSPFRecords(self, name, spfPolicy, external_ip):
         """Create or update TXT and SPF records (See RFC 4408 section 3.1.1.)"""
         
+        spf = 'v=spf1 mx ip4:{0}/32 '.format(external_ip)
         if spfPolicy == 'fail':
-            spf = '"v=spf1 mx -all"'
+            spf += '-all"'
         elif spfPolicy == 'softfail':
-            spf = '"v=spf1 mx ~all"'
+            spf += '~all"'
         elif spfPolicy == 'neutral':
-            spf = '"v=spf1 mx ?all"'
+            spf += '?all"'
             
         # Write the first 'temporary' TXT record
         self.WriteRecord(name, {
@@ -343,7 +344,7 @@ def main(args):
         manager.WriteMXRecord('mx', 'smtp', 5)
 
         # Create the SPF records
-        manager.WriteSPFRecords('@', args.spfPolicy)
+        manager.WriteSPFRecords('@', args.spfPolicy, external_ip)
         
         # Create the DKIM record
         if dkimPublicKey != None and dkimSelector != None:
