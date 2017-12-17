@@ -60,6 +60,7 @@
     - python-ldap
     - python-passlib
     - ldapscripts
+    - nslcd
 
 ################################################################################
 # At this point, the certificates should have been created already #############

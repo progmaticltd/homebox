@@ -11,6 +11,16 @@
   loop_control:
     loop_var: pkg
     
+- name: If the DKIM have been generated before, copy them on the remote server
+  tags: dkim
+  synchronize:
+    src: ../../../backup/dkim-keys/
+    dest: /etc/postfix
+    rsync_opts:
+      - '--no-motd'
+      - '--checksum'
+      - '--exclude=readme.md'
+
 - name: Create directory to install the keys
   tags: dkim
   file:
@@ -26,6 +36,13 @@
     opendkim-genkey -D /etc/postfix/dkim/ -d '{{ network.domain }}' -s mail
   args:
     creates: /etc/postfix/dkim/mail.txt
+
+- name: Backup the dkim on your local machine
+  tags: dkim
+  synchronize:
+    mode: pull
+    src: /etc/postfix/dkim
+    dest: ../../../backup/dkim-keys/
 
 - name: Set the default permissions
   tags: dkim
@@ -82,3 +99,4 @@
   service:
     name: opendkim
     state: restarted
+
