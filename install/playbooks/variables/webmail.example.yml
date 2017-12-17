@@ -21,6 +21,7 @@ webmail:
     - emoticons
     - new_user_identity
     - managesieve
+    - contextmenu
 
 # Available plugins:
 # - new_user_dialog
