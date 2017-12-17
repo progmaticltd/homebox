@@ -2,6 +2,6 @@
 
 # Dovecot configuration
 certificate:
-  cn: imap.example.com          # Will be used for the IMAP server certificate
-  email: admin@example.com      # Administrator email address
+  cn: 'imap.{{ network.domain }}'          # Will be used for the IMAP server certificate
+  email: 'admin@{{ network.domain }}'      # Administrator email address
   readby: dovecot

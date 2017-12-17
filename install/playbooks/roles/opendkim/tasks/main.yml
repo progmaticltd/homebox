@@ -33,9 +33,14 @@
   tags: dkim
   register: keys
   command: >-
-    opendkim-genkey -D /etc/postfix/dkim/ -d '{{ network.domain }}' -s mail
+    opendkim-genkey
+    -D /etc/postfix/dkim/
+    -d '{{ network.domain }}'
+    -b '{{ dkim.key_size }}'
+    -s '{{ dkim.selector }}'
+    -n '{{ dkim.note }}'
   args:
-    creates: /etc/postfix/dkim/mail.txt
+    creates: '/etc/postfix/dkim/{{ dkim.selector }}.txt'
 
 - name: Backup the dkim on your local machine
   tags: dkim

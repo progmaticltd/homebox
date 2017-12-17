@@ -2,8 +2,8 @@
 
 # Webmail configuration
 certificate:
-  cn: webmail.example.com      # Will be used to create the URL
-  email: admin@example.com     # The registered email address
+  cn: 'webmail.{{ network.domain }}'          # Will be used for the SMTP server certificate
+  email: 'admin@{{ network.domain }}'         # Administrator email address
   readby: www-data
 
 

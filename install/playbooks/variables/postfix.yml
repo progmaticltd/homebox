@@ -5,3 +5,9 @@ certificate:
   cn: 'smtp.{{ network.domain }}'          # Will be used for the SMTP server certificate
   email: 'admin@{{ network.domain }}'      # Administrator email address
   readby: postfix
+
+# DKIM keys parameters
+dkim:
+  key_size: 1024
+  selector: main
+  note: 'main DKIM key for the domain {{ network.domain }}'
