@@ -204,7 +204,7 @@ class GandiDomainManager(object):
         self.WriteRecord(name, {
             'name': name,
             'type': 'MX',
-            'value': "{0} {1}.{2}.".format(priority, value, self.domain_name),
+            'value': "{0} {1}".format(priority, value),
             'ttl': self.defaultTTL
         })
         return self.zone_version
@@ -341,7 +341,7 @@ def main(args):
             manager.WriteCNameRecord('autodiscover', 'main')
 
         # Create the MX record for mail deliveries
-        manager.WriteMXRecord('mx', 'smtp', 5)
+        manager.WriteMXRecord('mx', 'main', 5)
 
         # Create the SPF records
         manager.WriteSPFRecords('@', args.spfPolicy, external_ip)
