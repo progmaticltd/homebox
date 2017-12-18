@@ -62,6 +62,13 @@
     - ldapscripts
     - nslcd
 
+# Changes in the database will be stored there
+- name: Create the ldap config changes folder
+  tags: ldap
+  file:
+    path: /etc/ldap/changes
+    state: directory
+
 ################################################################################
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
@@ -93,12 +100,12 @@
   register: ldap_ssl
   template:
     src: ssl-config.ldif
-    dest: /tmp/ssl-config.ldif
+    dest: /etc/ldap/changes/ssl-config.ldif
 
 - name: Modify the configuration if not already done
   when: system.ssl == 'letsencrypt' and ldap_ssl.changed
   tags: ldap,ssl
-  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /tmp/ssl-config.ldif
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ssl-config.ldif
 #                                                                              #
 # End of TLS / SSL Configuration ###############################################
 
@@ -108,18 +115,31 @@
     src: ldap.conf
     dest: /etc/ldap/ldap.conf
 
-# # Activate password policies
+# Activate password policies
 - name: Load password policy module into the OLC database
   tags: ldap
   register: ldap_config
   template:
-    src: ldap-config.ldif
-    dest: /tmp/ldap-config.ldif
-    
+    src: ppolicy.ldif
+    dest: /etc/ldap/changes/ppolicy.ldif
+
 - name: Modify the configuration if not already done
   when: ldap_config.changed
   tags: ldap
-  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /tmp/ldap-config.ldif
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ppolicy.ldif
+
+# Activate password hash
+- name: Activate passwords hashing
+  tags: ldap
+  register: ldap_config
+  template:
+    src: password-hash.ldif
+    dest: /etc/ldap/changes/password-hash.ldif
+
+- name: Modify the configuration if not already done
+  when: ldap_config.changed
+  tags: ldap
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/password-hash.ldif
 
 # Users and groups creation
 - name: Make sure we have a parent entry for users
@@ -140,19 +160,6 @@
     objectClass: organizationalUnit
     state: present
 
-# TODO: Move this to another file / role
-# - name: Remove old groups if presents
-#   tags: ldap,clean
-#   ldap_entry:
-#     bind_dn: '{{ ldap.admin.dn }}'
-#     bind_pw:  '{{ ldap.admin.password }}'
-#     dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
-#     state: absent
-#   with_items:
-#     - '{{ posix_groups }}'
-#   loop_control:
-#     loop_var: group
-
 - name: Create all the group accounts
   tags: ldap
   ldap_entry:
@@ -169,20 +176,6 @@
     - '{{ posix_groups }}'
   loop_control:
     loop_var: group
-
-# TODO: Move this to another file / role
-# Create LDAP user accounts
-# - name: Remove previous users
-#   tags: ldap,clean
-#   ldap_entry:
-#     bind_dn: '{{ ldap.admin.dn }}'
-#     bind_pw:  '{{ ldap.admin.password }}'
-#     dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
-#     state: absent
-#   with_items:
-#     - '{{ users }}'
-#   loop_control:
-#     loop_var: user
 
 - name: Create all the user accounts
   tags: ldap
