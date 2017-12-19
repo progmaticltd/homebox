@@ -341,7 +341,7 @@ def main(args):
             manager.WriteCNameRecord('autodiscover', 'main')
 
         # Create the MX record for mail deliveries
-        manager.WriteMXRecord('mx', 'main', 5)
+        manager.WriteMXRecord('@', 'main', 5)
 
         # Create the SPF records
         manager.WriteSPFRecords('@', args.spfPolicy, external_ip)
