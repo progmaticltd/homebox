@@ -2,7 +2,7 @@
 - name: Restart postfix
   tags: postfix
   service:
-    name: {{ service }}
+    name: '{{ service }}'
     state: restarted
   with_items:
     - postfix

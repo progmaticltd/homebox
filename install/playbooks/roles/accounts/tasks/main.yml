@@ -124,9 +124,22 @@
     dest: /etc/ldap/changes/ppolicy.ldif
 
 - name: Modify the configuration if not already done
-  when: ldap_config.changed
   tags: ldap
+  when: ldap_config.changed
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ppolicy.ldif
+
+- name: Copy the password policy schema into the changes directory
+  tags: ldap
+  register: ldap_schema
+  copy:
+    src: /etc/ldap/schema/ppolicy.ldif
+    dest: /etc/ldap/changes/ppolicy-schema.ldif
+    remote_src: true
+
+- name: Activate password policies schmea
+  tags: ldap
+  when: ldap_schema.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ppolicy-schema.ldif
 
 # Activate password hash
 - name: Activate passwords hashing
@@ -137,20 +150,11 @@
     dest: /etc/ldap/changes/password-hash.ldif
 
 - name: Modify the configuration if not already done
-  when: ldap_config.changed
   tags: ldap
+  when: ldap_config.changed
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/password-hash.ldif
 
 # Users and groups creation
-- name: Make sure we have a parent entry for users
-  tags: ldap
-  ldap_entry:
-    bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ ldap.admin.password }}'
-    dn: '{{ ldap.users.dn }}'
-    objectClass: organizationalUnit
-    state: present
-
 - name: Make sure we have a parent entry for groups
   tags: ldap
   ldap_entry:
@@ -159,6 +163,20 @@
     dn: '{{ ldap.groups.dn }}'
     objectClass: organizationalUnit
     state: present
+
+# Remove all groups created before
+- name: Remove old groups if presents
+  tags: ldap
+  when: clean == True
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw:  '{{ ldap.admin.password }}'
+    dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
+    state: absent
+  with_items:
+    - '{{ posix_groups }}'
+  loop_control:
+    loop_var: group
 
 - name: Create all the group accounts
   tags: ldap
@@ -176,6 +194,28 @@
     - '{{ posix_groups }}'
   loop_control:
     loop_var: group
+
+- name: Make sure we have a parent entry for users
+  tags: ldap
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ ldap.admin.password }}'
+    dn: '{{ ldap.users.dn }}'
+    objectClass: organizationalUnit
+    state: present
+
+- name: Remove previous users
+  tags: ldap
+  when: clean == True
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw:  '{{ ldap.admin.password }}'
+    dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
+    state: absent
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
 
 - name: Create all the user accounts
   tags: ldap
@@ -210,15 +250,6 @@
   loop_control:
     loop_var: user
 
-- name: Add all users to the mail group
-  user:
-    name: '{{ user.uid }}'
-    groups: mail
-  with_items:
-    - '{{ users }}'
-  loop_control:
-    loop_var: user
-
 - name: Configure libnss to use passwords and groups
   tags: ldap
   debconf:
@@ -228,8 +259,8 @@
     vtype: multiselect
 
 - name: Install the required packages for interactive login
-  when: options.accounts.login == true
   tags: ldap
+  when: options.accounts.login == true
   apt:
     name: '{{ item }}'
     state: installed
@@ -238,9 +269,9 @@
     - libpam-ldapd
 
 - name: Update the ldap configuration file    
+  tags: ldap
   when: options.accounts.login == true
   register: config
-  tags: ldap
   template:
     src: nslcd.conf
     dest: /etc/nslcd.conf
@@ -254,8 +285,8 @@
     state: restarted
 
 - name: Create home directory for users on first login
-  when: options.accounts.login == true
   tags: ldap
+  when: options.accounts.login == true
   lineinfile:
     dest: /etc/pam.d/common-account
     line: 'session    required    pam_mkhomedir.so skel=/etc/skel/ umask=0022'
