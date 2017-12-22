@@ -116,43 +116,104 @@
     dest: /etc/ldap/ldap.conf
 
 # Activate password policies
+- name: Copy password policies module loading into the changes directory
+  tags: ldap
+  register: ppolicy_module
+  template:
+    src: ppolicy-module.ldif
+    dest: /etc/ldap/changes/ppolicy-module.ldif
+
 - name: Load password policy module into the OLC database
   tags: ldap
-  register: ldap_config
-  template:
-    src: ppolicy.ldif
-    dest: /etc/ldap/changes/ppolicy.ldif
+  when: ppolicy_module.changed
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ppolicy-module.ldif
 
-- name: Modify the configuration if not already done
+- name: Copy deref module loading into the changes directory
   tags: ldap
-  when: ldap_config.changed
-  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ppolicy.ldif
+  register: deref_module
+  template:
+    src: deref-module.ldif
+    dest: /etc/ldap/changes/deref-module.ldif
+
+- name: Load password policy module into the OLC database
+  tags: ldap
+  when: deref_module.changed
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/deref-module.ldif
 
 - name: Copy the password policy schema into the changes directory
   tags: ldap
-  register: ldap_schema
+  register: ppolicy_schema
   copy:
     src: /etc/ldap/schema/ppolicy.ldif
     dest: /etc/ldap/changes/ppolicy-schema.ldif
     remote_src: true
 
-- name: Activate password policies schmea
+- name: Activate password policies schema
   tags: ldap
-  when: ldap_schema.changed
+  when: ppolicy_schema.changed
   command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ppolicy-schema.ldif
 
-# Activate password hash
-- name: Activate passwords hashing
+- name: Copy the overlay into the changes directory
   tags: ldap
-  register: ldap_config
+  register: ldap_pwd_overlay
+  template:
+    src: overlay.ldif
+    dest: /etc/ldap/changes/overlay.ldif
+
+- name: Load the overlay definition
+  tags: ldap
+  when: ldap_pwd_overlay.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/overlay.ldif
+
+- name: Copy password hash overlay into the changes directory
+  tags: ldap
+  register: passwd_hash
   template:
     src: password-hash.ldif
     dest: /etc/ldap/changes/password-hash.ldif
 
-- name: Modify the configuration if not already done
+- name: Load the password hash overlay
   tags: ldap
-  when: ldap_config.changed
+  when: passwd_hash.changed
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/password-hash.ldif
+
+# Create a password policy for all the users
+- name: Make sure we have a parent entry for groups
+  tags: ldap8
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ ldap.admin.password }}'
+    dn: 'ou=pwpolicies,{{ ldap.organization.base }}'
+    objectClass:
+      - organizationalUnit
+      - top
+    state: present
+    attributes:
+      ou: pwpolicies
+
+- name: Make sure we have a parent entry for groups
+  tags: ldap
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ ldap.admin.password }}'
+    dn: cn=default,ou=pwpolicies,{{ ldap.organization.base }}
+    objectClass:
+      - pwdPolicy
+      - person
+      - top
+    attributes:
+      cn: default
+      sn: default
+      pwdMaxAge: '{{ passwords.max_age }}'
+      pwdExpireWarning: '{{ passwords.expire_warning }}'
+      pwdInHistory: 0
+      pwdCheckQuality: 0
+      pwdMaxFailure: '{{ passwords.max_failure }}'
+      pwdLockoutDuration: 0
+      pwdGraceAuthNLimit: 0
+      pwdFailureCountInterval: 0
+      pwdMinLength: '{{ passwords.min_length }}'
+      pwdAttribute: userPassword
 
 # Users and groups creation
 - name: Make sure we have a parent entry for groups
@@ -229,6 +290,7 @@
       givenName: '{{ user.first_name }}'
       sn: '{{ user.last_name }}'
       userPassword: "{{ user.password }}"
+      pwdPolicySubentry: 'cn=default,ou=pwpolicies,{{ ldap.organization.base }}'
       homeDirectory: '/home/{{ user.group }}/{{ user.uid }}'
       loginShell: '{{ user.shell }}'
       uidNumber: '{{ user.uidNumber }}'
@@ -239,6 +301,7 @@
       shadowWarning: 7
       shadowInactive: -1
       shadowFlag: 0
+      pwdPolicySubentry: 'cn=default,ou=pwpolicies,{{ ldap.organization.base }}'
     objectClass:
       - top
       - person

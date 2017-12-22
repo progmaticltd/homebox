@@ -20,7 +20,7 @@
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
 - name: Allow postfix to access the certificate directories
-  tags: ldap,ssl
+  tags: postfix,ssl
   notify: Restart postfix
   when: system.ssl == 'letsencrypt'
   vars:

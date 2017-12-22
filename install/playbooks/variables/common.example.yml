@@ -56,3 +56,10 @@ dns:
   gandi:
     handle: JD123-GANDI
     key: zaNGbUVIvi1KbYb6PPMdiQLh    # Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
+
+# Password policy:
+passwords:
+  min_length: 8
+  max_age: 31536000        # 365 days max
+  max_failure: 5
+  expire_warning: 259200   # 3 days

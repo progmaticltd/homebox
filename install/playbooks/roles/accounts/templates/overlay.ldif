@@ -1,0 +1,3 @@
+dn: olcOverlay=ppolicy,olcDatabase={1}mdb,cn=config
+objectClass: olcPPolicyConfig
+olcOverlay: ppolicy
