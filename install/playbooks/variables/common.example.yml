@@ -64,3 +64,14 @@ passwords:
   max_failure: 5
   expire_warning: 259200   # 3 days
   require_nonalpha: true
+
+# Once the system is in place, it is possible to use 'limit' for the rule, instead of any.
+# It is also possible to use fail2ban, which is installed anyway
+firewall:
+  ssh:
+    from: any
+    rule: allow
+
+# Automatically install security updates?x
+auto_update:
+  security: true

@@ -36,16 +36,16 @@ __Notes__:
 - This is a work in progress and a project I am maintaining on my spare time. Although I am trying to be very careful, there might be some errors. In this case, just fill a bug report, or take part.
 - I am privileging stability over features. The master branch should stay stable for production.
 - This is a work in progress, some features are missing, although the current version can be installed. Postfix and Dovecot are actually configured at the simplest level
-- I haven't added the firewall rules yet
 
 __TODO__:
 
 I am planning to add / test the following features, in *almost* no particular order:
 
-- DMARC: Records publication and DMARC implementation
-- Automatic configuration for Thunderbird and Outlook
+- Automatic LUKS setup for the ISO image installer.
+- Automatic configuration for Outlook (Thunderbird is done)
 - Add a caldav / carddav server (Any that works with LDAP authentication)
 - Add a jabber server (Any that works with LDAP authentication)
+- DMARC: Records publication and DMARC implementation.
 - Add optional components (e.g. [Gogs](https://gogs.io/), [openvpn](https://openvpn.net/), [Syncthing](https://syncthing.net/), etc)
 - Test other mail systems, like Cyrus, Sogo, etc.
 
@@ -139,6 +139,7 @@ The script is actually doing following:
 - Install some required packages.
 - Install a simple LDAP server (openLDAP).
 - Create a valid certificate, and activate TLS authentication for the LDAP server.
+- Create a password policy, and activate password encryption overlays in the LDAP server.
 - Create the user and group accounts in the directory.
 - Integrate the LDAP accounts into the system using pam_ldap and nslcd (optional).
 - Install Postfix mail transfer agent, with a dedicted SSL certificate.
@@ -147,8 +148,10 @@ The script is actually doing following:
 - Install Dovecot mail server, with a dedicated SSL certificate for IMAP.
 - Install PostgreSQL for the database.
 - Install Roundcube with nginx, and create a dedicated SSL certificate for the webmail.
+- Configure some plugins for roundcube, like password changing and automatic new user identity.
 
 The certificates are generated using LetsEncrypt service, with one for each service. Examples for example.com domain:
+
   - openldap: ldap.example.com
   - postfix: smtp.example.com
   - dovecot: imap.example.com

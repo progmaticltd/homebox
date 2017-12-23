@@ -115,3 +115,19 @@
     src: '/etc/nginx/sites-available/roundcube.conf'
     dest: '/etc/nginx/sites-enabled/roundcube.conf'
     state: link
+
+- name: Configure the firewall for default access
+  tags: security
+  ufw:
+    rule: allow
+    proto: tcp
+    src: any
+    port: '{{ rule.port }}'
+    comment: '{{ rule.comment }}'
+  with_items:
+    - comment: Allow http access, but it will be redirected to https directly
+      port: 80
+    - comment: Allow https access to the webmail
+      port: 443
+  loop_control:
+    loop_var: rule

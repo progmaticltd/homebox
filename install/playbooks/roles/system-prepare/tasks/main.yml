@@ -6,3 +6,48 @@
     path: /etc/homebox
     state: directory
     mode: 0755
+
+# We are going to install the "unattended-upgrades" package, and to
+# configure it to install security updates automatically.
+- name: Configure the automatic security updates
+  tags: security
+  debconf:
+    name: unattended-upgrades
+    question: '{{ conf.question }}'
+    value: '{{ conf.value }}'
+    vtype: '{{ conf.type }}'
+  with_items:
+    - question: unattended-upgrades/origins_pattern
+      value: 'origin=Debian,codename=${distro_codename},label=Debian-Security'
+      type: string
+    - question: unattended-upgrades/enable_auto_updates
+      value: '{{ auto_update.security }}'
+      type: boolean
+  loop_control:
+    loop_var: conf
+
+# Install the firewall, but to not configure any rule.
+# The other tasks will setup the rules themselves
+# We are also installing fail2ban, so the other services might use it, like postfix, dovecot and roundcube
+# The package 'unattended-upgrades' download and install security updates by default
+- name: Install ufw / fail2ban and automatic security updates
+  tags: security
+  apt:
+    name: "{{ pkg }}"
+    state: installed
+  with_items:
+    - unattended-upgrades
+    - ufw
+    - fail2ban
+  loop_control:
+    loop_var: pkg
+
+- name: Configure the firewall for SSH access
+  tags: security
+  ufw:
+    proto: tcp
+    rule: '{{ firewall.ssh.rule }}'
+    src: '{{ firewall.ssh.from }}'
+    port: 22
+    comment: Allow SSH access
+    state: enabled

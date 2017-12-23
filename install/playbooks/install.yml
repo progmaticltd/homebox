@@ -53,3 +53,9 @@
     - roundcube
     - autoconfig
 
+# Configure security
+- hosts: homebox
+  vars_files:
+    - variables/common.yml
+  roles:
+    - security

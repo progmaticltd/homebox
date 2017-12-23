@@ -1,27 +1,16 @@
 ---
 
-# Limit SSH
-- name: Configuring the firewall
-  ufw:
-    rule: limit
-    port: ssh
-    proto: tcp
+- name: Configure the automatic security updates
+  register: unattended_upgrades
+  tags: security
+  template:
+    src: 50unattended-upgrades
+    dest: /etc/apt/apt.conf.d/50unattended-upgrades
 
-# Allow some mail ports
-- ufw:
-    rule: allow
-    port: '{{ item }}'
-    proto: tcp
-  with_items:
-    - 80
-    - 443
-    - 25
-    - 587
-    - 143
-    - 993
-    - 110
-    - 995
+- name: Restart the automatic upgrades service if necessary
+  when: unattended_upgrades.changed
+  tags: security
+  service:
+    name: unattended-upgrades
+    state: restarted
 
-# Activate the firewall
-- ufw:
-    state: enabled

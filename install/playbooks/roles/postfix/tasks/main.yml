@@ -75,3 +75,20 @@
     path: /etc/hosts
     line: '127.0.0.1    {{ network.smtp }}'
     
+- name: Configure the firewall for default access
+  tags: security
+  ufw:
+    rule: allow
+    proto: tcp
+    src: any
+    port: '{{ rule.port }}'
+    comment: '{{ rule.comment }}'
+  with_items:
+    - comment: Allow basic SMTP
+      port: 25
+    - comment: Allow encrypted SMTP
+      port: 465
+    - comment: Allow submission
+      port: 587
+  loop_control:
+    loop_var: rule
