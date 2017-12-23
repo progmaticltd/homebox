@@ -63,3 +63,4 @@ passwords:
   max_age: 31536000        # 365 days max
   max_failure: 5
   expire_warning: 259200   # 3 days
+  require_nonalpha: true

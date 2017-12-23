@@ -22,10 +22,11 @@ A set of Ansible scripts to setup your personal mail server (and more) for your 
 This project has been created for those who simply want to host their emails at home,
 and don't want to manage the full installation process manually, from scratch.
 
-It is made to be unobtrusive, standard compliant, robust, extensible and automatic
+It is made to be unobtrusive, standard compliant, secure, robust, extensible and automatic
 
 - Unobtrusive: The base distribution (Debian) is only slightly modified. Once installed, you can use it normally, and install the packages you want.
 - Standard compliant: For instance, the system not only generate the DKIM records, it publish them for you on Gandi DNS server!
+- Secure: The LDAP server is setup to store passwords encrypted. Password policies and default password policy are setup as well, although not activated yet. I pay a beer / a glass of wine / etc to the first one who find what is wrong, in London or remotely ;-). See the 'account' role for details.
 - Robust: the DNS records update script is very safe, and you can run it in test mode. In this mode, the new zone version will be created, but not activated. If there is no change to your DNS record, the new version will be deleted.
 - Extensible: By using LDAP for user authentications, you can use other software, like nextcloud, gitlab or even an OpenVPN server, without having to remember more passwords.
 - Automatic: Most tasks are automated. Even the external IP address detection and DNS update process. In theory, you could use this with a dynamic IP address.

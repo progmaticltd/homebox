@@ -100,8 +100,8 @@
     src: '{{ file }}.php'
     dest: '/etc/roundcube/plugins/{{ file }}/config.inc.php'
     owner: root
-    group: root
-    mode: 0644 
+    group: www-data
+    mode: 0640
   with_items:
     - password
     - new_user_identity

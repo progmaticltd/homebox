@@ -178,8 +178,8 @@
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/password-hash.ldif
 
 # Create a password policy for all the users
-- name: Make sure we have a parent entry for groups
-  tags: ldap8
+- name: Create the password policies parent entry
+  tags: ldap
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ ldap.admin.password }}'
@@ -191,7 +191,7 @@
     attributes:
       ou: pwpolicies
 
-- name: Make sure we have a parent entry for groups
+- name: Create the default password policy
   tags: ldap
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
@@ -211,7 +211,7 @@
       pwdMaxFailure: '{{ passwords.max_failure }}'
       pwdLockoutDuration: 0
       pwdGraceAuthNLimit: 0
-      pwdFailureCountInterval: 0
+      pwdFailureCountInterval: 300
       pwdMinLength: '{{ passwords.min_length }}'
       pwdAttribute: userPassword
 
@@ -301,7 +301,6 @@
       shadowWarning: 7
       shadowInactive: -1
       shadowFlag: 0
-      pwdPolicySubentry: 'cn=default,ou=pwpolicies,{{ ldap.organization.base }}'
     objectClass:
       - top
       - person
