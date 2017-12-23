@@ -312,18 +312,6 @@
   loop_control:
     loop_var: user
 
-- name: Create the user account home folders
-  tags: accounts
-  file:
-    path: '/home/{{ user.group }}/{{ user.uid }}'
-    owner: '{{ user.uid }}'
-    group: '{{ user.group }}'
-    state: directory
-  with_items:
-    - '{{ users }}'
-  loop_control:
-    loop_var: user
-
 - name: Configure libnss to use passwords and groups
   tags: ldap
   debconf:
@@ -357,6 +345,30 @@
   service:
     name: nslcd
     state: restarted
+
+- name: Create the group home folders if necessary
+  tags: accounts
+  file:
+    path: '/home/{{ user.group }}'
+    owner: root
+    group: '{{ user.group }}'
+    state: directory
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Create the user account home folders
+  tags: accounts
+  file:
+    path: '/home/{{ user.group }}/{{ user.uid }}'
+    owner: '{{ user.uid }}'
+    group: '{{ user.group }}'
+    state: directory
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
 
 - name: Create home directory for users on first login
   tags: ldap
