@@ -12,7 +12,7 @@ users:
   - uid: johndoe
     cn: John Doe
     uidNumber: 1001
-    gidNumber: 1000
+    gidNumber: 1001
     first_name: John
     last_name: Doe
     group: users
@@ -22,7 +22,7 @@ users:
   - uid: janedoe
     cn: Jane Doe
     uidNumber: 1002
-    gidNumber: 1000
+    gidNumber: 1001
     first_name: Jane
     last_name: Doe
     group: users
@@ -31,9 +31,9 @@ users:
     password: "Tlwril!8"
 
 posix_groups:
-  - gid: std_users
-    description: Standard users
-    gidNumber: 1000
+  - gid: mail_users
+    description: Mail users
+    gidNumber: 1001
     mail: 'users@{{ network.domain }}'
   - gid: administrators
     description: Administrators

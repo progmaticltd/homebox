@@ -83,6 +83,17 @@
   loop_control:
     loop_var: line
 
+# We are using ACL here. but this is a temporary option
+# until the implementation of maildir in a dedicated directory
+- name: Allow email users to write in /var/mail
+  tags: dovecot
+  acl:
+    path: /var/mail
+    entity: mail_users
+    etype: group
+    permissions: wx
+    state: present
+
 - name: Activate dovecot authentication
   tags: dovecot
   notify: Restart dovecot

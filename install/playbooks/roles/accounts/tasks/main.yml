@@ -312,6 +312,18 @@
   loop_control:
     loop_var: user
 
+- name: Create the user account home folders
+  tags: accounts
+  file:
+    path: '/home/{{ user.group }}/{{ user.uid }}'
+    owner: '{{ user.uid }}'
+    group: '{{ user.group }}'
+    state: directory
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
 - name: Configure libnss to use passwords and groups
   tags: ldap
   debconf:
