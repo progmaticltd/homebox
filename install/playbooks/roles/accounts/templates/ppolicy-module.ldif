@@ -1,4 +1,4 @@
 dn: cn=module{0},cn=config
-changetype: modify
+changeType: modify
 add: olcModuleLoad
 olcModuleLoad: ppolicy.la

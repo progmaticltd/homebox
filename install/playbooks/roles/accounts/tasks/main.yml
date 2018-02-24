@@ -15,12 +15,6 @@
     - question: slapd/password2
       value: '{{ ldap.admin.password }}'
       type: password
-    - question: slapd/internal/adminpw
-      value: '{{ ldap.admin.password }}'
-      type: password
-    - question: slapd/internal/generated_adminpw
-      value: '{{ ldap.admin.password }}'
-      type: password
     - question: slapd/purge_database
       value: true
       type: boolean
@@ -45,6 +39,12 @@
     - question: slapd/password_mismatch
       value: false
       type: boolean
+    # - question: slapd/internal/adminpw
+    #   value: '{{ ldap.admin.password }}'
+    #   type: password
+    # - question: slapd/internal/generated_adminpw
+    #   value: '{{ ldap.admin.password }}'
+    #   type: password
   loop_control:
     loop_var: conf
 
@@ -116,6 +116,18 @@
     dest: /etc/ldap/ldap.conf
 
 # Activate password policies
+- name: Copy deref module loading into the changes directory
+  tags: ldap
+  register: deref_module
+  template:
+    src: deref-module.ldif
+    dest: /etc/ldap/changes/deref-module.ldif
+
+- name: Load deref module into the OLC database
+  tags: ldap
+  when: deref_module.changed
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/deref-module.ldif
+
 - name: Copy password policies module loading into the changes directory
   tags: ldap
   register: ppolicy_module
@@ -127,18 +139,6 @@
   tags: ldap
   when: ppolicy_module.changed
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ppolicy-module.ldif
-
-- name: Copy deref module loading into the changes directory
-  tags: ldap
-  register: deref_module
-  template:
-    src: deref-module.ldif
-    dest: /etc/ldap/changes/deref-module.ldif
-
-- name: Load password policy module into the OLC database
-  tags: ldap
-  when: deref_module.changed
-  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/deref-module.ldif
 
 - name: Copy the password policy schema into the changes directory
   tags: ldap
@@ -187,12 +187,12 @@
     objectClass:
       - organizationalUnit
       - top
-    state: present
     attributes:
       ou: pwpolicies
+    state: present
 
 - name: Create the default password policy
-  tags: ldap
+  tags: ldap2
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ ldap.admin.password }}'
@@ -205,15 +205,15 @@
       cn: default
       sn: default
       pwdMaxAge: '{{ passwords.max_age }}'
-      pwdExpireWarning: '{{ passwords.expire_warning }}'
       pwdInHistory: 0
       pwdCheckQuality: 0
-      pwdMaxFailure: '{{ passwords.max_failure }}'
       pwdLockoutDuration: 0
       pwdGraceAuthNLimit: 0
       pwdFailureCountInterval: 300
       pwdMinLength: '{{ passwords.min_length }}'
       pwdAttribute: userPassword
+      pwdMaxFailure: '{{ passwords.max_failure }}'
+      pwdExpireWarning: '{{ passwords.expire_warning }}'
 
 # Users and groups creation
 - name: Make sure we have a parent entry for groups
