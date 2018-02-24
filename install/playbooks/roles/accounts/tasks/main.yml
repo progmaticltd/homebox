@@ -39,12 +39,6 @@
     - question: slapd/password_mismatch
       value: false
       type: boolean
-    # - question: slapd/internal/adminpw
-    #   value: '{{ ldap.admin.password }}'
-    #   type: password
-    # - question: slapd/internal/generated_adminpw
-    #   value: '{{ ldap.admin.password }}'
-    #   type: password
   loop_control:
     loop_var: conf
 
