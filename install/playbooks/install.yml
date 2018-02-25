@@ -16,7 +16,7 @@
     - certificates
     - accounts
 
-# Add antispam filtering via rspad
+# Add antispam filtering via rspamd
 - hosts: homebox
   vars_files:
     - variables/common.yml

@@ -1,6 +1,17 @@
 
 - name: Restart dovecot
   tags: dovecot
+  notify: Compile global sieve scripts
   service:
     name: dovecot
     state: restarted
+
+- name: Compile global sieve scripts
+  tags: dovecot
+  command: '/usr/bin/sievec /etc/dovecot/sieve/{{ file }}'
+  with_items:
+    - report-spam.sieve
+    - report-ham.sieve
+  loop_control:
+    loop_var: file
+

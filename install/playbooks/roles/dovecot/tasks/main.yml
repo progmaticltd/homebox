@@ -83,19 +83,11 @@
   loop_control:
     loop_var: line
 
-# Build home folders hierarchy
-
-
-# We are using ACL here. but this is a temporary option
-# until the implementation of maildir in a dedicated directory
-- name: Allow email users to write in /var/mail
+- name: Create the global sieve directory
   tags: dovecot
-  acl:
-    path: /var/mail
-    entity: mail_users
-    etype: group
-    permissions: wx
-    state: present
+  file:
+    path: /etc/dovecot/sieve
+    state: directory
 
 - name: Activate dovecot authentication
   tags: dovecot
@@ -109,7 +101,27 @@
     - name: 15-lda.conf
     - name: 15-mailboxes.conf
     - name: 20-managesieve.conf
+    - name: 20-imap.conf
+    - name: 20-lmtp.conf
     - name: 90-sieve.conf
+    - name: 90-plugin.conf
+    - name: report-spam.sieve
+      dir: /etc/dovecot/sieve
+    - name: report-ham.sieve
+      dir: /etc/dovecot/sieve
+  loop_control:
+    loop_var: file
+
+- name: Copy spam/ham learning scripts
+  tags: dovecot
+  notify: Restart dovecot
+  template:
+    src: '{{ file }}'
+    dest: '/etc/dovecot/sieve/{{ file }}'
+    mode: 0755
+  with_items:
+    - learn-spam.sh
+    - learn-ham.sh
   loop_control:
     loop_var: file
 

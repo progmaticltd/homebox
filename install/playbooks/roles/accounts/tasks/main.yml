@@ -222,7 +222,7 @@
 # Remove all groups created before
 - name: Remove old groups if presents
   tags: ldap
-  when: clean == True
+  when: 'clean | default(False) == True'
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw:  '{{ ldap.admin.password }}'
@@ -261,7 +261,7 @@
 
 - name: Remove previous users
   tags: ldap
-  when: clean == True
+  when: 'clean | default(False) == True'
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw:  '{{ ldap.admin.password }}'
