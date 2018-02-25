@@ -22,6 +22,7 @@ webmail:
     - new_user_identity
     - managesieve
     - contextmenu
+    - keyboard-shortcuts
 
 # Available plugins:
 # - new_user_dialog

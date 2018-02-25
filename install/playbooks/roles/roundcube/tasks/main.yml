@@ -116,6 +116,22 @@
     dest: '/etc/nginx/sites-enabled/roundcube.conf'
     state: link
 
+# There is bugs in the name of the symbolic links on Debian
+# https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=roundcube-plugins-extra;dist=unstable 
+- name: Make sure the plugins are correctly named
+  tags: roundcube
+  notify: Restart nginx
+  command: mv '/var/lib/roundcube/plugins/{{ folder.old }}' '/var/lib/roundcube/plugins/{{ folder.new }}'
+  args:
+    creates: '/var/lib/roundcube/plugins/{{ folder.new }}'
+  with_items:
+    - old: keyboard-shortcuts
+      new: keyboard_shortcuts
+    - old: thunderbird-labels
+      new: thunderbird_labels
+  loop_control:
+    loop_var: folder
+
 - name: Configure the firewall for default access
   tags: security
   ufw:
@@ -131,3 +147,4 @@
       port: 443
   loop_control:
     loop_var: rule
+

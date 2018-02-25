@@ -98,11 +98,20 @@
     state: present
 
 - name: Activate dovecot authentication
-  tags: dovecot
+  tags: dovecot2
   notify: Restart dovecot
   template:
-    src: 10-master.conf
-    dest: /etc/dovecot/conf.d/10-master.conf
+    src: '{{ file.name }}'
+    dest: '{{ file.dir | default("/etc/dovecot/conf.d") }}/{{ file.name }}'
+  with_items:
+    - name: 10-master.conf
+    - name: 10-mail.conf
+    - name: 15-lda.conf
+    - name: 15-mailboxes.conf
+    - name: 20-managesieve.conf
+    - name: 90-sieve.conf
+  loop_control:
+    loop_var: file
 
 - name: Configure the firewall for default access
   tags: security

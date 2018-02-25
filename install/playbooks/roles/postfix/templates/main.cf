@@ -56,7 +56,7 @@ mydestination = $myhostname, {{ network.domain }}, localhost.{{ network.domain }
 relayhost =
 
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
-mailbox_command = procmail -a "$EXTENSION"
+mailbox_command = /usr/lib/dovecot/dovecot-lda -f "$SENDER" -a "$RECIPIENT"
 mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
@@ -67,3 +67,9 @@ milter_default_action = accept
 milter_protocol = 6
 smtpd_milters = inet:localhost:8891
 non_smtpd_milters = inet:localhost:8891
+
+# Send messages encrypted
+smtpd_tls_security_level = may
+smtp_tls_security_level = may
+smtp_tls_loglevel = 1
+smtpd_tls_loglevel = 1
