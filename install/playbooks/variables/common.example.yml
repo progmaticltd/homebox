@@ -75,3 +75,19 @@ firewall:
 # Automatically install security updates?x
 auto_update:
   security: true
+
+
+###############################################################################
+# Antispam features
+rspamd:
+  proxy:
+    port: 11332
+  normal:
+    port: 11333
+  controller:
+    port: 11334
+      
+antispam:
+  milter:
+    name: rspamd
+    port: '{{ rspamd.proxy.port }}'

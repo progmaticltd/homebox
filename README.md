@@ -142,6 +142,7 @@ The script is actually doing following:
 - Create a password policy, and activate password encryption overlays in the LDAP server.
 - Create the user and group accounts in the directory.
 - Integrate the LDAP accounts into the system using pam_ldap and nslcd (optional).
+- Install and configure an Antispam server ([rspamd](https://rspamd.com/))
 - Install Postfix mail transfer agent, with a dedicted SSL certificate.
 - Create a DKIM key, and publish the associated DNS record.
 - Update the SPF records with your external IP address.

@@ -1,0 +1,62 @@
+---
+
+- name: Add rspamd GPG key
+  tags: rspamd
+  apt_key:
+    url: https://rspamd.com/apt-stable/gpg.key
+    state: present
+
+- name: Add rspamd repository
+  tags: rspamd
+  apt_repository:
+    repo: deb http://rspamd.com/apt-stable/ stretch main
+    state: present
+    filename: 'rspamd'
+
+- name: Install rspamd packages
+  tags: rspamd
+  apt:
+    name: "{{ pkg }}"
+    state: installed
+  with_items:
+    - redis-server
+    - rspamd
+  loop_control:
+    loop_var: pkg
+
+- name: Generate a random password for rspamd
+  tags: rspamd
+  set_fact:
+    rspamd_password: '{{ lookup("password", "/tmp/rspamd.pwd length=16 chars=ascii_letters,digits") }}'
+
+- name: Set password for the rspamd account
+  register: rspamd_password_fact
+  tags: rspamd
+  command: 'rspamadm pw -p "{{ rspamd_password }}"'
+
+- name: display password
+  tags: rspamd
+  set_fact:
+    rspamd_password: rspamd_password_fact.stdout
+
+- name: Create some configuration files
+  tags: rspamd
+  notify: Restart rspamd
+  template:
+    src: '{{ file }}'
+    dest: '/etc/rspamd/local.d/{{ file }}'
+  with_items:
+    - classifier-bayes.conf
+    - worker-controller.inc
+    - worker-normal.inc
+    - worker-proxy.inc
+    - milter_headers.conf
+    - replies.conf
+    - surbl.conf
+    - url_reputation.conf
+    - url_tags.conf
+    - phishing.conf
+    - redis.conf
+  loop_control:
+    loop_var: file
+    

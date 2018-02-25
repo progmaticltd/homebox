@@ -80,7 +80,7 @@
   with_items:
     - 'KeyTable file:/etc/postfix/dkim/keytable'
     - 'SigningTable file:/etc/postfix/dkim/signingtable'
-    - 'Socket inet:8891@localhost'
+    - 'Socket inet:{{ dkim.milter.port }}@localhost'
   loop_control:
     loop_var: line
 
@@ -92,7 +92,7 @@
     line: '{{ line }}'
     state: present
   with_items:
-    - 'SOCKET="inet:8891@localhost"'
+    - 'SOCKET="inet:{{ dkim.milter.port }}@localhost"'
   loop_control:
     loop_var: line
 

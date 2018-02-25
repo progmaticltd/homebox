@@ -36,7 +36,6 @@ smtpd_sasl_type = dovecot
 smtpd_sasl_path = private/auth
 broken_sasl_auth_clients = yes
 smtpd_sasl_security_options = noanonymous
-smptd_sasl_tls_security_options = noanonymous
 
 # See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for
 # information on enabling SSL in the smtp client.
@@ -62,11 +61,12 @@ recipient_delimiter = +
 inet_interfaces = all
 inet_protocols = all
 
-# DKIM mails signing
+# DKIM mails signing / rspamd mail filtering
 milter_default_action = accept
 milter_protocol = 6
-smtpd_milters = inet:localhost:8891
-non_smtpd_milters = inet:localhost:8891
+smtpd_milters = inet:localhost:{{ dkim.milter.port }} inet:localhost:{{ antispam.milter.port }}
+non_smtpd_milters = inet:localhost:{{ dkim.milter.port }} inet:localhost:{{ antispam.milter.port }}
+milter_mail_macros =  i {mail_addr} {client_addr} {client_name} {auth_authen}
 
 # Send messages encrypted
 smtpd_tls_security_level = may

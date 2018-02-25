@@ -11,3 +11,5 @@ dkim:
   key_size: 1024
   selector: main
   note: main DKIM key for the domain {{ network.domain }}
+  milter:
+    port: 8891

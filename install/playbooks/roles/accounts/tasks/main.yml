@@ -186,7 +186,7 @@
     state: present
 
 - name: Create the default password policy
-  tags: ldap2
+  tags: ldap
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ ldap.admin.password }}'
