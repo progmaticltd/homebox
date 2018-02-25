@@ -148,7 +148,10 @@ The script is actually doing following:
 - Install Dovecot mail server, with a dedicated SSL certificate for IMAP.
 - Install PostgreSQL for the database.
 - Install Roundcube with nginx, and create a dedicated SSL certificate for the webmail.
-- Configure some plugins for roundcube, like password changing and automatic new user identity.
+- Configure some plugins for roundcube:
+  - password change interface
+  - automatic new user identity
+  - Sieve filter access
 
 The certificates are generated using LetsEncrypt service, with one for each service. Examples for example.com domain:
 
