@@ -30,8 +30,8 @@
     rspamd_password: '{{ lookup("password", "/tmp/rspamd.pwd length=16 chars=ascii_letters,digits") }}'
 
 - name: Set password for the rspamd account
-  register: rspamd_password_fact
   tags: rspamd
+  register: rspamd_password_fact
   command: 'rspamadm pw -p "{{ rspamd_password }}"'
 
 - name: display password
