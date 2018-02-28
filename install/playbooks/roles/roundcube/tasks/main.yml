@@ -12,6 +12,7 @@
     - roundcube-plugins
     - roundcube-plugins-extra
     - roundcube
+    - imapproxy
     - php-fpm
     - php-ldap
     - php-net-sieve
@@ -59,6 +60,16 @@
   template:
     src: webmail-site.tpl
     dest: /etc/nginx/sites-available/roundcube.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Configure the IMAP proxy
+  tags: roundcube
+  notify: Restart IMAP proxy
+  template:
+    src: imapproxy.conf
+    dest: /etc/imapproxy.conf
     owner: root
     group: root
     mode: 0644

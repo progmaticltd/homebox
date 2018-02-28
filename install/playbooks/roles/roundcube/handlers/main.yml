@@ -3,3 +3,8 @@
   service:
     name: nginx
     state: restarted
+
+- name: Restart IMAP proxy
+  service:
+    name: imapproxy
+    state: restarted

@@ -33,7 +33,7 @@ include_once("/etc/roundcube/debian-db-roundcube.php");
 // %s - domain name after the '@' from e-mail address provided at login screen
 // For example %n = mail.domain.tld, %t = domain.tld
 {% if system.ssl != False %}
-$config['default_host'] = 'tls://{{ network.imap }}';
+$config['default_host'] = 'tls://{{ network.imap }}:1143/';
 {% else %}
 $config['default_host'] = 'imap://{{ network.imap }}/';
 {% endif %}
