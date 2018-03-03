@@ -1,0 +1,9 @@
+---
+
+
+- name: Restart the automatic upgrades service
+  tags: security
+  service:
+    name: unattended-upgrades
+    state: restarted
+

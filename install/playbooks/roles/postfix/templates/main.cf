@@ -37,17 +37,11 @@ smtpd_sasl_path = private/auth
 broken_sasl_auth_clients = yes
 smtpd_sasl_security_options = noanonymous
 
-# See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for
-# information on enabling SSL in the smtp client.
-smtpd_relay_restrictions =
-    permit_mynetworks
-    permit_sasl_authenticated
-    defer_unauth_destination
-
 myhostname = {{ network.hostname }}
 
 alias_maps = hash:/etc/aliases, ldap:/etc/postfix/ldap-aliases.cf
 alias_database = hash:/etc/aliases
+mailbox_transport = lmtp:unix:private/dovecot-lmtp
 
 myorigin = /etc/mailname
 
@@ -68,9 +62,21 @@ smtpd_milters = inet:localhost:{{ dkim.milter.port }} inet:localhost:{{ antispam
 non_smtpd_milters = inet:localhost:{{ dkim.milter.port }} inet:localhost:{{ antispam.milter.port }}
 milter_mail_macros =  i {mail_addr} {client_addr} {client_name} {auth_authen}
 
-# Recipient restrictions: Quotas
+smtpd_relay_restrictions =
+    permit_mynetworks
+    permit_sasl_authenticated
+    defer_unauth_destination
+
+# Recipient restrictions: SPF policies, quotas
 smtpd_recipient_restrictions =
-    check_policy_service inet:mailstore.example.com:{{ quota.listener.port }}
+    permit_mynetworks
+    permit_sasl_authenticated
+    reject_unauth_destination
+    check_policy_service inet:localhost:{{ quota.listener.port }}
+    check_policy_service unix:private/policy-spf
+    
+# SPF policies
+policy-spf_time_limit = 3600s
 
 # Send messages encrypted
 smtpd_tls_security_level = may

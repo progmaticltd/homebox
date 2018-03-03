@@ -1,16 +1,15 @@
 ---
 
 - name: Configure the automatic security updates
-  register: unattended_upgrades
   tags: security
+  notify: Restart the automatic upgrades service
   template:
     src: 50unattended-upgrades
     dest: /etc/apt/apt.conf.d/50unattended-upgrades
 
-- name: Restart the automatic upgrades service if necessary
-  when: unattended_upgrades.changed
+- name: Install fail2ban
   tags: security
-  service:
-    name: unattended-upgrades
-    state: restarted
-
+  apt:
+    name: fail2ban
+    state: latest
+  

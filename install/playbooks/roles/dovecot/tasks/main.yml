@@ -101,6 +101,7 @@
     src: 'conf.d/{{ file }}'
     dest: '/etc/dovecot/conf.d/{{ file }}'
   with_items:
+    - 10-auth.conf
     - 10-master.conf
     - 10-mail.conf
     - 15-lda.conf

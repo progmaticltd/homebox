@@ -88,6 +88,6 @@ antispam:
 
 # User storage quotas for email
 quota:
-  per_user: 10G
+  per_user: 1G
   listener:
     port: 11335

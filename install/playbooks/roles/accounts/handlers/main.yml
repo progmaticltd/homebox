@@ -1,0 +1,10 @@
+
+- name: Restart the nslcd service
+  service:
+    name: nslcd
+    state: restarted
+
+- name: Restart the ldap service
+  service:
+    name: slapd
+    state: restarted

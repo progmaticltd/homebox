@@ -13,6 +13,7 @@
     - postfix-pcre
     - postfix-ldap
     - sasl2-bin
+    - postfix-policyd-spf-python
   loop_control:
     loop_var: pkg
 
@@ -64,6 +65,7 @@
     src: "{{ file }}"
     dest: "/etc/postfix/{{ file }}"
   with_items:
+    - master.cf
     - main.cf
     - ldap-aliases.cf
   loop_control:

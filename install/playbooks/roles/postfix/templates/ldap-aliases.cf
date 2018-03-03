@@ -1,5 +1,10 @@
 
 # Basic LDAP settings for postfix
-server_host = {{ ldap.hostname }}
-search_base = {{ ldap.organization.base }}
+server_host = ldap://{{ ldap.hostname }}/
+start_tls = yes
 
+search_base = {{ ldap.organization.base }}
+search_scope = sub
+
+query_filter = mail=%s
+result_attribute = uid 

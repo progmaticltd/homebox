@@ -17,6 +17,7 @@ config/hosts.yml
 
 # Ignore editors files
 .vscode
+README.html
 
 # Ignore the authorized_keys file when building the ISO image
 preseed/misc/root/.ssh/authorized_key
