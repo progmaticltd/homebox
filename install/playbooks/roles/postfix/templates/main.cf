@@ -68,6 +68,10 @@ smtpd_milters = inet:localhost:{{ dkim.milter.port }} inet:localhost:{{ antispam
 non_smtpd_milters = inet:localhost:{{ dkim.milter.port }} inet:localhost:{{ antispam.milter.port }}
 milter_mail_macros =  i {mail_addr} {client_addr} {client_name} {auth_authen}
 
+# Recipient restrictions: Quotas
+smtpd_recipient_restrictions =
+    check_policy_service inet:mailstore.example.com:{{ quota.listener.port }}
+
 # Send messages encrypted
 smtpd_tls_security_level = may
 smtp_tls_security_level = may

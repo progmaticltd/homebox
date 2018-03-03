@@ -66,22 +66,53 @@
   loop_control:
     loop_var: line
 
-- name: Activate LDAP configuration
+# - name: Activate LDAP configuration
+#   tags: dovecot
+#   notify: Restart dovecot
+#   replace:
+#     path: /etc/dovecot/dovecot-ldap.conf.ext
+#     regexp: '{{ line.regexp }}'
+#     replace: '{{ line.replace }}'
+#   with_items:
+#    - regexp: '^#?hosts =.*'
+#      replace: 'hosts = 127.0.0.1:389'
+#    - regexp: '^#?base =.*'
+#      replace: 'base = {{ ldap.organization.base }}'
+#    - regexp: '^#?scope = .*'
+#      replace: 'scope = subtree'
+#   loop_control:
+#     loop_var: line
+
+- name: Create dovecot global configuration files
   tags: dovecot
   notify: Restart dovecot
-  replace:
-    path: /etc/dovecot/dovecot-ldap.conf.ext
-    regexp: '{{ line.regexp }}'
-    replace: '{{ line.replace }}'
+  template:
+    src: '{{ file }}'
+    dest: '/etc/dovecot/{{ file }}'
   with_items:
-   - regexp: '^#?hosts =.*'
-     replace: 'hosts = 127.0.0.1:389'
-   - regexp: '^#?base =.*'
-     replace: 'base = {{ ldap.organization.base }}'
-   - regexp: '^#?scope = .*'
-     replace: 'scope = subtree'
+    - dovecot-ldap.conf.ext
   loop_control:
-    loop_var: line
+    loop_var: file
+
+- name: Create dovecot conf.d configuration files
+  tags: dovecot
+  notify: Restart dovecot
+  template:
+    src: 'conf.d/{{ file }}'
+    dest: '/etc/dovecot/conf.d/{{ file }}'
+  with_items:
+    - 10-master.conf
+    - 10-mail.conf
+    - 15-lda.conf
+    - 15-mailboxes.conf
+    - 20-managesieve.conf
+    - 20-imap.conf
+    - 20-lmtp.conf
+    - 90-sieve.conf
+    - 90-plugin.conf
+    - 90-quota.conf
+  loop_control:
+    loop_var: file
 
 - name: Create the global sieve directory
   tags: dovecot
@@ -89,39 +120,20 @@
     path: /etc/dovecot/sieve
     state: directory
 
-- name: Activate dovecot authentication
+- name: Copy spam/ham learn sieve configuration
   tags: dovecot
   notify: Restart dovecot
   template:
-    src: '{{ file.name }}'
-    dest: '{{ file.dir | default("/etc/dovecot/conf.d") }}/{{ file.name }}'
+    src: 'sieve/{{ file.name }}'
+    dest: '/etc/dovecot/sieve/{{ file.name }}'
+    mode: '{{ file.mode | default(644) }}'
   with_items:
-    - name: 10-master.conf
-    - name: 10-mail.conf
-    - name: 15-lda.conf
-    - name: 15-mailboxes.conf
-    - name: 20-managesieve.conf
-    - name: 20-imap.conf
-    - name: 20-lmtp.conf
-    - name: 90-sieve.conf
-    - name: 90-plugin.conf
     - name: report-spam.sieve
-      dir: /etc/dovecot/sieve
     - name: report-ham.sieve
-      dir: /etc/dovecot/sieve
-  loop_control:
-    loop_var: file
-
-- name: Copy spam/ham learning scripts
-  tags: dovecot
-  notify: Restart dovecot
-  template:
-    src: '{{ file }}'
-    dest: '/etc/dovecot/sieve/{{ file }}'
-    mode: 0755
-  with_items:
-    - learn-spam.sh
-    - learn-ham.sh
+    - name: learn-spam.sh
+      mode: 755
+    - name: learn-ham.sh
+      mode: 755
   loop_control:
     loop_var: file
 

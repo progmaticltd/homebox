@@ -7,10 +7,10 @@ system:
 
 # Network related
 network:
+  domain: example.com
   smtp: smtp.example.com
   imap: imap.example.com
   hostname: mail.example.com
-  domain: example.com
 
 # Email related
 mail:
@@ -44,18 +44,12 @@ options:
   local_admin: true
 
 
-# Email related
-mail:
-  admin:
-    name: "John Doe"
-    email: jdoe@example.com
-    user: jdoe
-
 # For automatic DNS update
+# Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
 dns:
   gandi:
     handle: JD123-GANDI
-    key: zaNGbUVIvi1KbYb6PPMdiQLh    # Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
+    key: zaNGbUVIvi1KbYb6PPMdiQLh
 
 # Password policy:
 passwords:
@@ -91,3 +85,9 @@ antispam:
   milter:
     name: rspamd
     port: '{{ rspamd.proxy.port }}'
+
+# User storage quotas for email
+quota:
+  per_user: 10G
+  listener:
+    port: 11335
