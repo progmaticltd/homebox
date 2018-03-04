@@ -1,5 +1,6 @@
 
 - name: Restart nginx
+  notify: Restart IMAP proxy
   service:
     name: nginx
     state: restarted

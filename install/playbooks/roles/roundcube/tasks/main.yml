@@ -1,5 +1,10 @@
 ---
 
+- name: Get the passwords generated in the accounts tasks
+  tags: roundcube
+  set_fact:
+    roPasswdParams: "../../backup/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
+
 - name: Install roundcube webmail
   tags: roundcube
   apt:

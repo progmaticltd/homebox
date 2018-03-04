@@ -1,5 +1,12 @@
 ---
 
+- name: Set the parameters for passwords generators
+  tags: ldap
+  set_fact:
+    roPasswdParams: "../../backup/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
+    managerPasswdParams: "../../backup/ldap/manager.pwd length=16 chars=ascii_letters,digits"
+    adminPasswdParams: "../../backup/ldap/admin.pwd length=16 chars=ascii_letters,digits"
+
 # Pre-configure the LDAP sever before instaling
 - name: Configure the LDAP administration account
   tags: ldap
@@ -10,13 +17,13 @@
     vtype: '{{ conf.type }}'
   with_items:
     - question: slapd/password1
-      value: '{{ ldap.admin.password }}'
       type: password
+      value: '{{ lookup("password", adminPasswdParams) }}'
     - question: slapd/password2
-      value: '{{ ldap.admin.password }}'
       type: password
+      value: '{{ lookup("password", adminPasswdParams) }}'
     - question: slapd/purge_database
-      value: true
+      value: false
       type: boolean
     - question: slapd/invalid_config
       value: false
@@ -180,7 +187,7 @@
   tags: ldap
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ ldap.admin.password }}'
+    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
     dn: 'ou=pwpolicies,{{ ldap.organization.base }}'
     objectClass:
       - organizationalUnit
@@ -193,7 +200,7 @@
   tags: ldap
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ ldap.admin.password }}'
+    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
     dn: cn=default,ou=pwpolicies,{{ ldap.organization.base }}
     objectClass:
       - pwdPolicy
@@ -218,7 +225,7 @@
   tags: ldap
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ ldap.admin.password }}'
+    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
     dn: '{{ ldap.groups.dn }}'
     objectClass: organizationalUnit
     state: present
@@ -229,7 +236,7 @@
   when: 'clean | default(False) == True'
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw:  '{{ ldap.admin.password }}'
+    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
     dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
     state: absent
   with_items:
@@ -241,7 +248,7 @@
   tags: ldap
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw:  '{{ ldap.admin.password }}'
+    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
     dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
     attributes:
       cn:  '{{ group.description }}'
@@ -258,7 +265,7 @@
   tags: ldap
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ ldap.admin.password }}'
+    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
     dn: '{{ ldap.users.dn }}'
     objectClass: organizationalUnit
     state: present
@@ -268,7 +275,7 @@
   when: 'clean | default(False) == True'
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw:  '{{ ldap.admin.password }}'
+    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
     dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
     state: absent
   with_items:
@@ -280,7 +287,7 @@
   tags: ldap
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw:  '{{ ldap.admin.password }}'
+    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
     dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
     state: present
     attributes:
@@ -309,6 +316,40 @@
     - '{{ users }}'
   loop_control:
     loop_var: user
+
+- name: Create the manager account
+  tags: ldap
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    dn: 'cn=manager account,{{ ldap.users.dn }}'
+    state: present
+    attributes:
+      uid: '{{ ldap.manager.uid }}'
+      userPassword: '{{ lookup("password", managerPasswdParams) }}'
+      givenName: Manager
+      sn: Account
+    objectClass:
+      - top
+      - person
+      - inetOrgPerson
+
+- name: Create a readonly account
+  tags: ldap
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    dn: 'cn=readonly account,{{ ldap.users.dn }}'
+    state: present
+    attributes:
+      uid: 'readonly'
+      userPassword: '{{ lookup("password", roPasswdParams) }}'
+      givenName: Readonly
+      sn: Account
+    objectClass:
+      - top
+      - person
+      - inetOrgPerson
 
 - name: Configure libnss to use passwords and groups
   tags: ldap
@@ -367,3 +408,18 @@
   lineinfile:
     dest: /etc/pam.d/common-account
     line: 'session    required    pam_mkhomedir.so skel=/etc/skel/ umask=0022'
+
+
+
+- name: Copy the access policies on the server
+  tags: ldap2
+  register: access_policies
+  template:
+    src: access-policies.ldif
+    dest: /etc/ldap/changes/access-policies.ldif
+
+- name: Load access policies
+  tags: ldap2
+  when: access_policies.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/access-policies.ldif
+

@@ -40,7 +40,7 @@ $config['password_force_new_user'] = false;
 // Possible options: des-crypt, ext-des-crypt, md5-crypt, blowfish-crypt,
 // sha256-crypt, sha512-crypt, md5, sha, smd5, ssha, samba, ad, dovecot, clear.
 // For details see password::hash_password() method.
-// The LDAP server is already configured to encrypt passwords, send them in clear text
+// If the LDAP server is already configured to encrypt passwords, send them in clear text
 $config['password_algorithm'] = 'ssha';
 
 // Password prefix (e.g. {CRYPT}, {SHA}) for passwords generated
@@ -83,17 +83,17 @@ $config['password_ldap_basedn'] = '{{ ldap.organization.base }}';
 // 'user': use user credential (recommanded, require password_confirm_current=true)
 // 'admin': use admin credential (this mode require password_ldap_adminDN and password_ldap_adminPW)
 // Default: 'user'
-$config['password_ldap_method'] = 'admin';
+$config['password_ldap_method'] = 'user';
 
 // LDAP Admin DN
 // Used only in admin connection mode
 // Default: null
-$config['password_ldap_adminDN'] = '{{ ldap.admin.dn }}';
+$config['password_ldap_adminDN'] = null;
 
 // LDAP Admin Password
 // Used only in admin connection mode
 // Default: null
-$config['password_ldap_adminPW'] = '{{ ldap.admin.password }}';
+$config['password_ldap_adminPW'] = null;
 
 // LDAP user DN mask
 // The user's DN is mandatory and as we only have his login,
@@ -103,7 +103,7 @@ $config['password_ldap_adminPW'] = '{{ ldap.admin.password }}';
 // '%domain' will be replaced by the current roundcube user's domain part
 // '%dc' will be replaced by domain name hierarchal string e.g. "dc=test,dc=domain,dc=com"
 // Exemple: 'uid=%login,ou=people,dc=exemple,dc=com'
-// $config['password_ldap_userDN_mask'] = 'uid=%login,{{ ldap.users.dn }}';
+// $config['password_ldap_userDN_mask'] = ;
 
 // LDAP search DN
 // The DN roundcube should bind with to find out user's DN
@@ -114,7 +114,7 @@ $config['password_ldap_adminPW'] = '{{ ldap.admin.password }}';
 // users login to find his DN instead. A common reason might be that
 // your users are placed under different ou's like engineering or
 // sales which cannot be derived from their login only.
-$config['password_ldap_searchDN'] = '{{ ldap.admin.dn }}';
+$config['password_ldap_searchDN'] = 'cn=readonly account,{{ ldap.users.dn }}';
 
 // LDAP search password
 // If password_ldap_searchDN is set, the password to use for
@@ -124,7 +124,7 @@ $config['password_ldap_searchDN'] = '{{ ldap.admin.dn }}';
 // is only accesible to roundcube and don't forget to restrict roundcube's access to
 // your directory as much as possible using ACLs. Should this password be compromised
 // you want to minimize the damage.
-$config['password_ldap_searchPW'] = '{{ ldap.admin.password }}';
+$config['password_ldap_searchPW'] = '{{ lookup("password", roPasswdParams) }}';
 
 // LDAP search base
 // If password_ldap_searchDN is set, the base to search in using the filter below.
@@ -142,7 +142,6 @@ $config['password_ldap_search_base'] = '{{ ldap.users.dn }}';
 // '%dc' will be replaced by domain name hierarchal string e.g. "dc=test,dc=domain,dc=com"
 // Example: '(uid=%login)'
 // Example: '(&(objectClass=posixAccount)(uid=%login))'
-// $config['password_ldap_search_filter'] = '(&(objectClass=posixAccount)(uid=%login))';
 $config['password_ldap_search_filter'] = '(uid=%login)';
 
 // The LDAP server is already configured to encrypt passwords, send them in clear text
@@ -163,7 +162,7 @@ $config['password_ldap_pwattr'] = 'userPassword';
 // Some places use an attribute to store the date of the last password change
 // The date is meassured in "days since epoch" (an integer value)
 // Whenever the password is changed, the attribute will be updated if set (e.g. shadowLastChange)
-$config['password_ldap_lchattr'] = '';
+$config['password_ldap_lchattr'] = 'pwdChangedTime';
 
 // LDAP Samba password attribute, e.g. sambaNTPassword
 // Name of the LDAP's Samba attribute used for storing user password

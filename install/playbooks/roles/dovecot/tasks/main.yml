@@ -1,5 +1,10 @@
 ---
 
+- name: Get the passwords generated in the accounts tasks
+  tags: dovecot
+  set_fact:
+    roPasswdParams: "../../backup/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
+
 # Install dovecot packages
 - name: Install dovecot packages
   tags: dovecot
@@ -21,7 +26,7 @@
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
 - name: Allow slapd and nslcd daemons to access the certificate directories
-  tags: ldap,ssl
+  tags: dovecot,ssl
   notify: Restart dovecot
   when: system.ssl == 'letsencrypt'
   vars:
@@ -66,29 +71,13 @@
   loop_control:
     loop_var: line
 
-# - name: Activate LDAP configuration
-#   tags: dovecot
-#   notify: Restart dovecot
-#   replace:
-#     path: /etc/dovecot/dovecot-ldap.conf.ext
-#     regexp: '{{ line.regexp }}'
-#     replace: '{{ line.replace }}'
-#   with_items:
-#    - regexp: '^#?hosts =.*'
-#      replace: 'hosts = 127.0.0.1:389'
-#    - regexp: '^#?base =.*'
-#      replace: 'base = {{ ldap.organization.base }}'
-#    - regexp: '^#?scope = .*'
-#      replace: 'scope = subtree'
-#   loop_control:
-#     loop_var: line
-
 - name: Create dovecot global configuration files
   tags: dovecot
   notify: Restart dovecot
   template:
     src: '{{ file }}'
     dest: '/etc/dovecot/{{ file }}'
+    mode: 0600
   with_items:
     - dovecot-ldap.conf.ext
   loop_control:
