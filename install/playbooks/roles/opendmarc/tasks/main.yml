@@ -1,10 +1,14 @@
 ---
 
-- name: Install opendmarc package
+- name: Install opendmarc related packages
   tags: opendmarc
   apt:
-    name: opendmarc
+    name: '{{ pkg }}'
     state: latest
+  with_items:
+    - opendmarc
+  loop_control:
+    loop_var: pkg
 
 - name: Comment all active socket for DMARC
   tags: opendmarc
@@ -18,3 +22,4 @@
   lineinfile:
     path: /etc/default/opendmarc
     line: 'SOCKET=inet:{{ dmarc.milter.port }}@localhost'
+

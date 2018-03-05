@@ -7,7 +7,7 @@ and don't want to manage the full installation process manually, from scratch.
 
 It is made to be unobtrusive, standard compliant, secure, robust, extensible and automatic
 
-- Unobtrusive: Most of the packages are coming from the official Debian repository. The others are coming from a maintained repository. *No git clone* here...Once installed, use it normally like a Debian.
+- Unobtrusive: Most of the packages are coming from the official Debian repository. The others are coming from a maintained repository. *No git clone* here...Once installed, use ad update it normally like a Debian, with apt.
 - Standard compliant: For instance, the system not only generate the DKIM records, it publish them for you on Gandi DNS server!
 - Secure: The LDAP server is setup to store passwords encrypted. Password policies and default password policy are setup as well. The distribution can be updated with normal apt update/upgrade.
 - Robust: the DNS records update script is very safe, and you can run it in test mode. In this mode, the new zone version will be created, but not activated. If there is no change to your DNS record, the new version will be deleted.
@@ -16,18 +16,21 @@ It is made to be unobtrusive, standard compliant, secure, robust, extensible and
 
 ## Current status
 
-| Feature                                   | Status      | Notes                                                                   |
-| ----------------------------------------- | ----------- | ----------------------------------------------------------------------- |
-| LDAP users database                       | Done        | SSL & TLS, password policies, system users, …                           |
-| SSL Certificates creation and publication | Done        | Using letsencrypt, publication on Gandi                                 |
-| DKIM keys generation and publication      | Done        | Publication on Gandi                                                    |
-| SPF records generation and publication    | Done        | Publication on Gandi                                                    |
-| DMARC management                          | In progress | Publication on Gandi                                                    |
-| Postfix configuration                     | Done        | LDAP lookups, SSL & TLS, DKIM, Antispam                                 |
-| Dovecot configuration                     | Done        | Spam and ham autolearn, sieve filtering and auto answers, quotas, …     |
-| Roundcube webmail                         | Done        | https, sieve filters access, password change, automatic identity, …     |
-| AppArmor                                  | In progress |                                                                         |
-
+| Feature                                                                                                          | Status      | 
+| ---------------------------------------------------------------------------------------------------------------- | ----------- | 
+| LDAP users database, SSL & TLS certificates, password policies, integration with PAM                             | Done        | 
+| SSL Certificates creation using letsencrypt, backup and publication on Gandi                                     | Done        | 
+| DKIM keys generation and backup, publication on Gandi                                                            | Done        | 
+| SPF records generation and publication on Gandi                                                                  | Done        | 
+| DMARC record generation and publication on Gandi (report generation planned)                                     | Done        | 
+| Generation and publication of automatic Thunderbird configuration (MS Outlook planned)                           | Done        | 
+| Postfix configuration and installation, with LDAP lookups, SSL & TLS, DKIM and Antispam (rspamd)                 | Done        | 
+| Dovecot configuration, IMAP, POP, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                | Done        | 
+| Roundcube webmail, https, sieve filters access, password change, automatic identity creation                     | Done        | 
+| AppArmor securisation for nginx, dovecot, postfix, etc                                                           | In progress | 
+| Automatic migration from old mail server                                                                         | Planned     | 
+| Automatic encrypted off-site backup                                                                              | Planned     | 
+| Parental filtering                                                                                               | Planned     | 
 
 ## Folders:
 - config: Ansible hosts file Configuration.
@@ -64,6 +67,8 @@ File contents
 - postfix.yml: Postfix MTA configuration
 - webmail.yml: Webmail (roundcube) configuration
 
+This process will be simplified in a future version to reduce the number of files to duplicate.
+
 ### Run the Ansible scripts to setup your email server
 The installation folder is using Ansible to setup the mail server
 For instance, inside the install folder, run the following command:
@@ -79,10 +84,11 @@ The certificates are generated using LetsEncrypt service, with one for each serv
   
 The generated certificates and DKIM keys will be automatically saved on your local computer, into the backup folder. This folder is ignored by git. If you restart the installation from scratch using a new server, these certificates and DKIM keys will be used, so you do not end up requesting more certificates or updating your DNS server more than necessary. This is particularly useful in development phase.
 
-## What do you need for production usage?
+## What do you need in production
+
 ### Basic requirements
 
-- A low consumption hardware box to plug on your router.
+- A low consumption hardware box to plug on your router, I personally use [pondesk](https://www.pondesk.com/) boxes.
 - A computer to run the Ansible scripts.
 - A static IP address from your ISP (Not mandatory, but works better)
 - Some basic newtork knowledge
@@ -109,16 +115,15 @@ __Notes:__
 - Once the script has been run, the backup folder contains your certificates and DKIM public keys. If you are rebuilding your server from scratch, the same certificates and keys will be used.
 - This is a work in progress and a project I am maintaining on my spare time. Although I am trying to be very careful, there might be some errors. In this case, just fill a bug report, or take part.
 - I am privileging stability over features. The master branch should stay stable for production.
+- There are other similar projects on internet and especially github you could check, for instance [Sovereign](https://github.com/sovereign/sovereign) which offer more features and more up to date packages, outside the Debian official repositories.
 
 __TODO__:
 
 I am planning to add / test the following features, in *almost* no particular order:
 
 - Automatic LUKS setup for the ISO image installer.
-- Automatic configuration for Outlook (Thunderbird is done)
 - Add a caldav / carddav server (Any that works with LDAP authentication)
 - Add a jabber server (Any that works with LDAP authentication)
-- DMARC: Records publication and DMARC implementation.
 - Add optional components (e.g. [Gogs](https://gogs.io/), [openvpn](https://openvpn.net/), [Syncthing](https://syncthing.net/), etc)
 - Test other mail systems, like Cyrus, Sogo, etc.
 

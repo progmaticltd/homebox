@@ -66,6 +66,7 @@ smtpd_milters =
 non_smtpd_milters =
     inet:localhost:{{ dkim.milter.port }}
     inet:localhost:{{ antispam.milter.port }}
+    inet:localhost:{{ dmarc.milter.port }}
 
 milter_mail_macros =  i {mail_addr} {client_addr} {client_name} {auth_authen}
 
