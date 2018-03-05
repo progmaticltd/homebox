@@ -251,6 +251,32 @@ class GandiDomainManager(object):
         })
         
 
+    def WriteDMARCRecord(self):
+        """Create or update TXT record for DMARC"""
+        
+        # Write the public key content
+        name = "_dmarc"
+
+        # Build the content string
+        content = "v=DMARC1;"
+        content += " p=quarantine;"
+        content += " rua=mailto:postmaster@{0};".format(self.domain_name)
+        content += " ruf=mailto:postmaster@{0};".format(self.domain_name)
+        content += " fo=0;"
+        content += " adkim=r;"
+        content += " aspf=r;"
+        content += " pct=100;"
+        content += " rf=afrf;"
+        content += " ri=86400"
+        
+        self.WriteRecord(name, {
+            'name': name,
+            'type': 'TXT',
+            'value': content,
+            'ttl': self.defaultTTL
+        })
+        
+
     # Versions management methods
     def ActivateNewVersion(self):
         """Activate the new version"""
@@ -346,11 +372,10 @@ def main(args):
         # Create the SPF records
         manager.WriteSPFRecords('@', args.spfPolicy, external_ip)
         
-        # Create the DKIM record
+        # Create the DKIM record if provided, and then DMARC record
         if dkimPublicKey != None and dkimSelector != None:
             manager.WriteDKIMRecord(dkimSelector, dkimPublicKey)
-
-        # TODO: Create DMARC records
+            manager.WriteDMARCRecord()
 
         # Roll back if the new created zone is the same as the current one
         # even in testing mode

@@ -24,6 +24,14 @@
   roles:
     - rspamd
     
+# Install and configure opendmarc
+- hosts: homebox
+  vars_files:
+    - variables/common.yml
+    - variables/postfix.yml
+  roles:
+    - opendmarc
+    
 # Install and configure postfix
 - hosts: homebox
   vars_files:

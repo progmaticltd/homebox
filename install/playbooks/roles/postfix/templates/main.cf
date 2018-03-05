@@ -58,8 +58,15 @@ inet_protocols = all
 # DKIM mails signing / rspamd mail filtering
 milter_default_action = accept
 milter_protocol = 6
-smtpd_milters = inet:localhost:{{ dkim.milter.port }} inet:localhost:{{ antispam.milter.port }}
-non_smtpd_milters = inet:localhost:{{ dkim.milter.port }} inet:localhost:{{ antispam.milter.port }}
+smtpd_milters =
+    inet:localhost:{{ dkim.milter.port }}
+    inet:localhost:{{ antispam.milter.port }}
+    inet:localhost:{{ dmarc.milter.port }}
+    
+non_smtpd_milters =
+    inet:localhost:{{ dkim.milter.port }}
+    inet:localhost:{{ antispam.milter.port }}
+
 milter_mail_macros =  i {mail_addr} {client_addr} {client_name} {auth_authen}
 
 smtpd_relay_restrictions =

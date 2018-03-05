@@ -1,0 +1,20 @@
+---
+
+- name: Install opendmarc package
+  tags: opendmarc
+  apt:
+    name: opendmarc
+    state: latest
+
+- name: Comment all active socket for DMARC
+  tags: opendmarc
+  replace:
+    path: /etc/default/opendmarc
+    regexp: '^SOCKET=(.*)'
+    replace: '#SOCKET=\1'
+
+- name: Add tcp interface on localhost
+  tags: opendmarc
+  lineinfile:
+    path: /etc/default/opendmarc
+    line: 'SOCKET=inet:{{ dmarc.milter.port }}@localhost'
