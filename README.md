@@ -30,7 +30,7 @@ It is made to be unobtrusive, standard compliant, secure, robust, extensible and
 | AppArmor securisation for nginx, dovecot, postfix, etc                                                           | In progress | 
 | Automatic migration from old mail server                                                                         | Planned     | 
 | Automatic encrypted off-site backup                                                                              | Planned     | 
-| Parental filtering                                                                                               | Planned     | 
+| Web proxy with privacy and parent filtering features                                                             | Planned     | 
 
 ## Folders:
 - config: Ansible hosts file Configuration.
@@ -119,11 +119,13 @@ __Notes:__
 
 __TODO__:
 
-I am planning to add / test the following features, in *almost* no particular order:
+I am planning to test / try / add the following features, in *almost* no particular order:
 
 - Automatic LUKS setup for the ISO image installer.
 - Add a caldav / carddav server (Any that works with LDAP authentication)
+- Tor, torrent download station, etc...
 - Add a jabber server (Any that works with LDAP authentication)
 - Add optional components (e.g. [Gogs](https://gogs.io/), [openvpn](https://openvpn.net/), [Syncthing](https://syncthing.net/), etc)
 - Test other mail systems, like Cyrus, Sogo, etc.
 
+Any ideas welcome...

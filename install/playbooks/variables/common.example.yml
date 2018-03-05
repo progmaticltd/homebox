@@ -91,3 +91,8 @@ quota:
   per_user: 1G
   listener:
     port: 11335
+
+# DMARC validation parameters
+dmarc:
+  milter:
+    port: 11336
