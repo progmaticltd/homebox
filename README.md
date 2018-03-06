@@ -5,32 +5,36 @@ A set of Ansible scripts to setup your personal mail server (and more) for your 
 This project has been created for those who simply want to host their emails - and more - at home,
 and don't want to manage the full installation process manually, from scratch.
 
+It is a set of Ansible scripts, to install a fully compliant mail server on Debian Stretch.
+
 It is made to be unobtrusive, standard compliant, secure, robust, extensible and automatic
 
-- Unobtrusive: Most of the packages are coming from the official Debian repository. The others are coming from a maintained repository. *No git clone* here...Once installed, use ad update it normally like a Debian, with apt.
-- Standard compliant: For instance, the system not only generate the DKIM records, it publish them for you on Gandi DNS server!
-- Secure: The LDAP server is setup to store passwords encrypted. Password policies and default password policy are setup as well. The distribution can be updated with normal apt update/upgrade.
-- Robust: the DNS records update script is very safe, and you can run it in test mode. In this mode, the new zone version will be created, but not activated. If there is no change to your DNS record, the new version will be deleted.
-- Extensible: By using LDAP for user authentications, you can use other software, like nextcloud, gitlab or even an OpenVPN server, without having to remember more passwords.
+- Unobtrusive: Most of the packages are coming from the official Debian repository. The final result is what you could have installed manually.
+- Standard compliant: The system generates and publish automaticall your DKIM, SPF and DMARC records. It is actually using the excellent [Gandi](https://gandi.net) DNS provider!
+- Secure: I am focusing on security, and take packages from official and maintained repositories. No *git clone* or manual download here, everything with apt.
+- Robust: the DNS records update script is very safe. You can run it in test mode, with the new zone version created, but not activated, with automatic rollback.
+- Extensible: By using LDAP for user authentications, you can use other software, like nextcloud, gitlab or even an OpenVPN server, with one central authentication system.
 - Automatic: Most tasks are automated. Even the external IP address detection and DNS update process. In theory, you could use this with a dynamic IP address.
 
 ## Current status
 
-| Feature                                                                                                          | Status      | 
-| ---------------------------------------------------------------------------------------------------------------- | ----------- | 
-| LDAP users database, SSL & TLS certificates, password policies, integration with PAM                             | Done        | 
-| SSL Certificates creation using letsencrypt, backup and publication on Gandi                                     | Done        | 
-| DKIM keys generation and backup, publication on Gandi                                                            | Done        | 
-| SPF records generation and publication on Gandi                                                                  | Done        | 
-| DMARC record generation and publication on Gandi (report generation planned)                                     | Done        | 
-| Generation and publication of automatic Thunderbird configuration (MS Outlook planned)                           | Done        | 
-| Postfix configuration and installation, with LDAP lookups, SSL & TLS, DKIM and Antispam (rspamd)                 | Done        | 
-| Dovecot configuration, IMAP, POP, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                | Done        | 
-| Roundcube webmail, https, sieve filters access, password change, automatic identity creation                     | Done        | 
-| AppArmor securisation for nginx, dovecot, postfix, etc                                                           | In progress | 
-| Automatic migration from old mail server                                                                         | Planned     | 
-| Automatic encrypted off-site backup                                                                              | Planned     | 
-| Web proxy with privacy and parent filtering features                                                             | Planned     | 
+| Current feature, implemented and planned                                                                                | Status      |
+| ----------------------------------------------------------------------------------------------------------------        | ----------- |
+| LDAP users database, SSL & TLS certificates, password policies, optional integration with PAM                           | Done        |
+| SSL Certificates creation using letsencrypt, backup and publication on Gandi                                            | Done        |
+| DKIM keys generation and backup, publication on Gandi                                                                   | Done        |
+| SPF records generation and publication on Gandi                                                                         | Done        |
+| DMARC record generation and publication on Gandi, *the reports generation is planned for a future version*              | Done        |
+| Generation and publication of automatic Thunderbird configuration (MS Outlook planned)                                  | Done        |
+| Postfix configuration and installation, with LDAP lookups, SSL & TLS                                                    | Done        |
+| Powerful but light antispam system with [rspamd](https://rspamd.com/)                                                   | Done        |
+| Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                    | Done        |
+| Roundcube webmail, https, sieve filters access, password change, automatic identity creation                            | Done        |
+| AppArmor securisation for nginx, dovecot, postfix, etc                                                                  | In progress |
+| Automatic migration from old mail server                                                                                | Planned     |
+| Automatic encrypted off-site backup                                                                                     | Planned     |
+| Web proxy with privacy and parent filtering features                                                                    | Planned     |
+| Jabber server using ejabberd and LDAP authentication                                                                    | Planned     |
 
 ## Folders:
 - config: Ansible hosts file Configuration.
@@ -73,7 +77,7 @@ This process will be simplified in a future version to reduce the number of file
 The installation folder is using Ansible to setup the mail server
 For instance, inside the install folder, run the following command:
 
-`ansible-playbook -vv -i ../config/hosts.yml playbooks/install.yml`
+`ansible-playbook -vv -i ../config/hosts.yml playbooks/main.yml`
 
 The certificates are generated using LetsEncrypt service, with one for each service. Examples for example.com domain:
 
@@ -115,7 +119,7 @@ __Notes:__
 - Once the script has been run, the backup folder contains your certificates and DKIM public keys. If you are rebuilding your server from scratch, the same certificates and keys will be used.
 - This is a work in progress and a project I am maintaining on my spare time. Although I am trying to be very careful, there might be some errors. In this case, just fill a bug report, or take part.
 - I am privileging stability over features. The master branch should stay stable for production.
-- There are other similar projects on internet and especially github you could check, for instance [Sovereign](https://github.com/sovereign/sovereign) which offer more features and more up to date packages, outside the Debian official repositories.
+- There are other similar projects on internet and especially github you could check, for instance [Sovereign](https://github.com/sovereign/sovereign) which offer more features, but outside the official Debian repositories.
 
 __TODO__:
 
@@ -124,7 +128,6 @@ I am planning to test / try / add the following features, in *almost* no particu
 - Automatic LUKS setup for the ISO image installer.
 - Add a caldav / carddav server (Any that works with LDAP authentication)
 - Tor, torrent download station, etc...
-- Add a jabber server (Any that works with LDAP authentication)
 - Add optional components (e.g. [Gogs](https://gogs.io/), [openvpn](https://openvpn.net/), [Syncthing](https://syncthing.net/), etc)
 - Test other mail systems, like Cyrus, Sogo, etc.
 
