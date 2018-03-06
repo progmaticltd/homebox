@@ -21,7 +21,7 @@
       value: 'origin=Debian,codename=${distro_codename},label=Debian-Security'
       type: string
     - question: unattended-upgrades/enable_auto_updates
-      value: '{{ auto_update.security }}'
+      value: '{{ security.auto_update }}'
       type: boolean
   loop_control:
     loop_var: conf

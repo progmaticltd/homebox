@@ -1,15 +1,53 @@
 ---
 
-- name: Configure the automatic security updates
-  tags: security
-  notify: Restart the automatic upgrades service
-  template:
-    src: 50unattended-upgrades
-    dest: /etc/apt/apt.conf.d/50unattended-upgrades
-
-- name: Install fail2ban
+- name: Install AppArmor packages
+  when: security.app_armor
   tags: security
   apt:
-    name: fail2ban
+    name: '{{ pkg }}'
     state: latest
-  
+  with_items:
+    - apparmor
+    - apparmor-profiles
+    - apparmor-utils
+  loop_control:
+    loop_var: pkg
+
+- name: Enable AppArmor at boot
+  when: security.app_armor
+  register: grub_config
+  tags: security
+  replace:
+    path: /etc/default/grub
+    regexp: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet"'
+    replace: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet apparmor=1 security=apparmor"' 
+
+- name: Update grub
+  when: grub_config.changed
+  command: update-grub2
+
+- name: Enable AppArmor service
+  when: security.app_armor
+  tags: security
+  service:
+    name: apparmor
+    enabled: true
+
+- name: Reboot to activate AppArmor if not already active
+  when: security.app_armor
+  tags: security
+  shell: >-
+    aa-enabled -q ||
+    systemctl reboot --message "Restarting the system to activate AppArmor"
+  async: 1
+  poll: 0
+
+- name: Wait for the server to come back online
+  when: security.app_armor
+  tags: security2
+  local_action:
+    module: wait_for
+    host: '{{ ansible_ssh_host }}'
+    state: started    
+    delay: 1
+    timeout: 60

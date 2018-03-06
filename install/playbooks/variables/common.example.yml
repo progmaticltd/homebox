@@ -66,10 +66,11 @@ firewall:
     from: any
     rule: allow
 
-# Automatically install security updates?x
-auto_update:
-  security: true
-
+###############################################################################
+# Extra security values
+security:
+  auto_update: true
+  app_armor: false
 
 ###############################################################################
 # Antispam features
