@@ -35,17 +35,15 @@
 
 - name: Reboot to activate AppArmor if not already active
   when: security.app_armor
-  register: server_rebooted
-  tags: security
+  tags: security, apparmor
   shell: >-
-    aa-enabled -q &&
+    aa-enabled -q ||
     systemctl reboot --message "Restarting the system to activate AppArmor"
   async: 1
   poll: 0
 
 - name: Wait for the server to come back online
   when: security.app_armor
-  # and server_rebooted.changed
   tags: security
   local_action:
     module: wait_for_connection
