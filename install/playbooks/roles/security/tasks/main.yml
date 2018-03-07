@@ -35,19 +35,29 @@
 
 - name: Reboot to activate AppArmor if not already active
   when: security.app_armor
+  register: server_rebooted
   tags: security
   shell: >-
-    aa-enabled -q ||
+    aa-enabled -q &&
     systemctl reboot --message "Restarting the system to activate AppArmor"
   async: 1
   poll: 0
 
 - name: Wait for the server to come back online
   when: security.app_armor
-  tags: security2
+  # and server_rebooted.changed
+  tags: security
   local_action:
-    module: wait_for
+    module: wait_for_connection
     host: '{{ ansible_ssh_host }}'
+    port: 22
     state: started    
-    delay: 1
-    timeout: 60
+    delay: 30
+    sleep: 10
+    timeout: 180
+
+- name: Enforce AppArmor profiles
+  when: security.app_armor
+  notify: Reload AppArmor policies
+  tags: security
+  command: aa-enforce nginx
