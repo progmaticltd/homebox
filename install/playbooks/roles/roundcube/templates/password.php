@@ -162,7 +162,7 @@ $config['password_ldap_pwattr'] = 'userPassword';
 // Some places use an attribute to store the date of the last password change
 // The date is meassured in "days since epoch" (an integer value)
 // Whenever the password is changed, the attribute will be updated if set (e.g. shadowLastChange)
-$config['password_ldap_lchattr'] = 'pwdChangedTime';
+$config['password_ldap_lchattr'] = 'shadowLastChange';
 
 // LDAP Samba password attribute, e.g. sambaNTPassword
 // Name of the LDAP's Samba attribute used for storing user password
