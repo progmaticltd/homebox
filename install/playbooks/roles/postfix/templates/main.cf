@@ -82,6 +82,9 @@ smtpd_recipient_restrictions =
     reject_unauth_destination
     check_policy_service inet:localhost:{{ quota.listener.port }}
     check_policy_service unix:private/policy-spf
+{% for url in dns_blacklists %}
+    reject_rbl_client {{ url }}
+{% endfor %}
     
 # SPF policies
 policy-spf_time_limit = 3600s

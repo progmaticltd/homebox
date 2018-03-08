@@ -13,3 +13,10 @@ dkim:
   note: main DKIM key for the domain {{ network.domain }}
   milter:
     port: 8891
+
+# Postfix blacklists to use
+# See https://en.wikipedia.org/wiki/Comparison_of_DNS_blacklists
+dns_blacklists:
+  - zen.spamhaus.org
+  - b.barracudacentral.org
+  
