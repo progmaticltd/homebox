@@ -13,6 +13,12 @@
   debug:
     var: ldap
 
+- name: Ensure the LDAP server FQDN resolves to localhost
+  tags: ldap
+  lineinfile:
+    path: /etc/hosts
+    line: '127.0.0.1    ldap.{{ network.domain }}'
+    
 # Pre-configure the LDAP sever before instaling
 - name: Configure the LDAP administration account
   tags: ldap

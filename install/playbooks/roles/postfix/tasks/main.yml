@@ -71,12 +71,6 @@
   loop_control:
     loop_var: file
 
-- name: Ensure the SMTP server FQDN resolves to localhost
-  tags: postfix
-  lineinfile:
-    path: /etc/hosts
-    line: '127.0.0.1    smtp.{{ network.domain }}'
-    
 - name: Configure the firewall for default access
   tags: postfix,security
   ufw:
