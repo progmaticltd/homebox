@@ -43,7 +43,7 @@
   tags: postfix
   lineinfile:
     path: /etc/hosts
-    line: '127.0.0.1    {{ ldap.hostname }}'
+    line: '127.0.0.1    smtp.{{ network.domain }}'
     
 - name: Install postfix packages for local administration
   tags: postfix
