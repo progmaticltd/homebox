@@ -7,6 +7,13 @@
     state: directory
     mode: 0755
 
+# Update packages cache, and install any security update
+- name: Update packages cache and install security updates
+  tags: security
+  apt:
+    upgrade: yes
+    cache_valid_time: 86400
+
 # We are going to install the "unattended-upgrades" package, and to
 # configure it to install security updates automatically.
 - name: Configure the automatic security updates
@@ -26,10 +33,11 @@
   loop_control:
     loop_var: conf
 
-# Install the firewall, but to not configure any rule.
+# Install the firewall, but do not configure any rule.
 # The other tasks will setup the rules themselves
 # We are also installing fail2ban, so the other services might use it, like postfix, dovecot and roundcube
 # The package 'unattended-upgrades' download and install security updates by default
+
 - name: Install ufw / fail2ban and automatic security updates
   tags: security
   apt:
@@ -39,6 +47,7 @@
     - unattended-upgrades
     - ufw
     - fail2ban
+    - rblcheck
   loop_control:
     loop_var: pkg
 
