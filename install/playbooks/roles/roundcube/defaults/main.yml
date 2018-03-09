@@ -1,19 +1,13 @@
----
-
-# Webmail configuration
-certificate:
-  cn: 'webmail.{{ network.domain }}'          # Will be used for the SMTP server certificate
-  email: 'admin@{{ network.domain }}'         # Administrator email address
-  readby: www-data
-
-
 webmail:
-  url: '{{ certificate.cn }}'
+  url: 'webmail.{{ network.domain }}'
   secure_port: 443
   title: 'Roundcube Webmail ({{ ldap.organization.domain }})'
+  enigma: no
   plugins:
     - password
     - archive
+    - jqueryui
+    - dkimstatus
     - markasjunk
     - newmail_notifier
     - autologon
@@ -22,15 +16,18 @@ webmail:
     - new_user_identity
     - managesieve
     - contextmenu
-    - keyboard-shortcuts
+    - keyboard_shortcuts
 
 # Available plugins:
+# - hide_blockquote
+# - thunderbird_labels
+# - enigma
+# - zipdownload
 # - new_user_dialog
 # - additional_message_headers
 # - acl
 # - database_attachments
 # - debug_logger
-# - enigma
 # - filesystem_attachments
 # - help
 # - hide_blockquote
@@ -42,4 +39,3 @@ webmail:
 # - vcard_attachments
 # - virtuser_file
 # - virtuser_query
-# - zipdownload

@@ -7,6 +7,12 @@
     managerPasswdParams: "../../backup/ldap/manager.pwd length=16 chars=ascii_letters,digits"
     adminPasswdParams: "../../backup/ldap/admin.pwd length=16 chars=ascii_letters,digits"
 
+- name: Display LDAP tree settings
+  tags: ldap, debug
+  when: debug
+  debug:
+    var: ldap
+
 # Pre-configure the LDAP sever before instaling
 - name: Configure the LDAP administration account
   tags: ldap
@@ -409,17 +415,15 @@
     dest: /etc/pam.d/common-account
     line: 'session    required    pam_mkhomedir.so skel=/etc/skel/ umask=0022'
 
-
-
 - name: Copy the access policies on the server
-  tags: ldap2
+  tags: ldap
   register: access_policies
   template:
     src: access-policies.ldif
     dest: /etc/ldap/changes/access-policies.ldif
 
 - name: Load access policies
-  tags: ldap2
+  tags: ldap
   when: access_policies.changed
   command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/access-policies.ldif
 

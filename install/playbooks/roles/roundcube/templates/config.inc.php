@@ -33,9 +33,9 @@ include_once("/etc/roundcube/debian-db-roundcube.php");
 // %s - domain name after the '@' from e-mail address provided at login screen
 // For example %n = mail.domain.tld, %t = domain.tld
 {% if system.ssl != False %}
-$config['default_host'] = 'tls://{{ network.imap }}:1143/';
+$config['default_host'] = 'tls://imap.{{ network.domain }}:1143/';
 {% else %}
-$config['default_host'] = 'imap://{{ network.imap }}/';
+$config['default_host'] = 'imap://imap.{{ network.domain }}/';
 {% endif %}
 // SMTP server host (for sending mails).
 // To use SSL/TLS connection, enter hostname with prefix ssl:// or tls://
@@ -48,9 +48,9 @@ $config['default_host'] = 'imap://{{ network.imap }}/';
 // %z - IMAP domain (IMAP hostname without the first part)
 // For example %n = mail.domain.tld, %t = domain.tld
 {% if system.ssl != False %}
-$config['smtp_server'] = 'tls://{{ network.smtp }}';
+$config['smtp_server'] = 'tls://smtp.{{ network.domain }}';
 {% else %}
-$config['smtp_server'] = '{{ network.smtp }}';
+$config['smtp_server'] = 'smtp.{{ network.domain }}';
 {% endif %}
 
 // SMTP port (default is 25; use 587 for STARTTLS or 465 for the

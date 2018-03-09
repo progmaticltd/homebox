@@ -11,7 +11,11 @@
 - hosts: homebox
   vars_files:
     - variables/common.yml
-    - variables/accounts.yml
+  vars:
+    certificate:
+      cn: 'ldap.{{ network.domain }}'
+      email: 'admin@{{ network.domain }}'
+      readby: openldap
   roles:
     - certificates
     - accounts
@@ -20,7 +24,6 @@
 - hosts: homebox
   vars_files:
     - variables/common.yml
-    - variables/dovecot.yml
   roles:
     - rspamd
     
@@ -28,7 +31,6 @@
 - hosts: homebox
   vars_files:
     - variables/common.yml
-    - variables/postfix.yml
   roles:
     - opendmarc
     
@@ -36,7 +38,11 @@
 - hosts: homebox
   vars_files:
     - variables/common.yml
-    - variables/postfix.yml
+  vars:
+    certificate:
+      cn: 'smtp.{{ network.domain }}'
+      email: 'admin@{{ network.domain }}'
+      readby: postfix
   roles:
     - certificates
     - opendkim
@@ -46,24 +52,31 @@
 - hosts: homebox
   vars_files:
     - variables/common.yml
-    - variables/postfix.yml
   roles:
     - dns-gandi-update
 
 # Install and configure dovecot
 - hosts: homebox
+  vars:
+    certificate:
+      cn: 'imap.{{ network.domain }}'
+      email: 'admin@{{ network.domain }}'
+      readby: dovecot
   vars_files:
     - variables/common.yml
-    - variables/dovecot.yml
   roles:
     - certificates
     - dovecot
 
 # Install a basic webmail
 - hosts: homebox
+  vars:
+    certificate:
+      cn: 'webmail.{{ network.domain }}'
+      email: 'admin@{{ network.domain }}'
+      readby: www-data
   vars_files:
     - variables/common.yml
-    - variables/webmail.yml
   roles:
     - certificates
     - roundcube

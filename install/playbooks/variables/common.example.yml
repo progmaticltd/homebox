@@ -8,9 +8,10 @@ system:
 # Network related
 network:
   domain: example.com
-  smtp: smtp.example.com
-  imap: imap.example.com
   hostname: mail.example.com
+
+# Useful to debug / develop
+debug: true
 
 # Email related
 mail:
@@ -19,30 +20,11 @@ mail:
     email: admin@example.com
     user: "john"
 
-# LDAP configuration
-ldap:
-  hostname: ldap.example.com
-  organization:
-    domain: example.com
-    base: dc=example,dc=com
-  users:
-    dn: ou=users,dc=example,dc=com
-  groups:
-    dn: ou=groups,dc=example,dc=com
-  manager:
-    uid: manager
-    password: homebox
-  admin:
-    dn: cn=admin,dc=example,dc=com
-    desc: administrator account
-    password: homebox
-
 # Options
 options:
   accounts:
     login: true
   local_admin: true
-
 
 # For automatic DNS update
 # Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
@@ -71,6 +53,8 @@ firewall:
 security:
   auto_update: true
   app_armor: false
+  aa_profiles:
+    - nginx
 
 ###############################################################################
 # Antispam features
@@ -97,3 +81,39 @@ quota:
 dmarc:
   milter:
     port: 11336
+
+###############################################################################
+# Users
+users:
+- uid: john
+  cn: John Doe
+  uidNumber: 1001
+  gidNumber: 1001
+  first_name: John
+  last_name: Doe
+  group: users
+  groups: mail
+  shell: /bin/bash
+  mail: 'john.doe@{{ network.domain }}'
+  password: "xIlm*uu7"
+- uid: jane
+  cn: Jane Doe
+  uidNumber: 1002
+  gidNumber: 1001
+  first_name: Jane
+  last_name: Doe
+  group: users
+  groups: mail
+  shell: /bin/bash
+  mail: 'jane.doe@{{ network.domain }}'
+  password: "Tlwril!8"
+
+posix_groups:
+- gid: mail_users
+  description: Mail users
+  gidNumber: 1001
+  mail: 'users@{{ network.domain }}'
+- gid: administrators
+  description: Administrators
+  gidNumber: 2000
+  mail: 'admin@{{ network.domain }}'

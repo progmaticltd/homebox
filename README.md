@@ -57,21 +57,10 @@ Run the following code to create your custom files
 
 ```
   cd install/playbook/variables
-  cp accounts.example.yml accounts.yml
   cp common.example.yml common.yml
-  cp dovecot.example.yml dovecot.yml
-  cp postfix.example.yml postfix.yml
-  cp webmail.example.yml webmail.yml
 ```
 
-File contents
-- common.yml: common variables and basic network configuration (domain)
-- accounts.yml: User and group accounts information
-- dovecot.yml: Dovecot mail server configuration
-- postfix.yml: Postfix MTA configuration
-- webmail.yml: Webmail (roundcube) configuration
-
-This process will be simplified in a future version to reduce the number of files to duplicate.
+This file contains all the network and accounts configuration
 
 ### Run the Ansible scripts to setup your email server
 The installation folder is using Ansible to setup the mail server

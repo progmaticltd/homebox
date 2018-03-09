@@ -48,7 +48,7 @@
   tags: dovecot
   lineinfile:
     path: /etc/hosts
-    line: '127.0.0.1    {{ network.imap }}'
+    line: '127.0.0.1    imap.{{ network.domain }}'
 
 # Activate SSL on the imap server
 - name: Activate SSL configuration

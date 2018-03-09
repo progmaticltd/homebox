@@ -1,14 +1,6 @@
----
-
-# Postfix configuration
-certificate:
-  cn: 'smtp.{{ network.domain }}'          # Will be used for the SMTP server certificate
-  email: 'admin@{{ network.domain }}'      # Administrator email address
-  readby: postfix
-
 # DKIM keys parameters
 dkim:
-  key_size: 1024
+  key_size: 2048
   selector: main
   note: main DKIM key for the domain {{ network.domain }}
   milter:
@@ -19,4 +11,3 @@ dkim:
 dns_blacklists:
   - zen.spamhaus.org
   - b.barracudacentral.org
-  

@@ -1,0 +1,4 @@
+# DKIM keys parameters
+dkim:
+  selector: main
+

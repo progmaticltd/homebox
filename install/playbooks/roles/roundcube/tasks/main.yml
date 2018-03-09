@@ -149,7 +149,7 @@
     loop_var: folder
 
 - name: Configure the firewall for default access
-  tags: security
+  tags: roundcube, security
   ufw:
     rule: allow
     proto: tcp
@@ -166,7 +166,7 @@
 
 - name: Install nginx AppArmor profile
   when: security.app_armor
-  tags: security, apparmor
+  tags: roundcube, security, apparmor
   template:
     src: apparmor.d/usr.sbin.nginx
     dest: /etc/apparmor.d/usr.sbin.nginx
