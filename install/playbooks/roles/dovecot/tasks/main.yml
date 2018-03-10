@@ -55,21 +55,13 @@
   tags: dovecot
   notify: Restart dovecot
   when: system.ssl == 'letsencrypt'
-  replace:
-    path: /etc/dovecot/conf.d/10-ssl.conf
-    regexp: '{{ line.regexp }}'
-    replace: '{{ line.replace }}'
+  template:
+    src: 'conf.d/{{ file }}'
+    dest: '/etc/dovecot/conf.d/{{ file }}'
   with_items:
-   - regexp: '^#?ssl = no'
-     replace: 'ssl = yes'
-   - regexp: '#?ssl_cert =.*'
-     replace: 'ssl_cert = </etc/letsencrypt/live/imap.{{ network.domain }}/cert.pem'
-   - regexp: '#?ssl_key =.*'
-     replace: 'ssl_key = </etc/letsencrypt/live/imap.{{ network.domain }}/privkey.pem'
-   - regexp: '#?ssl_ca =.*'
-     replace: 'ssl_ca = </etc/letsencrypt/live/imap.{{ network.domain }}/fullchain.pem'
+    - 10-ssl.conf
   loop_control:
-    loop_var: line
+    loop_var: file
 
 - name: Create dovecot global configuration files
   tags: dovecot

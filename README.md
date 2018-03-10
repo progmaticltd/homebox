@@ -28,7 +28,7 @@ It is made to be unobtrusive, standard compliant, secure, robust, extensible and
 | Generation and publication of automatic Thunderbird configuration (MS Outlook planned)                                  | Done        |
 | Postfix configuration and installation, with LDAP lookups, SSL & TLS                                                    | Done        |
 | Powerful but light antispam system with [rspamd](https://rspamd.com/)                                                   | Done        |
-| Dovecot configuration, IMAPS, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                           | Done        |
+| Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                    | Done        |
 | Roundcube webmail, https, sieve filters access, password change, automatic identity creation                            | Done        |
 | AppArmor securisation for nginx, dovecot, postfix, etc                                                                  | In progress |
 | Automatic migration from old mail server                                                                                | Planned     |

@@ -54,7 +54,16 @@
   roles:
     - dns-gandi-update
 
-# Install and configure dovecot
+# Install and configure dovecot (POP3 & IMAP)
+- hosts: homebox
+  vars:
+    certificate:
+      type: pop3
+  vars_files:
+    - ../../config/system.yml
+  roles:
+    - certificates
+
 - hosts: homebox
   vars:
     certificate:
