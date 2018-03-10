@@ -118,7 +118,59 @@ Here what to do to obtain an API key:
 
 Your API key will be activated on the test platform.
 
-__Notes:__
+### Testing / Developing
+
+If you have a fixed IP address, you can perfectly develop using a virtual machine on your workstation, if the network is correctly configured. There is a preseed folder to create an ISO image. As well, use snapshots, to rollback your modifications and run the Ansible scripts again.
+
+#### What is needed
+
+- a virtual machine, running on a bridge, using for instance KVM/libvirt or VirtualBox
+- your router should forward a few ports to your virtual machine:
+  - TCP/80 : Used to query letsencrypt for the certificates
+  - TCP/25 : SMTP, to receive emails
+- The other ports open don't need to be forwarded by your router:
+  - TCP/143 and TCP:993 : IMAP and IMAPS
+  - TCP/110 and TCP:995 : POP3 and POP3S
+  - TCP/4190 : ManageSieve
+  - TCP/443 : HTTPS access for the webmail
+
+#### Specific configuration
+
+In your config/system.yml, use the following values 
+
+```
+system:
+  release: stretch
+  login: true
+  ssl: letsencrypt
+  devel: true
+  debug: true
+```
+
+It is then possible to partially run some playbooks, using for instance the following tags:
+
+- system-prepare
+- accounts
+- apt
+- autoconfig
+- cert
+- dkim
+- dovecot
+- facts
+- ldap
+- opendmarc
+- postfix
+- roundcube
+- rspamd
+- security
+
+The following command in the install directory replays the postfix and roundcube installation:
+```
+ansible-playbook -vv -i ../config/hosts.yml -t facts,postfix,roundcube playbooks/main.yml
+```
+The tag"facts" is necessary to gather some facts other roles may need.
+
+### Notes
 
 - The initial creation of DNS records for certificate generation should take some time.
 - DNS automatic update is actually limited to Gandi, but it should be easy to add more.
@@ -127,7 +179,7 @@ __Notes:__
 - I am privileging stability over features. The master branch should stay stable for production.
 - There are other similar projects on internet and especially github you could check, for instance [Sovereign](https://github.com/sovereign/sovereign) or [yunohost](https://yunohost.org/). Both have plenty of features, and a different approach to self-hosting, though.
 
-__TODO__:
+### Future versions
 
 I am planning to test / try / add the following features, in *almost* no particular order:
 

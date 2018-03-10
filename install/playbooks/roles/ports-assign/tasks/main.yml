@@ -5,9 +5,21 @@
 
 - name: Assign ports for various services
   tags: facts
+  when: system.devel == false
   set_fact:
     mails_quota_port: '{{ 30000 + ( 1000 | random ) }}'
     milter_dkim_port: '{{ 31000 + ( 1000 | random ) }}'
     milter_dmarc_port: '{{ 32000 + ( 1000 | random ) }}'
     milter_antispam_port: '{{ 33000 + ( 1000 | random ) }}'
+
+# In development, use constant ports, so we can redeploy postfix / dovecot
+# without haveing to redeploy milters
+- name: Assign ports for various services
+  when: system.devel == true
+  tags: facts
+  set_fact:
+    mails_quota_port: 30000
+    milter_dkim_port: 31000
+    milter_dmarc_port: 32000
+    milter_antispam_port: 33000
 

@@ -65,6 +65,7 @@ system:
   release: stretch
   login: true
   ssl: letsencrypt
+  devel: false
   debug: false
 
 ###############################################################################
