@@ -1,0 +1,13 @@
+---
+
+# This create random ports for the services in the system, ensuring that they don't overlap each other
+# The port numbers are often shared between postfix and dovecot
+
+- name: Assign ports for various services
+  tags: facts
+  set_fact:
+    mails_quota_port: '{{ 30000 + ( 1000 | random ) }}'
+    milter_dkim_port: '{{ 31000 + ( 1000 | random ) }}'
+    milter_dmarc_port: '{{ 32000 + ( 1000 | random ) }}'
+    milter_antispam_port: '{{ 33000 + ( 1000 | random ) }}'
+

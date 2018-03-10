@@ -1,0 +1,135 @@
+# HomeBox configuration example.
+# Copy this file into config.yml, and edit it with the values that suits you
+
+###############################################################################
+# Domain and hostname information
+network:
+  domain: example.com
+  hostname: mail.example.com
+
+###############################################################################
+# Users and groups
+users:
+- uid: john
+  cn: John Doe
+  uidNumber: 1001
+  gidNumber: 1001
+  first_name: John
+  last_name: Doe
+  group: users
+  groups: mail
+  shell: /bin/bash
+  mail: john.doe@example.com
+  password: 'xIlm*uu7'
+- uid: jane
+  cn: Jane Doe
+  uidNumber: 1002
+  gidNumber: 1001
+  first_name: Jane
+  last_name: Doe
+  group: users
+  groups: mail
+  shell: /bin/bash
+  mail: jane.doe@example.com
+  password: 'Tlwril!8'
+  
+posix_groups:
+- gid: mail_users
+  description: Mail users
+  gidNumber: 1001
+  mail: users@exemple.com
+- gid: administrators
+  description: Administrators
+  gidNumber: 2000
+  mail: administrators@example.com
+
+###############################################################################
+# Email related options
+mail:
+  quota:
+    default: 1G
+  
+###############################################################################
+# Default password policies for users
+passwords:
+  min_length: 8
+  max_age: 31536000        # 365 days max
+  max_failure: 5
+  expire_warning: 259200   # 3 days
+  require_nonalpha: true
+
+###############################################################################
+# System related
+system:
+  release: stretch
+  login: true
+  ssl: letsencrypt
+  debug: false
+
+###############################################################################
+# Gandi automatic DNS update
+# Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
+dns:
+  gandi:
+    handle: JD123-GANDI
+    key: zaNGbUVIvi1KbYb6PPMdiQLh
+
+###############################################################################
+# Once the system is in place, it is possible to use 'limit' for the rule, instead of any.
+# It is also possible to use fail2ban, which is installed anyway
+firewall:
+  ssh:
+    from: any
+    rule: allow
+
+###############################################################################
+# Extra security values
+security:
+  auto_update: true
+  app_armor: true
+  aa_profiles:
+    - nginx
+
+###############################################################################
+# Webmail configuration
+# You can uncomment this block to customise roundcube,
+# Be careful, some plugins are not working yet !!!
+# roundcube:
+#   url: 'webmail.{{ network.domain }}'
+#   title: 'Roundcube Webmail ({{ ldap.organization.domain }})'
+#   enigma: no
+#   plugins:
+#     - password
+#     - archive
+#     - jqueryui
+#     - markasjunk
+#     - newmail_notifier
+#     - autologon
+#     - subscriptions_option
+#     - emoticons
+#     - new_user_identity
+#     - managesieve
+#     - contextmenu
+#
+# Available plugins:
+# - keyboard_shortcuts
+# - dkimstatus
+# - hide_blockquote
+# - thunderbird_labels
+# - enigma
+# - zipdownload
+# - new_user_dialog
+# - additional_message_headers
+# - acl
+# - database_attachments
+# - debug_logger
+# - filesystem_attachments
+# - help
+# - hide_blockquote
+# - http_authentication
+# - show_additional_headers
+# - squirrelmail_usercopy
+# - userinfo
+# - vcard_attachments
+# - virtuser_file
+# - virtuser_query

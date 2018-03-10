@@ -6,7 +6,7 @@ server {
 
     # Webmail FQDN
     listen 80;
-    server_name {{ webmail.url }};
+    server_name {{ roundcube.url }};
 
     # Use Letsencrypt and force https
     rewrite ^ https://$server_name$request_uri? permanent;
@@ -18,7 +18,7 @@ server {
 server {
 
     # Webmail FQDN
-    server_name {{ webmail.url }};
+    server_name {{ roundcube.url }};
 
     # Default roundcube location on Debian
     root /var/lib/roundcube/;
@@ -28,11 +28,11 @@ server {
 
     {% if system.ssl == 'letsencrypt' %}
     # SSL configuration
-    listen "{{ webmail.secure_port }}" ssl http2;
+    listen 443 ssl http2;
     ssl_protocols TLSv1.1 TLSv1.2;
-    ssl_certificate /etc/letsencrypt/live/{{ webmail.url }}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/{{ webmail.url }}/privkey.pem;
-    ssl_trusted_certificate /etc/letsencrypt/live/{{ webmail.url }}/fullchain.pem;
+    ssl_certificate /etc/letsencrypt/live/{{ roundcube.url }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ roundcube.url }}/privkey.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/{{ roundcube.url }}/fullchain.pem;
     {% endif %}
 
     # Add index.php to the list if you are using PHP

@@ -22,9 +22,9 @@ compatibility_level = 2
 
 # TLS parameters
 {% if system.ssl == 'letsencrypt' %}
-smtpd_tls_cert_file=/etc/letsencrypt/live/{{ certificate.cn }}/cert.pem
-smtpd_tls_key_file=/etc/letsencrypt/live/{{ certificate.cn }}/privkey.pem
-smtpd_tls_CAfile=/etc/letsencrypt/live/{{ certificate.cn }}/fullchain.pem
+smtpd_tls_cert_file=/etc/letsencrypt/live/smtp.{{ network.domain }}/cert.pem
+smtpd_tls_key_file=/etc/letsencrypt/live/smtp.{{ network.domain }}/privkey.pem
+smtpd_tls_CAfile=/etc/letsencrypt/live/smtp.{{ network.domain }}/fullchain.pem
 smtpd_use_tls=yes
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
@@ -59,14 +59,14 @@ inet_protocols = all
 milter_default_action = accept
 milter_protocol = 6
 smtpd_milters =
-    inet:localhost:{{ dkim.milter.port }}
-    inet:localhost:{{ antispam.milter.port }}
-    inet:localhost:{{ dmarc.milter.port }}
+    inet:localhost:{{ milter_dkim_port }}
+    inet:localhost:{{ milter_antispam_port }}
+    inet:localhost:{{ milter_dmarc_port }}
     
 non_smtpd_milters =
-    inet:localhost:{{ dkim.milter.port }}
-    inet:localhost:{{ antispam.milter.port }}
-    inet:localhost:{{ dmarc.milter.port }}
+    inet:localhost:{{ milter_dkim_port }}
+    inet:localhost:{{ milter_antispam_port }}
+    inet:localhost:{{ milter_dmarc_port }}
 
 milter_mail_macros =  i {mail_addr} {client_addr} {client_name} {auth_authen}
 
@@ -80,7 +80,7 @@ smtpd_recipient_restrictions =
     permit_mynetworks
     permit_sasl_authenticated
     reject_unauth_destination
-    check_policy_service inet:localhost:{{ quota.listener.port }}
+    check_policy_service inet:localhost:{{ mails_quota_port }}
     check_policy_service unix:private/policy-spf
 {% for url in dns_blacklists %}
     reject_rbl_client {{ url }}

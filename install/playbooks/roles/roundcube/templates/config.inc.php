@@ -70,7 +70,7 @@ $config['smtp_pass'] = '%p';
 $config['support_url'] = '';
 
 // Name your service. This is displayed on the login screen and in the window title
-$config['product_name'] = '{{ webmail.title }}';
+$config['product_name'] = '{{ roundcube.title }}';
 
 // this key is used to encrypt the users imap password which is stored
 // in the session record (and the client cookie if remember password is enabled).
@@ -80,7 +80,7 @@ $config['des_key'] = '{{ makepasswd.stdout }}';
 
 // List of active plugins (in plugins/ directory)
 // Debian: install roundcube-plugins first to have any
-$config['plugins'] = {{ webmail.plugins | list | regex_replace("(\[|, )u'", "\\1'") }};
+$config['plugins'] = {{ plugins }};
 
 // skin name: folder from skins/
 $config['skin'] = 'larry';

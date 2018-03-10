@@ -1,0 +1,14 @@
+# Default rspamd configuration
+rspamd:
+  proxy:
+    port: '{{ milter_antispam_port }}'
+  normal:
+    port: '{{ 1 + (milter_antispam_port | int) }}'
+  controller:
+    port: '{{ 2 + (milter_antispam_port | int) }}'
+      
+antispam:
+  milter:
+    name: rspamd
+    port: '{{ milter_antispam_port }}'
+

@@ -1,21 +1,22 @@
 ---
-# Main playbook
+## Main installation playbook
 
+# Prepare the system
 - hosts: homebox
   vars_files:
-    - variables/common.yml
+    - ../../config/system.yml
   roles:
     - packages
     - system-prepare
-    
+    - ports-assign
+
+# Create the accounts
 - hosts: homebox
   vars_files:
-    - variables/common.yml
+    - ../../config/system.yml
   vars:
     certificate:
-      cn: 'ldap.{{ network.domain }}'
-      email: 'admin@{{ network.domain }}'
-      readby: openldap
+      type: ldap
   roles:
     - certificates
     - accounts
@@ -23,35 +24,33 @@
 # Add antispam filtering via rspamd
 - hosts: homebox
   vars_files:
-    - variables/common.yml
+    - ../../config/system.yml
   roles:
     - rspamd
     
 # Install and configure opendmarc
 - hosts: homebox
   vars_files:
-    - variables/common.yml
+    - ../../config/system.yml
   roles:
     - opendmarc
     
 # Install and configure postfix
 - hosts: homebox
   vars_files:
-    - variables/common.yml
+    - ../../config/system.yml
   vars:
     certificate:
-      cn: 'smtp.{{ network.domain }}'
-      email: 'admin@{{ network.domain }}'
-      readby: postfix
+      type: smtp
   roles:
     - certificates
     - opendkim
     - postfix
 
-# Update Gandi DNS, especially the DKIM record
+# Generate the records on Gandi DNS
 - hosts: homebox
   vars_files:
-    - variables/common.yml
+    - ../../config/system.yml
   roles:
     - dns-gandi-update
 
@@ -59,32 +58,28 @@
 - hosts: homebox
   vars:
     certificate:
-      cn: 'imap.{{ network.domain }}'
-      email: 'admin@{{ network.domain }}'
-      readby: dovecot
+      type: imap
   vars_files:
-    - variables/common.yml
+    - ../../config/system.yml
   roles:
     - certificates
     - dovecot
 
-# Install a basic webmail
+# Install a basic webmail (roundcube)
 - hosts: homebox
   vars:
     certificate:
-      cn: 'webmail.{{ network.domain }}'
-      email: 'admin@{{ network.domain }}'
-      readby: www-data
+      type: webmail
   vars_files:
-    - variables/common.yml
+    - ../../config/system.yml
   roles:
     - certificates
     - roundcube
     - autoconfig
 
-# Configure security
+# Configure security, especially AppArmor
 - hosts: homebox
   vars_files:
-    - variables/common.yml
+    - ../../config/system.yml
   roles:
     - security

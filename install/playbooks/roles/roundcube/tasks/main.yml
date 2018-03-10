@@ -98,12 +98,14 @@
 - name: Copy roundcube configuration
   tags: roundcube
   notify: Restart nginx
+  vars:
+    plugins: ' [''{{ roundcube.plugins | join(", "|quote) }}'' ]'
   template:
     src: '{{ file }}'
     dest: '/etc/roundcube/{{ file }}'
     owner: root
     group: root
-    mode: 0644 
+    mode: 0644
   with_items:
     - config.inc.php
   loop_control:

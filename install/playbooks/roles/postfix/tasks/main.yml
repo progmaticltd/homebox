@@ -48,7 +48,6 @@
 - name: Install postfix packages for local administration
   tags: postfix
   notify: Restart postfix
-  when: options.local_admin == true
   apt:
     name: "{{ pkg }}"
     state: installed

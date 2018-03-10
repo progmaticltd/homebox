@@ -5,12 +5,10 @@ hosts
 preseed/variables/*.yml
 !preseed/variables/*.example.yml
 
-# Variables Used for Ansible deployment
-install/playbooks/variables/*.yml
-!install/playbooks/variables/*.example.yml
-
-# Same for the hosts file
+# Ignore the local configuration files
+config/system.yml
 config/hosts.yml
+config/preseed.yml
 
 # Ignore ansible error files
 *.retry

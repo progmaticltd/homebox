@@ -63,11 +63,11 @@
    - regexp: '^#?ssl = no'
      replace: 'ssl = yes'
    - regexp: '#?ssl_cert =.*'
-     replace: 'ssl_cert = </etc/letsencrypt/live/{{ certificate.cn }}/cert.pem'
+     replace: 'ssl_cert = </etc/letsencrypt/live/imap.{{ network.domain }}/cert.pem'
    - regexp: '#?ssl_key =.*'
-     replace: 'ssl_key = </etc/letsencrypt/live/{{ certificate.cn }}/privkey.pem'
+     replace: 'ssl_key = </etc/letsencrypt/live/imap.{{ network.domain }}/privkey.pem'
    - regexp: '#?ssl_ca =.*'
-     replace: 'ssl_ca = </etc/letsencrypt/live/{{ certificate.cn }}/fullchain.pem'
+     replace: 'ssl_ca = </etc/letsencrypt/live/imap.{{ network.domain }}/fullchain.pem'
   loop_control:
     loop_var: line
 
@@ -148,3 +148,4 @@
       port: 4190
   loop_control:
     loop_var: rule
+

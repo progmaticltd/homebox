@@ -34,11 +34,11 @@
     /usr/bin/certbot certonly
     --non-interactive
     --standalone
-    --domain "{{ certificate.cn }}"
-    --email "{{ certificate.email }}"
+    --domain "{{ certificate.type }}.{{ network.domain }}"
+    --email "admin@{{ network.domain }}"
     --agree-tos
   args:
-    creates: "/etc/letsencrypt/live/{{ certificate.cn }}/cert.pem"
+    creates: "/etc/letsencrypt/live/{{ certificate.type }}.{{ network.domain }}/cert.pem"
     
 - name: Restart the nginx server if installed
   when: stat_result.stat["exists"] == True

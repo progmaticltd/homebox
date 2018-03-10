@@ -11,7 +11,7 @@ It is made to be unobtrusive, standard compliant, secure, robust, extensible and
 
 - Unobtrusive: Most of the packages are coming from the official Debian repository. The final result is what you could have installed manually.
 - Standard compliant: The system generates and publish automaticall your DKIM, SPF and DMARC records. It is actually using the excellent [Gandi](https://gandi.net) DNS provider!
-- Secure: I am focusing on security, and take packages from official and maintained repositories. No *git clone* or manual download here, everything with apt.
+- Secure: We are focusing on security, and take packages from official and maintained repositories. No *git clone* or manual download here, everything should be done with apt.
 - Robust: the DNS records update script is very safe. You can run it in test mode, with the new zone version created, but not activated, with automatic rollback.
 - Extensible: By using LDAP for user authentications, you can use other software, like nextcloud, gitlab or even an OpenVPN server, with one central authentication system.
 - Automatic: Most tasks are automated. Even the external IP address detection and DNS update process. In theory, you could use this with a dynamic IP address.
@@ -37,10 +37,11 @@ It is made to be unobtrusive, standard compliant, secure, robust, extensible and
 | Jabber server using ejabberd and LDAP authentication                                                                    | Planned     |
 
 ## Folders:
-- config: Ansible hosts file Configuration.
+- config: Ansible configuration files for your platform.
 - preseed: Ansible scripts to create an automatic ISO image installer for testing or live system.
 - install: Ansible scripts to install the whole server environment.
-- backup: Automatic backup of certificates and DKIM keys.
+- backup: Automatic backup of important information upon deployment.
+- sandbox: Put anything you don't want to commit here.
 
 ## Mail server installation
 
@@ -51,13 +52,25 @@ First, check that you can login to your server, using SSH on the root account:
 Replace mail.example.com with the address of your mail server.
 This will also add the server to your known_hosts file
 
-### Copy the example files to create your basic setup
+### Create your custom configuration
 
-Run the following code to create your custom files
+The system configuration file is a complete YAML configuration file containing all your settings:
+
+  - Network information
+  - Users and groups
+  - Email quotas
+  - Webmail settings (roundcube)
+  - Password policies
+  - Low level system settings
+  - DNS update credentials (Gandi API key)
+  - Firewall settings
+  - Security settings
+
+The most important settings are the first three one, the others can be left to their default values, except during the development phase.
 
 ```
-  cd install/playbook/variables
-  cp common.example.yml common.yml
+  cd config
+  cp system-example.yml system.yml
 ```
 
 This file contains all the network and accounts configuration
@@ -68,14 +81,17 @@ For instance, inside the install folder, run the following command:
 
 `ansible-playbook -vv -i ../config/hosts.yml playbooks/main.yml`
 
-The certificates are generated using LetsEncrypt service, with one for each service. Examples for example.com domain:
+The script will do the following:
 
-  - openldap: ldap.example.com
-  - postfix: smtp.example.com
-  - dovecot: imap.example.com
-  - the webmail: webmail.example.com
-  
-The generated certificates and DKIM keys will be automatically saved on your local computer, into the backup folder. This folder is ignored by git. If you restart the installation from scratch using a new server, these certificates and DKIM keys will be used, so you do not end up requesting more certificates or updating your DNS server more than necessary. This is particularly useful in development phase.
+- Prepare the system
+- Create the accounts
+- Add antispam filtering via rspamd
+- Install and configure opendmarc
+- Install and configure postfix
+- Generate the records on Gandi DNS
+- Install and configure dovecot
+- Install a basic webmail (roundcube)
+- Configure security, especially AppArmor
 
 ## What do you need in production
 
@@ -83,13 +99,14 @@ The generated certificates and DKIM keys will be automatically saved on your loc
 
 - A low consumption hardware box to plug on your router, I personally use [pondesk](https://www.pondesk.com/) boxes.
 - A computer to run the Ansible scripts.
-- A static IP address from your ISP (Not mandatory, but works better)
+- A static IP address from your ISP (it is not mandatory, but will work better)
 - Some basic newtork knowledge
+
+### Automatic update of the DNS entries
 
 For automatic DNS records creation and update:
 - A registered domain name, with [Gandi](https://gandi.net/)
 
-### Automatic update of the DNS entries
 A custom script automatically register domains entries to Gandi, if you provide an API key.
 This is useful so you do not have to manage the entries yourself, or if even if you don't have a static IP address.
 
@@ -108,7 +125,7 @@ __Notes:__
 - Once the script has been run, the backup folder contains your certificates and DKIM public keys. If you are rebuilding your server from scratch, the same certificates and keys will be used.
 - This is a work in progress and a project I am maintaining on my spare time. Although I am trying to be very careful, there might be some errors. In this case, just fill a bug report, or take part.
 - I am privileging stability over features. The master branch should stay stable for production.
-- There are other similar projects on internet and especially github you could check, for instance [Sovereign](https://github.com/sovereign/sovereign) which offer more features, but outside the official Debian repositories.
+- There are other similar projects on internet and especially github you could check, for instance [Sovereign](https://github.com/sovereign/sovereign) which offer more features, but sometimes outside the official Debian repositories.
 
 __TODO__:
 

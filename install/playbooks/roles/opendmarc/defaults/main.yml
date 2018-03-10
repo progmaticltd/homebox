@@ -1,0 +1,5 @@
+# DMARC validation parameters
+dmarc:
+  milter:
+    port: '{{ milter_dmarc_port }}'
+

@@ -9,7 +9,7 @@
 
 - name: Display LDAP tree settings
   tags: ldap, debug
-  when: debug
+  when: system.debug
   debug:
     var: ldap
 
@@ -373,7 +373,7 @@
 
 - name: Install the required packages for interactive login
   tags: ldap
-  when: options.accounts.login == true
+  when: system.login == true
   apt:
     name: '{{ item }}'
     state: installed
@@ -383,7 +383,7 @@
 
 - name: Update the ldap configuration file    
   tags: ldap
-  when: options.accounts.login == true
+  when: system.login == true
   notify: Restart the nslcd service
   template:
     src: nslcd.conf
@@ -416,7 +416,7 @@
 
 - name: Create home directory for users on first login
   tags: ldap
-  when: options.accounts.login == true
+  when: system.login == true
   lineinfile:
     dest: /etc/pam.d/common-account
     line: 'session    required    pam_mkhomedir.so skel=/etc/skel/ umask=0022'

@@ -18,12 +18,17 @@ ldap:
 dkim:
   key_size: 2048
   selector: main
-  note: main DKIM key for the domain {{ network.domain }}
+  note: 'main DKIM key for the domain {{ network.domain }}'
   milter:
-    port: 8891
+    port: '{{ milter_dkim_port }}'
 
 # Postfix blacklists to use
 # See https://en.wikipedia.org/wiki/Comparison_of_DNS_blacklists
 dns_blacklists:
   - zen.spamhaus.org
   - b.barracudacentral.org
+
+antispam:
+  milter:
+    name: rspamd
+    port: '{{ milter_antispam_port }}'
