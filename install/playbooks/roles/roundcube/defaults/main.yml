@@ -18,6 +18,7 @@ roundcube:
   url: 'webmail.{{ network.domain }}'
   title: 'Roundcube Webmail ({{ ldap.organization.domain }})'
   enigma: no
+  max_attachment_size: 25   # In megabytes
   plugins:
     - password
     - archive

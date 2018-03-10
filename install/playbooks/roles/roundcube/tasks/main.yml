@@ -59,6 +59,12 @@
     state: absent
     force: yes
 
+- name: Compute max upload size from max attachment size
+  tags: roundcube
+  set_fact:
+    upload_max_size: '{{ mail.max_attachment_size }}M'
+    post_max_size: '{{ 1 + mail.max_attachment_size | int }}M'
+
 - name: Create the webmail site
   tags: roundcube
   notify: Restart nginx

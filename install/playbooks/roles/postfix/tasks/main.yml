@@ -56,7 +56,15 @@
     - bsd-mailx
   loop_control:
     loop_var: pkg
-    
+
+# The typical base64 overhead is 33%, and the value in the configuration file is in Mb
+# So the value is max_attachment_size * 1.33 * 1024 * 1024, i.e. max_attachment_size * 1394606
+# Adding 1Kb for the message text, because we are generous (sic)
+- name: Compute max message size from max attachment size
+  tags: postfix
+  set_fact:
+    message_size_limit: '{{ 1024 + mail.max_attachment_size * 1394606 | int }}'
+
 - name: Copy configuration template
   tags: postfix
   notify: Restart postfix

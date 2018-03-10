@@ -46,6 +46,7 @@ posix_groups:
 ###############################################################################
 # Email related options
 mail:
+  max_attachment_size: 25   # In megabytes
   quota:
     default: 1G
   
