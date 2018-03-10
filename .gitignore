@@ -27,4 +27,3 @@ preseed/misc/root/.ssh/authorized_key
 backup/certificates/letsencrypt
 backup/dkim-keys/dkim
 backup/ldap
-!backup/ldap/readme.md

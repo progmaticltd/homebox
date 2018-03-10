@@ -28,7 +28,7 @@ It is made to be unobtrusive, standard compliant, secure, robust, extensible and
 | Generation and publication of automatic Thunderbird configuration (MS Outlook planned)                                  | Done        |
 | Postfix configuration and installation, with LDAP lookups, SSL & TLS                                                    | Done        |
 | Powerful but light antispam system with [rspamd](https://rspamd.com/)                                                   | Done        |
-| Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                    | Done        |
+| Dovecot configuration, IMAPS, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                           | Done        |
 | Roundcube webmail, https, sieve filters access, password change, automatic identity creation                            | Done        |
 | AppArmor securisation for nginx, dovecot, postfix, etc                                                                  | In progress |
 | Automatic migration from old mail server                                                                                | Planned     |
@@ -40,7 +40,7 @@ It is made to be unobtrusive, standard compliant, secure, robust, extensible and
 - config: Ansible configuration files for your platform.
 - preseed: Ansible scripts to create an automatic ISO image installer for testing or live system.
 - install: Ansible scripts to install the whole server environment.
-- backup: Automatic backup of important information upon deployment.
+- backup: Automatic backup of important information upon deployment, (see the [readme](./backup/)).
 - sandbox: Put anything you don't want to commit here.
 
 ## Mail server installation
@@ -102,10 +102,10 @@ The script will do the following:
 - A static IP address from your ISP (it is not mandatory, but will work better)
 - Some basic newtork knowledge
 
-### Automatic update of the DNS entries
-
 For automatic DNS records creation and update:
 - A registered domain name, with [Gandi](https://gandi.net/)
+
+### Automatic update of the DNS entries
 
 A custom script automatically register domains entries to Gandi, if you provide an API key.
 This is useful so you do not have to manage the entries yourself, or if even if you don't have a static IP address.
