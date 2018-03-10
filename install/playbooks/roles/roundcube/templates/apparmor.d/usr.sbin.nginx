@@ -33,6 +33,10 @@
   /usr/share/roundcube/** r,
   /var/lib/nginx/body/* rw,
 
+  # Allow the web server to access autoconfig
+  # TODO: Use another approach for apparmor profiles update
+  /var/www/autoconfig/mail/config-v1.1.xml r,
+
   # Log files
   /run/nginx.pid rw,
   /var/log/nginx/access.log w,
