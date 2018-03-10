@@ -1,0 +1,4 @@
+---
+
+# Default variables to build the ISO image
+build_dir: '{{ playbook_dir }}/../build'

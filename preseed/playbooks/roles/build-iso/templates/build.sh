@@ -4,7 +4,9 @@
 HOSTNAME=$1
 
 # Use proxy if defined
+{% if network.main.proxy %}
 export http_proxy='{{ network.main.proxy }}'
+{% endif %}
 
 # Parameters
 DIST='{{ repo.release }}'
@@ -24,7 +26,7 @@ OPTIONS="--do-mirror ${COMMON_OPTS}"
 simple-cdd $OPTIONS
 
 # Create the miscellaneous files archive
-tar c --remove-files -C /tmp/homebox/misc -z -f /tmp/homebox/misc.tgz .
+tar c --remove-files -C {{ build_dir }}/misc -z -f {{ build_dir }}/misc.tgz .
 
 # Build installer CDs for the whole platform
 OPTIONS="--verbose"
@@ -40,8 +42,8 @@ fi
 OPTIONS+=" --keyboard {{ locale.keymap }}"
 
 # Where to save the logs:
-LOGFILE="/tmp/homebox/logs/${HOSTNAME}-cdd.log"
-test -d /tmp/homebox/logs || mkdir /tmp/homebox/logs
+LOGFILE="{{ build_dir }}/logs/${HOSTNAME}-cdd.log"
+test -d {{ build_dir }}/logs || mkdir {{ build_dir }}/logs
 
 OPTIONS+=" --logfile ${LOGFILE}"
 

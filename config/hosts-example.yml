@@ -13,6 +13,7 @@ all:
       ansible_user: root
       ansible_port: 22
     cdbuilder:
+      ansible_become: no
       ansible_host: vmhost.example.home
       ansible_user: root
       ansible_port: 22

@@ -1,0 +1,4 @@
+# This folder creates ISO images for a complete installer, before running the Ansible scripts
+
+# Everything is build here
+build/

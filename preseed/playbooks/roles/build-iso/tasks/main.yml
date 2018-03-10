@@ -1,10 +1,14 @@
 ---
 
 - name: Update packages cache
+  become: true
+  tags: apt
   apt:
     update_cache: true
     
 - name: install the required packages to build the ISO image
+  become: true
+  tags: apt
   apt:
     name: '{{ pkg }}'
     state: installed
@@ -18,33 +22,33 @@
 - name: create the working directory in /tmp
   tags: preseed
   file:
-    path: /tmp/homebox
+    path: '{{ build_dir }}'
     state: directory
   
 - name: Copy the configuration file for simple cdd
   tags: preseed
   template:
     src: common.conf
-    dest: /tmp/homebox/common.conf
+    dest: '{{ build_dir }}/common.conf'
   
 - name: Copy the build script
   tags: preseed
   template:
     src: build.sh
-    dest: /tmp/homebox/build.sh
+    dest: '{{ build_dir }}/build.sh'
     mode: 0744
   
 - name: Create the profile folder
   tags: preseed
   file:
-    path: /tmp/homebox/profiles
+    path: '{{ build_dir }}/profiles'
     state: directory
     
 - name: Copy the profile folder content
   tags: preseed
   template:
-    src: "profiles/{{ item }}"
-    dest: "/tmp/homebox/profiles/{{ item }}"
+    src: 'profiles/{{ item }}'
+    dest: '{{ build_dir }}/profiles/{{ item }}'
   with_items:
     - default.description
     - default.packages
@@ -53,57 +57,62 @@
 - name: Create the profile folder
   tags: preseed
   file:
-    path: /tmp/homebox/profiles/preseed
+    path: '{{ build_dir }}/profiles/preseed'
     state: directory
     
 - name: Copy the preseed files
   tags: preseed
   template:
-    src: "{{ item }}"
-    dest: "/tmp/homebox/profiles/preseed/{{ item | basename }}"
+    src: '{{ item }}'
+    dest: '{{ build_dir }}/profiles/preseed/{{ item | basename }}'
   with_fileglob:
     - ../templates/profiles/preseed/*.preseed
 
 - name: Assemble the global preseed file
+  tags: preseed
   assemble:
-    src: "/tmp/homebox/profiles/preseed/"
-    dest: "/tmp/homebox/profiles/default.preseed"
+    src: '{{ build_dir }}/profiles/preseed/'
+    dest: '{{ build_dir }}/profiles/default.preseed'
     
 
 - name: Copy the files that need to be on the CD/DVD image
   tags: preseed
   copy:
     src: ../../../misc
-    dest: /tmp/homebox
+    dest: '{{ build_dir }}'
 
 # TODO: Dynamicall add the version number
 - name: Copy the logo in the temporary folder for the installer
+  tags: preseed
   copy:
     src: ../logos/logo-small.png
-    dest: /tmp/homebox/splash.png
+    dest: '{{ build_dir }}/splash.png'
   
 # Run the script to create the iso images
 - name: Run the command to create the iso file
-  command: "./build.sh {{ system.hostname }}"
+  tags: preseed
+  command: './build.sh {{ system.hostname }}'
   args:
-    chdir: /tmp/homebox
-    creates: '/tmp/homebox/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
+    chdir: '{{ build_dir }}'
+    creates: '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
     
 - name: Move the iso image to the appropriate folder
+  tags: preseed
   copy:
-    src: "/tmp/homebox/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso"
-    dest: "/var/lib/libvirt/images/{{ system.hostname }}-install.iso"
+    src: '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
+    dest: '/var/lib/libvirt/images/{{ system.hostname }}-install.iso'
     remote_src: true
 
 # Run the script to create the iso images
 - name: Remove the file
+  tags: preseed
   file:
-    path: '/tmp/homebox/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
+    path: '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
     state: absent
     
 # Clean up
-# - name: Clean up the working directory in /tmp
+# - name: Clean up the working directory
 #   file:
-#     path: /tmp/homebox
+#     path: {{ build_dir }}
 #     state: absent
   
