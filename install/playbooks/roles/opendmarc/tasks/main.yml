@@ -12,15 +12,25 @@
 
 - name: Comment all active socket for DMARC
   tags: opendmarc
+  notify: Restart OpenDMARC service
   replace:
     path: /etc/default/opendmarc
     regexp: '^SOCKET=(.*)'
     replace: '#SOCKET=\1'
 
+- name: Comment all active socket for DMARC
+  tags: opendmarc
+  notify: Restart OpenDMARC service
+  replace:
+    path: /etc/opendmarc.conf
+    regexp: '^Socket(.*)'
+    replace: '# Socket=\1'
+
 - name: Add tcp interface on localhost
+  notify: Restart OpenDMARC service
   tags: opendmarc
   lineinfile:
-    path: /etc/default/opendmarc
-    line: 'SOCKET=inet:{{ dmarc.milter.port }}@localhost'
+    path: /etc/opendmarc.conf
+    line: 'Socket inet:{{ dmarc.milter.port }}@localhost'
 
 

@@ -1,0 +1,4 @@
+- name: Restart OpenDMARC service
+  service:
+    name: opendmarc
+    state: restarted
