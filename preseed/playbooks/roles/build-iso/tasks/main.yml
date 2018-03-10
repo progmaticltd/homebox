@@ -97,7 +97,8 @@
     creates: '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
     
 - name: Move the iso image to the appropriate folder
-  tags: preseed
+  become: true
+  tags: libvirt
   copy:
     src: '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
     dest: '/var/lib/libvirt/images/{{ system.hostname }}-install.iso'
@@ -110,9 +111,23 @@
     path: '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
     state: absent
     
-# Clean up
-# - name: Clean up the working directory
-#   file:
-#     path: {{ build_dir }}
-#     state: absent
+# Clean up if needed
+- name: Clean up the working directory
+  tags: preseed
+  when: devel.clean
+  file:
+    path: '{{ build_dir }}/{{ path }}'
+    state: absent
+  with_items:
+    - build.sh
+    - common.conf
+    - images
+    - logs
+    - misc.tgz
+    - profiles
+    - splash.png
+    - tmp
+  loop_control:
+    loop_var: path
+
   

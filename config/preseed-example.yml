@@ -25,7 +25,7 @@
 # System configuration: We use Software RAID, with two drives
 system:
   hostname: mail
-  version: 9.3
+  version: 9.4
   arch: amd64
   hw:
     disks:
@@ -38,7 +38,7 @@ system:
 network:
   main:
     domain: example.com
-    proxy: 'http://proxy.example.com:3128/'
+    proxy: 'http://proxy.example.com:3128/'  # Or just use 'false'
     iface: eth0
 
 # Country and locales definition
@@ -75,3 +75,7 @@ accounts:
 cdimage:
   profiles: ''
 
+# Clean the build folder after the image is created
+# This is mostly useful in a CI/CD pipeline
+devel:
+  clean: false
