@@ -26,7 +26,7 @@ It is made to be unobtrusive, standard compliant, secure, robust, extensible and
 | SPF records generation and publication on Gandi                                                                         | Done        |
 | DMARC record generation and publication on Gandi, *the reports generation is planned for a future version*              | Done        |
 | Generation and publication of automatic Thunderbird configuration (MS Outlook planned)                                  | Done        |
-| Postfix configuration and installation, with LDAP lookups, SSL & TLS                                                    | Done        |
+| Postfix configuration and installation, with LDAP lookups, and protocols STARTTLS/Submission/SMTPS                      | Done        |
 | Powerful but light antispam system with [rspamd](https://rspamd.com/)                                                   | Done        |
 | Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                    | Done        |
 | Roundcube webmail, https, sieve filters access, password change, automatic identity creation                            | Done        |
