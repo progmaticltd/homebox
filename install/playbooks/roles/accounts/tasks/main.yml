@@ -384,7 +384,6 @@
 - name: Update the ldap configuration file    
   tags: ldap
   when: system.login == true
-  notify: Restart the nslcd service
   template:
     src: nslcd.conf
     dest: /etc/nslcd.conf
