@@ -21,6 +21,7 @@
 
 - name: Stop the nginx server if installed
   when: stat_result.stat["exists"] == True
+  register: nginx_state
   tags: cert
   service:
     name: nginx
@@ -40,8 +41,8 @@
   args:
     creates: "/etc/letsencrypt/live/{{ certificate.type }}.{{ network.domain }}/cert.pem"
     
-- name: Restart the nginx server if installed
-  when: stat_result.stat["exists"] == True
+- name: Restart the nginx server if installed and previously stopped
+  when: stat_result.stat["exists"] == True and nginx_state.changed
   tags: cert
   service:
     name: nginx
