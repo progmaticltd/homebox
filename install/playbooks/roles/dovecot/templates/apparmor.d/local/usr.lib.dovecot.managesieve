@@ -16,3 +16,6 @@
   /etc/nsswitch.conf r,
   /etc/group r,
   /etc/passwd r,
+
+  # Let managesieve to lock indexes
+  /home/users/*/mails/maildir/dovecot.* rwkl,
