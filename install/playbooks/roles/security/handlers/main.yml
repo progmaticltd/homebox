@@ -1,6 +1,0 @@
-
-- name: Reload AppArmor policies
-  service:
-    name: apparmor
-    state: reloaded
-

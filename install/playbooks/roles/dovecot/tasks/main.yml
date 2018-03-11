@@ -141,3 +141,31 @@
   loop_control:
     loop_var: rule
 
+# AppArmor configuration ======================================================
+- name: Install some dovecot AppArmor profile
+  when: security.app_armor
+  tags: dovecot, security, apparmor
+  template:
+    src: 'apparmor.d/{{ aa_config }}'
+    dest: '/etc/apparmor.d/{{ aa_config }}'
+  with_items:
+    - tunables/dovecot
+    - usr.lib.dovecot.auth
+    - usr.lib.dovecot.config
+    - usr.lib.dovecot.lmtp
+    - usr.lib.dovecot.managesieve
+  loop_control:
+    loop_var: aa_config
+
+- name: Activate AppArmor profiles
+  when: security.app_armor
+  tags: dovecot, security, apparmor
+  command: 'aa-complain {{ aa_config }}'
+  with_items:
+    - usr.lib.dovecot.auth
+    - usr.lib.dovecot.config
+    - usr.lib.dovecot.lmtp
+    - usr.lib.dovecot.managesieve
+  loop_control:
+    loop_var: aa_config
+
