@@ -23,7 +23,6 @@
     - php-net-sieve
     - php-net-ldap2
     - php-net-ldap3       # For LDAP address book
-    - nginx
     - makepasswd
     - haveged             # speed up password generation
   loop_control:
@@ -172,10 +171,25 @@
   loop_control:
     loop_var: rule
 
+# AppArmor configuration ======================================================
+
 - name: Install nginx AppArmor profile
   when: security.app_armor
   tags: roundcube, security, apparmor
   template:
-    src: apparmor.d/usr.sbin.nginx
-    dest: /etc/apparmor.d/usr.sbin.nginx
-    
+    src: 'apparmor.d/local/roundcube'
+    dest: '/etc/apparmor.d/local/roundcube'
+
+- name: Add roundcube AppAromor specific configuration
+  when: security.app_armor
+  tags: roundcube, security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/roundcube>'
+    insertbefore: '# End of local includes for homebox'
+
+- name: Activate AppArmor profiles
+  when: security.app_armor
+  tags: roundcube, security, apparmor
+  command: 'aa-enforce usr.sbin.nginx'
+
