@@ -38,5 +38,6 @@
     /usr/local/sbin/dns-gandi
     --config /etc/homebox/{{ network.domain }}.ini
     --dkim-public-key-file /etc/postfix/dkim/{{ dkim.selector }}.txt
+    --auto-discover all
     --log-file /var/log/dns-update-gandi.log
     --log-level DEBUG
