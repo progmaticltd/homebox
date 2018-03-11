@@ -1,0 +1,13 @@
+
+  # Basic maildir hierarchy
+  /home/users/*/mails/maildir/ r,
+  /home/users/*/mails/maildir/** rwkl,
+
+  # Mail dir size access
+  /home/users/*/mails/maildir/maildirsize rw,
+  /home/users/*/mails/maildir/maildirsize ra,
+
+  # Allow the imap process to run the global sieve scripts
+  /etc/dovecot/sieve/* r,
+  /etc/dovecot/sieve/*.sh ix,
+  /usr/bin/rspamc mix,

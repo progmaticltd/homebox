@@ -152,6 +152,7 @@
     - tunables/dovecot
     - local/usr.sbin.dovecot
     - local/usr.lib.dovecot.imap
+    - local/usr.lib.dovecot.pop3
     - local/usr.lib.dovecot.lmtp
     - local/usr.lib.dovecot.config
     - local/usr.lib.dovecot.auth
@@ -169,6 +170,7 @@
   with_items:
     - usr.sbin.dovecot
     - usr.lib.dovecot.imap
+    - usr.lib.dovecot.pop3
     - usr.lib.dovecot.lmtp
     - usr.lib.dovecot.config
     - usr.lib.dovecot.auth
