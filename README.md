@@ -19,18 +19,19 @@ It is made to be unobtrusive, standard compliant, secure, robust, extensible and
 ## Current status
 
 | Current feature, implemented and planned                                                                                | Status      |
-| ----------------------------------------------------------------------------------------------------------------        | ----------- |
-| LDAP users database, SSL & TLS certificates, password policies, optional integration with PAM                           | Done        |
-| SSL Certificates creation using letsencrypt, backup and publication on Gandi                                            | Done        |
-| DKIM keys generation and backup, publication on Gandi                                                                   | Done        |
+| ----------------------------------------------------------------------------------------------------------------------- | ----------- |
+| LDAP users database, SSL & TLS certificates, password policies, integration with the system and PAM                     | Done        |
+| SSL Certificates creation using letsencrypt, automatic local backup and publication on Gandi                            | Done        |
+| DKIM keys generation and automatic local backup, publication on Gandi                                                   | Done        |
 | SPF records generation and publication on Gandi                                                                         | Done        |
 | DMARC record generation and publication on Gandi, *the reports generation is planned for a future version*              | Done        |
-| Generation and publication of automatic Thunderbird configuration (MS Outlook planned)                                  | Done        |
+| Generation and publication of automatic Thunderbird (autoconfig) and Outlook (autodiscover) configuration               | Done        |
 | Postfix configuration and installation, with LDAP lookups, and protocols STARTTLS/Submission/SMTPS                      | Done        |
-| Powerful but light antispam system with [rspamd](https://rspamd.com/)                                                   | Done        |
+| Powerful and light antispam system with [rspamd](https://rspamd.com/)                                                   | Done        |
 | Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                    | Done        |
-| Roundcube webmail, https, sieve filters access, password change, automatic identity creation                            | Done        |
+| Roundcube webmail, https, sieve filters management, password change, automatic identity creation                        | Done        |
 | AppArmor securisation for nginx, dovecot, postfix, etc                                                                  | In progress |
+| Automatic ports opening using upnp                                                                                      | Planned     |
 | Automatic migration from old mail server                                                                                | Planned     |
 | Automatic encrypted off-site backup                                                                                     | Planned     |
 | Web proxy with privacy and parent filtering features                                                                    | Planned     |
@@ -129,8 +130,9 @@ If you have a fixed IP address, you can perfectly develop using a virtual machin
   - TCP/80 : Used to query letsencrypt for the certificates
   - TCP/25 : SMTP, to receive emails
 - The other ports open don't need to be forwarded by your router:
-  - TCP/143 and TCP:993 : IMAP and IMAPS
-  - TCP/110 and TCP:995 : POP3 and POP3S
+  - TCP/143 and TCP/993 : IMAP and IMAPS
+  - TCP/110 and TCP/995 : POP3 and POP3S
+  - TCP/465 and TCP/587 : [SMTPS](https://en.wikipedia.org/wiki/SMTPS) and [Submission](https://en.wikipedia.org/wiki/Opportunistic_TLS) (the former is kept for compatibility with some old devices)
   - TCP/4190 : ManageSieve
   - TCP/443 : HTTPS access for the webmail
 
@@ -184,7 +186,7 @@ The tag"facts" is necessary to gather some facts other roles may need.
 I am planning to test / try / add the following features, in *almost* no particular order:
 
 - Automatic LUKS setup for the ISO image installer.
-- Add a caldav / carddav server (Any that works with LDAP authentication)
+- Add Sogo for caldav / carddav server, with LDAP authentication
 - Tor, torrent download station, etc...
 - Add optional components (e.g. [Gogs](https://gogs.io/), [openvpn](https://openvpn.net/), [Syncthing](https://syncthing.net/), etc)
 - Test other mail systems, like Cyrus, Sogo, etc.

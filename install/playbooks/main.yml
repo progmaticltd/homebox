@@ -54,7 +54,7 @@
   roles:
     - dns-gandi-update
 
-# Install and configure dovecot (POP3 & IMAP)
+# Crate the certificate for dovecot (POP3)
 - hosts: homebox
   vars:
     certificate:
@@ -64,6 +64,7 @@
   roles:
     - certificates
 
+# Crate the certificate for dovecot (IMAP)
 - hosts: homebox
   vars:
     certificate:
@@ -72,6 +73,11 @@
     - ../../config/system.yml
   roles:
     - certificates
+
+- hosts: homebox
+  vars_files:
+    - ../../config/system.yml
+  roles:
     - dovecot
 
 # Install a basic webmail (roundcube)
@@ -83,12 +89,31 @@
     - ../../config/system.yml
   roles:
     - certificates
+    - nginx
     - roundcube
+
+- hosts: homebox
+  vars:
+    certificate:
+      type: autodiscover
+  vars_files:
+    - ../../config/system.yml
+  roles:
+    - certificates
+
+- hosts: homebox
+  vars:
+    certificate:
+      type: autodiscover
+  vars_files:
+    - ../../config/system.yml
+  roles:
+    - certificates
     - autoconfig
 
-# Configure security, especially AppArmor
 - hosts: homebox
   vars_files:
     - ../../config/system.yml
   roles:
-    - security
+    - autoconfig
+
