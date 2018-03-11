@@ -48,7 +48,8 @@ myorigin = /etc/mailname
 mydestination = $myhostname, {{ network.domain }}, localhost.{{ network.domain }}, localhost
 relayhost =
 
-mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 192.168.0.0/16
+
 mailbox_command = /usr/lib/dovecot/dovecot-lda -f "$SENDER" -a "$RECIPIENT"
 mailbox_size_limit = 0
 recipient_delimiter = +

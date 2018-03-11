@@ -1,5 +1,3 @@
 # Domain {{ network.domain }}
-{{ network.domain }} {{ dkim.selector }}._domainkey.{{ network.domain }}
+*@{{ network.domain }} {{ dkim.selector }}._domainkey.{{ network.domain }}
 
-# You can specify multiple domains
-# Example.net www._domainkey.example.net 

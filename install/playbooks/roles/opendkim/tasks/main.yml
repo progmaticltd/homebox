@@ -12,11 +12,21 @@
   loop_control:
     loop_var: pkg
     
+- name: Create directory to install the keys
+  tags: dkim
+  notify: Restart opendkim
+  file:
+    path: /etc/opendkim/keys
+    state: directory
+    owner: opendkim
+    group: opendkim
+    mode: 0700
+
 - name: If the DKIM have been generated before, copy them on the remote server
   tags: dkim
   synchronize:
-    src: ../../../backup/dkim-keys/
-    dest: /etc/postfix
+    src: '../../backup/dkim-keys/'
+    dest: '/etc/opendkim/keys/'
     mode: push
     owner: no
     group: no
@@ -24,16 +34,6 @@
     rsync_opts:
       - '--no-motd'
       - '--checksum'
-      - '--exclude=readme.md'
-
-- name: Create directory to install the keys
-  tags: dkim
-  notify: Restart opendkim
-  file:
-    path: /etc/postfix/dkim/
-    state: directory
-    group: opendkim
-    mode: u=rwx,g=rx,o=
 
 - name: Run the command to create the keys
   tags: dkim
@@ -41,21 +41,25 @@
   register: keys
   command: >-
     opendkim-genkey
-    -D /etc/postfix/dkim/
+    --restrict
+    -D /etc/opendkim/keys
     -d '{{ network.domain }}'
     -b '{{ dkim.key_size }}'
     -s '{{ dkim.selector }}'
     -n '{{ dkim.note }}'
   args:
-    creates: '/etc/postfix/dkim/{{ dkim.selector }}.txt'
+    creates: '/etc/opendkim/keys/{{ dkim.selector }}.txt'
 
 - name: Backup the dkim on your local machine
   tags: dkim
   synchronize:
     mode: pull
-    src: /etc/postfix/dkim
-    dest: ../../../backup/dkim-keys/
+    src: '/etc/opendkim/keys/{{ item }}'
+    dest: '../../backup/dkim-keys/{{ item }}'
     perms: yes
+  with_items:
+    - '{{ dkim.selector }}.txt'
+    - '{{ dkim.selector }}.private'
 
 - name: Set the default permissions
   tags: dkim
@@ -63,48 +67,39 @@
   file:
     path: '{{ path }}'
     mode: u=rw,g=r,o=
+    owner: opendkim
     group: opendkim
   with_items:
-    - '/etc/postfix/dkim/{{ dkim.selector }}.private'
-    - '/etc/postfix/dkim/{{ dkim.selector }}.txt'
+    - '/etc/opendkim/keys/{{ dkim.selector }}.private'
+    - '/etc/opendkim/keys/{{ dkim.selector }}.txt'
   loop_control:
     loop_var: path
 
-- name: Update the configuration file
+- name: Create the configuration file
   tags: dkim
   notify: Restart opendkim
-  lineinfile:
-    path: /etc/opendkim.conf
-    line: '{{ line }}'
-    state: present
-  with_items:
-    - 'KeyTable file:/etc/postfix/dkim/keytable'
-    - 'SigningTable file:/etc/postfix/dkim/signingtable'
-    - 'Socket inet:{{ milter_dkim_port }}@localhost'
-  loop_control:
-    loop_var: line
+  template:
+    src: opendkim.conf
+    dest: /etc/opendkim.conf
 
-- name: Update the configuration file for the socket
+- name: Update the default configuration file for the socket
   tags: dkim
   notify: Restart opendkim
-  lineinfile:
+  replace:
     path: /etc/default/opendkim
-    line: '{{ line }}'
-    state: present
-  with_items:
-    - 'SOCKET="inet:{{ milter_dkim_port }}@localhost"'
-  loop_control:
-    loop_var: line
+    regexp: '^SOCKET.*'
+    replace: 'SOCKET="inet:{{ milter_dkim_port }}@localhost"'
 
 - name: Create the keys and signing table
   tags: dkim
   notify: Restart opendkim
   template:
     src: '{{ file }}'
-    dest: '/etc/postfix/dkim/{{ file }}'
+    dest: '/etc/opendkim/{{ file }}'
   with_items:
     - keytable
     - signingtable
+    - trusted-hosts
   loop_control:
     loop_var: file
 
