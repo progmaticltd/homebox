@@ -4,6 +4,7 @@
   #include <abstractions/base>
 
   capability setgid,
+  capability setuid,
   
   /lib/x86_64-linux-gnu/ld-*.so mr,
   /usr/lib/dovecot/quota-status mr,

@@ -14,5 +14,5 @@
 # 
 
 # HomeBox specific
-@{DOVECOT_MAILSTORE}=@{HOME}/mails/
+@{DOVECOT_MAILSTORE}=@{HOME}/mails/ @{HOME}/mails/maildir
 
