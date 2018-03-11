@@ -408,6 +408,20 @@
     owner: '{{ user.uid }}'
     group: '{{ user.group }}'
     state: directory
+    mode: 0700
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Create the user account mail folders
+  tags: accounts
+  file:
+    path: '/home/{{ user.group }}/{{ user.uid }}/mails/maildir'
+    owner: '{{ user.uid }}'
+    group: '{{ user.group }}'
+    state: directory
+    mode: 0700
   with_items:
     - '{{ users }}'
   loop_control:

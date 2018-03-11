@@ -89,22 +89,28 @@
   command: update-grub2
 
 - name: Enable AppArmor service
-  register: aa_service
   when: security.app_armor
   tags: security
   service:
     name: apparmor
     enabled: true
 
+- name: Check if AppArmor is enabled
+  register: aa_enabled
+  when: security.app_armor
+  tags: security
+  shell: aa-enabled
+  failed_when: false
+
 - name: Reboot to activate AppArmor if not already active
-  when: security.app_armor and aa_service.changed
+  when: security.app_armor and aa_enabled.rc == 1
   tags: security, apparmor
   shell: systemctl reboot --message "Restarting the system to activate AppArmor"
   async: 1
   poll: 0
 
 - name: Wait for the server to come back online
-  when: security.app_armor and aa_service.changed
+  when: security.app_armor and aa_enabled.rc == 1
   tags: security
   local_action:
     module: wait_for_connection
