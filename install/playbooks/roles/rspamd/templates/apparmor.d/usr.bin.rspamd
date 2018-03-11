@@ -1,0 +1,28 @@
+# Last Modified: Sat Mar 10 18:38:34 2018
+#include <tunables/global>
+
+/usr/bin/rspamd {
+  #include <abstractions/base>
+
+  /dev/shm/rhm.* rw,
+
+  # Read configuration files
+  /etc/rspamd/* r,
+  /etc/rspamd/modules.d/* r,
+  /etc/nsswitch.conf r,
+  /etc/host.conf r,
+  /etc/resolv.conf r,
+  /etc/hosts r,
+  /etc/nsswitch.conf r,
+  /etc/host.conf r,
+
+  # Run programs
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/bin/rspamd mr,
+
+  # Read data
+  /var/lib/rspamd/** r,
+  
+  /var/lib/rspamd/stats.ucl wk,
+  /var/log/rspamd/rspamd.log w,
+}

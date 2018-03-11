@@ -60,3 +60,10 @@
   loop_control:
     loop_var: file
     
+- name: Install rspamd AppArmor profile
+  when: security.app_armor
+  tags: rspamd, security, apparmor
+  template:
+    src: apparmor.d/usr.bin.rspamd
+    dest: /etc/apparmor.d/usr.bin.rspamd
+    
