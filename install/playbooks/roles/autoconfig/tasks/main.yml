@@ -56,13 +56,15 @@
 - name: Add autoconfig AppAromor specific configuration
   when: security.app_armor
   tags: autoconfig, security, apparmor
+  register: aa_config
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
     line: '  #include <local/autoconfig>'
     insertbefore: '# End of local includes for homebox'
 
 - name: Activate AppArmor profiles
-  when: security.app_armor
+  when: security.app_armor and aa_config.changed
   tags: autoconfig, security, apparmor
   command: 'aa-enforce usr.sbin.nginx'
+  notify: Restart AppArmor service
 

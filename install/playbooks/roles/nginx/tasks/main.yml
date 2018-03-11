@@ -64,3 +64,12 @@
     src: 'apparmor.d/usr.sbin.nginx'
     dest: '/etc/apparmor.d/usr.sbin.nginx'
 
+- name: Activate AppArmor profiles
+  when: security.app_armor
+  tags: nginx, security, apparmor
+  notify: Restart AppArmor service
+  command: 'aa-enforce {{ aa_config }}'
+  with_items:
+    - usr.sbin.nginx
+  loop_control:
+    loop_var: aa_config

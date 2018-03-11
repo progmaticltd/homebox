@@ -182,6 +182,7 @@
 
 - name: Add roundcube AppAromor specific configuration
   when: security.app_armor
+  register: aa_config
   tags: roundcube, security, apparmor
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
@@ -189,7 +190,9 @@
     insertbefore: '# End of local includes for homebox'
 
 - name: Activate AppArmor profiles
-  when: security.app_armor
+  when: security.app_armor and aa_config.changed
   tags: roundcube, security, apparmor
   command: 'aa-enforce usr.sbin.nginx'
+  notify: Restart AppArmor service
+
 
