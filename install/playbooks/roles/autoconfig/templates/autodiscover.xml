@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Autodiscover xmlns="http://schemas.microsoft.com/exchange/autodiscover/responseschema/2006">
+<Response xmlns="http://schemas.microsoft.com/exchange/autodiscover/outlook/responseschema/2006a">
+<Account>
+  <AccountType>email</AccountType>
+  <Action>settings</Action>
+  <Protocol>
+    <Type>IMAP</Type>
+    <Server>imap.{{ network.domain }}</Server>
+    <Port>993</Port>
+    <DomainRequired>off</DomainRequired>
+    <SPA>off</SPA>
+    <SSL>on</SSL>
+    <AuthRequired>on</AuthRequired>
+  </Protocol>
+  <Protocol>
+    <Type>POP3</Type>
+    <Server>pop3.{{ network.domain }}</Server>
+    <Port>995</Port>
+    <DomainRequired>off</DomainRequired>
+    <SPA>off</SPA>
+    <SSL>on</SSL>
+    <AuthRequired>on</AuthRequired>
+  </Protocol>
+  <Protocol>
+    <Type>SMTP</Type>
+    <Server>smtp.{{ network.domain }}</Server>
+    <Port>587</Port>
+    <DomainRequired>off</DomainRequired>
+    <SPA>off</SPA>
+    <SSL>on</SSL>
+    <AuthRequired>on</AuthRequired>
+    <UsePOPAuth>off</UsePOPAuth>
+    <SMTPLast>on</SMTPLast>
+  </Protocol>
+  <Protocol>
+    <Type>WEB</Type>
+    <Server>webmail.{{ network.domain }}</Server>
+    <Port>443</Port>
+    <SSL>on</SSL>
+  </Protocol>
+</Account>
+</Response>
+</Autodiscover>
