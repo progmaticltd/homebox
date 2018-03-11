@@ -1,0 +1,15 @@
+
+  # Basic maildir hierarchy
+  /home/users/*/mails/maildir/ r,
+  /home/users/*/mails/maildir/ rw,
+  /home/users/*/mails/maildir/** r,
+  /home/users/*/mails/maildir/** ra,
+  /home/users/*/mails/maildir/** w,
+  /home/users/*/mails/maildir/** rw,
+  /home/users/*/mails/maildir/** k,
+  /home/users/*/mails/maildir/** l,
+
+  # Mail dir size access
+  /home/users/*/mails/maildir/maildirsize rw,
+  /home/users/*/mails/maildir/maildirsize ra,
+  

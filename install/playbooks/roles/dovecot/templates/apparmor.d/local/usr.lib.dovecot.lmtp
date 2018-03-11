@@ -1,0 +1,19 @@
+
+  /home/users/*/mails/maildir/dovecot-uidlist rw,
+  /home/users/*/mails/maildir/dovecot-uidlist.lock rw,
+  
+  /home/users/*/mails/maildir/dovecot.index.cache rw,
+  /home/users/*/mails/maildir/dovecot.index.cache k,
+  /home/users/*/mails/maildir/dovecot.index.log rwk,
+  
+  /home/users/*/mails/maildir/maildirsize rw,
+  /home/users/*/mails/maildir/{tmp,cur,new}/ rw,
+  /home/users/*/mails/maildir/{tmp,cur,new}/* rw,
+  /home/users/*/mails/sieve/* rw,
+
+  /home/users/*/mails/maildir/* l,
+  /home/users/*/mails/maildir/* r,
+  /home/users/*/mails/maildir/* ra,
+  /home/users/*/mails/maildir/* rw,
+
+  /home/users/*/.dovecot.lda-dupes.lock rw,

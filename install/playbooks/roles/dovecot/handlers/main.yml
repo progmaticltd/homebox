@@ -15,3 +15,9 @@
   loop_control:
     loop_var: file
 
+
+- name: Restart AppArmor service
+  tags: dovecot
+  service:
+    name: apparmor
+    state: restarted

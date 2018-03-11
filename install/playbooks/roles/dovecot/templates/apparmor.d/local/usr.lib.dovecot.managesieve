@@ -1,0 +1,13 @@
+  # Mails directory
+  /home/users/*/mails/maildir/dovecot.index.log rw,
+  /home/users/*/mails/maildir/maildirsize rw,
+  /home/users/*/mails/sieve/ rw,
+  /home/users/*/mails/sieve/** rw,
+  
+  /usr/bin/doveconf rix,
+  /usr/lib/dovecot/managesieve mrix,
+  /usr/share/dovecot/protocols.d/ r,
+  /usr/share/dovecot/protocols.d/imapd.protocol r,
+  /usr/share/dovecot/protocols.d/lmtpd.protocol r,
+  /usr/share/dovecot/protocols.d/managesieved.protocol r,
+  /usr/share/dovecot/protocols.d/pop3d.protocol r,

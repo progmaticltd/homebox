@@ -1,0 +1,4 @@
+  # Access maildirs
+  /home/users/*/mails/maildir/maildirsize ra,
+  /home/users/*/mails/maildir/maildirsize rw,
+

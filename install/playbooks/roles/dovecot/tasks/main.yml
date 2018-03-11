@@ -150,22 +150,30 @@
     dest: '/etc/apparmor.d/{{ aa_config }}'
   with_items:
     - tunables/dovecot
-    - usr.lib.dovecot.auth
-    - usr.lib.dovecot.config
-    - usr.lib.dovecot.lmtp
-    - usr.lib.dovecot.managesieve
+    - local/usr.sbin.dovecot
+    - local/usr.lib.dovecot.imap
+    - local/usr.lib.dovecot.lmtp
+    - local/usr.lib.dovecot.config
+    - local/usr.lib.dovecot.auth
+    - local/usr.lib.dovecot.managesieve
+    - local/usr.lib.dovecot.quota-status
+    - usr.lib.dovecot.quota-status
   loop_control:
     loop_var: aa_config
 
 - name: Activate AppArmor profiles
   when: security.app_armor
   tags: dovecot, security, apparmor
-  command: 'aa-complain {{ aa_config }}'
+  notify: Restart AppArmor service
+  command: 'aa-enforce {{ aa_config }}'
   with_items:
-    - usr.lib.dovecot.auth
-    - usr.lib.dovecot.config
+    - usr.sbin.dovecot
+    - usr.lib.dovecot.imap
     - usr.lib.dovecot.lmtp
+    - usr.lib.dovecot.config
+    - usr.lib.dovecot.auth
     - usr.lib.dovecot.managesieve
+    - usr.lib.dovecot.quota-status
   loop_control:
     loop_var: aa_config
 

@@ -1,0 +1,13 @@
+#include <tunables/global>
+
+/usr/lib/dovecot/quota-status {
+  #include <abstractions/base>
+
+  capability setgid,
+  
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/lib/dovecot/quota-status mr,
+
+  # Site-specific additions and overrides. See local/README for details.
+  #include <local/usr.lib.dovecot.quota-status>
+}
