@@ -1,0 +1,42 @@
+# Nginx AppArmor profile
+#include <tunables/global>
+
+/usr/sbin/nginx {
+
+  #include <abstractions/base>
+  #include <abstractions/nis>
+  #include <abstractions/nameservice>
+  #include <abstractions/openssl>
+  #include <abstractions/ssl_keys>
+   
+  # Capabilities and network
+  capability dac_override,
+  capability dac_read_search,
+  capability net_bind_service,
+  capability setgid,
+  capability setuid,network inet stream,
+  network inet6 stream,
+
+  # Allow to read configuration and site files
+  /etc/nginx/modules-enabled/ r,
+  /usr/share/nginx/modules-available/mod-*.conf r,
+  /usr/share/nginx/sites-available/* r,
+  /etc/nginx/** r,
+
+  # Binaries
+  /usr/share/nginx/modules/ngx_*.so mr,
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/lib/nginx/modules/ngx_*.so mr,
+  /usr/sbin/nginx mr,
+
+  # Data cache
+  /var/lib/nginx/body/* rw,
+
+  # Log files
+  /run/nginx.pid rw,
+  /var/log/nginx/*access.log w,
+  /var/log/nginx/*error.log w,
+
+  # Local includes for homebox
+  # End of local includes for homebox
+}

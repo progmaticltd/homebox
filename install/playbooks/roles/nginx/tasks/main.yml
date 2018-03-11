@@ -1,0 +1,66 @@
+---
+
+- name: Install nginx
+  tags: nginx
+  apt:
+    name: "{{ pkg }}"
+    state: installed
+  with_items:
+    - nginx
+  loop_control:
+    loop_var: pkg
+
+################################################################################
+# At this point, the certificates should have been created already #############
+# in order to have SSL and TLS encryption activated.                           #
+- name: Allow slapd and nslcd daemons to access the certificate directories
+  tags: ldap,ssl
+  notify: Restart nginx
+  when: system.ssl == 'letsencrypt'
+  vars:
+    details:
+      - [ /etc/letsencrypt/archive, /etc/letsencrypt/live ]
+      - [ www-data ]
+  acl:
+    path: '{{ item[0] }}'
+    entity: '{{ item[1] }}'
+    etype: user
+    permissions: rx
+    state: present
+  with_nested: '{{ details }}'
+
+#                                                                              #
+# End of TLS / SSL Configuration ###############################################
+
+- name: Disable nginx default site
+  tags: nginx
+  notify: Restart nginx
+  file:
+    path: '/etc/nginx/sites-enabled/default'
+    state: absent
+    force: yes
+
+- name: Configure the firewall for default access
+  tags: nginx, security
+  ufw:
+    rule: allow
+    proto: tcp
+    src: any
+    port: '{{ rule.port }}'
+    comment: '{{ rule.comment }}'
+  with_items:
+    - comment: Allow http access (might be redirect to https)
+      port: 80
+    - comment: Allow https access
+      port: 443
+  loop_control:
+    loop_var: rule
+
+# AppArmor configuration ======================================================
+- name: Install a basic nginx AppArmor profile
+  when: security.app_armor
+  tags: nginx, security, apparmor
+  template:
+    src: 'apparmor.d/usr.sbin.nginx'
+    dest: '/etc/apparmor.d/usr.sbin.nginx'
+
