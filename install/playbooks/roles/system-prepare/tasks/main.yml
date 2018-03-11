@@ -60,3 +60,58 @@
     port: 22
     comment: Allow SSH access
     state: enabled
+
+- name: Install AppArmor packages
+  when: security.app_armor
+  tags: security
+  apt:
+    name: '{{ pkg }}'
+    state: latest
+  with_items:
+    - apparmor
+    - apparmor-profiles
+    - apparmor-utils
+  loop_control:
+    loop_var: pkg
+
+- name: Enable AppArmor at boot
+  register: grub_config
+  when: security.app_armor
+  tags: security
+  replace:
+    path: /etc/default/grub
+    regexp: 'GRUB_CMDLINE_LINUX_DEFAULT="([^"]*)"'
+    replace: 'GRUB_CMDLINE_LINUX_DEFAULT="\1 apparmor=1 security=apparmor"'
+
+# AppArmor will be enabled on the next reboot
+- name: Update grub
+  when: grub_config.changed
+  command: update-grub2
+
+- name: Enable AppArmor service
+  register: aa_service
+  when: security.app_armor
+  tags: security
+  service:
+    name: apparmor
+    enabled: true
+
+- name: Reboot to activate AppArmor if not already active
+  when: security.app_armor and aa_service.changed
+  tags: security, apparmor
+  shell: systemctl reboot --message "Restarting the system to activate AppArmor"
+  async: 1
+  poll: 0
+
+- name: Wait for the server to come back online
+  when: security.app_armor and aa_service.changed
+  tags: security
+  local_action:
+    module: wait_for_connection
+    host: '{{ ansible_ssh_host }}'
+    port: 22
+    state: started    
+    delay: 30
+    sleep: 10
+    timeout: 180
+  
