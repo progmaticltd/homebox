@@ -1,0 +1,18 @@
+# ------------------------------------------------------------------
+#
+#    Copyright (C) 2013 Christian Boltz
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#
+# ------------------------------------------------------------------
+# vim:ft=apparmor
+
+# @{DOVECOT_MAILSTORE} is a space-separated list of all directories
+# where dovecot is allowed to store and read mails
+# 
+
+# HomeBox specific
+@{DOVECOT_MAILSTORE}=@{HOME}/mails/
+

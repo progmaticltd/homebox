@@ -1,0 +1,44 @@
+# Last Modified: Sat Mar 10 21:33:24 2018
+#include <tunables/global>
+
+# ------------------------------------------------------------------
+#
+#    Copyright (C) 2013 Christian Boltz
+#    Copyright (C) 2014 Christian Wittmer
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#
+# ------------------------------------------------------------------
+# vim: ft=apparmor
+
+
+/usr/lib/dovecot/auth {
+  #include <abstractions/authentication>
+  #include <abstractions/base>
+  #include <abstractions/dovecot-common>
+  #include <abstractions/nameservice>
+  #include <abstractions/openssl>
+  #include <abstractions/wutmp>
+  #include <local/usr.lib.dovecot.auth>
+
+  capability audit_write,
+  capability setuid,
+
+  /etc/dovecot/* r,
+  /etc/ldap/ldap.conf r,
+  /etc/letsencrypt/archive/ldap.{{ network.domain }}/* r,
+
+  /usr/lib/dovecot/auth mr,
+  /var/spool/postfix/private/auth w,
+  
+  /var/tmp/imap_* rw,
+  /var/tmp/pop_* rw,
+  /var/tmp/sieve_* rw,
+  /var/tmp/smtp_* rw,
+  
+  /{var/,}run/dovecot/anvil-auth-penalty rw,
+  /{var/,}run/dovecot/auth-token-secret.dat{,.tmp} rw,
+  /{var/,}run/dovecot/stats-user rw,
+}
