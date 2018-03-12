@@ -5,7 +5,6 @@
 - hosts: homebox
   vars_files:
     - ../../config/system.yml
-    - ../../config/tests.yml
   roles:
     - tests-system-base
 

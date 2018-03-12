@@ -88,7 +88,7 @@ firewall:
 # Extra security values
 security:
   auto_update: true
-  app_armor: true
+  app_armor: false
   aa_profiles:
     - nginx
 

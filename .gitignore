@@ -8,7 +8,6 @@ preseed/variables/*.yml
 # Ignore the local configuration files
 config/system.yml
 config/hosts.yml
-config/tests.yml
 config/preseed.yml
 
 # Ignore ansible error files

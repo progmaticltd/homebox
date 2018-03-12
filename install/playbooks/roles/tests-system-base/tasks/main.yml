@@ -1,14 +1,13 @@
 ---
 
+- name: Check internet access
+  tags: network
+  shell: ping -c 4 8.8.8.8
 
 - name: Check if apt works normally
   tags: apt
   apt:
     update_cache: true
-
-- name: Check internet access
-  tags: network
-  shell: ping -c 4 8.8.8.8
 
 - name: Check basic required packages
   tags: network
@@ -19,3 +18,7 @@
   tags: security
   shell: aa-enabled
 
+- name: Check if certbot is installed
+  when: system.ssl == 'letsencrypt'
+  tags: apt
+  shell: dpkg -s certbot
