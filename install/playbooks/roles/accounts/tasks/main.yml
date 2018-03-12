@@ -1,11 +1,18 @@
 ---
 
+- name: Create a directory for ldap passwords backup if it does not exists
+  tags: ldap
+  delegate_to: localhost
+  file:
+    path: '{{ playbook_dir }}/../../backup/dkim-keys/'
+    state: directory
+
 - name: Set the parameters for passwords generators
   tags: ldap
   set_fact:
-    roPasswdParams: "../../backup/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
-    managerPasswdParams: "../../backup/ldap/manager.pwd length=16 chars=ascii_letters,digits"
-    adminPasswdParams: "../../backup/ldap/admin.pwd length=16 chars=ascii_letters,digits"
+    roPasswdParams: "{{ playbook_dir }}/../../backup/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
+    managerPasswdParams: "{{ playbook_dir }}/../../backup/ldap/manager.pwd length=16 chars=ascii_letters,digits"
+    adminPasswdParams: "{{ playbook_dir }}/../../backup/ldap/admin.pwd length=16 chars=ascii_letters,digits"
 
 - name: Display LDAP tree settings
   tags: ldap, debug

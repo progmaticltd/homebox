@@ -24,15 +24,15 @@
 
 - name: Create a directory for DKIM keys backup if it does not exists
   tags: dkim
-  delegate_to: loclhost
+  delegate_to: localhost
   file:
-    path: '../../backup/dkim-keys/'
+    path: '{{ playbook_dir }}/../../backup/dkim-keys/'
     state: directory
 
 - name: If the DKIM have been generated before, copy them on the remote server
   tags: dkim
   synchronize:
-    src: '../../backup/dkim-keys/'
+    src: '{{ playbook_dir }}/../../backup/dkim-keys/'
     dest: '/etc/opendkim/keys/'
     mode: push
     owner: no
@@ -62,7 +62,7 @@
   synchronize:
     mode: pull
     src: '/etc/opendkim/keys/{{ item }}'
-    dest: '../../backup/dkim-keys/{{ item }}'
+    dest: '{{ playbook_dir }}/../../backup/dkim-keys/'
     perms: yes
   with_items:
     - '{{ dkim.selector }}.txt'
