@@ -1,0 +1,10 @@
+---
+
+# Defaults packages to install
+defaults:
+  packages:
+    - unattended-upgrades
+    - ufw
+    - fail2ban
+    - rblcheck
+

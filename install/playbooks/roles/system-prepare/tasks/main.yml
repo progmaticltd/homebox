@@ -44,10 +44,7 @@
     name: "{{ pkg }}"
     state: installed
   with_items:
-    - unattended-upgrades
-    - ufw
-    - fail2ban
-    - rblcheck
+    - '{{ defaults.packages }}'
   loop_control:
     loop_var: pkg
 
@@ -120,4 +117,4 @@
     delay: 30
     sleep: 10
     timeout: 180
-  
+    

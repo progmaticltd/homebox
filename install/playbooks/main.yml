@@ -109,7 +109,6 @@
     - ../../config/system.yml
   roles:
     - certificates
-    - autoconfig
 
 - hosts: homebox
   vars_files:

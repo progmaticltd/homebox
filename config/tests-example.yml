@@ -1,0 +1,8 @@
+---
+
+###############################################################################
+# Run system tests at the end of the plabook
+test:
+  all: true
+  apt: false
+
