@@ -69,7 +69,7 @@ non_smtpd_milters =
     inet:localhost:{{ milter_antispam_port }}
     inet:localhost:{{ milter_dmarc_port }}
 
-milter_mail_macros =  i {mail_addr} {client_addr} {client_name} {auth_authen}
+milter_mail_macros =  i {mail_addr} {client_addr} {client_name} {auth_authen} {auth_type}
 
 smtpd_relay_restrictions =
     permit_mynetworks
@@ -89,6 +89,9 @@ smtpd_recipient_restrictions =
     
 # SPF policies
 policy-spf_time_limit = 3600s
+
+disable_vrfy_command = yes
+
 
 # Message size, computed from max attachment size and base64 overhead
 message_size_limit = {{ message_size_limit }}

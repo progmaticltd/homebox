@@ -22,6 +22,13 @@
     group: opendkim
     mode: 0700
 
+- name: Create a directory for DKIM keys backup if it does not exists
+  tags: dkim
+  delegate_to: loclhost
+  file:
+    path: '../../backup/dkim-keys/'
+    state: directory
+
 - name: If the DKIM have been generated before, copy them on the remote server
   tags: dkim
   synchronize:

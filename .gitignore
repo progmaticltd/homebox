@@ -25,5 +25,5 @@ preseed/misc/root/.ssh/authorized_key
 # - dkim: dkim keys 
 # - ldap: LDAP passwords automatically generated
 backup/certificates/letsencrypt
-backup/dkim-keys/dkim
+backup/dkim-keys
 backup/ldap
