@@ -1,0 +1,8 @@
+- hosts: homebox
+  vars:
+    certificate:
+      type: autodiscover
+  vars_files:
+    - ../../config/system.yml
+  roles:
+    - certificates

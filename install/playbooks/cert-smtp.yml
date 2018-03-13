@@ -1,0 +1,9 @@
+# Install and configure postfix
+- hosts: homebox
+  vars_files:
+    - ../../config/system.yml
+  vars:
+    certificate:
+      type: smtp
+  roles:
+    - certificates

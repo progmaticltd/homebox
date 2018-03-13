@@ -72,6 +72,8 @@ system:
 # Gandi automatic DNS update
 # Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
 dns:
+  update: yes    # Automatic update of your DNS server
+  test: true     # test mode: does not activate the DNS zone straight
   gandi:
     handle: JD123-GANDI
     key: zaNGbUVIvi1KbYb6PPMdiQLh

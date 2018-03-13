@@ -1,0 +1,9 @@
+# Crate the certificate for dovecot (POP3)
+- hosts: homebox
+  vars:
+    certificate:
+      type: pop3
+  vars_files:
+    - ../../config/system.yml
+  roles:
+    - certificates

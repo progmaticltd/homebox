@@ -1,0 +1,9 @@
+# Crate the certificate for dovecot (IMAP)
+- hosts: homebox
+  vars:
+    certificate:
+      type: imap
+  vars_files:
+    - ../../config/system.yml
+  roles:
+    - certificates
