@@ -41,3 +41,4 @@
     --auto-discover all
     --log-file /var/log/dns-update-gandi.log
     --log-level DEBUG
+    --test {{ dns.test }}
