@@ -388,6 +388,13 @@
     - libnss-ldapd
     - libpam-ldapd
 
+- name: Restart the nslcd service
+  when: system.login == true
+  tags: ldap
+  service:
+    name: nscd
+    state: restarted
+
 - name: Update the ldap configuration file    
   tags: ldap
   when: system.login == true
@@ -395,6 +402,15 @@
     src: nslcd.conf
     dest: /etc/nslcd.conf
     mode: 0600
+
+- name: Restart the nslcd service
+  when: system.login == true
+  tags: ldap
+  service:
+    name: nslcd
+    state: restarted
+
+# TODO: This role need to be split in two here, with the two handlers above
 
 - name: Create the group home folders if necessary
   tags: accounts
@@ -416,6 +432,7 @@
     group: '{{ user.group }}'
     state: directory
     mode: 0700
+    recurse: true
   with_items:
     - '{{ users }}'
   loop_control:
@@ -429,6 +446,7 @@
     group: '{{ user.group }}'
     state: directory
     mode: 0700
+    recurse: true
   with_items:
     - '{{ users }}'
   loop_control:

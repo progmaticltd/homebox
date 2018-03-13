@@ -1,0 +1,6 @@
+# Generate the records on Gandi DNS
+- hosts: homebox
+  vars_files:
+    - ../../config/system.yml
+  roles:
+    - dns-gandi-update

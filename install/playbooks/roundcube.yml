@@ -1,0 +1,11 @@
+# Install a basic webmail (roundcube)
+- hosts: homebox
+  vars:
+    certificate:
+      type: webmail
+  vars_files:
+    - ../../config/system.yml
+  roles:
+    - certificates
+    - nginx
+    - roundcube

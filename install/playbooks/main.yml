@@ -2,117 +2,18 @@
 ## Main installation playbook
 
 # Prepare the system
-- hosts: homebox
-  vars_files:
-    - ../../config/system.yml
-  roles:
-    - packages
-    - system-prepare
-    - ports-assign
-
-# Create the accounts
-- hosts: homebox
-  vars_files:
-    - ../../config/system.yml
-  vars:
-    certificate:
-      type: ldap
-  roles:
-    - certificates
-    - accounts
-
-# Add antispam filtering via rspamd
-- hosts: homebox
-  vars_files:
-    - ../../config/system.yml
-  roles:
-    - rspamd
-    
-# Install and configure opendmarc
-- hosts: homebox
-  vars_files:
-    - ../../config/system.yml
-  roles:
-    - opendmarc
-    
-# Install and configure postfix
-- hosts: homebox
-  vars_files:
-    - ../../config/system.yml
-  vars:
-    certificate:
-      type: smtp
-  roles:
-    - certificates
-    - opendkim
-    - postfix
-
-# Generate the records on Gandi DNS
-- hosts: homebox
-  vars_files:
-    - ../../config/system.yml
-  roles:
-    - dns-gandi-update
-
-# Crate the certificate for dovecot (POP3)
-- hosts: homebox
-  vars:
-    certificate:
-      type: pop3
-  vars_files:
-    - ../../config/system.yml
-  roles:
-    - certificates
-
-# Crate the certificate for dovecot (IMAP)
-- hosts: homebox
-  vars:
-    certificate:
-      type: imap
-  vars_files:
-    - ../../config/system.yml
-  roles:
-    - certificates
-
-- hosts: homebox
-  vars_files:
-    - ../../config/system.yml
-  roles:
-    - dovecot
-
-# Install a basic webmail (roundcube)
-- hosts: homebox
-  vars:
-    certificate:
-      type: webmail
-  vars_files:
-    - ../../config/system.yml
-  roles:
-    - certificates
-    - nginx
-    - roundcube
-
-- hosts: homebox
-  vars:
-    certificate:
-      type: autodiscover
-  vars_files:
-    - ../../config/system.yml
-  roles:
-    - certificates
-
-- hosts: homebox
-  vars:
-    certificate:
-      type: autodiscover
-  vars_files:
-    - ../../config/system.yml
-  roles:
-    - certificates
-
-- hosts: homebox
-  vars_files:
-    - ../../config/system.yml
-  roles:
-    - autoconfig
-
+import_playbook:
+- system-prepare.yml
+- accounts.yml
+- rspamd.yml
+- opendmarc.yml
+- cert-smtp.yml
+- opendkim.yml
+- postfix.yml
+- dns-update.yml
+- cert-pop3.yml
+- cert-imap.yml
+- dovecot.yml
+- roundcube.yml
+- autodiscover.yml
+- autoconfig.yml
