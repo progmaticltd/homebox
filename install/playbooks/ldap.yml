@@ -2,5 +2,9 @@
 - hosts: homebox
   vars_files:
     - ../../config/system.yml
+  vars:
+    certificate:
+      type: ldap
   roles:
-    - accounts
+    - certificates
+    - ldap

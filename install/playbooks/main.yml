@@ -1,19 +1,19 @@
 ---
 ## Main installation playbook
 
-# Prepare the system
-import_playbook:
-- system-prepare.yml
-- accounts.yml
-- rspamd.yml
-- opendmarc.yml
-- cert-smtp.yml
-- opendkim.yml
-- postfix.yml
-- dns-update.yml
-- cert-pop3.yml
-- cert-imap.yml
-- dovecot.yml
-- roundcube.yml
-- autodiscover.yml
-- autoconfig.yml
+# Complete list of playbooks to run, in this order
+- import_playbook: system-prepare.yml
+- import_playbook: ldap.yml
+- import_playbook: accounts.yml
+- import_playbook: rspamd.yml
+- import_playbook: opendmarc.yml
+- import_playbook: cert-smtp.yml
+- import_playbook: opendkim.yml
+- import_playbook: postfix.yml
+- import_playbook: dns-update.yml
+- import_playbook: cert-pop3.yml
+- import_playbook: cert-imap.yml
+- import_playbook: dovecot.yml
+- import_playbook: roundcube.yml
+- import_playbook: autodiscover.yml
+- import_playbook: autoconfig.yml
