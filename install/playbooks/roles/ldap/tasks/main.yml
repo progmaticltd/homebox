@@ -408,3 +408,15 @@
   when: access_policies.changed
   command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/access-policies.ldif
 
+- name: Copy index definitions on the server
+  tags: ldap
+  register: index_defs
+  template:
+    src: indexes.ldif
+    dest: /etc/ldap/changes/indexes.ldif
+
+- name: Add indexes to the database for optimisation
+  tags: ldap
+  when: index_defs.changed
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/indexes.ldif
+

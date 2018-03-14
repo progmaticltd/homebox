@@ -1,0 +1,45 @@
+# simple use of the default value OLC (cn=config) form
+dn: cn=olcDatabase={0}config 
+changeType: add
+add: olcDbIndex
+olcDbIndex: default pres,eq
+olcDbIndex: cn,sn,uid
+olcDbIndex: sn eq,approx,sub
+olcDbIndex: mail pres,eq,sub
+olcDbIndex: objectclass eq
+
+# Exemples
+# # simple use of the default value
+# # OLC (cn=config) form
+# olcDbIndex: default pres,eq
+# olcDbIndex: cn,sn,uid
+
+# # slapd.conf form
+# index default pres,eq
+# index cn,sn,uid
+
+# # defines presence and equality indexes for 
+# # attributes cn, sn and uid
+# # exactly the same as the three index directives below
+# index cn pres,eq
+# index sn pres,eq
+# index uid pres,eq
+
+# index cn eq,sub,subinitial
+# # creates indexes for attribute cn (commonname)
+# # EQUALITY, SUBSTR searches and further optimises
+# # for sc=a* type searches
+
+# index sn eq,approx,sub
+# # creates indexes for sn (surname) on
+# # EQUALITY and SUBSTR searches
+# # NOTE: The approx index is a waste of time because
+# #       there is no ORDERING rule for sn approx is present
+# #       only to illustrate the parameter exists
+
+# index mail pres,eq,sub
+# # creates indexes for attribute mail on
+# # presence, EQUALITY and SUBSTR
+
+# index objectclass eq
+# # optimises searches of form objectclass=person
