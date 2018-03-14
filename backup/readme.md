@@ -21,7 +21,7 @@ For instance, this is the certificates generated, for the domain "homebox.space"
 
 This folder contains the DKIM keys generated on the server. The installation script will compare these DKIM public key with the one recorded in your DNS, and will update it only if different.
 
-## LDAP passwords:
+## LDAP passwords
 
 This folder contains the passwords generated automatically for some accounts in the LDAP directory
 
@@ -29,3 +29,6 @@ This folder contains the passwords generated automatically for some accounts in 
   - manager.pwd: Manager: read/write access to user accounts
   - readonly.pwd: readonly account to query the ldap server
 
+## Password for the rspamd administration interface
+
+The Antispam comes with an excellent [web interface](https://www.rspamd.com/webui/) that provides basic functions for setting metric actions, scores, viewing statistic and learning.

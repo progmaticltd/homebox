@@ -190,6 +190,6 @@ I am planning to test / try / add the following features, in *almost* no particu
 - Add Sogo for caldav / carddav server, with LDAP authentication
 - Tor, torrent download station, etc...
 - Add optional components (e.g. [Gogs](https://gogs.io/), [openvpn](https://openvpn.net/), [Syncthing](https://syncthing.net/), etc)
-- Test other mail systems, like Cyrus, Sogo, etc.
+- Version 2: Install [Sogo](https://sogo.nu/).
 
 Any ideas welcome...
