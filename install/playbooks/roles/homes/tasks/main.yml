@@ -3,21 +3,17 @@
 - name: Create the group home folders if necessary
   tags: accounts
   file:
-    path: '/home/{{ user.group }}'
+    path: /home/users
     owner: root
-    group: '{{ user.group }}'
+    group: users
     state: directory
-  with_items:
-    - '{{ users }}'
-  loop_control:
-    loop_var: user
 
 - name: Create the user account home folders
   tags: accounts
   file:
-    path: '/home/{{ user.group }}/{{ user.uid }}'
+    path: '/home/users/{{ user.uid }}'
     owner: '{{ user.uid }}'
-    group: '{{ user.group }}'
+    group: users
     state: directory
     mode: 0700
     recurse: true
@@ -29,9 +25,9 @@
 - name: Create the user account mail folders
   tags: accounts
   file:
-    path: '/home/{{ user.group }}/{{ user.uid }}/mails/maildir'
+    path: '/home/users/{{ user.uid }}/mails/maildir'
     owner: '{{ user.uid }}'
-    group: '{{ user.group }}'
+    group: users
     state: directory
     mode: 0700
     recurse: true

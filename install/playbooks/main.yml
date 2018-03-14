@@ -4,7 +4,7 @@
 # Complete list of playbooks to run, in this order
 - import_playbook: system-prepare.yml
 - import_playbook: ldap.yml
-- import_playbook: accounts.yml
+- import_playbook: homes.yml
 - import_playbook: rspamd.yml
 - import_playbook: opendmarc.yml
 - import_playbook: cert-smtp.yml
