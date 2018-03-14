@@ -418,5 +418,5 @@
 - name: Add indexes to the database for optimisation
   tags: ldap
   when: index_defs.changed
-  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/indexes.ldif
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/indexes.ldif
 
