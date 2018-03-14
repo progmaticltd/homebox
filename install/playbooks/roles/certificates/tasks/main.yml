@@ -20,24 +20,41 @@
       - '--checksum'
       - '--exclude=readme.md'
 
+- name: Check if the certificate has been copied from a previous backup
+  tags: cert
+  register: cert_stat
+  stat:
+    path: "/etc/letsencrypt/live/{{ certificate.type }}.{{ network.domain }}/cert.pem"
+
 - name: Check if nginx has been already installed
   tags: cert
-  register: stat_result
+  register: nginx_stat
   stat:
     path: /usr/sbin/nginx
 
 - name: Stop the nginx server if installed
-  when: stat_result.stat["exists"] == True
+  when: nginx_stat.stat["exists"] == True and cert_stat.stat["exists"] == False
   register: nginx_state
   tags: cert
   service:
     name: nginx
     state: stopped
 
+- name: Open the port 80 if necessary
+  when: cert_stat.stat["exists"] == False
+  tags: security
+  register: ufw_http
+  ufw:
+    proto: tcp
+    rule: limit
+    src: any
+    port: 80
+    comment: Allow LetsEncrypt temporarily
+
 # The certbot package need to be installed
 - name: Create the certificate
   tags: cert
-  when: system.ssl == 'letsencrypt'
+  when: system.ssl == 'letsencrypt' and cert_stat.stat["exists"] == False
   command: >-
     /usr/bin/certbot certonly
     --non-interactive
@@ -48,8 +65,19 @@
   args:
     creates: "/etc/letsencrypt/live/{{ certificate.type }}.{{ network.domain }}/cert.pem"
     
+- name: Remove the firewall rule if it has been added
+  tags: security
+  when: ufw_http.changed and cert_stat.stat["exists"] == False
+  ufw:
+    proto: tcp
+    rule: limit
+    src: any
+    port: 80
+    delete: yes
+    comment: Allow LetsEncrypt temporarily
+
 - name: Restart the nginx server if installed and previously stopped
-  when: stat_result.stat["exists"] == True and nginx_state.changed
+  when: nginx_stat.stat["exists"] == True and nginx_state.changed and cert_stat.stat["exists"] == False
   tags: cert
   service:
     name: nginx

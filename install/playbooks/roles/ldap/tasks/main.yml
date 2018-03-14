@@ -95,7 +95,6 @@
 - name: Allow slapd and nslcd daemons to access the certificate directories
   when: system.ssl == 'letsencrypt'
   tags: ldap,ssl
-  notify: Restart the ldap service
   vars:
     details:
       - [ /etc/letsencrypt/archive, /etc/letsencrypt/live ]
@@ -111,7 +110,6 @@
 - name: Configure the ldap server for SSL / TLS
   when: system.ssl == 'letsencrypt'
   tags: ldap,ssl
-  notify: Restart the ldap service
   template:
     src: default-slapd
     dest: /etc/default/slapd
@@ -119,7 +117,6 @@
 - name: Copy the ldap ssl config on the server before running it
   when: system.ssl == 'letsencrypt'
   tags: ldap,ssl
-  notify: Restart the ldap service
   register: ldap_ssl
   template:
     src: ssl-config.ldif
@@ -128,7 +125,6 @@
 - name: Modify the configuration if not already done
   when: system.ssl == 'letsencrypt' and ldap_ssl.changed
   tags: ldap,ssl
-  notify: Restart the ldap service
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ssl-config.ldif
 #                                                                              #
 # End of TLS / SSL Configuration ###############################################
@@ -307,19 +303,19 @@
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ lookup("password", adminPasswdParams) }}'
-    dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
+    dn: 'cn={{ user.1.cn }},{{ ldap.users.dn }}'
     state: present
     attributes:
-      uid: '{{ user.uid }}'
-      givenName: '{{ user.first_name }}'
-      sn: '{{ user.last_name }}'
-      userPassword: "{{ user.password }}"
+      uid: '{{ user.1.uid }}'
+      givenName: '{{ user.1.first_name }}'
+      sn: '{{ user.1.last_name }}'
+      userPassword: "{{ user.1.password }}"
       pwdPolicySubentry: 'cn=default,ou=pwpolicies,{{ ldap.organization.base }}'
-      homeDirectory: '/home/{{ user.group }}/{{ user.uid }}'
-      loginShell: '{{ user.shell }}'
-      uidNumber: '{{ user.uidNumber }}'
-      gidNumber: '{{ user.gidNumber }}'
-      mail: '{{ user.mail }}'
+      homeDirectory: '/home/users/{{ user.1.uid }}'
+      loginShell: '{{ users_defaults.shell }}'
+      uidNumber: '{{ users_defaults.uid_start + user.0 }}'
+      gidNumber: '{{ users_defaults.gid_start }}'
+      mail: '{{ user.1.mail }}'
       shadowMin: 0
       shadowMax: 999999
       shadowWarning: 7
@@ -331,7 +327,7 @@
       - posixAccount
       - shadowAccount
       - inetOrgPerson
-  with_items:
+  with_indexed_items:
     - '{{ users }}'
   loop_control:
     loop_var: user
@@ -396,51 +392,6 @@
     dest: /etc/nslcd.conf
     mode: 0600
 
-- name: Create the group home folders if necessary
-  tags: accounts
-  file:
-    path: '/home/{{ user.group }}'
-    owner: root
-    group: '{{ user.group }}'
-    state: directory
-  with_items:
-    - '{{ users }}'
-  loop_control:
-    loop_var: user
-
-- name: Create the user account home folders
-  tags: accounts
-  file:
-    path: '/home/{{ user.group }}/{{ user.uid }}'
-    owner: '{{ user.uid }}'
-    group: '{{ user.group }}'
-    state: directory
-    mode: 0700
-  with_items:
-    - '{{ users }}'
-  loop_control:
-    loop_var: user
-
-- name: Create the user account mail folders
-  tags: accounts
-  file:
-    path: '/home/{{ user.group }}/{{ user.uid }}/mails/maildir'
-    owner: '{{ user.uid }}'
-    group: '{{ user.group }}'
-    state: directory
-    mode: 0700
-  with_items:
-    - '{{ users }}'
-  loop_control:
-    loop_var: user
-
-- name: Create home directory for users on first login
-  tags: ldap
-  when: system.login == true
-  lineinfile:
-    dest: /etc/pam.d/common-account
-    line: 'session    required    pam_mkhomedir.so skel=/etc/skel/ umask=0022'
-
 - name: Copy the access policies on the server
   tags: ldap
   register: access_policies
@@ -453,4 +404,25 @@
   when: access_policies.changed
   command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/access-policies.ldif
 
+- name: Copy index definitions on the server
+  tags: ldap
+  register: index_defs
+  template:
+    src: indexes.ldif
+    dest: /etc/ldap/changes/indexes.ldif
+
+- name: Add indexes to the database for optimisation
+  tags: ldap
+  when: index_defs.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/indexes.ldif
+
+- name: Restart the ldap service
+  service:
+    name: slapd
+    state: restarted
+
+- name: Restart the nslcd service
+  service:
+    name: nslcd
+    state: restarted
 

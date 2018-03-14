@@ -1,0 +1,5 @@
+- hosts: homebox
+  vars_files:
+    - ../../config/system.yml
+  roles:
+    - autoconfig

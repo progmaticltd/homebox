@@ -1,0 +1,5 @@
+# Set some default values
+olcDbIndex: default pres,eq
+olcDbIndex: cn,uid eq
+olcDbIndex: mail pres,eq,sub
+olcDbIndex: objectclass eq

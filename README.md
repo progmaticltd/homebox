@@ -20,9 +20,9 @@ It is made to be unobtrusive, standard compliant, secure, robust, extensible and
 
 | Current feature, implemented and planned                                                                                | Status      |
 | ----------------------------------------------------------------------------------------------------------------------- | ----------- |
-| LDAP users database, SSL & TLS certificates, password policies, integration with the system and PAM                     | Done        |
-| SSL Certificates creation using letsencrypt, automatic local backup and publication on Gandi                            | Done        |
-| DKIM keys generation and automatic local backup, publication on Gandi                                                   | Done        |
+| LDAP users database, SSL & TLS certificates, password policies, integration with the system and PAM.                    | Done        |
+| SSL Certificates generation with [letsencrypt](https://letsencrypt.org), automatic local backup and publication.        | Done        |
+| DKIM keys generation and automatic local backup and publication on Gandi                                                | Done        |
 | SPF records generation and publication on Gandi                                                                         | Done        |
 | DMARC record generation and publication on Gandi, *the reports generation is planned for a future version*              | Done        |
 | Generation and publication of automatic Thunderbird (autoconfig) and Outlook (autodiscover) configuration               | Done        |
@@ -30,12 +30,13 @@ It is made to be unobtrusive, standard compliant, secure, robust, extensible and
 | Powerful and light antispam system with [rspamd](https://rspamd.com/)                                                   | Done        |
 | Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                    | Done        |
 | Roundcube webmail, https, sieve filters management, password change, automatic identity creation                        | Done        |
-| AppArmor securisation for nginx, dovecot, postfix, etc                                                                  | In progress |
-| Automatic ports opening using upnp                                                                                      | Planned     |
-| Automatic migration from old mail server                                                                                | Planned     |
-| Automatic encrypted off-site backup                                                                                     | Planned     |
-| Web proxy with privacy and parent filtering features                                                                    | Planned     |
-| Jabber server using ejabberd and LDAP authentication                                                                    | Planned     |
+| AppArmor securisation for nginx (done), dovecot (wip), postfix, etc.                                                    | In progress |
+| Antivirus for the email, using [clamav](https://www.clamav.net/)                                                        | Planned     |
+| Automatic ports opening using [upnp](https://github.com/flyte/upnpclient).                                              | Planned     |
+| Automatic migration from old mail server using imap synchronisation                                                     | Planned     |
+| Automatic encrypted off-site backup with [borg-ackup](https://www.borgbackup.org/)                                      | Planned     |
+| Web proxy with privacy and parent filtering features using [privoxy](https://www.privoxy.org/)                          | Planned     |
+| Jabber server using [ejabberd](https://www.ejabberd.im/)                                                                | Planned     |
 
 ## Folders:
 - config: Ansible configuration files for your platform.
@@ -189,6 +190,6 @@ I am planning to test / try / add the following features, in *almost* no particu
 - Add Sogo for caldav / carddav server, with LDAP authentication
 - Tor, torrent download station, etc...
 - Add optional components (e.g. [Gogs](https://gogs.io/), [openvpn](https://openvpn.net/), [Syncthing](https://syncthing.net/), etc)
-- Test other mail systems, like Cyrus, Sogo, etc.
+- Version 2: Install [Sogo](https://sogo.nu/).
 
 Any ideas welcome...

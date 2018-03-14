@@ -1,0 +1,46 @@
+---
+
+- name: Create the group home folders if necessary
+  tags: accounts
+  file:
+    path: /home/users
+    owner: root
+    group: users
+    state: directory
+
+- name: Create the user account home folders
+  tags: accounts
+  file:
+    path: '/home/users/{{ user.uid }}'
+    owner: '{{ user.uid }}'
+    group: users
+    state: directory
+    mode: 0700
+    recurse: true
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Create the user account mail folders
+  tags: accounts
+  file:
+    path: '/home/users/{{ user.uid }}/mails/maildir'
+    owner: '{{ user.uid }}'
+    group: users
+    state: directory
+    mode: 0700
+    recurse: true
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Create home directory for users on first login
+  tags: ldap
+  when: system.login == true
+  lineinfile:
+    dest: /etc/pam.d/common-account
+    line: 'session    required    pam_mkhomedir.so skel=/etc/skel/ umask=0022'
+
+

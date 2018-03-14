@@ -1,0 +1,10 @@
+---
+# Prepare the system
+- hosts: homebox
+  vars_files:
+    - ../../config/system.yml
+  roles:
+    - packages
+    - system-prepare
+    - ports-assign
+

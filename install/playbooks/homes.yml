@@ -1,0 +1,6 @@
+# Create the accounts
+- hosts: homebox
+  vars_files:
+    - ../../config/system.yml
+  roles:
+    - homes

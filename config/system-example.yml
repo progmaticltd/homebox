@@ -8,41 +8,22 @@ network:
   hostname: mail.example.com
 
 ###############################################################################
-# Users and groups
+# Users
+
 users:
 - uid: john
   cn: John Doe
-  uidNumber: 1001
-  gidNumber: 1001
   first_name: John
   last_name: Doe
-  group: users
-  groups: mail
-  shell: /bin/bash
   mail: john.doe@example.com
   password: 'xIlm*uu7'
 - uid: jane
   cn: Jane Doe
-  uidNumber: 1002
-  gidNumber: 1001
   first_name: Jane
   last_name: Doe
-  group: users
-  groups: mail
-  shell: /bin/bash
   mail: jane.doe@example.com
   password: 'Tlwril!8'
   
-posix_groups:
-- gid: mail_users
-  description: Mail users
-  gidNumber: 1001
-  mail: users@exemple.com
-- gid: administrators
-  description: Administrators
-  gidNumber: 2000
-  mail: administrators@example.com
-
 ###############################################################################
 # Email related options
 mail:
@@ -72,6 +53,8 @@ system:
 # Gandi automatic DNS update
 # Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
 dns:
+  update: yes    # Automatic update of your DNS server
+  test: true     # test mode: does not activate the DNS zone straight
   gandi:
     handle: JD123-GANDI
     key: zaNGbUVIvi1KbYb6PPMdiQLh
