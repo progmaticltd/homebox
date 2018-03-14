@@ -95,7 +95,6 @@
 - name: Allow slapd and nslcd daemons to access the certificate directories
   when: system.ssl == 'letsencrypt'
   tags: ldap,ssl
-  notify: Restart the ldap service
   vars:
     details:
       - [ /etc/letsencrypt/archive, /etc/letsencrypt/live ]
@@ -111,7 +110,6 @@
 - name: Configure the ldap server for SSL / TLS
   when: system.ssl == 'letsencrypt'
   tags: ldap,ssl
-  notify: Restart the ldap service
   template:
     src: default-slapd
     dest: /etc/default/slapd
@@ -119,7 +117,6 @@
 - name: Copy the ldap ssl config on the server before running it
   when: system.ssl == 'letsencrypt'
   tags: ldap,ssl
-  notify: Restart the ldap service
   register: ldap_ssl
   template:
     src: ssl-config.ldif
@@ -128,7 +125,6 @@
 - name: Modify the configuration if not already done
   when: system.ssl == 'letsencrypt' and ldap_ssl.changed
   tags: ldap,ssl
-  notify: Restart the ldap service
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ssl-config.ldif
 #                                                                              #
 # End of TLS / SSL Configuration ###############################################
@@ -419,4 +415,14 @@
   tags: ldap
   when: index_defs.changed
   command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/indexes.ldif
+
+- name: Restart the ldap service
+  service:
+    name: slapd
+    state: restarted
+
+- name: Restart the nslcd service
+  service:
+    name: nslcd
+    state: restarted
 
