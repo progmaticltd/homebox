@@ -307,19 +307,19 @@
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ lookup("password", adminPasswdParams) }}'
-    dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
+    dn: 'cn={{ user.1.cn }},{{ ldap.users.dn }}'
     state: present
     attributes:
-      uid: '{{ user.uid }}'
-      givenName: '{{ user.first_name }}'
-      sn: '{{ user.last_name }}'
-      userPassword: "{{ user.password }}"
+      uid: '{{ user.1.uid }}'
+      givenName: '{{ user.1.first_name }}'
+      sn: '{{ user.1.last_name }}'
+      userPassword: "{{ user.1.password }}"
       pwdPolicySubentry: 'cn=default,ou=pwpolicies,{{ ldap.organization.base }}'
-      homeDirectory: '/home/{{ user.group }}/{{ user.uid }}'
-      loginShell: '{{ user.shell }}'
-      uidNumber: '{{ user.uidNumber }}'
-      gidNumber: '{{ user.gidNumber }}'
-      mail: '{{ user.mail }}'
+      homeDirectory: '/home/users/{{ user.1.uid }}'
+      loginShell: '{{ users_defaults.shell }}'
+      uidNumber: '{{ users_defaults.uid_start + user.0 }}'
+      gidNumber: '{{ users_defaults.gid_start }}'
+      mail: '{{ user.1.mail }}'
       shadowMin: 0
       shadowMax: 999999
       shadowWarning: 7
@@ -331,7 +331,7 @@
       - posixAccount
       - shadowAccount
       - inetOrgPerson
-  with_items:
+  with_indexed_items:
     - '{{ users }}'
   loop_control:
     loop_var: user
