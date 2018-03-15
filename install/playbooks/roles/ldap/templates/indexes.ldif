@@ -1,5 +1,7 @@
-# Set some default values
+dn: olcDatabase={1}mdb,cn=config
+changetype: modify
+replace: olcDbIndex
 olcDbIndex: default pres,eq
 olcDbIndex: cn,uid eq
-olcDbIndex: mail pres,eq,sub
 olcDbIndex: objectclass eq
+olcDbIndex: mail pres,eq,sub
