@@ -432,8 +432,11 @@
   become_method: sudo
   command: 'slapindex -n 1 -v {{ field }}'
   with_items:
-    - mail
+    - uid
     - cn
+    - sn
+    - givenName
+    - mail
     - memberUid
     - uidNumber
     - gidNumber
