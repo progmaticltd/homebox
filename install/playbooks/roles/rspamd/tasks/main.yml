@@ -1,5 +1,12 @@
 ---
 
+- name: Create a directory for the rspamd passwords
+  tags: rspamd
+  delegate_to: localhost
+  file:
+    path: '{{ playbook_dir }}/../../backup/rspamd/'
+    state: directory
+
 - name: Add rspamd GPG key
   tags: rspamd
   apt_key:
@@ -24,10 +31,16 @@
   loop_control:
     loop_var: pkg
 
+- name: Set facts for rspamd password generation
+  tags: rspamd
+  set_fact:
+    password_path: "{{ playbook_dir }}/../../backup/rspamd/admin.pwd"
+    password_params: "length=16 chars=ascii_letters,digits"
+
 - name: Generate a random password for rspamd
   tags: rspamd
   set_fact:
-    rspamd_password: '{{ lookup("password", "/tmp/rspamd.pwd length=16 chars=ascii_letters,digits") }}'
+    rspamd_password: '{{ lookup("password", "{{ password_path }} {{ password_params }}") }}'
 
 - name: Set password for the rspamd account
   tags: rspamd
