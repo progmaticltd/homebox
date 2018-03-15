@@ -1,8 +1,6 @@
 
-  /etc/letsencrypt/archive/imap.{{ network.domain }}/cert1.pem r,
-  /etc/letsencrypt/archive/imap.{{ network.domain }}/privkey1.pem r,
-  /etc/letsencrypt/archive/pop3.{{ network.domain }}/cert1.pem r,
-  /etc/letsencrypt/archive/pop3.{{ network.domain }}/privkey1.pem r,
+  /etc/letsencrypt/archive/imap.{{ network.domain }}/* r,
+  /etc/letsencrypt/archive/pop3.{{ network.domain }}/* r,
 
   /lib/*/libc-*.so mr,
 
