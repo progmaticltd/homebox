@@ -22,7 +22,7 @@ compatibility_level = 2
 
 # TLS parameters
 {% if system.ssl == 'letsencrypt' %}
-smtpd_tls_cert_file=/etc/letsencrypt/live/smtp.{{ network.domain }}/cert.pem
+smtpd_tls_cert_file=/etc/letsencrypt/live/smtp.{{ network.domain }}/fullchain.pem
 smtpd_tls_key_file=/etc/letsencrypt/live/smtp.{{ network.domain }}/privkey.pem
 smtpd_tls_CAfile=/etc/letsencrypt/live/smtp.{{ network.domain }}/fullchain.pem
 smtpd_use_tls=yes
