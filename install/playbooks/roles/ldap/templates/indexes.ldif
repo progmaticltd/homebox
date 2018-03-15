@@ -4,4 +4,5 @@ replace: olcDbIndex
 olcDbIndex: default pres,eq
 olcDbIndex: cn,uid eq
 olcDbIndex: objectclass eq
+olcDbIndex: memberUid,uidNumber,gidNumber eq
 olcDbIndex: mail pres,eq,sub
