@@ -1,4 +1,5 @@
   # Local docecot LMTP configuration
+  /home/users/*/mails/maildir/ rwkl,
   /home/users/*/mails/maildir/** rwkl,
   /home/users/*/mails/maildir/** ra,
   /home/users/*/mails/sieve/** rwkl,
