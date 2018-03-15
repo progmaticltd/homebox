@@ -50,7 +50,8 @@ relayhost =
 
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 192.168.0.0/16
 
-mailbox_command = /usr/lib/dovecot/dovecot-lda -f "$SENDER" -a "$RECIPIENT"
+# mailbox_command = /usr/lib/dovecot/dovecot-lda -f "$SENDER" -a "$RECIPIENT"
+mailbox_command = /usr/lib/dovecot/dovecot-lda -f "$SENDER" -a ${original_recipient} -d ${user}@${nexthop}
 mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
@@ -63,7 +64,7 @@ smtpd_milters =
     inet:localhost:{{ milter_dkim_port }}
     inet:localhost:{{ milter_antispam_port }}
     inet:localhost:{{ milter_dmarc_port }}
-    
+
 non_smtpd_milters =
     inet:localhost:{{ milter_dkim_port }}
     inet:localhost:{{ milter_antispam_port }}
