@@ -25,9 +25,16 @@
   lineinfile:
     path: /etc/hosts
     line: '127.0.0.1    ldap.{{ network.domain }}'
+
+- name: Check if the OpenLDAP server is already installed
+  tags: ldap
+  register: slapd_stats
+  stat:
+    path: /usr/sbin/slapd
     
 # Pre-configure the LDAP sever before instaling
 - name: Configure the LDAP administration account
+  when: slapd_stats.stat.exists == False
   tags: ldap
   debconf:
     name: slapd
@@ -73,7 +80,7 @@
   tags: ldap
   apt:
     name: '{{ item }}'
-    state: installed
+    state: latest
   with_items:
     - acl
     - slapd
