@@ -27,6 +27,7 @@
   /usr/bin/rspamd mr,
 
   # Read/write data
+  /var/lib/rspamd/ r,
   /var/lib/rspamd/** rwk,
   /{var/,}run/rspamd/* rwk,
 
