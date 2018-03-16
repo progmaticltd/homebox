@@ -31,18 +31,28 @@
   tags: autoconfig
   notify: Restart nginx server
   template:
-    src: autoconfig.conf
-    dest: /etc/nginx/sites-available/autoconfig.conf
+    src: '{{ site }}.conf'
+    dest: '/etc/nginx/sites-available/{{ site }}.conf'
     owner: root
     group: root
     mode: 0644
+  with_items:
+    - autoconfig
+    - autodiscover
+  loop_control:
+    loop_var: site
 
 - name: Enable nginx site
   tags: autoconfig
   file:
-    src: '/etc/nginx/sites-available/autoconfig.conf'
-    dest: '/etc/nginx/sites-enabled/autoconfig.conf'
+    src: '/etc/nginx/sites-available/{{ site }}.conf'
+    dest: '/etc/nginx/sites-enabled/{{ site }}.conf'
     state: link
+  with_items:
+    - autoconfig
+    - autodiscover
+  loop_control:
+    loop_var: site
 
 # AppArmor configuration ======================================================
 
