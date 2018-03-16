@@ -7,22 +7,38 @@
   /dev/shm/rhm.* rw,
 
   # Read configuration files
-  /etc/rspamd/* r,
-  /etc/rspamd/modules.d/* r,
+  /etc/rspamd/** r,
+
+  # System files
   /etc/nsswitch.conf r,
   /etc/host.conf r,
   /etc/resolv.conf r,
   /etc/hosts r,
   /etc/nsswitch.conf r,
   /etc/host.conf r,
+  /etc/gai.conf r,
+  /etc/magic r,
+
+  # prof file system
+  /proc/sys/kernel/random/uuid r,
 
   # Run programs
   /lib/x86_64-linux-gnu/ld-*.so mr,
   /usr/bin/rspamd mr,
 
-  # Read data
-  /var/lib/rspamd/** r,
+  # Read/write data
+  /var/lib/rspamd/** rwk,
+  /{var/,}run/rspamd/* rwk,
+
+  # log files
+  /var/log/rspamd/rspamd.log* rwk,
+
+  # Read cached nscd
+  /var/cache/nscd/hosts r,
+
+  # Read usr config - for the web administration interface as well
+  /usr/share/rspamd/** r,
   
-  /var/lib/rspamd/stats.ucl wk,
-  /var/log/rspamd/rspamd.log w,
+  # Read certificates
+  /usr/share/ca-certificates/** r,
 }

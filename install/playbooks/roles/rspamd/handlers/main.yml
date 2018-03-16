@@ -2,3 +2,9 @@
   service:
     name: rspamd
     state: restarted
+
+- name: Restart AppArmor service
+  tags: dovecot
+  service:
+    name: apparmor
+    state: restarted
