@@ -119,3 +119,24 @@ $config['ldap_public']['users'] = [
         'object_classes'  => [ 'top', 'postixGroup' ]
     ]
 ];
+
+// Disables saving sent messages in Sent folder (like gmail)
+// The SMTP server does that already
+$config['no_save_sent_messages'] = true;
+
+// Allow browser-autocompletion on login form.
+$config['login_autocomplete'] = 2;
+
+// Message size limit. Note that SMTP server(s) may use a different value.
+// This limit is verified when user attaches files to a composed message.
+// Size in bytes (possible unit suffix: K, M, G)
+$config['max_message_size'] = '{{ mail.max_attachment_size }}M';
+
+// Lock identities as they are coming from the LDAP server
+// Set identities access level:
+// 0 - many identities with possibility to edit all params
+// 1 - many identities with possibility to edit all params but not email address
+// 2 - one identity with possibility to edit all params
+// 3 - one identity with possibility to edit all params but not email address
+// 4 - one identity with possibility to edit only signature
+$config['identities_level'] = 3;
