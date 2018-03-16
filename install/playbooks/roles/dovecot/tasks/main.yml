@@ -177,6 +177,16 @@
     - usr.lib.dovecot.auth
     - usr.lib.dovecot.managesieve
     - usr.lib.dovecot.quota-status
+    - usr.lib.dovecot.anvil
+    - usr.lib.dovecot.deliver
+    - usr.lib.dovecot.dict
+    - usr.lib.dovecot.dovecot-auth
+    - usr.lib.dovecot.dovecot-lda
+    - usr.lib.dovecot.imap-login
+    - usr.lib.dovecot.log
+    - usr.lib.dovecot.managesieve-login
+    - usr.lib.dovecot.pop3-login
+    - usr.lib.dovecot.ssl-params
   loop_control:
     loop_var: aa_config
 
