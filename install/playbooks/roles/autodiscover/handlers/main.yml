@@ -1,0 +1,4 @@
+- name: Restart AppArmor service
+  service:
+    name: apparmor
+    state: restarted

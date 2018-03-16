@@ -1,0 +1,10 @@
+  # Autodiscover from microsoft use https
+  /etc/letsencrypt/archive/autodiscover.{{ network.domain }}/* r,
+  /etc/letsencrypt/live/autodiscover.{{ network.domain }}/* r,
+
+  # Default location for autodiscover outlook
+  /var/www/autodiscover/autodiscover/autodiscover.xml r,
+
+  # Log files
+  /var/log/nginx/autodiscover-access.log w,
+  /var/log/nginx/autodiscover-error.log w,

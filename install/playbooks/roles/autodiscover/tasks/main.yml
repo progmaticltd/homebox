@@ -3,24 +3,24 @@
 - name: Create the autoconfiguration directories
   tags: autoconfig
   file:
-    path: /var/www/autoconfig/mail/
+    path: /var/www/autodiscover/autodiscover/
     state: directory
 
-- name: Copy autoconfig XML template
+- name: Copy XML template
   tags: autoconfig
   template:
-    src: config-v1.1.xml
-    dest: /var/www/autoconfig/mail/config-v1.1.xml
+    src: autodiscover.xml
+    dest: /var/www/autodiscover/autodiscover/autodiscover.xml
     owner: root
     group: root
     mode: 0644
 
-- name: Create the autoconfig site
+- name: Create the autodiscover site
   tags: autoconfig
   notify: Restart nginx server
   template:
-    src: autoconfig.conf
-    dest: /etc/nginx/sites-available/autoconfig.conf
+    src: autodiscover.conf
+    dest: /etc/nginx/sites-available/autodiscover.conf
     owner: root
     group: root
     mode: 0644
@@ -28,8 +28,8 @@
 - name: Enable nginx site
   tags: autoconfig
   file:
-    src: /etc/nginx/sites-available/autoconfig.conf
-    dest: /etc/nginx/sites-enabled/autoconfig.conf
+    src: /etc/nginx/sites-available/autodiscover.conf
+    dest: /etc/nginx/sites-enabled/autodiscover.conf
     state: link
 
 # AppArmor configuration ======================================================
@@ -38,16 +38,16 @@
   when: security.app_armor
   tags: autoconfig, security, apparmor
   template:
-    src: 'apparmor.d/local/autoconfig'
-    dest: '/etc/apparmor.d/local/autoconfig'
+    src: 'apparmor.d/local/autodiscover'
+    dest: '/etc/apparmor.d/local/autodiscover'
 
-- name: Add autoconfig AppAromor specific configuration
+- name: Add autodiscover AppAromor specific configuration
   when: security.app_armor
   tags: autoconfig, security, apparmor
   register: aa_config
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
-    line: '  #include <local/autoconfig>'
+    line: '  #include <local/autodiscover>'
     insertbefore: '# End of local includes for homebox'
 
 - name: Activate AppArmor profiles
