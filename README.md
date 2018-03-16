@@ -181,7 +181,7 @@ The tag"facts" is necessary to gather some facts other roles may need.
 - Once the script has been run, the backup folder contains your certificates and DKIM public keys. If you are rebuilding your server from scratch, the same certificates and keys will be used.
 - This is a work in progress and a project I am maintaining on my spare time. Although I am trying to be very careful, there might be some errors. In this case, just fill a bug report, or take part.
 - I am privileging stability over features. The master branch should stay stable for production.
-- There are other similar projects on internet and especially github you could check, for instance [Sovereign](https://github.com/sovereign/sovereign) or [yunohost](https://yunohost.org/). Both have plenty of features, and a different approach to self-hosting, though.
+- There are other similar projects on internet and especially github you could check, for instance [Sovereign](https://github.com/sovereign/sovereign), [yunohost](https://yunohost.org/) or [mailinabox](https://mailinabox.email/). All have plenty of features, and a different approach to self-hosting, though.
 
 ### Future versions
 
