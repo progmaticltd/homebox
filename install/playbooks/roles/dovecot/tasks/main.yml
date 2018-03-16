@@ -120,18 +120,6 @@
   loop_control:
     loop_var: file
 
-- name: Compile the global sieve scripts
-  tags: sieve
-  notify: Restart dovecot
-  command: 'sievec /etc/dovecot/sieve/{{ file }}'
-  args:
-  with_items:
-    - before-global.sieve
-    - report-spam.sieve
-    - report-ham.sieve
-  loop_control:
-    loop_var: file
-
 - name: Configure the firewall for default access
   tags: security
   ufw:

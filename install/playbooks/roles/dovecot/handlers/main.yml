@@ -12,6 +12,7 @@
   with_items:
     - report-spam.sieve
     - report-ham.sieve
+    - before-global.sieve
   loop_control:
     loop_var: file
 
