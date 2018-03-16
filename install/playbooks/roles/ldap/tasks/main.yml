@@ -443,13 +443,18 @@
   loop_control:
     loop_var: field
 
+- name: Stop the nslcd service
+  service:
+    name: nslcd
+    state: stopped
+
 - name: Restart the ldap service
   service:
     name: slapd
     state: restarted
 
-- name: Restart the nslcd service
+- name: Start the nslcd service
   service:
     name: nslcd
-    state: restarted
+    state: started
 

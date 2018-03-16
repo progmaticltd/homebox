@@ -8,33 +8,20 @@
     group: users
     state: directory
 
-- name: Create the user account home folders
+- name: Also add these folders into the skeletonf, for new users
   tags: accounts
   file:
-    path: '/home/users/{{ user.uid }}'
-    owner: '{{ user.uid }}'
-    group: users
+    path: '{{ dir }}'
+    owner: root
+    group: root
     state: directory
     mode: 0700
     recurse: true
   with_items:
-    - '{{ users }}'
+    - /etc/skel/mails/maildir
+    - /etc/skel/mails/sieve
   loop_control:
-    loop_var: user
-
-- name: Create the user account mail folders
-  tags: accounts
-  file:
-    path: '/home/users/{{ user.uid }}/mails/maildir'
-    owner: '{{ user.uid }}'
-    group: users
-    state: directory
-    mode: 0700
-    recurse: true
-  with_items:
-    - '{{ users }}'
-  loop_control:
-    loop_var: user
+    loop_var: dir
 
 - name: Create home directory for users on first login
   tags: ldap

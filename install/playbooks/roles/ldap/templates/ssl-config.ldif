@@ -1,9 +1,9 @@
 dn: cn=config
 add: olcTLSCACertificateFile
-olcTLSCACertificateFile: /etc/letsencrypt/live/{{ ldap.hostname }}/fullchain.pem
+olcTLSCACertificateFile: /etc/letsencrypt/live/{{ ldap.hostname }}/chain.pem
 -
 add: olcTLSCertificateFile
-olcTLSCertificateFile: /etc/letsencrypt/live/{{ ldap.hostname }}/cert.pem
+olcTLSCertificateFile: /etc/letsencrypt/live/{{ ldap.hostname }}/fullchain.pem
 -
 add: olcTLSCertificateKeyFile
 olcTLSCertificateKeyFile: /etc/letsencrypt/live/{{ ldap.hostname }}/privkey.pem
