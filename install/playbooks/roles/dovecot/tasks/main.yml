@@ -97,25 +97,38 @@
     loop_var: file
 
 - name: Create the global sieve directory
-  tags: dovecot
+  tags: sieve
   file:
     path: /etc/dovecot/sieve
     state: directory
 
-- name: Copy spam/ham learn sieve configuration
-  tags: dovecot
+- name: Copy global sieve configuration
+  tags: sieve
   notify: Restart dovecot
   template:
     src: 'sieve/{{ file.name }}'
     dest: '/etc/dovecot/sieve/{{ file.name }}'
     mode: '{{ file.mode | default(644) }}'
   with_items:
+    - name: before-global.sieve
     - name: report-spam.sieve
     - name: report-ham.sieve
     - name: learn-spam.sh
       mode: 755
     - name: learn-ham.sh
       mode: 755
+  loop_control:
+    loop_var: file
+
+- name: Compile the global sieve scripts
+  tags: sieve
+  notify: Restart dovecot
+  command: 'sievec /etc/dovecot/sieve/{{ file }}'
+  args:
+  with_items:
+    - before-global.sieve
+    - report-spam.sieve
+    - report-ham.sieve
   loop_control:
     loop_var: file
 
