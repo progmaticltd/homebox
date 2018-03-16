@@ -25,9 +25,16 @@
   lineinfile:
     path: /etc/hosts
     line: '127.0.0.1    ldap.{{ network.domain }}'
+
+- name: Check if the OpenLDAP server is already installed
+  tags: ldap
+  register: slapd_stats
+  stat:
+    path: /usr/sbin/slapd
     
 # Pre-configure the LDAP sever before instaling
 - name: Configure the LDAP administration account
+  when: slapd_stats.stat.exists == False
   tags: ldap
   debconf:
     name: slapd
@@ -73,7 +80,7 @@
   tags: ldap
   apt:
     name: '{{ item }}'
-    state: installed
+    state: latest
   with_items:
     - acl
     - slapd
@@ -81,6 +88,7 @@
     - python-passlib
     - ldapscripts
     - nslcd
+    - sudo
 
 # Changes in the database will be stored there
 - name: Create the ldap config changes folder
@@ -405,16 +413,35 @@
   command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/access-policies.ldif
 
 - name: Copy index definitions on the server
-  tags: ldap
+  tags: ldap,indexes
   register: index_defs
   template:
     src: indexes.ldif
     dest: /etc/ldap/changes/indexes.ldif
 
 - name: Add indexes to the database for optimisation
-  tags: ldap
+  tags: ldap,indexes
   when: index_defs.changed
-  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/indexes.ldif
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/indexes.ldif
+
+- name: Update the indexes
+  when: index_defs.changed
+  tags: ldap,indexes
+  become: true
+  become_user: openldap
+  become_method: sudo
+  command: 'slapindex -n 1 -v {{ field }}'
+  with_items:
+    - uid
+    - cn
+    - sn
+    - givenName
+    - mail
+    - memberUid
+    - uidNumber
+    - gidNumber
+  loop_control:
+    loop_var: field
 
 - name: Restart the ldap service
   service:

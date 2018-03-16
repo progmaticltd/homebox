@@ -1,6 +1,7 @@
   # Thunderbird autoconfig does not need https,
   # but autodiscover from microsoft need them
   /etc/letsencrypt/archive/autodiscover.{{ network.domain }}/* r,
+  /etc/letsencrypt/live/autodiscover.{{ network.domain }}/* r,
 
   # Default location for autoconfing for roundcube and outlook
   /var/www/autoconfig/mail/config-v1.1.xml r,

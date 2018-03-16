@@ -75,6 +75,16 @@
     - master.cf
     - main.cf
     - ldap-aliases.cf
+    - senders-bcc.cf
+  loop_control:
+    loop_var: file
+
+- name: Refresh the senders bcc map
+  tags: postfix
+  notify: Restart postfix
+  command: "postmap /etc/postfix/{{ file }}"
+  with_items:
+    - senders-bcc.cf
   loop_control:
     loop_var: file
 

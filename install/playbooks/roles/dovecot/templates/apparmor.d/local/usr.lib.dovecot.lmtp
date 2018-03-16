@@ -1,4 +1,10 @@
   # Local docecot LMTP configuration
+  /home/users/*/mails/maildir/ rwkl,
   /home/users/*/mails/maildir/** rwkl,
   /home/users/*/mails/maildir/** ra,
+
+  # User sieve scripts
   /home/users/*/mails/sieve/** rwkl,
+
+  # Global sieve scripts
+  /etc/dovecot/sieve/** rwk,

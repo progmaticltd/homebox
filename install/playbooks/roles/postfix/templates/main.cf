@@ -22,7 +22,7 @@ compatibility_level = 2
 
 # TLS parameters
 {% if system.ssl == 'letsencrypt' %}
-smtpd_tls_cert_file=/etc/letsencrypt/live/smtp.{{ network.domain }}/cert.pem
+smtpd_tls_cert_file=/etc/letsencrypt/live/smtp.{{ network.domain }}/fullchain.pem
 smtpd_tls_key_file=/etc/letsencrypt/live/smtp.{{ network.domain }}/privkey.pem
 smtpd_tls_CAfile=/etc/letsencrypt/live/smtp.{{ network.domain }}/fullchain.pem
 smtpd_use_tls=yes
@@ -50,7 +50,8 @@ relayhost =
 
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 192.168.0.0/16
 
-mailbox_command = /usr/lib/dovecot/dovecot-lda -f "$SENDER" -a "$RECIPIENT"
+# mailbox_command = /usr/lib/dovecot/dovecot-lda -f "$SENDER" -a "$RECIPIENT"
+mailbox_command = /usr/lib/dovecot/dovecot-lda -f "$SENDER" -a ${original_recipient} -d ${user}@${nexthop}
 mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
@@ -63,7 +64,7 @@ smtpd_milters =
     inet:localhost:{{ milter_dkim_port }}
     inet:localhost:{{ milter_antispam_port }}
     inet:localhost:{{ milter_dmarc_port }}
-    
+
 non_smtpd_milters =
     inet:localhost:{{ milter_dkim_port }}
     inet:localhost:{{ milter_antispam_port }}
@@ -92,6 +93,9 @@ policy-spf_time_limit = 3600s
 
 disable_vrfy_command = yes
 
+# Send a copy of each email for a user to himself,
+# the mail will be stored in the Sent folder
+sender_bcc_maps = hash:/etc/postfix/senders-bcc.cf
 
 # Message size, computed from max attachment size and base64 overhead
 message_size_limit = {{ message_size_limit }}
