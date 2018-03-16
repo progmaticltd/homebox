@@ -34,6 +34,7 @@
   
 - name: Run the the dns management script
   tags: dns,gandi
+  when: dns.update == True
   shell: >-
     /usr/local/sbin/dns-gandi
     --config /etc/homebox/{{ network.domain }}.ini
