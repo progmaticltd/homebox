@@ -1,0 +1,19 @@
+---
+
+# Default list of development packages to install
+# You can override it in your config/system.yml file
+
+devel:
+  packages:
+    - mc
+    - telnet
+    - dnsutils
+    - whois
+    - tmux
+    - pfqueue
+    - aptitude
+    - man
+    - less
+    - vim
+  root:
+    shell: /bin/bash

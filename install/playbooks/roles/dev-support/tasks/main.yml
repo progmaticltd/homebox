@@ -1,0 +1,33 @@
+---
+
+- name: Install Development support packages
+  when: system.devel
+  tags: development
+  apt:
+    name: '{{ pkg }}'
+    state: latest
+  with_items:
+    - '{{ devel.packages }}'
+  loop_control:
+    loop_var: pkg
+
+- name: Install a correct bashrc for root
+  when: system.devel
+  tags: development
+  template:
+    src: '{{ dot_file }}'
+    dest: '/root/.{{ dot_file }}'
+  with_items:
+    - bashrc
+    - zshrc
+    - vimrc
+  loop_control:
+    loop_var: dot_file
+
+- name: Set the default shell for the root user
+  when: system.devel
+  tags: development
+  user:
+    name: root
+    shell: '{{ devel.root.shell }}'
+  
