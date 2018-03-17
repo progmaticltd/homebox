@@ -10,6 +10,10 @@ ldap:
     dn: 'ou=groups,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
   manager:
     uid: manager
+    dn: 'cn=manager,ou=users,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+  readonly:
+    uid: readonly
+    dn: 'cn=readonly account,ou=users,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
   admin:
     dn: 'cn=admin,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
     desc: administrator account

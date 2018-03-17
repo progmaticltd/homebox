@@ -21,14 +21,14 @@
 
 # LDAP URIs to use. You can use this instead of hosts list. Note that this
 # setting isn't supported by all LDAP libraries.
-uris = ldaps://{{ ldap.hostname }}/
+uris = ldap://{{ ldap.hostname }}/
 
 # Distinguished Name - the username used to login to the LDAP server.
 # Leave it commented out to bind anonymously (useful with auth_bind=yes).
-# dn = 
+dn = {{ ldap.readonly.dn }}
 
 # Password for LDAP server, if dn is specified.
-# dnpass = 
+dnpass = {{ lookup("password", roPasswdParams) }}
 
 # Use SASL binding instead of the simple binding. Note that this changes
 # ldap_version automatically to be 3 if it's lower.
@@ -42,7 +42,7 @@ uris = ldaps://{{ ldap.hostname }}/
 #sasl_authz_id =
 
 # Use TLS to connect to the LDAP server.
-# tls = yes
+tls = yes
 
 # TLS options, currently supported only with OpenLDAP:
 #tls_ca_cert_file =
@@ -67,7 +67,7 @@ uris = ldaps://{{ ldap.hostname }}/
 # The pass_filter is used to find the DN for the user. Note that the pass_attrs
 # is still used, only the password field is ignored in it. Before doing any
 # search, the binding is switched back to the default DN.
-auth_bind = yes
+# auth_bind = yes
 
 # If authentication binding is used, you can save one LDAP request per login
 # if users' DN can be specified with a common template. The template can use
@@ -112,6 +112,7 @@ user_attrs = homeDirectory=home,uidNumber=uid,gidNumber=gid,mail=mail
 #   %u - username
 #   %n - user part in user@domain, same as %u if there's no domain
 #   %d - domain part in user@domain, empty if user there's no domain
+# user_filter = (&(objectClass=posixAccount)(|(uid=%n)(mail=%n@%d)(mailLocalAddress=%n@%d)))
 user_filter = (&(objectClass=posixAccount)(uid=%n))
 
 # Password checking attributes:
@@ -120,17 +121,17 @@ user_filter = (&(objectClass=posixAccount)(uid=%n))
 #  password: Password, may optionally start with {type}, eg. {crypt}
 # There are also other special fields which can be returned, see
 # http://wiki2.dovecot.org/PasswordDatabase/ExtraFields
-# pass_attrs = uid=user,userPassword=password,mail=mail
+pass_attrs = uid=user,userPassword=password,mail=mail
 
 # If you wish to avoid two LDAP lookups (passdb + userdb), you can use
 # userdb prefetch instead of userdb ldap in dovecot.conf. In that case you'll
 # also have to include user_attrs in pass_attrs field prefixed with "userdb_"
 # string. For example:
-pass_attrs = uid=user,userPassword=password,\
-  homeDirectory=userdb_home,uidNumber=userdb_uid,gidNumber=userdb_gid,mail=mail
+#pass_attrs = uid=user,userPassword=password,\
+#  homeDirectory=userdb_home,uidNumber=userdb_uid,gidNumber=userdb_gid,mail=userdb_mail
 
 # Filter for password lookups
-pass_filter = (&(objectClass=posixAccount)(uid=%u))
+pass_filter = (&(objectClass=posixAccount)(uid=%n))
 
 # Attributes and filter to get a list of all users
 #iterate_attrs = uid=user
