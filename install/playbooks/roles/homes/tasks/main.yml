@@ -8,7 +8,35 @@
     group: users
     state: directory
 
-- name: Also add these folders into the skeletonf, for new users
+- name: Create the user account home folders
+  tags: accounts
+  file:
+    path: '/home/users/{{ user.uid }}'
+    owner: '{{ user.uid }}'
+    group: users
+    state: directory
+    mode: 0700
+    recurse: true
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Create the user account mail folders
+  tags: accounts
+  file:
+    path: '/home/users/{{ user.uid }}/mails/maildir'
+    owner: '{{ user.uid }}'
+    group: users
+    state: directory
+    mode: 0700
+    recurse: true
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Also add these folders into the skeleton, for new users
   tags: accounts
   file:
     path: '{{ dir }}'
