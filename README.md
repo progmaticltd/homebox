@@ -48,7 +48,7 @@ I am privileging stability and security over features, this is why you will not 
 | Powerful and light antispam system with [rspamd](https://rspamd.com/)                                                   | Done        |
 | Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                    | Done        |
 | Roundcube webmail, https, sieve filters management, password change, automatic identity creation                        | Done        |
-| AppArmor securisation for nginx (done), dovecot (done), postfix (wip), etc.                                             | 80% Done    |
+| AppArmor securisation for rspamd, nginx, dovecot, postfix                                                               | Done        |
 | Dovecot full text search using [Apache Tika](https://en.wikipedia.org/wiki/Apache_Tika)                                 | Planned     |
 | Antivirus for the emails with sieve and [clamav](https://www.clamav.net/)                                               | Planned     |
 | Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                                  | Planned     |
