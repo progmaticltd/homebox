@@ -1,0 +1,45 @@
+# ------------------------------------------------------------------
+#
+#    Copyright (C) 2002-2006 Novell/SUSE
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#
+# ------------------------------------------------------------------
+
+#include <tunables/global>
+
+/usr/lib/postfix/smtp {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/kerberosclient>
+  #include <abstractions/postfix-common>
+  #include <abstractions/openssl>
+
+  capability dac_override,
+  capability dac_read_search,
+  capability net_bind_service,
+
+  /usr/lib/postfix/smtp                        rmix,
+
+  /{var/spool/postfix/,}active/[0-9A-F]/[0-9A-F]/*      rwl,
+  /{var/spool/postfix/,}active/[0-9A-F]/[0-9A-F]/       rwl,
+  /{var/spool/postfix/,}active/[0-9A-F]/                rwl,
+  /{var/spool/postfix/,}private/anvil                   w,
+  /{var/spool/postfix/,}private/bounce                  w,
+  /{var/spool/postfix/,}private/defer                   w,
+  /{var/spool/postfix/,}private/rewrite                 w,
+  /{var/spool/postfix/,}private/scache                  w,
+  /{var/spool/postfix/,}private/tlsmgr                  w,
+  /{var/spool/postfix/,}private/trace                   w,
+  /{var/spool/postfix/,}public/flush                    w,
+  /{var/spool/postfix/,}pid/unix.smtp            rw,
+  /{var/spool/postfix/,}pid/unix.relay           rw,
+  /etc/postfix/{ssl/,}*.pem                   r,
+  /etc/postfix/prng_exch                      rw,
+  /usr/share/ssl/certs/ca-bundle.crt          r,
+  /etc/postfix/virtual.db                     r,
+  /etc/postfix/sasl_passwd.db                 r,
+  /etc/mtab                                   r,
+}

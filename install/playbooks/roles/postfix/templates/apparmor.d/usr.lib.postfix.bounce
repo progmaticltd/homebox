@@ -1,0 +1,46 @@
+# ------------------------------------------------------------------
+#
+#    Copyright (C) 2002-2006 Novell/SUSE
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#
+# ------------------------------------------------------------------
+
+#include <tunables/global>
+
+/usr/lib/postfix/bounce {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/kerberosclient>
+  #include <abstractions/postfix-common>
+
+  capability setgid,
+  capability setuid,
+
+  /usr/lib/postfix/bounce                      rmix,
+
+  /{var/spool/postfix/,}active/[0-9A-F]/[0-9A-F]/*                 rwl,
+  /{var/spool/postfix/,}active/[0-9A-F]/[0-9A-F]/                  rwl,
+  /{var/spool/postfix/,}active/[0-9A-F]/                           rwl,
+  /{var/spool/postfix/,}bounce/[0-9A-F]/[0-9A-F]/*                 rwl,
+  /{var/spool/postfix/,}bounce/[0-9A-F]/[0-9A-F]/                  rwl,
+  /{var/spool/postfix/,}bounce/[0-9A-F]/                           rwl,
+  /{var/spool/postfix/,}defer/[0-9A-F]/[0-9A-F]/*                  rwl,
+  /{var/spool/postfix/,}defer/[0-9A-F]/[0-9A-F]/                   rwl,
+  /{var/spool/postfix/,}defer/[0-9A-F]/                            rwl,
+  /{var/spool/postfix/,}incoming/[0-9A-F]/[0-9A-F]/*               rwl,
+  /{var/spool/postfix/,}incoming/[0-9A-F]/[0-9A-F]/                rwl,
+  /{var/spool/postfix/,}incoming/[0-9A-F]/                         rwl,
+  /{var/spool/postfix/,}trace/[0-9A-F]/[0-9A-F]/*                  rwl,
+  /{var/spool/postfix/,}trace/[0-9A-F]/[0-9A-F]/                   rwl,
+  /{var/spool/postfix/,}trace/[0-9A-F]/                            rwl,
+  /{var/spool/postfix/,}public/cleanup                             w,
+  /{var/spool/postfix/,}pid/unix.bounce          rw,
+  /{var/spool/postfix/,}pid/unix.defer           rw,
+  /{var/spool/postfix/,}pid/unix.trace           rw,
+
+  /etc/postfix/main.cf                        r,
+  @{PROC}/net/if_inet6                        r,
+}

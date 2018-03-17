@@ -1,0 +1,25 @@
+# ------------------------------------------------------------------
+#
+#    Copyright (C) 2002-2006 Novell/SUSE
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#
+# ------------------------------------------------------------------
+
+#include <tunables/global>
+
+/usr/lib/postfix/pickup {
+  #include <abstractions/base>
+  #include <abstractions/kerberosclient>
+  #include <abstractions/nameservice>
+  #include <abstractions/postfix-common>
+
+  /usr/lib/postfix/pickup                     rmix,
+
+  /{var/spool/postfix/,}public/cleanup           w,
+  /{var/spool/postfix/,}public/pickup            r,
+  /{var/spool/postfix/,}maildrop/                r,
+  /{var/spool/postfix/,}maildrop/*               rwl,
+}
