@@ -94,6 +94,7 @@
 # in order to have SSL and TLS encryption activated.                           #
 - name: Allow slapd daemons to access the certificate directories
   when: system.ssl == 'letsencrypt'
+  notify: Restart the ldap service
   tags: cert
   acl:
     path: '{{ path }}'
@@ -109,6 +110,7 @@
 
 - name: Configure the ldap server for SSL / TLS
   when: system.ssl == 'letsencrypt'
+  notify: Restart the ldap service
   tags: cert
   template:
     src: default-slapd
@@ -116,6 +118,7 @@
   
 - name: Copy the ldap ssl config on the server before running it
   when: system.ssl == 'letsencrypt'
+  notify: Restart the ldap service
   tags: cert
   register: ldap_ssl
   template:
@@ -124,6 +127,7 @@
 
 - name: Modify the configuration if not already done
   when: system.ssl == 'letsencrypt' and ldap_ssl.changed
+  notify: Restart the ldap service
   tags: cert
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ssl-config.ldif
 #                                                                              #
@@ -233,7 +237,7 @@
 
 # Remove all groups created before
 - name: Remove old groups if presents
-  when: 'clean | default(False) == True'
+  when: clean == True
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ lookup("password", adminPasswdParams) }}'
@@ -269,7 +273,7 @@
     state: present
 
 - name: Remove previous users
-  when: 'clean | default(False) == True'
+  when: clean == True
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ lookup("password", adminPasswdParams) }}'
@@ -279,6 +283,17 @@
     - '{{ users }}'
   loop_control:
     loop_var: user
+
+- name: Copy the local misc schema in the changes directory
+  register: misc_schema
+  copy:
+    src: /etc/ldap/schema/misc.ldif
+    dest: /etc/ldap/changes/misc.ldif
+    remote_src: true
+    
+- name: Load misc schema for multiple email addresses
+  when: misc_schema.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/misc.ldif
 
 - name: Create all the user accounts
   ldap_entry:
@@ -297,6 +312,7 @@
       uidNumber: '{{ users_defaults.uid_start + user.0 }}'
       gidNumber: '{{ users_defaults.gid_start }}'
       mail: '{{ user.1.mail }}'
+      mailLocalAddress: '{{ user.1.otherMailBox | default([]) }}'
       shadowMin: 0
       shadowMax: 999999
       shadowWarning: 7
@@ -308,28 +324,11 @@
       - posixAccount
       - shadowAccount
       - inetOrgPerson
+      - inetLocalMailRecipient
   with_indexed_items:
     - '{{ users }}'
   loop_control:
     loop_var: user
-
-# - name: Build an LDIF file for email aliases
-#   tags: mail
-#   register: mail_aliases
-#   template:
-#     src: email-aliases.ldif
-#     dest: /etc/ldap/changes/email-aliases.ldif
-#     mode: 0600
-
-# - name: Load email aliases into the LDAP database
-#   tags: mail
-#   when: mail_aliases.changed
-#   command: >-
-#     ldapmodify
-#     -H ldapi:///
-#     -D {{ ldap.admin.dn }}
-#     -w{{ lookup("password", adminPasswdParams) }}
-#     -f /etc/ldap/changes/email-aliases.ldif
 
 - name: Create the manager account
   ldap_entry:
@@ -431,15 +430,12 @@
     - memberUid
     - uidNumber
     - gidNumber
+    - mailLocalAddress
   loop_control:
     loop_var: field
 
-- name: Restart the ldap service
-  service:
-    name: slapd
-    state: restarted
-
 - name: Install the nslcd package to map LDAP users to system users
+  notify: Restart the ldap service
   tags: apt
   apt:
     name: nslcd

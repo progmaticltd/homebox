@@ -3,6 +3,7 @@
   vars_files:
     - ../../config/system.yml
   vars:
+    clean: False      # Do not delete the previous users if running again the script
     certificate:
       type: ldap
   roles:
