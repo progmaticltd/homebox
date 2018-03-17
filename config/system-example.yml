@@ -74,8 +74,23 @@ firewall:
 security:
   auto_update: true
   app_armor: false
-  aa_profiles:
-    - nginx
+
+###############################################################################
+# Development helpers
+# devel:
+#   packages:
+#     - mc
+#     - telnet
+#     - dnsutils
+#     - whois
+#     - tmux
+#     - pfqueue
+#     - aptitude
+#     - man
+#     - less
+#   root:
+#     shell: /bin/dash (or bash/zsh/etc)
+
 
 ###############################################################################
 # Webmail configuration
