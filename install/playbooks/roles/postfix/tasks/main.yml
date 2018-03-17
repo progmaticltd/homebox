@@ -105,3 +105,26 @@
       port: 587
   loop_control:
     loop_var: rule
+
+# AppArmor configuration ======================================================
+- name: Install some postfix AppArmor profile
+  when: security.app_armor
+  tags: security, apparmor
+  template:
+    src: 'apparmor.d/{{ aa_config }}'
+    dest: '/etc/apparmor.d/{{ aa_config }}'
+  with_items:
+    - usr.sbin.sendmail
+  loop_control:
+    loop_var: aa_config
+
+- name: Activate AppArmor profiles
+  when: security.app_armor
+  tags: security, apparmor
+  notify: Restart AppArmor service
+  command: 'aa-enforce {{ aa_config }}'
+  with_items:
+    - usr.sbin.sendmail
+  loop_control:
+    loop_var: aa_config
+

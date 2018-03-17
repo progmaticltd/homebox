@@ -1,0 +1,43 @@
+#include <tunables/global>
+
+# This is the postfix version of sendmail, from aparmor-profiles-extra package
+
+/usr/sbin/sendmail {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/consoles>
+  #include <abstractions/kerberosclient>
+  #include <abstractions/user-tmp>
+  #include <abstractions/postfix-common>
+
+  /etc/mtab                                r,
+  /etc/postfix                             r,
+  /etc/postfix/aliases                     r,
+  /etc/postfix/aliases.db                  rw,
+  /etc/postfix/main.cf                     r,
+  /etc/postfix/postfix-script              Px,
+  @{PROC}/net/if_inet6                     r,
+  /usr/lib/postfix                         r,
+  /usr/lib/postfix/master                  Px,
+  /usr/lib/postfix/showq                   Px,
+  /usr/sbin/postalias                      Px,
+  /usr/sbin/postdrop                       Px,
+  /usr/sbin/postqueue                      Px,
+  /usr/sbin/sendmail.postfix               rmix,
+  /var/spool/postfix/                      r,
+  /var/spool/postfix/active                r,
+  /var/spool/postfix/bounce                r,
+  /var/spool/postfix/corrupt               r,
+  /var/spool/postfix/defer                 r,
+  /var/spool/postfix/deferred              r,
+  /var/spool/postfix/incoming              r,
+  /var/spool/postfix/maildrop/             r,
+  /var/spool/postfix/maildrop/*            lrw,
+  /var/spool/postfix/pid                   r,
+  /var/spool/postfix/private               r,
+  /var/spool/postfix/public/               r,
+  /var/spool/postfix/public/pickup         w,
+  /var/spool/postfix/public/showq          w,
+  /var/spool/postfix/public/qmgr           w,
+  /var/spool/postfix/saved                 r,
+}

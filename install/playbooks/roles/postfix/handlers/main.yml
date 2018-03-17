@@ -9,3 +9,8 @@
     - postfix@-
   loop_control:
     loop_var: service
+
+- name: Restart AppArmor service
+  service:
+    name: apparmor
+    state: restarted

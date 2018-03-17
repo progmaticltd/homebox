@@ -5,6 +5,10 @@
 
   # User sieve scripts
   /home/users/*/mails/sieve/** rwkl,
+  /home/users/*/.dovecot.lda-dupes* rwk,
+
+  # Allow the LMTP server to send emails through sendmail
+  /usr/sbin/sendmail rPx,
 
   # Global sieve scripts
   /etc/dovecot/sieve/** rwk,
