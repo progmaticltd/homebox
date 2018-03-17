@@ -1,0 +1,26 @@
+# ------------------------------------------------------------------
+#
+#    Copyright (C) 2002-2006 Novell/SUSE
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#
+# ------------------------------------------------------------------
+
+#include <tunables/global>
+
+/usr/lib/postfix/virtual {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/kerberosclient>
+  #include <abstractions/postfix-common>
+
+  capability setgid,
+  capability setuid,
+
+  /usr/lib/postfix/virtual rmix,
+  /var/spool/postfix/active/* rw,
+  /var/spool/postfix/pid/unix.virtual rw,
+  /var/spool/postfix/private/bounce w,
+}

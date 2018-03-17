@@ -107,14 +107,47 @@
     loop_var: rule
 
 # AppArmor configuration ======================================================
+- name: Set postfix AppAromor profiles list
+  when: security.app_armor
+  tags: security, apparmor
+  set_fact:
+    postfix_apparmor_profiles:
+    - usr.lib.postfix.anvil
+    - usr.lib.postfix.bounce
+    - usr.lib.postfix.cleanup
+    - usr.lib.postfix.discard
+    - usr.lib.postfix.error
+    - usr.lib.postfix.flush
+    - usr.lib.postfix.lmtp
+    - usr.lib.postfix.local
+    - usr.lib.postfix.master
+    - usr.lib.postfix.nqmgr
+    - usr.lib.postfix.oqmgr
+    - usr.lib.postfix.pickup
+    - usr.lib.postfix.pipe
+    - usr.lib.postfix.proxymap
+    - usr.lib.postfix.qmgr
+    - usr.lib.postfix.qmqpd
+    - usr.lib.postfix.scache
+    - usr.lib.postfix.showq
+    - usr.lib.postfix.smtp
+    - usr.lib.postfix.smtpd
+    - usr.lib.postfix.spawn
+    - usr.lib.postfix.tlsmgr
+    - usr.lib.postfix.trivial-rewrite
+    - usr.lib.postfix.verify
+    - usr.lib.postfix.virtual
+    - usr.sbin.sendmail
+  
 - name: Install some postfix AppArmor profile
   when: security.app_armor
   tags: security, apparmor
+  notify: Restart postfix
   template:
     src: 'apparmor.d/{{ aa_config }}'
     dest: '/etc/apparmor.d/{{ aa_config }}'
   with_items:
-    - usr.sbin.sendmail
+    - '{{ postfix_apparmor_profiles }}'
   loop_control:
     loop_var: aa_config
 
@@ -124,7 +157,7 @@
   notify: Restart AppArmor service
   command: 'aa-enforce {{ aa_config }}'
   with_items:
-    - usr.sbin.sendmail
+    - '{{ postfix_apparmor_profiles }}'
   loop_control:
     loop_var: aa_config
 

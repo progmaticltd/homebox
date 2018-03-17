@@ -251,7 +251,7 @@ During the development phase, you can also run the scripts one by one.
 
 ### Automatic backup
 
-- Once the script has been run, the backup folder contains important files to run your scripts again. See (see the [readme](./backup/)
+- Once the script has been run, the backup folder contains important files to run your scripts again. See (see the [readme](./backup/))
 
 
 ### Future versions

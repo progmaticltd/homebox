@@ -1,0 +1,25 @@
+# ------------------------------------------------------------------
+#
+#    Copyright (C) 2002-2005 Novell/SUSE
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#
+# ------------------------------------------------------------------
+# vim:syntax=apparmor
+
+#include <tunables/global>
+
+/usr/lib/postfix/tlsmgr {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/postfix-common>
+
+  /usr/lib/postfix/tlsmgr           rmix,
+
+  /etc/postfix/prng_exch            rw,
+  /{var/spool/postfix/,}private/tlsmgr r,
+  /{,var/}run/__db.smtpd_tls_session_cache.db rw,
+  /{,var/}run/smtpd_tls_session_cache.db rw,
+}
