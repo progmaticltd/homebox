@@ -1,7 +1,6 @@
 ---
 
 - name: Create a homebox directory to store any specific configuration
-  tags: system-prepare
   file:
     path: /etc/homebox
     state: directory
@@ -9,10 +8,15 @@
 
 # Update packages cache, and install any security update
 - name: Update packages cache and install security updates
-  tags: security
+  tags: apt
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Upgrade the distribution, and install security updates if needed
+  tags: apt
   apt:
     upgrade: yes
-    cache_valid_time: 86400
 
 # We are going to install the "unattended-upgrades" package, and to
 # configure it to install security updates automatically.
