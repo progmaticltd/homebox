@@ -7,8 +7,11 @@
     path: '{{ playbook_dir }}/../../backup/certificates/'
     state: directory
 
+# The "--ignore-existing" option skip the files already existing,
+# especially the symbolic links in the live folder
+# The '--update' option make sure to not overwrite new certificates.
 - name: If the certificates have been generated before, copy them on the remote server
-  tags: cert
+  tags: cert,sync
   synchronize:
     src: '{{ playbook_dir }}/../../backup/certificates/'
     dest: /etc
@@ -17,8 +20,9 @@
     perms: yes
     rsync_opts:
       - '--no-motd'
-      - '--checksum'
       - '--exclude=readme.md'
+      - '--ignore-existing'
+      - '--update'
 
 - name: Check if the certificate has been copied from a previous backup
   tags: cert
@@ -83,10 +87,37 @@
     name: nginx
     state: started
 
+# In this direction, we should overwrite the symbolic links, in case the certificates
+# have been renewed
 - name: Backup the certificates on your local machine
-  tags: cert
+  tags: cert,sync2
   synchronize:
     mode: pull
     src: /etc/letsencrypt
     dest: '{{ playbook_dir }}/../../backup/certificates/'
     perms: yes
+    rsync_opts:
+      - '--no-motd'
+      - '--exclude=readme.md'
+      - '--update'
+
+- name: Install a script to renew the certificates when they have expired
+  tags: script
+  template:
+    src: certificates-renew.sh
+    dest: /usr/local/sbin/certificates-renew.sh
+    mode: 0755
+    
+- name: Use cron to renew the certificate
+  tags: cron
+  template:
+    src: certificates-renew.cron
+    dest: /etc/cron.d/certificates-renew.cron
+    
+- name: Remove the certbot certificate renew script
+  tags: cron
+  file:
+    path: /etc/cron.d/certbot
+    state: absent
+    
+    
