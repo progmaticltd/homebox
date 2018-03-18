@@ -6,13 +6,6 @@
     path: '{{ playbook_dir }}/../../backup/ldap/'
     state: directory
 
-- name: Set the parameters for passwords generators
-  tags: facts,passwords
-  set_fact:
-    roPasswdParams: "{{ playbook_dir }}/../../backup/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
-    managerPasswdParams: "{{ playbook_dir }}/../../backup/ldap/manager.pwd length=16 chars=ascii_letters,digits"
-    adminPasswdParams: "{{ playbook_dir }}/../../backup/ldap/admin.pwd length=16 chars=ascii_letters,digits"
-
 - name: Display LDAP tree settings
   tags: debug
   when: system.debug
@@ -40,10 +33,10 @@
   with_items:
     - question: slapd/password1
       type: password
-      value: '{{ lookup("password", adminPasswdParams) }}'
+      value: '{{ lookup("password", ldap.adminPasswdParams) }}'
     - question: slapd/password2
       type: password
-      value: '{{ lookup("password", adminPasswdParams) }}'
+      value: '{{ lookup("password", ldap.adminPasswdParams) }}'
     - question: slapd/purge_database
       value: false
       type: boolean
@@ -194,7 +187,7 @@
 - name: Create the password policies parent entry
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: 'ou=pwpolicies,{{ ldap.organization.base }}'
     objectClass:
       - organizationalUnit
@@ -206,7 +199,7 @@
 - name: Create the default password policy
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: cn=default,ou=pwpolicies,{{ ldap.organization.base }}
     objectClass:
       - pwdPolicy
@@ -230,7 +223,7 @@
 - name: Make sure we have a parent entry for groups
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: '{{ ldap.groups.dn }}'
     objectClass: organizationalUnit
     state: present
@@ -240,7 +233,7 @@
   when: clean == True
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
     state: absent
   with_items:
@@ -251,7 +244,7 @@
 - name: Create all the group accounts
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
     attributes:
       cn:  '{{ group.description }}'
@@ -267,7 +260,7 @@
 - name: Make sure we have a parent entry for users
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: '{{ ldap.users.dn }}'
     objectClass: organizationalUnit
     state: present
@@ -276,7 +269,7 @@
   when: clean == True
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
     state: absent
   with_items:
@@ -298,7 +291,7 @@
 - name: Create all the user accounts
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: 'cn={{ user.1.cn }},{{ ldap.users.dn }}'
     state: present
     attributes:
@@ -330,15 +323,24 @@
   loop_control:
     loop_var: user
 
+- name: Remove the manager account
+  tags: manager
+  when: clean == True
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn=manager account,{{ ldap.users.dn }}'
+    state: absent
+
 - name: Create the manager account
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: 'cn=manager account,{{ ldap.users.dn }}'
     state: present
     attributes:
       uid: '{{ ldap.manager.uid }}'
-      userPassword: '{{ lookup("password", managerPasswdParams) }}'
+      userPassword: '{{ lookup("password", ldap.managerPasswdParams) }}'
       givenName: Manager
       sn: Account
     objectClass:
@@ -346,15 +348,23 @@
       - person
       - inetOrgPerson
 
+- name: Remove the readonly account
+  when: clean == True
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn=readonly account,{{ ldap.users.dn }}'
+    state: absent
+
 - name: Create a readonly account
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: 'cn=readonly account,{{ ldap.users.dn }}'
     state: present
     attributes:
       uid: 'readonly'
-      userPassword: '{{ lookup("password", roPasswdParams) }}'
+      userPassword: '{{ lookup("password", ldap.roPasswdParams) }}'
       givenName: Readonly
       sn: Account
     objectClass:

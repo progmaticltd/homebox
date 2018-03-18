@@ -4,7 +4,9 @@
 # Basic system tests
 - hosts: homebox
   vars_files:
-    - ../../config/system.yml
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/defaults/main.yml'
   roles:
     - tests-system-base
+    - tests-ldap
 
