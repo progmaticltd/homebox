@@ -5,16 +5,40 @@ A set of Ansible scripts to setup your personal mail server (and more) for your 
 
 Source: https://en.wikipedia.org/wiki/Self-hosting#Website_management
 
+<!-- TOC -->
+
+- [Introduction](#introduction)
+- [Current status and supported features](#current-status-and-supported-features)
+- [Basic installation](#basic-installation)
+    - [Prerequisites](#prerequisites)
+    - [Folders](#folders)
+    - [Debian automatic installation using preseed](#debian-automatic-installation-using-preseed)
+    - [Configure your remote system for root access](#configure-your-remote-system-for-root-access)
+        - [Example to allow SSH as root](#example-to-allow-ssh-as-root)
+    - [Create your host file](#create-your-host-file)
+    - [Create your custom configuration](#create-your-custom-configuration)
+    - [Configure your router to forward email - and web - traffic](#configure-your-router-to-forward-email---and-web---traffic)
+        - [Home installation](#home-installation)
+        - [Hosted installation](#hosted-installation)
+    - [Automatic DNS records creation and update:](#automatic-dns-records-creation-and-update)
+    - [Run the Ansible scripts to setup your email server](#run-the-ansible-scripts-to-setup-your-email-server)
+    - [Automatic backup](#automatic-backup)
+    - [Future versions](#future-versions)
+- [Other projects to mention](#other-projects-to-mention)
+
+<!-- /TOC -->
+
 ## Introduction
 
-This project has been created for those who want to securely host their emails - and more - at home,
-but don't want to manage the full installation process manually, from scratch. You can also use a remote virtual or dedicated server.
+This project has been created for those who want to securely host their emails - and more - at home but don't want to manage the full installation process manually, from scratch.
+
+Although the project is called "homebox", you can also use a virtual or dedicated server online.
 
 It is a set of [Ansible](https://en.wikipedia.org/wiki/Ansible_(software)) scripts, to automate tasks you would have done manually.
 
 There is a lot of excellent projects on internet to help emails self-hosting, and I am providing links below. This one is different in the approach used.
 
-It is made to be unobtrusive with a standard Debian distribution and highly secure.
+It is made to be unobtrusive with a standard Debian distribution, stable and highly secure.
 
 Security is a very important concern when using self hosting. All the packages are coming from the official Debian repository or from a well maintained repository. There is no *git clone* or manual download here. Moreover, the system also deploys and carefully configure [AppArmor](https://en.wikipedia.org/wiki/AppArmor), to secure the system and to protect you from any zero-day vulnerability.
 
@@ -33,29 +57,29 @@ This is a work in progress and a project I am maintaining on my spare time. Alth
 I am privileging stability and security over features, this is why you will not have the latest version of RoundCube and other components. There are plenty projects on internet that provides the latest and shinest versions of these software if you need. I am providing links at the end of this page.
 
 
-## Current status
-
-| Current feature, implemented and planned                                                                                | Status      |
-| ----------------------------------------------------------------------------------------------------------------------- | ----------- |
-| LDAP users database, SSL & TLS certificates, password policies, integration with the system and PAM.                    | Done        |
-| SSL Certificates generation with [letsencrypt](https://letsencrypt.org), automatic local backup and publication.        | Done        |
-| DKIM keys generation and automatic local backup and publication on Gandi                                                | Done        |
-| SPF records generation and publication on Gandi                                                                         | Done        |
-| DMARC record generation and publication on Gandi, *the reports generation is planned for a future version*              | Done        |
-| Generation and publication of automatic Thunderbird (autoconfig) and Outlook (autodiscover) configuration               | Done        |
-| Postfix configuration and installation, with LDAP lookups, and protocols STARTTLS/Submission/SMTPS                      | Done        |
-| Automatic copy of sent emails into the sent folderm ala GMail                                                           | Done        |
-| Powerful and light antispam system with [rspamd](https://rspamd.com/)                                                   | Done        |
-| Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                    | Done        |
-| Roundcube webmail, https, sieve filters management, password change, automatic identity creation                        | Done        |
-| AppArmor securisation for rspamd, nginx, dovecot, postfix                                                               | Done        |
-| Dovecot full text search using [Apache Tika](https://en.wikipedia.org/wiki/Apache_Tika)                                 | Planned     |
-| Antivirus for the emails with sieve and [clamav](https://www.clamav.net/)                                               | Planned     |
-| Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                                  | Planned     |
-| Web proxy with privacy and parent filtering features, probably using [privoxy](https://www.privoxy.org/)                | Planned     |
-| Automatic migration from old mail server using imap synchronisation                                                     | Planned     |
-| Automatic encrypted off-site backup, probably with [borg-ackup](https://www.borgbackup.org/)                            | Planned     |
-| Jabber server, probably using [ejabberd](https://www.ejabberd.im/)                                                      | Planned     |
+## Current status and supported features
+ 
+| Current feature, implemented and planned                                                                                | Status     | Tested   |
+| ----------------------------------------------------------------------------------------------------------------------- | :--------: | :------: | 
+| LDAP users database, SSL & TLS certificates, password policies, integration with the system and PAM.                    | Done       |   Yes    | 
+| SSL Certificates generation with [letsencrypt](https://letsencrypt.org), automatic local backup and publication.        | Done       |   Yes    | 
+| DKIM keys generation and automatic local backup and publication on Gandi                                                | Done       |   Yes    | 
+| SPF records generation and publication on Gandi                                                                         | Done       |   Yes    | 
+| DMARC record generation and publication on Gandi, *the reports generation is planned for a future version*              | Done       |   Yes    | 
+| Generation and publication of automatic Thunderbird (autoconfig) and Outlook (autodiscover) configuration               | Done       |   Yes    | 
+| Postfix configuration and installation, with LDAP lookups, and protocols STARTTLS/Submission/SMTPS                      | Done       |   Yes    | 
+| Automatic copy of sent emails into the sent folderm ala GMail                                                           | Done       |   Yes    | 
+| Powerful and light antispam system with [rspamd](https://rspamd.com/)                                                   | Done       |   No     | 
+| Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                    | Done       |  Basic   | 
+| Roundcube webmail, https, sieve filters management, password change, automatic identity creation                        | Done       |  Basic   | 
+| AppArmor securisation for rspamd, nginx, dovecot, postfix                                                               | Done       |   No     | 
+| Dovecot full text search using [Apache Tika](https://en.wikipedia.org/wiki/Apache_Tika)                                 | Planned    |          | 
+| Antivirus for the emails with sieve and [clamav](https://www.clamav.net/)                                               | Planned    |          | 
+| Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                                  | Planned    |          | 
+| Web proxy with privacy and parent filtering features, probably using [privoxy](https://www.privoxy.org/)                | Planned    |          | 
+| Automatic migration from old mail server using imap synchronisation                                                     | Planned    |          | 
+| Automatic encrypted off-site backup, probably with [borg-ackup](https://www.borgbackup.org/)                            | Planned    |          | 
+| Jabber server, probably using [ejabberd](https://www.ejabberd.im/)                                                      | Planned    |          |
 
 ## Basic installation
 
@@ -245,6 +269,11 @@ The script will call the playbooks below:
 - autodiscover.yml : Configure Microsoft Outlook autodiscovery feature.
 - autoconfig.yml :  Configure Mozilla Thunderbird autoconfig feature.
 
+There is also two other Ansible scripts worth to mention:
+
+- tests.yml : Run a set of self-diagnostic from inside the box, for each service
+- dev-support : Install some convenient tools for better development support on the server
+
 During the development phase, you can also run the scripts one by one.
 
 **Note: The scripts are idempotents, you can run then multiple time without error.**
@@ -252,7 +281,6 @@ During the development phase, you can also run the scripts one by one.
 ### Automatic backup
 
 - Once the script has been run, the backup folder contains important files to run your scripts again. See (see the [readme](./backup/))
-
 
 ### Future versions
 

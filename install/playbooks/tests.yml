@@ -1,7 +1,14 @@
 ---
-## Full tests playbook
+## Self diagnostic / basic unit tests suite to run before commiting
+## 
 
-# Basic system tests
+# Install development support packages needed to run the tests
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+  roles:
+    - dev-support
+
 - hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'

@@ -1,0 +1,10 @@
+---
+# Cleanup the system, make it ready for production, remove development packages
+
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/roles/dev-support/defaults/main.yml'
+  roles:
+    - dev-cleanup
+
