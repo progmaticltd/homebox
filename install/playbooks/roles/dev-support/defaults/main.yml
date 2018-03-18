@@ -18,5 +18,6 @@ devel:
     - net-tools
     - file
     - swaks
+    - curl
   root:
     shell: /bin/bash
