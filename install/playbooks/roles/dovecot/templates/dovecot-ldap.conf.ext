@@ -134,7 +134,7 @@ user_attrs = homeDirectory=home,uidNumber=uid,gidNumber=gid,mail=mail
 #   %u - username
 #   %n - user part in user@domain, same as %u if there's no domain
 #   %d - domain part in user@domain, empty if user there's no domain
-user_filter = (&(objectClass=posixAccount)(|(uid=%n)(mailLocalAddress=%n@{{ network.domain }})))
+user_filter = (&(objectClass=posixAccount)(|(uid=%n)(mailLocalAddress=%u)(mail=%u)))
 
 # Password checking attributes:
 #  user: Virtual user name (user@domain), if you wish to change the
@@ -152,7 +152,7 @@ pass_attrs = uid=user,userPassword=password,mail=mail
 #  homeDirectory=userdb_home,uidNumber=userdb_uid,gidNumber=userdb_gid,mail=userdb_mail
 
 # Filter for password lookups
-pass_filter = (&(objectClass=posixAccount)(uid=%n))
+pass_filter = (&(objectClass=posixAccount)(|(uid=%n)(mailLocalAddress=%u)(mail=%u)))
 
 # Attributes and filter to get a list of all users
 #iterate_attrs = uid=user
