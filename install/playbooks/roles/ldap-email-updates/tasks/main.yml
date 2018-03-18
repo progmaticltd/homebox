@@ -1,0 +1,16 @@
+---
+
+
+- name: Update all account email addresses
+  ldap_attr:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn={{ user.1.cn }},{{ ldap.users.dn }}'
+    name: mailLocalAddress
+    values: '{{ user.1.otherMailBox | default([]) }}'
+    state: exact
+  with_indexed_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+

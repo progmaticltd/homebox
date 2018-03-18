@@ -269,10 +269,12 @@ The script will call the playbooks below:
 - autodiscover.yml : Configure Microsoft Outlook autodiscovery feature.
 - autoconfig.yml :  Configure Mozilla Thunderbird autoconfig feature.
 
-There is also two other Ansible scripts worth to mention:
+There is also a few others Ansible scripts worth to mention:
 
 - tests.yml : Run a set of self-diagnostic from inside the box, for each service
 - dev-support : Install some convenient tools for better development support on the server
+- dev-cleanup : Remove the development packages previously installed
+- ldap-refresh: Read again the user's list, and refresh email aliases
 
 During the development phase, you can also run the scripts one by one.
 
