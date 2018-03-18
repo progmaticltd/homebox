@@ -1,5 +1,5 @@
 ---
-## Main installation playbook
+## Full tests playbook
 
 # Basic system tests
 - hosts: homebox
@@ -30,4 +30,31 @@
   roles:
     - ports-assign
     - tests-opendkim
+    - tests-postfix
+
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+  vars:
+    certificate:
+      type: pop3
+  roles:
+    - tests-certificate
+
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+  vars:
+    certificate:
+      type: imap
+  roles:
+    - tests-certificate
+
+# - hosts: homebox
+#   vars_files:
+#     - '{{ playbook_dir }}/../../config/system.yml'
+#     - '{{ playbook_dir }}/defaults/main.yml'
+#     - '{{ playbook_dir }}/roles/opendkim/defaults/main.yml'
+#   roles:
+#     - tests-dovecot
 

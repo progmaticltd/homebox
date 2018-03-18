@@ -28,7 +28,7 @@ uris = ldap://{{ ldap.hostname }}/
 dn = {{ ldap.readonly.dn }}
 
 # Password for LDAP server, if dn is specified.
-dnpass = {{ lookup("password", roPasswdParams) }}
+dnpass = {{ lookup("password", ldap.roPasswdParams) }}
 
 # Use SASL binding instead of the simple binding. Note that this changes
 # ldap_version automatically to be 3 if it's lower.

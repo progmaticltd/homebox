@@ -16,5 +16,7 @@ devel:
     - less
     - vim
     - net-tools
+    - file
+    - swaks
   root:
     shell: /bin/bash

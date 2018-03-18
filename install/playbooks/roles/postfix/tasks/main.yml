@@ -121,6 +121,7 @@
 - name: Set postfix AppAromor profiles list
   when: security.app_armor
   tags: security, apparmor
+  register: aa_templates
   set_fact:
     postfix_apparmor_profiles:
     - usr.lib.postfix.anvil
