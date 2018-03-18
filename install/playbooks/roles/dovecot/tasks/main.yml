@@ -85,6 +85,7 @@
     - 10-auth.conf
     - 10-master.conf
     - 10-mail.conf
+    - 10-logging.conf
     - 15-lda.conf
     - 15-mailboxes.conf
     - 20-managesieve.conf

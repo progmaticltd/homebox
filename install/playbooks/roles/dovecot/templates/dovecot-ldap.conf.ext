@@ -61,13 +61,34 @@ tls = yes
 # -1 = everything. You may need to recompile OpenLDAP with debugging enabled
 # to get enough output.
 # debug_level =
+{% if system.debug %}
+# http://www.openldap.org/doc/admin24/runningslapd.html
+# Level     Keyword             Description
+# -1        any                 enable all debugging
+# 0                             no debugging
+# 1         (0x1 trace)         trace function calls
+# 2         (0x2 packets)       debug packet handling
+# 4         (0x4 args)          heavy trace debugging
+# 8         (0x8 conns)         connection management
+# 16        (0x10 BER)          print out packets sent and received
+# 32        (0x20 filter)       search filter processing
+# 64        (0x40 config)       configuration processing
+# 128       (0x80 ACL)          access control list processing
+# 256       (0x100 stats)       stats log connections/operations/results
+# 512       (0x200 stats2)      stats log entries sent
+# 1024      (0x400 shell)       print communication with shell backends
+# 2048      (0x800 parse)       print entry parsing debugging
+# 16384     (0x4000 sync)       syncrepl consumer processing
+# 32768     (0x8000 none)       only messages that get logged whatever log level is set
+debug_level = 160
+{% endif %}
 
 # Use authentication binding for verifying password's validity. This works by
 # logging into LDAP server using the username and password given by client.
 # The pass_filter is used to find the DN for the user. Note that the pass_attrs
 # is still used, only the password field is ignored in it. Before doing any
 # search, the binding is switched back to the default DN.
-# auth_bind = yes
+auth_bind = yes
 
 # If authentication binding is used, you can save one LDAP request per login
 # if users' DN can be specified with a common template. The template can use
