@@ -1,0 +1,17 @@
+---
+
+- name: Check if rspamd has been installed
+  tags: apt,rspamd
+  shell: dpkg -s rspamd
+     
+- name: Check if the rspamd service is up and running
+  tags: systemctl,rspamd
+  shell: systemctl status rspamd
+    
+- name: Test rspamd configuration
+  tags: systemctl,rspamd
+  shell: rspamd -t
+  become: yes
+  become_method: sudo
+  become_user: _rspamd
+    

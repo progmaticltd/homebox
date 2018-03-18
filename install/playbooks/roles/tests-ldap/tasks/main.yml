@@ -1,11 +1,11 @@
 ---
 
 - name: Check if the ldap service is running
-  tags: ldap
+  tags: systemctl,ldap
   shell: systemctl status slapd
 
 - name: Check if the nslcd service is running
-  tags: ldap
+  tags: systemctl,ldap
   shell: systemctl status nslcd
 
 - name: Check that 'ldap.{{ network.domain }}' resoves to localhost
