@@ -50,11 +50,11 @@
   roles:
     - tests-certificate
 
-# - hosts: homebox
-#   vars_files:
-#     - '{{ playbook_dir }}/../../config/system.yml'
-#     - '{{ playbook_dir }}/defaults/main.yml'
-#     - '{{ playbook_dir }}/roles/opendkim/defaults/main.yml'
-#   roles:
-#     - tests-dovecot
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/defaults/main.yml'
+    - '{{ playbook_dir }}/roles/dovecot/defaults/main.yml'
+  roles:
+    - tests-dovecot
 

@@ -1,0 +1,89 @@
+---
+
+- name: Check if dovecot has been installed
+  tags: apt, dovecot
+  shell: dpkg -s '{{ pkg }}'
+  with_items:
+    - '{{ dovecot.packages }}'
+  loop_control:
+    loop_var: pkg
+     
+- name: Check if the dovecot service is up and running
+  tags: systemctl, dovecot
+  shell: systemctl status dovecot
+    
+
+- name: Check the certificate using IMAPS
+  tags: systemctl, dovecot
+  shell: >-
+    echo QUIT | openssl s_client
+    -servername imap.{{ network.domain }}
+    -connect imap.{{ network.domain }}:993 2>&1
+    | grep 'Verification: OK'
+       
+- name: Check the certificate using IMAP and STARTTLS
+  tags: systemctl, dovecot
+  shell: >-
+    echo QUIT | openssl s_client
+    -servername imap.{{ network.domain }}
+    -connect imap.{{ network.domain }}:143
+    -starttls imap 2>&1
+    | grep 'Verification: OK'
+       
+- name: Check the certificate using ManageSieve
+  tags: systemctl, dovecot
+  shell: >-
+    echo LOGOUT | openssl s_client
+    -servername imap.{{ network.domain }}
+    -connect imap.{{ network.domain }}:4190
+    -starttls telnet 2>&1
+    | grep 'Verification: OK'
+
+- name: Test authentication on each user
+  tags: dovecot
+  shell: >-
+    doveadm auth login '{{ user.uid }}' '{{ user.password }}'
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Check the LDAP mapping from email address to uid
+  tags: dovecot
+  shell: >-
+    doveadm -v user '{{ user.mail }}' | grep -E '^user\s+{{ user.uid }}$'
+  become: yes
+  become_method: sudo
+  become_user: dovecot
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Check the LDAP mapping from uid to email address
+  tags: dovecot
+  shell: >-
+    doveadm -v user '{{ user.uid }}' | grep -E '^mail\s+{{ user.mail }}$'
+  become: yes
+  become_method: sudo
+  become_user: dovecot
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+# This functionality does not work yet
+# - name: Check the LDAP mapping for email aliases
+#   tags: postfix
+#   shell: >-
+#     postmap -q '{{ user.otherMailBox[0] }}'
+#     ldap:/etc/postfix/ldap-aliases.cf
+#     | grep '{{ user.uid }}'
+#   become: yes
+#   become_method: sudo
+#   become_user: postfix
+#   with_items:
+#     - '{{ users | selectattr("otherMailBox", "defined") | list }}'
+#   loop_control:
+#     loop_var: user
+

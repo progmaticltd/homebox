@@ -7,13 +7,7 @@
     name: "{{ pkg }}"
     state: installed
   with_items:
-    - dovecot-core
-    - dovecot-imapd
-    - dovecot-lmtpd
-    - dovecot-pop3d
-    - dovecot-managesieved
-    - dovecot-sieve
-    - dovecot-ldap
+    - '{{ dovecot.packages }}'
   loop_control:
     loop_var: pkg
 

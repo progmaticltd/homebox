@@ -4,3 +4,13 @@ quota:
   listener:
     port: '{{ mails_quota_port }}'
 
+# Default dovecot packages to install
+dovecot:
+  packages:
+    - dovecot-core
+    - dovecot-imapd
+    - dovecot-lmtpd
+    - dovecot-pop3d
+    - dovecot-managesieved
+    - dovecot-sieve
+    - dovecot-ldap
