@@ -4,14 +4,41 @@
   tags: apt,postfix
   shell: dpkg -s postfix
      
-- name: Check if the rspamd service is up and running
+- name: Check if the postfix service is up and running
   tags: systemctl,postfix
   shell: systemctl status postfix
     
-- name: Check if the rspamd service is up and running
+- name: Check if the postfix service is up and running
   tags: systemctl,postfix
   shell: postfix status
     
+
+- name: Check the certificate using SMTPS
+  tags: systemctl, postfix
+  shell: >-
+    echo QUIT | openssl s_client
+    -servername smtp.{{ network.domain }}
+    -connect smtp.{{ network.domain }}:465 2>&1
+    | grep 'Verification: OK'
+       
+- name: Check the certificate using SMTP and STARTTLS
+  tags: systemctl, postfix
+  shell: >-
+    echo QUIT | openssl s_client
+    -servername smtp.{{ network.domain }}
+    -connect smtp.{{ network.domain }}:25
+    -starttls smtp 2>&1
+    | grep 'Verification: OK'
+
+- name: Check the certificate using SMTP and STARTTLS On submission port
+  tags: systemctl, postfix
+  shell: >-
+    echo QUIT | openssl s_client
+    -servername smtp.{{ network.domain }}
+    -connect smtp.{{ network.domain }}:587
+    -starttls smtp 2>&1
+    | grep 'Verification: OK'
+
 - name: Check the LDAP mapping
   tags: postfix
   shell: >-
@@ -21,6 +48,20 @@
   become_user: postfix
   with_items:
     - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Check the LDAP mapping for email aliases
+  tags: postfix
+  shell: >-
+    postmap -q '{{ user.otherMailBox[0] }}'
+    ldap:/etc/postfix/ldap-aliases.cf
+    | grep '{{ user.uid }}'
+  become: yes
+  become_method: sudo
+  become_user: postfix
+  with_items:
+    - '{{ users | selectattr("otherMailBox", "defined") | list }}'
   loop_control:
     loop_var: user
 
