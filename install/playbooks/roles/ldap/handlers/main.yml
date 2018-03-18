@@ -1,0 +1,16 @@
+---
+
+- name: Restart the ldap service
+  service:
+    name: '{{ service.name }}'
+    state: '{{ service.state }}'
+  with_items:
+    - name: nslcd
+      state: stopped
+    - name: slapd
+      state: restarted
+    - name: nslcd
+      state: started
+  loop_control:
+    loop_var: service
+      

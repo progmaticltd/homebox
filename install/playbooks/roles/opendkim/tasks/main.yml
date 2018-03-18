@@ -41,6 +41,8 @@
     rsync_opts:
       - '--no-motd'
       - '--checksum'
+      - '--ignore-existing'
+      - '--update'
 
 - name: Run the command to create the keys
   tags: dkim
@@ -57,6 +59,22 @@
   args:
     creates: '/etc/opendkim/keys/{{ dkim.selector }}.txt'
 
+- name: Set the default permissions
+  tags: dkim
+  notify: Restart opendkim
+  file:
+    path: '{{ file.path }}'
+    mode: '{{ file.mode }}'
+    owner: opendkim
+    group: opendkim
+  with_items:
+    - path: '/etc/opendkim/keys/{{ dkim.selector }}.private'
+      mode: '0600'
+    - path: '/etc/opendkim/keys/{{ dkim.selector }}.txt'
+      mode: '0640'
+  loop_control:
+    loop_var: file
+
 - name: Backup the dkim on your local machine
   tags: dkim
   synchronize:
@@ -64,23 +82,13 @@
     src: '/etc/opendkim/keys/{{ item }}'
     dest: '{{ playbook_dir }}/../../backup/dkim-keys/'
     perms: yes
+    rsync_opts:
+      - '--no-motd'
+      - '--exclude=readme.md'
+      - '--update'
   with_items:
     - '{{ dkim.selector }}.txt'
     - '{{ dkim.selector }}.private'
-
-- name: Set the default permissions
-  tags: dkim
-  notify: Restart opendkim
-  file:
-    path: '{{ path }}'
-    mode: u=rw,g=r,o=
-    owner: opendkim
-    group: opendkim
-  with_items:
-    - '/etc/opendkim/keys/{{ dkim.selector }}.private'
-    - '/etc/opendkim/keys/{{ dkim.selector }}.txt'
-  loop_control:
-    loop_var: path
 
 - name: Create the configuration file
   tags: dkim

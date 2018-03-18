@@ -21,14 +21,14 @@
 
 # LDAP URIs to use. You can use this instead of hosts list. Note that this
 # setting isn't supported by all LDAP libraries.
-uris = ldaps://{{ ldap.hostname }}/
+uris = ldap://{{ ldap.hostname }}/
 
 # Distinguished Name - the username used to login to the LDAP server.
 # Leave it commented out to bind anonymously (useful with auth_bind=yes).
-# dn = 
+dn = {{ ldap.readonly.dn }}
 
 # Password for LDAP server, if dn is specified.
-# dnpass = 
+dnpass = {{ lookup("password", ldap.roPasswdParams) }}
 
 # Use SASL binding instead of the simple binding. Note that this changes
 # ldap_version automatically to be 3 if it's lower.
@@ -42,7 +42,7 @@ uris = ldaps://{{ ldap.hostname }}/
 #sasl_authz_id =
 
 # Use TLS to connect to the LDAP server.
-# tls = yes
+tls = yes
 
 # TLS options, currently supported only with OpenLDAP:
 #tls_ca_cert_file =
@@ -61,6 +61,27 @@ uris = ldaps://{{ ldap.hostname }}/
 # -1 = everything. You may need to recompile OpenLDAP with debugging enabled
 # to get enough output.
 # debug_level =
+{% if system.debug %}
+# http://www.openldap.org/doc/admin24/runningslapd.html
+# Level     Keyword             Description
+# -1        any                 enable all debugging
+# 0                             no debugging
+# 1         (0x1 trace)         trace function calls
+# 2         (0x2 packets)       debug packet handling
+# 4         (0x4 args)          heavy trace debugging
+# 8         (0x8 conns)         connection management
+# 16        (0x10 BER)          print out packets sent and received
+# 32        (0x20 filter)       search filter processing
+# 64        (0x40 config)       configuration processing
+# 128       (0x80 ACL)          access control list processing
+# 256       (0x100 stats)       stats log connections/operations/results
+# 512       (0x200 stats2)      stats log entries sent
+# 1024      (0x400 shell)       print communication with shell backends
+# 2048      (0x800 parse)       print entry parsing debugging
+# 16384     (0x4000 sync)       syncrepl consumer processing
+# 32768     (0x8000 none)       only messages that get logged whatever log level is set
+debug_level = 160
+{% endif %}
 
 # Use authentication binding for verifying password's validity. This works by
 # logging into LDAP server using the username and password given by client.
@@ -105,6 +126,7 @@ scope = subtree
 #
 # There are also other special fields which can be returned, see
 # http://wiki2.dovecot.org/UserDatabase/ExtraFields
+# user_attrs = homeDirectory=home,uidNumber=uid,gidNumber=gid,mail=mail,mailLocalAddress=mail
 user_attrs = homeDirectory=home,uidNumber=uid,gidNumber=gid,mail=mail
 
 # Filter for user lookup. Some variables can be used (see
@@ -120,17 +142,17 @@ user_filter = (&(objectClass=posixAccount)(uid=%n))
 #  password: Password, may optionally start with {type}, eg. {crypt}
 # There are also other special fields which can be returned, see
 # http://wiki2.dovecot.org/PasswordDatabase/ExtraFields
-# pass_attrs = uid=user,userPassword=password,mail=mail
+pass_attrs = uid=user,userPassword=password,mail=mail
 
 # If you wish to avoid two LDAP lookups (passdb + userdb), you can use
 # userdb prefetch instead of userdb ldap in dovecot.conf. In that case you'll
 # also have to include user_attrs in pass_attrs field prefixed with "userdb_"
 # string. For example:
-pass_attrs = uid=user,userPassword=password,\
-  homeDirectory=userdb_home,uidNumber=userdb_uid,gidNumber=userdb_gid,mail=mail
+#pass_attrs = uid=user,userPassword=password,\
+#  homeDirectory=userdb_home,uidNumber=userdb_uid,gidNumber=userdb_gid,mail=userdb_mail
 
 # Filter for password lookups
-pass_filter = (&(objectClass=posixAccount)(uid=%u))
+pass_filter = (&(objectClass=posixAccount)(uid=%n))
 
 # Attributes and filter to get a list of all users
 #iterate_attrs = uid=user

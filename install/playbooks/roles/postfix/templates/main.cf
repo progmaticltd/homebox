@@ -39,8 +39,8 @@ smtpd_sasl_security_options = noanonymous
 
 myhostname = {{ network.hostname }}
 
-alias_maps = hash:/etc/aliases, ldap:/etc/postfix/ldap-aliases.cf
-alias_database = hash:/etc/aliases
+alias_maps = hash:/etc/postfix/aliases.cf, ldap:/etc/postfix/ldap-aliases.cf
+alias_database = hash:/etc/postfix/aliases.cf
 mailbox_transport = lmtp:unix:private/dovecot-lmtp
 
 myorigin = /etc/mailname

@@ -1,0 +1,9 @@
+---
+# Prepare the remote system for development
+
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+  roles:
+    - dev-support
+

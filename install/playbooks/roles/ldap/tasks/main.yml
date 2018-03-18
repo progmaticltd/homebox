@@ -1,33 +1,23 @@
 ---
 
 - name: Create a directory for ldap passwords backup if it does not exists
-  tags: ldap
   delegate_to: localhost
   file:
     path: '{{ playbook_dir }}/../../backup/ldap/'
     state: directory
 
-- name: Set the parameters for passwords generators
-  tags: ldap
-  set_fact:
-    roPasswdParams: "{{ playbook_dir }}/../../backup/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
-    managerPasswdParams: "{{ playbook_dir }}/../../backup/ldap/manager.pwd length=16 chars=ascii_letters,digits"
-    adminPasswdParams: "{{ playbook_dir }}/../../backup/ldap/admin.pwd length=16 chars=ascii_letters,digits"
-
 - name: Display LDAP tree settings
-  tags: ldap, debug
+  tags: debug
   when: system.debug
   debug:
     var: ldap
 
 - name: Ensure the LDAP server FQDN resolves to localhost
-  tags: ldap
   lineinfile:
     path: /etc/hosts
     line: '127.0.0.1    ldap.{{ network.domain }}'
 
 - name: Check if the OpenLDAP server is already installed
-  tags: ldap
   register: slapd_stats
   stat:
     path: /usr/sbin/slapd
@@ -35,7 +25,6 @@
 # Pre-configure the LDAP sever before instaling
 - name: Configure the LDAP administration account
   when: slapd_stats.stat.exists == False
-  tags: ldap
   debconf:
     name: slapd
     question: '{{ conf.question }}'
@@ -44,10 +33,10 @@
   with_items:
     - question: slapd/password1
       type: password
-      value: '{{ lookup("password", adminPasswdParams) }}'
+      value: '{{ lookup("password", ldap.adminPasswdParams) }}'
     - question: slapd/password2
       type: password
-      value: '{{ lookup("password", adminPasswdParams) }}'
+      value: '{{ lookup("password", ldap.adminPasswdParams) }}'
     - question: slapd/purge_database
       value: false
       type: boolean
@@ -77,7 +66,6 @@
 
 # Install LDAP server
 - name: Install the required packages
-  tags: ldap
   apt:
     name: '{{ item }}'
     state: latest
@@ -87,12 +75,9 @@
     - python-ldap
     - python-passlib
     - ldapscripts
-    - nslcd
-    - sudo
 
 # Changes in the database will be stored there
 - name: Create the ldap config changes folder
-  tags: ldap
   file:
     path: /etc/ldap/changes
     state: directory
@@ -100,31 +85,34 @@
 ################################################################################
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
-- name: Allow slapd and nslcd daemons to access the certificate directories
+- name: Allow slapd daemons to access the certificate directories
   when: system.ssl == 'letsencrypt'
-  tags: ldap,ssl
-  vars:
-    details:
-      - [ /etc/letsencrypt/archive, /etc/letsencrypt/live ]
-      - [ openldap, nslcd ]
+  notify: Restart the ldap service
+  tags: cert
   acl:
-    path: '{{ item[0] }}'
-    entity: '{{ item[1] }}'
+    path: '{{ path }}'
+    entity: openldap
     etype: user
     permissions: rx
     state: present
-  with_nested: '{{ details }}'
+  with_items:
+      - /etc/letsencrypt/archive
+      - /etc/letsencrypt/live
+  loop_control:
+    loop_var: path
 
 - name: Configure the ldap server for SSL / TLS
   when: system.ssl == 'letsencrypt'
-  tags: ldap,ssl
+  notify: Restart the ldap service
+  tags: cert
   template:
     src: default-slapd
     dest: /etc/default/slapd
   
 - name: Copy the ldap ssl config on the server before running it
   when: system.ssl == 'letsencrypt'
-  tags: ldap,ssl
+  notify: Restart the ldap service
+  tags: cert
   register: ldap_ssl
   template:
     src: ssl-config.ldif
@@ -132,44 +120,39 @@
 
 - name: Modify the configuration if not already done
   when: system.ssl == 'letsencrypt' and ldap_ssl.changed
-  tags: ldap,ssl
+  notify: Restart the ldap service
+  tags: cert
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ssl-config.ldif
 #                                                                              #
 # End of TLS / SSL Configuration ###############################################
 
 - name: Copy the client configuration
-  tags: ldap
   template:
     src: ldap.conf
     dest: /etc/ldap/ldap.conf
 
 # Activate password policies
 - name: Copy deref module loading into the changes directory
-  tags: ldap
   register: deref_module
   template:
     src: deref-module.ldif
     dest: /etc/ldap/changes/deref-module.ldif
 
 - name: Load deref module into the OLC database
-  tags: ldap
   when: deref_module.changed
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/deref-module.ldif
 
 - name: Copy password policies module loading into the changes directory
-  tags: ldap
   register: ppolicy_module
   template:
     src: ppolicy-module.ldif
     dest: /etc/ldap/changes/ppolicy-module.ldif
 
 - name: Load password policy module into the OLC database
-  tags: ldap
   when: ppolicy_module.changed
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ppolicy-module.ldif
 
 - name: Copy the password policy schema into the changes directory
-  tags: ldap
   register: ppolicy_schema
   copy:
     src: /etc/ldap/schema/ppolicy.ldif
@@ -177,40 +160,34 @@
     remote_src: true
 
 - name: Activate password policies schema
-  tags: ldap
   when: ppolicy_schema.changed
   command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ppolicy-schema.ldif
 
 - name: Copy the overlay into the changes directory
-  tags: ldap
   register: ldap_pwd_overlay
   template:
     src: overlay.ldif
     dest: /etc/ldap/changes/overlay.ldif
 
 - name: Load the overlay definition
-  tags: ldap
   when: ldap_pwd_overlay.changed
   command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/overlay.ldif
 
 - name: Copy password hash overlay into the changes directory
-  tags: ldap
   register: passwd_hash
   template:
     src: password-hash.ldif
     dest: /etc/ldap/changes/password-hash.ldif
 
 - name: Load the password hash overlay
-  tags: ldap
   when: passwd_hash.changed
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/password-hash.ldif
 
 # Create a password policy for all the users
 - name: Create the password policies parent entry
-  tags: ldap
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: 'ou=pwpolicies,{{ ldap.organization.base }}'
     objectClass:
       - organizationalUnit
@@ -220,10 +197,9 @@
     state: present
 
 - name: Create the default password policy
-  tags: ldap
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: cn=default,ou=pwpolicies,{{ ldap.organization.base }}
     objectClass:
       - pwdPolicy
@@ -245,21 +221,19 @@
 
 # Users and groups creation
 - name: Make sure we have a parent entry for groups
-  tags: ldap
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: '{{ ldap.groups.dn }}'
     objectClass: organizationalUnit
     state: present
 
 # Remove all groups created before
 - name: Remove old groups if presents
-  tags: ldap
-  when: 'clean | default(False) == True'
+  when: clean == True
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
     state: absent
   with_items:
@@ -268,10 +242,9 @@
     loop_var: group
 
 - name: Create all the group accounts
-  tags: ldap
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
     attributes:
       cn:  '{{ group.description }}'
@@ -285,20 +258,18 @@
     loop_var: group
 
 - name: Make sure we have a parent entry for users
-  tags: ldap
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: '{{ ldap.users.dn }}'
     objectClass: organizationalUnit
     state: present
 
 - name: Remove previous users
-  tags: ldap
-  when: 'clean | default(False) == True'
+  when: clean == True
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
     state: absent
   with_items:
@@ -306,11 +277,21 @@
   loop_control:
     loop_var: user
 
+- name: Copy the local misc schema in the changes directory
+  register: misc_schema
+  copy:
+    src: /etc/ldap/schema/misc.ldif
+    dest: /etc/ldap/changes/misc.ldif
+    remote_src: true
+    
+- name: Load misc schema for multiple email addresses
+  when: misc_schema.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/misc.ldif
+
 - name: Create all the user accounts
-  tags: ldap
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: 'cn={{ user.1.cn }},{{ ldap.users.dn }}'
     state: present
     attributes:
@@ -324,6 +305,7 @@
       uidNumber: '{{ users_defaults.uid_start + user.0 }}'
       gidNumber: '{{ users_defaults.gid_start }}'
       mail: '{{ user.1.mail }}'
+      mailLocalAddress: '{{ user.1.otherMailBox | default([]) }}'
       shadowMin: 0
       shadowMax: 999999
       shadowWarning: 7
@@ -335,21 +317,30 @@
       - posixAccount
       - shadowAccount
       - inetOrgPerson
+      - inetLocalMailRecipient
   with_indexed_items:
     - '{{ users }}'
   loop_control:
     loop_var: user
 
-- name: Create the manager account
-  tags: ldap
+- name: Remove the manager account
+  tags: manager
+  when: clean == True
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn=manager account,{{ ldap.users.dn }}'
+    state: absent
+
+- name: Create the manager account
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: 'cn=manager account,{{ ldap.users.dn }}'
     state: present
     attributes:
       uid: '{{ ldap.manager.uid }}'
-      userPassword: '{{ lookup("password", managerPasswdParams) }}'
+      userPassword: '{{ lookup("password", ldap.managerPasswdParams) }}'
       givenName: Manager
       sn: Account
     objectClass:
@@ -357,16 +348,23 @@
       - person
       - inetOrgPerson
 
-- name: Create a readonly account
-  tags: ldap
+- name: Remove the readonly account
+  when: clean == True
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ lookup("password", adminPasswdParams) }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn=readonly account,{{ ldap.users.dn }}'
+    state: absent
+
+- name: Create a readonly account
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: 'cn=readonly account,{{ ldap.users.dn }}'
     state: present
     attributes:
       uid: 'readonly'
-      userPassword: '{{ lookup("password", roPasswdParams) }}'
+      userPassword: '{{ lookup("password", ldap.roPasswdParams) }}'
       givenName: Readonly
       sn: Account
     objectClass:
@@ -375,7 +373,6 @@
       - inetOrgPerson
 
 - name: Configure libnss to use passwords and groups
-  tags: ldap
   debconf:
     name: libnss-ldap
     question: 'libnss-ldapd/nsswitch'
@@ -383,7 +380,6 @@
     vtype: multiselect
 
 - name: Install the required packages for interactive login
-  tags: ldap
   when: system.login == true
   apt:
     name: '{{ item }}'
@@ -393,7 +389,6 @@
     - libpam-ldapd
 
 - name: Update the ldap configuration file    
-  tags: ldap
   when: system.login == true
   template:
     src: nslcd.conf
@@ -401,32 +396,37 @@
     mode: 0600
 
 - name: Copy the access policies on the server
-  tags: ldap
   register: access_policies
   template:
     src: access-policies.ldif
     dest: /etc/ldap/changes/access-policies.ldif
 
 - name: Load access policies
-  tags: ldap
   when: access_policies.changed
   command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/access-policies.ldif
 
 - name: Copy index definitions on the server
-  tags: ldap,indexes
+  tags: indexes
   register: index_defs
   template:
     src: indexes.ldif
     dest: /etc/ldap/changes/indexes.ldif
 
 - name: Add indexes to the database for optimisation
-  tags: ldap,indexes
+  tags: indexes
   when: index_defs.changed
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/indexes.ldif
 
+# Sudo to update the indexes as the openldap user
+- name: Install the required packages
+  tags: apt
+  apt:
+    name: sudo
+    state: latest
+
 - name: Update the indexes
   when: index_defs.changed
-  tags: ldap,indexes
+  tags: indexes
   become: true
   become_user: openldap
   become_method: sudo
@@ -440,21 +440,13 @@
     - memberUid
     - uidNumber
     - gidNumber
+    - mailLocalAddress
   loop_control:
     loop_var: field
 
-- name: Stop the nslcd service
-  service:
+- name: Install the nslcd package to map LDAP users to system users
+  notify: Restart the ldap service
+  tags: apt
+  apt:
     name: nslcd
-    state: stopped
-
-- name: Restart the ldap service
-  service:
-    name: slapd
-    state: restarted
-
-- name: Start the nslcd service
-  service:
-    name: nslcd
-    state: started
-
+    state: latest

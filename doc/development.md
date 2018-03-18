@@ -35,25 +35,70 @@ system:
 
 There is also a development branch called buster-dev, for the next Debian version.
 
-## Playbooks
+## Installatin playbooks
 
 There is one main playbook 'main.yml', that includes playbooks for individual tasks:
 
-- autoconfig.yml
-- autodiscover.yml
-- cert-imap.yml
-- cert-pop3.yml
-- cert-smtp.yml
-- dns-update.yml
-- dovecot.yml
-- homes.yml
-- ldap.yml
-- opendkim.yml
-- opendmarc.yml
-- postfix.yml
-- roundcube.yml
-- rspamd.yml
 - system-prepare.yml
+- ldap.yml          
+- homes.yml         
+- rspamd.yml        
+- opendmarc.yml     
+- cert-smtp.yml     
+- opendkim.yml      
+- postfix.yml       
+- dns-update.yml    
+- cert-pop3.yml     
+- cert-imap.yml     
+- dovecot.yml       
+- roundcube.yml     
+- autodiscover.yml  
+- autoconfig.yml    
 
-There is also a test playbook 'test.yml', to run integration tests on your mail server.
+## Development playbook
+
+The playbook "dev-support.yml" installs some diagnostic and convenience packages on the server, to make your life easier during the development phase. By defaults, these packages are installed:
+
+- mc
+- telnet
+- dnsutils
+- whois
+- tmux
+- pfqueue
+- aptitude
+- man
+- less
+- vim
+- net-tools
+- file
+- swaks
+- curl
+
+The script also configures bashrc / zsh.
+
+## Development cleanup
+
+The playbook do the opposite of dev-support, by uninstalling the packages used for development, and restoring the bashrc to its default state. You probably want to run this script before putting your server in production.
+
+## Tests / Diagnostic playbook.
+
+There is also a test playbook 'tests.yml'. This playbook runs a list of system and integration tests on your server. This is useful for diagnostic purposes, and also during the development phase, to be sure nothing is broken.
+
+The following roles are run:
+
+- Install the development packages above:
+- Basic system tests
+- LDAP server: Binding, users list, SSL certificate, etc.
+- Home folders: Presence and permissions
+- Antivirus rspamd: Current state
+- Service opendmarc: Current state
+- SMTP certificate: presence and validity
+- Service opendkim: Current state, key validdity
+- Service postfix: Current state, certificate, emails sending and receiving
+- POP3 certificate: presence and validity
+- IMAP certificate: presence and validity
+- Service dovecot: current state, user authentication, email resolution
+- Web site for roundcube: basic access, SSL certificate test
+- Web site "autoconfig" for Thunderbird: Check the validity of the XML generated
+- Web Site "autodiscover" for Outlook: HTTPS certificate, check the validity of the XML generated
 

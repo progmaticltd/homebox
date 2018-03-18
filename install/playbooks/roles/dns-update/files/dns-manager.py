@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-# Gandi DNS manager
-# usage: dns-gandi.py [-h] --config CONFIG
-#                     [--dkim-public-key-file DKIMPUBLICKEY]
-#                     [--log-file LOGFILE] [--log-level LOGLEVEL] [--ip IP]
-#                     [--ttl TTL] [--spf-policy {fail,softfail,neutral}]
-#                     [--auto-discover {none,thunderbird,outlook,all}]
-#                     [--test TEST]
+# DNS manager
+# usage: dns-manager.py [-h] --config CONFIG
+#                       [--dkim-public-key-file DKIMPUBLICKEY]
+#                       [--log-file LOGFILE] [--log-level LOGLEVEL] [--ip IP]
+#                       [--ttl TTL] [--spf-policy {fail,softfail,neutral}]
+#                       [--auto-discover {none,thunderbird,outlook,all}]
+#                       [--test TEST]
 
 # Gandi DNS updater for homebox
 
@@ -55,14 +55,17 @@ import json, sys, argparse
 
 import logging
 
-class GandiDomainManager(object):
-    """Gandi DNS manager / manager."""
+class DomainManager(object):
+    """DNS manager (Gandi only for now)."""
   
     def __init__(self, configPath):
         """ Constructor """
 
+        # This should be common to all DNS providers
         self.apikey = None
         self.domain_name = None
+
+        # This might be common
         self.zone_id = None
         self.zone_info = None
         self.domain_info = None
@@ -76,8 +79,6 @@ class GandiDomainManager(object):
         # which is perhaps identical as the current one
         self.modified = False
         
-        self.api = xmlrpc.client.ServerProxy('https://rpc.gandi.net/xmlrpc/')
-    
         # Read the domain configuration
         config = ConfigParser()
         config.read(configPath)
@@ -85,6 +86,11 @@ class GandiDomainManager(object):
         # Default TTL: 1h
         self.defaultTTL = args.ttl
         
+        ############################################################################
+        # Beginning of Gandi specific initialisation
+        
+        self.api = xmlrpc.client.ServerProxy('https://rpc.gandi.net/xmlrpc/')
+    
         # Exit if the provider is not Gandi
         provider = config.get('main', 'provider')
         if provider != 'gandi':
@@ -112,16 +118,14 @@ class GandiDomainManager(object):
             self.zone_id = zones[0]['id']
             self.zone_version = zones[0]['version']
             self.api.domain.zone.set(self.apikey, self.domain_name, self.zone_id)
+            
+        # End of Gandi specific initialisation
+        ############################################################################
+        
 
-    # Get information methods
-    def getDomain(self):
-        """Get the current domain associated"""
-        return self.domain_name
-        
-    def isModified(self):
-        """Check if the DNS records have been modified"""
-        return self.modified
-        
+    ############################################################################
+    # Begin of Gandi specific
+
     # Read only functions
     def recordExists(self, name, details):
         """Check if a record exists"""
@@ -137,7 +141,37 @@ class GandiDomainManager(object):
             return records[0]
         else:
             return None
+        
+    # Write records methods
+    def WriteRecord(self, name, details):
+        """Update the whole details of a record"""
+        current = self.getRecordDetails(name, details)
+        if current is None:
+            self.api.domain.zone.record.add(self.apikey, self.zone_id, self.zone_version, details)
+            self.modified = True
+            logging.info("Created new record for '{0}'".format(name))
+        elif self.isDifferent(current, details):
+            opts = { 'id': current['id'] }
+            self.api.domain.zone.record.update(self.apikey, self.zone_id, self.zone_version, opts, details)
+            self.modified = True
+            logging.info("Updated record for '{0}'".format(name))
+        return self.zone_version
+    
+    # End of Gandi specific
+    ############################################################################
 
+    ############################################################################
+    # Generic functions
+    
+    # Get information methods
+    def getDomain(self):
+        """Get the current domain associated"""
+        return self.domain_name
+        
+    def isModified(self):
+        """Check if the DNS records have been modified"""
+        return self.modified
+        
     def isDifferent(self, current, new):
         """Compare two records, to check if they are the same before creating a new one.
         return True if the new record is different from the current one"""
@@ -162,22 +196,6 @@ class GandiDomainManager(object):
             diff = newValue != currentValue
 
         return diff
-
-
-    # Write records methods
-    def WriteRecord(self, name, details):
-        """Update the whole details of a record"""
-        current = self.getRecordDetails(name, details)
-        if current is None:
-            self.api.domain.zone.record.add(self.apikey, self.zone_id, self.zone_version, details)
-            self.modified = True
-            logging.info("Created new record for '{0}'".format(name))
-        elif self.isDifferent(current, details):
-            opts = { 'id': current['id'] }
-            self.api.domain.zone.record.update(self.apikey, self.zone_id, self.zone_version, opts, details)
-            self.modified = True
-            logging.info("Updated record for '{0}'".format(name))
-        return self.zone_version
 
     def WriteARecord(self, name, ipAddress):
         """Create or update an A record"""
@@ -306,7 +324,7 @@ def main(args):
             filename=args.logFile
         )
 
-        manager = GandiDomainManager(args.config)
+        manager = DomainManager(args.config)
 
         # Get the external IP address automatically if not provided
         if args.ip != None:
@@ -358,6 +376,9 @@ def main(args):
         manager.WriteCNameRecord('smtp', 'main')
         manager.WriteCNameRecord('ldap', 'main')
 
+        # Add a wildcard record to redirect everything to the same IP address
+        manager.WriteCNameRecord('ldap', 'main')
+
         # Add the autoconfig entry for Thunderbird
         if args.autoDiscover == 'all' or args.autoDiscover == 'thunderbird':
             manager.WriteCNameRecord('autoconfig', 'main')
@@ -366,8 +387,18 @@ def main(args):
         if args.autoDiscover == 'all' or args.autoDiscover == 'outlook':
             manager.WriteCNameRecord('autodiscover', 'main')
 
+        # Create a wildcard entry to redirect all traffic to your box
+        if args.createWildcard:
+            manager.WriteCNameRecord('*', 'main')
+
+        # Create a www entry to host a web site
+        if args.createWebEntry:
+            manager.WriteCNameRecord('www', 'main')
+
         # Create the MX record for mail deliveries
         manager.WriteMXRecord('@', 'main', 5)
+
+        # TODO: Add a backup MX record
 
         # Create the SPF records
         manager.WriteSPFRecords('@', args.spfPolicy, external_ip)
@@ -462,11 +493,27 @@ parser.add_argument(
     default = 'all',
     help = 'Type of autodiscover entries to create (create all by default)')
 
+# Create a www entry, like to host a web site
+parser.add_argument(
+    '--add-www',
+    type = bool,
+    dest = 'createWebEntry',
+    default = False,
+    help = 'Create a www entry to host a web site (default is false)')
+
+# Add a wildcard entry to redirect everything to the same IP address
+parser.add_argument(
+    '--add-wildcard',
+    type = bool,
+    dest = 'createWildcard',
+    default = False,
+    help = 'Add a wildcard entry *.example.com to redirect all traffic to your box (default is false)')
 
 # Testing mode: Create the new version, but does not activate it
 parser.add_argument(
     '--test',
     type = bool,
+    default = True,
     help = 'Testing mode: Create the new version, but does not activate it')
 
 args = parser.parse_args()

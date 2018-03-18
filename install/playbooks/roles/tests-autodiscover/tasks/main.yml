@@ -1,0 +1,34 @@
+---
+
+- name: Install an XML linter
+  tags: systemctl, autodiscover
+  apt:
+    name: '{{ pkg }}'
+    state: installed
+  with_items:
+    - libxml2-utils
+  loop_control:
+    loop_var: pkg
+
+- name: Download the XML autodiscover file
+  tags: systemctl, autodiscover
+  vars:
+    email: '{{ users[0].mail }}'
+  uri:
+    url: 'https://autodiscover.{{ network.domain }}/autodiscover/autodiscover.xml'
+    method: POST
+    body: ''
+    status_code: 200
+    dest: /tmp/autodiscover.xml
+
+- name: Check the autodiscover answer is valid
+  tags: systemctl, autodiscover
+  shell: xmllint /tmp/autodiscover.xml
+
+- name: Remove the downloaded file
+  tags: systemctl, autodiscover
+  file:
+    path: /tmp/autodiscover.xml
+    state: absent
+
+

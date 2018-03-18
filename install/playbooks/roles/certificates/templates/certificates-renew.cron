@@ -1,0 +1,2 @@
+# renew the certificates if needed
+0 */12 * * * root test -x /usr/local/sbin/certificates-renew.sh && /usr/local/sbin/certificates-renew.sh cron

@@ -1,0 +1,16 @@
+---
+
+- name: Check if certbot is installed
+  tags: apt,cert
+  shell: dpkg -s certbot
+     
+- name: Check if there is a certificate file
+  tags: systemctl,cert
+  shell: >-
+    test -f "/etc/letsencrypt/live/{{ certificate.type }}.{{ network.domain }}/cert.pem"
+
+- name: Check if the certificate is valid
+  tags: systemctl,cert
+  shell: >-
+    certbot -d "{{ certificate.type }}.{{ network.domain }}" certificates | grep VALID
+

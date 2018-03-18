@@ -1,0 +1,104 @@
+---
+
+- name: Check if the ldap service is running
+  tags: systemctl,ldap
+  shell: systemctl status slapd
+
+- name: Check if the nslcd service is running
+  tags: systemctl,ldap
+  shell: systemctl status nslcd
+
+- name: Check that 'ldap.{{ network.domain }}' resoves to localhost
+  tags: ldap
+  shell: ping -c 1 ldap.{{ network.domain }} | grep 127.0.0.1
+    
+- name: Check that I can bind as readonly and get all uids
+  tags: ldap
+  shell: >-
+    ldapsearch
+    -H ldapi:///
+    -D '{{ ldap.readonly.dn }}'
+    -w{{ lookup("password", ldap.roPasswdParams) }}
+    'uid'
+
+- name: Check that I can bind as manager and get my details
+  tags: ldap
+  shell: >-
+    ldapsearch
+    -H ldapi:///
+    -D '{{ ldap.manager.dn }}'
+    -w{{ lookup("password", ldap.managerPasswdParams) }}
+    '(uid=manager)'
+     
+- name: Check that I can bind as admin and get all uids
+  tags: ldap
+  shell: >-
+    ldapsearch
+    -H ldapi:///
+    -D '{{ ldap.admin.dn }}'
+    -w{{ lookup("password", ldap.adminPasswdParams) }}
+    'uid'
+     
+- name: Check that every user is in the database
+  tags: ldap
+  shell: >-
+    ldapsearch
+    -H ldapi:///
+    -D '{{ ldap.readonly.dn }}'
+    -w{{ lookup("password", ldap.roPasswdParams) }}
+    '(uid={{user.uid}})'
+    | grep 'numEntries: 1'
+  with_items: '{{ users }}'
+  loop_control:
+    loop_var: user
+     
+- name: Check that I can bind using TLS
+  tags: ldap
+  shell: >-
+    ldapsearch -ZZ
+    -H ldap://ldap.{{ network.domain }}/
+    -D '{{ ldap.readonly.dn }}'
+    -w{{ lookup("password", ldap.roPasswdParams) }}
+    'uid'
+
+- name: Check that I can bind using SSL
+  tags: ldap
+  shell: >-
+    ldapsearch
+    -H ldaps://ldap.{{ network.domain }}/
+    -D '{{ ldap.readonly.dn }}'
+    -w{{ lookup("password", ldap.roPasswdParams) }}
+    'uid'
+
+# TODO: check if we can use a variables or system specific settings for shell and homeBase
+- name: Check that every user is in the system, with the correct attributes
+  tags: ldap
+  vars:
+    shell: /bin/dash
+    homeBase: /home/users
+  shell: >-
+    getent passwd |
+    grep -E "^{{ u.uid }}:x:10[01][0-9]:10[01][0-9]:{{ u.cn }}:{{ homeBase }}/{{ u.uid }}:{{ shell }}"
+  with_items: '{{ users }}'
+  loop_control:
+    loop_var: u
+     
+- name: Check that I can update the indexes
+  tags: indexes
+  become: true
+  become_user: openldap
+  become_method: sudo
+  command: 'slapindex -n 1 -v {{ field }}'
+  with_items:
+    - uid
+    - cn
+    - sn
+    - givenName
+    - mail
+    - memberUid
+    - uidNumber
+    - gidNumber
+    - mailLocalAddress
+  loop_control:
+    loop_var: field
+

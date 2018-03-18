@@ -53,8 +53,10 @@ system:
 # Gandi automatic DNS update
 # Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
 dns:
-  update: true   # Automatic update of your DNS server
-  test: true     # test mode: does not activate the DNS zone straight
+  update: true          # Automatic update of your DNS server
+  test: true            # test mode: does not activate the DNS zone straight
+  add_wildcard: false   # Create a wildcard entry to redirect all traffic to your box
+  add_www: false        # Create a www entry to host a web site
   gandi:
     handle: JD123-GANDI
     key: zaNGbUVIvi1KbYb6PPMdiQLh
@@ -72,8 +74,23 @@ firewall:
 security:
   auto_update: true
   app_armor: false
-  aa_profiles:
-    - nginx
+
+###############################################################################
+# Development helpers
+# devel:
+#   packages:
+#     - mc
+#     - telnet
+#     - dnsutils
+#     - whois
+#     - tmux
+#     - pfqueue
+#     - aptitude
+#     - man
+#     - less
+#   root:
+#     shell: /bin/dash (or bash/zsh/etc)
+
 
 ###############################################################################
 # Webmail configuration

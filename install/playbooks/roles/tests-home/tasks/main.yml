@@ -1,0 +1,12 @@
+---
+
+- name: Check that every home folder has been created
+  tags: homes
+  vars:
+    homeBase: /home/users
+  shell: >-
+    test -d "{{ homeBase }}/{{ user.uid }}"
+  with_items: '{{ users }}'
+  loop_control:
+    loop_var: user
+     

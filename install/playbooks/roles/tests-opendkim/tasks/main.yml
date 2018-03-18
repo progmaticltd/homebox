@@ -1,0 +1,32 @@
+---
+
+- name: Check if opendkim has been installed
+  tags: apt,opendkim
+  shell: dpkg -s opendkim
+     
+- name: Check if the rspamd service is up and running
+  tags: systemctl,opendkim
+  shell: systemctl status opendkim
+    
+- name: Test opendkim key files exists and are readable
+  tags: systemctl,opendkim
+  shell: test -f '/etc/opendkim/keys/{{ file }}'
+  become: yes
+  become_method: sudo
+  become_user: opendkim
+  with_items:
+    - main.private
+    - main.txt
+  loop_control:
+    loop_var: file
+
+- name: Test opendkim configuration
+  tags: opendkim
+  become: yes
+  become_method: sudo
+  become_user: opendkim
+  shell: >-
+    opendkim-testkey -vv -s {{ dkim.selector }}
+    -d {{ network.domain }}
+    -k /etc/opendkim/keys/{{ dkim.selector }}.private
+    

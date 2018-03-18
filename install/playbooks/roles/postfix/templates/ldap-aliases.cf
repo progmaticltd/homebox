@@ -6,5 +6,5 @@ start_tls = yes
 search_base = {{ ldap.organization.base }}
 search_scope = sub
 
-query_filter = mail=%s
+query_filter = (|(mail=%s)(mailLocalAddress=%s))
 result_attribute = uid 

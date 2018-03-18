@@ -1,0 +1,18 @@
+"
+" Minimal .vimrc for server setup
+"
+set nocompatible
+set autoindent
+set smartindent
+set tabstop=4
+set shiftwidth=4
+set showmatch
+set vb t_vb=
+set incsearch
+
+syntax on
+set ffs=unix,dos,mac
+set nobackup
+set number
+
+colorscheme desert

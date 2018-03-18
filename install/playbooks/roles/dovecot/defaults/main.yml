@@ -1,23 +1,16 @@
-# LDAP configuration
-ldap:
-  hostname: 'ldap.{{ network.domain }}'
-  organization:
-    domain: '{{ network.domain }}'
-    base: 'dc={{ network.domain | regex_replace("\.", ",dc=") }}'
-  users:
-    dn: 'ou=users,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
-  groups:
-    dn: 'ou=groups,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
-  manager:
-    uid: manager
-  admin:
-    dn: 'cn=admin,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
-    desc: administrator account
-
-
 # User storage quotas for email
 quota:
   per_user: '{{ mail.quota.default }}'
   listener:
     port: '{{ mails_quota_port }}'
 
+# Default dovecot packages to install
+dovecot:
+  packages:
+    - dovecot-core
+    - dovecot-imapd
+    - dovecot-lmtpd
+    - dovecot-pop3d
+    - dovecot-managesieved
+    - dovecot-sieve
+    - dovecot-ldap

@@ -2,3 +2,9 @@
   service:
     name: apparmor
     state: restarted
+
+- name: Restart nginx server
+  service:
+    name: nginx
+    state: restarted
+
