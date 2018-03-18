@@ -15,5 +15,6 @@ devel:
     - man
     - less
     - vim
+    - net-tools
   root:
     shell: /bin/bash
