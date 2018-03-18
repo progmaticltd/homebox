@@ -134,7 +134,7 @@ user_attrs = homeDirectory=home,uidNumber=uid,gidNumber=gid,mail=mail
 #   %u - username
 #   %n - user part in user@domain, same as %u if there's no domain
 #   %d - domain part in user@domain, empty if user there's no domain
-user_filter = (&(objectClass=posixAccount)(uid=%n))
+user_filter = (&(objectClass=posixAccount)(|(uid=%n)(mailLocalAddress=%n@{{ network.domain }})))
 
 # Password checking attributes:
 #  user: Virtual user name (user@domain), if you wish to change the

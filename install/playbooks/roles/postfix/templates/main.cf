@@ -41,6 +41,8 @@ myhostname = {{ network.hostname }}
 
 alias_maps = hash:/etc/postfix/aliases.cf, ldap:/etc/postfix/ldap-aliases.cf
 alias_database = hash:/etc/postfix/aliases.cf
+
+# Use dovecot LMTP for transport
 mailbox_transport = lmtp:unix:private/dovecot-lmtp
 
 myorigin = /etc/mailname
@@ -48,10 +50,9 @@ myorigin = /etc/mailname
 mydestination = $myhostname, {{ network.domain }}, localhost.{{ network.domain }}, localhost
 relayhost =
 
-mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 192.168.0.0/16
+# TODO: Add local network here with Ansible or any other tool
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 
-# mailbox_command = /usr/lib/dovecot/dovecot-lda -f "$SENDER" -a "$RECIPIENT"
-mailbox_command = /usr/lib/dovecot/dovecot-lda -f "$SENDER" -a ${original_recipient} -d ${user}@${nexthop}
 mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = all

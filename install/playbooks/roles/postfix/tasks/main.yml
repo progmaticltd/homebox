@@ -165,7 +165,7 @@
     loop_var: aa_config
 
 - name: Activate AppArmor profiles
-  when: security.app_armor
+  when: security.app_armor and aa_templates.changed
   tags: security, apparmor
   notify: Restart AppArmor service
   command: 'aa-enforce {{ aa_config }}'
