@@ -17,12 +17,16 @@ users:
   last_name: Doe
   mail: john.doe@example.com
   password: 'xIlm*uu7'
+  otherMailBox:
+    - john@homebox.space
 - uid: jane
   cn: Jane Doe
   first_name: Jane
   last_name: Doe
   mail: jane.doe@example.com
   password: 'Tlwril!8'
+  otherMailBox:
+    - jane@homebox.space
   
 ###############################################################################
 # Email related options

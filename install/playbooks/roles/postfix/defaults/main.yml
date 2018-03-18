@@ -8,3 +8,14 @@ antispam:
   milter:
     name: rspamd
     port: '{{ milter_antispam_port }}'
+
+master_addresses:
+  - postmaster
+  - mailer-daemon
+  - postmaster
+  - hostmaster
+  - webmaster
+  - abuse
+  - masteruser
+  - admin
+  - root

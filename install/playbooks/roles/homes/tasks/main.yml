@@ -36,6 +36,16 @@
   loop_control:
     loop_var: user
 
+- name: Create the postmaster account mail folders
+  tags: postmaster
+  file:
+    path: '/home/users/postmaster/mails/maildir'
+    owner: postmaster
+    group: users
+    state: directory
+    mode: 0700
+    recurse: true
+
 - name: Also add these folders into the skeleton, for new users
   tags: accounts
   file:

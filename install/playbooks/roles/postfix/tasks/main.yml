@@ -106,22 +106,10 @@
   loop_control:
     loop_var: rule
 
-# Build email aliases
-- name: Add local email aliases
-  tags: aliases
-  template:
-    src: aliases.cf
-    dest: /etc/postfix/aliases.cf
-
-- name: Add email aliases
-  tags: aliases
-  command: postmap /etc/postfix/aliases.cf
-
 # AppArmor configuration ======================================================
 - name: Set postfix AppAromor profiles list
   when: security.app_armor
   tags: security, apparmor
-  register: aa_templates
   set_fact:
     postfix_apparmor_profiles:
     - usr.lib.postfix.anvil
@@ -152,7 +140,7 @@
     - usr.sbin.sendmail
   
 - name: Install some postfix AppArmor profile
-  when: security.app_armor and aa_templates.changed
+  when: security.app_armor
   tags: security, apparmor
   notify: Restart postfix
   register: aa_templates

@@ -1,3 +1,8 @@
+# Standard policies
+policies:
+  system:
+    password: 'length=16 chars=ascii_letters,digits'
+
 # LDAP configuration
 ldap:
   hostname: 'ldap.{{ network.domain }}'
@@ -5,19 +10,34 @@ ldap:
     domain: '{{ network.domain }}'
     base: 'dc={{ network.domain | regex_replace("\.", ",dc=") }}'
   users:
-    dn: 'ou=users,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+    dn: 'ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
   groups:
-    dn: 'ou=groups,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+    dn: 'ou=groups, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
   manager:
     uid: manager
-    dn: 'cn=manager account,ou=users,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+    dn: 'cn=manager account, ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
   readonly:
     uid: readonly
-    dn: 'cn=readonly account,ou=users,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+    dn: 'cn=readonly account, ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
   admin:
     dn: 'cn=admin,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
     desc: administrator account
+  postmaster:
+    uid: postmaster
+    dn: 'cn=postmaster account, ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+    # See https://www.ietf.org/rfc/rfc2142.txt
+    mailLocalAddress:
+      - 'abuse@{{ network.domain }}'
+      - 'noc@{{ network.domain }}'
+      - 'security@{{ network.domain }}'
+      - 'mailer-daemon@{{ network.domain }}'
+      - 'webmaster@{{ network.domain }}'
+      - 'hostmaster@{{ network.domain }}'
+      - 'admin@{{ network.domain }}'
+      - 'root@{{ network.domain }}'
+
   # password params
-  roPasswdParams: "{{ playbook_dir }}/../../backup/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
-  managerPasswdParams: "{{ playbook_dir }}/../../backup/ldap/manager.pwd length=16 chars=ascii_letters,digits"
-  adminPasswdParams: "{{ playbook_dir }}/../../backup/ldap/admin.pwd length=16 chars=ascii_letters,digits"
+  roPasswdParams: "{{ playbook_dir }}/../../backup/ldap/readonly.pwd {{ policies.system.password }}"
+  managerPasswdParams: "{{ playbook_dir }}/../../backup/ldap/manager.pwd {{ policies.system.password }}"
+  adminPasswdParams: "{{ playbook_dir }}/../../backup/ldap/admin.pwd {{ policies.system.password }}"
+  postmasterPasswdParams: "{{ playbook_dir }}/../../backup/ldap/postmaster.pwd {{ policies.system.password }}"

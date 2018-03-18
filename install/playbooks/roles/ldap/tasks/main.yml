@@ -333,6 +333,7 @@
     state: absent
 
 - name: Create the manager account
+  tags: manager
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
@@ -371,6 +372,47 @@
       - top
       - person
       - inetOrgPerson
+
+- name: Remove the postmaster account
+  tags: postmaster
+  when: clean == True
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn=manager account,{{ ldap.users.dn }}'
+    state: absent
+
+- name: Create the postmaster account
+  tags: postmaster
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: '{{ ldap.postmaster.dn }}'
+    state: present
+    attributes:
+      uid: postmaster
+      givenName: 'Postmaster'
+      sn: 'Account'
+      userPassword: '{{ lookup("password", ldap.postmasterPasswdParams) }}'
+      pwdPolicySubentry: 'cn=default,ou=pwpolicies,{{ ldap.organization.base }}'
+      homeDirectory: '/home/users/postmaster'
+      loginShell: '{{ users_defaults.shell }}'
+      uidNumber: '{{ users_defaults.uid_start + 999 }}'
+      gidNumber: '{{ users_defaults.gid_start }}'
+      mail: 'postmaster@{{ network.domain }}'
+      mailLocalAddress: '{{ ldap.postmaster.mailLocalAddress }}'
+      shadowMin: 0
+      shadowMax: 999999
+      shadowWarning: 7
+      shadowInactive: -1
+      shadowFlag: 0
+    objectClass:
+      - top
+      - person
+      - posixAccount
+      - shadowAccount
+      - inetOrgPerson
+      - inetLocalMailRecipient
 
 - name: Configure libnss to use passwords and groups
   debconf:
