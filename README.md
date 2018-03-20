@@ -1,10 +1,6 @@
 
 A set of Ansible scripts to setup your personal mail server (and more) for your home...
 
-> In the context of website management and online publishing, the term "self hosting" is used to describe the practice of running and maintaining a website using a private web server [...]
-
-Source: https://en.wikipedia.org/wiki/Self-hosting#Website_management
-
 <!-- TOC -->
 
 - [Introduction](#introduction)
@@ -30,32 +26,9 @@ Source: https://en.wikipedia.org/wiki/Self-hosting#Website_management
 
 ## Introduction
 
-This project has been created for those who want to securely host their emails - and more - at home but don't want to manage the full installation process manually, from scratch.
+This project was initially meant to host emails at home, but you can use it on a dedicated or VPS server online.
 
-Although the project is called "homebox", you can also use a virtual or dedicated server online.
-
-It is a set of [Ansible](https://en.wikipedia.org/wiki/Ansible_(software)) scripts, to automate tasks you would have done manually.
-
-There is a lot of excellent projects on internet to help emails self-hosting, and I am providing links below. This one is different in the approach used.
-
-It is made to be unobtrusive with a standard Debian distribution, stable and highly secure.
-
-Security is a very important concern when using self hosting. All the packages are coming from the official Debian repository or from a well maintained repository. There is no *git clone* or manual download here. Moreover, the system also deploys and carefully configure [AppArmor](https://en.wikipedia.org/wiki/AppArmor), to secure the system and to protect you from any zero-day vulnerability.
-
-There is no custom scripts to upgrade the system, it is set to use the standard Debian repositories, or at least official repositories when there is no Debian package. Once installed, manage it the way you like!
-
-It is also standard compliant, as the system generates and _publish_ automatically your DKIM, SPF and DMARC records. It is actually using the excellent [Gandi](https://gandi.net) DNS provider, but can be extended to support more.
-
-The authentication is done using an LDAP server. This allows to add more software and simgle sign on. I am planning to add more applications in the future.
-
-Most of the tasks are automated, even the external IP address detection and DNS update process. In theory, you could use this with a dynamic IP address.
-
-This is a work in progress and a project I am maintaining on my spare time. Although I am trying to be very careful, there might be a few errors, especially on the development branch. In this case, just fill a bug report, or take part.
-
-[Some information on development](doc/development.md).
-
-I am privileging stability and security over features, this is why you will not have the latest version of RoundCube and other components. There are plenty projects on internet that provides the latest and shinest versions of these software if you need. I am providing links at the end of this page.
-
+If you just want - like me - to securely host your emails - and more - but don't want to manually do the full installation process and neither update it every day/week/month, then this project is for you.
 
 ## Current status and supported features
  
@@ -83,6 +56,8 @@ I am privileging stability and security over features, this is why you will not 
 
 ## Basic installation
 
+It is using [Ansible](https://en.wikipedia.org/wiki/Ansible_(software)) scripts, to automate tasks you would have done manually, so it 
+
 ### Prerequisites
 
 - A workstation to run the Ansible scripts.
@@ -107,7 +82,7 @@ If you already have a machine to deploy your mail server, you can skip this step
 
 Although this is experimental and subject to reorganisation, there is a preseed folder, that contains a [Debian preseed file](https://wiki.debian.org/DebianInstaller/Preseed) for a fully automatic installation of a bare Debian. I will document and focus more on these features later.
 
-I am planning to create an automatic installer with a fully encrypted disk [LUKS](https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup). I might also include the Ansible scripts as well.
+I am actually working ona an automatic installer with a fully encrypted disk [LUKS](https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup).
 
 ### Configure your remote system for root access
 
