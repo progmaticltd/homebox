@@ -1,9 +1,17 @@
 ---
 
 # Create an ISO image for the installation
+# The host can be localhost
+# - hosts: cdbuilder
+#   vars_files:
+#     - '{{ playbook_dir }}/../../config/preseed.yml'
+#   roles:
+#     - install-required
+
 
 - hosts: cdbuilder
   vars_files:
-    - ../../config/preseed.yml
+    - '{{ playbook_dir }}/../../config/preseed.yml'
   roles:
     - build-iso
+

@@ -1,0 +1,220 @@
+#### Contents of the preconfiguration file (for stretch)
+### Localization
+
+{% include "templates/profiles/common/localization.preseed" %}
+
+{% include "templates/profiles/common/apt-setup.preseed" %}
+
+{% include "templates/profiles/common/network.preseed" %}
+
+{% include "templates/profiles/common/hw-detect.preseed" %}
+
+{% include "templates/profiles/common/network-console.preseed" %}
+
+{% include "templates/profiles/common/mirror.preseed" %}
+
+{% include "templates/profiles/common/accounts.preseed" %}
+
+{% include "templates/profiles/common/clock.preseed" %}
+
+### Partitioning
+# Alternatively, you may specify a disk to partition. If the system has only
+d-i partman-auto/method string raid
+
+# Use the first two disks
+d-i partman-auto/disk string /dev/{{ system.hw.disks[0].name }} /dev/{{ system.hw.disks[1].name }}
+
+## Partitioning using RAID
+d-i partman-auto-raid/recipe string     \
+        1 2 0 ext3 /boot                \
+                /dev/{{ system.hw.disks[0].name }}1#/dev/{{ system.hw.disks[1].name }}1     \
+        .                               \
+        1 2 0 lvm -                     \
+                /dev/{{ system.hw.disks[0].name }}2#/dev/{{ system.hw.disks[1].name }}2     \
+        .
+
+# Partman installer
+partman-base partman/confirm boolean true
+partman-base partman/confirm_nochanges boolean true
+partman-base partman/confirm_nooverwrite boolean true
+
+# In the expert_recipe, there is a stanza for each RAID partition
+# and each LVM partition.
+# The RAID partitions are tagged as "lvmignore", while
+# the LVM logical volumes as "defaultignore" and "lvmok".
+# The RAID partition containing the LVM volumes must be made big
+# enough to hold them all.
+# Note that in the example shown here the mountpoint for /boot
+# (which is not encapsulated within LVM) is specified in the
+# partman-auto-raid recipe, rather than in the corresponding 
+# raid partition definition below.
+d-i partman-auto/expert_recipe string                        \
+        multiraid ::                                         \
+                128 100 256 raid                             \
+                        $lvmignore{ }                        \
+                        $primary{ }                          \
+                        method{ raid }                       \
+			$bootable{ }                         \
+                        mountpoint{ /boot }                  \
+                .                                            \
+                900 32768 -1 raid                            \
+                        $lvmignore{ }                        \
+                        $primary{ }                          \
+                        method{ raid }                       \
+                .                                            \
+                1024 1024 2048 ext3                          \
+                        $defaultignore{ }                    \
+                        $lvmok{ }                            \
+                        method{ format }                     \
+                        format{ }                            \
+                        use_filesystem{ }                    \
+                        filesystem{ ext3 }                   \
+                        mountpoint{ / }                      \
+                        lv_name{ system }                    \
+                        label{ system }                      \
+                .                                            \
+                2048 8192 8192 ext4                          \
+                        $defaultignore{ }                    \
+                        $lvmok{ }                            \
+                        method{ format }                     \
+                        format{ }                            \
+                        use_filesystem{ }                    \
+                        filesystem{ ext4 }                   \
+                        mountpoint{ /tmp }                   \
+			options/nodev{ nodev }               \
+                        lv_name{ tmp }                       \
+                        label{ tmp }                         \
+                .                                            \
+                2048 4096 4096 ext4                          \
+                        $defaultignore{ }                    \
+                        $lvmok{ }                            \
+                        method{ format }                     \
+                        format{ }                            \
+                        use_filesystem{ }                    \
+                        filesystem{ ext4 }                   \
+                        mountpoint{ /usr }                   \
+                        lv_name{ usr }                       \
+                        label{ usr }                         \
+                .                                            \
+                512 1024 1024 ext4                           \
+                        $defaultignore{ }                    \
+                        $lvmok{ }                            \
+                        method{ format }                     \
+                        format{ }                            \
+                        use_filesystem{ }                    \
+                        filesystem{ ext4 }                   \
+                        mountpoint{ /opt }                   \
+                        lv_name{ opt }                       \
+                        label{ opt }                         \
+                .                                            \
+                4096 4096 8192 btrfs                         \
+                        $defaultignore{ }                    \
+                        $lvmok{ }                            \
+                        method{ format }                     \
+                        format{ }                            \
+                        use_filesystem{ }                    \
+                        filesystem{ btrfs }                  \
+                        mountpoint{ /home }                  \
+                        lv_name{ home }                      \
+                        label{ home }                        \
+                .                                            \
+                8192 8192 200% linux-swap                    \
+                        $defaultignore{ }                    \
+                        $lvmok{ }                            \
+                        method{ swap }                       \
+                        format{ }                            \
+                        lv_name{ swap }                      \
+                .                                            \
+                8192 16384 16384 ext4                        \
+                        $defaultignore{ }                    \
+                        $lvmok{ }                            \
+                        method{ format }                     \
+                        format{ }                            \
+                        use_filesystem{ }                    \
+                        filesystem{ ext4 }                   \
+                        mountpoint{ /var }                   \
+			options/noatime{ noatime }           \
+			options/nodiratime{ nodiratime }     \
+                        lv_name{ var }                       \
+                        label{ var }                         \
+                .                                            \
+                32768 32768 -1 ext4                          \
+                        $defaultignore{ }                    \
+                        $lvmok{ }                            \
+                        lv_name{ reserved }                  \
+                .
+
+# This makes partman automatically partition without confirmation, provided
+# that you told it what to do using one of the methods above.
+d-i partman-partitioning/confirm_write_new_label boolean true
+partman-partitioning partman-partitioning/confirm_new_label boolean true
+
+d-i partman/confirm_write_new_label boolean true
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm_nochanges boolean true
+
+# The same applies to pre-existing software RAID array:
+d-i partman-md/device_remove_md boolean true
+d-i partman-md/confirm boolean true
+d-i partman-md/confirm_nochanges boolean true
+d-i partman-md/confirm_nooverwrite boolean true
+partman-md partman-md/confirm boolean true
+partman-md partman-md/confirm_nochanges boolean true
+
+# And the same goes for the confirmation to write the lvm partitions.
+d-i partman-lvm/device_remove_lvm boolean true
+d-i partman-lvm/confirm boolean true
+d-i partman-lvm/confirm_nochanges boolean true
+d-i partman-lvm/confirm_nooverwrite boolean true
+partman-lvm partman-lvm/confirm boolean true
+partman-lvm partman-lvm/confirm_nochanges boolean true
+
+
+# When making the logical volumes, only 75% of the available disk space will be used.
+# FIXME: This does not seem to work
+d-i partman-auto-lvm/guided_size string 75%
+
+# Allow to boot even if the array is degraded
+d-i mdadm/boot_degraded boolean true
+
+# For additional information see the file partman-auto-raid-recipe.txt
+# included in the 'debian-installer' package or available from D-I source
+# repository.
+
+## Controlling how partitions are mounted
+# The default is to mount by UUID, but you can also choose "traditional" to
+# use traditional device names, or "label" to try filesystem labels before
+# falling back to UUIDs.
+# d-i partman/mount_style select uuid
+d-i partman/mount_style select label
+
+{% include "templates/profiles/common/base-installer.preseed" %}
+
+### Package selection
+tasksel tasksel/first multiselect standard, ssh-server
+
+# Individual additional packages to install
+d-i pkgsel/include string apparmor apparmor-utils apparmor-profiles apparmor-profiles-extra
+
+# Whether to upgrade packages after debootstrap.
+# Allowed values: none, safe-upgrade, full-upgrade
+d-i pkgsel/upgrade select full-upgrade
+
+# Some versions of the installer can report back on what software you have
+# installed, and what software you use. The default is not to report back,
+# but sending reports helps the project determine what software is most
+# popular and include it on CDs.
+popularity-contest popularity-contest/participate boolean false
+
+{% include "templates/profiles/common/grub.preseed" %}
+
+# Use the following option to add additional boot parameters for the
+# installed system (if supported by the bootloader installer).
+# Note: options passed to the installer will be added automatically.
+#d-i debian-installer/add-kernel-opts string nousb
+
+{% include "templates/profiles/common/finish.preseed" %}
+
+{% include "templates/profiles/common/commands.preseed" %}

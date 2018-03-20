@@ -1,0 +1,14 @@
+### Clock and time zone setup
+# Controls whether or not the hardware clock is set to UTC.
+d-i clock-setup/utc boolean {{ clock.utc }}
+
+# You may set this to any valid setting for $TZ; see the contents of
+# /usr/share/zoneinfo/ for valid values.
+d-i time/zone string {{ country.timezone }}
+
+# Controls whether to use NTP to set the clock during the install
+d-i clock-setup/ntp boolean {{ clock.ntp }}
+
+# NTP server to use. The default is almost always fine here.
+#d-i clock-setup/ntp-server string ntp.example.com
+

@@ -22,17 +22,38 @@
 
 # 5. See the documentation and the Ansible scripts into the install folder to install the mail server platform.
 
-# System configuration: We use Software RAID, with two drives
-system:
-  hostname: mail
-  version: 9.4
-  arch: amd64
-  hw:
-    disks:
-      - name: vda
-        size: 500G
-      - name: vdb
-        size: 500G
+# Remember: http://imgs.xkcd.com/comics/security.png
+# So, here some good passphrases are, if you are drugged:
+# - Can I have some water, please?
+# - I am tired, I want to sleep, now
+# - I will not give you my password
+# - etc...
+
+# System configuration sample 1: Encrypted hard drive
+# system:
+#   hostname: mail
+#   preseed: luks
+#   version: 9.4
+#   arch: amd64
+#   passphrase: I will not give you my password
+#   hw:
+#     disks:
+#       - name: vda
+#         size: 500G
+
+# System configuration sample 2: Software RAID + Luks
+# system:
+#   hostname: mail
+#   preseed: raid-luks
+#   version: 9.4
+#   arch: amd64
+#   passphrase: I will not give you my password
+#   hw:
+#     disks:
+#       - name: vda
+#         size: 500G
+#       - name: vdb
+#         size: 500G
 
 # The proxy is optional. When specified, it is used to configure apt
 network:
@@ -66,14 +87,22 @@ time:
 
 # Accounts informations
 # You can choose a strong password here,
-# You can also delete the root password, lock the account,
-# and connect to your machine only using SSH
-accounts:
-  root_password: H0meb0x
+# You can also delete the root password, lock the account, and connect to your machine
+# only using SSH. In this case, set the second flag to true.
+# Be careful, doing this would completely lock you if you loose network access to the machine
+root:
+  password: H0meb0x
+  lock: false
 
-# Personalise the CD imgage
+# Where to put the ISO image once built. If You are doing development, you can copy it to
+# the libvirt/images folder.
+# You should have the right to write in ths folder.
+# cdimage:
+#   destination: '/var/lib/libvirt/images/'
+
+# Or ready to be put on a USB stick / burned on a CD
 cdimage:
-  profiles: ''
+  destination: '/tmp'
 
 # Clean the build folder after the image is created
 # This is mostly useful in a CI/CD pipeline
