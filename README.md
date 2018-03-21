@@ -1,11 +1,9 @@
 
 A set of Ansible scripts to setup your personal mail server (and more) for your home...
 
-## Introduction
-
 This project was initially meant to host emails at home, but you can use it on a dedicated or VPS server online.
 
-If you just want - like me - to securely host your emails - and more - but don't want to manually do the full installation process and neither update it every day/week/month, then this project is for you.
+If you just want - like me - to _securely_ host your emails - _and more_ - but don't want to manually do the full installation process and neither update it every day/week/month, then this project is for you.
 
 ## Current status and supported features
  
@@ -23,6 +21,7 @@ If you just want - like me - to securely host your emails - and more - but don't
 | Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                    | Done       |  Basic   | 
 | Roundcube webmail, https, sieve filters management, password change, automatic identity creation                        | Done       |  Basic   | 
 | AppArmor securisation for rspamd, nginx, dovecot, postfix                                                               | Done       |   No     | 
+| ISO image builder, with fully encrypted drive using LUKS                                                                | In progress|   No     | 
 | Dovecot full text search using [Apache Tika](https://en.wikipedia.org/wiki/Apache_Tika)                                 | Planned    |          | 
 | Antivirus for the emails with sieve and [clamav](https://www.clamav.net/)                                               | Planned    |          | 
 | Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                                  | Planned    |          | 
