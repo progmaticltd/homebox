@@ -1,34 +1,9 @@
 
 A set of Ansible scripts to setup your personal mail server (and more) for your home...
 
-<!-- TOC -->
-
-- [Introduction](#introduction)
-- [Current status and supported features](#current-status-and-supported-features)
-- [Basic installation](#basic-installation)
-    - [Prerequisites](#prerequisites)
-    - [Folders](#folders)
-    - [Debian automatic installation using preseed](#debian-automatic-installation-using-preseed)
-    - [Configure your remote system for root access](#configure-your-remote-system-for-root-access)
-        - [Example to allow SSH as root](#example-to-allow-ssh-as-root)
-    - [Create your host file](#create-your-host-file)
-    - [Create your custom configuration](#create-your-custom-configuration)
-    - [Configure your router to forward email - and web - traffic](#configure-your-router-to-forward-email---and-web---traffic)
-        - [Home installation](#home-installation)
-        - [Hosted installation](#hosted-installation)
-    - [Automatic DNS records creation and update:](#automatic-dns-records-creation-and-update)
-    - [Run the Ansible scripts to setup your email server](#run-the-ansible-scripts-to-setup-your-email-server)
-    - [Automatic backup](#automatic-backup)
-    - [Future versions](#future-versions)
-- [Other projects to mention](#other-projects-to-mention)
-
-<!-- /TOC -->
-
-## Introduction
-
 This project was initially meant to host emails at home, but you can use it on a dedicated or VPS server online.
 
-If you just want - like me - to securely host your emails - and more - but don't want to manually do the full installation process and neither update it every day/week/month, then this project is for you.
+If you just want - like me - to _securely_ host your emails - _and more_ - but don't want to manually do the full installation process and neither update it every day/week/month, then this project is for you.
 
 ## Current status and supported features
  
@@ -46,6 +21,7 @@ If you just want - like me - to securely host your emails - and more - but don't
 | Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                    | Done       |  Basic   | 
 | Roundcube webmail, https, sieve filters management, password change, automatic identity creation                        | Done       |  Basic   | 
 | AppArmor securisation for rspamd, nginx, dovecot, postfix                                                               | Done       |   No     | 
+| ISO image builder, with fully encrypted drive using LUKS                                                                | In progress|   No     | 
 | Dovecot full text search using [Apache Tika](https://en.wikipedia.org/wiki/Apache_Tika)                                 | Planned    |          | 
 | Antivirus for the emails with sieve and [clamav](https://www.clamav.net/)                                               | Planned    |          | 
 | Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                                  | Planned    |          | 
