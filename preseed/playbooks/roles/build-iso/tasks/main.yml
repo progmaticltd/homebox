@@ -43,6 +43,8 @@
   file:
     path: '{{ playbook_dir }}/../misc/root/.ssh/'
     mode: '0700'
+    owner: root
+    group: root
     state: directory
 
 - name: Copy the public keys in the ISO image
@@ -50,6 +52,8 @@
   copy:
     src: '{{ root.pubkey }}'
     dest: '{{ playbook_dir }}/../misc/root/.ssh/authorized_keys'
+    owner: root
+    group: root
     mode: 0600
 
 - name: Copy the files that need to be on the CD/DVD image
