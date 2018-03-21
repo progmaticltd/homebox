@@ -38,6 +38,18 @@
   loop_control:
     loop_var: file
 
+- name: Make sure the "misc" folder has the appropriate hierarchy
+  tags: preseed
+  file:
+    path: '{{ playbook_dir }}/../misc/root/.ssh/'
+    state: directory
+
+- name: Copy the public keys in the ISO image
+  tags: preseed
+  copy:
+    src: '{{ root.pubkey }}'
+    dest: '{{ playbook_dir }}/../misc/root/.ssh/authorized_keys'
+
 - name: Copy the files that need to be on the CD/DVD image
   tags: preseed
   copy:
@@ -61,19 +73,12 @@
 - name: Move the iso image to the appropriate folder
   copy:
     src: '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
-    dest: '/var/lib/libvirt/iso/{{ system.hostname }}-install.iso'
+    dest: '{{ cdimage.destination }}/{{ system.hostname }}-install.iso'
 
 - name: Delete the iso file
   file:
     path: '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
     state: absent
-    
-# - name: Remove the ISO file
-#   when: devel.clean
-#   tags: preseed
-#   file:
-#     path: '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
-#     state: absent
     
 # # Clean up if needed
 # - name: Clean up the working directory

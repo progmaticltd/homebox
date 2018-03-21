@@ -21,8 +21,8 @@
 # still a usable /target directory. You can chroot to /target and use it
 # directly, or use the apt-install and in-target commands to easily install
 # packages and run commands in the target system.
+
 # Extract the miscellaneous files
-# WIP
-# d-i preseed/late_command string -C /target -zxf /cdrom/simple-cdd/misc.tgz
+d-i preseed/late_command string tar -C /target -zxf /cdrom/simple-cdd/misc.tgz
  
 

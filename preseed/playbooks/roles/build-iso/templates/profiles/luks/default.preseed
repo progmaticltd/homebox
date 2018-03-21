@@ -1,5 +1,4 @@
-#### Contents of the preconfiguration file (for stretch)
-### Localization
+#### Preseed for fully encrypted drive using LUKS
 
 {% include "templates/profiles/common/localization.preseed" %}
 
@@ -18,23 +17,6 @@
 {% include "templates/profiles/common/clock.preseed" %}
 
 ### Partitioning
-## Partitioning example
-# If the system has free space you can choose to only partition that space.
-# This is only honoured if partman-auto/method (below) is not set.
-#d-i partman-auto/init_automatically_partition select biggest_free
-
-# Alternatively, you may specify a disk to partition. If the system has only
-# one disk the installer will default to using that, but otherwise the device
-# name must be given in traditional, non-devfs format (so e.g. /dev/sda
-# and not e.g. /dev/discs/disc0/disc).
-# For example, to use the first SCSI/SATA hard disk:
-# d-i partman-auto/disk string /dev/vda
-
-# In addition, you'll need to specify the method to use.
-# The presently available methods are:
-# - regular: use the usual partition types for your architecture
-# - lvm:     use LVM to partition the disk
-# - crypto:  use LVM within an encrypted partition
 d-i partman-auto/method string crypto
 
 # Passphrase for the encryption
