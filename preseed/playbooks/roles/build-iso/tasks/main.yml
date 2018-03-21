@@ -38,10 +38,11 @@
   loop_control:
     loop_var: file
 
-- name: Make sure the "misc" folder has the appropriate hierarchy
+- name: Make sure the misc folder has the appropriate hierarchy
   tags: preseed
   file:
     path: '{{ playbook_dir }}/../misc/root/.ssh/'
+    mode: '0700'
     state: directory
 
 - name: Copy the public keys in the ISO image
@@ -49,6 +50,7 @@
   copy:
     src: '{{ root.pubkey }}'
     dest: '{{ playbook_dir }}/../misc/root/.ssh/authorized_keys'
+    mode: 0600
 
 - name: Copy the files that need to be on the CD/DVD image
   tags: preseed
@@ -70,33 +72,13 @@
     chdir: '{{ build_dir }}'
     creates: '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
     
-- name: Move the iso image to the appropriate folder
+- name: Copy the iso image to the destination folder
   copy:
     src: '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
-    dest: '{{ cdimage.destination }}/{{ system.hostname }}-install.iso'
+    dest: '{{ cdimage.destination }}/{{ system.hostname }}-{{ system.preseed }}-install.iso'
 
-- name: Delete the iso file
+- name: Delete the iso image
   file:
     path: '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
     state: absent
     
-# # Clean up if needed
-# - name: Clean up the working directory
-#   tags: preseed
-#   when: devel.clean
-#   file:
-#     path: '{{ build_dir }}/{{ path }}'
-#     state: absent
-#   with_items:
-#     - build.sh
-#     - common.conf
-#     - images
-#     - logs
-#     - misc.tgz
-#     - profiles
-#     - splash.png
-#     - tmp
-#   loop_control:
-#     loop_var: path
-
-  

@@ -23,10 +23,10 @@
 # 5. See the documentation and the Ansible scripts into the install folder to install the mail server platform.
 
 # Remember: http://imgs.xkcd.com/comics/security.png
-# So, here some good passphrases are, if you are drugged:
+# So, here some good passphrases:
 # - Can I have some water, please?
-# - I am tired, I want to sleep, now
-# - I will not give you my password
+# - I am tired, I want to sleep.
+# - I will not give you my password.
 # - etc...
 
 # System configuration sample 1: Encrypted hard drive
@@ -35,6 +35,7 @@
 #   preseed: luks
 #   version: 9.4
 #   arch: amd64
+#   boot_timeout: 5   # In seconds
 #   passphrase: I will not give you my password
 #   hw:
 #     disks:
@@ -43,12 +44,13 @@
 
 # System configuration sample 2: Software RAID
 # WORK IN PROGRESS, NOT FULLY TESTED YET
+# TODO: Add encryption support (luks? / ext4? / ecryptfs?)
 # system:
 #   hostname: mail
-#   preseed: raid-luks
+#   preseed: raid
 #   version: 9.4
 #   arch: amd64
-#   passphrase: I will not give you my password
+#   boot_timeout: 5   # In seconds
 #   hw:
 #     disks:
 #       - name: vda

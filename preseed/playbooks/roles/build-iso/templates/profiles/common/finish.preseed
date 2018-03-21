@@ -17,3 +17,8 @@ d-i finish-install/reboot_in_progress note
 # This will power off the machine instead of just halting it.
 d-i debian-installer/exit/poweroff boolean true
 
+# Use the following option to add additional boot parameters for the
+# installed system (if supported by the bootloader installer).
+# Note: options passed to the installer will be added automatically.
+# Activate AppArmor on next boot
+d-i debian-installer/add-kernel-opts string security=apparmor apparmor=1

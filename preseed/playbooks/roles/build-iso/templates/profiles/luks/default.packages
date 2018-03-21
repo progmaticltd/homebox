@@ -1,6 +1,1 @@
 # Default packages to install
-mc
-mc-data
-tmux
-btrfs-progs
-apt-transport-https

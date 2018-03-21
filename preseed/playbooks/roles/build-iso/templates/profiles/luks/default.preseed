@@ -74,8 +74,8 @@ d-i partman/mount_style select uuid
 tasksel tasksel/first multiselect standard, ssh-server
 
 # Individual additional packages to install
-# TODO: Use a list from defaults/main.yml
-d-i pkgsel/include string apparmor apparmor-utils apparmor-profiles apparmor-profiles-extra
+# Install AppArmor by default, because it will be activated on the first boot
+d-i pkgsel/include string apparmor apparmor-utils
 
 # Whether to upgrade packages after debootstrap.
 # Allowed values: none, safe-upgrade, full-upgrade
