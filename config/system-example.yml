@@ -32,6 +32,7 @@ users:
 # Email related options
 mail:
   max_attachment_size: 25   # In megabytes
+  recipient_delimiter: '+'  # The characters you want to use to split email address from mailbox
   quota:
     default: 1G
   

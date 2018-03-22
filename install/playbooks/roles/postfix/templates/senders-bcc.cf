@@ -1,3 +1,3 @@
 {% for user in users %}
-{{ user.mail }} {{ user.mail | regex_replace('@', '+sent@') }}
+{{ user.mail }} {{ user.mail | regex_replace("@", mail.recipient_delimiter + "sent@") }}
 {% endfor %}

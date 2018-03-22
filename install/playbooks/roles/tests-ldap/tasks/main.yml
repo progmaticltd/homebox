@@ -98,7 +98,7 @@
     - memberUid
     - uidNumber
     - gidNumber
-    - mailLocalAddress
+    - intlMailAddr
   loop_control:
     loop_var: field
 

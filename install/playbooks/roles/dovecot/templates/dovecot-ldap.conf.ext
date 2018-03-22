@@ -126,15 +126,14 @@ scope = subtree
 #
 # There are also other special fields which can be returned, see
 # http://wiki2.dovecot.org/UserDatabase/ExtraFields
-# user_attrs = homeDirectory=home,uidNumber=uid,gidNumber=gid,mail=mail,mailLocalAddress=mail
-user_attrs = homeDirectory=home,uidNumber=uid,gidNumber=gid,mail=mail
+user_attrs = homeDirectory=home,uidNumber=uid,gidNumber=gid,mail=mail,uid=user
 
 # Filter for user lookup. Some variables can be used (see
 # http://wiki2.dovecot.org/Variables for full list):
 #   %u - username
 #   %n - user part in user@domain, same as %u if there's no domain
 #   %d - domain part in user@domain, empty if user there's no domain
-user_filter = (&(objectClass=posixAccount)(|(uid=%n)(mailLocalAddress=%u)(mail=%u)))
+user_filter = (&(objectClass=posixAccount)(|(uid=%n)(mail=%u)(intlMailAddr=%u)))
 
 # Password checking attributes:
 #  user: Virtual user name (user@domain), if you wish to change the
@@ -152,7 +151,7 @@ pass_attrs = uid=user,userPassword=password,mail=mail
 #  homeDirectory=userdb_home,uidNumber=userdb_uid,gidNumber=userdb_gid,mail=userdb_mail
 
 # Filter for password lookups
-pass_filter = (&(objectClass=posixAccount)(|(uid=%n)(mailLocalAddress=%u)(mail=%u)))
+pass_filter = (&(objectClass=posixAccount)(|(uid=%n)(intlMailAddr=%u)(mail=%u)))
 
 # Attributes and filter to get a list of all users
 #iterate_attrs = uid=user

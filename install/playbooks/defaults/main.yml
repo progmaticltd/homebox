@@ -26,7 +26,7 @@ ldap:
     uid: postmaster
     dn: 'cn=postmaster account, ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
     # See https://www.ietf.org/rfc/rfc2142.txt
-    mailLocalAddress:
+    mailAliases:
       - 'abuse@{{ network.domain }}'
       - 'noc@{{ network.domain }}'
       - 'security@{{ network.domain }}'

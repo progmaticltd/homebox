@@ -230,7 +230,7 @@
 
 # Remove all groups created before
 - name: Remove old groups if presents
-  when: clean == True
+  when: clean_groups
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
@@ -266,7 +266,7 @@
     state: present
 
 - name: Remove previous users
-  when: clean == True
+  when: clean_users
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
@@ -288,6 +288,18 @@
   when: misc_schema.changed
   command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/misc.ldif
 
+- name: Copy the internatinal email addresses schema into the changes directory
+  tags: smtputf8
+  register: intlmailaddr_schema
+  template:
+    src: intlmailaddr.schema
+    dest: /etc/ldap/changes/intlmailaddr.schema
+
+- name: Activate internatinal email addresses schema
+  tags: smtputf8
+  when: intlmailaddr_schema.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/intlmailaddr.schema
+
 - name: Create all the user accounts
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
@@ -305,7 +317,7 @@
       uidNumber: '{{ users_defaults.uid_start + user.0 }}'
       gidNumber: '{{ users_defaults.gid_start }}'
       mail: '{{ user.1.mail }}'
-      mailLocalAddress: '{{ user.1.otherMailBox | default([]) }}'
+      intlMailAddr: '{{ user.1.otherMailBox | default([]) }}'
       shadowMin: 0
       shadowMax: 999999
       shadowWarning: 7
@@ -318,6 +330,7 @@
       - shadowAccount
       - inetOrgPerson
       - inetLocalMailRecipient
+      - mailboxRelatedObject
   with_indexed_items:
     - '{{ users }}'
   loop_control:
@@ -325,7 +338,7 @@
 
 - name: Remove the manager account
   tags: manager
-  when: clean == True
+  when: clean_users
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
@@ -350,7 +363,7 @@
       - inetOrgPerson
 
 - name: Remove the readonly account
-  when: clean == True
+  when: clean_users
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
@@ -375,7 +388,7 @@
 
 - name: Remove the postmaster account
   tags: postmaster
-  when: clean == True
+  when: clean_users
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
@@ -400,7 +413,7 @@
       uidNumber: '{{ users_defaults.uid_start + 999 }}'
       gidNumber: '{{ users_defaults.gid_start }}'
       mail: 'postmaster@{{ network.domain }}'
-      mailLocalAddress: '{{ ldap.postmaster.mailLocalAddress }}'
+      intlMailAddr: '{{ ldap.postmaster.mailAliases }}'
       shadowMin: 0
       shadowMax: 999999
       shadowWarning: 7
@@ -413,6 +426,7 @@
       - shadowAccount
       - inetOrgPerson
       - inetLocalMailRecipient
+      - mailboxRelatedObject
 
 - name: Configure libnss to use passwords and groups
   debconf:
@@ -482,7 +496,7 @@
     - memberUid
     - uidNumber
     - gidNumber
-    - mailLocalAddress
+    - intlMailAddr
   loop_control:
     loop_var: field
 
