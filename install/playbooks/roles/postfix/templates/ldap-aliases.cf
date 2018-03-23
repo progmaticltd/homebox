@@ -8,4 +8,5 @@ search_scope = sub
 query_filter = (|(mail=%s)(intlMailAddr=%s))
 result_attribute = mail
 
+# Force support for UTF8
 version = 3

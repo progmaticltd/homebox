@@ -1,33 +1,46 @@
 # Homebox generated
+# =============================================================================
+# The Postfix main.cf configuration file specifies a very small subset of all
+# the parameters that control the operation of the Postfix mail system.
+# Parameters not explicitly specified are left at their default values. 
+# http://www.postfix.org/postconf.5.html
 
-# Debian specific:  Specifying a file name will cause the first
-# line of that file to be used as the name.  The Debian default
-# is /etc/mailname.
-#myorigin = /etc/mailname
-
+# The text that follows the 220 status code in the SMTP greeting banner
 smtpd_banner = $myhostname ESMTP $mail_name (Debian/GNU)
 biff = no
 
 # appending .domain is the MUA's job.
 append_dot_mydomain = no
 
+# The time after which the sender receives a copy of the message headers of mail that is still queued.
 # Uncomment the next line to generate "delayed mail" warnings
-#delay_warning_time = 4h
+delay_warning_time = 4h
 
-readme_directory = no
+{% if system.debug %}
+# Optional list of remote client or server hostname or network address patterns
+# that cause the verbose logging level
+debug_peer_list = 127.0.0.1
+{% endif %}
 
 # See http://www.postfix.org/COMPATIBILITY_README.html -- default to 2 on
 # fresh installs.
 compatibility_level = 2
 
-# TLS parameters
 {% if system.ssl == 'letsencrypt' %}
+# TLS parameters
 smtpd_tls_cert_file=/etc/letsencrypt/live/smtp.{{ network.domain }}/fullchain.pem
 smtpd_tls_key_file=/etc/letsencrypt/live/smtp.{{ network.domain }}/privkey.pem
 smtpd_tls_CAfile=/etc/letsencrypt/live/smtp.{{ network.domain }}/fullchain.pem
 smtpd_use_tls=yes
+
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+
+# Encrypt communication with other SMTP servers
+smtpd_tls_security_level = may
+smtp_tls_security_level = may
+smtp_tls_loglevel = 1
+smtpd_tls_loglevel = 1
 {% endif %}
 
 # Authentication via SASL
@@ -37,48 +50,63 @@ smtpd_sasl_path = private/auth
 broken_sasl_auth_clients = yes
 smtpd_sasl_security_options = noanonymous
 
+# The internet hostname of this mail system.
+# The default is to use the fully-qualified domain name (FQDN) from gethostname(),
 myhostname = {{ network.hostname }}
 
-alias_maps = ldap:/etc/postfix/ldap-aliases.cf
-alias_database = ldap:/etc/postfix/ldap-aliases.cf
+# Use virtual aliases, mailboxes, domains and transport
+virtual_alias_maps = ldap:/etc/postfix/ldap-aliases.cf
+virtual_mailbox_maps = ldap:/etc/postfix/ldap-aliases.cf
+virtual_mailbox_domains = {{ network.domain }}
+virtual_transport = lmtp:unix:private/dovecot-lmtp
 
-# Use dovecot LMTP for transport
-mailbox_transport = lmtp:unix:private/dovecot-lmtp
-
+# Specifies the domain that appears in mail that is posted on this machine
 myorigin = /etc/mailname
 
-mydestination = $myhostname, {{ network.domain }}, localhost.{{ network.domain }}, localhost
-relayhost =
+# Specifies what domains this machine will deliver locally, instead of forwarding to another machine
+mydestination = $myhostname, localhost.{{ network.domain }}, localhost
 
-# TODO: Add local network here with Ansible or any other tool
-mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
-
+# The maximal size of any local(8) individual mailbox or maildir file
 mailbox_size_limit = 0
-recipient_delimiter = {{ mail.recipient_delimiter | default('+') }}
+
+# Only listen myself, don't trust any one
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 inet_interfaces = all
 inet_protocols = all
+
+# The set of characters that can separate a user name from its extension
+recipient_delimiter = {{ mail.recipient_delimiter | default('+') }}
 
 # DKIM mails signing / rspamd mail filtering
 milter_default_action = accept
 milter_protocol = 6
+
+# A list of Milter applications for new mail that arrives via the Postfix smtpd(8) server
 smtpd_milters =
     inet:localhost:{{ milter_dkim_port }}
     inet:localhost:{{ milter_antispam_port }}
     inet:localhost:{{ milter_dmarc_port }}
 
+# A list of Milter applications for new mail that does not arrive via the Postfix smtpd(8) server.
+# This includes local submission via the sendmail(1) command line, new mail that arrives via the Postfix
+# qmqpd(8) server, and old mail that is re-injected into the queue with "postsuper -r".
 non_smtpd_milters =
     inet:localhost:{{ milter_dkim_port }}
     inet:localhost:{{ milter_antispam_port }}
     inet:localhost:{{ milter_dmarc_port }}
 
+# The macros that are sent to Milter applications after the SMTP MAIL FROM command.
 milter_mail_macros =  i {mail_addr} {client_addr} {client_name} {auth_authen} {auth_type}
 
+# Access restrictions for mail relay control that the Postfix SMTP server applies
+# in the context of the RCPT TO command, before smtpd_recipient_restrictions.
 smtpd_relay_restrictions =
     permit_mynetworks
     permit_sasl_authenticated
     defer_unauth_destination
 
-# Recipient restrictions: SPF policies, quotas
+# Optional restrictions that the Postfix SMTP server applies in the context of a client RCPT TO command,
+# after smtpd_relay_restrictions
 smtpd_recipient_restrictions =
     permit_mynetworks
     permit_sasl_authenticated
@@ -102,10 +130,5 @@ sender_bcc_maps = hash:/etc/postfix/senders-bcc.cf
 # Message size, computed from max attachment size and base64 overhead
 message_size_limit = {{ message_size_limit }}
 
-# Send messages encrypted
-smtpd_tls_security_level = may
-smtp_tls_security_level = may
-smtp_tls_loglevel = 1
-smtpd_tls_loglevel = 1
-
 smtputf8_enable = yes
+smtputf8_autodetect_classes = verify
