@@ -7,7 +7,7 @@
     bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
     dn: 'cn={{ user.1.cn }},{{ ldap.users.dn }}'
     name: intlMailAddr
-    values: '{{ user.1.otherMailBox | default([]) }}'
+    values: '{{ user.1.aliases | default([]) }}'
     state: exact
   with_indexed_items:
     - '{{ users }}'

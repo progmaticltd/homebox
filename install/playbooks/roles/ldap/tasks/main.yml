@@ -317,7 +317,7 @@
       uidNumber: '{{ users_defaults.uid_start + user.0 }}'
       gidNumber: '{{ users_defaults.gid_start }}'
       mail: '{{ user.1.mail }}'
-      intlMailAddr: '{{ user.1.otherMailBox | default([]) }}'
+      intlMailAddr: '{{ user.1.aliases | default([]) }}'
       shadowMin: 0
       shadowMax: 999999
       shadowWarning: 7
