@@ -16,6 +16,8 @@
   /etc/postfix/aliases.db                  rw,
   /etc/postfix/main.cf                     r,
   /etc/postfix/postfix-script              Px,
+  /etc/postfix/dynamicmaps.cf.d/           r,
+  
   @{PROC}/net/if_inet6                     r,
   /usr/lib/postfix                         r,
   /usr/lib/postfix/master                  Px,
@@ -23,7 +25,7 @@
   /usr/sbin/postalias                      Px,
   /usr/sbin/postdrop                       Px,
   /usr/sbin/postqueue                      Px,
-  /usr/sbin/sendmail.postfix               rmix,
+  /usr/sbin/sendmail                       rmix,
   /var/spool/postfix/                      r,
   /var/spool/postfix/active                r,
   /var/spool/postfix/bounce                r,
