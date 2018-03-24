@@ -9,8 +9,10 @@ if header :contains "Received" "{{ mail.recipient_delimiter}}Sent"
   fileinto "Sent";
 }
 
+# {% if mail.discard_duplicates %}
 # Remove duplicate messages in the Sent folder
 if duplicate :seconds 3600 :header "message-id"
 {
   discard;
 }
+# {% endif %}

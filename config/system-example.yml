@@ -32,7 +32,8 @@ users:
 # Email related options
 mail:
   max_attachment_size: 25   # In megabytes
-  recipient_delimiter: '+'  # The characters you want to use to split email address from mailbox
+  recipient_delimiter: '+'  # The characters you want to use to split email address from mailbox.
+  discard_duplicates: true  # Discard duplicates messages. It is safe, but you can disable if you are worried
   quota:
     default: 1G
   
@@ -140,17 +141,3 @@ security:
 # - vcard_attachments
 # - virtuser_file
 # - virtuser_query
-
-# Default dovecot packages to install
-# You can use stretch-backports for advanced features
-# like mailbox_delimiter or international email addresses...
-# dovecot:
-#   repository: stretch
-#   packages:
-#     - dovecot-core
-#     - dovecot-imapd
-#     - dovecot-lmtpd
-#     - dovecot-pop3d
-#     - dovecot-managesieved
-#     - dovecot-sieve
-#     - dovecot-ldap
