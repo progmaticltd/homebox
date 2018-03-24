@@ -22,7 +22,6 @@ If you just want - like me - to _securely_ host your emails - _and more_ - but d
 | Roundcube webmail, https, sieve filters management, password change, automatic identity creation                    | Done      |  Basic   | 
 | AppArmor securisation for rspamd, nginx, dovecot, postfix                                                           | Done      |   No     | 
 | ISO image builder, with fully encrypted drive using LUKS (¹)                                                        | Done      |          | 
-| International characters in mail addresses, e.g. andré@homebox.space                                                | Partial   |          | 
 | Antivirus for the emails with sieve and [clamav](https://www.clamav.net/)                                           | Planned   |          | 
 | Dovecot full text search using [Apache Tika](https://en.wikipedia.org/wiki/Apache_Tika)                             | Planned   |          | 
 | Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned   |          | 
