@@ -1,4 +1,5 @@
   # Mails directory
+  /home/users/*/mails/maildir/ r,
   /home/users/*/mails/maildir/dovecot.index rw,
   /home/users/*/mails/maildir/dovecot.index.log rw,
   /home/users/*/mails/maildir/maildirsize rw,
