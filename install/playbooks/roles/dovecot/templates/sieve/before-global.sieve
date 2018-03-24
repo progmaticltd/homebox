@@ -7,22 +7,15 @@ require [
   "variables"
 ];
 
-# {% if mail.discard_duplicates %}
+{% if mail.discard_duplicates %}
 # Remove duplicate messages sent from mailing lists
 if duplicate :seconds 3600 :header "message-id"
 {
   discard;
 }
-# {% endif %}
+{% endif %}
 
-# Move automatically copied emails to the sent folder
-# And mark them as read
-if header :contains "Received" "{{ mail.recipient_delimiter}}Sent"
-{
-  setflag "\\seen";
-  fileinto "Sent";
-}
-
+# Mark emails sent as read
 # When using the internal LMTP, these tests are needed:
 # 1 - Get from and to,
 # 2 - Check if to contains +Sent, and mark the message as read
