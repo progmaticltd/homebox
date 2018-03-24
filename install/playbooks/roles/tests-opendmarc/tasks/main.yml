@@ -4,7 +4,7 @@
   tags: apt,opendmarc
   shell: dpkg -s opendmarc
      
-- name: Check if the rspamd service is up and running
+- name: Check if the opendmarc service is up and running
   tags: systemctl,opendmarc
   shell: systemctl status opendmarc
     
