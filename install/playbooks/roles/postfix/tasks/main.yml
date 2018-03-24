@@ -138,6 +138,7 @@
     - usr.lib.postfix.verify
     - usr.lib.postfix.virtual
     - usr.sbin.sendmail
+    - usr.sbin.postdrop
   
 - name: Install some postfix AppArmor profile
   when: security.app_armor
