@@ -26,7 +26,7 @@
 - name: Create the user account mail folders
   tags: accounts
   file:
-    path: '/home/users/{{ user.uid }}/mails/sieve'
+    path: '/home/users/{{ user.uid }}/mails/sieve/logs'
     owner: '{{ user.uid }}'
     group: users
     state: directory
