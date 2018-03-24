@@ -28,9 +28,11 @@ if header :contains "Received" "{{ mail.recipient_delimiter}}Sent"
 # 2 - Check if to contains +Sent, and mark the message as read
 if envelope :matches "from" "*@{{ network.domain }}" {
   set "from" "${1}";
-} else if envelope :matches "to" "*@{{ network.domain }}" {
+}
+if envelope :matches "to" "*@{{ network.domain }}" {
   set "to" "${1}";
 }
+
 if string :is "${from}{{ mail.recipient_delimiter }}Sent" "${to}" {
   setflag "\\seen";
 }
