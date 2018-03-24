@@ -6,6 +6,7 @@ quota:
 
 # Default dovecot packages to install
 dovecot:
+  repository: stretch
   packages:
     - dovecot-core
     - dovecot-imapd

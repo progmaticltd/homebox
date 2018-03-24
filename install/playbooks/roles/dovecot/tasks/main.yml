@@ -5,7 +5,8 @@
   tags: dovecot
   apt:
     name: "{{ pkg }}"
-    state: installed
+    default_release: '{{ dovecot.repository }}'
+    state: latest
   with_items:
     - '{{ dovecot.packages }}'
   loop_control:

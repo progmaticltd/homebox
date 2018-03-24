@@ -7,28 +7,29 @@ If you just want - like me - to _securely_ host your emails - _and more_ - but d
 
 ## Current status and supported features
  
-| Current feature, implemented and planned                                                                                | Status     | Tested   |
-| ----------------------------------------------------------------------------------------------------------------------- | :--------: | :------: | 
-| LDAP users database, SSL & TLS certificates, password policies, integration with the system and PAM.                    | Done       |   Yes    | 
-| SSL Certificates generation with [letsencrypt](https://letsencrypt.org), automatic local backup and publication.        | Done       |   Yes    | 
-| DKIM keys generation and automatic local backup and publication on Gandi                                                | Done       |   Yes    | 
-| SPF records generation and publication on Gandi                                                                         | Done       |   Yes    | 
-| DMARC record generation and publication on Gandi, *the reports generation is planned for a future version*              | Done       |   Yes    | 
-| Generation and publication of automatic Thunderbird (autoconfig) and Outlook (autodiscover) configuration               | Done       |   Yes    | 
-| Postfix configuration and installation, with LDAP lookups, and protocols STARTTLS/Submission/SMTPS                      | Done       |   Yes    | 
-| Automatic copy of sent emails into the sent folderm ala GMail                                                           | Done       |   Yes    | 
-| Powerful and light antispam system with [rspamd](https://rspamd.com/)                                                   | Done       |   No     | 
-| Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                    | Done       |  Basic   | 
-| Roundcube webmail, https, sieve filters management, password change, automatic identity creation                        | Done       |  Basic   | 
-| AppArmor securisation for rspamd, nginx, dovecot, postfix                                                               | Done       |   No     | 
-| ISO image builder, with fully encrypted drive using LUKS (¹)                                                            | Done       |          | 
-| Antivirus for the emails with sieve and [clamav](https://www.clamav.net/)                                               | Planned    |          | 
-| Dovecot full text search using [Apache Tika](https://en.wikipedia.org/wiki/Apache_Tika)                                 | Planned    |          | 
-| Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                                  | Planned    |          | 
-| Web proxy with privacy and parent filtering features, probably using [privoxy](https://www.privoxy.org/)                | Planned    |          | 
-| Automatic migration from old mail server using imap synchronisation                                                     | Planned    |          | 
-| Automatic encrypted off-site backup, probably with [borg-ackup](https://www.borgbackup.org/)                            | Planned    |          | 
-| Jabber server, probably using [ejabberd](https://www.ejabberd.im/)                                                      | Planned    |          |
+| Current feature, implemented and planned                                                                            | Status    | Tested   |
+| ------------------------------------------------------------------------------------------------------------------- | :-------: | :------: | 
+| LDAP users database, SSL & TLS certificates, password policies, integration with the system and PAM.                | Done      |   Yes    | 
+| SSL Certificates generation with [letsencrypt](https://letsencrypt.org), automatic local backup and publication.    | Done      |   Yes    | 
+| DKIM keys generation and automatic local backup and publication on Gandi                                            | Done      |   Yes    | 
+| SPF records generation and publication on Gandi                                                                     | Done      |   Yes    | 
+| DMARC record generation and publication on Gandi, *the reports generation is planned for a future version*          | Done      |   Yes    | 
+| Generation and publication of automatic Thunderbird (autoconfig) and Outlook (autodiscover) configuration           | Done      |   Yes    | 
+| Postfix configuration and installation, with LDAP lookups, and protocols STARTTLS/Submission/SMTPS                  | Done      |   Yes    | 
+| Automatic copy of sent emails into the sent folderm ala GMail                                                       | Done      |   Yes    | 
+| Powerful and light antispam system with [rspamd](https://rspamd.com/)                                               | Done      |   No     | 
+| Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                | Done      |  Basic   | 
+| Roundcube webmail, https, sieve filters management, password change, automatic identity creation                    | Done      |  Basic   | 
+| AppArmor securisation for rspamd, nginx, dovecot, postfix                                                           | Done      |   No     | 
+| ISO image builder, with fully encrypted drive using LUKS (¹)                                                        | Done      |          | 
+| International characters in mail addresses, e.g. andré@homebox.space                                                | Partial   |          | 
+| Antivirus for the emails with sieve and [clamav](https://www.clamav.net/)                                           | Planned   |          | 
+| Dovecot full text search using [Apache Tika](https://en.wikipedia.org/wiki/Apache_Tika)                             | Planned   |          | 
+| Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned   |          | 
+| Web proxy with privacy and parent filtering features, probably using [privoxy](https://www.privoxy.org/)            | Planned   |          | 
+| Automatic migration from old mail server using imap synchronisation                                                 | Planned   |          | 
+| Automatic encrypted off-site backup, probably with [borg-ackup](https://www.borgbackup.org/)                        | Planned   |          | 
+| Jabber server, probably using [ejabberd](https://www.ejabberd.im/)                                                  | Planned   |          |
 
 1) The ISO image provided is meant to ease developpment and installation of the system, it does not include any installer.
 

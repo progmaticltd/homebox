@@ -140,3 +140,17 @@ security:
 # - vcard_attachments
 # - virtuser_file
 # - virtuser_query
+
+# Default dovecot packages to install
+# You can use stretch-backports for advanced features
+# like mailbox_delimiter or international email addresses...
+# dovecot:
+#   repository: stretch
+#   packages:
+#     - dovecot-core
+#     - dovecot-imapd
+#     - dovecot-lmtpd
+#     - dovecot-pop3d
+#     - dovecot-managesieved
+#     - dovecot-sieve
+#     - dovecot-ldap
