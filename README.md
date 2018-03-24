@@ -27,7 +27,7 @@ If you just want - like me - to _securely_ host your emails - _and more_ - but d
 | Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned   |          | 
 | Web proxy with privacy and parent filtering features, probably using [privoxy](https://www.privoxy.org/)            | Planned   |          | 
 | Automatic migration from old mail server using imap synchronisation                                                 | Planned   |          | 
-| Automatic encrypted off-site backup, probably with [borg-ackup](https://www.borgbackup.org/)                        | Planned   |          | 
+| Automatic encrypted off-site backup, probably with [borg-backup](https://www.borgbackup.org/)                        | Planned   |          | 
 | Jabber server, probably using [ejabberd](https://www.ejabberd.im/)                                                  | Planned   |          |
 
 1) The ISO image provided is meant to ease developpment and installation of the system, it does not include any installer.
