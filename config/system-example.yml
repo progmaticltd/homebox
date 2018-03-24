@@ -32,10 +32,17 @@ users:
 # Email related options
 mail:
   max_attachment_size: 25   # In megabytes
-  recipient_delimiter: '+'  # The characters you want to use to split email address from mailbox.
-  discard_duplicates: true  # Discard duplicates messages. It is safe, but you can disable if you are worried
   quota:
-    default: 1G
+    default: 1G             # Maximul allowed mailbox size for your users.
+                            # The safe maximum value will be automatically computed in a next version.
+  discard_duplicates: true  # Discard duplicates messages. It is safe, but you can disable if you are worried
+                            # The default timerange is 1h
+  advanced_features: false  # Use some advanced features that will need the latest version of dovecot
+                            # from stretch-backports, like those below.
+                            # like sending emails to an international addresses (e.g. andré@homebox.space)
+  recipient_delimiter: '+'  # The characters you want to use to split email address from mailbox, i.e.:
+                            # when receiving a message to john+lists@example.com, it should go directly to
+                            # the 'lists' folder...
   
 ###############################################################################
 # Default password policies for users
