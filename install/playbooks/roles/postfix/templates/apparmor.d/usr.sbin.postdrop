@@ -1,0 +1,12 @@
+#include <tunables/global>
+
+/usr/sbin/postdrop {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/postfix-common>
+
+  /etc/postfix/dynamicmaps.cf.d/ r,
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/sbin/postdrop mr,
+  /var/spool/postfix/maildrop/** rw,
+}
