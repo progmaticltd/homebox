@@ -1,8 +1,9 @@
-# This folder creates ISO images for a complete installer, before running the Ansible scripts
-
-# Everything is build here
-build/
-
 # Everything in this folder will be decompressed on the target
-# before the first boot
-misc/
+# before the first boot, at the same level
+!misc/readme.md
+misc/*
+
+# Ignores your system configuration and your public key
+config/system.yml
+config/authorized_keys
+

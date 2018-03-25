@@ -38,36 +38,12 @@
   loop_control:
     loop_var: file
 
-- name: Make sure the misc folder has the appropriate hierarchy
-  tags: preseed
-  file:
-    path: '{{ playbook_dir }}/../misc/root/.ssh/'
-    mode: '0700'
-    owner: root
-    group: root
-    state: directory
-
-- name: Copy the public keys in the ISO image
-  tags: preseed
-  copy:
-    src: '{{ root.pubkey }}'
-    dest: '{{ playbook_dir }}/../misc/root/.ssh/authorized_keys'
-    owner: root
-    group: root
-    mode: 0600
-
-- name: Copy the files that need to be on the CD/DVD image
+- name: Copy the miscellaneous files that need to be on the CD/DVD image
   tags: preseed
   copy:
     src: '{{ playbook_dir }}/../misc'
     dest: '{{ build_dir }}'
 
-- name: Copy the logo in the temporary folder for the installer
-  tags: preseed
-  copy:
-    src: '{{ playbook_dir }}/../logos/logo-small.png'
-    dest: '{{ build_dir }}/splash.png'
-  
 # Run the script to create the iso images
 - name: Run the command to create the iso file
   tags: preseed
@@ -76,13 +52,12 @@
     chdir: '{{ build_dir }}'
     creates: '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
     
-- name: Copy the iso image to the destination folder
-  copy:
-    src: '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
-    dest: '{{ cdimage.destination }}/{{ system.hostname }}-{{ system.preseed }}-install.iso'
-
-- name: Delete the iso image
-  file:
-    path: '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
-    state: absent
+- name: Rename the ISO image
+  tags: preseed
+  command: >-
+     mv {{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso
+     {{ build_dir }}/{{ system.hostname }}-install.iso
+  args:
+    chdir: '{{ build_dir }}'
+    creates: '{{ build_dir }}/{{ system.hostname }}-install.iso'
     
