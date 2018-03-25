@@ -25,3 +25,4 @@ WORKDIR /home/cdbuild
 
 # Run the ansible playbook
 ENTRYPOINT ansible-playbook -vv -l localhost playbooks/docker.yml
+# ENTRYPOINT /bin/bash

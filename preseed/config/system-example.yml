@@ -60,8 +60,8 @@
 
 # The proxy is optional. When specified, it is used to configure apt
 network:
+  # proxy:               # something like http://proxy.example.com:3128/
   domain: example.com
-  proxy: false           # or something like http://proxy.example.com:3128/
   iface: auto            # or use eth0, ens3, etc...
 
 # Country and locales definition
@@ -90,21 +90,14 @@ clock:
 
 # Accounts informations
 # You can choose a strong password here,
-# The public key will be copied on the CD image so you can logon directly onto the system
 root:
   password: H0meb0x
-  pubkey: /home/john/.ssh/id_rsa.pub
 
 # Where to put the ISO image once built. If You are doing development, you can copy it to
 # the libvirt/images folder.
 # You should have the right to write in ths folder.
 # cdimage:
 #   destination: '/var/lib/libvirt/images/'
-
-# Or ready to be put on a USB stick / burned on a CD
-cdimage:
-  destination: '/tmp'
-
 
 # Debug: As it states
 debug: true

@@ -50,7 +50,6 @@
   command: './build.sh {{ system.hostname }}'
   args:
     chdir: '{{ build_dir }}'
-    creates: '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
     
 - name: Rename the ISO image
   tags: preseed
@@ -59,5 +58,4 @@
      {{ build_dir }}/{{ system.hostname }}-install.iso
   args:
     chdir: '{{ build_dir }}'
-    creates: '{{ build_dir }}/{{ system.hostname }}-install.iso'
     
