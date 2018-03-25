@@ -1,0 +1,3 @@
+# Example of public key, not a real one!
+# copy your public key in 'authorized_keys'
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4FP46hNkAkXYq2vVnLrBMz4kVb2PV2NaVPWjuTub9XdYpPyZW7PHZUKKHLVnKvnk3SbRbOYQ1Gu+fCv8vaZjK8m+LdWntg77iLMB3pSV9HUlvUJi8w82UeVSDgdlft+fwuonrygdGpBgtwJom8BVI+nXsA9NJRTl0+jPYPBfIP92PlTQXRwQrvdGw7GezE7A9ydc84hIDh5IAJQNpBs3I0tiuJAmEmZC1cvPayWVlTXRxZRQsc7Yv0H8Kb7+zYjUoheOonHriPautjCrvxwI/G3hyYFr04fYgRYXFbq2eDaqB1YWrVkyFrJP3u2Tl1nIG96Qx12V+JSyiCyOdfErZ Homebox connection key

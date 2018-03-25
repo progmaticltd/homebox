@@ -3,7 +3,12 @@ A set of Ansible scripts to setup your personal mail server (and more) for your 
 
 This project was initially meant to host emails at home, but you can use it on a dedicated or VPS server online.
 
-If you just want - like me - to _securely_ host your emails - _and more_ - but don't want to manually do the full installation process and neither update it every day/week/month, then this project is for you.
+This project is for you if:
+
+- You are interested to host your emails on your personal mail server, at home or online.
+- You want your server to be secure against physical or remote intrusion.
+- You don't want to pass your weekends applying security updates or hacking it.
+- You are happy with Debian, and don't want to rely on a commercial disribution to push security updates.
 
 ## Current status and supported features
  
@@ -21,7 +26,7 @@ If you just want - like me - to _securely_ host your emails - _and more_ - but d
 | Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers                | Done      |  Basic   | 
 | Roundcube webmail, https, sieve filters management, password change, automatic identity creation                    | Done      |  Basic   | 
 | AppArmor securisation for rspamd, nginx, dovecot, postfix                                                           | Done      |   No     | 
-| ISO image builder, with fully encrypted drive using LUKS (¹)                                                        | Done      |          | 
+| ISO image builder, for automatic Debian installation and a fully encrypted drive using LUKS ([preseed](preseed/))   | Done      |          | 
 | Antivirus for the emails with sieve and [clamav](https://www.clamav.net/)                                           | Planned   |          | 
 | Dovecot full text search using [Apache Tika](https://en.wikipedia.org/wiki/Apache_Tika)                             | Planned   |          | 
 | Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned   |          | 
@@ -30,7 +35,6 @@ If you just want - like me - to _securely_ host your emails - _and more_ - but d
 | Automatic encrypted off-site backup, probably with [borg-backup](https://www.borgbackup.org/)                        | Planned   |          | 
 | Jabber server, probably using [ejabberd](https://www.ejabberd.im/)                                                  | Planned   |          |
 
-1) The ISO image provided is meant to ease developpment and installation of the system, it does not include any installer.
 
 ## Basic installation
 
@@ -48,66 +52,20 @@ It is using [Ansible](https://en.wikipedia.org/wiki/Ansible_(software)) scripts,
 The repository contains a few folders you should be familiar with:
 
 - config: Yaml configuration files for your homebox device.
-- preseed: Ansible scripts to create an automatic ISO image installer for testing or live system (experimental)
+- preseed: Dockerfile to create an automatic ISO image installer for testing and live system.
 - install: Ansible scripts to install the whole server environment.
 - backup: Automatic backup of important information after deployment, (see the [readme](./backup/)).
 - sandbox: Put anything you don't want to commit here.
-- doc: Varous documentation, work in progress.
+- doc: Various documentation, work in progress.
 
-### Debian automatic installation using preseed
-
-If you already have a machine to deploy your mail server, you can skip this step.
-
-Although this is experimental and subject to reorganisation, there is a preseed folder, that contains a [Debian preseed file](https://wiki.debian.org/DebianInstaller/Preseed) for a fully automatic installation of a bare Debian. I will document and focus more on these features later.
-
-I am actually working ona an automatic installer with a fully encrypted disk [LUKS](https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup).
-
-### Configure your remote system for root access
-
-I have tested with the Ansible remote user as root, but it is possible to reconfigure the system after the installation to install sudo and create an admin user if necessary.
-
-**_I advise you to keep an SSH connection openen while you are doing the following steps, to avoid locking you out of your server if something goes wrong_**
-
-#### Example to allow SSH as root
-
-To configure a system to be accessible by SSH with the root account, you may need to modify your system.
-
-If you cannot connect as root on your system, for instance if it isrestriced to a specific account, like admin, you will have to modify it slightly:
-
-```
-$ ssh admin@mail.home.lan
-$ sudo bash
-# ...
-```
-
-Activate _secure_ root login via SSH:
-```
-# sed -i 's/^#\?\s*PermitRootLogin.*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
-```
-
-And copy your public ssh key to the root folder, for instance using commands like this
-```
-# test -d /root/.ssh || mkdir /root/.ssh/
-# mv /root/.ssh/authorized_keys /root/.ssh/authorized_keys.backup # not mandatory
-# cp /home/admin/.ssh/authorized_keys /root/.ssh/authorized_keys
-# nano /root/.ssh/authorized_keys
-# systemctl restart ssh
-```
-Then, connect on the system using ssh root@mail.home.lan
-
-```
-$ ssh root@mail.home.lan
-# ...
-```
-
-### Create your host file
+### 1. Create your hosts file
 
 ```
   cd config
   cp hosts-example.yml hosts.yml
 ```
 
-The host file is in YAML format, and contains two host. The first is your homebox server, the second is a machine to build an ISO installer for preseed. If you want to use this experimental feature, you can use localhost. 
+The host file is in YAML format, and contains only one host, which is your homebox server.
 
 Here an example:
 ```
@@ -117,14 +75,11 @@ all:
       ansible_host: 192.168.42.1
       ansible_user: root
       ansible_port: 22
-    cdbuilder:
-      ansible_become: no
-      ansible_host: localhost
-      ansible_user: root
-      ansible_port: 22
 ```
 
-### Create your custom configuration
+I have actually tested with the Ansible remote user as root. However, it should be possible to run as an admin user and use sudo with little modifications.
+
+### 2. Create your custom configuration
 
 The main configuration file to create is in the config folder.
 
@@ -133,8 +88,7 @@ There is an example configuration file available in the config folder [system-ex
 ```
   cd config
   cp system-example.yml system.yml
-  cp hosts-example.yml hosts.yml
-```
+  ```
 
 The system configuration file is a complete YAML configuration file containing all your settings:
 
@@ -148,11 +102,11 @@ The system configuration file is a complete YAML configuration file containing a
   - Firewall policy for SSH
   - Security settings, like AppArmor activation.
 
-The most important settings are the first three one, the others can be left to their default values, except during the development phase.
+The most important settings are the first three sections, the others can be left to their default values, except during the development phase.
 
 This file contains all the network and accounts configuration
 
-### Configure your router to forward email - and web - traffic
+### 3. Network configuration
 
 Initially, the following TCP ports are required:
 
@@ -165,15 +119,15 @@ Initially, the following TCP ports are required:
 
 #### Home installation
 
-Hosting your emails at home require your router to be configured to forward any traffic to your homebox server.
+Hosting your emails at home requires your router to be configured to forward the traffic above to your homebox server.
 
-The easiest way to to create a DMZ in your router. Another approach is to use Upnp to configure your router automatically. This feature will be added.
+The easiest way to to create a DMZ in your router. Another approach is to use Upnp to configure your router automatically. This feature will be added in a future version.
 
 #### Hosted installation
 
-If you are hosted using a professional provider, then you probably don't need help on opening the ports and configuring your platform.
+If you are hosted using a professional provider, then you probably don't need help on opening the ports and configuring your platform. Just use the reference above
 
-### Automatic DNS records creation and update:
+### 4. Automatic DNS records creation and update:
 
 One way to configure your DNS is to use a wildcard entry, that would redirect everything to your homebox. There is also a script that configures your DNS entries automatically. The current version only supports [Gandi](https://gandi.net/).
 
@@ -194,10 +148,10 @@ You should obtain credentials like this:
 I am planning to add more DNS providers, or even to provides a custom DNS server.
 The initial creation of DNS records for certificate generation should take some time. I am thinking to a solution for this.
 
-### Run the Ansible scripts to setup your email server
+### 5. Run the Ansible scripts to setup your email server
 
 The installation folder is using Ansible to setup the mail server
-For instance, inside the install folder, run the following command:
+For instance, you can run the following commands:
 
 ```
 cd install
@@ -233,15 +187,14 @@ During the development phase, you can also run the scripts one by one.
 
 **Note: The scripts are idempotents, you can run then multiple time without error.**
 
-### Automatic backup
+#### Automatic backup
 
 - Once the script has been run, the backup folder contains important files to run your scripts again. See (see the [readme](./backup/))
 
-### Future versions
+## Future versions
 
 I am planning to test / try / add the following features, in *almost* no particular order:
 
-- Create an automatic installer with LUKS setup for the ISO image builder.
 - Install [Sogo](https://sogo.nu/) for caldav / carddav server, with of course LDAP authentication.
 - Add optional components (e.g. [Gogs](https://gogs.io/), [openvpn](https://openvpn.net/), [Syncthing](https://syncthing.net/), etc).
 

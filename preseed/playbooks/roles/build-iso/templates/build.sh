@@ -30,7 +30,7 @@ OPTIONS="--do-mirror ${COMMON_OPTS}"
 simple-cdd $OPTIONS
 
 # Create the miscellaneous files archive
-tar c -C "{{ playbook_dir }}/../misc" -z -f "{{ playbook_dir }}/../build/misc.tgz" .
+tar c -C "{{ playbook_dir }}/../misc" -z -f "{{ build_dir }}/misc.tgz" .
 
 # Build installer CDs for the whole platform
 OPTIONS="--verbose"
