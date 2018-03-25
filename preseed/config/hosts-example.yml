@@ -1,0 +1,9 @@
+# hosts config
+
+all:
+  hosts:
+    localhost:
+      ansible_become: no
+      ansible_host: localhost
+      ansible_user: root
+      ansible_port: 22

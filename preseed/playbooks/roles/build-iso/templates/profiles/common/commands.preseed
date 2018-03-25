@@ -23,6 +23,6 @@
 # packages and run commands in the target system.
 
 # Extract the miscellaneous files into the archives
-d-i preseed/late_command string tar -C /target --no-same-owner -zxf /cdrom/simple-cdd/misc.tgz
+d-i preseed/late_command string tar -C /target -zxf /cdrom/simple-cdd/misc.tgz && chown -R 0:0 /target/root
  
 

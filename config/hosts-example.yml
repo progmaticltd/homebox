@@ -1,20 +1,11 @@
 # Host files for the homebox project
-
-# There is two hosts defined:
-# - homebox: the box that will host the system
-# - cdbuilder: the box that will be used to generate the iso image
-# - It might be a virtual machine host or even your local machine.
-
+# Choose the box that will host the system
+# It might be a virtual machine host or even your local machine.
 
 all:
   hosts:
     homebox:
       ansible_host: homebox.example.home
-      ansible_user: root
-      ansible_port: 22
-    cdbuilder:
-      ansible_become: no
-      ansible_host: vmhost.example.home
       ansible_user: root
       ansible_port: 22
 

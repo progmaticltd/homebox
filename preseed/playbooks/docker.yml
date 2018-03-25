@@ -1,0 +1,8 @@
+---
+
+- hosts: localhost
+  vars_files:
+    - '{{ playbook_dir }}/../config/system.yml'
+  roles:
+    - build-iso
+

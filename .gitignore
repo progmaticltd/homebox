@@ -1,24 +1,15 @@
 # Host file is per user
 hosts
 
-# Variables used for the Debian preseed generation
-preseed/variables/*.yml
-!preseed/variables/*.example.yml
-
 # Ignore the local configuration files
 config/system.yml
 config/hosts.yml
-config/preseed.yml
 
 # Ignore ansible error files
 *.retry
 
 # Ignore editors files
-.vscode
 README.html
-
-# Ignore the authorized_keys file when building the ISO image
-preseed/misc/root/.ssh/authorized_key
 
 # Sandboxing folder to tests
 sandbox/*
@@ -27,6 +18,7 @@ sandbox/*
 # - certificates: Letsencrypt Certificates archives, see the file "certificates/readme.md" for details
 # - dkim: dkim keys 
 # - ldap: LDAP passwords automatically generated
+# - rspamd: rspamd web interface password
 backup/certificates/letsencrypt
 backup/dkim-keys
 backup/ldap
