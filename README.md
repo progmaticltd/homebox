@@ -8,7 +8,7 @@ This project is for you if:
 - You are interested to host your emails on your personal mail server, at home or online.
 - You want your server to be secure against physical or remote intrusion.
 - You don't want to pass your weekends applying security updates or hacking it.
-- You are happy with Debian, and don't want to rely on a commercial disribution to push security updates.
+- You trust the Debian community to push security updates in time.
 
 ## Current status and supported features
  
