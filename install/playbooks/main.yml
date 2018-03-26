@@ -15,5 +15,9 @@
 - import_playbook: cert-imap.yml
 - import_playbook: dovecot.yml
 - import_playbook: roundcube.yml
+
+# Automatic configuration for email clients.
 - import_playbook: autodiscover.yml
+  when: mail.autodiscover
 - import_playbook: autoconfig.yml
+  when: mail.autoconfig

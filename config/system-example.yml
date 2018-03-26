@@ -32,8 +32,10 @@ users:
 # Email related options
 mail:
   max_attachment_size: 25   # In megabytes
+  autoconfig: true          # Support Thunderbird automatic configuration
+  autodiscover: false       # Support MS Outlook automatic configuration (uses https)
   quota:
-    default: 1G             # Maximul allowed mailbox size for your users.
+    default: 1G             # Maximum allowed mailbox size for your users.
                             # The safe maximum value will be automatically computed in a next version.
   discard_duplicates: true  # Discard duplicates messages. It is safe, but you can disable if you are worried
                             # The default timerange is 1h
