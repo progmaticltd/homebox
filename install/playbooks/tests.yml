@@ -72,6 +72,13 @@
     - '{{ playbook_dir }}/defaults/main.yml'
   roles:
     - tests-roundcube
+
+# Autoconfig / Autodiscover tests (when using it)
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/defaults/main.yml'
+  roles:
     - tests-autoconfig
     - tests-autodiscover
 

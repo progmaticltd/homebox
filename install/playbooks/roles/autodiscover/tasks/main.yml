@@ -22,7 +22,7 @@
     group: root
     mode: 0644
 
-- name: Enable nginx site
+- name: Enable nginx sit
   file:
     src: /etc/nginx/sites-available/autodiscover.conf
     dest: /etc/nginx/sites-enabled/autodiscover.conf
