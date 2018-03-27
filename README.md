@@ -30,9 +30,9 @@ This project is for you if:
 | Antivirus for inbound / outbound emails with [clamav](https://www.clamav.net/)                                      | Working on |          | 
 | Dovecot full text search in emails and attachments.                                                                 | Planned   |          | 
 | Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned   |          | 
-| Web proxy with privacy and parent filtering features, probably using [privoxy](https://www.privoxy.org/)            | Planned   |          | 
+| Web proxy with privacy and parent filtering features                                                                | Planned   |          | 
 | Automatic migration from old mail server using imap synchronisation                                                 | Planned   |          | 
-| Automatic encrypted off-site backup, probably with [borg-backup](https://www.borgbackup.org/)                        | Planned   |          | 
+| Automatic encrypted off-site backup, probably with [borg-backup](https://www.borgbackup.org/)                       | Planned   |          | 
 | Jabber server, probably using [ejabberd](https://www.ejabberd.im/)                                                  | Planned   |          |
 
 
