@@ -5,15 +5,23 @@
 - import_playbook: system-prepare.yml
 - import_playbook: ldap.yml
 - import_playbook: homes.yml
+
+# System protection: antivirus / antispam
 - import_playbook: rspamd.yml
+- import_playbook: clamav.yml
+
 - import_playbook: opendmarc.yml
 - import_playbook: cert-smtp.yml
 - import_playbook: opendkim.yml
+  
 - import_playbook: postfix.yml
+  
 - import_playbook: dns-update.yml
+  
 - import_playbook: cert-pop3.yml
 - import_playbook: cert-imap.yml
 - import_playbook: dovecot.yml
+  
 - import_playbook: roundcube.yml
 
 # Automatic configuration for email clients.
@@ -21,3 +29,5 @@
   when: mail.autodiscover
 - import_playbook: autoconfig.yml
   when: mail.autoconfig
+
+# Install mailboxes synchronisation to import emails from other platforms

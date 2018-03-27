@@ -1,0 +1,5 @@
+
+- name: Restart clamsmtpd
+  service:
+    name: clamsmtp
+    state: restarted

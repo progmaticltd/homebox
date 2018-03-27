@@ -1,0 +1,28 @@
+---
+
+- name: Install clamav antivirus suite
+  apt:
+    name: '{{ pkg }}'
+    state: latest
+  with_items:
+    - clamav
+    - clamav-base
+    - clamav-freshclam
+    - clamdscan
+    - clamsmtp
+  loop_control:
+    loop_var: pkg
+
+- name: Set up the configuration file
+  notify: Restart clamsmtpd
+  template:
+    src: clamsmtpd.conf
+    dest: /etc/clamsmtpd.conf
+
+- name: Copy th virus alert script
+  template:
+    src: virus-alert.sh
+    dest: /usr/local/bin/virus-alert.sh
+    owner: clamsmtp
+    group: clamsmtp
+    mode: '0700'

@@ -117,7 +117,11 @@ smtpd_recipient_restrictions =
     reject_rbl_client {{ url }}
 {% endfor %}
     permit
-    
+
+# Content filtering: Antivirus using clamsmtp
+content_filter = scan:127.0.0.1:{{ filter_antivirus_port + 1 }}
+receive_override_options = no_address_mappings 
+
 # SPF policies
 policy-spf_time_limit = 3600s
 
