@@ -27,7 +27,7 @@ This project is for you if:
 | Roundcube webmail, https, sieve filters management, password change, automatic identity creation                    | Done      |  Basic   | 
 | AppArmor securisation for rspamd, nginx, dovecot, postfix                                                           | Done      |   No     | 
 | ISO image builder, for automatic Debian installation and a fully encrypted drive using LUKS ([preseed](preseed/))   | Done      |          | 
-| Antivirus for the emails with sieve and [clamav](https://www.clamav.net/)                                           | Planned   |          | 
+| Antivirus for inbound / outbound emails with [clamav](https://www.clamav.net/)                                      | Working on |          | 
 | Dovecot full text search using [Apache Tika](https://en.wikipedia.org/wiki/Apache_Tika)                             | Planned   |          | 
 | Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned   |          | 
 | Web proxy with privacy and parent filtering features, probably using [privoxy](https://www.privoxy.org/)            | Planned   |          | 
