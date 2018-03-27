@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# This script is called when a virus has been sent from one of the user
+# in the domain.
+
+# TODO: Translate in other languages
+
 # Initialise the log file, and redirect stdout
 logfile="/var/log/clamav/clamsmtp.log"
 exec 1>>$logfile
@@ -13,8 +18,8 @@ now=$(date +'%Y-%m-%d %H:%m:%s')
 # If the sender is in the internal domain, send an email
 if [[ "${SENDER}" =~ "@{{ network.domain }}" ]]; then
 
-# Will be in the logs
-	echo "${now}: Virus found for ${RECIPIENTS}, sending a warning email to sender ${SENDER}."
+    # Will be in the logs
+    echo "${now}: Virus found for ${RECIPIENTS}, sending a warning email to sender ${SENDER}."
 
     # email subject
     subject="Virus detected: ($VIRUS)"
@@ -28,7 +33,7 @@ if [[ "${SENDER}" =~ "@{{ network.domain }}" ]]; then
 The email has been discarded, check your workstation for viruses!
 \n\n\n
 -- \n
-The Postmater"
+The Postmaster"
 
     # Send the email
     echo -e ${body} | mail -a 'X-Postmaster-Alert: virus' \
