@@ -6,12 +6,14 @@
 # TODO: Translate in other languages
 
 # Initialise the log file, and redirect stdout
+{% if not system.debug %}
 logfile="/var/log/clamav/clamsmtp.log"
 exec 1>>$logfile
 
 # Initialise the errors file, and redirect stderr
 errorfile="/var/log/clamav/clamsmtp-errors.log"
 exec 2>>$errorfile
+{% endif %}
 
 now=$(date +'%Y-%m-%d %H:%m:%s')
 
@@ -19,26 +21,36 @@ now=$(date +'%Y-%m-%d %H:%m:%s')
 if [[ "${SENDER}" =~ "@{{ network.domain }}" ]]; then
 
     # Will be in the logs
-    echo "${now}: Virus found for ${RECIPIENTS}, sending a warning email to sender ${SENDER}."
+    echo "${now}: Virus found from ${SENDER}, sending an email to the sender."
 
-    # email subject
-    subject="Virus detected: ($VIRUS)"
+    # Get the email subject from the default template
+    subject="$(head -n 1 /etc/clamsmtp/virus-alert-default.eml)"
 
-    # Email body
-    body="An email coming from your email address (${SENDER}) has been found with a virus.\n
-\n
-- The virus is identified by ClamAV as '${VIRUS}'.\n
-- The final recipient(s) were ${RECIPIENTS}\n
-\n\n
-The email has been discarded, check your workstation for viruses!
-\n\n\n
--- \n
-The Postmaster"
+    # Flaten the list of recipients
+    RECIPIENTS_FLAT=$(echo "${RECIPIENTS}" | tr '\n' ';' | sed 's/;$//')
 
-    # Send the email
-    echo -e ${body} | mail -a 'X-Postmaster-Alert: virus' \
-			   -r 'postmaster@{{ network.domain }}' \
-			   -s "${subject}" -- $SENDER
+    # Get the type of IP address
+    IP_PRIVATE=$(ipcalc -n -c ${REMOTE} | grep 'Private' | wc -l)
+
+    # Add more details about the IP address to the email
+    if [[ "${IP_PRIVATE}" = "1" ]]; then
+	IP_DETAILS="https://en.wikipedia.org/wiki/Private_network"
+    else
+	IP_DETAILS="https://getmyipaddress.org/ipwhois.php?ip=${REMOTE}"
+    fi
+    
+    # Parse the body and send the email alert
+    tail -n +3 /etc/clamsmtp/virus-alert-default.eml | \
+	sed "s/{SENDER}/${SENDER}/g" | \
+	sed "s/{VIRUS}/${VIRUS}/g" | \
+	sed "s/{REMOTE}/${REMOTE}/g" | \
+	sed "s|{IP_DETAILS}|${IP_DETAILS}|g" | \
+	sed "s/{RECIPIENTS}/${RECIPIENTS_FLAT}/g" | \
+	sed "s/;/\n  - /" | \
+	mail -a 'X-Postmaster-Alert: virus' \
+	     -r 'postmaster@{{ network.domain }}' \
+	     -b 'postmaster@{{ network.domain }}' \
+	     -s "${subject}" -- ${SENDER}
 else
-    echo "${now}: Virus found from ${SENDER} to ${RECIPIENTS}, dropped: not in domain {{ network.domain }}."
+    echo "${now}: Virus from ${SENDER} at ${REMOTE} to ${RECIPIENTS}; dropped."
 fi

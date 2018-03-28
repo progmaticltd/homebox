@@ -10,6 +10,7 @@
     - clamav-freshclam
     - clamdscan
     - clamsmtp
+    - ipcalc
   loop_control:
     loop_var: pkg
 
@@ -19,7 +20,31 @@
     src: clamsmtpd.conf
     dest: /etc/clamsmtpd.conf
 
-- name: Copy th virus alert script
+- name: Get the remote locale
+  tags: locale
+  set_fact:
+    lang: '{{ ansible_env.LANG | regex_replace("\..*", "") }}'
+
+- name: Create the clamsmtp templates directory
+  file:
+    path: /etc/clamsmtp
+    state: directory
+    owner: clamsmtp
+    group: clamsmtp
+    mode: '0700'
+
+- name: Copy the virus alert template
+  template:
+    src: '{{ item }}'
+    dest: '/etc/clamsmtp/virus-alert-default.eml'
+    owner: clamsmtp
+    group: clamsmtp
+    mode: '0600'
+  with_first_found:
+    - 'virus-alert-{{ lang }}.eml'
+    - 'virus-alert-default.eml'
+
+- name: Copy the virus alert script
   template:
     src: virus-alert.sh
     dest: /usr/local/bin/virus-alert.sh

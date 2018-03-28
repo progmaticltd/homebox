@@ -1,0 +1,22 @@
+Virus detected from your email address.
+--
+Hello,
+
+A virus has been sent using your email address ({SENDER}).
+
+- The virus is identified by ClamAV as "{VIRUS}".
+- The remote IP address is "{REMOTE}".
+- The intended recipient(s) were:
+  - {RECIPIENTS}
+
+The email has been discarded and not transferred, please:
+
+- Check your workstation for viruses,
+- Change your password, using https://webmail.{{ network.domain }}/
+- Download an antivirus, for instance at https://www.clamav.net/
+
+More details about the source IP address:
+{IP_DETAILS}
+
+-- 
+The Postmaster
