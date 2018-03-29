@@ -129,10 +129,14 @@ policy-spf  unix  -       n       n       -       -       spawn
 
 
 # Antivirus scanner
+# See http://www.postfix.org/FILTER_README.html
 scan      unix  -       -       n       -       16      smtp 
   -o smtp_send_xforward_command=yes 
+  -o disable_mime_output_conversion=yes
+  -o smtp_generic_maps=
+  -o smtp_enforce_tls=no
 
-# Antivirus scanner: Injecting mail back into postfix from the filter 
+# Antivirus scanner: Injecting mail back into postfix from the filter
 127.0.0.1:{{ filter_antivirus_port }} inet  n -       n       -       16      smtpd 
   -o content_filter= 
   -o receive_override_options=no_unknown_recipient_checks,no_header_body_checks
