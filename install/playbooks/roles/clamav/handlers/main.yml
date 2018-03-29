@@ -1,5 +1,10 @@
 
-- name: Restart clamsmtpd
+- name: Restart clamav services
   service:
-    name: clamsmtp
+    name: '{{ service }}'
     state: restarted
+  with_items:
+    - clamsmtp
+    - clamav-daemon
+  loop_control:
+    loop_var: service

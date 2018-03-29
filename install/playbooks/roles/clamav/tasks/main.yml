@@ -7,6 +7,7 @@
   with_items:
     - clamav
     - clamav-base
+    - clamav-daemon
     - clamav-freshclam
     - clamdscan
     - clamsmtp
@@ -15,7 +16,7 @@
     loop_var: pkg
 
 - name: Set up the configuration file
-  notify: Restart clamsmtpd
+  notify: Restart clamav services
   template:
     src: clamsmtpd.conf
     dest: /etc/clamsmtpd.conf
