@@ -111,10 +111,11 @@ security:
 # Webmail configuration
 # You can uncomment this block to customise roundcube,
 # Be careful, some plugins are not working yet !!!
+# webmail: roundcube # or false to skip webmail installation
 # roundcube:
 #   url: 'webmail.{{ network.domain }}'
 #   title: 'Roundcube Webmail ({{ ldap.organization.domain }})'
-#   enigma: no
+#   enigma: no # not stable yet
 #   plugins:
 #     - password
 #     - archive

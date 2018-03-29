@@ -1,7 +1,6 @@
 ---
 
 - name: Install nginx
-  tags: nginx
   apt:
     name: "{{ pkg }}"
     state: installed
@@ -13,8 +12,8 @@
 ################################################################################
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
-- name: Allow slapd and nslcd daemons to access the certificate directories
-  tags: ldap,ssl
+- name: Allow the web server to access certificates
+  tags: ssl
   notify: Restart nginx
   when: system.ssl == 'letsencrypt'
   vars:
@@ -33,7 +32,6 @@
 # End of TLS / SSL Configuration ###############################################
 
 - name: Disable nginx default site
-  tags: nginx
   notify: Restart nginx
   file:
     path: '/etc/nginx/sites-enabled/default'
@@ -41,7 +39,7 @@
     force: yes
 
 - name: Configure the firewall for default access
-  tags: nginx, security
+  tags: ufw, security
   ufw:
     rule: allow
     proto: tcp
@@ -49,27 +47,22 @@
     port: '{{ rule.port }}'
     comment: '{{ rule.comment }}'
   with_items:
-    - comment: Allow http access (might be redirect to https)
-      port: 80
-    - comment: Allow https access
-      port: 443
+    - comment: Allow http/https access
+      port: 80,443
   loop_control:
     loop_var: rule
 
 # AppArmor configuration ======================================================
-- name: Install a basic nginx AppArmor profile
+
+- name: Install nginx AppArmor profile
   when: security.app_armor
-  tags: nginx, security, apparmor
+  tags: security, apparmor
   template:
     src: 'apparmor.d/usr.sbin.nginx'
     dest: '/etc/apparmor.d/usr.sbin.nginx'
 
 - name: Activate AppArmor profiles
   when: security.app_armor
-  tags: nginx, security, apparmor
+  tags: roundcube, security, apparmor
+  command: 'aa-enforce usr.sbin.nginx'
   notify: Restart AppArmor service
-  command: 'aa-enforce {{ aa_config }}'
-  with_items:
-    - usr.sbin.nginx
-  loop_control:
-    loop_var: aa_config
