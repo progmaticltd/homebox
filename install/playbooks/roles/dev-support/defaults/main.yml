@@ -19,5 +19,6 @@ devel:
     - file
     - swaks
     - curl
+    - locate
   root:
     shell: /bin/bash

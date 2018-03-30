@@ -82,6 +82,11 @@ $config['des_key'] = '{{ makepasswd.stdout }}';
 // Debian: install roundcube-plugins first to have any
 $config['plugins'] = {{ plugins }};
 
+# {% if mail.master_user is defined %}
+# Add the dovecot impersonate plugin
+$config['plugins'][] = 'dovecot_impersonate';
+# {% endif %}
+
 // skin name: folder from skins/
 $config['skin'] = 'larry';
 

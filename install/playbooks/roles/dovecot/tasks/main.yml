@@ -145,6 +145,31 @@
   loop_control:
     loop_var: rule
 
+# Dovecot impersonate feature =================================================
+- name: Initialise the master user password parameters
+  when: mail.impersonate.active
+  tags: impersonate
+  set_fact:
+    master_password_params: "{{ playbook_dir }}/../../backup/ldap/master.pwd {{ policies.system.password }}"
+
+- name: Create the master user account
+  when: mail.impersonate.active
+  tags: impersonate
+  set_fact:
+    master_password: '{{ lookup("password", master_password_params) }}'
+
+- name: Create the master user account
+  when: mail.impersonate.active
+  tags: impersonate
+  htpasswd:
+    path: /etc/dovecot/master-users
+    name: '{{ mail.impersonate.master }}'
+    password: '{{ master_password }}'
+    owner: dovecot
+    group: dovecot
+    mode: '0400'
+    crypt_scheme: ldap_sha1
+
 # AppArmor configuration ======================================================
 - name: Install some dovecot AppArmor profile
   when: security.app_armor
@@ -193,4 +218,3 @@
     - usr.lib.dovecot.ssl-params
   loop_control:
     loop_var: aa_config
-

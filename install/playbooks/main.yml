@@ -5,15 +5,37 @@
 - import_playbook: system-prepare.yml
 - import_playbook: ldap.yml
 - import_playbook: homes.yml
+
+# System protection: antispam
 - import_playbook: rspamd.yml
+
+# System protection: antivirus
+- import_playbook: clamav.yml
+  when: mail.antivirus.active
+
+# Email server: MTA
+- import_playbook: opendkim.yml
 - import_playbook: opendmarc.yml
 - import_playbook: cert-smtp.yml
-- import_playbook: opendkim.yml
 - import_playbook: postfix.yml
+
+# Create DNS entries (Only Gandi for now)
 - import_playbook: dns-update.yml
+
 - import_playbook: cert-pop3.yml
 - import_playbook: cert-imap.yml
 - import_playbook: dovecot.yml
+
+# Install nginx as the default web server, if needed
+- import_playbook: nginx.yml
+  when: webmail.install or mail.autodiscover or mail.autoconfig
+
+# Install the selected webmail
 - import_playbook: roundcube.yml
+  when: webmail.install and webmail.type == 'roundcube'
+
+# Automatic configuration for email clients.
 - import_playbook: autodiscover.yml
+  when: mail.autodiscover
 - import_playbook: autoconfig.yml
+  when: mail.autoconfig

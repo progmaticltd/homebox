@@ -1,6 +1,7 @@
 ---
 
 - name: Install an XML linter
+  when: mail.autodiscover
   tags: systemctl, autodiscover
   apt:
     name: '{{ pkg }}'
@@ -11,6 +12,7 @@
     loop_var: pkg
 
 - name: Download the XML autodiscover file
+  when: mail.autodiscover
   tags: systemctl, autodiscover
   vars:
     email: '{{ users[0].mail }}'
@@ -22,10 +24,12 @@
     dest: /tmp/autodiscover.xml
 
 - name: Check the autodiscover answer is valid
+  when: mail.autodiscover
   tags: systemctl, autodiscover
   shell: xmllint /tmp/autodiscover.xml
 
 - name: Remove the downloaded file
+  when: mail.autodiscover
   tags: systemctl, autodiscover
   file:
     path: /tmp/autodiscover.xml
