@@ -100,8 +100,11 @@
   tags: postfix
   register: email_found
   shell: >-
-    sleep 3 && grep -l "Subject: {{ test_subject }}"
+    grep -l "Subject: {{ test_subject }}"
     /home/users/{{ users[1].uid }}/mails/maildir/new/*
+  until: email_found.rc == 0
+  retries: 5
+  delay: 1
 
 - name: Check if this specific email has been signed
   tags: postfix

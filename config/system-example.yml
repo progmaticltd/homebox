@@ -27,7 +27,7 @@ users:
   password: 'Tlwril!8'
   aliases:
     - jane@homebox.space
-  
+
 ###############################################################################
 # Email related options
 mail:
@@ -39,13 +39,21 @@ mail:
                             # The safe maximum value will be automatically computed in a next version.
   discard_duplicates: true  # Discard duplicates messages. It is safe, but you can disable if you are worried
                             # The default timerange is 1h
+  antivirus:                # Check inbound and outbound emails for viruses
+    active: true            # or false
+    send_warnings: false    # Send a warning email to - internal - users who are sending viruses
+  impersonate:              # Activate dovecot "master" user feature, ideal for families and communities
+    active: false           # https://wiki2.dovecot.org/Authentication/MasterUsers
+    master: master          # master user name
+    separator: '*'          # Separation char between master user / real user name. I personally use '/'
+  #############################################################################
   advanced_features: false  # Use some advanced features that will need the latest version of dovecot
                             # from stretch-backports, like those below.
                             # like sending emails to an international addresses (e.g. andré@homebox.space)
   recipient_delimiter: '+'  # The characters you want to use to split email address from mailbox, i.e.:
                             # when receiving a message to john+lists@example.com, it should go directly to
-                            # the 'lists' folder...
-  
+                            # the 'lists' folder... I personally use '~'
+
 ###############################################################################
 # Default password policies for users
 passwords:
@@ -111,9 +119,12 @@ security:
 # Webmail configuration
 # You can uncomment this block to customise roundcube,
 # Be careful, some plugins are not working yet !!!
-# webmail: roundcube # or false to skip webmail installation
-# roundcube:
+# webmail:
+#   type: roundcube
+#   install: yes
 #   url: 'webmail.{{ network.domain }}'
+# roundcube:
+#   url: '{{ webmail.url }}'
 #   title: 'Roundcube Webmail ({{ ldap.organization.domain }})'
 #   enigma: no # not stable yet
 #   plugins:

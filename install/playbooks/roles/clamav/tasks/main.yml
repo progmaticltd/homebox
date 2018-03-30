@@ -34,7 +34,7 @@
     group: clamsmtp
     mode: '0700'
 
-- name: Copy the virus alert template
+- name: Copy the virus alert templates
   template:
     src: '{{ item }}'
     dest: '/etc/clamsmtp/virus-alert-default.eml'
@@ -45,10 +45,42 @@
     - 'virus-alert-{{ lang }}.eml'
     - 'virus-alert-default.eml'
 
+- name: Cretae the logs folder for clamsmtp
+  file:
+    path: /var/log/clamsmtp
+    owner: clamsmtp
+    group: clamsmtp
+    mode: '0700'
+    state: directory
+
 - name: Copy the virus alert script
-  template:
+  copy:
     src: virus-alert.sh
     dest: /usr/local/bin/virus-alert.sh
     owner: clamsmtp
     group: clamsmtp
-    mode: '0700'
+    mode: '0755'
+
+# AppArmor configuration ======================================================
+- name: Install some dovecot AppArmor profile
+  when: security.app_armor
+  tags: security, apparmor
+  register: aa_templates
+  template:
+    src: 'apparmor.d/{{ aa_config }}'
+    dest: '/etc/apparmor.d/{{ aa_config }}'
+  with_items:
+    - usr.sbin.clamsmtpd
+  loop_control:
+    loop_var: aa_config
+
+- name: Activate AppArmor profiles
+  when: security.app_armor and aa_templates.changed
+  tags: security, apparmor
+  notify: Restart AppArmor service
+  command: 'aa-complain {{ aa_config }}'
+  with_items:
+    - usr.bin.freshclam
+    - usr.sbin.clamd
+  loop_control:
+    loop_var: aa_config

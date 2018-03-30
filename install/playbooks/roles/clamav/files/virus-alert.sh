@@ -1,27 +1,21 @@
-#!/bin/bash
+#!/bin/dash
 
 # This script is called when a virus has been sent from one of the user
 # in the domain.
 
-# TODO: Translate in other languages
+now=$(date --rfc-3339=seconds)
 
-# Initialise the log file, and redirect stdout
-{% if not system.debug %}
-logfile="/var/log/clamav/clamsmtp.log"
-exec 1>>$logfile
+# Get IP address details
+hostname=$(hostname)
+domain=$(hostname -f | sed "s/$hostname\.//g")
+internal=$(echo "${SENDER}" | grep "${domain}" | wc -l)
 
-# Initialise the errors file, and redirect stderr
-errorfile="/var/log/clamav/clamsmtp-errors.log"
-exec 2>>$errorfile
-{% endif %}
+logfile=/var/log/clamsmtp/virus-alerts.log
 
-now=$(date +'%Y-%m-%d %H:%m:%s')
-
-# If the sender is in the internal domain, send an email
-if [[ "${SENDER}" =~ "@{{ network.domain }}" ]]; then
+if [ "$internal" = "1" ]; then
 
     # Will be in the logs
-    echo "${now}: Virus found from ${SENDER}, sending an email to the sender."
+    echo "${now}: Virus found from ${SENDER}, sending an email to the sender." >>${logfile}
 
     # Get the email subject from the default template
     subject="$(head -n 1 /etc/clamsmtp/virus-alert-default.eml)"
@@ -33,12 +27,13 @@ if [[ "${SENDER}" =~ "@{{ network.domain }}" ]]; then
     IP_PRIVATE=$(ipcalc -n -c ${REMOTE} | grep 'Private' | wc -l)
 
     # Add more details about the IP address to the email
-    if [[ "${IP_PRIVATE}" = "1" ]]; then
-	IP_DETAILS="https://en.wikipedia.org/wiki/Private_network"
+    if [ "${IP_PRIVATE}" = "1" ]; then
+	mac=$(cat /proc/net/arp | grep "${REMOTE}" | sed 's/\s\+/|/g' | cut -d '|' -f 4)
+	IP_DETAILS="MAC address: ${mac}"
     else
 	IP_DETAILS="https://getmyipaddress.org/ipwhois.php?ip=${REMOTE}"
     fi
-    
+
     # Parse the body and send the email alert
     tail -n +3 /etc/clamsmtp/virus-alert-default.eml | \
 	sed "s/{SENDER}/${SENDER}/g" | \
@@ -48,9 +43,10 @@ if [[ "${SENDER}" =~ "@{{ network.domain }}" ]]; then
 	sed "s/{RECIPIENTS}/${RECIPIENTS_FLAT}/g" | \
 	sed "s/;/\n  - /" | \
 	mail -a 'X-Postmaster-Alert: virus' \
-	     -r 'postmaster@{{ network.domain }}' \
-	     -b 'postmaster@{{ network.domain }}' \
+	     -r 'postmaster@homebox.space' \
+	     -b 'postmaster@homebox.space' \
 	     -s "${subject}" -- ${SENDER}
+
 else
-    echo "${now}: Virus from ${SENDER} at ${REMOTE} to ${RECIPIENTS}; dropped."
+    echo "${now}: Virus from ${SENDER} at ${REMOTE} to ${RECIPIENTS}; dropped." >>${logfile}
 fi
