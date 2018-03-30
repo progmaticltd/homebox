@@ -29,3 +29,9 @@ if envelope :matches "to" "*@{{ network.domain }}" {
 if string :is "${from}{{ mail.recipient_delimiter }}Sent" "${to}" {
   setflag "\\seen";
 }
+
+# Flag the Homebox email alerts
+if header :matches "X-Postmaster-Alert" "*" {
+  addflag "$label1";
+  stop;
+}

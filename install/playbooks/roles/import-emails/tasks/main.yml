@@ -1,0 +1,11 @@
+---
+
+- name: Install isync package
+  apt:
+    name: '{{ pkg }}'
+    state: latest
+  with_items:
+    - isync
+  loop_control:
+    loop_var: pkg
+

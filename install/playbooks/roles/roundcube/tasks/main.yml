@@ -28,36 +28,6 @@
   loop_control:
     loop_var: pkg
 
-################################################################################
-# At this point, the certificates should have been created already #############
-# in order to have SSL and TLS encryption activated.                           #
-- name: Allow slapd and nslcd daemons to access the certificate directories
-  tags: ldap,ssl
-  notify: Restart nginx
-  when: system.ssl == 'letsencrypt'
-  vars:
-    details:
-      - [ /etc/letsencrypt/archive, /etc/letsencrypt/live ]
-      - [ www-data ]
-  acl:
-    path: '{{ item[0] }}'
-    entity: '{{ item[1] }}'
-    etype: user
-    permissions: rx
-    state: present
-  with_nested: '{{ details }}'
-
-#                                                                              #
-# End of TLS / SSL Configuration ###############################################
-
-- name: Disable nginx default site
-  tags: roundcube
-  notify: Restart nginx
-  file:
-    path: '/etc/nginx/sites-enabled/default'
-    state: absent
-    force: yes
-
 - name: Compute max upload size from max attachment size
   tags: roundcube
   set_fact:
@@ -100,11 +70,33 @@
   shell: makepasswd --chars=24
   register: makepasswd
 
+- name: Create the dovecot impersonate configuration
+  tags: impersonate
+  when: mail.impersonate.active
+  template:
+    src: dovecot_impersonate.php
+    dest: '/etc/roundcube/plugins/dovecot-impersonate/config.inc.php'
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Create the dovecot impersonate configuration
+  tags: impersonate
+  when: mail.impersonate.active
+  set_fact:
+    roundcube_plugins: '{{ roundcube.plugins | union(["dovecot_impersonate"]) }}'
+
+- name: Create the dovecot impersonate configuration
+  tags: impersonate
+  when: not mail.impersonate.active
+  set_fact:
+    roundcube_plugins: roundcube.plugins
+
 - name: Copy roundcube configuration
   tags: roundcube
   notify: Restart nginx
   vars:
-    plugins: ' [''{{ roundcube.plugins | join(", "|quote) }}'' ]'
+    plugins: ' [''{{ roundcube_plugins | join(", "|quote) }}'' ]'
   template:
     src: '{{ file }}'
     dest: '/etc/roundcube/{{ file }}'
@@ -131,6 +123,23 @@
   loop_control:
     loop_var: file
 
+# There is bugs in the name of the symbolic links on Debian
+# https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=roundcube-plugins-extra;dist=unstable
+- name: Make sure the plugins are correctly named
+  command: >-
+    mv '/var/lib/roundcube/plugins/{{ folder.old }}' '/var/lib/roundcube/plugins/{{ folder.new }}'
+  args:
+    creates: '/var/lib/roundcube/plugins/{{ folder.new }}'
+  with_items:
+    - old: keyboard-shortcuts
+      new: keyboard_shortcuts
+    - old: thunderbird-labels
+      new: thunderbird_labels
+    - old: dovecot-impersonate
+      new: dovecot_impersonate
+  loop_control:
+    loop_var: folder
+
 - name: Enable nginx site
   tags: roundcube
   notify: Restart nginx
@@ -140,7 +149,7 @@
     state: link
 
 # There is bugs in the name of the symbolic links on Debian
-# https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=roundcube-plugins-extra;dist=unstable 
+# https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=roundcube-plugins-extra;dist=unstable
 - name: Make sure the plugins are correctly named
   tags: roundcube
   notify: Restart nginx
@@ -154,22 +163,6 @@
       new: thunderbird_labels
   loop_control:
     loop_var: folder
-
-- name: Configure the firewall for default access
-  tags: roundcube, security
-  ufw:
-    rule: allow
-    proto: tcp
-    src: any
-    port: '{{ rule.port }}'
-    comment: '{{ rule.comment }}'
-  with_items:
-    - comment: Allow http access, but it will be redirected to https directly
-      port: 80
-    - comment: Allow https access to the webmail
-      port: 443
-  loop_control:
-    loop_var: rule
 
 # AppArmor configuration ======================================================
 
@@ -194,5 +187,3 @@
   tags: roundcube, security, apparmor
   command: 'aa-enforce usr.sbin.nginx'
   notify: Restart AppArmor service
-
-

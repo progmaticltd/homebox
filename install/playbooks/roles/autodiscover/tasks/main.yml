@@ -1,13 +1,11 @@
 ---
 
 - name: Create the autoconfiguration directories
-  tags: autoconfig
   file:
     path: /var/www/autodiscover/autodiscover/
     state: directory
 
 - name: Copy XML template
-  tags: autoconfig
   template:
     src: autodiscover.xml
     dest: /var/www/autodiscover/autodiscover/autodiscover.xml
@@ -16,7 +14,6 @@
     mode: 0644
 
 - name: Create the autodiscover site
-  tags: autoconfig
   notify: Restart nginx server
   template:
     src: autodiscover.conf
@@ -25,8 +22,7 @@
     group: root
     mode: 0644
 
-- name: Enable nginx site
-  tags: autoconfig
+- name: Enable nginx sit
   file:
     src: /etc/nginx/sites-available/autodiscover.conf
     dest: /etc/nginx/sites-enabled/autodiscover.conf
@@ -36,14 +32,14 @@
 
 - name: Install nginx AppArmor profile
   when: security.app_armor
-  tags: autoconfig, security, apparmor
+  tags: security, apparmor
   template:
     src: 'apparmor.d/local/autodiscover'
     dest: '/etc/apparmor.d/local/autodiscover'
 
 - name: Add autodiscover AppAromor specific configuration
   when: security.app_armor
-  tags: autoconfig, security, apparmor
+  tags: security, apparmor
   register: aa_config
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
@@ -52,7 +48,7 @@
 
 - name: Activate AppArmor profiles
   when: security.app_armor and aa_config.changed
-  tags: autoconfig, security, apparmor
+  tags: security, apparmor
   command: 'aa-enforce usr.sbin.nginx'
   notify: Restart AppArmor service
 
