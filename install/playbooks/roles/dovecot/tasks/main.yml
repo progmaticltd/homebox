@@ -145,6 +145,28 @@
   loop_control:
     loop_var: rule
 
+- name: Initialise the master user password parameters
+  when: mail.master_user is defined
+  tags: master_user
+  set_fact:
+    master_password_params: "{{ playbook_dir }}/../../backup/ldap/master.pwd {{ policies.system.password }}"
+    
+- name: Create the master user account
+  when: mail.master_user is defined
+  tags: master_user
+  set_fact:
+    master_password: '{{ lookup("password", master_password_params) }}'
+
+- name: Create the master user account
+  tags: master_user
+  when: mail.master_user is defined
+  template:
+    src: master-users
+    dest: /etc/dovecot/master-users
+    owner: dovecot
+    group: dovecot
+    mode: '0600'
+
 # AppArmor configuration ======================================================
 - name: Install some dovecot AppArmor profile
   when: security.app_armor
