@@ -39,3 +39,6 @@
   when: mail.autodiscover
 - import_playbook: autoconfig.yml
   when: mail.autoconfig
+
+# Add the old emails import scripts for each users
+- import_playbook: migrate-emails.yml
