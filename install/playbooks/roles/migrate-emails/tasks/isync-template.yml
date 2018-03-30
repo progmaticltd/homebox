@@ -1,0 +1,13 @@
+---
+
+- name: Create a migration file for each account
+  template:
+    src: 'isync-{{ account.type }}.conf'
+    dest: '/home/users/{{ user.uid }}/mails/import/{{ account.name }}-{{ account.type }}.conf'
+    owner: '{{ user.uid }}'
+    group: users
+    mode: 0600
+  with_items:
+    - '{{ user.migrate | default([]) }}'
+  loop_control:
+    loop_var: account

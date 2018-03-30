@@ -1,0 +1,7 @@
+# Copy the emails migration scripts
+
+- hosts: homebox
+  vars_files:
+    - ../../config/system.yml
+  roles:
+    - migrate-emails
