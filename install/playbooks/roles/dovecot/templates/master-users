@@ -1,1 +1,0 @@
-{{ mail.master_user }}:{SHA512}{{ master_password | password_hash('sha512') }}

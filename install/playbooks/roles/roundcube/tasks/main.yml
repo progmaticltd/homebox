@@ -71,11 +71,11 @@
   register: makepasswd
 
 - name: Create the dovecot impersonate configuration
-  tags: master_user
-  when: mail.master_user is defined
+  tags: impersonate
+  when: mail.impersonate.active
   template:
     src: dovecot_impersonate.php
-    dest: '/etc/roundcube/dovecot_impersonate.php'
+    dest: '/etc/roundcube/plugins/dovecot-impersonate/config.inc.php'
     owner: root
     group: root
     mode: 0644
@@ -110,6 +110,23 @@
     - new_user_identity
   loop_control:
     loop_var: file
+
+# There is bugs in the name of the symbolic links on Debian
+# https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=roundcube-plugins-extra;dist=unstable
+- name: Make sure the plugins are correctly named
+  command: >-
+    mv '/var/lib/roundcube/plugins/{{ folder.old }}' '/var/lib/roundcube/plugins/{{ folder.new }}'
+  args:
+    creates: '/var/lib/roundcube/plugins/{{ folder.new }}'
+  with_items:
+    - old: keyboard-shortcuts
+      new: keyboard_shortcuts
+    - old: thunderbird-labels
+      new: thunderbird_labels
+    - old: dovecot-impersonate
+      new: dovecot_impersonate
+  loop_control:
+    loop_var: folder
 
 - name: Enable nginx site
   tags: roundcube
