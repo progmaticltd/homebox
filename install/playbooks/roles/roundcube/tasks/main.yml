@@ -80,11 +80,23 @@
     group: root
     mode: 0644
 
+- name: Create the dovecot impersonate configuration
+  tags: impersonate
+  when: mail.impersonate.active
+  set_fact:
+    roundcube_plugins: '{{ roundcube.plugins | union(["dovecot_impersonate"]) }}'
+
+- name: Create the dovecot impersonate configuration
+  tags: impersonate
+  when: not mail.impersonate.active
+  set_fact:
+    roundcube_plugins: roundcube.plugins
+
 - name: Copy roundcube configuration
   tags: roundcube
   notify: Restart nginx
   vars:
-    plugins: ' [''{{ roundcube.plugins | join(", "|quote) }}'' ]'
+    plugins: ' [''{{ roundcube_plugins | join(", "|quote) }}'' ]'
   template:
     src: '{{ file }}'
     dest: '/etc/roundcube/{{ file }}'
