@@ -11,3 +11,8 @@
   /etc/dovecot/sieve/* r,
   /etc/dovecot/sieve/*.sh ix,
   /usr/bin/rspamc mix,
+
+  # Duplicate lock and logs
+  /home/users/*/.dovecot.lda-dupes rwkl,
+  /home/users/*/.dovecot.lda-dupes.lock rwkl,
+  /home/users/*/mails/sieve/logs/* rwk,

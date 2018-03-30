@@ -113,6 +113,7 @@
     dest: '/etc/dovecot/sieve/{{ file.name }}'
     mode: '{{ file.mode | default(644) }}'
   with_items:
+    - name: append-checks.sieve
     - name: before-global.sieve
     - name: report-spam.sieve
     - name: report-ham.sieve

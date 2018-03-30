@@ -13,6 +13,7 @@
     - report-spam.sieve
     - report-ham.sieve
     - before-global.sieve
+    - append-checks.sieve
   loop_control:
     loop_var: file
 
