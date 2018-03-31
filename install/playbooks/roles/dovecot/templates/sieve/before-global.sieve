@@ -1,4 +1,4 @@
-# Global sieve script executed before for user 
+# Global sieve script executed before for user
 require [
   "fileinto",
   "imap4flags",
@@ -27,7 +27,7 @@ if envelope :matches "to" "*@{{ network.domain }}" {
 }
 
 if string :is "${from}{{ mail.recipient_delimiter }}Sent" "${to}" {
-  setflag "\\seen";
+  setflag "\\Seen";
 }
 
 # Flag the Homebox email alerts

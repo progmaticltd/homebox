@@ -4,6 +4,16 @@ quota:
   listener:
     port: '{{ mails_quota_port }}'
 
+
+sieve:
+  global_scripts:
+    - duplicate-checks.sieve
+    - sent-checks.sieve
+    - before-global.sieve
+    - report-spam.sieve
+    - report-ham.sieve
+    - tags-important.sieve
+
 # Default dovecot packages to install
 dovecot:
   packages:

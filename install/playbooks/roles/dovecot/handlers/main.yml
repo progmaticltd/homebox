@@ -10,10 +10,7 @@
   tags: dovecot
   command: '/usr/bin/sievec /etc/dovecot/sieve/{{ file }}'
   with_items:
-    - report-spam.sieve
-    - report-ham.sieve
-    - before-global.sieve
-    - append-checks.sieve
+    - '{{ sieve.global_scripts }}'
   loop_control:
     loop_var: file
 

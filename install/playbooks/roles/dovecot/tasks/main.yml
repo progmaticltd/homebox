@@ -109,18 +109,24 @@
   tags: sieve
   notify: Restart dovecot
   template:
-    src: 'sieve/{{ file.name }}'
-    dest: '/etc/dovecot/sieve/{{ file.name }}'
-    mode: '{{ file.mode | default(644) }}'
+    src: 'sieve/{{ file }}'
+    dest: '/etc/dovecot/sieve/{{ file }}'
+    mode: '0644'
   with_items:
-    - name: append-checks.sieve
-    - name: before-global.sieve
-    - name: report-spam.sieve
-    - name: report-ham.sieve
-    - name: learn-spam.sh
-      mode: 755
-    - name: learn-ham.sh
-      mode: 755
+    - '{{ sieve.global_scripts }}'
+  loop_control:
+    loop_var: file
+
+- name: Copy global sieve custom pipe scripts
+  tags: sieve
+  notify: Restart dovecot
+  template:
+    src: 'sieve/{{ file }}'
+    dest: '/etc/dovecot/sieve/{{ file }}'
+    mode: '0755'
+  with_items:
+    - learn-spam.sh
+    - learn-ham.sh
   loop_control:
     loop_var: file
 
