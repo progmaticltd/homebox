@@ -9,7 +9,7 @@ network:
 
 ###############################################################################
 # Users
-
+# List of users to create in the system
 users:
 - uid: john
   cn: John Doe
@@ -19,6 +19,13 @@ users:
   password: 'xIlm*uu7'
   aliases:
     - john@homebox.space
+  migrate:
+    - name: outlook
+      type: live.com
+      user: john.doe@live.co.uk
+      password: ebsipmfwuqsopxsg
+      get_junk: true
+      get_trash: true
 - uid: jane
   cn: Jane Doe
   first_name: Jane
@@ -27,6 +34,29 @@ users:
   password: 'Tlwril!8'
   aliases:
     - jane@homebox.space
+  migrate:
+    - name: work
+      type: imap
+      host: imap.company.com
+      user: jane
+      password: '0lih*(&nTrom'
+      max_messages: 10
+    - name: gmail
+      type: gmail
+      user: jane.doe@gmail.com
+      password: yjkytvofwbqlcmry
+      get_important: false
+      get_junk: true
+      get_trash: true
+      max_messages: 10
+    - name: yahoo
+      type: ymail
+      user: jane.doe@ymail.com
+      password: zakxizvqpkxzibnn
+      get_junk: true
+      get_trash: true
+      max_messages: 10
+
 
 ###############################################################################
 # Email related options
@@ -41,6 +71,8 @@ mail:
                             # The default timerange is 1h
   antivirus:                # Check inbound and outbound emails for viruses
     active: true            # or false
+    action: drop            # Action to do when a virus is found in an email: bounce or drop
+                            # be careful, bouncing external emails is a way to expose clamav usage
     send_warnings: false    # Send a warning email to - internal - users who are sending viruses
   impersonate:              # Activate dovecot "master" user feature, ideal for families and communities
     active: false           # https://wiki2.dovecot.org/Authentication/MasterUsers
