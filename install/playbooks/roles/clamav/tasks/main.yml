@@ -21,6 +21,41 @@
     src: clamsmtpd.conf
     dest: /etc/clamsmtpd.conf
 
+###############################################################################
+# See the Debian bug report:
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=827909
+#
+- name: Start clamav freshclam service
+  register: clamav_freshclam
+  service:
+    name: clamav-freshclam
+    state: started
+    enabled: yes
+
+- name: Wait for the freshclam service to have downloaded daily.cvd
+  register: clamav_freshclam
+  wait_for:
+    path: /var/lib/clamav/daily.cvd
+  sleep: 1
+  timeout: 60
+
+- name: Start clamav service
+  service:
+    name: clamav-daemon
+    state: started
+    enabled: yes
+
+- name: Wait for the clamav service to be started
+  register: clamav_daemon
+  command: systemctl status clamav-daemon
+  retries: 10
+  until: clamav_daemon.rc == 0
+  retries: 5
+  delay: 1
+
+#
+###############################################################################
+
 - name: Get the remote locale
   tags: locale
   set_fact:
@@ -45,7 +80,7 @@
     - 'virus-alert-{{ lang }}.eml'
     - 'virus-alert-default.eml'
 
-- name: Cretae the logs folder for clamsmtp
+- name: Create the logs folder for clamsmtp
   file:
     path: /var/log/clamsmtp
     owner: clamsmtp
