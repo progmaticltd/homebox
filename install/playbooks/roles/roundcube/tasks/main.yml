@@ -74,8 +74,8 @@
   tags: impersonate
   when: mail.impersonate.active
   template:
-    src: dovecot_impersonate.php
-    dest: '/etc/roundcube/plugins/dovecot-impersonate/config.inc.php'
+    src: plugins/dovecot_impersonate.php
+    dest: /etc/roundcube/plugins/dovecot-impersonate/config.inc.php
     owner: root
     group: root
     mode: 0644
@@ -98,13 +98,25 @@
   vars:
     plugins: ' [''{{ roundcube_plugins | join(", "|quote) }}'' ]'
   template:
-    src: '{{ file }}'
-    dest: '/etc/roundcube/{{ file }}'
+    src: config.inc.php
+    dest: /etc/roundcube/config.inc.php
     owner: root
     group: root
     mode: 0644
+
+- name: Make sure there is a directory for each of these plugins
+  tags: roundcube
+  file:
+    path: '/etc/roundcube/plugins/{{ file }}'
+    owner: root
+    group: www-data
+    mode: 0700
+    state: directory
   with_items:
-    - config.inc.php
+    - password
+    - new_user_identity
+    - managesieve
+    - thunderbird_labels
   loop_control:
     loop_var: file
 
@@ -112,7 +124,7 @@
   tags: roundcube
   notify: Restart nginx
   template:
-    src: '{{ file }}.php'
+    src: 'plugins/{{ file }}.php'
     dest: '/etc/roundcube/plugins/{{ file }}/config.inc.php'
     owner: root
     group: www-data
@@ -120,6 +132,8 @@
   with_items:
     - password
     - new_user_identity
+    - managesieve
+    - thunderbird_labels
   loop_control:
     loop_var: file
 
@@ -144,25 +158,9 @@
   tags: roundcube
   notify: Restart nginx
   file:
-    src: '/etc/nginx/sites-available/roundcube.conf'
-    dest: '/etc/nginx/sites-enabled/roundcube.conf'
+    src: /etc/nginx/sites-available/roundcube.conf
+    dest: /etc/nginx/sites-enabled/roundcube.conf
     state: link
-
-# There is bugs in the name of the symbolic links on Debian
-# https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=roundcube-plugins-extra;dist=unstable
-- name: Make sure the plugins are correctly named
-  tags: roundcube
-  notify: Restart nginx
-  command: mv '/var/lib/roundcube/plugins/{{ folder.old }}' '/var/lib/roundcube/plugins/{{ folder.new }}'
-  args:
-    creates: '/var/lib/roundcube/plugins/{{ folder.new }}'
-  with_items:
-    - old: keyboard-shortcuts
-      new: keyboard_shortcuts
-    - old: thunderbird-labels
-      new: thunderbird_labels
-  loop_control:
-    loop_var: folder
 
 # AppArmor configuration ======================================================
 
@@ -170,8 +168,8 @@
   when: security.app_armor
   tags: roundcube, security, apparmor
   template:
-    src: 'apparmor.d/local/roundcube'
-    dest: '/etc/apparmor.d/local/roundcube'
+    src: apparmor.d/local/roundcube
+    dest: /etc/apparmor.d/local/roundcube
 
 - name: Add roundcube AppAromor specific configuration
   when: security.app_armor
