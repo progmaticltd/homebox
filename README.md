@@ -26,9 +26,9 @@ This project is for you if:
 | Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers, impersonate   | Done      |  Basic    |
 | Roundcube webmail, https, sieve filters management, password change, automatic identity creation                    | Done      |  Basic    |
 | AppArmor securisation for rspamd, nginx, dovecot, postfix, clamav                                                   | Done      |  Manual   |
-| ISO image builder, for automatic Debian installation and a fully encrypted drive using LUKS ([preseed](preseed/))   | Done      |  Manual   |
+| ISO image builder, for automatic Debian installation and a fully encrypted with LUKS ([preseed](doc/preseed.md))    | Done      |  Manual   |
 | Antivirus for inbound / outbound emails with [clamav](https://www.clamav.net/) without blocking the SMTP session.   | Done      | Automatic |
-| Add your GMail, Yahoo, Outlook.com or standard IMAP accounts.  See [external accounts](doc/external-accounts.md) | Done         |  Manual   |
+| Add your GMail, Yahoo, Outlook.com or standard IMAP accounts.  See [external accounts](doc/external-accounts.md)    | Done         |  Manual   |
 | Dovecot full text search in emails and attachments.                                                                 |     ~     |           |
 | Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned   |           |
 | Web proxy with privacy and parent filtering features                                                                | Planned   |           |
@@ -56,7 +56,7 @@ The repository contains a few folders you should be familiar with:
 - config: Yaml configuration files for your homebox device.
 - preseed: Dockerfile to create an automatic ISO image installer for testing and live system.
 - install: Ansible scripts to install the whole server environment.
-- backup: Automatic backup of important information after deployment, (see the [readme](./backup/)).
+- backup: Automatic backup of important information after deployment.
 - sandbox: Put anything you don't want to commit here.
 - doc: Various documentation, work in progress.
 
@@ -133,22 +133,8 @@ If you are hosted using a professional provider, then you probably don't need he
 
 One way to configure your DNS is to use a wildcard entry, that would redirect everything to your homebox. There is also a script that configures your DNS entries automatically. The current version only supports [Gandi](https://gandi.net/).
 
-This custom script needs an API key to run. This is also useful so you do not have to manage the entries yourself, or if even if you don't have a static IP address.
-
-Here what to do to obtain an API key on gandi:
-
-1. Visit the [API key page on Gandi](https://www.gandi.net/admin/api_key)
-2. Activate of the API on the test platform.
-3. Activate of the production API
-
-You should obtain credentials like this:
-
-- A Gandi "handle", like AR789-GANDI
-- An API key of 24 characters, like "TYdiYFPfXR3j3vMfmTc82hVc"
-
-
 I am planning to add more DNS providers, or even to provides a custom DNS server.
-The initial creation of DNS records for certificate generation should take some time. I am thinking to a solution for this.
+The initial creation of DNS records for certificate generation should take some time.
 
 ### 5. Run the Ansible scripts to setup your email server
 
@@ -177,6 +163,7 @@ The script will call the playbooks below:
 - roundcube.yml : Install and configure roundcube webmail.
 - autodiscover.yml : Configure Microsoft Outlook autodiscovery feature.
 - autoconfig.yml :  Configure Mozilla Thunderbird autoconfig feature.
+- import-accounts.yml : Integrate external email accounts into the system.
 
 There is also a few others Ansible scripts worth to mention:
 
@@ -191,7 +178,7 @@ During the development phase, you can also run the scripts one by one.
 
 #### Automatic backup
 
-- Once the script has been run, the backup folder contains important files to run your scripts again. See (see the [readme](./backup/))
+- Once the script has been run, the backup folder contains important files to run your scripts again. See (see the [backup.md](../doc/backup.md) file ni the doc folder)
 
 ## Future versions
 
