@@ -5,7 +5,6 @@ When deploying for the first time, they will contain some important files, to av
 
 This is useful, both for archiving purposes and during the development phase.
 
-
 ## Certificates
 
 This folder contains the letsencrypt certificates generated on the server. This is also very important, to avoid requesting the certificates again and again, and being blocked by LetsEncrypt.
@@ -28,6 +27,9 @@ This folder contains the passwords generated automatically for some accounts in 
   - admin.pwd: Super administrator password, read/write on the entire LDAP system
   - manager.pwd: Manager: read/write access to user accounts
   - readonly.pwd: readonly account to query the ldap server
+  - import.pwd: Master account used to inject imported external emails into the user's emails.
+  - postmaster.pwd: Postmaster account, that receives, for instance, emails
+    like postmaster@domain.com or webmaster@domain.com.
 
 ## Password for the rspamd administration interface
 
