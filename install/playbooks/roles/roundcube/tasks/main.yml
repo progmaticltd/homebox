@@ -23,8 +23,6 @@
     - php-net-sieve
     - php-net-ldap2
     - php-net-ldap3       # For LDAP address book
-    - makepasswd
-    - haveged             # speed up password generation
   loop_control:
     loop_var: pkg
 
@@ -70,33 +68,39 @@
   shell: makepasswd --chars=24
   register: makepasswd
 
+- name: Create the directoru for dovecot_impersonate plugin
+  when: mail.impersonate.active
+  tags: roundcube
+  file:
+    path: /etc/roundcube/plugins/dovecot_impersonate
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
+
 - name: Create the dovecot impersonate configuration
   tags: impersonate
   when: mail.impersonate.active
   template:
     src: plugins/dovecot_impersonate.php
-    dest: /etc/roundcube/plugins/dovecot-impersonate/config.inc.php
+    dest: /etc/roundcube/plugins/dovecot_impersonate/config.inc.php
     owner: root
     group: root
     mode: 0644
 
-- name: Create the dovecot impersonate configuration
+- name: Make sure the plugin reads the correct configuration file
   tags: impersonate
-  when: mail.impersonate.active
-  set_fact:
-    roundcube_plugins: '{{ roundcube.plugins | union(["dovecot_impersonate"]) }}'
-
-- name: Create the dovecot impersonate configuration
-  tags: impersonate
-  when: not mail.impersonate.active
-  set_fact:
-    roundcube_plugins: roundcube.plugins
+  file:
+    src: /etc/roundcube/plugins/dovecot_impersonate/config.inc.php
+    dest: /usr/share/roundcube/plugins/dovecot-impersonate/config.inc.php
+    state: link
+    force: yes
 
 - name: Copy roundcube configuration
   tags: roundcube
   notify: Restart nginx
   vars:
-    plugins: ' [''{{ roundcube_plugins | join(", "|quote) }}'' ]'
+    plugins: ' [''{{ roundcube.plugins | join(", "|quote) }}'' ]'
   template:
     src: config.inc.php
     dest: /etc/roundcube/config.inc.php
@@ -109,8 +113,8 @@
   file:
     path: '/etc/roundcube/plugins/{{ file }}'
     owner: root
-    group: www-data
-    mode: 0700
+    group: root
+    mode: 0755
     state: directory
   with_items:
     - password

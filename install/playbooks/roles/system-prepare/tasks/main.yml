@@ -6,24 +6,23 @@
   apt:
     name: "{{ pkg }}"
     state: installed
+    cache_valid_time: 3600
   with_items:
     - ufw
     - rsync
+    - makepasswd
+    - haveged             # speed up password generation
   loop_control:
     loop_var: pkg
 
 # Install the most required packages
-- name: Install common packages
+- name: Install certbot
   when: system.ssl == 'letsencrypt'
   tags: apt
   apt:
-    name: "{{ pkg }}"
+    name: certbot
     state: installed
-  with_items:
-    - certbot
-  loop_control:
-    loop_var: pkg
-    
+
 - name: Create a homebox directory to store any specific configuration
   file:
     path: /etc/homebox
@@ -141,8 +140,15 @@
     module: wait_for_connection
     host: '{{ ansible_ssh_host }}'
     port: 22
-    state: started    
+    state: started
     delay: 30
     sleep: 10
     timeout: 180
-    
+
+- name: Create a passphrase to encrypt system files
+  shell: >-
+    makepasswd --chars=32 >/etc/homebox/system-key
+    && chown root:root /etc/homebox/system-key
+    && chmod 0600 /etc/homebox/system-key
+  args:
+    creates: /etc/homebox/system-key

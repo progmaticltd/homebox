@@ -6,12 +6,7 @@
 
 - name: Check if the postfix service is up and running
   tags: systemctl,postfix
-  shell: systemctl status postfix
-
-- name: Check if the postfix service is up and running
-  tags: systemctl,postfix
   shell: postfix status
-
 
 - name: Check the certificate using SMTPS
   tags: systemctl, postfix
@@ -103,7 +98,7 @@
     grep -l "Subject: {{ test_subject }}"
     /home/users/{{ users[1].uid }}/mails/maildir/new/*
   until: email_found.rc == 0
-  retries: 5
+  retries: 10
   delay: 1
 
 - name: Check if this specific email has been signed

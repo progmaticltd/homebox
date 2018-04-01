@@ -36,8 +36,8 @@
   register: clamav_freshclam
   wait_for:
     path: /var/lib/clamav/daily.cvd
-  sleep: 1
-  timeout: 60
+    sleep: 1
+    timeout: 60
 
 - name: Start clamav service
   service:
@@ -50,7 +50,6 @@
   command: systemctl status clamav-daemon
   retries: 10
   until: clamav_daemon.rc == 0
-  retries: 5
   delay: 1
 
 #

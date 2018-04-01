@@ -159,13 +159,13 @@
   set_fact:
     master_password_params: "{{ playbook_dir }}/../../backup/ldap/master.pwd {{ policies.system.password }}"
 
-- name: Create the master user account
+- name: Create the master user account password
   when: mail.impersonate.active
   tags: impersonate
   set_fact:
     master_password: '{{ lookup("password", master_password_params) }}'
 
-- name: Create the master user account
+- name: Store the master user account password
   when: mail.impersonate.active
   tags: impersonate
   htpasswd:
@@ -176,6 +176,48 @@
     group: dovecot
     mode: '0400'
     crypt_scheme: ldap_sha1
+
+# Import emails from other accounts ===========================================
+
+# This user account will impersonate each user, to store their emails after migration
+# from other accounts
+- name: Initialise the import user password parameters
+  when: mail.import.active
+  tags: impersonate
+  set_fact:
+    import_password_params: "{{ playbook_dir }}/../../backup/ldap/import.pwd {{ policies.system.password }}"
+
+- name: Create the import user account password
+  when: mail.import.active
+  tags: impersonate
+  set_fact:
+    import_password: '{{ lookup("password", import_password_params) }}'
+
+- name: Create the import email master user account
+  when: mail.import.active
+  tags: impersonate
+  htpasswd:
+    path: /etc/dovecot/master-users
+    name: '{{ mail.import.username }}'
+    password: '{{ import_password }}'
+    owner: dovecot
+    group: dovecot
+    mode: '0400'
+    crypt_scheme: ldap_sha1
+
+- name: Create the post-login script directory
+  file:
+    path: /etc/dovecot/login-scripts
+    state: directory
+
+- name: Copy the default postlogin script
+  tags: scripts
+  copy:
+    src: dovecot-postlogin
+    dest: /usr/local/sbin/dovecot-postlogin
+    mode: '0755'
+    owner: root
+    group: root
 
 # AppArmor configuration ======================================================
 - name: Install some dovecot AppArmor profile
@@ -196,6 +238,7 @@
     - local/usr.lib.dovecot.managesieve
     - local/usr.lib.dovecot.quota-status
     - usr.lib.dovecot.quota-status
+    - usr.lib.dovecot.script-login
   loop_control:
     loop_var: aa_config
 
@@ -223,5 +266,6 @@
     - usr.lib.dovecot.managesieve-login
     - usr.lib.dovecot.pop3-login
     - usr.lib.dovecot.ssl-params
+    - usr.lib.dovecot.script-login
   loop_control:
     loop_var: aa_config

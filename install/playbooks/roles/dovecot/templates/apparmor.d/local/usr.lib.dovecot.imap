@@ -16,3 +16,6 @@
   /home/users/*/.dovecot.lda-dupes rwkl,
   /home/users/*/.dovecot.lda-dupes.lock rwkl,
   /home/users/*/mails/sieve/logs/* rwk,
+
+  # the imap daemon wants to read this folder
+  /home/users/*/ r,

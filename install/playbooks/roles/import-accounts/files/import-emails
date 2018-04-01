@@ -1,0 +1,82 @@
+#!/bin/dash
+
+# This script is run as the current logged in user.
+# It receives a decryption key as an environment variable,
+# to decrypt the account emails import configuration files
+# The next version may use user's GPG keys
+
+# Exemple of the environment variables received from Dovecot login script:
+# USERDB_KEYS=HOME UID GID MAIL AUTH_TOKEN
+# USER=andre
+# MAIL=/var/mail/andre
+# HOME=/home/users/andre
+# LOGNAME=andre
+# PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
+# UID=1001
+# GID=1001
+# LANG=en_GB.UTF-8
+# LANGUAGE=en_GB:en
+# SHELL=/bin/dash
+# PWD=/run/dovecot
+# LOCAL_IP=192.168.33.250
+# IP=192.168.33.39
+# AUTH_TOKEN=bd254f9a87e06dec68ce1bb7ee75f14690b45aee
+# DECRYPT_KEY=cIy29nzfAnQCxU8v84Q2jTKAyETmf2Cu
+
+# Nothing to import ??
+test -d $HOME/mails/import/safe || exit 0;
+
+# Exit if no password is specified
+if [ "$DECRYPT_KEY" = "" ]; then
+    echo "You need to pass the decryption key to decrypt configuration files"
+    exit 2;
+fi
+
+# Start in the import directory
+cd $HOME/mails/import/safe
+
+# Get the list of imports to run
+imports=$(ls *conf)
+
+# Go back on the import root directory
+cd $HOME/mails/import
+
+# make the directories I need if they do not exists
+test -d logs || mkdir logs
+test -d status || mkdir status
+
+# Encryption parameters
+CIPHER=aes-256-cbc
+
+for import in $imports; do
+
+    # Check if there is an import already running
+    lock="$import.lock"
+    test -f "$lock" && continue
+
+    # Lock asap
+    touch $lock
+
+    # Log everyhing
+    logfile="logs/$import.log"
+
+    # time the process
+    date=$(date --rfc-3339=seconds)
+    echo "$date: Starting to import for account '$import'" >>$logfile
+
+    # decrypt the configuration file using the encryption key passed in the environment
+    openssl $CIPHER -d -in safe/$import -out conf/$import -pass env:DECRYPT_KEY
+
+    # Start the import command and remove the lock once finished
+    # Run in background, if there is multiple accounts
+    (mbsync -q -c "conf/$import" -a >> $logfile 2>&1 ; rm -f $lock) &
+
+    # Remove the decrypted file as soon as mbsync has loaded it
+    sleep 1
+    rm conf/$import
+
+    # time the process
+    date=$(date --rfc-3339=seconds)
+    echo "$date: Finished to import for account '${import}'" >>$logfile
+
+done

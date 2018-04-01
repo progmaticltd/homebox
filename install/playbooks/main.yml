@@ -41,4 +41,4 @@
   when: mail.autoconfig
 
 # Add the old emails import scripts for each users
-- import_playbook: migrate-emails.yml
+- import_playbook: import-accounts.yml

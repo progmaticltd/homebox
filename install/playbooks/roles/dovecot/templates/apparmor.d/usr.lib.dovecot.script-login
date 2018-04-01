@@ -1,0 +1,54 @@
+# Last Modified: Sat Mar 31 16:05:14 2018
+#include <tunables/global>
+
+/usr/lib/dovecot/script-login {
+
+  #include <abstractions/base>
+  #include <abstractions/dovecot-common>
+
+  # Capabilities
+  capability setuid,
+  capability setgid,
+
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/lib/dovecot/script-login mr,
+
+  # The login script is running unconfined,
+  # but as the Dovecot user
+  /usr/local/sbin/dovecot-postlogin r,
+  /usr/local/sbin/dovecot-postlogin Ux,
+
+  # Access configuration files
+  /etc/passwd r,
+  /etc/nsswitch.conf r,
+
+  # profile /usr/local/sbin/dovecot-postlogin {
+  #   #include <abstractions/base>
+
+  #   capability dac_override,
+  #   capability dac_read_search,
+
+  #   # Read the users list for su
+  #   /etc/passwd r,
+  #   /etc/login.defs r,
+
+  #   # Executables
+  #   /bin/dash mr,
+  #   /bin/rm mr,
+  #   /bin/rm rix,
+  #   /bin/su mr,
+  #   /bin/su rix,
+  #   /bin/touch mr,
+  #   /bin/touch rix,
+  #   /usr/bin/mbsync mr,
+  #   /usr/bin/mbsync rix,
+  #   /lib/x86_64-linux-gnu/ld-*.so mr,
+  #   /usr/lib/dovecot/script-login mr,
+  #   /usr/lib/dovecot/script-login rix,
+  #   /usr/local/sbin/postlogin-script.sh r,
+
+  #   # The import scripts are typically writing in these folders
+  #   /home/users/*/mails/import/** r,
+  #   /home/users/*/mails/import/** rwkl,
+  # }
+}

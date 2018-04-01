@@ -1,0 +1,20 @@
+#!/bin/dash
+
+# Very simple post-login script for Dovecot
+INITIAL_COMMAND="$@"
+
+# Pass the sytem key to the login scripts,
+# So they can decrypt sensitive content.
+# A future version would probably GPG keys for each user.
+DECRYPT_KEY=$(cat /etc/homebox/system-key)
+
+# Get the list of scripts to run
+login_scripts=$(ls /etc/dovecot/login-scripts)
+
+# Call all the scripts in the folder /etc/dovecot/login-scripts,
+for script in $login_scripts; do
+    su $USER -c "DECRYPT_KEY=$DECRYPT_KEY /etc/dovecot/login-scripts/$script" &
+done
+
+# Pass the hand back to dovecot
+exec "$INITIAL_COMMAND"

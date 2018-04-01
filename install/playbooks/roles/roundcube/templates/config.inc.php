@@ -82,10 +82,10 @@ $config['des_key'] = '{{ makepasswd.stdout }}';
 // Debian: install roundcube-plugins first to have any
 $config['plugins'] = {{ plugins }};
 
-# {% if mail.master_user is defined %}
+{% if mail.impersonate.active %}
 # Add the dovecot impersonate plugin
 $config['plugins'][] = 'dovecot_impersonate';
-# {% endif %}
+{% endif %}
 
 // skin name: folder from skins/
 $config['skin'] = 'larry';
@@ -98,27 +98,26 @@ $config['enable_spellcheck'] = false;
 # Auto-complete address books
 $rcmail_config['autocomplete_addressbooks'] = ['sql', 'users'];
 
-
 $config['ldap_public']['users'] = [
-    'name'              => 'Users',
-    'hosts'             => ['localhost'],
-    'port'              => 389,
-    'user_specific'     => false,
-    'writeable'         => false,
-    'scope'             => 'sub',
-    'base_dn'           => '{{ ldap.organization.base }}',
-    'bind_dn'           => 'cn=readonly account,{{ ldap.users.dn }}',
-    'bind_pass'         => '{{ lookup("password", roPasswdParams) }}',
-    'name_field'        => 'cn',
-    'email_field'       => 'mail',
-    'surname_field'     => 'sn',
-    'firstname_field'   => 'givenName',
-    'sort' => 'sn',
-    'filter'            => '(mail=*)',
-    'search_fields'     => ['mail', 'cn', 'givenName', 'sn'],
-    'global_search'     => true,
-    'fuzzy_search'      => true,
-    'groups'            => [
+    'name'             => 'Users',
+    'hosts'            => [ 'ldap.{{ network.domain }}' ],
+    'port'             => 389,
+    'user_specific'    => false,
+    'writeable'        => false,
+    'scope'            => 'sub',
+    'base_dn'          => '{{ ldap.organization.base }}',
+    'bind_dn'          => 'cn=readonly account,{{ ldap.users.dn }}',
+    'bind_pass'        => '{{ lookup("password", roPasswdParams) }}',
+    'name_field'       => 'cn',
+    'email_field'      => 'mail',
+    'surname_field'    => 'sn',
+    'firstname_field'  => 'givenName',
+    'sort'             => 'sn',
+    'filter'           => '(|(mail=*)(intlMailAddr=*))',
+    'search_fields'    => ['mail', 'cn', 'givenName', 'sn', 'intlMailAddr'],
+    'global_search'    => true,
+    'fuzzy_search'     => true,
+    'groups'           => [
         'base_dn'         => '{{ ldap.groups.dn }}',
         'filter'          => '(objectClass=postixGroup)',
         'object_classes'  => [ 'top', 'postixGroup' ]
@@ -144,4 +143,4 @@ $config['max_message_size'] = '{{ mail.max_attachment_size }}M';
 // 2 - one identity with possibility to edit all params
 // 3 - one identity with possibility to edit all params but not email address
 // 4 - one identity with possibility to edit only signature
-$config['identities_level'] = 3;
+$config['identities_level'] = 0;

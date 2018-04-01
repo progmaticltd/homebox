@@ -19,7 +19,7 @@ users:
   password: 'xIlm*uu7'
   aliases:
     - john@homebox.space
-  migrate:
+  external_accounts:
     - name: outlook
       type: live.com
       user: john.doe@live.co.uk
@@ -34,7 +34,7 @@ users:
   password: 'Tlwril!8'
   aliases:
     - jane@homebox.space
-  migrate:
+  external_accounts:
     - name: work
       type: imap
       host: imap.company.com
@@ -74,10 +74,15 @@ mail:
     action: drop            # Action to do when a virus is found in an email: bounce or drop
                             # be careful, bouncing external emails is a way to expose clamav usage
     send_warnings: false    # Send a warning email to - internal - users who are sending viruses
+    quarantine: yes         # Place emails with a virus in quarantine, for further analysis
   impersonate:              # Activate dovecot "master" user feature, ideal for families and communities
     active: false           # https://wiki2.dovecot.org/Authentication/MasterUsers
     master: master          # master user name
     separator: '*'          # Separation char between master user / real user name. I personally use '/'
+  #############################################################################
+  import:                   # If you have users with "import" email active scripts, set this flag to true
+    active: false           # A master user, with reduced rights will be created, to append miported emails
+                            # in user's mailboxes.
   #############################################################################
   advanced_features: false  # Use some advanced features that will need the latest version of dovecot
                             # from stretch-backports, like those below.
@@ -128,69 +133,4 @@ firewall:
 # Extra security values
 security:
   auto_update: true
-  app_armor: false
-
-###############################################################################
-# Development helpers
-# devel:
-#   packages:
-#     - mc
-#     - telnet
-#     - dnsutils
-#     - whois
-#     - tmux
-#     - pfqueue
-#     - aptitude
-#     - man
-#     - less
-#   root:
-#     shell: /bin/dash (or bash/zsh/etc)
-
-
-###############################################################################
-# Webmail configuration
-# You can uncomment this block to customise roundcube,
-# Be careful, some plugins are not working yet !!!
-# webmail:
-#   type: roundcube
-#   install: yes
-#   url: 'webmail.{{ network.domain }}'
-# roundcube:
-#   url: '{{ webmail.url }}'
-#   title: 'Roundcube Webmail ({{ ldap.organization.domain }})'
-#   enigma: no # not stable yet
-#   plugins:
-#     - password
-#     - archive
-#     - jqueryui
-#     - markasjunk
-#     - newmail_notifier
-#     - autologon
-#     - subscriptions_option
-#     - emoticons
-#     - new_user_identity
-#     - managesieve
-#     - contextmenu
-#
-# Available plugins:
-# - keyboard_shortcuts
-# - dkimstatus
-# - hide_blockquote
-# - thunderbird_labels
-# - enigma
-# - zipdownload
-# - new_user_dialog
-# - additional_message_headers
-# - acl
-# - database_attachments
-# - debug_logger
-# - filesystem_attachments
-# - help
-# - hide_blockquote
-# - http_authentication
-# - show_additional_headers
-# - squirrelmail_usercopy
-# - userinfo
-# - vcard_attachments
-# - virtuser_file
-# - virtuser_query
+  app_armor: true

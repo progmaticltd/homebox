@@ -1,6 +1,6 @@
 ---
 ## Self diagnostic / basic unit tests suite to run before commiting
-## 
+##
 
 # Install development support packages needed to run the tests
 - hosts: homebox
@@ -82,3 +82,10 @@
     - tests-autoconfig
     - tests-autodiscover
 
+# Test if the antivirus is bouncing emails
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/defaults/main.yml'
+  roles:
+    - tests-clamav

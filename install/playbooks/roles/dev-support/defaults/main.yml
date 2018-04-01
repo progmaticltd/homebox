@@ -3,6 +3,9 @@
 # Default list of development packages to install
 # You can override it in your config/system.yml file
 
+# they are installed when running the playbook dev-support,
+# and cleaned up when using dev-cleanup
+
 devel:
   packages:
     - mc
@@ -20,5 +23,7 @@ devel:
     - swaks
     - curl
     - locate
+    - colorized-logs
+    - bash-completion
   root:
     shell: /bin/bash
