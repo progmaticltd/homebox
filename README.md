@@ -11,7 +11,7 @@ This project is for you if:
 - You trust the Debian community to push security updates in time.
 
 ## Current status and supported features
- 
+
 | Current feature, implemented and planned                                                                            | Status    |  Tested   |
 | ------------------------------------------------------------------------------------------------------------------- | :-------: | :-------: |
 | LDAP users database, SSL & TLS certificates, password policies, integration with the system and PAM.                | Done      | Automatic |
@@ -28,7 +28,7 @@ This project is for you if:
 | AppArmor securisation for rspamd, nginx, dovecot, postfix, clamav                                                   | Done      |  Manual   |
 | ISO image builder, for automatic Debian installation and a fully encrypted drive using LUKS ([preseed](preseed/))   | Done      |  Manual   |
 | Antivirus for inbound / outbound emails with [clamav](https://www.clamav.net/) without blocking the SMTP session.   | Done      | Automatic |
-| Add your GMail, Yahoo, Outlook.com or standard IMAP accounts.  See [external accounts](doc/extexternal-accounts.md) | Done      |  Manual   |
+| Add your GMail, Yahoo, Outlook.com or standard IMAP accounts.  See [external accounts](doc/external-accounts.md) | Done         |  Manual   |
 | Dovecot full text search in emails and attachments.                                                                 |     ~     |           |
 | Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned   |           |
 | Web proxy with privacy and parent filtering features                                                                | Planned   |           |
@@ -40,7 +40,7 @@ This project is for you if:
 
 ## Basic installation
 
-It is using [Ansible](https://en.wikipedia.org/wiki/Ansible_(software)) scripts, to automate tasks you would have done manually, so it 
+It is using [Ansible](https://en.wikipedia.org/wiki/Ansible_(software)) scripts, to automate tasks you would have done manually, so it
 
 ### Prerequisites
 
