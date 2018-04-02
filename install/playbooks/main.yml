@@ -45,4 +45,8 @@
   when: mail.autoconfig
 
 # Add the old emails import scripts for each users
+# Except when in development mode.
+# It can alter the tests and is CPU intensive if you have
+# defined a lot of accounts.
 - import_playbook: import-accounts.yml
+  when: not system.devel
