@@ -24,11 +24,23 @@
       - '--ignore-existing'
       - '--update'
 
+- name: Use the default domain name for FQDN
+  when: certificate.type == '@'
+  tags: cert
+  set_fact:
+    certificate_fqdn: "{{ network.domain }}"
+
+- name: Create the certificate fqdn with the subdomain
+  when: certificate.type != '@'
+  tags: cert
+  set_fact:
+    certificate_fqdn: "{{ certificate.type }}.{{ network.domain }}"
+
 - name: Check if the certificate has been copied from a previous backup
   tags: cert
   register: cert_stat
   stat:
-    path: "/etc/letsencrypt/live/{{ certificate.type }}.{{ network.domain }}/cert.pem"
+    path: "/etc/letsencrypt/live/{{ certificate_fqdn }}/cert.pem"
 
 - name: Check if nginx has been already installed
   tags: cert
@@ -63,12 +75,12 @@
     /usr/bin/certbot certonly
     --non-interactive
     --standalone
-    --domain "{{ certificate.type }}.{{ network.domain }}"
+    --domain "{{ certificate_fqdn }}"
     --email "admin@{{ network.domain }}"
     --agree-tos
   args:
-    creates: "/etc/letsencrypt/live/{{ certificate.type }}.{{ network.domain }}/cert.pem"
-    
+    creates: "/etc/letsencrypt/live/{{ certificate_fqdn }}/cert.pem"
+
 - name: Remove the firewall rule if it has been added
   tags: security
   when: ufw_http.changed and cert_stat.stat["exists"] == False
@@ -107,17 +119,15 @@
     src: certificates-renew.sh
     dest: /usr/local/sbin/certificates-renew.sh
     mode: 0755
-    
+
 - name: Use cron to renew the certificate
   tags: cron
   template:
     src: certificates-renew.cron
     dest: /etc/cron.d/certificates-renew.cron
-    
+
 - name: Remove the certbot certificate renew script
   tags: cron
   file:
     path: /etc/cron.d/certbot
     state: absent
-    
-    

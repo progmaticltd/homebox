@@ -10,6 +10,16 @@
     - certificates
 
 - hosts: homebox
+  vars:
+    certificate:
+      type: '@'
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/defaults/main.yml'
+  roles:
+    - certificates
+
+- hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/defaults/main.yml'

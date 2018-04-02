@@ -1,6 +1,8 @@
   # Certificates
   /etc/letsencrypt/archive/www.{{ network.domain }}/* r,
   /etc/letsencrypt/live/www.{{ network.domain }}/* r,
+  /etc/letsencrypt/archive/{{ network.domain }}/* r,
+  /etc/letsencrypt/live/{{ network.domain }}/* r,
 
   # Allow the web server to access the default content
   /var/www/default/** r,

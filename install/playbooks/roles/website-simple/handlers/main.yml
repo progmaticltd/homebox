@@ -1,10 +1,11 @@
-
-- name: Restart nginx
-  service:
-    name: nginx
-    state: restarted
+---
 
 - name: Restart AppArmor service
   service:
     name: apparmor
+    state: restarted
+
+- name: Restart nginx
+  service:
+    name: nginx
     state: restarted
