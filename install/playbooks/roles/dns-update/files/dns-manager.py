@@ -57,7 +57,7 @@ import logging
 
 class DomainManager(object):
     """DNS manager (Gandi only for now)."""
-  
+
     def __init__(self, configPath):
         """ Constructor """
 
@@ -78,19 +78,19 @@ class DomainManager(object):
         # we will delete the new zone version,
         # which is perhaps identical as the current one
         self.modified = False
-        
+
         # Read the domain configuration
         config = ConfigParser()
         config.read(configPath)
-    
+
         # Default TTL: 1h
         self.defaultTTL = args.ttl
-        
+
         ############################################################################
         # Beginning of Gandi specific initialisation
-        
+
         self.api = xmlrpc.client.ServerProxy('https://rpc.gandi.net/xmlrpc/')
-    
+
         # Exit if the provider is not Gandi
         provider = config.get('main', 'provider')
         if provider != 'gandi':
@@ -103,7 +103,7 @@ class DomainManager(object):
             self.domain_name,
             self.apikey[0:4] + "*" * 20
         ))
-    
+
         # Create the 'homebox' zone if not exists yet, or get it
         zoneID = "homebox-{0}".format(self.domain_name)
         exists = self.api.domain.zone.count(self.apikey, { 'name': zoneID })
@@ -118,10 +118,10 @@ class DomainManager(object):
             self.zone_id = zones[0]['id']
             self.zone_version = zones[0]['version']
             self.api.domain.zone.set(self.apikey, self.domain_name, self.zone_id)
-            
+
         # End of Gandi specific initialisation
         ############################################################################
-        
+
 
     ############################################################################
     # Begin of Gandi specific
@@ -141,7 +141,7 @@ class DomainManager(object):
             return records[0]
         else:
             return None
-        
+
     # Write records methods
     def WriteRecord(self, name, details):
         """Update the whole details of a record"""
@@ -156,22 +156,22 @@ class DomainManager(object):
             self.modified = True
             logging.info("Updated record for '{0}'".format(name))
         return self.zone_version
-    
+
     # End of Gandi specific
     ############################################################################
 
     ############################################################################
     # Generic functions
-    
+
     # Get information methods
     def getDomain(self):
         """Get the current domain associated"""
         return self.domain_name
-        
+
     def isModified(self):
         """Check if the DNS records have been modified"""
         return self.modified
-        
+
     def isDifferent(self, current, new):
         """Compare two records, to check if they are the same before creating a new one.
         return True if the new record is different from the current one"""
@@ -227,9 +227,21 @@ class DomainManager(object):
         })
         return self.zone_version
 
+    def WriteSRVRecord(self, service, protocol, priority, weight, port, target):
+        """Create or update an SRV record"""
+        fqdn = "{0}.{1}.".format(target, self.domain_name)
+        name = "_{0}._{1}".format(service, protocol)
+        self.WriteRecord(name, {
+            'name': name,
+            'type': 'SRV',
+            'value': "{0} {1} {2} {3}".format(priority, weight, port, fqdn),
+            'ttl': self.defaultTTL
+        })
+        return self.zone_version
+
     def WriteSPFRecords(self, name, spfPolicy, external_ip):
         """Create or update TXT and SPF records (See RFC 4408 section 3.1.1.)"""
-        
+
         spf = 'v=spf1 mx ip4:{0}/32 '.format(external_ip)
         if spfPolicy == 'fail':
             spf += '-all"'
@@ -237,7 +249,7 @@ class DomainManager(object):
             spf += '~all"'
         elif spfPolicy == 'neutral':
             spf += '?all"'
-            
+
         # Write the first 'temporary' TXT record
         self.WriteRecord(name, {
             'name': name,
@@ -245,7 +257,7 @@ class DomainManager(object):
             'value': spf,
             'ttl': self.defaultTTL
         })
-        
+
         # Write the second 'standard' SPF record
         self.WriteRecord(name, {
             'name': name,
@@ -258,7 +270,7 @@ class DomainManager(object):
 
     def WriteDKIMRecord(self, selector, content):
         """Create or update TXT record for DKIM"""
-        
+
         # Write the public key content
         name = "{0}._domainkey".format(selector)
         self.WriteRecord(name, {
@@ -267,11 +279,11 @@ class DomainManager(object):
             'value': content,
             'ttl': self.defaultTTL
         })
-        
+
 
     def WriteDMARCRecord(self):
         """Create or update TXT record for DMARC"""
-        
+
         # Write the public key content
         name = "_dmarc"
 
@@ -286,14 +298,14 @@ class DomainManager(object):
         content += " pct=100;"
         content += " rf=afrf;"
         content += " ri=86400"
-        
+
         self.WriteRecord(name, {
             'name': name,
             'type': 'TXT',
             'value': content,
             'ttl': self.defaultTTL
         })
-        
+
 
     # Versions management methods
     def ActivateNewVersion(self):
@@ -333,7 +345,7 @@ def main(args):
             import json, urllib, urllib.request
             data = json.loads(urllib.request.urlopen("http://ip.jsontest.com/").read().decode("utf-8"))
             external_ip = data["ip"]
-    
+
         # Check the syntax of the DKIM public key first
         # return if any error occurs
         dkimPublicKey = None
@@ -367,7 +379,7 @@ def main(args):
 
         # Write an empty record to redirect everything
         manager.WriteARecord('@', external_ip)
-        
+
         # Create or update the default records
         manager.WriteARecord('main', external_ip)
         manager.WriteCNameRecord('webmail', 'main')
@@ -398,11 +410,19 @@ def main(args):
         # Create the MX record for mail deliveries
         manager.WriteMXRecord('@', 'main', 5)
 
-        # TODO: Add a backup MX record
-
         # Create the SPF records
         manager.WriteSPFRecords('@', args.spfPolicy, external_ip)
-        
+
+        # Use of SRV Records for Locating Email Submission/Access Services (RFC 6186)
+        # Arguments are service, protocol, priority, weight, port, target
+        manager.WriteSRVRecord('submission', 'tcp', 0,  0, 587, 'smtp')
+        manager.WriteSRVRecord('imaps',      'tcp', 10, 0, 993, 'imap')
+        manager.WriteSRVRecord('imap',       'tcp', 10, 0, 143, 'imap')
+        manager.WriteSRVRecord('pop3s',      'tcp', 20, 0, 995, 'pop3')
+        manager.WriteSRVRecord('pop3',       'tcp', 20, 0, 110, 'pop3')
+
+        # TODO: Add a backup MX record
+
         # Create the DKIM record if provided, and then DMARC record
         if dkimPublicKey != None and dkimSelector != None:
             manager.WriteDKIMRecord(dkimSelector, dkimPublicKey)
@@ -416,11 +436,11 @@ def main(args):
             return
 
         # If there is some modification but we are in testing mode,
-        # we keep the version but we do not activate it        
+        # we keep the version but we do not activate it
         if args.test:
             logging.info("Testing mode, not activating the new zone version")
             return
-    
+
         # Last case: We are not in test mode, and there is changes
         # in the new version, so we activate it
         logging.info("Activating the new zone version")
@@ -519,5 +539,3 @@ parser.add_argument(
 args = parser.parse_args()
 
 main(args)
-
-
