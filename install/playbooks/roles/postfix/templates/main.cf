@@ -2,7 +2,7 @@
 # =============================================================================
 # The Postfix main.cf configuration file specifies a very small subset of all
 # the parameters that control the operation of the Postfix mail system.
-# Parameters not explicitly specified are left at their default values. 
+# Parameters not explicitly specified are left at their default values.
 # http://www.postfix.org/postconf.5.html
 
 # The text that follows the 220 status code in the SMTP greeting banner
@@ -61,7 +61,7 @@ virtual_mailbox_domains = {{ network.domain }}
 virtual_transport = lmtp:unix:private/dovecot-lmtp
 
 # Specifies the domain that appears in mail that is posted on this machine
-myorigin = /etc/mailname
+myorigin = {{ network.domain }}
 
 # Specifies what domains this machine will deliver locally, instead of forwarding to another machine
 mydestination = $myhostname, localhost.{{ network.domain }}, localhost
@@ -120,7 +120,7 @@ smtpd_recipient_restrictions =
 
 # Content filtering: Antivirus using clamsmtp
 content_filter = scan:127.0.0.1:{{ filter_antivirus_port + 1 }}
-receive_override_options = no_address_mappings 
+receive_override_options = no_address_mappings
 
 # SPF policies
 policy-spf_time_limit = 3600s
