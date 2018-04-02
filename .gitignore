@@ -10,13 +10,14 @@ config/hosts.yml
 
 # Ignore editors files
 README.html
+.markdown-preview.html
 
 # Sandboxing folder to tests
 sandbox/*
 
 # Backup folder:
 # - certificates: Letsencrypt Certificates archives, see the file "certificates/readme.md" for details
-# - dkim: dkim keys 
+# - dkim: dkim keys
 # - ldap: LDAP passwords automatically generated
 # - rspamd: rspamd web interface password
 backup/certificates/letsencrypt

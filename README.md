@@ -1,14 +1,10 @@
 
-A set of Ansible scripts to setup your personal mail server (and more) for your home...
+A set of Ansible scripts to setup a secure email and personal files server. This project is for you if:
 
-This project was initially meant to host emails at home, but you can use it on a dedicated or VPS server online.
-
-This project is for you if:
-
-- You are interested to host your emails on your personal mail server, at home or online.
-- You want your server to be secure against physical or remote intrusion.
-- You don't want to pass your weekends applying security updates or hacking it.
-- You trust the Debian community to push security updates in time.
+- You are interested to host your emails yourself, for privacy, security or any other reason.
+- You want your server to be secure against both physical and remote intrusion.
+- You want a low maintanance box that keep itself updated automatically.
+- You trust the Debian community to push security updates.
 
 ## Current status and supported features
 
@@ -28,15 +24,12 @@ This project is for you if:
 | AppArmor securisation for rspamd, nginx, dovecot, postfix, clamav                                                   | Done      |  Manual   |
 | ISO image builder, for automatic Debian installation and a fully encrypted with LUKS ([preseed](doc/preseed.md))    | Done      |  Manual   |
 | Antivirus for inbound / outbound emails with [clamav](https://www.clamav.net/) without blocking the SMTP session.   | Done      | Automatic |
-| Add your GMail, Yahoo, Outlook.com or standard IMAP accounts.  See [external accounts](doc/external-accounts.md)    | Done         |  Manual   |
-| Dovecot full text search in emails and attachments.                                                                 |     ~     |           |
+| Add your GMail, Yahoo, Outlook.com or standard IMAP accounts.  See [external accounts](doc/external-accounts.md)    | Done      |  Manual   |
+| Automatic encrypted off-site backup,                                                                                | Working on|           |
+| Dovecot full text search in emails and attachments.                                                                 | Planned   |           |
 | Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned   |           |
 | Web proxy with privacy and parent filtering features                                                                | Planned   |           |
-| Automatic encrypted off-site backup,                                                                                | Planned   |           |
 | Jabber server, probably using [ejabberd](https://www.ejabberd.im/)                                                  | Planned   |           |
-
-( ~ = In progress )
-( - = Not tested / manually tested )
 
 ## Basic installation
 
@@ -45,18 +38,17 @@ It is using [Ansible](https://en.wikipedia.org/wiki/Ansible_(software)) scripts,
 ### Prerequisites
 
 - A workstation to run the Ansible scripts.
-- A static IP address from your ISP (it is not mandatory, but will work better).
+- If you want to host the server at home, a static IP address from your ISP.
 - A server plugged on your router, or a virtual machine for testing.
-- Some basic Linux networking knowledge.
 
 ### Folders
 
 The repository contains a few folders you should be familiar with:
 
 - config: Yaml configuration files for your homebox device.
-- preseed: Dockerfile to create an automatic ISO image installer for testing and live system.
-- install: Ansible scripts to install the whole server environment.
-- backup: Automatic backup of important information after deployment.
+- preseed: Docker environment to create an automatic ISO image installer for Debian. Useful for testing and live system.
+- install: Ansible scripts to install or test the whole server environment.
+- backup: Automatic backup of important information during the deployment. See [doc/backup.md](doc/backup.md).
 - sandbox: Put anything you don't want to commit here.
 - doc: Various documentation, work in progress.
 
@@ -104,36 +96,88 @@ The system configuration file is a complete YAML configuration file containing a
   - Firewall policy for SSH
   - Security settings, like AppArmor activation.
 
-The most important settings are the first three sections, the others can be left to their default values, except during the development phase.
+The most important settings are the first two sections, the others can be left to their default values.
 
-This file contains all the network and accounts configuration
+#### Network details
+
+Every network subdomain entry, email address, etc... will be derivated from these values:
+
+```
+###############################################################################
+# Domain and hostname information
+network:
+  domain: homebox.space
+  hostname: mail.homebox.space
+```
+
+#### User list
+
+The other information you need to fill first is the user list.
+You can also [import accounts from other platforms](doc/external-accounts.md).
+
+```
+###############################################################################
+# Users
+users:
+- uid: andre
+  cn: André Rodier
+  first_name: André
+  last_name: Rodier
+  mail: andre@homebox.space
+  password: "iuh*686ni23"
+  aliases:
+    - andy@homebox.space
+    - andrew@homebox.space
+  external_accounts:
+    - name: gmail
+      type: gmail
+      user: andre.rodier@gmail.com
+      password: jfelcjwmdjslpwmx
+      get_junk: true
+    - name: free.fr
+      type: imap
+      host: imap.free.fr
+      user: andre.rodier
+      password: oim98BVIYswf
+```
+
+#### Note on AppArmor
+
+AppArmor is activated by default, unless you disable it in the configuration file.
+The script will reboot the server to activate AppArmor if it is not active.
+If you have installed the system using the preseed installer, your server has already activated AppArmor on boot.
 
 ### 3. Network configuration
 
 Initially, the following TCP ports are required:
 
-- To obtain your certificates, you need your system to be accessible externally on the port 80.
-- To test sending and receiving emails, your system should be accessible on the port 25 as well
-- To retrieve emails, your system should be accessible on ports 143, 993, 110, 995
-- To send emails, your system should be accessible on ports 587 and/or 465
+- To obtain your certificates from LetsEncrypt, you need your system to be accessible externally on the port 80.
+- To test sending and receiving emails, your system should be accessible on the port 25 as well.
+- To retrieve emails, your system should be accessible on ports 143, 993, 110, 995.
+- To send emails, your system should be accessible on ports 587 and/or 465.
 - For Thunderbird automatic configuration, your system should be accessible on port 80.
-- Once installed, the webmail is accessible ni http (port 80), but redirects you directly to https (port 443)
+- Once installed, the webmail is accessible in http (port 80), but redirects you directly to https (port 443).
 
 #### Home installation
 
 Hosting your emails at home requires your router to be configured to forward the traffic above to your homebox server.
 
-The easiest way to to create a DMZ in your router. Another approach is to use Upnp to configure your router automatically. This feature will be added in a future version.
+The easiest way to to create a DMZ in your router. Another approach is to use Upnp to configure your router automatically.
+This feature will be added in a future version.
 
 #### Hosted installation
 
-If you are hosted using a professional provider, then you probably don't need help on opening the ports and configuring your platform. Just use the reference above
+If you are hosted using a professional provider, then you probably don't need help on opening the ports and configuring your platform.
+Just use the ports list above
 
 ### 4. Automatic DNS records creation and update:
 
-One way to configure your DNS is to use a wildcard entry, that would redirect everything to your homebox. There is also a script that configures your DNS entries automatically. The current version only supports [Gandi](https://gandi.net/).
+One way to configure your DNS is to use a wildcard entry, that would redirect everything to your homebox.
+There is also a script that configures your DNS entries automatically.
+The current version only supports [Gandi](https://gandi.net/).
 
-I am planning to add more DNS providers, or even to provides a custom DNS server.
+I am planning to add more DNS providers, or even to provides a custom DNS server,
+for instance using  [Lexicon](https://github.com/AnalogJ/lexicon).
 The initial creation of DNS records for certificate generation should take some time.
 
 ### 5. Run the Ansible scripts to setup your email server
@@ -178,7 +222,8 @@ During the development phase, you can also run the scripts one by one.
 
 #### Automatic backup
 
-- Once the script has been run, the backup folder contains important files to run your scripts again. See (see the [backup.md](../doc/backup.md) file ni the doc folder)
+Once the scripts have been run, the backup folder contains important files to run your scripts again.
+See (see the [backup.md](../doc/backup.md)
 
 ## Future versions
 
@@ -186,6 +231,7 @@ I am planning to test / try / add the following features, in *almost* no particu
 
 - Install [Sogo](https://sogo.nu/) for caldav / carddav server, with of course LDAP authentication.
 - Add optional components (e.g. [Gogs](https://gogs.io/), [openvpn](https://openvpn.net/), [Syncthing](https://syncthing.net/), etc).
+- Use Lexicon for DNS updates: https://github.com/AnalogJ/lexicon.
 
 ## Other projects to mention
 

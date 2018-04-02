@@ -15,6 +15,7 @@ For instance, this is the certificates generated, for the domain "homebox.space"
   - ldap.homebox.space
   - smtp.homebox.space
   - webmail.homebox.space
+  - autodiscover.homebox.space (when using autodiscover from Outlook)
 
 ## DKIM Keys: 'dkim-keys'
 
