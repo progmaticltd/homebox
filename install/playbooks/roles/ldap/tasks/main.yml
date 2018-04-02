@@ -439,7 +439,6 @@
     vtype: multiselect
 
 - name: Install the required packages for interactive login
-  when: system.login == true
   apt:
     name: '{{ item }}'
     state: installed
@@ -448,7 +447,6 @@
     - libpam-ldapd
 
 - name: Update the ldap configuration file
-  when: system.login == true
   template:
     src: nslcd.conf
     dest: /etc/nslcd.conf

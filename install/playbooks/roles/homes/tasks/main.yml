@@ -55,9 +55,6 @@
 
 - name: Create home directory for users on first login
   tags: ldap
-  when: system.login == true
   lineinfile:
     dest: /etc/pam.d/common-account
     line: 'session    required    pam_mkhomedir.so skel=/etc/skel/ umask=0022'
-
-

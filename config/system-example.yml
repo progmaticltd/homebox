@@ -121,7 +121,6 @@ passwords_quality_difok: 3
 # System related
 system:
   release: stretch
-  login: true
   ssl: letsencrypt
   devel: false
   debug: false
