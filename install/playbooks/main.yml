@@ -28,11 +28,15 @@
 
 # Install nginx as the default web server, if needed
 - import_playbook: nginx.yml
-  when: webmail.install or mail.autodiscover or mail.autoconfig
+  when: webmail.install or mail.autodiscover or mail.autoconfig or website.install
 
 # Install the selected webmail
 - import_playbook: roundcube.yml
   when: webmail.install and webmail.type == 'roundcube'
+
+# Install a simple but secure (https) web site on www
+- import_playbook: website-simple.yml
+  when: website.install
 
 # Automatic configuration for email clients.
 - import_playbook: autodiscover.yml

@@ -1,0 +1,10 @@
+  # Certificates
+  /etc/letsencrypt/archive/www.{{ network.domain }}/* r,
+  /etc/letsencrypt/live/www.{{ network.domain }}/* r,
+
+  # Allow the web server to access the default content
+  /var/www/default/** r,
+
+  # Log files
+  /var/log/nginx/default-access.log rwkl,
+  /var/log/nginx/default-error.log rwkl,

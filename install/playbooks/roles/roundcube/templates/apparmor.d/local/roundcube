@@ -3,10 +3,6 @@
 
   # Web content
   /usr/share/roundcube/** r,
-  #/usr/share/roundcube/program/resources/** r,
-
-  # Allow the web server to access autoconfig
-  # /var/www/autoconfig/mail/config-v1.1.xml r,
 
   # Log files
   /var/log/nginx/roundcube-access.log w,

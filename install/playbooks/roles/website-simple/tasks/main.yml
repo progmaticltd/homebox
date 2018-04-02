@@ -1,0 +1,106 @@
+---
+
+- name: Create the website site root folder
+  tags: website
+  file:
+    path: '{{ path }}'
+    state: directory
+    owner: root
+    group: www-data
+    mode: '0750'
+  with_items:
+    - /var/www/default
+    - /var/www/default/css
+    - /var/www/default/js
+  loop_control:
+    loop_var: path
+
+- name: Check if you have already uploaded a web page named 'index.html'
+  tags: website
+  register: index_page
+  stat:
+    path: /var/www/default/index.html
+
+
+- name: Get remote environment locale
+  when: not index_page.stat.exists
+  tags: website
+  set_fact:
+    website_language: '{{ ansible_env.LANGUAGE | regex_replace("_.*", "") }}'
+    website_charset: '{{ ansible_env.LC_CTYPE | regex_replace(".*\.", "") }}'
+
+# Create the real one, and name it index.html. it will not be overwritten if you redeploy
+# same for main.css and main.js
+- name: Create a very simple fallback page.
+  when: not index_page.stat.exists
+  tags: website
+  template:
+    src: '{{ path.name }}'
+    dest: '{{ path.dest }}'
+    owner: root
+    group: www-data
+    mode: '0640'
+  with_items:
+    - name: index-demo.html
+      dest: /var/www/default/index-demo.html
+    - name: demo.css
+      dest: /var/www/default/css/demo.css
+    - name: demo.js
+      dest: /var/www/default/js/demo.js
+  loop_control:
+    loop_var: path
+
+- name: Remove the demo files if there is a real index file
+  when: index_page.stat.exists
+  tags: website
+  file:
+    path: '/var/www/default/{{ path }}'
+    state: absent
+  with_items:
+      - index-demo.html
+      - css/demo.css
+      - js/demo.js
+  loop_control:
+    loop_var: path
+
+- name: Create the website site configuration file
+  tags: website
+  notify: Restart nginx
+  template:
+    src: website-simple.tpl
+    dest: /etc/nginx/sites-available/website-simple.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable nginx site
+  tags: website
+  notify: Restart nginx
+  file:
+    src: /etc/nginx/sites-available/website-simple.conf
+    dest: /etc/nginx/sites-enabled/website-simple.conf
+    state: link
+
+# AppArmor configuration ======================================================
+
+- name: Install web site AppArmor profile
+  when: security.app_armor
+  tags: website-simple, security, apparmor
+  template:
+    src: apparmor.d/local/website-simple
+    dest: /etc/apparmor.d/local/website-simple
+
+- name: Add website-simple AppAromor specific configuration
+  when: security.app_armor
+  register: aa_config
+  tags: website-simple, security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/website-simple>'
+    insertbefore: '# End of local includes for homebox'
+
+- name: Activate AppArmor profiles
+  notify: Restart AppArmor service
+  when: security.app_armor and aa_config.changed
+  tags: website-simple, security, apparmor
+  command: 'aa-enforce usr.sbin.nginx'

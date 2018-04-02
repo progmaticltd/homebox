@@ -1,0 +1,17 @@
+# Install a basic web site in http and https
+- hosts: homebox
+  vars:
+    certificate:
+      type: www
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/defaults/main.yml'
+  roles:
+    - certificates
+
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/defaults/main.yml'
+  roles:
+    - website-simple
