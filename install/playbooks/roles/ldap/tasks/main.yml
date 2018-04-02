@@ -21,7 +21,7 @@
   register: slapd_stats
   stat:
     path: /usr/sbin/slapd
-    
+
 # Pre-configure the LDAP sever before instaling
 - name: Configure the LDAP administration account
   when: slapd_stats.stat.exists == False
@@ -66,6 +66,7 @@
 
 # Install LDAP server
 - name: Install the required packages
+  tags: dpkg
   apt:
     name: '{{ item }}'
     state: latest
@@ -75,6 +76,8 @@
     - python-ldap
     - python-passlib
     - ldapscripts
+    - libpam-pwquality
+    - cracklib-runtime
 
 # Changes in the database will be stored there
 - name: Create the ldap config changes folder
@@ -108,7 +111,7 @@
   template:
     src: default-slapd
     dest: /etc/default/slapd
-  
+
 - name: Copy the ldap ssl config on the server before running it
   when: system.ssl == 'letsencrypt'
   notify: Restart the ldap service
@@ -209,8 +212,8 @@
       cn: default
       sn: default
       pwdMaxAge: '{{ passwords.max_age }}'
-      pwdInHistory: 0
-      pwdCheckQuality: 0
+      pwdInHistory: '{{ passwords.remember }}'
+      pwdCheckQuality: '{{ passwords.quality.enforce | ternary(1,0) }}'
       pwdLockoutDuration: 0
       pwdGraceAuthNLimit: 0
       pwdFailureCountInterval: 300
@@ -283,7 +286,7 @@
     src: /etc/ldap/schema/misc.ldif
     dest: /etc/ldap/changes/misc.ldif
     remote_src: true
-    
+
 - name: Load misc schema for multiple email addresses
   when: misc_schema.changed
   command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/misc.ldif
@@ -444,7 +447,7 @@
     - libnss-ldapd
     - libpam-ldapd
 
-- name: Update the ldap configuration file    
+- name: Update the ldap configuration file
   when: system.login == true
   template:
     src: nslcd.conf
@@ -506,3 +509,28 @@
   apt:
     name: nslcd
     state: latest
+
+# Password quality enforcement
+- name: Build password quality parameters string
+  when: passwords.quality.enforce
+  tags: password
+  set_fact:
+    pwq_params: '{{ pwq_params | default("") }}{{ item.name }}={{ item.value }} '
+  with_items:
+    - '{{ passwords.quality.params }}'
+
+- name: Configure password quality module
+  when: passwords.quality.enforce
+  tags: password
+  replace:
+    path: /etc/pam.d/common-password
+    regexp: '^password\s+requisite\s+pam_pwquality.so.*$'
+    replace: 'password requisite pam_pwquality.so {{ pwq_params | trim() }}'
+
+- name: Configure password quality module
+  when: passwords.remember > 0
+  tags: password
+  replace:
+    path: /etc/pam.d/common-password
+    regexp: '^(password.*pam_unix.so.*sha512.*)$'
+    replace: '\1 remember={{ passwords.remember }}'

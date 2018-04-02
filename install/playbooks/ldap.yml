@@ -7,6 +7,7 @@
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/defaults/main.yml'
+    - '{{ playbook_dir }}/roles/ldap/variables/main.yml'
   vars:
     clean_users: '{{ clean | default(false)}}'
     clean_groups: '{{ clean | default(false)}}'

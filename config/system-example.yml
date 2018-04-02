@@ -93,12 +93,29 @@ mail:
 
 ###############################################################################
 # Default password policies for users
-passwords:
-  min_length: 8
-  max_age: 31536000        # 365 days max
-  max_failure: 5
-  expire_warning: 259200   # 3 days
-  require_nonalpha: true
+passwords_min_length: 8
+passwords_max_age: 365 # days
+passwords_max_failure: 5
+passwords_expire_warning: 7 # days
+passwords_require_nonalpha: true
+
+# Keep track of the passwords you have used before.
+# They are stored using salted SHA512, which is safe enough.
+# If you do not want, set this value to 0
+passwords_remember: 12
+
+# Strong system enforcement of passwords
+# See: https://www.networkworld.com/article/3198444/linux/the-complexity-of-password-complexity.html
+passwords_quality_check: true
+passwords_quality_minclass: 3
+passwords_quality_maxrepeat: 3
+passwords_quality_maxclassrepeat: 4
+passwords_quality_lcredit: 1
+passwords_quality_ucredit: 1
+passwords_quality_ocredit: 3
+passwords_quality_dcredit: 1
+passwords_quality_difok: 3
+
 
 ###############################################################################
 # System related

@@ -1,18 +1,25 @@
-###############################################################################
-# Default posix groups
-posix_groups:
-- gid: mail_users
-  description: Mail users
-  gidNumber: 1001
-  mail: 'users@{{ network.domain }}'
-- gid: administrators
-  description: Administrators
-  gidNumber: 2000
-  mail: 'admin@{{ network.domain }}'
+---
 
-users_defaults:
-  uid_start: 1001
-  gid_start: 1001
-  shell: /bin/dash
-  group: users
-  groups: mail
+# Default values for passwords
+passwords_min_length: 8
+passwords_max_age: 365 # 365 days max
+passwords_max_failure: 5
+passwords_expire_warning: 3 # 3 days
+passwords_require_nonalpha: true
+
+# Password quality enforcement parameters:
+# See: https://www.networkworld.com/article/3198444/linux/the-complexity-of-password-complexity.html
+passwords_quality_check: true
+passwords_quality_minclass: 3
+passwords_quality_maxrepeat: 3
+passwords_quality_maxclassrepeat: 4
+passwords_quality_lcredit: 1
+passwords_quality_ucredit: 1
+passwords_quality_ocredit: 3
+passwords_quality_dcredit: 1
+passwords_quality_difok: 3
+
+# Keep track of the passwords you have used before
+# If you do not want, set this value to 0
+# Passwords are stored using salted SHA512, safe enough
+passwords_quality_remember: 12

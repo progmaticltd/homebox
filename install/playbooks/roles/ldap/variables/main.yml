@@ -1,0 +1,52 @@
+###############################################################################
+# Default posix groups
+posix_groups:
+- gid: mail_users
+  description: Mail users
+  gidNumber: 1001
+  mail: 'users@{{ network.domain }}'
+- gid: administrators
+  description: Administrators
+  gidNumber: 2000
+  mail: 'admin@{{ network.domain }}'
+
+users_defaults:
+  uid_start: 1001
+  gid_start: 1001
+  shell: /bin/dash
+  group: users
+  groups: mail
+
+# Default password policies for LDAP
+passwords:
+  min_length: '{{ passwords_min_length }}'
+  max_failure: '{{ passwords_max_failure }}'
+  expire_warning: '{{ passwords_expire_warning * 86400 }}'
+  max_age: '{{ passwords_max_age * 86400 }}'
+  require_nonalpha: '{{ passwords_require_nonalpha }}'
+  remember: '{{ passwords_remember }}'
+  # Password quality module
+  # See: https://www.networkworld.com/article/3198444/linux/the-complexity-of-password-complexity.html
+  quality:
+    enforce: '{{ passwords_quality_check }}'
+    params:
+      - name: retry
+        value: '{{ passwords_max_failure }}'
+      - name: minlen
+        value: '{{ passwords_min_length }}'
+      - name: minclass
+        value: '{{ passwords_quality_minclass }}'
+      - name: maxrepeat
+        value: '{{ passwords_quality_maxrepeat }}'
+      - name: maxclassrepeat
+        value: '{{ passwords_quality_maxclassrepeat }}'
+      - name: lcredit
+        value: '{{ passwords_quality_lcredit }}'
+      - name: ucredit
+        value: '{{ passwords_quality_ucredit }}'
+      - name: ocredit
+        value: '{{ passwords_quality_ocredit }}'
+      - name: dcredit
+        value: '{{ passwords_quality_dcredit }}'
+      - name: difok
+        value: '{{ passwords_quality_difok }}'
