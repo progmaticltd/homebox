@@ -41,7 +41,7 @@
     --dkim-public-key-file /etc/opendkim/keys/{{ dkim.selector }}.txt
     --auto-discover all
     --log-file /var/log/dns-update-gandi.log
-    --log-level {{ system.debug | ternary(DEBUG, INFO) }}
+    --log-level {{ system.debug | ternary("DEBUG", "INFO") }}
     --test {{ dns.test }}
     --add-wildcard {{ dns.add_wildcard }}
     --add-www {{ website.install }}
