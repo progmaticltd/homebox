@@ -90,10 +90,11 @@ $config['plugins'][] = 'dovecot_impersonate';
 // skin name: folder from skins/
 $config['skin'] = 'larry';
 
-// Disable spellchecking
-// Debian: spellshecking needs additional packages to be installed, or calling external APIs
-//         see defaults.inc.php for additional informations
-$config['enable_spellcheck'] = false;
+// Spellcheck parameters
+$config['spellcheck_engine'] = 'pspell';
+$config['enable_spellcheck'] = true;
+$config['spellcheck_dictionary'] = true;
+$config['spellcheck_languages'] = [ 'en' => 'English' ];
 
 # Auto-complete address books
 $rcmail_config['autocomplete_addressbooks'] = ['sql', 'users'];
