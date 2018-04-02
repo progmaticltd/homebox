@@ -12,6 +12,7 @@
     - rsync
     - makepasswd
     - haveged             # speed up password generation
+    - aptitude
   loop_control:
     loop_var: pkg
 
