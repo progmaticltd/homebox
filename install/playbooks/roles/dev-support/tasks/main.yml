@@ -1,7 +1,6 @@
 ---
 
 - name: Install Development support packages
-  when: system.devel
   tags: development
   apt:
     name: '{{ pkg }}'
@@ -12,7 +11,6 @@
     loop_var: pkg
 
 - name: Install a correct bashrc for root
-  when: system.devel
   tags: development
   template:
     src: '{{ dot_file }}'
@@ -25,9 +23,7 @@
     loop_var: dot_file
 
 - name: Set the default shell for the root user
-  when: system.devel
   tags: development
   user:
     name: root
     shell: '{{ devel.root.shell }}'
-  

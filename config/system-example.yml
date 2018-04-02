@@ -133,7 +133,6 @@ dns:
   update: true          # Automatic update of your DNS server
   test: true            # test mode: does not activate the DNS zone straight
   add_wildcard: false   # Create a wildcard entry to redirect all traffic to your box
-  add_www: false        # Create a www entry to host a web site
   gandi:
     handle: JD123-GANDI
     key: zaNGbUVIvi1KbYb6PPMdiQLh
