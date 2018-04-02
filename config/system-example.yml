@@ -147,7 +147,51 @@ firewall:
     rule: allow
 
 ###############################################################################
+# Install a webmail, or not...
+webmail:
+  install: true
+  type: roundcube
+
+###############################################################################
 # Extra security values
 security:
   auto_update: true
   app_armor: true
+
+###############################################################################
+# roundcube_install: true
+roundcube_plugins:
+  - password
+  - archive
+  - jqueryui
+  - markasjunk
+  - newmail_notifier
+  - autologon
+  - subscriptions_option
+  - emoticons
+  - new_user_identity
+  - managesieve
+  - contextmenu
+  - thunderbird_labels
+
+# Available plugins:
+# - keyboard_shortcuts
+# - dkimstatus
+# - hide_blockquote
+# - enigma
+# - zipdownload
+# - new_user_dialog
+# - additional_message_headers
+# - acl
+# - vcard_attachments
+# - database_attachments
+# - debug_logger
+# - filesystem_attachments
+# - help
+# - hide_blockquote
+# - http_authentication
+# - show_additional_headers
+# - squirrelmail_usercopy
+# - userinfo
+# - virtuser_file
+# - virtuser_query

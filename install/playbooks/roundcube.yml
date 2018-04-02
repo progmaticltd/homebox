@@ -6,6 +6,7 @@
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/defaults/main.yml'
+    - '{{ playbook_dir }}/roles/roundcube/variables/main.yml'
   roles:
     - certificates
     - roundcube

@@ -1,21 +1,23 @@
-roundcube:
-  url: 'webmail.{{ network.domain }}'
-  title: 'Roundcube Webmail ({{ ldap.organization.domain }})'
-  enigma: no
-  max_attachment_size: 25   # In megabytes
-  plugins:
-    - password
-    - archive
-    - jqueryui
-    - markasjunk
-    - newmail_notifier
-    - autologon
-    - subscriptions_option
-    - emoticons
-    - new_user_identity
-    - managesieve
-    - contextmenu
-    - thunderbird_labels
+# Default values for passwords
+passwords_min_length: 8
+passwords_max_age: 365 # 365 days max
+passwords_max_failure: 5
+passwords_expire_warning: 3 # 3 days
+passwords_require_nonalpha: true
+
+roundcube_plugins:
+  - password
+  - archive
+  - jqueryui
+  - markasjunk
+  - newmail_notifier
+  - autologon
+  - subscriptions_option
+  - emoticons
+  - new_user_identity
+  - managesieve
+  - contextmenu
+  - thunderbird_labels
 
 # Available plugins:
 # - keyboard_shortcuts

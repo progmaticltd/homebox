@@ -29,8 +29,8 @@
 - name: Compute max upload size from max attachment size
   tags: roundcube
   set_fact:
-    upload_max_size: '{{ mail.max_attachment_size }}M'
-    post_max_size: '{{ 1 + mail.max_attachment_size | int }}M'
+    upload_max_size: '{{ mail.max_attachment_size }}'
+    post_max_size: '{{ 1 + mail.max_attachment_size | int }}'
 
 - name: Create the webmail site
   tags: roundcube
@@ -140,6 +140,21 @@
     - thunderbird_labels
   loop_control:
     loop_var: file
+
+- name: Replace the upload maximum size in
+  tags: roundcube
+  notify: Restart php-fpm
+  replace:
+    path: /etc/php/7.0/fpm/php.ini
+    regexp: '{{ line.regexp }}'
+    replace: '{{ line.replace }}'
+  with_items:
+    - regexp: '^upload_max_filesize = .*'
+      replace: 'upload_max_filesize = {{ upload_max_size }}M'
+    - regexp: '^post_max_size = .*'
+      replace: 'post_max_size = {{ post_max_size }}M'
+  loop_control:
+    loop_var: line
 
 # There is bugs in the name of the symbolic links on Debian
 # https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=roundcube-plugins-extra;dist=unstable

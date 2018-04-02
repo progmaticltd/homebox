@@ -26,12 +26,12 @@ server {
 
     # Default roundcube location on Debian
     root /var/lib/roundcube/;
-    
+
     # Remove useless tokens for better security feelings ;-)
     server_tokens off;
 
     # Maximum upload size for attachments
-    client_max_body_size 25M;
+    client_max_body_size {{ mail.max_attachment_size }}M;
 
     {% if system.ssl == 'letsencrypt' %}
     # SSL configuration
@@ -90,8 +90,6 @@ server {
         include /etc/nginx/fastcgi_params;
         fastcgi_pass unix:/run/php/php7.0-fpm.sock;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_param PHP_VALUE "upload_max_filesize = {{ upload_max_size }}";
-        fastcgi_param PHP_VALUE "post_max_size={{ post_max_size }}";
         fastcgi_index index.php;
     }
 }

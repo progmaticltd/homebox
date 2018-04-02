@@ -1,0 +1,14 @@
+# Default password policies for LDAP
+passwords:
+  min_length: '{{ passwords_min_length }}'
+  max_failure: '{{ passwords_max_failure }}'
+  expire_warning: '{{ passwords_expire_warning * 86400 }}'
+  max_age: '{{ passwords_max_age * 86400 }}'
+  require_nonalpha: '{{ passwords_require_nonalpha }}'
+
+roundcube:
+  url: 'webmail.{{ network.domain }}'
+  title: 'Roundcube Webmail ({{ ldap.organization.domain }})'
+  enigma: no
+  max_attachment_size: 25   # In megabytes
+  plugins: '{{ roundcube_plugins }}'
