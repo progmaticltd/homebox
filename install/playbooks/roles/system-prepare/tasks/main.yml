@@ -153,3 +153,12 @@
     && chmod 0600 /etc/homebox/system-key
   args:
     creates: /etc/homebox/system-key
+
+- name: Instal the dictionnaries
+  tags: lang
+  apt:
+    name: 'aspell-{{ dict.id }}'
+    state: installed
+  with_items: '{{ dictionaries }}'
+  loop_control:
+    loop_var: dict

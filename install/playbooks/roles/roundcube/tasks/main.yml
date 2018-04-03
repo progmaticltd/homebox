@@ -25,7 +25,6 @@
     - php-net-ldap3       # For LDAP address book
     - php7.0-pspell       # For spell checking
     - aspell
-    - aspell-en
     - php7.0-zip          # For multiple attachments download
   loop_control:
     loop_var: pkg
@@ -184,6 +183,7 @@
     src: /etc/nginx/sites-available/roundcube.conf
     dest: /etc/nginx/sites-enabled/roundcube.conf
     state: link
+
 
 # AppArmor configuration ======================================================
 

@@ -157,6 +157,17 @@ security:
   app_armor: true
 
 ###############################################################################
+# Dictionaries to install in the system
+dictionaries:
+  - name: English
+    id: en
+  - name: French
+    id: fr
+  - name: Spanish
+    id: es
+
+
+###############################################################################
 # roundcube_install: true
 roundcube_plugins:
   - password

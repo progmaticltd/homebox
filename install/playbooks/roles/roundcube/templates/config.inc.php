@@ -88,13 +88,19 @@ $config['plugins'][] = 'dovecot_impersonate';
 {% endif %}
 
 // skin name: folder from skins/
+
 $config['skin'] = 'larry';
 
 // Spellcheck parameters
 $config['spellcheck_engine'] = 'pspell';
 $config['enable_spellcheck'] = true;
 $config['spellcheck_dictionary'] = true;
-$config['spellcheck_languages'] = [ 'en' => 'English' ];
+$config['spellcheck_languages'] = [
+{% for dict in dictionaries %}
+'{{ dict.id }}' => '{{ dict.name }}'
+{% if not loop.last %},{% endif %}
+{% endfor %}
+];
 
 # Auto-complete address books
 $rcmail_config['autocomplete_addressbooks'] = ['sql', 'users'];
