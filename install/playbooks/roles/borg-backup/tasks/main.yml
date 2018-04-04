@@ -1,0 +1,11 @@
+---
+
+- name: Install borgbackup package
+  tags: backup
+  apt:
+    name: '{{ pkg }}'
+    state: latest
+  with_items:
+    - borgbackup
+  loop_control:
+    loop_var: pkg

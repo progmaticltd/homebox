@@ -44,6 +44,10 @@
 - import_playbook: autoconfig.yml
   when: mail.autoconfig
 
+# Backup script using borg-backup
+- import_playbook: backup-borg.yml
+  when: backup.install and backup.type == 'borgbackup'
+
 # Add the old emails import scripts for each users
 # Except when in development mode.
 # It can alter the tests and is CPU intensive if you have
