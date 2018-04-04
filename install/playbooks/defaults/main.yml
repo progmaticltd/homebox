@@ -2,6 +2,7 @@
 policies:
   system:
     password: 'length=16 chars=ascii_letters,digits'
+    passphrase: 'length=40'
 
 # LDAP configuration
 ldap:
@@ -41,3 +42,8 @@ ldap:
   managerPasswdParams: "{{ playbook_dir }}/../../backup/ldap/manager.pwd {{ policies.system.password }}"
   adminPasswdParams: "{{ playbook_dir }}/../../backup/ldap/admin.pwd {{ policies.system.password }}"
   postmasterPasswdParams: "{{ playbook_dir }}/../../backup/ldap/postmaster.pwd {{ policies.system.password }}"
+
+
+# Encryption parameters
+encryption:
+  systemKeyParams: "{{ playbook_dir }}/../../backup/encryption/system-key.pwd {{ policies.system.passphrase }}"
