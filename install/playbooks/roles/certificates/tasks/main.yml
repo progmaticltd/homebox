@@ -102,7 +102,7 @@
 # In this direction, we should overwrite the symbolic links, in case the certificates
 # have been renewed
 - name: Backup the certificates on your local machine
-  tags: cert,sync2
+  tags: cert,sync
   synchronize:
     mode: pull
     src: /etc/letsencrypt
