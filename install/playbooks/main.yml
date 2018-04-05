@@ -46,7 +46,7 @@
 
 # Backup script using borg-backup
 - import_playbook: backup-borg.yml
-  when: backup.install and backup.type == 'borgbackup'
+  when: backup.install
 
 # Add the old emails import scripts for each users
 # Except when in development mode.

@@ -157,6 +157,36 @@ security:
   app_armor: true
 
 ###############################################################################
+# Backup configuration
+# You can have multiple backup configuration, remote, local, USB, etc...
+# All backups will be encrypted
+# The implementation is in progress...
+backup:
+  install: true
+  type: borgbackup
+  locations:
+  - name: local
+    url: local://home/backup/homebox
+    active: yes
+  - name: router
+    url: ssh://backup@fw.office.pm:/home/backup/homebox
+    key: backup.rsa
+    active: yes
+  - name: free.fr
+    url: ftp://backup:4hweghytfu@www.sinfo.ftpperso.free.fr:/private/
+    active: yes
+  - name: NAS
+    url: smb://backup:giuwh97kwerr@ftp.office.pm:/home/backup/homebox
+    active: yes
+  - name: Corsair Voyager
+    url: usb://media/usb/corsair/backup/homebox
+    active: yes
+  - name: AWS
+    url: http://AKOIUHEUGYFG:AOUINQEFUWGY972098GU@http://s3-eu-west-1.amazonaws.com/bucket/
+    active: no
+
+
+###############################################################################
 # Dictionaries to install in the system
 dictionaries:
   - name: English

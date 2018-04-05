@@ -1,0 +1,61 @@
+---
+
+- name: Get backup location
+  tags: backup
+  set_fact:
+    protocol: '{{ location.url | regex_replace("://.*", "") }}'
+
+
+
+###############################################################################
+- name: Check if it is a local directory for backup
+  when: protocol == 'local'
+  set_fact:
+    path: '{{ location.url | regex_replace("local:/", "") }}'
+
+- name: Create the local backup directory
+  when: protocol == 'local'
+  file:
+    path:  '{{ path }}'
+    state: directory
+    mode: 0700
+    owner: root
+    group: root
+
+###############################################################################
+- name: Install the required file systems
+  when: protocol == 'ssh'
+  apt:
+    name: 'sshfs'
+    state: latest
+
+###############################################################################
+# Install FTP fuse fs if needed
+- name: Install the required file systems
+  when: protocol == 'ftp'
+  apt:
+    name: 'curlftpfs'
+    state: latest
+
+###############################################################################
+# For Samba drives, uses cifs-utils
+- name: Install the required file systems
+  when: protocol == 'smb'
+  apt:
+    name: 'cifs-utils'
+    state: latest
+
+###############################################################################
+# For usb drives, we will use autofs feature
+- name: Install the required file systems
+  when: protocol == 'usb'
+  apt:
+    name: 'autofs'
+    state: latest
+
+###############################################################################
+- name: Install the required file systems
+  when: protocol == 's3'
+  apt:
+    name: 's3fs'
+    state: latest

@@ -1,6 +1,6 @@
 ---
 
-- name: Install borgbackup package
+- name: Install required packages package
   tags: backup
   apt:
     name: '{{ pkg }}'
@@ -9,3 +9,16 @@
     - borgbackup
   loop_control:
     loop_var: pkg
+
+- name: Create the backup mount point
+  tags: backup
+  file:
+    path: /mnt/backup
+    state: directory
+
+- name: Configure each protocol
+  include_tasks: install-protocol.yml
+  with_items:
+    - '{{ backup.locations }}'
+  loop_control:
+    loop_var: location
