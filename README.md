@@ -8,28 +8,28 @@ A set of Ansible scripts to setup a secure email and personal files server. This
 
 ## Current status and supported features
 
-| Current feature, implemented and planned                                                                            | Status    |  Tested   |
-| ------------------------------------------------------------------------------------------------------------------- | :-------: | :-------: |
-| LDAP users database, SSL & TLS certificates, password policies, integration with the system and PAM.                | Done      | Automatic |
-| SSL Certificates generation with [letsencrypt](https://letsencrypt.org), automatic local backup and publication.    | Done      | Automatic |
-| DKIM keys generation and automatic local backup and publication on Gandi                                            | Done      | Automatic |
-| SPF records generation and publication on Gandi                                                                     | Done      | Automatic |
-| DMARC record generation and publication on Gandi, *the reports generation is planned for a future version*          | Done      | Automatic |
-| Generation and publication of automatic Thunderbird (autoconfig) and Outlook (autodiscover) configuration           | Done      | Automatic |
-| Postfix configuration and installation, with LDAP lookups, and protocols STARTTLS/Submission/SMTPS                  | Done      | Automatic |
-| Automatic copy of sent emails into the sent folderm ala GMail                                                       | Done      | Automatic |
-| Powerful and light antispam system with [rspamd](https://rspamd.com/)                                               | Done      |  Manual   |
-| Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers, impersonate   | Done      |  Basic    |
-| Roundcube webmail, https, sieve filters management, password change, automatic identity creation                    | Done      |  Basic    |
-| AppArmor securisation for rspamd, nginx, dovecot, postfix, clamav                                                   | Done      |  Manual   |
-| ISO image builder, for automatic Debian installation and a fully encrypted with LUKS ([preseed](doc/preseed.md))    | Done      |  Manual   |
-| Antivirus for inbound / outbound emails with [clamav](https://www.clamav.net/) without blocking the SMTP session.   | Done      | Automatic |
-| Add your GMail, Yahoo, Outlook.com or standard IMAP accounts.  See [external accounts](doc/external-accounts.md)    | Done      |  Manual   |
-| Automatic encrypted off-site backup,                                                                                | Working on|           |
-| Dovecot full text search in emails and attachments.                                                                 | Planned   |           |
-| Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned   |           |
-| Web proxy with privacy and parent filtering features                                                                | Planned   |           |
-| Jabber server, probably using [ejabberd](https://www.ejabberd.im/)                                                  | Planned   |           |
+| Current feature, implemented and planned                                                                            | Status      |  Tested   |
+| ------------------------------------------------------------------------------------------------------------------- | :---------: | :-------: |
+| LDAP users database, SSL & TLS certificates, password policies, integration with the system and PAM.                | Done        | Automatic |
+| SSL Certificates generation with [letsencrypt](https://letsencrypt.org), automatic local backup and publication.    | Done        | Automatic |
+| DKIM keys generation and automatic local backup and publication on Gandi                                            | Done        | Automatic |
+| SPF records generation and publication on Gandi                                                                     | Done        | Automatic |
+| DMARC record generation and publication on Gandi, *the reports generation is planned for a future version*          | Done        | Automatic |
+| Generation and publication of automatic Thunderbird (autoconfig) and Outlook (autodiscover) configuration           | Done        | Automatic |
+| Postfix configuration and installation, with LDAP lookups, and protocols STARTTLS/Submission/SMTPS                  | Done        | Automatic |
+| Automatic copy of sent emails into the sent folderm ala GMail                                                       | Done        | Automatic |
+| Powerful and light antispam system with [rspamd](https://rspamd.com/)                                               | Done        |  Manual   |
+| Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers, impersonate   | Done        |  Basic    |
+| Roundcube webmail, https, sieve filters management, password change, automatic identity creation                    | Done        |  Basic    |
+| AppArmor securisation for rspamd, nginx, dovecot, postfix, clamav                                                   | Done        |  Manual   |
+| ISO image builder, for automatic Debian installation and a fully encrypted with LUKS ([preseed](doc/preseed.md))    | Done        |  Manual   |
+| Antivirus for inbound / outbound emails with [clamav](https://www.clamav.net/) without blocking the SMTP session.   | Done        | Automatic |
+| Add your GMail, Yahoo, Outlook.com or standard IMAP accounts.  See [external accounts](doc/external-accounts.md)    | Done        |  Manual   |
+| Encrypted backups on multiple locations (USB, LAN, AWS, etc…) using [borg-backup](https://www.borgbackup.org/)      | In progress |           |
+| Dovecot full text search in emails and attachments.                                                                 | Planned     |           |
+| Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned     |           |
+| Web proxy with privacy and parent filtering features                                                                | Planned     |           |
+| Jabber server, probably using [ejabberd](https://www.ejabberd.im/)                                                  | Planned     |           |
 
 ## Basic installation
 
