@@ -47,3 +47,4 @@ ldap:
 # Encryption parameters
 encryption:
   systemKeyParams: "{{ playbook_dir }}/../../backup/encryption/system-key.pwd {{ policies.system.passphrase }}"
+  backupKeyParams: "{{ playbook_dir }}/../../backup/encryption/backup-key.pwd {{ policies.system.passphrase }}"
