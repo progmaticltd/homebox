@@ -16,9 +16,53 @@
     path: /mnt/backup
     state: directory
 
+- name: Create a directory to store all the ssh configuration segments
+  tags: backup
+  file:
+    path: /root/.ssh/config.d/
+    state: directory
+
 - name: Configure each protocol
   include_tasks: install-protocol.yml
   with_items:
     - '{{ backup.locations }}'
   loop_control:
     loop_var: location
+
+- name: Create the backup config into /etc/homebox
+  tags: config
+  ini_file:
+    path: '/etc/homebox/backup.ini'
+    section: '{{ location.name }}'
+    option: url
+    value: '{{ location.url }}'
+    mode: '0600'
+  with_items:
+    - '{{ backup.locations }}'
+  loop_control:
+    loop_var: location
+
+- name: Add the cron entries
+  tags: config
+  template:
+    src: backup.sh
+    dest: '/etc/cron.{{ location.frequency | default("daily") }}/backup-{{ location.name }}'
+    mode: '0700'
+  with_items:
+    - '{{ backup.locations }}'
+  loop_control:
+    loop_var: location
+
+- name: Create a random passphrase for encrypted backup
+  tags: encryption
+  set_fact:
+    backup_key: '{{ lookup("password", "{{ encryption.backupKeyParams }}") }}'
+
+- name: Create a passphrase to encrypt system files
+  tags: encryption
+  template:
+    src: backup-key
+    dest: /etc/homebox/backup-key
+    owner: root
+    group: root
+    mode: '0400'

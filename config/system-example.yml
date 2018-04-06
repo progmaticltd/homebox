@@ -172,16 +172,16 @@ backup:
     url: ssh://backup@fw.office.pm:/home/backup/homebox
     key: backup.rsa
     active: yes
-  - name: free.fr
+  - name: ftp_free1
     url: ftp://backup:4hweghytfu@www.sinfo.ftpperso.free.fr:/private/
     active: yes
-  - name: NAS
+  - name: nas
     url: smb://backup:giuwh97kwerr@ftp.office.pm:/home/backup/homebox
     active: yes
-  - name: Corsair Voyager
+  - name: usb_voyager1
     url: usb://media/usb/corsair/backup/homebox
     active: yes
-  - name: AWS
+  - name: aws1
     url: http://AKOIUHEUGYFG:AOUINQEFUWGY972098GU@http://s3-eu-west-1.amazonaws.com/bucket/
     active: no
 

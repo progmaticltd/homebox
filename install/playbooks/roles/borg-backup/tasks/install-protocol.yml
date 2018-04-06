@@ -5,7 +5,23 @@
   set_fact:
     protocol: '{{ location.url | regex_replace("://.*", "") }}'
 
+- name: Get backup location components
+  tags: backup
+  register: location_user_facts
+  shell: php -r 'echo parse_url("{{ location.url }}",  PHP_URL_USER);'
 
+- name: Set the location user
+  set_fact:
+    location_user: '{{ location_user_facts.stdout | default("backup") }}'
+
+- name: Get backup location components
+  tags: backup
+  register: location_host_facts
+  shell: php -r 'echo parse_url("{{ location.url }}",  PHP_URL_HOST);'
+
+- name: Set the location host
+  set_fact:
+    location_host: '{{ location_host_facts.stdout }}'
 
 ###############################################################################
 - name: Check if it is a local directory for backup
@@ -28,6 +44,19 @@
   apt:
     name: 'sshfs'
     state: latest
+
+- name: Configure the backup location
+  when: protocol == 'ssh'
+  template:
+    src: 'ssh-config'
+    dest: '/root/.ssh/config.d/backup-{{ location.name }}'
+
+- name: Create the global ssh config for root
+  assemble:
+    src: /root/.ssh/config.d
+    dest: /root/.ssh/config
+    delimiter: "#---\n"
+    mode: '0600'
 
 ###############################################################################
 # Install FTP fuse fs if needed

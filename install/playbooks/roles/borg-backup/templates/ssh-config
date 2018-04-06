@@ -1,0 +1,8 @@
+
+# SSH configuration for {{ location.name }}
+Host {{ location_host }}
+  User {{ location_user }}
+  UserKnownHostsFile /dev/null
+  CheckHostIP no
+  StrictHostKeyChecking no
+  IdentityFile ~/.ssh/backup.rsa
