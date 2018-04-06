@@ -147,11 +147,12 @@
     timeout: 180
 
 - name: Create a random password for file encryption on the server
-  tags: security
+  tags: encryption
   set_fact:
     system_key: '{{ lookup("password", "{{ encryption.systemKeyParams }}") }}'
 
 - name: Create a passphrase to encrypt system files
+  tags: encryption
   template:
     src: system-key
     dest: /etc/homebox/system-key
