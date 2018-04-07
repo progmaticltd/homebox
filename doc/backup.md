@@ -1,37 +1,74 @@
-# Automatic backup
+# Incremental backup
 
-The files in these folders are excluded from the git repository.
-When deploying for the first time, they will contain some important files, to avoid being regenerated every time you are running the Ansible scripts.
+The platform supports incremental backup of the home directory.
+You can specify multiple backup strategies, and multiple locations:
 
-This is useful, both for archiving purposes and during the development phase.
+## Backup strategy example
+```yaml
+backup:
+  install: true
+  type: borgbackup
+  locations:
+  - name: local
+    url: dir://home/backup/homebox
+    active: yes                      # The backup is currently active
+    frequency: daily                 # Run the backup every day
+    keep_daily: 3                    # Keep the last three days locally
+  - name: router
+    url: ssh://fw.office.pm:/home/backup/homebox
+    active: yes                      # The backup is currently active
+    frequency: daily                 # Run the backup every day
+    keep_daily: 7                    # Keep the last seven days (default value)
+    keep_weekly: 4                   # Keep the last four weeks (default value)
+    keep_monthly: 6                  # Keep the last six months (12 by default)
+  - name: nas
+    url: smb://backup:giuwh97kwerr@ftp.office.pm:/home/backup/homebox
+    active: yes                      # The backup is currently active
+    frequency: weekly                # Run the backup every week
+    keep_weekly: 4                   # Keep the last four weeks (default value)
+    keep_monthly: 6                  # Keep the last six months (12 by default)
+```
 
-## Certificates
+The locations currently supported are:
 
-This folder contains the letsencrypt certificates generated on the server. This is also very important, to avoid requesting the certificates again and again, and being blocked by LetsEncrypt.
+- local: local drive, useful for quick and short time backup.
+- ssh: remote backup on another server through SSH.
+- smb: samba share, probably on your local network.
 
-For instance, this is the certificates generated, for the domain "homebox.space"
+You can have different backup frequencies, for instance daily, weekly or monthly
 
-  - imap.homebox.space
-  - ldap.homebox.space
-  - smtp.homebox.space
-  - webmail.homebox.space
-  - autodiscover.homebox.space (when using autodiscover from Outlook)
+## Emails reporting
 
-## DKIM Keys: 'dkim-keys'
+By default, backup jobs are run overnight, and an email is sent to the postmaster, with a summary of the backup job:
 
-This folder contains the DKIM keys generated on the server. The installation script will compare these DKIM public key with the one recorded in your DNS, and will update it only if different.
+```
+Backup report for nas1: Success
+Creation status:
+------------------------------------------------------------------------------
+Archive name: home-2018-04-07 22:03:47.380483
+Archive fingerprint: b5ca1c8ff733e6450c861ac66ccc70fcdcffe13690a969c895bc8cf843f27059
+Time (start): Sat, 2018-04-07 22:03:48
+Time (end):   Sat, 2018-04-07 22:03:48
+Duration: 0.37 seconds
+Number of files: 2825
+------------------------------------------------------------------------------
+                       Original size      Compressed size    Deduplicated size
+This archive:              157.00 MB            123.53 MB             58.16 kB
+All archives:              784.84 MB            617.59 MB            123.94 MB
 
-## LDAP passwords
+                       Unique chunks         Total chunks
+Chunk index:                    2014                13830
+------------------------------------------------------------------------------
+terminating with success status, rc 0
+Prune status:
+------------------------------------------------------------------------------
+                       Original size      Compressed size    Deduplicated size
+Deleted data:                    0 B                  0 B                  0 B
+All archives:              784.84 MB            617.59 MB            123.94 MB
 
-This folder contains the passwords generated automatically for some accounts in the LDAP directory
+                       Unique chunks         Total chunks
+Chunk index:                    2014                13830
+------------------------------------------------------------------------------
+terminating with success status, rc 0
+```
 
-  - admin.pwd: Super administrator password, read/write on the entire LDAP system
-  - manager.pwd: Manager: read/write access to user accounts
-  - readonly.pwd: readonly account to query the ldap server
-  - import.pwd: Master account used to inject imported external emails into the user's emails.
-  - postmaster.pwd: Postmaster account, that receives, for instance, emails
-    like postmaster@domain.com or webmaster@domain.com.
-
-## Password for the rspamd administration interface
-
-The Antispam comes with an excellent [web interface](https://www.rspamd.com/webui/) that provides basic functions for setting metric actions, scores, viewing statistic and learning.

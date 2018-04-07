@@ -25,7 +25,7 @@ A set of Ansible scripts to setup a secure email and personal files server. This
 | ISO image builder, for automatic Debian installation and a fully encrypted with LUKS ([preseed](doc/preseed.md))    | Done        |  Manual   |
 | Antivirus for inbound / outbound emails with [clamav](https://www.clamav.net/) without blocking the SMTP session.   | Done        | Automatic |
 | Add your GMail, Yahoo, Outlook.com or standard IMAP accounts.  See [external accounts](doc/external-accounts.md)    | Done        |  Manual   |
-| Encrypted backups on multiple locations (USB, LAN, AWS, etc…) using [borg-backup](https://www.borgbackup.org/)      | In progress |           |
+| Multiple encrypted incremental backups, with email reporting. See [backup documentation](doc/backup.md) for details.| Done        |  Manual   |
 | Dovecot full text search in emails and attachments.                                                                 | Planned     |           |
 | Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned     |           |
 | Web proxy with privacy and parent filtering features                                                                | Planned     |           |
@@ -48,7 +48,7 @@ The repository contains a few folders you should be familiar with:
 - config: Yaml configuration files for your homebox device.
 - preseed: Docker environment to create an automatic ISO image installer for Debian. Useful for testing and live system.
 - install: Ansible scripts to install or test the whole server environment.
-- backup: Automatic backup of important information during the deployment. See [doc/backup.md](doc/backup.md).
+- backup: Automatic backup of important information during the deployment. See [doc/deployment-backup.md](doc/deployment-backup.md).
 - sandbox: Put anything you don't want to commit here.
 - doc: Various documentation, work in progress.
 
@@ -220,10 +220,10 @@ During the development phase, you can also run the scripts one by one.
 
 **Note: The scripts are idempotents, you can run then multiple time without error.**
 
-#### Automatic backup
+#### Automatic deployment backup
 
 Once the scripts have been run, the backup folder contains important files to run your scripts again.
-See (see the [backup.md](../doc/backup.md)
+See (see the [deployment-backup.md](../doc/deployment-backup.md)
 
 ## Future versions
 
