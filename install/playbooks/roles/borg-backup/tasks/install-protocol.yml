@@ -1,36 +1,41 @@
 ---
 
-- name: Get backup location
-  tags: backup
+- name: Extract backup location details
+  tags: backup, facts
   set_fact:
-    protocol: '{{ location.url | regex_replace("://.*", "") }}'
+    protocol: '{{ location.url | urlsplit("scheme") }}'
+    location_host: '{{ location.url | urlsplit("hostname") }}'
+    location_user: '{{ location.url | urlsplit("username") | default("backup") }}'
+    path: '{{ location.url | urlsplit("path") }}'
+    location_details: '{{ location.url | urlsplit }}'
 
-- name: Get backup location components
-  tags: backup
-  register: location_user_facts
-  shell: php -r 'echo parse_url("{{ location.url }}",  PHP_URL_USER);'
+- name: Create the backup config into /etc/homebox
+  tags: config
+  ini_file:
+    path: '/etc/homebox/backup.ini'
+    section: '{{ location.name }}'
+    option: '{{ option.name }}'
+    value: '{{ option.value }}'
+    mode: '0600'
+  with_items:
+    - name: url
+      value: '{{ location.url }}'
+    - name: active
+      value: '{{ location.active }}'
+    - name: keep_daily
+      value: '{{ location.keep_daily | default(7) }}'
+    - name: keep_weekly
+      value: '{{ location.keep_weekly | default(4)  }}'
+    - name: keep_monthly
+      value: '{{ location.keep_monthly | default(12)  }}'
+  loop_control:
+    loop_var: option
 
-- name: Set the location user
-  set_fact:
-    location_user: '{{ location_user_facts.stdout | default("backup") }}'
-
-- name: Get backup location components
-  tags: backup
-  register: location_host_facts
-  shell: php -r 'echo parse_url("{{ location.url }}",  PHP_URL_HOST);'
-
-- name: Set the location host
-  set_fact:
-    location_host: '{{ location_host_facts.stdout }}'
 
 ###############################################################################
-- name: Check if it is a local directory for backup
-  when: protocol == 'local'
-  set_fact:
-    path: '{{ location.url | regex_replace("local:/", "") }}'
 
 - name: Create the local backup directory
-  when: protocol == 'local'
+  when: protocol == 'dir'
   file:
     path:  '{{ path }}'
     state: directory
@@ -40,31 +45,45 @@
 
 ###############################################################################
 - name: Install the required file systems
+  tags: ssh
   when: protocol == 'ssh'
   apt:
     name: 'sshfs'
     state: latest
 
 - name: Configure the backup location
+  tags: ssh
   when: protocol == 'ssh'
   template:
     src: 'ssh-config'
     dest: '/root/.ssh/config.d/backup-{{ location.name }}'
 
 - name: Create the global ssh config for root
+  when: protocol == 'ssh'
+  tags: ssh
   assemble:
     src: /root/.ssh/config.d
     dest: /root/.ssh/config
     delimiter: "#---\n"
     mode: '0600'
 
-###############################################################################
-# Install FTP fuse fs if needed
-- name: Install the required file systems
-  when: protocol == 'ftp'
-  apt:
-    name: 'curlftpfs'
-    state: latest
+- name: Get backup server signature
+  when: protocol == 'ssh'
+  tags: ssh
+  shell: 'ssh-keyscan -H {{ location_host }}'
+  register: keyscan
+
+- name: Add the backup server to known_hosts, once for all
+  when: protocol == 'ssh'
+  tags: ssh
+  lineinfile:
+    path: /root/.ssh/known_hosts
+    line: '{{ line }}'
+    create: yes
+  with_items:
+    - '{{ keyscan.stdout_lines }}'
+  loop_control:
+    loop_var: line
 
 ###############################################################################
 # For Samba drives, uses cifs-utils
@@ -76,15 +95,18 @@
 
 ###############################################################################
 # For usb drives, we will use autofs feature
-- name: Install the required file systems
-  when: protocol == 'usb'
-  apt:
-    name: 'autofs'
-    state: latest
+# Not implemented yet
+# - name: Install the required file systems
+#   when: protocol == 'usb'
+#   apt:
+#     name: 'autofs'
+#     state: latest
 
 ###############################################################################
-- name: Install the required file systems
-  when: protocol == 's3'
-  apt:
-    name: 's3fs'
-    state: latest
+# To backup on S3
+# Not implemented yet
+# - name: Install the required file systems
+#   when: protocol == 's3'
+#   apt:
+#     name: 's3fs'
+#     state: latest

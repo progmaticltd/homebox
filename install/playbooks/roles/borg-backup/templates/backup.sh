@@ -5,11 +5,14 @@
 # Setting this, so the repo does not need to be given on the commandline:
 export BORG_REPO='{{ location.url }}'
 
-# Setting this, so you won't be asked for your repository passphrase:
-# export BORG_PASSPHRASE='XYZl0ngandsecurepa_55_phrasea&&123'
+scheme='{{ location.url | urlsplit("scheme") }}'
+host='{{ location.url | urlsplit("hostname") }}'
+user='{{ location.url | urlsplit("username") | default("backup") }}'
+path='{{ location.url | urlsplit("path") }}'
 
-# or this to ask an external program to supply the passphrase:
-export BORG_PASSCOMMAND='cat /etc/homebox/backup-key'
+# Setting this, so you won't be asked for your repository passphrase:
+export BORG_PASSPHRASE=$(cat /etc/homebox/backup-key)
+# Or: export BORG_PASSCOMMAND='cat /etc/homebox/backup-key'
 
 # some helpers and error handling:
 info() { printf "\n%s %s\n\n" "$( date )" "$*" >&2; }
@@ -19,6 +22,7 @@ info "Starting backup for '{{ location.name }}'"
 
 # Backup the most important directories into an archive named after
 # the machine this script is currently running on:
+# Add exclude: --exclude '/home/users/*/
 
 borg create                         \
     --verbose                       \
@@ -28,7 +32,6 @@ borg create                         \
     --show-rc                       \
     --compression lz4               \
     --exclude-caches                \
-    --exclude '/home/*/.cache/*'    \
                                     \
     ::'{hostname}-{now}'            \
     /home                           \

@@ -29,23 +29,10 @@
   loop_control:
     loop_var: location
 
-- name: Create the backup config into /etc/homebox
-  tags: config
-  ini_file:
-    path: '/etc/homebox/backup.ini'
-    section: '{{ location.name }}'
-    option: url
-    value: '{{ location.url }}'
-    mode: '0600'
-  with_items:
-    - '{{ backup.locations }}'
-  loop_control:
-    loop_var: location
-
 - name: Add the cron entries
   tags: config
   template:
-    src: backup.sh
+    src: cron-script.sh
     dest: '/etc/cron.{{ location.frequency | default("daily") }}/backup-{{ location.name }}'
     mode: '0700'
   with_items:
@@ -58,7 +45,7 @@
   set_fact:
     backup_key: '{{ lookup("password", "{{ encryption.backupKeyParams }}") }}'
 
-- name: Create a passphrase to encrypt system files
+- name: Save the passphrase
   tags: encryption
   template:
     src: backup-key
@@ -66,3 +53,10 @@
     owner: root
     group: root
     mode: '0400'
+
+- name: Copy the backup script
+  tags: scripts
+  copy:
+    src: backup.py
+    dest: '/usr/local/sbin/backup'
+    mode: '0700'
