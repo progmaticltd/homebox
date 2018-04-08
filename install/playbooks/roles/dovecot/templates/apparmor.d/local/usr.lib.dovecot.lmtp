@@ -12,3 +12,11 @@
 
   # Global sieve scripts
   /etc/dovecot/sieve/** rwk,
+
+  # When storing indexes outside maildir
+  /home/users/*/mails/indexes/**/dovecot.index.log rak,
+  /home/users/*/mails/indexes/**/dovecot.index.log rwk,
+  /home/users/*/mails/indexes/ rak,
+  /home/users/*/mails/indexes/ rwkl,
+  /home/users/*/mails/indexes/** rak,
+  /home/users/*/mails/indexes/** rwkl,

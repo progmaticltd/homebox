@@ -30,6 +30,9 @@ class BackupManager(object):
         self.lastBackupInfo['create'] = None
         self.lastBackupInfo['prune'] = None
 
+        # Read the compression scheme to use, or use lz4 by default
+        self.compression = self.config.get(configName, 'compression')
+
         # Read the domain configuration
         self.config = ConfigParser()
         self.config.read('/etc/homebox/backup.ini')
@@ -192,13 +195,18 @@ class BackupManager(object):
 
         args.append('--verbose')
 
-        args.append('--compression')
-        args.append('lz4')
+        # Check if we compress the content
+        if self.compression != None:
+            args.append('--compression')
+            args.append(self.compression)
 
-        args.append('--stats')
-
+        # Exclude some files and directories
         args.append('--exclude-caches')
+        args.append('--exclude-from')
+        args.append('/etc/homebox/backup-exclude')
 
+        # Reporting
+        args.append('--stats')
         args.append('--show-rc')
 
         args.append(pathSpec)
@@ -327,6 +335,7 @@ class BackupManager(object):
 ################################################################################
 # Entry point
 def main(args):
+
     try:
 
         success = False

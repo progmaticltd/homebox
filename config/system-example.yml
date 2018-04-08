@@ -166,10 +166,11 @@ backup:
   type: borgbackup
   locations:
   - name: local
-    url: dir://home/backup/homebox
+    url: dir://va/backups/homebox
     active: yes                      # The backup is currently active
     frequency: daily                 # Run the backup every day
     keep_daily: 3                    # Keep the last three days locally
+    compression: lz4                 # default compression to use
   - name: router
     url: ssh://fw.office.pm:/home/backup/homebox
     active: yes                      # The backup is currently active
@@ -177,12 +178,14 @@ backup:
     keep_daily: 7                    # Keep the last seven days (default value)
     keep_weekly: 4                   # Keep the last four weeks (default value)
     keep_monthly: 6                  # Keep the last six months (12 by default)
+    compression: lz4                 # default compression to use
   - name: nas
     url: smb://backup:giuwh97kwerr@ftp.office.pm:/home/backup/homebox
     active: yes                      # The backup is currently active
     frequency: weekly                # Run the backup every week
     keep_weekly: 4                   # Keep the last four weeks (default value)
     keep_monthly: 6                  # Keep the last six months (12 by default)
+    compression: lz4                 # default compression to use
 
 
 ###############################################################################
