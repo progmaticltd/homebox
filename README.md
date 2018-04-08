@@ -54,7 +54,7 @@ The repository contains a few folders you should be familiar with:
 
 ### 1. Create your hosts file
 
-```
+```sh
   cd config
   cp hosts-example.yml hosts.yml
 ```
@@ -62,7 +62,7 @@ The repository contains a few folders you should be familiar with:
 The host file is in YAML format, and contains only one host, which is your homebox server.
 
 Here an example:
-```
+```yaml
 all:
   hosts:
     homebox:
@@ -102,7 +102,7 @@ The most important settings are the first two sections, the others can be left t
 
 Every network subdomain entry, email address, etc... will be derivated from these values:
 
-```
+```yaml
 ###############################################################################
 # Domain and hostname information
 network:
@@ -115,7 +115,7 @@ network:
 The other information you need to fill first is the user list.
 You can also [import accounts from other platforms](doc/external-accounts.md).
 
-```
+```yaml
 ###############################################################################
 # Users
 users:
@@ -185,7 +185,7 @@ The initial creation of DNS records for certificate generation should take some 
 The installation folder is using Ansible to setup the mail server
 For instance, you can run the following commands:
 
-```
+```sh
 cd install
 ansible-playbook -vv -i ../config/hosts.yml playbooks/main.yml
 ```
