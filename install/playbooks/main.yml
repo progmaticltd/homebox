@@ -45,7 +45,7 @@
   when: mail.autoconfig
 
 # Backup script using borg-backup
-- import_playbook: backup-borg.yml
+- import_playbook: borgbackup.yml
   when: backup.install
 
 # Add the old emails import scripts for each users
