@@ -30,14 +30,14 @@ class BackupManager(object):
         self.lastBackupInfo['create'] = None
         self.lastBackupInfo['prune'] = None
 
-        # Read the compression scheme to use, or use lz4 by default
-        self.compression = self.config.get(configName, 'compression')
-
         # Read the domain configuration
         self.config = ConfigParser()
         self.config.read('/etc/homebox/backup.ini')
         self.url = self.config.get(configName, 'url')
         self.location = urlparse(self.url)
+
+        # Read the compression scheme to use, or use lz4 by default
+        self.compression = self.config.get(configName, 'compression')
 
         # Get frequency options
         self.keepDaily = self.config.get(configName, 'keep_daily')
@@ -46,6 +46,9 @@ class BackupManager(object):
 
         # Check if the backup is active
         self.active = self.config.get(configName, 'active')
+
+        # Save the process information here
+        self.runFilePath = '/run/backup-' + self.configName
 
     # read backup key
     def loadKey(self, path):
@@ -107,7 +110,11 @@ class BackupManager(object):
             self.repositoryMounted = True
 
         # Log more details
-        logging.info('Successfully mounted remote location: ' + self.url.replace(self.location.password, "***"))
+        if self.location.password != None:
+            url = self.url.replace(self.location.password, "***")
+        else:
+            url = self.url;
+        logging.info('Successfully mounted remote location: ' + url)
         logging.info('Using directory for remote repository: ' + self.repositoryPath)
 
         # Return the current status
@@ -158,6 +165,31 @@ class BackupManager(object):
     # Check if this current backup is active
     def isBackupActive(self):
         return self.active
+
+    # Check if this backup is actually running,
+    # in this case, exit to avoid two concurrent backups
+    def isRunning(self):
+        import psutil
+        # Check if the running file is here
+        try:
+            with open(self.runFilePath) as runFile:
+                pid = runFile.read()
+                logging.info("Backup is marked as running with pid " + pid)
+                if psutil.pid_exists(int(pid)):
+                    logging.debug("Process {0} found".format(pid))
+                    return True
+                logging.warning("Process {0} not found".format(pid))
+                return False
+        except FileNotFoundError as error:
+            return False
+
+    def setRunning(self, running):
+        if running == True:
+            import psutil
+            with open(self.runFilePath, 'w') as runFile:
+                runFile.write(str(os.getpid()))
+        elif os.path.isfile(self.runFilePath):
+            os.remove(self.runFilePath)
 
     # Check if the repository exists
     def repositoryInitialised(self):
@@ -357,6 +389,14 @@ def main(args):
             logging.info("Skipping backup '{0}': Not active".format(args.config))
             return;
 
+        # Return if the backup is already running
+        if manager.isRunning():
+            logging.info("Skipping backup '{0}': already running".format(args.config))
+            return;
+
+        # Make sure there is only one backup of this configuration at a time
+        manager.setRunning(True)
+
         # Load the global key encryption key
         manager.loadKey(args.key_file)
 
@@ -375,6 +415,11 @@ def main(args):
         if not manager.umountRepository():
             messages.append("Warning: could not umount the remote location")
 
+        # Clear up the running flag here, not in the finally block
+        # because this block is called if we return because the process
+        # is already running
+        manager.setRunning(False)
+
         # Will be the email status
         success = True
 
@@ -389,12 +434,15 @@ def main(args):
         success = False
         messages.append("Exception when running backup, see logs for details")
 
+        # Clear up the running flag here, not in the finally block
+        # because this block is called if we return because the process
+        # is already running
+        manager.setRunning(False)
+
     finally:
 
         # Send the email to the postmaster
         manager.sendEmail(success, messages)
-
-
 
 
 ################################################################################
@@ -422,7 +470,7 @@ parser.add_argument(
     '--log-level',
     dest = 'logLevel',
     type = str,
-    default = logging.DEBUG,
+    default = logging.INFO,
     help = 'Log level to use, like DEBUG, INFO, NOTICE, etc. (INFO by default)')
 
 # Path to the log file

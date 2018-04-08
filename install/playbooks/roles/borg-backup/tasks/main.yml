@@ -7,6 +7,7 @@
     state: latest
   with_items:
     - borgbackup
+    - python3-psutil
   loop_control:
     loop_var: pkg
 
