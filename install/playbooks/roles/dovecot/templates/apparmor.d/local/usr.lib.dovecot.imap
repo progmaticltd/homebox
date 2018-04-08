@@ -17,5 +17,13 @@
   /home/users/*/.dovecot.lda-dupes.lock rwkl,
   /home/users/*/mails/sieve/logs/* rwk,
 
+  # When storing indexes outside maildir
+  /home/users/*/mails/indexes/**/dovecot.index.log rak,
+  /home/users/*/mails/indexes/**/dovecot.index.log rwk,
+  /home/users/*/mails/indexes/ rak,
+  /home/users/*/mails/indexes/ rwkl,
+  /home/users/*/mails/indexes/** rak,
+  /home/users/*/mails/indexes/** rwkl,
+
   # the imap daemon wants to read this folder
   /home/users/*/ r,
