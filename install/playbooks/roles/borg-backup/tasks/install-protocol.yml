@@ -23,11 +23,13 @@
     - name: active
       value: '{{ location.active }}'
     - name: keep_daily
-      value: '{{ location.keep_daily | default(7) }}'
+      value: '{{ location.keep_daily | default(0) }}'
     - name: keep_weekly
-      value: '{{ location.keep_weekly | default(4)  }}'
+      value: '{{ location.keep_weekly | default(0) }}'
     - name: keep_monthly
-      value: '{{ location.keep_monthly | default(12)  }}'
+      value: '{{ location.keep_monthly | default(0) }}'
+    - name: compression
+      value: '{{ location.compression | default("lz4") }}'
   loop_control:
     loop_var: option
 

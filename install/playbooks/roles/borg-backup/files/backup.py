@@ -320,6 +320,7 @@ class BackupManager(object):
             pruneReport = MIMEText(self.lastBackupInfo['prune'])
             pruneReport.add_header('Content-Disposition', 'inline; filename="prune.log"')
             msg.attach(pruneReport)
+            pruneReport.add_header('X-Postmaster-Alert', 'backup')
 
         msg['Subject'] = 'Backup report for %s' % self.configName
         msg['From'] = 'root'
