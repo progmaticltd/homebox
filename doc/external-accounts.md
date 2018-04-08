@@ -22,13 +22,13 @@ The folders hierarchy is reproduced on your server, with some adaptations for GM
 
 - The emails will be imported once only. The system is keeping a record of the emails indexes already imported.
 - If you set up multiple external accounts, they will be all downloaded in parallel.
-- The next version will add cron synchronisation, at office hours, etc.
+- The next version may add cron synchronisation, for instance at office hours, if required.
 
 ## Example
 
 Below is an example for one user named "andre", with multiple external accounts:
 
-```
+```yaml
 users:
 - uid: andre
   cn: André Rodier
