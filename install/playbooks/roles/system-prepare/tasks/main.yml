@@ -30,6 +30,12 @@
     state: directory
     mode: 0755
 
+- name: Create a homebox directory to store any specific configuration
+  tags: backup
+  template:
+    src: backup-exclude
+    dest: /etc/homebox/backup-exclude
+
 # Update packages cache, and install any security update
 - name: Update packages cache and install security updates
   tags: apt
