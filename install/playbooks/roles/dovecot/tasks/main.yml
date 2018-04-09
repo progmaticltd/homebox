@@ -54,7 +54,7 @@
 
 # Activate SSL on the imap server
 - name: Activate SSL configuration
-  tags: dovecot
+  tags: ssl, config
   notify: Restart dovecot
   when: system.ssl == 'letsencrypt'
   template:
@@ -66,7 +66,7 @@
     loop_var: file
 
 - name: Create dovecot global configuration files
-  tags: dovecot
+  tags: config
   notify: Restart dovecot
   template:
     src: '{{ file }}'
@@ -78,7 +78,7 @@
     loop_var: file
 
 - name: Create dovecot conf.d configuration files
-  tags: dovecot
+  tags: config
   notify: Restart dovecot
   template:
     src: 'conf.d/{{ file }}'
@@ -283,3 +283,18 @@
     - usr.lib.dovecot.script-login
   loop_control:
     loop_var: aa_config
+
+- name: Activate fail2ban for dovecot
+  tags: security,fail2ban
+  notify: Restart fail2ban
+  ini_file:
+    path: /etc/fail2ban/jail.conf
+    option: enabled
+    section: '{{ section }}'
+    value: true
+    create: no
+  with_items:
+    - dovecot
+    - sieve
+  loop_control:
+    loop_var: section
