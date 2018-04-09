@@ -44,7 +44,7 @@
   lineinfile:
     path: /etc/hosts
     line: '127.0.0.1    smtp.{{ network.domain }}'
-    
+
 - name: Install postfix packages for local administration
   tags: postfix
   notify: Restart postfix
@@ -139,7 +139,7 @@
     - usr.lib.postfix.virtual
     - usr.sbin.sendmail
     - usr.sbin.postdrop
-  
+
 - name: Install some postfix AppArmor profile
   when: security.app_armor
   tags: security, apparmor
@@ -163,3 +163,19 @@
   loop_control:
     loop_var: aa_config
 
+
+- name: Activate fail2ban on postfix
+  tags: security,fail2ban
+  notify: Restart fail2ban
+  ini_file:
+    path: /etc/fail2ban/jail.conf
+    option: enabled
+    section: '{{ section }}'
+    value: true
+    create: no
+  with_items:
+    - postfix
+    - postfix-sasl
+    - postfix-rbl
+  loop_control:
+    loop_var: section
