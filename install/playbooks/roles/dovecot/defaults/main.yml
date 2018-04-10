@@ -24,3 +24,7 @@ dovecot:
     - dovecot-managesieved
     - dovecot-sieve
     - dovecot-ldap
+  settings:
+    mail_max_userip_connections: 10
+    lda_mailbox_autocreate: yes
+    lda_mailbox_autosubscribe: yes
