@@ -73,7 +73,7 @@ for import in $imports; do
 
     # Remove the decrypted file as soon as mbsync has loaded it
     sleep 1
-    rm conf/$import
+    rm -f conf/$import
 
     # time the process
     date=$(date --rfc-3339=seconds)
