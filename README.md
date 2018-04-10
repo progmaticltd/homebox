@@ -33,7 +33,7 @@ A set of Ansible scripts to setup a secure email and personal files server. This
 
 ## Basic installation
 
-It is using [Ansible](https://en.wikipedia.org/wiki/Ansible_(software)) scripts, to automate tasks you would have done manually, so it
+It is using [Ansible](https://en.wikipedia.org/wiki/Ansible_(software)) scripts, to automate tasks you would have done manually. Once the scripts have been run, you can administer the server as your convenience.
 
 ### Prerequisites
 
