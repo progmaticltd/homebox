@@ -5,7 +5,7 @@
   /home/users/*/mails/maildir/maildirsize rw,
   /home/users/*/mails/sieve/ rw,
   /home/users/*/mails/sieve/** rw,
-  
+
   /usr/bin/doveconf rix,
   /usr/lib/dovecot/managesieve mrix,
   /usr/share/dovecot/protocols.d/ r,
@@ -17,6 +17,14 @@
   /etc/nsswitch.conf r,
   /etc/group r,
   /etc/passwd r,
+
+  # When storing indexes outside maildir
+  /home/users/*/mails/indexes/**/dovecot.index.log rak,
+  /home/users/*/mails/indexes/**/dovecot.index.log rwk,
+  /home/users/*/mails/indexes/ rak,
+  /home/users/*/mails/indexes/ rwkl,
+  /home/users/*/mails/indexes/** rak,
+  /home/users/*/mails/indexes/** rwkl,
 
   # Let managesieve to lock indexes
   /home/users/*/mails/maildir/dovecot.* rwkl,
