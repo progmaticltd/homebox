@@ -163,6 +163,14 @@
   loop_control:
     loop_var: aa_config
 
+# See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=858587
+- name: Fix a bug in fail2ban configuration
+  tags: security,fail2ban
+  notify: Restart fail2ban
+  replace:
+    path: /etc/fail2ban/jail.conf
+    regexp: 'imap3,'
+    replace: ''
 
 - name: Activate fail2ban on postfix
   tags: security,fail2ban
