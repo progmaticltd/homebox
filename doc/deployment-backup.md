@@ -16,7 +16,7 @@ For instance, this is the certificates generated, for the domain "homebox.space"
   - smtp.homebox.space
   - webmail.homebox.space
   - autodiscover.homebox.space (when using autodiscover from Outlook)
-  - <span>www.</span>homebox.space and homebox.space (When activating the option simple web site)
+  - <span>www</span>.homebox.space and homebox.space (When activating the option simple web site)
 
 ## DKIM Keys: 'dkim-keys'
 
