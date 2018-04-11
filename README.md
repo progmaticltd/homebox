@@ -223,7 +223,7 @@ During the development phase, you can also run the scripts one by one.
 #### Automatic deployment backup
 
 Once the scripts have been run, the backup folder contains important files to run your scripts again.
-See (see the [deployment-backup.md](../doc/deployment-backup.md)
+See (see the [deployment-backup.md](doc/deployment-backup.md)
 
 ## Future versions
 
