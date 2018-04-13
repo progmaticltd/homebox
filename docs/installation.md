@@ -162,9 +162,7 @@ I will test this if requested.
 
 ### 2. Describe your configuration
 
-This step is detailed in the configuration.md document.
-
-The second step is to start the installation procedure
+This step is detailed in the next section. The second step is to start the installation procedure
 
 ## Your router
 

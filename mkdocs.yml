@@ -2,6 +2,7 @@ site_name: homebox
 pages:
   - Home: index.md
   - Installation: installation.md
+  - Configuration: configuration.md
   - Debian preseed: preseed.md
   - External accounts: external-accounts.md
   - Backup your emails: backup.md
