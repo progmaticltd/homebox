@@ -1,3 +1,6 @@
+![Documentation status](http://readthedocs.org/projects/homebox/badge/?version=latest)
+
+I have started some documentation here: http://homebox.readthedocs.io/en/latest/
 
 A set of Ansible scripts to setup a secure email and personal files server. This project is for you if:
 
