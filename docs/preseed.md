@@ -1,5 +1,3 @@
-# Preseed folder
-
 This step is only required if you want to build a Debian installation disc - before running the Ansible scripts. It does not install the homebox server software stack.
 
 However, the whole precedure build an automatic installer with the hostname set, the root password, and the drive fully encrypted by the key you specify in the configuration file!
@@ -8,13 +6,14 @@ This script can be used both for development with a virtual machine or for produ
 
 Once installed, the system drive will be fully encrypted with [LUKS](https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup).
 
-## 1. Customisation
+# Customisation
 
 Copy system-example.yml to system.yml, and modify the values accordingly.
 
 Example:
 
-```
+```yaml
+
 # System configuration sample 1: Encrypted hard drive
 system:
   hostname: mail
@@ -60,6 +59,7 @@ root:
 
 # Debug: As it states
 debug: true
+
 ```
 
 There is actually two flavours, one is a fully encrypted drive with a passphrase,
@@ -67,20 +67,24 @@ while the second one installs on a machine with two drives and software RAID.
 
 See system-example.yml for reference.
 
-## 2. Setup SSH authentication
+# Setup SSH authentication
 
 Copy your public key into the folder `config/authorized_key`. This file will be copied into the
 `/root/.ssh/authorized_keys` by the automatic installer for you to connect using public key authentication.
 
-## 3. Build the ISO image
+# Build the ISO image
+
 Then, run this command to build the ISO image:
 
-```
+```sh
+
 docker-compose build cdbuild
 docker run -v /tmp:/tmp -t -i cdbuild:latest
+
 ```
 
-This will create the ISO images in /tmp/build-${hostname}/${hostname}-install.iso folder, for instance /tmp/homebox/homebox-install.iso
+This will create the ISO images in `/tmp/build-${hostname}/${hostname}-install.iso` folder,
+for instance `/tmp/homebox/homebox-install.iso`
 
 The whole installation should be automatic, with LVM and software RAID.
 For LVM, there is a volume called "reserved" you can remove. This will let
