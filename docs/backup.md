@@ -5,12 +5,13 @@ You can specify multiple backup strategies, and multiple locations:
 
 ## Backup strategy example
 ```yaml
+
 backup:
   install: true
   type: borgbackup
   locations:
   - name: local
-    url: dir://home/backup/homebox
+    url: dir:///var/backups/homebox
     active: yes                      # The backup is currently active
     frequency: daily                 # Run the backup every day
     keep_daily: 3                    # Keep the last three days locally

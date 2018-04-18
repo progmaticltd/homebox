@@ -90,7 +90,7 @@ so you can use this as well if you prefer. However, remembe that RAID is not bac
 
 ## Your workstation
 
-Any workstation with a decent text editor like emacs, vim or even VS code should be enough.
+Any workstation with a decent text editor like _Emacs_, _Vim_ or even _[VS code](https://code.visualstudio.com/)_ should be enough.
 You will need to run the Ansible scripts, and perhaps to install rsync.
 
 I recommend using Linux, any flavour, but for a very expensive price, MacOS should be about fine.
