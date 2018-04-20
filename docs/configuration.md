@@ -27,11 +27,13 @@ The most important settings are the first two sections, the others can be left t
 Every network subdomain entries, email addresses, etc... will include the domain name:
 
 ```yaml
+
 ###############################################################################
 # Domain and hostname information
 network:
   domain: homebox.space
   hostname: mail.homebox.space
+
 ```
 
 The hostname is important, use the real one. If you used the preseed configuration,
@@ -76,6 +78,7 @@ You can also [import accounts from other platforms](external-accounts.md).
 ## Email options
 
 ```yaml
+
 ###############################################################################
 # Email related options
 mail:
@@ -110,22 +113,16 @@ mail:
                             # the 'lists' folder... I personally use '~'
 
 ###############################################################################
+
 ```
 
 Once again, the file should be self documented.
 
-### Automatic configuration of Thunderbird and Outlook
-
-The two options “autoconfig” and “autodiscover” allows your users to automatically configure their
-email parameters in _Mozilla Thunderbird_ and _Microsoft Outlook_. Both requires the creation of two domain
-entries, for instance "autoconfig.homebox.space" and "autodiscover.homebox.space"
-
-The later requires the creation of an HTTPS certificate, which is automatically managed when using Gandi.
-
 ## Password policies
 
-Password policies are enforced at two levels, when you change your password via the Roundcube webmail
-interface, and from the command line, if you are connected through SSH or in the console.
+Password policies are enforced at two levels, when you change your
+password via the Roundcube webmail interface, and from the command
+line, if you are connected through SSH or in the console.
 
 ```yaml
 

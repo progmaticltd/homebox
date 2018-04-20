@@ -4,6 +4,7 @@ pages:
   - Installation: installation.md
   - Debian preseed: preseed.md
   - Main configuration file: configuration.md
+  - Email configuration: email-configuration.md
   - External accounts: external-accounts.md
   - Backup your emails: backup.md
   - Backup your deployment: deployment-backup.md
