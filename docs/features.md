@@ -75,10 +75,11 @@ problem.
 ## Address extension
 
 When registering on a service, you can use address extensions, to directly receive emails
-in a specific folder. For instance, emails to john+lists@example.com will be directly saved
-into the 'lists' folder of your IMAP server.
+in a specific folder. For instance, emails to __john+lists@example.com__ will be directly
+saved into the __‘lists’__ folder of your IMAP server.
 
-Email folders can be automatically created and subscribed as well.
+Email folders can be automatically created and subscribed as well, and you can use any
+character to separate your email address. for instance ‘:’, ‘~’, ‘/’ etc.
 
 ## Sieve filtering
 
@@ -93,7 +94,8 @@ You can also access your sieve filters with the _ManageSieve_ protocol, and the
 
 The server supports _Mozilla Thunderbird_, _Microsoft Outlook_ and other email clients
 automatic configuration. This makes the life of your users easier. It creates and publish
-autoconfig.xml, autodiscover.xml and DNS records (RFC 6186).
+autoconfig.xml, autodiscover.xml and DNS records
+([RFC 6186](https://tools.ietf.org/html/rfc6186)).
 
 ## Antivirus
 
@@ -102,10 +104,9 @@ if they contain one. The emails sent by your users are checked as well, avoiding
 IP address to be blacklisted if one of your account is compromised. In the second case,
 the system can also send a warning with the IP address of the sender.
 
-You can also choose to explicitly reject (bounce) emails containing viruses.
-
-In all case, the analysis is done after the email queue, making the process non blocking
-and efficient on small resourced hardware.
+You can also choose to explicitly reject (bounce) emails containing viruses. In all case,
+the analysis is done after the email queue, making the process non blocking and efficient
+on small resourced hardware.
 
 ## Antispam with automatic learning
 
