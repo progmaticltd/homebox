@@ -25,10 +25,10 @@ A set of Ansible scripts to setup a secure email and personal files server. This
 | Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers, impersonate   | Done        |  Basic    |
 | Roundcube webmail, https, sieve filters management, password change, automatic identity creation                    | Done        |  Basic    |
 | AppArmor securisation for rspamd, nginx, dovecot, postfix, clamav                                                   | Done        |  Manual   |
-| ISO image builder, for automatic Debian installation and a fully encrypted with LUKS ([preseed](doc/preseed.md))    | Done        |  Manual   |
+| ISO image builder, for automatic Debian installation and a fully encrypted with LUKS ([preseed](docs/preseed.md))   | Done        |  Manual   |
 | Antivirus for inbound / outbound emails with [clamav](https://www.clamav.net/) without blocking the SMTP session.   | Done        | Automatic |
-| Add your GMail, Yahoo, Outlook.com or standard IMAP accounts.  See [external accounts](doc/external-accounts.md)    | Done        |  Manual   |
-| Multiple encrypted incremental backups, with email reporting. See [backup documentation](doc/backup.md) for details.| Done        |  Manual   |
+| Add your GMail, Yahoo, Outlook.com or standard IMAP accounts.  See [external accounts](docs/external-accounts.md)   | Done        |  Manual   |
+| Multiple encrypted incremental backups, with email reporting. See [backup documentation](docs/backup.md) for details| Done        |  Manual   |
 | Dovecot full text search in emails and attachments.                                                                 | Planned     |           |
 | Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned     |           |
 | Web proxy with privacy and parent filtering features                                                                | Planned     |           |
@@ -58,7 +58,7 @@ The repository contains a few folders you should be familiar with:
   environment.
 - backup: Automatic backup of important information during the
   deployment. See
-  [doc/deployment-backup.md](doc/deployment-backup.md).
+  [docs/deployment-backup.md](docs/deployment-backup.md).
 - sandbox: Put anything you don't want to commit here.
 - docs: Official documentation for the project.
 
@@ -129,7 +129,7 @@ network:
 #### User list
 
 The other information you need to fill first is the user list.
-You can also [import accounts from other platforms](doc/external-accounts.md).
+You can also [import accounts from other platforms](docs/external-accounts.md).
 
 ```yaml
 
@@ -255,7 +255,7 @@ During the development phase, you can also run the scripts one by one.
 
 Once the scripts have been run, the backup folder contains important
 files to run your scripts again.  See (see the
-[deployment-backup.md](doc/deployment-backup.md)
+[deployment-backup.md](docs/deployment-backup.md)
 
 ## Future versions
 
