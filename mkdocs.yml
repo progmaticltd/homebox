@@ -1,6 +1,7 @@
 site_name: homebox
 pages:
   - Home: index.md
+  - Features: features.md
   - Installation: installation.md
   - Debian preseed: preseed.md
   - Main configuration file: configuration.md

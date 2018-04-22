@@ -1,5 +1,5 @@
 
-# Quick installation guide
+# Introduction
 
 This guide is a high level overview of the steps you need to run and
 in which order, to have a production ready mail server.
