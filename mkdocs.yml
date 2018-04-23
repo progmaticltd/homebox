@@ -9,6 +9,7 @@ pages:
   - External accounts: external-accounts.md
   - Backup your emails: backup.md
   - Backup your deployment: deployment-backup.md
+  - Maintenance: maintenance.md
   - Testing and development: development.md
   - Code of conduct: codeofconduct.md
 theme: readthedocs
