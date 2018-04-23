@@ -113,7 +113,30 @@ autoconfig.xml, autodiscover.xml and DNS records
 The emails received are automatically checked for viruses, and are dropped by default
 if they contain one. The emails sent by your users are checked as well, avoiding your
 IP address to be blacklisted if one of your account is compromised. In the second case,
-the system can also send a warning with the IP address of the sender.
+the system can also send a warning with the IP address of the sender:
+
+```html
+Hello,
+
+A virus has been sent using your email address (andre@homebox.space).
+
+- The virus is identified by ClamAV as "Clamav.Test.File-6".
+- The remote IP address is "172.16.1.39".
+- The intended recipient(s) were:
+  - john@homebox.space
+
+The email has been discarded and not transferred, please:
+
+- Check your workstation for viruses,
+- Change your password, using https://webmail.homebox.space/
+- Download an antivirus, for instance at https://www.clamav.net/
+
+More details about the source IP address:
+MAC address: 26:ac:5b:6a:4d:ac
+
+--
+The Postmaster
+```
 
 You can also choose to explicitly reject (bounce) emails containing viruses. In all case,
 the analysis is done after the email queue, making the process non blocking and efficient
