@@ -29,7 +29,7 @@ A set of Ansible scripts to setup a secure email and personal files server. This
 | Antivirus for inbound / outbound emails with [clamav](https://www.clamav.net/) without blocking the SMTP session.   | Done        | Automatic |
 | Add your GMail, Yahoo, Outlook.com or standard IMAP accounts.  See [external accounts](docs/external-accounts.md)   | Done        |  Manual   |
 | Multiple encrypted incremental backups, with email reporting. See [backup documentation](docs/backup.md) for details| Done        |  Manual   |
-| Dovecot full text search in emails and attachments.                                                                 | Planned     |           |
+| Dovecot full text search in emails and attachments.                                                                 | In progress |           |
 | Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned     |           |
 | Web proxy with privacy and parent filtering features                                                                | Planned     |           |
 | Jabber server, probably using [ejabberd](https://www.ejabberd.im/)                                                  | Planned     |           |
