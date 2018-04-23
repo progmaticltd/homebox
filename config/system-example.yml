@@ -81,6 +81,7 @@ mail:
     separator: '*'          # Separation char between master user / real user name. I personally use '/'
   #############################################################################
   import:                   # If you have users with "import" email active scripts, set this flag to true
+    username: import        # The name of the user that import emails
     active: false           # A master user, with reduced rights will be created, to append miported emails
                             # in user's mailboxes.
   #############################################################################
