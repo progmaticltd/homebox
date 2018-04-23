@@ -23,7 +23,8 @@ You can setup multiple backups for your user's home folders, remote or local, wi
 multiple frequencies as well. For instance, one daily backup on your NAS using a Samba
 share, and a weekly backup on a remote server using SSH.<br />
 All the backups are encrypted and managed by the excellent _borgbackup_ package.
-A summary email is sent at the end of the backup process, both in case of success and failure.
+A [summary email](/backup/#emails-reporting) is sent at the end of the backup process,
+both in case of success and failure.
 
 # Security
 
@@ -32,8 +33,8 @@ A summary email is sent at the end of the backup process, both in case of succes
 When you are using the ISO image builder to install Debian, the server disk will be fully
 encrypted using LUKS, with the passphrase specified in a configuration file.
 
-This makes your server fully secure against physical intrusion, if your hardware is
-stolen.
+This make your server fully secure against physical intrusion, even if your hardware is
+lost or stolen.
 
 ## AppArmor enforcement
 
@@ -59,6 +60,16 @@ Password complexity is enforced at system level, using
 You can specify minimum length, mandatory characters like symbols and a mix of lowercase /
 uppercase letters. You can also remember the last passwords for each users, avoiding them
 to re-use the same passwords, or use a password too similar than the previous ones.
+
+## Automatic security update
+
+Once your system is installed, any security update will be installed in background,
+without you having to do anything. This is set using the Debian unattended upgrades
+package.  If you prefer to install security updates yourself, you can disable this
+behaviour in your system.yml file.
+
+Only the security updates are installed, new packages versions still need to be installed
+manually.
 
 # Email features
 
