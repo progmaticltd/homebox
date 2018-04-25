@@ -1,0 +1,22 @@
+---
+
+- name: Install packages needed for dovecot fts
+  apt:
+    update_cache: yes
+    cache_valid_time: 86400
+    name: '{{ pkg }}'
+    state: latest
+  with_items:
+    - tomcat8
+    - solr-tomcat
+    - dovecot-solr
+    - poppler-utils  # PDF text extraction
+    - catdoc         # .doc, .xls and .ppt extract
+  loop_control:
+    loop_var: pkg
+
+
+- name: Copy solr schema
+  template:
+    src: solr-schema.xml
+    dest: /etc/solr/conf/schema.xml

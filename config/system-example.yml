@@ -85,6 +85,15 @@ mail:
     active: false           # A master user, with reduced rights will be created, to append miported emails
                             # in user's mailboxes.
   #############################################################################
+  # Dovecot / solr FTS (Full Text search)
+  fts:
+    active: true
+    langs:
+      - id: fr
+        name: French
+      - id: en
+        name: English
+  #############################################################################
   advanced_features: false  # Use some advanced features that will need the latest version of dovecot
                             # from stretch-backports, like those below.
                             # like sending emails to an international addresses (e.g. andré@homebox.space)

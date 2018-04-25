@@ -1,0 +1,6 @@
+# Add an indexer for email content
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+  roles:
+    - indexer
