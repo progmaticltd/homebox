@@ -1,0 +1,17 @@
+
+################################################################################
+# Merge user options with default options
+- name: Use default mail settings
+  when: mail is not defined
+  set_fact:
+    mail: mail_default
+
+- name: Combine default and user defined mail settings
+  when: mail is defined
+  set_fact:
+    mail: '{{ mail_default | combine(mail) }}'
+
+- name: Display merged mail settings
+  when: mail is defined and system.debug
+  debug:
+    var: mail

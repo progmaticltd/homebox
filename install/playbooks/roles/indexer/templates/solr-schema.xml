@@ -2,9 +2,9 @@
 
 <!--
 For fts-solr:
-
 This is the Solr schema file, place it into solr/conf/schema.xml. You may
 want to modify the tokenizers and filters.
+Customised version for homebox, with multiple languages support
 -->
 <schema name="dovecot" version="1.5">
   <types>
