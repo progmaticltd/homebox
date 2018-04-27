@@ -60,12 +60,14 @@ mail_default:
                             # The safe maximum value will be automatically computed in a next version.
   discard_duplicates: true  # Discard duplicates messages. It is safe, but you can disable if you are worried
                             # The default timerange is 1h
+  #############################################################################
   antivirus:                # Check inbound and outbound emails for viruses
     active: true            # or false
     action: drop            # Action to do when a virus is found in an email: bounce or drop
                             # be careful, bouncing external emails is a way to expose clamav usage
     send_warnings: false    # Send a warning email to - internal - users who are sending viruses
     quarantine: yes         # Place emails with a virus in quarantine, for further analysis
+  #############################################################################
   impersonate:              # Activate dovecot "master" user feature, ideal for families and communities
     active: false           # https://wiki2.dovecot.org/Authentication/MasterUsers
     master: master          # master user name
@@ -91,3 +93,70 @@ mail_default:
   recipient_delimiter: '+'  # The characters you want to use to split email address from mailbox, i.e.:
                             # when receiving a message to john+lists@example.com, it should go directly to
                             # the 'lists' folder... I personally use '~'
+
+###############################################################################
+# Default password policies for users
+passwords_default:
+  min_length: 8
+  max_age: 31536000        # 365 days max
+  max_failure: 5
+  expire_warning: 259200   # 3 days
+  require_nonalpha: true
+  # Keep track of the passwords you have used before
+  # If you do not want, set this value to 0
+  # Passwords are stored using salted SHA512, safe enough
+  remember: 12
+  # Password quality module
+  # See: https://www.networkworld.com/article/3198444/linux/the-complexity-of-password-complexity.html
+  quality:
+    enforce: true
+    params:
+      - name: retry
+        value: 5
+      - name: minlen
+        value: 8
+      - name: minclass
+        value: 3
+      - name: maxrepeat
+        value: 3
+      - name: maxclassrepeat
+        value: 4
+      - name: lcredit
+        value: 1
+      - name: ucredit
+        value: 1
+      - name: ocredit
+        value: 3
+      - name: dcredit
+        value: 1
+      - name: difok
+        value: 3
+
+###############################################################################
+# Default system settings
+system_default:
+  release: stretch
+  login: true
+  ssl: letsencrypt
+  devel: false
+  debug: false
+
+###############################################################################
+# Once the system is in place, it is possible to use 'limit' for the rule, instead of any.
+# It is also possible to use fail2ban, which is installed anyway
+firewall_default:
+  ssh:
+    from: any
+    rule: allow
+
+###############################################################################
+# Extra security values
+security_default:
+  auto_update: true
+  app_armor: true
+
+###############################################################################
+# Dictionaries to install in the system
+dictionaries_default:
+  - name: English
+    id: en

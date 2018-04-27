@@ -1,3 +1,5 @@
+---
+
 # Install a basic web site in http and https
 - hosts: homebox
   vars:

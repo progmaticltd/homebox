@@ -1,6 +1,9 @@
-# Generate the records on Gandi DNS
+---
+
+# Generate the records on the DNS server
 - hosts: homebox
   vars_files:
-    - ../../config/system.yml
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/defaults/main.yml'
   roles:
     - dns-update

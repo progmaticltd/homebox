@@ -4,14 +4,99 @@
 - name: Use default mail settings
   when: mail is not defined
   set_fact:
-    mail: mail_default
+    mail: '{{ mail_default }}'
 
 - name: Combine default and user defined mail settings
   when: mail is defined
   set_fact:
     mail: '{{ mail_default | combine(mail) }}'
 
-- name: Display merged mail settings
-  when: mail is defined and system.debug
-  debug:
-    var: mail
+# - name: Display merged mail settings
+#   when: mail is defined and system.debug
+#   debug:
+#     var: mail
+
+################################################################################
+# Merge user options with default options
+- name: Use default passwords settings
+  when: passwords is not defined
+  set_fact:
+    passwords: '{{ passwords_default }}'
+
+- name: Combine default and user defined password settings
+  when: passwords is defined
+  set_fact:
+    passwords: '{{ passwords_default | combine(passwords) }}'
+
+# - name: Display merged password settings
+#   when: passwords is defined and system.debug
+#   debug:
+#     var: passwords
+
+################################################################################
+# Merge system defaults
+- name: Use default system settings
+  when: system is not defined
+  set_fact:
+    system: '{{ system_default }}'
+
+- name: Combine default and user defined system settings
+  when: system is defined
+  set_fact:
+    system: '{{ system_default | combine(system) }}'
+
+# - name: Display merged system settings
+#   when: system is defined and system.debug
+#   debug:
+#     var: system
+
+################################################################################
+# Merge firewall defaults
+- name: Use default firewall settings
+  when: firewall is not defined
+  set_fact:
+    firewall: '{{ firewall_default }}'
+
+- name: Combine default and user defined firewall settings
+  when: firewall is defined
+  set_fact:
+    firewall: '{{ firewall_default | combine(firewall) }}'
+
+# - name: Display merged firewall settings
+#   when: firewall is defined and system.debug
+#   debug:
+#     var: firewall
+
+################################################################################
+# Merge security defaults
+- name: Use default security settings
+  when: security is not defined
+  set_fact:
+    security: '{{ security_default }}'
+
+- name: Combine default and user defined security settings
+  when: security is defined
+  set_fact:
+    security: '{{ security_default | combine(security) }}'
+
+# - name: Display merged security settings
+#   when: security is defined and system.debug
+#   debug:
+#     var: security
+
+################################################################################
+# Merge dictionaries defaults
+- name: Use default dictionaries settings
+  when: dictionaries is not defined
+  set_fact:
+    dictionaries: '{{ dictionaries_default }}'
+
+- name: Combine default and user defined dictionaries settings
+  when: dictionaries is defined
+  set_fact:
+    dictionaries: '{{ dictionaries_default | union(dictionaries) }}'
+
+# - name: Display merged dictionaries settings
+#   when: dictionaries is defined and system.debug
+#   debug:
+#     var: dictionaries
