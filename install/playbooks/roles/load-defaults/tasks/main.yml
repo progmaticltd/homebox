@@ -1,3 +1,8 @@
+---
+# This rolad load all the default values, and merge them with user specified values.
+# This is a first version, roughly copy and paste, but will evolve to something more
+# elaborated later...
+
 
 ################################################################################
 # Merge user options with default options
@@ -119,6 +124,24 @@
     var: dns
 
 ################################################################################
+# Merge webmail defaults
+- name: Use default webmail settings
+  when: webmail is not defined
+  set_fact:
+    webmail: '{{ webmail_default }}'
+
+- name: Combine default and user defined webmail settings
+  when: webmail is defined
+  set_fact:
+    webmail: '{{ webmail_default | combine(webmail) }}'
+
+- name: Display merged webmail settings
+  when: verbose is defined and verbose == True
+  debug:
+    var: webmail
+
+
+################################################################################
 # Merge website defaults
 - name: Use default website settings
   when: website is not defined
@@ -134,3 +157,21 @@
   when: verbose is defined and verbose == True
   debug:
     var: website
+
+
+################################################################################
+# Merge backup defaults
+- name: Use default backup settings
+  when: backup is not defined
+  set_fact:
+    backup: '{{ backup_default }}'
+
+- name: Combine default and user defined backup settings
+  when: backup is defined
+  set_fact:
+    backup: '{{ backup_default | combine(backup) }}'
+
+- name: Display merged backup settings
+  when: verbose is defined and verbose == True
+  debug:
+    var: backup

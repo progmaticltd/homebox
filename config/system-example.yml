@@ -57,17 +57,60 @@ users:
       get_trash: true
       max_messages: 10
 
-# ###############################################################################
-# # System related
+###############################################################################
+# Email related default options
+# mail:
+#   max_attachment_size: 25   # In megabytes
+#   autoconfig: true          # Support Thunderbird automatic configuration
+#   autodiscover: false       # Support MS Outlook automatic configuration (uses https)
+#   quota:
+#     default: 1G             # Maximum allowed mailbox size for your users.
+#                             # The safe maximum value will be automatically computed in a next version.
+#   discard_duplicates: true  # Discard duplicates messages. It is safe, but you can disable if you are worried
+#                             # The default timerange is 1h
+#   #############################################################################
+#   antivirus:                # Check inbound and outbound emails for viruses
+#     active: true            # or false
+#     action: drop            # Action to do when a virus is found in an email: bounce or drop
+#                             # be careful, bouncing external emails is a way to expose clamav usage
+#     send_warnings: false    # Send a warning email to - internal - users who are sending viruses
+#     quarantine: yes         # Place emails with a virus in quarantine, for further analysis
+#   #############################################################################
+#   impersonate:              # Activate dovecot "master" user feature, ideal for families and communities
+#     active: false           # https://wiki2.dovecot.org/Authentication/MasterUsers
+#     master: master          # master user name
+#     separator: '*'          # Separation char between master user / real user name.
+#   #############################################################################
+#   import:                   # If you have users with "import" email active scripts, set this flag to true
+#     username: import        # The name of the user that import emails
+#     active: false           # A master user, with reduced rights will be created, to append miported emails
+#                             # in user's mailboxes.
+#   #############################################################################
+#   # Dovecot / solr FTS (Full Text search)
+#   fts:
+#     active: true
+#     langs:
+#       - id: fr
+#         name: French
+#       - id: en
+#         name: English
+#   #############################################################################
+#   advanced_features: false  # Use some advanced features that will need the latest version of dovecot
+#                             # from stretch-backports, like those below.
+#                             # like sending emails to an international addresses (e.g. andré@homebox.space)
+#   recipient_delimiter: '+'  # The characters you want to use to split email address from mailbox, i.e.:
+#                             # when receiving a message to john+lists@example.com, it should go directly to
+#                             # the 'lists' folder...
+
+###############################################################################
+# System related
 # system:
-#   release: stretch
-#   ssl: letsencrypt
 #   devel: true
 #   debug: true
 
-# ###############################################################################
-# # Gandi automatic DNS update
-# # Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
+###############################################################################
+# Gandi automatic DNS update
+# Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
 # dns:
 #   update: false         # Automatic update of your DNS server
 #   test: true            # test mode: does not activate the DNS zone straight
@@ -76,22 +119,22 @@ users:
 #     handle: JD123-GANDI
 #     key: zaNGbUVIvi1KbYb6PPMdiQLh
 
-# ###############################################################################
-# # Once the system is in place, it is possible to use 'limit' for the rule, instead of any.
-# # It is also possible to use fail2ban, which is installed anyway
+###############################################################################
+# Once the system is in place, it is possible to use 'limit' for the rule, instead of any.
+# It is also possible to use fail2ban, which is installed anyway
 # firewall:
 #   ssh:
 #     from: any
 #     rule: allow
 
-# ###############################################################################
-# # Install a webmail, or not...
+###############################################################################
+# Install a webmail, or not...
 # webmail:
 #   install: true
 #   type: roundcube
 
-# ###############################################################################
-# # Extra security values
+###############################################################################
+# Extra security values
 # security:
 #   auto_update: true
 #   app_armor: true
@@ -130,8 +173,8 @@ users:
 #     compression: zlib,6              # Compression scheme to use (lz4 by default)
 
 
-# ###############################################################################
-# # Dictionaries to install in the system
+###############################################################################
+# Dictionaries to install in the system, will be displayed in roundcube for now.
 # dictionaries:
 #   - name: English
 #     id: en

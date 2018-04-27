@@ -1,3 +1,8 @@
+---
+# These are the default values, you can copy and paste into your system.yml
+# configuration file for customisation.
+
+
 # Standard policies
 policies:
   system:
@@ -180,4 +185,14 @@ dns_default:
 # Still requests two certificates:
 # One for for https://yourdomain.com/ and one for https://www.yourdomain.com
 website_default:
+  install: false
+
+###############################################################################
+# Install a webmail, or not...
+webmail_default:
+  install: true
+  type: roundcube
+
+###############################################################################
+backup_default:
   install: false
