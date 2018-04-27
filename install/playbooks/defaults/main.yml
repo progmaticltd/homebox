@@ -160,3 +160,24 @@ security_default:
 dictionaries_default:
   - name: English
     id: en
+
+###############################################################################
+# Gandi automatic DNS update
+# Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
+# update: Automatic update of your DNS server
+# test: test mode: does not activate the DNS zone straight
+# add_wildcard:  Create a wildcard entry to redirect all traffic to your box
+dns_default:
+  update: false
+  test: true
+  add_wildcard: false
+  gandi:
+    handle: JD123-GANDI
+    key: zaNGbUVIvi1KbYb6PPMdiQLh
+
+###############################################################################
+# Install a static web site on www.yourdomain.com
+# Still requests two certificates:
+# One for for https://yourdomain.com/ and one for https://www.yourdomain.com
+website_default:
+  install: false

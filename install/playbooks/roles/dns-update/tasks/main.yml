@@ -34,7 +34,7 @@
 
 - name: Run the the dns management script
   tags: dns
-  when: dns.update
+  when: dns.update == true
   shell: >-
     /usr/local/sbin/dns-manager
     --config /etc/homebox/{{ network.domain }}.ini

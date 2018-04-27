@@ -57,70 +57,44 @@ users:
       get_trash: true
       max_messages: 10
 
-###############################################################################
-# Default password policies for users
-passwords_min_length: 8
-passwords_max_age: 365 # days
-passwords_max_failure: 5
-passwords_expire_warning: 7 # days
-passwords_require_nonalpha: true
+# ###############################################################################
+# # System related
+# system:
+#   release: stretch
+#   ssl: letsencrypt
+#   devel: true
+#   debug: true
 
-# Keep track of the passwords you have used before.
-# They are stored using salted SHA512, which is safe enough.
-# If you do not want, set this value to 0
-passwords_remember: 12
+# ###############################################################################
+# # Gandi automatic DNS update
+# # Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
+# dns:
+#   update: false         # Automatic update of your DNS server
+#   test: true            # test mode: does not activate the DNS zone straight
+#   add_wildcard: false   # Create a wildcard entry to redirect all traffic to your box
+#   gandi:
+#     handle: JD123-GANDI
+#     key: zaNGbUVIvi1KbYb6PPMdiQLh
 
-# Strong system enforcement of passwords
-# See: https://www.networkworld.com/article/3198444/linux/the-complexity-of-password-complexity.html
-passwords_quality_check: true
-passwords_quality_minclass: 3
-passwords_quality_maxrepeat: 3
-passwords_quality_maxclassrepeat: 4
-passwords_quality_lcredit: 1
-passwords_quality_ucredit: 1
-passwords_quality_ocredit: 3
-passwords_quality_dcredit: 1
-passwords_quality_difok: 3
+# ###############################################################################
+# # Once the system is in place, it is possible to use 'limit' for the rule, instead of any.
+# # It is also possible to use fail2ban, which is installed anyway
+# firewall:
+#   ssh:
+#     from: any
+#     rule: allow
 
+# ###############################################################################
+# # Install a webmail, or not...
+# webmail:
+#   install: true
+#   type: roundcube
 
-###############################################################################
-# System related
-system:
-  release: stretch
-  ssl: letsencrypt
-  devel: true
-  debug: true
-
-###############################################################################
-# Gandi automatic DNS update
-# Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
-dns:
-  update: true          # Automatic update of your DNS server
-  test: true            # test mode: does not activate the DNS zone straight
-  add_wildcard: false   # Create a wildcard entry to redirect all traffic to your box
-  gandi:
-    handle: JD123-GANDI
-    key: zaNGbUVIvi1KbYb6PPMdiQLh
-
-###############################################################################
-# Once the system is in place, it is possible to use 'limit' for the rule, instead of any.
-# It is also possible to use fail2ban, which is installed anyway
-firewall:
-  ssh:
-    from: any
-    rule: allow
-
-###############################################################################
-# Install a webmail, or not...
-webmail:
-  install: true
-  type: roundcube
-
-###############################################################################
-# Extra security values
-security:
-  auto_update: true
-  app_armor: true
+# ###############################################################################
+# # Extra security values
+# security:
+#   auto_update: true
+#   app_armor: true
 
 ###############################################################################
 # Backup configuration
@@ -129,78 +103,39 @@ security:
 # All backups will be encrypted
 # Compression: See borg documentation
 
-backup:
-  install: true
-  type: borgbackup
-  locations:
-  - name: local
-    url: dir://va/backups/homebox
-    active: yes                      # The backup is currently active
-    frequency: daily                 # Run the backup every day
-    keep_daily: 3                    # Keep the last three days locally
-    compression: lz4                 # Compression scheme to use (lz4 by default)
-  - name: router
-    url: ssh://fw.office.pm:/home/backup/homebox
-    active: yes                      # The backup is currently active
-    frequency: daily                 # Run the backup every day
-    keep_daily: 7                    # Keep the last seven days (default value)
-    keep_weekly: 4                   # Keep the last four weeks (default value)
-    keep_monthly: 6                  # Keep the last six months (12 by default)
-    compression: lz4                 # Compression scheme to use (lz4 by default)
-  - name: nas
-    url: smb://backup:giuwh97kwerr@ftp.office.pm:/home/backup/homebox
-    active: yes                      # The backup is currently active
-    frequency: weekly                # Run the backup every week
-    keep_weekly: 4                   # Keep the last four weeks (default value)
-    keep_monthly: 6                  # Keep the last six months (12 by default)
-    compression: zlib,6              # Compression scheme to use (lz4 by default)
+# backup:
+#   install: true
+#   type: borgbackup
+#   locations:
+#   - name: local
+#     url: dir://va/backups/homebox
+#     active: yes                      # The backup is currently active
+#     frequency: daily                 # Run the backup every day
+#     keep_daily: 3                    # Keep the last three days locally
+#     compression: lz4                 # Compression scheme to use (lz4 by default)
+#   - name: router
+#     url: ssh://fw.office.pm:/home/backup/homebox
+#     active: yes                      # The backup is currently active
+#     frequency: daily                 # Run the backup every day
+#     keep_daily: 7                    # Keep the last seven days (default value)
+#     keep_weekly: 4                   # Keep the last four weeks (default value)
+#     keep_monthly: 6                  # Keep the last six months (12 by default)
+#     compression: lz4                 # Compression scheme to use (lz4 by default)
+#   - name: nas
+#     url: smb://backup:giuwh97kwerr@ftp.office.pm:/home/backup/homebox
+#     active: yes                      # The backup is currently active
+#     frequency: weekly                # Run the backup every week
+#     keep_weekly: 4                   # Keep the last four weeks (default value)
+#     keep_monthly: 6                  # Keep the last six months (12 by default)
+#     compression: zlib,6              # Compression scheme to use (lz4 by default)
 
 
-###############################################################################
-# Dictionaries to install in the system
-dictionaries:
-  - name: English
-    id: en
-  - name: French
-    id: fr
-  - name: Spanish
-    id: es
-
-
-###############################################################################
-# roundcube_install: true
-roundcube_plugins:
-  - password
-  - archive
-  - jqueryui
-  - markasjunk
-  - newmail_notifier
-  - autologon
-  - subscriptions_option
-  - emoticons
-  - new_user_identity
-  - managesieve
-  - contextmenu
-  - thunderbird_labels
-
-# Available plugins:
-# - keyboard_shortcuts
-# - dkimstatus
-# - hide_blockquote
-# - enigma
-# - zipdownload
-# - new_user_dialog
-# - additional_message_headers
-# - acl
-# - vcard_attachments
-# - database_attachments
-# - debug_logger
-# - filesystem_attachments
-# - help
-# - hide_blockquote
-# - http_authentication
-# - show_additional_headers
-# - squirrelmail_usercopy
-# - userinfo
-# - virtuser_file
-# - virtuser_query
+# ###############################################################################
+# # Dictionaries to install in the system
+# dictionaries:
+#   - name: English
+#     id: en
+#   - name: French
+#     id: fr
+#   - name: Spanish
+#     id: es

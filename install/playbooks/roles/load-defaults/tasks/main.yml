@@ -11,10 +11,10 @@
   set_fact:
     mail: '{{ mail_default | combine(mail) }}'
 
-# - name: Display merged mail settings
-#   when: mail is defined and system.debug
-#   debug:
-#     var: mail
+- name: Display merged mail settings
+  when: verbose is defined and verbose == True
+  debug:
+    var: mail
 
 ################################################################################
 # Merge user options with default options
@@ -28,10 +28,10 @@
   set_fact:
     passwords: '{{ passwords_default | combine(passwords) }}'
 
-# - name: Display merged password settings
-#   when: passwords is defined and system.debug
-#   debug:
-#     var: passwords
+- name: Display merged password settings
+  when: verbose is defined and verbose == True
+  debug:
+    var: passwords
 
 ################################################################################
 # Merge system defaults
@@ -45,10 +45,10 @@
   set_fact:
     system: '{{ system_default | combine(system) }}'
 
-# - name: Display merged system settings
-#   when: system is defined and system.debug
-#   debug:
-#     var: system
+- name: Display merged system settings
+  when: verbose is defined and verbose == True
+  debug:
+    var: system
 
 ################################################################################
 # Merge firewall defaults
@@ -62,10 +62,10 @@
   set_fact:
     firewall: '{{ firewall_default | combine(firewall) }}'
 
-# - name: Display merged firewall settings
-#   when: firewall is defined and system.debug
-#   debug:
-#     var: firewall
+- name: Display merged firewall settings
+  when: verbose is defined and verbose == True
+  debug:
+    var: firewall
 
 ################################################################################
 # Merge security defaults
@@ -79,10 +79,10 @@
   set_fact:
     security: '{{ security_default | combine(security) }}'
 
-# - name: Display merged security settings
-#   when: security is defined and system.debug
-#   debug:
-#     var: security
+- name: Display merged security settings
+  when: verbose is defined and verbose == True
+  debug:
+    var: security
 
 ################################################################################
 # Merge dictionaries defaults
@@ -96,7 +96,41 @@
   set_fact:
     dictionaries: '{{ dictionaries_default | union(dictionaries) }}'
 
-# - name: Display merged dictionaries settings
-#   when: dictionaries is defined and system.debug
-#   debug:
-#     var: dictionaries
+- name: Display merged dictionaries settings
+  when: verbose is defined and verbose == True
+  debug:
+    var: dictionaries
+
+################################################################################
+# Merge DNS defaults
+- name: Use default DNS settings
+  when: dns is not defined
+  set_fact:
+    dns: '{{ dns_default }}'
+
+- name: Combine default and user defined dns settings
+  when: dns is defined
+  set_fact:
+    dns: '{{ dns_default | combine(dns) }}'
+
+- name: Display merged dns settings
+  when: verbose is defined and verbose == True
+  debug:
+    var: dns
+
+################################################################################
+# Merge website defaults
+- name: Use default website settings
+  when: website is not defined
+  set_fact:
+    website: '{{ website_default }}'
+
+- name: Combine default and user defined website settings
+  when: website is defined
+  set_fact:
+    website: '{{ website_default | combine(website) }}'
+
+- name: Display merged website settings
+  when: verbose is defined and verbose == True
+  debug:
+    var: website

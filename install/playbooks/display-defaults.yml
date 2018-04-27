@@ -1,12 +1,11 @@
 ---
 
-# Install and configure certificate for postfix
+# Generate the records on the DNS server
 - hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/defaults/main.yml'
   vars:
-    certificate:
-      type: smtp
+    verbose: True
   roles:
-    - certificates
+    - load-defaults
