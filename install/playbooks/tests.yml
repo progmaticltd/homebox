@@ -14,6 +14,7 @@
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/defaults/main.yml'
   roles:
+    - load-defaults
     - tests-system-base
     - tests-ldap
     - tests-home
@@ -37,6 +38,13 @@
   roles:
     - ports-assign
     - tests-opendkim
+
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/defaults/main.yml'
+  roles:
+    - ports-assign
     - tests-postfix
 
 - hosts: homebox
