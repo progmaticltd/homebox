@@ -1,0 +1,7 @@
+---
+
+- name: Restart dovecot
+  tags: dovecot
+  service:
+    name: dovecot
+    state: restarted

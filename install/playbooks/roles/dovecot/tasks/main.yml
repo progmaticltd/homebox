@@ -264,6 +264,7 @@
     - local/usr.lib.dovecot.quota-status
     - usr.lib.dovecot.quota-status
     - usr.lib.dovecot.script-login
+    - usr.lib.dovecot.script
   loop_control:
     loop_var: aa_config
 
@@ -292,9 +293,70 @@
     - usr.lib.dovecot.pop3-login
     - usr.lib.dovecot.ssl-params
     - usr.lib.dovecot.script-login
+    - usr.lib.dovecot.script
   loop_control:
     loop_var: aa_config
 
+################################################################################
+- name: Install packages needed for dovecot fts
+  when: mail.fts.active
+  apt:
+    update_cache: yes
+    cache_valid_time: 86400
+    name: '{{ pkg }}'
+    state: latest
+  with_items:
+    - tomcat8
+    - solr-tomcat
+    - dovecot-solr
+    - poppler-utils  # PDF text extraction
+    - catdoc         # .doc, .xls and .ppt extract
+    - unzip          # to extract docs from office files
+    - docx2txt
+    - xlsx2csv
+  loop_control:
+    loop_var: pkg
+
+- name: Copy decode2text script
+  when: mail.fts.active
+  copy:
+    src: fts/decode2text.sh
+    dest: /usr/local/bin/decode2text.sh
+    mode: 0755
+
+- name: Copy solr schema
+  when: mail.fts.active
+  notify: Restart tomcat
+  template:
+    src: fts/solr-schema.xml
+    dest: /etc/solr/conf/schema.xml
+
+# AppArmor configuration ======================================================
+- name: Install dovecot indexer AppArmor profile
+  when: mail.fts.active and security.app_armor
+  tags: dovecot, security, apparmor
+  register: aa_templates
+  template:
+    src: 'apparmor.d/{{ aa_config }}'
+    dest: '/etc/apparmor.d/{{ aa_config }}'
+  with_items:
+    - usr.lib.dovecot.indexer
+    - usr.lib.dovecot.indexer-worker
+  loop_control:
+    loop_var: aa_config
+
+- name: Activate AppArmor profiles
+  when: mail.fts.active and security.app_armor and aa_templates.changed
+  tags: dovecot, security, apparmor
+  notify: Restart AppArmor service
+  command: 'aa-complain {{ aa_config }}'
+  with_items:
+    - usr.lib.dovecot.indexer
+    - usr.lib.dovecot.indexer-worker
+  loop_control:
+    loop_var: aa_config
+
+# fail2ban configuration ======================================================
 - name: Activate fail2ban for dovecot
   tags: security,fail2ban
   notify: Restart fail2ban

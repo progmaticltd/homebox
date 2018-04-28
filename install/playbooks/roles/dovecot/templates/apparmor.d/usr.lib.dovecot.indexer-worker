@@ -1,0 +1,29 @@
+# Last Modified: Sat Apr 28 11:41:20 2018
+#include <tunables/global>
+
+/usr/lib/dovecot/indexer-worker {
+
+  #include <abstractions/base>
+  #include <abstractions/dovecot-common>
+  #include <abstractions/nameservice>
+
+  capability dac_override,
+  capability setuid,
+  capability setgid,
+
+  /home/users/*/mails/maildir/dovecot-uidlist rw,
+  /home/users/*/mails/maildir/dovecot-uidlist.lock rw,
+  /home/users/*/mails/maildir/**/dovecot-uidlist rw,
+  /home/users/*/mails/maildir/**/dovecot-uidlist.lock rw,
+
+  /home/users/*/mails/maildir/maildirsize ra,
+  /home/users/*/mails/maildir/new/ r,
+  /home/users/*/mails/maildir/** r,
+  /home/users/*/mails/maildir/ r,
+
+  /home/users/*/mails/indexes/** rw,
+  /home/users/*/mails/indexes/** rwk,
+
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/lib/dovecot/indexer-worker mr,
+}

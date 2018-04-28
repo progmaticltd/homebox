@@ -16,7 +16,6 @@
 
 
 - name: Restart AppArmor service
-  tags: dovecot
   service:
     name: apparmor
     state: restarted
@@ -24,4 +23,9 @@
 - name: Restart fail2ban
   service:
     name: fail2ban
+    state: restarted
+
+- name: Restart tomcat
+  service:
+    name: tomcat8
     state: restarted

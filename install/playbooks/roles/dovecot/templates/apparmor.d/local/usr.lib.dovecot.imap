@@ -9,6 +9,7 @@
 
   # Allow the imap process to run the global sieve scripts
   /etc/dovecot/sieve/* r,
+  /etc/dovecot/sieve/* rw,
   /etc/dovecot/sieve/*.sh ix,
   /usr/bin/rspamc mix,
 
