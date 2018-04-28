@@ -1,6 +1,7 @@
 ---
 
 - name: Install clamav antivirus suite
+  register: clamav_packages
   apt:
     name: '{{ pkg }}'
     state: latest
@@ -32,12 +33,12 @@
     state: started
     enabled: yes
 
-- name: Wait for the freshclam service to have downloaded daily.cvd
-  register: clamav_freshclam
+- name: Wait for the freshclam service to have downloaded daily update on the first installation
+  when: clamav_packages.changed
   wait_for:
     path: /var/lib/clamav/daily.cvd
     sleep: 1
-    timeout: 60
+    timeout: 120
 
 - name: Start clamav service
   service:

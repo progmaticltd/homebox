@@ -53,4 +53,8 @@
 # It can alter the tests and is CPU intensive if you have
 # defined a lot of accounts.
 - import_playbook: import-accounts.yml
-  when: not system.devel
+  when: mail.import.active and not system.devel
+
+# Install the development support packages
+- import_playbook: dev-support.yml
+  when: system.devel

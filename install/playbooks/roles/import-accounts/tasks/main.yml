@@ -26,7 +26,6 @@
     loop_var: user
 
 - name: Copy the postlogin scripts to start emails import on each user login
-  when: mail.import.active
   tags: scripts
   copy:
     src: import-emails
