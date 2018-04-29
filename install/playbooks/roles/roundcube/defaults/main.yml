@@ -18,9 +18,9 @@ roundcube_plugins:
   - managesieve
   - contextmenu
   - thunderbird_labels
+  - keyboard_shortcuts
 
 # Available plugins:
-# - keyboard_shortcuts
 # - dkimstatus
 # - hide_blockquote
 # - enigma

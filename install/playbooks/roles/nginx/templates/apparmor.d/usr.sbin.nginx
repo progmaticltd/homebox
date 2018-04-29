@@ -8,13 +8,14 @@
   #include <abstractions/nameservice>
   #include <abstractions/openssl>
   #include <abstractions/ssl_keys>
-   
+
   # Capabilities and network
   capability dac_override,
   capability dac_read_search,
   capability net_bind_service,
   capability setgid,
-  capability setuid,network inet stream,
+  capability setuid,
+  network inet stream,
   network inet6 stream,
 
   # Allow to read configuration and site files
@@ -28,6 +29,9 @@
   /lib/x86_64-linux-gnu/ld-*.so mr,
   /usr/lib/nginx/modules/ngx_*.so mr,
   /usr/sbin/nginx mr,
+
+  # FastCGI
+  /var/lib/nginx/fastcgi/*/ w,
 
   # Data cache
   /var/lib/nginx/body/* rw,

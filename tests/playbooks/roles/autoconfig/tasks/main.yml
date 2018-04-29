@@ -1,0 +1,26 @@
+---
+
+- name: Install an XML linter
+  tags: systemctl, autoconfig
+  apt:
+    name: libxml2-utils
+    state: installed
+
+- name: Check the autoconfig answer is valid
+  tags: systemctl, autoconfig
+  vars:
+    email: '{{ users[0].mail }}'
+  get_url:
+    url: 'http://autoconfig.{{ network.domain }}/mail/config-v1.1.xml?emailaddress={{ mail }}'
+    dest: /tmp/autoconfig.xml
+    force: yes
+
+- name: Check the autoconfig answer is valid
+  tags: systemctl, autoconfig
+  shell: xmllint /tmp/autoconfig.xml
+
+- name: Remove the downloaded file
+  tags: systemctl, autoconfig
+  file:
+    path: /tmp/autoconfig.xml
+    state: absent

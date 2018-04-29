@@ -26,11 +26,13 @@ if envelope :matches "to" "*@{{ network.domain }}" {
   set "to" "${1}";
 }
 
+# Mark as read and make sure the email is not moved to another folder
 if string :is "${from}{{ mail.recipient_delimiter }}Sent" "${to}" {
   setflag "\\Seen";
+  stop;
 }
 
-# Flag the Homebox email alerts
+# Flag the Homebox email alerts as important
 if header :matches "X-Postmaster-Alert" "*" {
   addflag "$label1";
   stop;

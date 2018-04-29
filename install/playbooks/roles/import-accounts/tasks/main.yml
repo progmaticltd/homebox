@@ -26,7 +26,7 @@
     loop_var: user
 
 - name: Copy the postlogin scripts to start emails import on each user login
-  when: mail.import.active
+  notify: Restart dovecot
   tags: scripts
   copy:
     src: import-emails

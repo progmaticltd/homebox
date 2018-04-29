@@ -1,0 +1,37 @@
+---
+## Self diagnostic / basic unit tests suite to run before commiting
+##
+
+# Install development support packages needed to run the tests
+- import_playbook: dev-support.yml
+
+# Test the basic functions
+- import_playbook: system-base.yml
+
+# Test LDAP functions and home folders
+- import_playbook: ldap.yml
+- import_playbook: home-folders.yml
+
+# Test rspamd program
+- import_playbook: rspamd.yml
+
+# Test opendmarc and opendkim
+- import_playbook: opendmarc.yml
+- import_playbook: opendkim.yml
+
+# Test mail related certificates
+- import_playbook: mail-certificates.yml
+
+# Test mail related certificates
+- import_playbook: postfix.yml
+
+# Test mail related certificates
+- import_playbook: dovecot.yml
+
+# Test autoconfiguration
+- import_playbook: autoconfig.yml
+  when: mail.autoconfig
+
+# Test autodiscover
+- import_playbook: autodiscover.yml
+  when: mail.autodiscover

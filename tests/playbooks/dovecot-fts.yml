@@ -1,0 +1,13 @@
+---
+
+- hosts: homebox
+  vars:
+    attachment:
+      name: subfossil-lemurs.doc
+      mime: application/msword
+      search: Madagascar
+  vars_files:
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+    - '{{ playbook_dir }}/../../config/system.yml'
+  roles:
+    - dovecot-fts

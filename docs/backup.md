@@ -52,7 +52,8 @@ By default, backup jobs are run overnight, and an email is sent to the postmaste
 
 ### Example of backup success email
 
-```
+```html
+
 Backup report for nas1: Success
 Creation status:
 ------------------------------------------------------------------------------
@@ -84,7 +85,9 @@ terminating with success status, rc 0
 ```
 
 ### Example of backup success but prune error email
-```
+
+```html
+
 Backup report for router: Error
 Exception when running backup, see logs for details
 Creation status:
