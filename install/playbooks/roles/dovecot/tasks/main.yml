@@ -309,10 +309,11 @@
     - tomcat8
     - solr-tomcat
     - dovecot-solr
-    - poppler-utils  # PDF text extraction
-    - catdoc         # .doc, .xls and .ppt extract
-    - unzip          # to extract docs from office files
+    - poppler-utils
+    - catdoc
+    - unzip
     - docx2txt
+    - odt2txt
     - xlsx2csv
   loop_control:
     loop_var: pkg

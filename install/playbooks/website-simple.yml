@@ -7,7 +7,7 @@
       type: www
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/defaults/main.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
     - certificates
 
@@ -17,13 +17,13 @@
       type: '@'
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/defaults/main.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
     - certificates
 
 - hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/defaults/main.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
     - website-simple

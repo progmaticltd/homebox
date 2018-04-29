@@ -1,0 +1,238 @@
+---
+# These are the default values, you can copy and paste into your system.yml
+# configuration file for customisation.
+
+
+# Standard policies
+policies:
+  system:
+    password: 'length=16 chars=ascii_letters,digits'
+    passphrase: 'length=40'
+
+# LDAP configuration
+ldap:
+  hostname: 'ldap.{{ network.domain }}'
+  organization:
+    domain: '{{ network.domain }}'
+    base: 'dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+  users:
+    dn: 'ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+  groups:
+    dn: 'ou=groups, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+  manager:
+    uid: manager
+    dn: 'cn=manager account, ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+  readonly:
+    uid: readonly
+    dn: 'cn=readonly account, ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+  admin:
+    dn: 'cn=admin,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+    desc: administrator account
+  postmaster:
+    uid: postmaster
+    dn: 'cn=postmaster account, ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+    # See https://www.ietf.org/rfc/rfc2142.txt
+    mailAliases:
+      - 'abuse@{{ network.domain }}'
+      - 'noc@{{ network.domain }}'
+      - 'security@{{ network.domain }}'
+      - 'mailer-daemon@{{ network.domain }}'
+      - 'webmaster@{{ network.domain }}'
+      - 'hostmaster@{{ network.domain }}'
+      - 'admin@{{ network.domain }}'
+      - 'root@{{ network.domain }}'
+
+  # password params
+  roPasswdParams: "{{ playbook_dir }}/../../backup/ldap/readonly.pwd {{ policies.system.password }}"
+  managerPasswdParams: "{{ playbook_dir }}/../../backup/ldap/manager.pwd {{ policies.system.password }}"
+  adminPasswdParams: "{{ playbook_dir }}/../../backup/ldap/admin.pwd {{ policies.system.password }}"
+  postmasterPasswdParams: "{{ playbook_dir }}/../../backup/ldap/postmaster.pwd {{ policies.system.password }}"
+
+
+# Encryption parameters
+encryption:
+  systemKeyParams: "{{ playbook_dir }}/../../backup/encryption/system-key.pwd {{ policies.system.passphrase }}"
+  backupKeyParams: "{{ playbook_dir }}/../../backup/encryption/backup-key.pwd {{ policies.system.passphrase }}"
+
+###############################################################################
+# Email related default options
+mail_default:
+  max_attachment_size: 25   # In megabytes
+  autoconfig: true          # Support Thunderbird automatic configuration
+  autodiscover: false       # Support MS Outlook automatic configuration (uses https)
+  quota:
+    default: 1G             # Maximum allowed mailbox size for your users.
+                            # The safe maximum value will be automatically computed in a next version.
+  discard_duplicates: true  # Discard duplicates messages. It is safe, but you can disable if you are worried
+                            # The default timerange is 1h
+  #############################################################################
+  antivirus:                # Check inbound and outbound emails for viruses
+    active: true            # or false
+    action: drop            # Action to do when a virus is found in an email: bounce or drop
+                            # be careful, bouncing external emails is a way to expose clamav usage
+    send_warnings: false    # Send a warning email to - internal - users who are sending viruses
+    quarantine: yes         # Place emails with a virus in quarantine, for further analysis
+  #############################################################################
+  impersonate:              # Activate dovecot "master" user feature, ideal for families and communities
+    active: false           # https://wiki2.dovecot.org/Authentication/MasterUsers
+    master: master          # master user name
+    separator: '*'          # Separation char between master user / real user name. I personally use '/'
+  #############################################################################
+  import:                   # If you have users with "import" email active scripts, set this flag to true
+    username: import        # The name of the user that import emails
+    active: false           # A master user, with reduced rights will be created, to append miported emails
+                            # in user's mailboxes.
+  #############################################################################
+  # Dovecot / solr FTS (Full Text search)
+  fts:
+    active: true
+    langs:
+      - id: fr
+        name: French
+      - id: en
+        name: English
+  #############################################################################
+  advanced_features: false  # Use some advanced features that will need the latest version of dovecot
+                            # from stretch-backports, like those below.
+                            # like sending emails to an international addresses (e.g. andré@homebox.space)
+  recipient_delimiter: '+'  # The characters you want to use to split email address from mailbox, i.e.:
+                            # when receiving a message to john+lists@example.com, it should go directly to
+                            # the 'lists' folder... I personally use '~'
+
+###############################################################################
+# Default password policies for users
+passwords_default:
+  min_length: 8
+  max_age: 31536000        # 365 days max
+  max_failure: 5
+  expire_warning: 259200   # 3 days
+  require_nonalpha: true
+  # Keep track of the passwords you have used before
+  # If you do not want, set this value to 0
+  # Passwords are stored using salted SHA512, safe enough
+  remember: 12
+  # Password quality module
+  # See: https://www.networkworld.com/article/3198444/linux/the-complexity-of-password-complexity.html
+  quality:
+    enforce: true
+    params:
+      - name: retry
+        value: 5
+      - name: minlen
+        value: 8
+      - name: minclass
+        value: 3
+      - name: maxrepeat
+        value: 3
+      - name: maxclassrepeat
+        value: 4
+      - name: lcredit
+        value: 1
+      - name: ucredit
+        value: 1
+      - name: ocredit
+        value: 3
+      - name: dcredit
+        value: 1
+      - name: difok
+        value: 3
+
+###############################################################################
+# Default system settings
+system_default:
+  release: stretch
+  login: true
+  ssl: letsencrypt
+  devel: false
+  debug: false
+
+###############################################################################
+# Once the system is in place, it is possible to use 'limit' for the rule, instead of any.
+# It is also possible to use fail2ban, which is installed anyway
+firewall_default:
+  ssh:
+    from: any
+    rule: allow
+
+###############################################################################
+# Extra security values
+security_default:
+  auto_update: true
+  app_armor: true
+
+###############################################################################
+# Dictionaries to install in the system
+dictionaries_default:
+  - name: English
+    id: en
+
+###############################################################################
+# Gandi automatic DNS update
+# Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
+# update: Automatic update of your DNS server
+# test: test mode: does not activate the DNS zone straight
+# add_wildcard:  Create a wildcard entry to redirect all traffic to your box
+dns_default:
+  update: false
+  test: true
+  add_wildcard: false
+  gandi:
+    handle: JD123-GANDI
+    key: zaNGbUVIvi1KbYb6PPMdiQLh
+
+###############################################################################
+# Install a static web site on www.yourdomain.com
+# Still requests two certificates:
+# One for for https://yourdomain.com/ and one for https://www.yourdomain.com
+website_default:
+  install: false
+
+###############################################################################
+# Install a webmail, or not...
+webmail_default:
+  install: true
+  type: roundcube
+
+###############################################################################
+backup_default:
+  install: false
+
+###############################################################################
+# Default list of development packages to install
+# You can override it in your config/system.yml file
+# they are installed when running the playbook dev-support,
+# and removed when using dev-cleanup
+
+devel_default:
+  packages:
+    - mc
+    - telnet
+    - dnsutils
+    - whois
+    - tmux
+    - pfqueue
+    - aptitude
+    - man
+    - less
+    - vim
+    - net-tools
+    - file
+    - swaks
+    - curl
+    - locate
+    - colorized-logs
+    - bash-completion
+    - cyrus-clients
+    - zsh
+  root:
+    shell: /bin/zsh
+
+
+###############################################################################
+# DKIM keys default parameters
+dkim_default:
+  key_size: 4096
+  selector: main
+  note: 'main DKIM key for the domain {{ network.domain }}'
+  milter:
+    port: '{{ milter_dkim_port }}'

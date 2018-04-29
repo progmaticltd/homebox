@@ -229,5 +229,25 @@
     var: devel
 
 ################################################################################
+# Merge defaults DKIM keys settings
+- name: Combine default and user defined dkim settings
+  when: dkim is defined
+  tags: defaults
+  set_fact:
+    dkim: '{{ dkim_default | combine(dkim, recursive=True) }}'
+
+- name: Use default dkim settings
+  when: dkim is not defined
+  tags: defaults
+  set_fact:
+    dkim: '{{ dkim_default }}'
+
+- name: Display merged dkim settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: dkim
+
+################################################################################
 # Set the mail import flag is there is external accounts for at least one user
 # - name: Check if the import flag should be set

@@ -59,7 +59,7 @@ Password complexity is enforced at system level, using
 [pwquality module](https://packages.debian.org/stretch/libpam-pwquality).
 You can specify minimum length, mandatory characters like symbols and a mix of lowercase /
 uppercase letters. You can also remember the last passwords for each users, avoiding them
-to re-use the same passwords, or use a password too similar than the previous ones.
+to re-use the same passwords or use a password too similar than the previous ones.
 
 ## Automatic security update
 
@@ -76,7 +76,8 @@ manually.
 ## Digital signature
 
 A DKIM certificate of 4096 bits is generated during the installation, and the associated
-public key is published on the DNS server.
+public key is published on the DNS server. The DKIM key purpose is to mark emails coming
+from your domain as authentic.
 
 The SPF and DMARC records are generated and published automatically as well.
 
@@ -108,6 +109,17 @@ use.
 
 You can also access your sieve filters with the _ManageSieve_ protocol, and the
 [Thunderbird extension](https://addons.mozilla.org/en-US/thunderbird/addon/sieve/).
+
+## Full text search
+
+The server implements full text search inside your emails _and_ your attachments. The
+following attachments types are actually recognised:
+
+- PDF files.
+- Microsoft Office documents: doc, docx, xls, xlsx, ppt.
+- LibreOffice documents: ods, odt, odp, sxw.
+
+More formats will be added once Apache Tika will be included in Debian Stable.
 
 ## Master user
 

@@ -1,0 +1,54 @@
+---
+
+- name: Create a unique subject for testing
+  set_fact:
+    test_subject: 'Test email {{ ansible_date_time.iso8601_micro | to_uuid }}'
+
+- name: Create an email template
+  template:
+    src: testmsg-01.txt
+    dest: /tmp/testmsg-01.txt
+    mode: 0600
+    owner: postfix
+    group: postfix
+
+- name: Copy the attachment on the remote server
+  copy:
+    src: '{{ attachment.name }}'
+    dest: '/tmp/{{ attachment.name }}'
+
+- name: Send an email with attachment
+  shell: >-
+    swaks
+    --from="{{ users[0].mail }}"
+    --to "{{ users[1].mail }}"
+    --h-Subject '{{ test_subject }}'
+    --attach '/tmp/{{ attachment.name }}'
+    --attach-name '{{ attachment.name }}'
+    --attach-type '{{ attachment.mime }}'
+    --auth
+    --auth-user="{{ users[0].uid }}"
+    --auth-password="{{ users[0].password }}"
+    --server smtp.{{ network.domain }}
+    --body /tmp/testmsg-01.txt
+  become: yes
+  become_method: sudo
+  become_user: postfix
+
+- name: Cleanup, delete the attachment and the email template
+  file:
+    state: absent
+    dest: '{{ file }}'
+  with_items:
+    - '/tmp/{{ attachment.name }}'
+    - /tmp/testmsg-01.txt
+  loop_control:
+    loop_var: file
+
+# - name: Check if the email has been received
+#   shell: >-
+#     grep -l "Subject: {{ test_subject }}"
+#     /home/users/{{ users[1].uid }}/mails/maildir/new/*
+#   until: email_found.rc == 0
+#   retries: 10
+#   delay: 1

@@ -1,14 +1,17 @@
-#!/bin/bash
+#!/bin/dash
 
 # Example attachment decoder script. The attachment comes from stdin, and
 # the script is expected to output UTF-8 data to stdout. (If the output isn't
 # UTF-8, everything except valid UTF-8 sequences are dropped from it.)
 
-# Add some logs
-# date=$(date -Iseconds)
-# echo "${date}: $1" >>/var/log/decode2txt.log
+# Where to save logs
+logfile=/tmp/decode2txt.log
 
-libexec_dir=`dirname $0`
+# Add some logs
+date=$(date -Iseconds)
+echo "${date}: $1" >>$logfile
+
+libexec_dir=$(dirname $0)
 content_type=$1
 
 # The second parameter is the format's filename extension, which is used when
@@ -31,14 +34,15 @@ application/vnd.oasis.opendocument.spreadsheet ods
 application/vnd.oasis.opendocument.presentation odp
 '
 
+# The mime type should be specified
 if [ "$content_type" = "" ]; then
-    echo "$formats"
+    echo "Script called without mime type" >>$logfile
     exit 0
 fi
 
-fmt=`echo "$formats" | grep -w "^$content_type" | cut -d ' ' -f 2`
+fmt=$(echo ${formats} | grep -w "^${content_type}" | cut -d ' ' -f 2)
 if [ "$fmt" = "" ]; then
-    echo "Content-Type: $content_type not supported" >&2
+    echo "Content-Type: ${content_type} not supported" >>${logfile}
     exit 1
 fi
 
@@ -58,36 +62,62 @@ LANG=en_US.UTF-8
 export LANG
 
 if [ $fmt = "pdf" ]; then
+
+    # Extract text from PDF file
     /usr/bin/pdftotext $path - 2>/dev/null &
     wait_timeout 2>/dev/null
+
 elif [ $fmt = "doc" ]; then
+
+    # Extract text from doc file
     (/usr/bin/catdoc $path; true) 2>/dev/null &
     wait_timeout 2>/dev/null
+
 elif [ $fmt = "ppt" ]; then
+
+    # Extract text from PPT file
     (/usr/bin/catppt $path; true) 2>/dev/null &
     wait_timeout 2>/dev/null
+
 elif [ $fmt = "xls" ]; then
+
+    # Extract text from XLS file
     (/usr/bin/xls2csv $path; true) 2>/dev/null &
     wait_timeout 2>/dev/null
+
 elif [ $fmt = "odt" ]; then
+
+    # Extract text from ODT file
     (/usr/bin/odt2txt $path; true) 2>/dev/null &
     wait_timeout 2>/dev/null
+
 elif [ $fmt = "sxw" ]; then
+
+    # Extract text from SXW file
     (/usr/bin/sxw2txt $path; true) 2>/dev/null &
     wait_timeout 2>/dev/null
+
 elif [ $fmt = "ods" ]; then
+
+    # Extract text from ODS files
     (/usr/bin/ods2txt $path; true) 2>/dev/null &
     wait_timeout 2>/dev/null
+
 elif [ $fmt = "docx" ]; then
+
+    # Extract text from DOCX file
     (/usr/bin/docx2txt $path -; true) 2>/dev/null &
     wait_timeout 2>/dev/null
+
 elif [ $fmt = "xlsx" ]; then
+
+    # Extract text from XLSX file
     (/usr/bin/xlsx2csv $path; true) 2>/dev/null &
     wait_timeout 2>/dev/null
+
 else
     echo "Buggy decoder script: $fmt not handled" >&2
     exit 1
 fi
-
 
 exit 0

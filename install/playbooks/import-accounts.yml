@@ -4,6 +4,6 @@
 - hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/defaults/main.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
     - import-accounts
