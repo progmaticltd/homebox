@@ -1,5 +1,7 @@
 # HomeBox configuration example.
 # Copy this file into config.yml, and edit it with the values that suits you
+# For a more comprehensive list of settings, you can see the default file in
+#
 
 ###############################################################################
 # Domain and hostname information

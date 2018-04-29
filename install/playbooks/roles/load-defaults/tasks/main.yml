@@ -207,6 +207,27 @@
   debug:
     var: backup
 
+
+################################################################################
+# Merge defaults development settings
+- name: Combine default and user defined devel settings
+  when: devel is defined
+  tags: defaults
+  set_fact:
+    devel: '{{ devel_default | combine(devel, recursive=True) }}'
+
+- name: Use default devel settings
+  when: devel is not defined
+  tags: defaults
+  set_fact:
+    devel: '{{ devel_default }}'
+
+- name: Display merged devel settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: devel
+
 ################################################################################
 # Set the mail import flag is there is external accounts for at least one user
 # - name: Check if the import flag should be set

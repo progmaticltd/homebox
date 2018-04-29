@@ -25,5 +25,7 @@ devel:
     - locate
     - colorized-logs
     - bash-completion
+    - cyrus-clients
+    - zsh
   root:
-    shell: /bin/bash
+    shell: /bin/zsh

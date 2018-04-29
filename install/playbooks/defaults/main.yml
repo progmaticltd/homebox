@@ -196,3 +196,33 @@ webmail_default:
 ###############################################################################
 backup_default:
   install: false
+
+###############################################################################
+# Default list of development packages to install
+# You can override it in your config/system.yml file
+# they are installed when running the playbook dev-support,
+# and removed when using dev-cleanup
+
+devel_default:
+  packages:
+    - mc
+    - telnet
+    - dnsutils
+    - whois
+    - tmux
+    - pfqueue
+    - aptitude
+    - man
+    - less
+    - vim
+    - net-tools
+    - file
+    - swaks
+    - curl
+    - locate
+    - colorized-logs
+    - bash-completion
+    - cyrus-clients
+    - zsh
+  root:
+    shell: /bin/zsh
