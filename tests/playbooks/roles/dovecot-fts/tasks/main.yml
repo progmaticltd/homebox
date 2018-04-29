@@ -23,9 +23,9 @@
     --from="{{ users[0].mail }}"
     --to "{{ users[1].mail }}"
     --h-Subject '{{ test_subject }}'
-    --attach '/tmp/{{ attachment.name }}'
-    --attach-name '{{ attachment.name }}'
     --attach-type '{{ attachment.mime }}'
+    --attach-name '{{ attachment.name }}'
+    --attach '/tmp/{{ attachment.name }}'
     --auth
     --auth-user="{{ users[0].uid }}"
     --auth-password="{{ users[0].password }}"
@@ -37,18 +37,12 @@
 
 - name: Cleanup, delete the attachment and the email template
   file:
+    path: '{{ file }}'
     state: absent
-    dest: '{{ file }}'
   with_items:
     - '/tmp/{{ attachment.name }}'
     - /tmp/testmsg-01.txt
   loop_control:
     loop_var: file
 
-# - name: Check if the email has been received
-#   shell: >-
-#     grep -l "Subject: {{ test_subject }}"
-#     /home/users/{{ users[1].uid }}/mails/maildir/new/*
-#   until: email_found.rc == 0
-#   retries: 10
-#   delay: 1
+# TODO: Search using doveadm and validate the search functionality
