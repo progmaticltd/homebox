@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This document was created by AbiWord -->
+<!-- AbiWord is a free, Open Source word processor. -->
+<!-- You may obtain more information about AbiWord at http://www.abisource.com -->
+
+<DOC editor="AbiWord" mime="application/x-kword" syntaxVersion="1">
+<PAPER format="1" orientation="0" columns="1" columnspacing="0" width="210.000000" height="297.000000">
+<PAPERBORDERS left="25.400000" right="25.400000" top="25.400000" bottom="25.400000"/>
+</PAPER>
+<ATTRIBUTES processing="0" unit="in"/>
+<FRAMESETS>
+<FRAMESET frameType="1" frameInfo="0" removable="0" visible="1" name="Frameset 1">
+<FRAME left="0" top="0" right="0" bottom="0" runaround="1" autoCreateNewFrame="1" newFrameBehaviour="0"/>
+<PARAGRAPH>
+<TEXT></TEXT>
+<FORMATS>
+</FORMATS>
+<LAYOUT>
+<FLOW value="0"/>
+</LAYOUT>
+</PARAGRAPH>
+<PARAGRAPH>
+<TEXT>The price good men pay for indifference to public affairs is to be ruled by evil men.</TEXT>
+<FORMATS>
+<FORMAT id="1" pos="0" len="85">
+<FONT name="times"/>
+<ITALIC value="1"/>
+</FORMAT>
+</FORMATS>
+<LAYOUT>
+<FLOW value="0"/>
+</LAYOUT>
+</PARAGRAPH>
+<PARAGRAPH>
+<TEXT>Plato</TEXT>
+<FORMATS>
+<FORMAT id="1" pos="0" len="5">
+<FONT name="times"/>
+<WEIGHT value="75"/>
+<ITALIC value="1"/>
+</FORMAT>
+</FORMATS>
+<LAYOUT>
+<FLOW value="1"/>
+</LAYOUT>
+</PARAGRAPH>
+<PARAGRAPH>
+<TEXT>1d115b3a-4fda-11e8-92de-4355291f7bc3</TEXT>
+<FORMATS>
+<FORMAT id="1" pos="0" len="36">
+<FONT name="times"/>
+</FORMAT>
+</FORMATS>
+<LAYOUT>
+<FLOW value="0"/>
+</LAYOUT>
+</PARAGRAPH>
+</FRAMESET>
+</FRAMESETS>
+<STYLES>
+</STYLES>
+</DOC>

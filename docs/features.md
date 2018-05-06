@@ -112,14 +112,25 @@ You can also access your sieve filters with the _ManageSieve_ protocol, and the
 
 ## Full text search
 
-The server implements full text search inside your emails _and_ your attachments. The
+The server implements full text search inside your emails _and_ your attachments. 
+Full text search is also done inside attached archives (zip, rar, etc)
 following attachments types are actually recognised:
 
 - PDF files.
-- Microsoft Office documents: doc, docx, xls, xlsx, ppt.
-- LibreOffice documents: ods, odt, odp, sxw.
+- Text, XML and HTML files (various encoding)
+- Microsoft Office documents: doc, docx, xls, xlsx, pptx.
+- LibreOffice/OpenOffice documents: ods, odt, odp, sxw.
+- Other office documents: csv, rtf, gnumeric and abiword files
+- E-Books (epub)
+- Attached emails (eml)
+- Archives: (zip, tar, rar, gzip)
 
-More formats will be added once Apache Tika will be included in Debian Stable.
+__Notes and Limitations:__
+
+- Although encrypted archives cannot be opened, the file list can be searched.
+- Powerpoint files before 2003 (.ppt) are not well supported.
+
+More formats could be added once Apache Tika will be included in Debian Stable.
 
 ## Master user
 

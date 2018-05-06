@@ -1,0 +1,18 @@
+---
+
+- name: Copy the attachment on the remote server
+  copy:
+    src: '{{ attachment.uid }}.{{ attachment.extension }}'
+    dest: '/tmp/file.data'
+
+# Check if the parser can return the string when converting to text
+- name: Check if the text conversion script returns the uuid ({{ attachment.description }})
+  shell: >-
+    cat /tmp/file.data
+    | /usr/local/bin/decode2text {{ attachment.mime }}
+    | grep "{{ attachment.uid }}"
+
+- name: Delete the temporary file
+  file:
+    path: /tmp/file.data
+    state: absent

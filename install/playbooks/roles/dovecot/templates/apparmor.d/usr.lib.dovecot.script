@@ -16,5 +16,5 @@
   # Run the attachment decoding script, unconfined for now.
   # TODO: Use a proper parsing library without
   # external executable dependencies
-  /usr/local/bin/decode2text.sh Ux,
+  /usr/local/bin/decode2text Ux,
 }
