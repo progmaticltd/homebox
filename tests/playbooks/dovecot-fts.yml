@@ -1,0 +1,11 @@
+---
+
+- hosts: homebox
+  vars:
+    test_dovecot: false
+    test_script: true
+  vars_files:
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+    - '{{ playbook_dir }}/../../config/system.yml'
+  roles:
+    - dovecot-fts

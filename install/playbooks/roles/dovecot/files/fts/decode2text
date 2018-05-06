@@ -1,0 +1,295 @@
+#!/bin/dash
+
+# Log everything to this file
+exec 2>>/var/log/decode2text.log
+
+# A few improvements that can be done
+# - convert to python ?
+# - read a configuration file with some flags ?
+# - add debug output ?
+# - use 7z instead of unzip everywhere ?
+
+# Successes and error codes
+SUCCESS=0
+ERROR_IGNORE=0
+ERROR_EMPTY_ATTACHMENT=1
+ERROR_UNKNOWN_ATTACHMENT=2
+ERROR_TMP_FILE_CREATION=3
+ERROR_EXTRACTION=4
+
+# When no mime type is passed, return the list of supported mime types
+if [ "$1" = "" ]; then
+    cat /etc/dovecot/fts-mime-types.conf | sed -E '/(^$|^#.*)/d'
+    echo "\n"
+    exit $SUCCESS
+fi
+
+# For logs
+NOW=$(date -Iseconds)
+
+# Set locale
+LANG=en_US.UTF-8
+export LANG
+
+# Logging helpers
+error() {
+    echo "$NOW: Error: $1" >&2
+}
+
+log() {
+    echo "$NOW: Notice: $1" >&2
+}
+
+debug() {
+    echo "$NOW: Debug: $1" >&2
+}
+
+# Various programs used
+xml2text=/usr/lib/dovecot/xml2text
+
+# Write the attachment file to a temporary location
+attach=$(mktemp)
+trap "rm -f $attach" 0 1 2 3 14 15
+
+# Read the file from standard imput
+cat > $attach
+
+# If the file does not exists, exit
+if [ ! -f $attach ]; then
+    error "Failed to save attachment"
+    exit $ERROR_TMP_FILE_CREATION
+fi
+
+# Check if the attachment is empty
+if [ ! -s $attach ]; then
+   error "Empty attachment passed ($1)"
+   exit $ERROR_EMPTY_ATTACHMENT
+fi
+
+# Try to guess the mime type automatically
+mime=$1
+if [ "$mime" = "application/octet-stream" -o "$mime" = "auto" ]; then
+    mime=$(test -f $attach && file --mime-type $attach | sed 's/.*: //')
+fi
+
+# And exit if it is still unknown
+if [ "$mime" = "application/octet-stream" ]; then
+    error "Cannot guess file type for binary attachment. Exit"
+    exit $ERROR_UNKNOWN_ATTACHMENT
+fi
+
+# Log informations about the file, useful for debugging
+size=$(stat -c %s $attach)
+md5=$(md5sum $attach | sed -E 's/\s+.*//')
+log "$mime (md5=$md5, size=$size)"
+
+# Remove the attachment and kill the process if running
+wait_timeout() {
+    childpid=$!
+    trap "kill -9 $childpid; rm -f $attach" 1 2 3 14 15
+    wait $childpid
+}
+
+# Uncompress archives, and call myself
+uncompress_and_parse() {
+
+    # Get the path and the 7z comptibility flag
+    attach=$1
+    cmp7z=$2
+
+    # Create a temorary directory,
+    # and exit if this does not work
+    tempdir=$(mktemp -d)
+    if [ "$tempdir" = "" ]; then
+        exit $ERROR_TMP_FILE_CREATION
+    fi
+
+    # Get inside the temporary folder
+    trap "rm -rf $attach $tempdir" 0 1 2 3 14 15
+    cd $tempdir || exit $ERROR_TMP_FILE_CREATION
+
+    # Check first if the file is encrypted
+    if [ "$cmp7z" = "1" ]; then
+        encrypted=$(7z l -slt $attach | grep 'Encrypted = +' | wc -l)
+    fi
+
+    # Extract the archive
+    if [ "$mime" = "application/zip" -o "$mime" = "application/epub+zip" ]; then
+
+        if [ "$encrypted" = "0" ]; then
+            7z x "$attach" || exit $ERROR_EXTRACTION
+            rm -f $attach
+        else
+            # Just print the list of entries
+            debug "Skipping encrypted file"
+            7z l "$attach"
+            exit $SUCCESS
+        fi
+
+    elif [ "$mime" = "application/gzip" -o "$mime" = "application/x-gzip" ]; then
+        shortname="$(basename $attach).gz"
+        mv $attach $shortname
+        gunzip $shortname || exit $ERROR_EXTRACTION
+
+    elif [ "$mime" = "application/ms-tnef" -o "$mime" = "application/vnd.ms-tnef" ]; then
+        shortname="$(basename $attach).tnef"
+        mv $attach $shortname
+        /usr/bin/tnef $shortname || exit $ERROR_EXTRACTION
+        rm $shortname
+
+    elif [ "$mime" = "application/x-rar" -o "$mime" = "application/rar" ]; then
+        shortname="$(basename $attach).rar"
+        if [ "$encrypted" = "0" ]; then
+            mv $attach $shortname
+            7z x $shortname || exit $ERROR_EXTRACTION
+            rm $shortname
+        else
+            # Just print the list of entries
+            debug "Skipping encrypted file"
+            7z l "$attach"
+            exit $SUCCESS
+        fi
+
+    elif [ "$mime" = "application/x-tar" ]; then
+        shortname="$(basename $attach).tar"
+        mv $attach $shortname
+        tar xf $shortname -C $tempdir || exit $ERROR_EXTRACTION
+        rm -f $shortname
+    fi
+
+    # Call the parse function for each file
+    files=$(find . -type f -print)
+    for file in $files; do
+        mime=$(test -f $file && file --mime-type $file 2>/dev/null | sed 's/.*: //')
+        test -f $file && parse_file "${tempdir}/${file}" "$mime"
+    done
+}
+
+parse_file() {
+
+    attach=$1
+    mime=$2
+
+    case "$mime" in
+
+        # PDF Documents
+        application/pdf)
+            /usr/bin/pdftotext $attach - 2>/dev/null &
+            wait_timeout
+            ;;
+
+        # Text files ###########################################
+        text/*)
+            charset=$(file -b -i $attach | sed 's/.*charset=//')
+            debug "Found charset $charset for $mime attachment"
+            cat $attach | iconv -f $charset -t utf8 &
+            wait_timeout
+            ;;
+
+        text/xml)
+            charset=$(file -b -i $attach | sed 's/.*charset=//')
+            debug "Found charset $charset for $mime attachment"
+            cat $attach | $xml2text | sed -E '/(^\s*$)/d' | sed -E 's/(^\s*|\s*$)//g' &
+            wait_timeout
+            ;;
+
+        message/rfc822)
+            cat $attach &
+            wait_timeout
+            ;;
+
+        # Libre Office documents ###############################
+        application/vnd.oasis.opendocument.spreadsheet)
+            /usr/bin/ods2txt $attach &
+            wait_timeout
+            ;;
+
+        application/vnd.oasis.opendocument.text)
+            /usr/bin/odt2txt $attach &
+            wait_timeout
+            ;;
+
+        application/vnd.oasis.opendocument.presentation)
+            /usr/bin/odp2txt $attach &
+            wait_timeout
+            ;;
+
+        # OpenOffice office formats ############################
+        application/vnd.sun.xml.writer)
+            /usr/bin/sxw2txt $attach &
+            wait_timeout
+            ;;
+
+        # MS Office documents (97-2003) ########################
+        application/msword)
+            /usr/bin/catdoc $attach &
+            wait_timeout
+            ;;
+
+        application/vnd.ms-powerpoint)
+            /usr/bin/catppt $attach &
+            wait_timeout
+            ;;
+
+        application/vnd.ms-excel)
+            /usr/bin/xls2csv $attach &
+            wait_timeout
+            ;;
+
+        # MS Office documents (2003-07) ########################
+        application/vnd.openxmlformats-officedocument.presentationml.presentation)
+            /usr/bin/unzip -qc $attach 'ppt/slides/slide*.xml' | \
+                /bin/grep -oP '(?<=\<a:t\>).*?(?=\</a:t\>)' &
+            wait_timeout
+            ;;
+
+        application/vnd.openxmlformats-officedocument.wordprocessingml.document)
+            cat $attach | /usr/bin/docx2txt &
+            wait_timeout
+            ;;
+
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet)
+            /usr/bin/xlsx2csv $attach &
+            wait_timeout
+            ;;
+
+        # Other office formats #################################
+        application/x-gnumeric)
+            /bin/gunzip -c $attach | $xml2text | sed -E '/(^\s*$)/d' | sed -E 's/(^\s*|\s*$)//g' &
+            wait_timeout
+            ;;
+        application/x-abiword)
+            cat $attach | $xml2text | sed -E '/(^\s*$)/d' | sed -E 's/(^\s*|\s*$)//g' &
+            wait_timeout
+            ;;
+        application/rtf)
+            unrtf $attach --quiet --text --nopict | sed -E -ne '/^[-]+/,$ p' &
+            wait_timeout
+            ;;
+
+        # Uncompress archives ##################################
+	# the format is compatible with 7z
+        application/*zip | application/x-?ar | application/*-tnef)
+            uncompress_and_parse $attach 1
+            ;;
+
+        # Uncompress tnef archives #############################
+	# the format is *not* compatible with 7z
+        application/*-tnef)
+            uncompress_and_parse $attach 0
+            ;;
+
+        # Display an error message for unhandled attachment types
+        *)
+            error "Warning: don't know how to parse $mime"
+            exit $ERROR_IGNORE
+            ;;
+    esac
+}
+
+# Parse the attachment
+parse_file $attach $mime
+
+
+# Everything is fine
+exit $SUCCESS

@@ -59,7 +59,7 @@ Password complexity is enforced at system level, using
 [pwquality module](https://packages.debian.org/stretch/libpam-pwquality).
 You can specify minimum length, mandatory characters like symbols and a mix of lowercase /
 uppercase letters. You can also remember the last passwords for each users, avoiding them
-to re-use the same passwords, or use a password too similar than the previous ones.
+to re-use the same passwords or use a password too similar than the previous ones.
 
 ## Automatic security update
 
@@ -76,12 +76,21 @@ manually.
 ## Digital signature
 
 A DKIM certificate of 4096 bits is generated during the installation, and the associated
-public key is published on the DNS server.
+public key is published on the DNS server. The DKIM key purpose is to mark emails coming
+from your domain as authentic.
 
 The SPF and DMARC records are generated and published automatically as well.
 
 This will guarantee your emails being recognised by other email servers without any
 problem.
+
+## Internationalised email aliases
+
+You can add as many email aliases as you want for your user accounts. Moreover, you will
+be able to add email addresses with internationalised characters, using a standardised
+LDAP schema.
+
+You can then have email addresses like andré@homebox.space, or even аджай@экзампл.рус.
 
 ## Address extension
 
@@ -101,6 +110,39 @@ use.
 You can also access your sieve filters with the _ManageSieve_ protocol, and the
 [Thunderbird extension](https://addons.mozilla.org/en-US/thunderbird/addon/sieve/).
 
+## Full text search
+
+The server implements full text search inside your emails _and_ your attachments.
+Full text search is also done inside attached archives (zip, rar, etc)
+following attachments types are actually recognised:
+
+- PDF files.
+- Text, XML and HTML files (various encoding)
+- Microsoft Office documents: doc, docx, xls, xlsx, pptx.
+- LibreOffice/OpenOffice documents: ods, odt, odp, sxw.
+- Other office documents: csv, rtf, gnumeric and abiword files
+- E-Books (epub)
+- Attached emails (eml)
+- Archives: (zip, tar, rar, gzip)
+- Old microsoft archive format: tnef (aka winmail.dat)
+
+__Notes and Limitations:__
+
+- Although encrypted archives cannot be opened, the file list is indexed.
+- Powerpoint files before 2003 (.ppt) are not well supported.
+
+More formats could be added once Apache Tika will be included in Debian Stable.
+
+## Master user
+
+Whatever you use your email server for a community or a family, you can activate the
+"impersonate" function. This function creates a "master" user, with an access to every
+other user's mail boxes.
+
+This feature is disabled by default, and the next version will send an alert in real time
+to the user when this functionality is used. It is mainly meant for family and children
+with an email address.
+
 ## Automatic client configuration
 
 The server supports _Mozilla Thunderbird_, _Microsoft Outlook_ and other email clients
@@ -110,12 +152,42 @@ autoconfig.xml, autodiscover.xml and DNS records
 
 ## Antivirus
 
-The emails received are automatically checked for viruses, and are dropped by default
-if they contain one. The emails sent by your users are checked as well, avoiding your
-IP address to be blacklisted if one of your account is compromised. In the second case,
-the system can also send a warning with the IP address of the sender:
+The emails received are automatically checked for viruses, and are discarded by default
+if they are infected. The emails sent by your users are checked as well, avoiding your
+IP address to be blacklisted if one of your account is compromised.
+
+In the later case, the system can also send a warning with the IP address of the sender
+for a remote address:
 
 ```html
+
+Hello,
+
+A virus has been sent using your email address (andre@homebox.space).
+
+- The virus is identified by ClamAV as "Clamav.Test.File-6".
+- The remote IP address is "106.57.174.35".
+- The intended recipient(s) were:
+  - mirina@homebox.space
+
+The email has been discarded and not transferred, please:
+
+- Check your workstation for viruses,
+- Change your password, using https://webmail.homebox.space/
+- Download an antivirus, for instance at https://www.clamav.net/
+
+More details about the source IP address:
+https://getmyipaddress.org/ipwhois.php?ip=106.57.174.35
+
+--
+The Postmaster
+
+```
+
+When the email is sent from your network, the MAC address is added to the email warning:
+
+```html
+
 Hello,
 
 A virus has been sent using your email address (andre@homebox.space).
@@ -136,6 +208,7 @@ MAC address: 26:ac:5b:6a:4d:ac
 
 --
 The Postmaster
+
 ```
 
 You can also choose to explicitly reject (bounce) emails containing viruses. In all case,
@@ -157,6 +230,47 @@ appear in your account.
 
 Because the folders hierarchy will be copied as well, it is possible to migrate from
 another account very easily.
+
+## Webmail
+
+The current webmail installed is RoundCube, with the following plugins / features
+activated by default:
+
+- Archive
+- Context Menu
+- Emoticons
+- Sieve Rules management, with vacation, automatic answers, etc…
+- Mark as Junk
+- New mail desktop notification
+- Password modification
+- IMAP Subscriptions management
+- Thunderbird labels
+- Hotkeys support (Ctrl+Enter to send an email)
+
+When the master user functionality has been activated, the impersonate plugin is also
+installed, allowing you to inspect any user's emails from the webmail.
+
+More plugins can be activated very easily, just by specifying their name in the list of
+plugins:
+
+- dkimstatus
+- hide_blockquote
+- zipdownload
+- new_user_dialog
+- additional_message_headers
+- acl
+- database_attachments
+- debug_logger
+- help
+- hide_blockquote
+- http_authentication
+- show_additional_headers
+- squirrelmail_usercopy
+- userinfo
+- vcard_attachments
+- virtuser_file
+- virtuser_query
+
 
 ## Automatic copy to the sent folder
 
@@ -188,3 +302,40 @@ will be www.example.com and example.com.
 Although All the components are well integrated together, it is possible to replace them
 by another one, or to remove them. For instance, the RoundCube webmail is optional, as
 well as automatic configuration modules for _Mozilla Thunderbird_ and _Microsoft Outlook_.
+
+# Development Features
+
+## Included debug
+
+When you will deploy the server for the first time, on when you are developing, you can
+set a global "debug" flag. This will activate the verbose or debug logging option of every
+service. Just using systemctl, you will be then able to filter by service. Once
+everything is working, set the flag back to false, run the deployment script again, and
+you have a sever ready for production.
+
+## Integrated testing
+
+Until we have a full testing environment, perhaps based on virtualisation, you are already
+able to test the most important features of your server, automatically, with one command,
+with an Ansible playbook. This test playbook is running self diagnostic tasks on your
+server, and test the following:
+
+- Basic OS tests
+- LDAP server
+- Home folders
+- Antispam (rspamd)
+- Antivirus (clamav)
+- OpenDMARC
+- Certificates for all services
+- DKIM keys (opendkim)
+- Postfix configuration
+- IMAP access (dovecot
+- Autoconfig and Autodiscover
+
+You can even run the tests on a production server.
+
+## Development support playbook
+
+A playbook will add support for development packages, necessary to debug and diagnostic
+the system while you are developing it, like SMTP or DNS tools. Once the development is
+finished, another playbook remove these packages and cleanup the system.

@@ -1,0 +1,13 @@
+Dear tester,
+
+Thanks for testing homebox,
+
+This email has an attachment, with a unique UUID inside.
+The scripts test that a search of this UUID returns at least a value.
+
+All the attachments are containing nice quotes as well ;-)
+
+This email contains a {{ attachment.description }}.
+
+--  
+The tester

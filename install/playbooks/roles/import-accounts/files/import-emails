@@ -36,7 +36,7 @@ fi
 cd $HOME/mails/import/safe
 
 # Get the list of imports to run
-imports=$(ls *conf)
+imports=$(ls *conf 2>/dev/null)
 
 # Go back on the import root directory
 cd $HOME/mails/import

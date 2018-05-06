@@ -1,0 +1,20 @@
+# Last Modified: Sat Apr 28 14:32:34 2018
+#include <tunables/global>
+
+/usr/lib/dovecot/script {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/dovecot-common>
+  #include <abstractions/postfix-common>
+
+  /bin/bash mr,
+  /bin/dash mr,
+
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/lib/dovecot/script mr,
+
+  # Run the attachment decoding script, unconfined for now.
+  # TODO: Use a proper parsing library without
+  # external executable dependencies
+  /usr/local/bin/decode2text Ux,
+}

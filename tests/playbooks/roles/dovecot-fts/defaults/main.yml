@@ -1,0 +1,183 @@
+---
+
+# List of attachments to test
+
+attachments:
+  # Proprietary extensions
+  - uid: d27dddc0-513a-11e8-9653-e7af3c54987f
+    extension: tnef
+    mime: application/vnd.ms-tnef
+    description: TNEF document from Microsoft Outlook
+    search: damned@world.std.com
+    smtp_test: true
+    script_test: true
+  # Simplest documents
+  - uid: b93a4d30-4fd7-11e8-9988-0bff21231c37
+    extension: csv
+    mime:  text/csv
+    description: CSV file
+    smtp_test: true
+    script_test: true
+  - uid: c1934c6c-4fdb-11e8-a1fd-8b52e2f60cdc
+    extension: txt
+    mime:  text/plain
+    description: Generic text file
+    smtp_test: true
+    script_test: true
+  - uid: dc05099c-4fda-11e8-8bbb-d3c29e5fafb7
+    extension: eml
+    mime: message/rfc822
+    description: Email document
+    smtp_test: false
+    script_test: true
+  - uid: fa869176-4fd8-11e8-ac44-1b431475b31f
+    extension: rtf
+    mime:  application/rtf
+    description: Generic RTF document
+    smtp_test: false
+    script_test: true
+  # Text documents
+  - uid: 71feb6a0-5062-11e8-94c3-5759751031f8
+    extension: txt
+    mime:  text/plain
+    description: Generic text file (utf-8)
+    smtp_test: true
+    script_test: true
+  - uid: 3a77cee0-5064-11e8-b25d-ffd106f5f2be
+    extension: txt
+    mime:  text/plain
+    description: Generic text file (iso-8859-1)
+    smtp_test: true
+    script_test: true
+  - uid: 3b3f8576-4fdc-11e8-a275-83fbaa9271ef
+    extension: txt
+    mime:  text/plain
+    description: Generic text file (utf-16)
+    smtp_test: false
+    script_test: true
+  - uid: 574185dc-4fda-11e8-bf53-dbbe925a5a48
+    extension: html
+    mime: text/html
+    description: Generic HTML document
+    smtp_test: true
+    script_test: true
+  - uid: b77daaaa-4fdc-11e8-a127-effed8eaa5ff
+    extension: pdf
+    mime:  application/pdf
+    description: Generic PDF file
+    smtp_test: true
+    script_test: true
+  # Libre Office
+  - uid: 6134ab8e-4fd8-11e8-bf1d-97a8afb41480
+    extension: odt
+    mime:  application/vnd.oasis.opendocument.text
+    description: Libreoffice writer text document
+    smtp_test: true
+    script_test: true
+  - uid: 9fcd6860-4fd6-11e8-9681-43aa8275e1e2
+    extension: odp
+    mime:  application/vnd.oasis.opendocument.presentation
+    description: LibreOffice impress presentation
+    smtp_test: true
+    script_test: true
+  - uid: 6a329b16-4fd7-11e8-9df6-97e40fdeac64
+    extension: ods
+    mime:  application/vnd.oasis.opendocument.spreadsheet
+    description: LibreOffice calc spreadsheet
+    smtp_test: true
+    script_test: true
+  # Open office formats
+  - uid: 87dbbe3e-4fd9-11e8-a6a6-833efa968b0c
+    extension: sxw
+    mime: application/vnd.sun.xml.writer
+    description: OpenOffice writer document
+    smtp_test: true
+    script_test: true
+  # Microsoft office
+  - uid: cba12826-4fd8-11e8-8cd3-c7ba3f147c7d
+    extension: docx
+    mime: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+    description: Microsoft Word 2007 document
+    smtp_test: true
+    script_test: true
+  - uid: ac58313a-4fd8-11e8-b257-f38689bfa0c8
+    extension: doc
+    mime:  application/msword
+    description: Microsoft Word 2003 document
+    smtp_test: true
+    script_test: true
+  - uid: 879f7b24-4fd7-11e8-95f2-37f68401bddc
+    extension: xls
+    mime:  application/vnd.ms-excel
+    description: Microsoft Excel 2003 spreadsheet
+    smtp_test: true
+    script_test: true
+  - uid: d80c5508-5033-11e8-822f-63821fc14a12
+    extension: xlsx
+    mime: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+    description:  Microsoft Excel 2007 spreadsheet
+    smtp_test: true
+    script_test: true
+  - uid: 2b060e28-4fc8-11e8-a69f-1b7c709faed0
+    extension: pptx
+    mime: application/vnd.openxmlformats-officedocument.presentationml.presentation
+    description: Microsoft Powerpoint 2013 presentation
+    smtp_test: true
+    script_test: true
+  # Other office formats
+  - uid: 1d115b3a-4fda-11e8-92de-4355291f7bc3
+    extension: kwd
+    mime:  text/xml
+    description: KWord text document
+    smtp_test: true
+    script_test: true
+  - uid: c540c4f0-5032-11e8-af91-57a83cd7ff60
+    extension: gnumeric
+    mime: application/x-gnumeric
+    description: Gnumeric document
+    smtp_test: true
+    script_test: true
+  - uid: 87dbbe3e-4fd9-11e8-a6a6-833efa968b0c
+    extension: abw
+    mime:  text/xml
+    description: Abiword document
+    smtp_test: true
+    script_test: true
+  - uid: ef859c70-4fda-11e8-bc3b-9383a175cbed
+    extension: epub
+    mime: application/epub+zip
+    description: Generic ePub document
+    smtp_test: true
+    script_test: true
+  # Archives
+  - uid: ff5705f2-50f3-11e8-9ee5-bb711bd0060c
+    extension: rar
+    mime:  application/x-rar
+    description: RAR archive
+    smtp_test: true
+    script_test: true
+  - uid: 54e04f86-50ec-11e8-a48b-efe5bfd4eaa6
+    extension: zip
+    mime:  application/zip
+    description: Encrypted zip file
+    smtp_test: true
+    script_test: true
+  - uid: be17a3c2-502a-11e8-9723-a7bcf2ddd230
+    extension: zip
+    mime:  application/zip
+    description: Generic zip file with a text document inside
+    smtp_test: true
+    script_test: true
+  - uid: 4901bc0e-5079-11e8-8297-2f51a5e7cc0f
+    extension: tar.gz
+    mime:  application/gzip
+    description: Generic tgz file with a text document inside
+    smtp_test: true
+    script_test: true
+  # FIXME: Disabled tests
+  - uid: 4554875c-4fc6-11e8-9f02-c7e6198d928a
+    extension: ppt
+    mime:  application/vnd.ms-powerpoint
+    description: Microsoft Powerpoint presentation
+    smtp_test: false
+    script_test: false

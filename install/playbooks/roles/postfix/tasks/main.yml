@@ -172,6 +172,13 @@
     regexp: 'imap3,'
     replace: ''
 
+# Create an empty mail.warn configuration, to let fail2ban start
+- name: Create an empty mail.warn
+  tags: security,fail2ban
+  file:
+    path: /var/log/mail.warn
+    state: touch
+
 - name: Activate fail2ban on postfix
   tags: security,fail2ban
   notify: Restart fail2ban

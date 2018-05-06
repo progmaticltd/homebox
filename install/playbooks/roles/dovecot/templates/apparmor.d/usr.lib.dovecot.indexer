@@ -1,0 +1,16 @@
+# Last Modified: Sat Apr 28 11:29:01 2018
+#include <tunables/global>
+
+/usr/lib/dovecot/indexer {
+  #include <abstractions/base>
+  #include <abstractions/dovecot-common>
+
+  capability setuid,
+  capability setgid,
+
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/lib/dovecot/indexer mr,
+
+  # Attachment decoding script has its own profile
+  /usr/local/bin/decode2text ix,
+}

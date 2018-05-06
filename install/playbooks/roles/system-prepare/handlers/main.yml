@@ -1,0 +1,4 @@
+---
+
+- name: Rebuild locales
+  command: /usr/sbin/locale-gen

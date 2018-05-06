@@ -1,0 +1,20 @@
+---
+
+# Test the script only, call grep to check for the uuid
+- name: Test parsing script ({{ attachment.description }})
+  when: test_script = true
+  include_tasks: ./test-script.yml
+  with_items:
+    - '{{ attachments | selectattr("script_test", "equalto", true) | list }}'
+  loop_control:
+    loop_var: attachment
+
+
+# Full test by sending an email and using dovecot fts to search
+- name: Send email and search using fts ({{ attachment.description }})
+  when: test_dovecot = true
+  include_tasks: ./send-attachment.yml
+  with_items:
+    - '{{ attachments | selectattr("smtp_test", "equalto", true) | list }}'
+  loop_control:
+    loop_var: attachment

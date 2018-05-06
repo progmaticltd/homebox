@@ -1,0 +1,253 @@
+---
+# This role load all the default values, and merge them with user specified values.
+# This is a first version, roughly copy and paste, but will evolve to something more
+# elaborated later. The final purpose is fulfilled:
+# Users can specify copy partial branches of default values, and not worry
+# about new version changes.
+
+
+################################################################################
+# Merge user options with default options
+- name: Combine default and user defined mail settings
+  when: mail is defined
+  tags: defaults
+  set_fact:
+    mail: '{{ mail_default | combine(mail, recursive=True) }}'
+
+- name: Use default mail settings
+  when: mail is not defined
+  tags: defaults
+  set_fact:
+    mail: '{{ mail_default }}'
+
+- name: Display merged mail settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: mail
+
+################################################################################
+# Merge user options with default options
+- name: Combine default and user defined password settings
+  when: passwords is defined
+  tags: defaults
+  set_fact:
+    passwords: '{{ passwords_default | combine(passwords, recursive=True) }}'
+
+- name: Use default passwords settings
+  when: passwords is not defined
+  tags: defaults
+  set_fact:
+    passwords: '{{ passwords_default }}'
+
+- name: Display merged password settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: passwords
+
+################################################################################
+# Merge system defaults
+- name: Combine default and user defined system settings
+  when: system is defined
+  tags: defaults
+  set_fact:
+    system: '{{ system_default | combine(system, recursive=True) }}'
+
+- name: Use default system settings
+  when: system is not defined
+  tags: defaults
+  set_fact:
+    system: '{{ system_default }}'
+
+- name: Display merged system settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: system
+
+################################################################################
+# Merge firewall defaults
+- name: Combine default and user defined firewall settings
+  when: firewall is defined
+  tags: defaults
+  set_fact:
+    firewall: '{{ firewall_default | combine(firewall, recursive=True) }}'
+
+- name: Use default firewall settings
+  when: firewall is not defined
+  tags: defaults
+  set_fact:
+    firewall: '{{ firewall_default }}'
+
+- name: Display merged firewall settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: firewall
+
+################################################################################
+# Merge security defaults
+- name: Combine default and user defined security settings
+  when: security is defined
+  tags: defaults
+  set_fact:
+    security: '{{ security_default | combine(security, recursive=True) }}'
+
+- name: Use default security settings
+  when: security is not defined
+  tags: defaults
+  set_fact:
+    security: '{{ security_default }}'
+
+- name: Display merged security settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: security
+
+################################################################################
+# Merge dictionaries defaults
+- name: Combine default and user defined dictionaries settings
+  when: dictionaries is defined
+  tags: defaults
+  set_fact:
+    dictionaries: '{{ dictionaries_default | union(dictionaries) }}'
+
+- name: Use default dictionaries settings
+  when: dictionaries is not defined
+  tags: defaults
+  set_fact:
+    dictionaries: '{{ dictionaries_default }}'
+
+- name: Display merged dictionaries settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: dictionaries
+
+################################################################################
+# Merge DNS defaults
+- name: Combine default and user defined dns settings
+  when: dns is defined
+  tags: defaults
+  set_fact:
+    dns: '{{ dns_default | combine(dns, recursive=True) }}'
+
+- name: Use default DNS settings
+  when: dns is not defined
+  tags: defaults
+  set_fact:
+    dns: '{{ dns_default }}'
+
+- name: Display merged dns settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: dns
+
+################################################################################
+# Merge webmail defaults
+- name: Combine default and user defined webmail settings
+  when: webmail is defined
+  tags: defaults
+  set_fact:
+    webmail: '{{ webmail_default | combine(webmail, recursive=True) }}'
+
+- name: Use default webmail settings
+  when: webmail is not defined
+  tags: defaults
+  set_fact:
+    webmail: '{{ webmail_default }}'
+
+- name: Display merged webmail settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: webmail
+
+
+################################################################################
+# Merge website defaults
+- name: Combine default and user defined website settings
+  when: website is defined
+  tags: defaults
+  set_fact:
+    website: '{{ website_default | combine(website, recursive=True) }}'
+
+- name: Use default website settings
+  when: website is not defined
+  tags: defaults
+  set_fact:
+    website: '{{ website_default }}'
+
+- name: Display merged website settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: website
+
+################################################################################
+# Merge backup defaults
+- name: Combine default and user defined backup settings
+  when: backup is defined
+  tags: defaults
+  set_fact:
+    backup: '{{ backup_default | combine(backup, recursive=True) }}'
+
+- name: Use default backup settings
+  when: backup is not defined
+  tags: defaults
+  set_fact:
+    backup: '{{ backup_default }}'
+
+- name: Display merged backup settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: backup
+
+
+################################################################################
+# Merge defaults development settings
+- name: Combine default and user defined devel settings
+  when: devel is defined
+  tags: defaults
+  set_fact:
+    devel: '{{ devel_default | combine(devel, recursive=True) }}'
+
+- name: Use default devel settings
+  when: devel is not defined
+  tags: defaults
+  set_fact:
+    devel: '{{ devel_default }}'
+
+- name: Display merged devel settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: devel
+
+################################################################################
+# Merge defaults DKIM keys settings
+- name: Combine default and user defined dkim settings
+  when: dkim is defined
+  tags: defaults
+  set_fact:
+    dkim: '{{ dkim_default | combine(dkim, recursive=True) }}'
+
+- name: Use default dkim settings
+  when: dkim is not defined
+  tags: defaults
+  set_fact:
+    dkim: '{{ dkim_default }}'
+
+- name: Display merged dkim settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: dkim
+
+################################################################################
+# Set the mail import flag is there is external accounts for at least one user
+# - name: Check if the import flag should be set
