@@ -93,6 +93,10 @@ wait_timeout() {
 # Uncompress archives, and call myself
 uncompress_and_parse() {
 
+    # Get the path and the 7z comptibility flag
+    attach=$1
+    cmp7z=$2
+
     # Create a temorary directory,
     # and exit if this does not work
     tempdir=$(mktemp -d)
@@ -105,7 +109,7 @@ uncompress_and_parse() {
     cd $tempdir || exit $ERROR_TMP_FILE_CREATION
 
     # Check first if the file is encrypted
-    if [ "$mime" != "application/ms-tnef" ]; then
+    if [ "$cmp7z" = "1" ]; then
         encrypted=$(7z l -slt $attach | grep 'Encrypted = +' | wc -l)
     fi
 
@@ -127,7 +131,7 @@ uncompress_and_parse() {
         mv $attach $shortname
         gunzip $shortname || exit $ERROR_EXTRACTION
 
-    elif [ "$mime" = "application/ms-tnef" ]; then
+    elif [ "$mime" = "application/ms-tnef" -o "$mime" = "application/vnd.ms-tnef" ]; then
         shortname="$(basename $attach).tnef"
         mv $attach $shortname
         /usr/bin/tnef $shortname || exit $ERROR_EXTRACTION
@@ -264,8 +268,15 @@ parse_file() {
             ;;
 
         # Uncompress archives ##################################
-        application/*zip | application/x-?ar | application/ms-tnef)
-            uncompress_and_parse $attach
+	# the format is compatible with 7z
+        application/*zip | application/x-?ar | application/*-tnef)
+            uncompress_and_parse $attach 1
+            ;;
+
+        # Uncompress tnef archives #############################
+	# the format is *not* compatible with 7z
+        application/*-tnef)
+            uncompress_and_parse $attach 0
             ;;
 
         # Display an error message for unhandled attachment types

@@ -316,8 +316,7 @@
     - odt2txt
     - xlsx2csv
     - unrtf
-    - gunzip
-    - iconv
+    - gzip
     - p7zip-full
     - p7zip-rar
     - tnef

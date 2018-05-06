@@ -10,7 +10,7 @@
   shell: >-
     cat /tmp/file.data
     | /usr/local/bin/decode2text {{ attachment.mime }}
-    | grep "{{ attachment.uid }}"
+    | grep "{{ attachment.search | default(attachment.uid) }}"
 
 - name: Delete the temporary file
   file:
