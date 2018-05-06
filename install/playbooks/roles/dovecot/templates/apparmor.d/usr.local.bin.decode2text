@@ -1,0 +1,105 @@
+# Last Modified: Sun May  6 09:53:18 2018
+#include <tunables/global>
+
+/usr/local/bin/decode2text {
+  #include <abstractions/base>
+  #include <abstractions/bash>
+  #include <abstractions/nameservice>
+  #include <abstractions/python>
+  #include <abstractions/perl>
+
+  # Capabilities
+  capability dac_override,
+  capability chown,
+
+  # for tar commands.
+  capability fowner,
+  capability fsetid,
+
+  # System related
+  /sys/devices/system/cpu/ r,
+
+  # The script itself
+  /usr/local/bin/decode2text r,
+  /var/log/decode2text.log w,
+
+  # temporary files
+  /tmp/ r,
+  /tmp/** rwkl,
+  /tmp/** rw,
+  /tmp/** w,
+
+  # Shell commands
+  /bin/mv rix,
+  /bin/tar rix,
+  /bin/cat rix,
+  /bin/dash rix,
+  /bin/grep rix,
+  /bin/mktemp rix,
+  /bin/rm rix,
+  /bin/sed rix,
+  /bin/gunzip rix,
+  /bin/gzip rix,
+
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+
+  /usr/lib/dovecot/xml2text rix,
+
+  # various in /usr
+  /usr/bin/file mr,
+  /usr/bin/file rix,
+  /usr/bin/md5sum rix,
+  /usr/bin/stat rix,
+  /usr/bin/wc rix,
+  /usr/bin/find rix,
+  /usr/bin/basename rix,
+  /usr/bin/iconv mr,
+  /usr/bin/iconv rix,
+  /usr/bin/tnef mr,
+  /usr/bin/tnef rix,
+
+  # Configuration files
+  /etc/magic r,
+  /etc/catdocrc r,
+
+  # pdf
+  /usr/bin/pdftotext r,
+  /usr/bin/pdftotext mr,
+  /usr/bin/pdftotext rix,
+
+  # rtf
+  /usr/bin/unrtf r,
+  /usr/bin/unrtf mr,
+  /usr/bin/unrtf rix,
+  /usr/share/unrtf/*conf r,
+
+  # lo docs
+  /usr/bin/odt2txt.odt2txt rix,
+  /usr/bin/odt2txt rix,
+  /usr/bin/odp2txt rix,
+  /usr/bin/ods2csv rix,
+
+  # ms docs
+  /usr/bin/catdoc r,
+  /usr/bin/catdoc rix,
+  /usr/share/catdoc/* r,
+  /usr/bin/catppt r,
+  /usr/bin/catppt rix,
+  /usr/bin/xls2csv r,
+  /usr/bin/xls2csv rix,
+  /usr/bin/docx2txt r,
+  /usr/bin/docx2txt rix,
+  /usr/bin/pptx2txt r,
+  /usr/bin/pptx2txt rix,
+  /usr/bin/xlsx2csv r,
+  /usr/bin/xlsx2csv rix,
+
+  # Archives
+  /usr/bin/unzip mr,
+  /usr/bin/unzip rix,
+  /usr/bin/7z mr,
+  /usr/bin/7z rix,
+  /usr/lib/p7zip/7z rix,
+  /usr/lib/p7zip/Codecs/*so mr,
+  /usr/lib/p7zip/*so mr,
+}

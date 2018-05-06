@@ -320,6 +320,7 @@
     - iconv
     - p7zip-full
     - p7zip-rar
+    - tnef
   loop_control:
     loop_var: pkg
 
@@ -330,6 +331,17 @@
     src: fts/decode2text
     dest: /usr/local/bin/decode2text
     mode: 0755
+
+- name: Copy decode2text script
+  when: mail.fts.active
+  tags: logs
+  file:
+    path: /var/log/decode2text.log
+    mode: 0644
+    owner: dovecot
+    group: dovecot
+    state: touch
+
 
 - name: Copy fts mime configuration files
   when: mail.fts.active

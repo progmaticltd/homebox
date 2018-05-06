@@ -16,7 +16,7 @@
     group: users
     state: directory
     mode: 0700
-    recurse: true
+    recurse: false # TODO: Need to check from a fresh install
   with_items:
     - '{{ users }}'
     - uid: postmaster
