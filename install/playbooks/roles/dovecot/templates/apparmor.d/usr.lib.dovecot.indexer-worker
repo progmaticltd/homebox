@@ -16,6 +16,7 @@
   /home/users/*/mails/maildir/**/dovecot-uidlist rw,
   /home/users/*/mails/maildir/**/dovecot-uidlist.lock rw,
 
+
   /home/users/*/mails/maildir/maildirsize ra,
   /home/users/*/mails/maildir/new/ r,
   /home/users/*/mails/maildir/** r,
@@ -23,6 +24,7 @@
 
   /home/users/*/mails/indexes/** rw,
   /home/users/*/mails/indexes/** rwk,
+  /home/users/*/mails/indexes/** rwkl,
 
   /lib/x86_64-linux-gnu/ld-*.so mr,
   /usr/lib/dovecot/indexer-worker mr,

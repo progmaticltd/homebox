@@ -55,6 +55,8 @@
   /usr/bin/basename rix,
   /usr/bin/iconv mr,
   /usr/bin/iconv rix,
+  /usr/bin/tnef mr,
+  /usr/bin/tnef rix,
 
   # Configuration files
   /etc/magic r,
