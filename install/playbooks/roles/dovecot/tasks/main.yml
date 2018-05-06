@@ -315,22 +315,46 @@
     - docx2txt
     - odt2txt
     - xlsx2csv
+    - unrtf
+    - gunzip
+    - iconv
+    - p7zip-full
+    - p7zip-rar
   loop_control:
     loop_var: pkg
 
 - name: Copy decode2text script
   when: mail.fts.active
+  tags: scripts
   copy:
-    src: fts/decode2text.sh
-    dest: /usr/local/bin/decode2text.sh
+    src: fts/decode2text
+    dest: /usr/local/bin/decode2text
     mode: 0755
 
-- name: Copy solr schema
+- name: Copy fts mime configuration files
   when: mail.fts.active
+  tags: config
+  template:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+  with_items:
+    - src: fts/mime-supported.conf
+      dest: /etc/dovecot/fts-mime-types.conf
+  loop_control:
+    loop_var: file
+
+- name: Copy solr configuration files
+  when: mail.fts.active
+  tags: config
   notify: Restart tomcat
   template:
-    src: fts/solr-schema.xml
-    dest: /etc/solr/conf/schema.xml
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+  with_items:
+    - src: fts/solr-schema.xml
+      dest: /etc/solr/conf/schema.xml
+  loop_control:
+    loop_var: file
 
 # AppArmor configuration ======================================================
 - name: Install dovecot indexer AppArmor profile

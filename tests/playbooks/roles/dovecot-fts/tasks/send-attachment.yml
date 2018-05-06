@@ -1,0 +1,68 @@
+---
+
+- name: Create a unique subject for testing
+  set_fact:
+    test_subject: 'Testing with attachment ({{ attachment.description }})'
+
+- name: Create an email template
+  template:
+    src: testmsg-01.txt
+    dest: /tmp/testmsg-01.txt
+    mode: 0600
+    owner: postfix
+    group: postfix
+
+- name: Copy the attachment on the remote server
+  copy:
+    src: '{{ attachment.uid }}.{{ attachment.extension }}'
+    dest: '/tmp/file.{{ attachment.extension }}'
+
+- name: 'Send an email with attachment ({{ attachment.description }})'
+  shell: >-
+    swaks
+    --from="{{ users[0].mail }}"
+    --to "{{ users[1].mail }}"
+    --h-Subject '{{ test_subject }}'
+    --attach-type '{{ attachment.mime }}'
+    --attach-name 'file.{{ attachment.extension }}'
+    --attach '/tmp/file.{{ attachment.extension }}'
+    --auth
+    --auth-user="{{ users[0].uid }}"
+    --auth-password="{{ users[0].password }}"
+    --server smtp.{{ network.domain }}
+    --body /tmp/testmsg-01.txt
+  become: yes
+  become_method: sudo
+  become_user: postfix
+
+- name: Cleanup, delete the attachment and the email template
+  file:
+    path: '{{ file }}'
+    state: absent
+  with_items:
+    - '/tmp/file.{{ attachment.extension }}'
+    - /tmp/testmsg-01.txt
+  loop_control:
+    loop_var: file
+
+# Search using doveadm and validate the search functionality
+- name: Clear and rebuid the fts index for user {{ users[1].uid }}
+  shell: >-
+    doveadm fts rescan -u "{{ users[1].uid }}" &&
+    doveadm index -u "{{ users[1].uid }}" 'INBOX'
+
+# Now, we do a search inside the emais using the uuid,
+# this should return at least one result
+- name: Search inside the emails for the uuid ({{ attachment.description }})
+  register: email_found
+  shell: >-
+    doveadm search -u "{{ users[1].uid }}" text "{{ attachment.uid }}"
+    | grep -E '[a-f0-9-]+\s[0-9]'
+  until: email_found.rc == 0
+  retries: 10
+  delay: 1
+
+# Now, remove the mail to ensure next tests are valid
+- name: Remove the email
+  shell: >-
+    doveadm expunge -u "{{ users[1].uid }}" mailbox 'inbox' all
