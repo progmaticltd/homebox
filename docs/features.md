@@ -127,7 +127,7 @@ following attachments types are actually recognised:
 
 __Notes and Limitations:__
 
-- Although encrypted archives cannot be opened, the file list can be searched.
+- Although encrypted archives cannot be opened, the file list is indexed.
 - Powerpoint files before 2003 (.ppt) are not well supported.
 
 More formats could be added once Apache Tika will be included in Debian Stable.

@@ -316,8 +316,7 @@
     - odt2txt
     - xlsx2csv
     - unrtf
-    - gunzip
-    - iconv
+    - gzip
     - p7zip-full
     - p7zip-rar
   loop_control:
@@ -367,6 +366,7 @@
   with_items:
     - usr.lib.dovecot.indexer
     - usr.lib.dovecot.indexer-worker
+    - usr.local.bin.decode2text
   loop_control:
     loop_var: aa_config
 
@@ -374,10 +374,11 @@
   when: mail.fts.active and security.app_armor and aa_templates.changed
   tags: dovecot, security, apparmor
   notify: Restart AppArmor service
-  command: 'aa-complain {{ aa_config }}'
+  command: 'aa-enforce {{ aa_config }}'
   with_items:
     - usr.lib.dovecot.indexer
     - usr.lib.dovecot.indexer-worker
+    - usr.local.bin.decode2text
   loop_control:
     loop_var: aa_config
 

@@ -11,8 +11,6 @@
   /lib/x86_64-linux-gnu/ld-*.so mr,
   /usr/lib/dovecot/indexer mr,
 
-  # Run the attachment decoding script, unconfined for now.
-  # TODO: Use a proper parsing library without
-  # external executable dependencies
-  /usr/local/bin/decode2text Ux,
+  # Attachment decoding script has its own profile
+  /usr/local/bin/decode2text ix,
 }
