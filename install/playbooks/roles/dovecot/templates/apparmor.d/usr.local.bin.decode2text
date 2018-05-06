@@ -73,11 +73,12 @@
   /usr/bin/unrtf rix,
   /usr/share/unrtf/*conf r,
 
-  # lo docs
+  # lo/oo docs
   /usr/bin/odt2txt.odt2txt rix,
   /usr/bin/odt2txt rix,
   /usr/bin/odp2txt rix,
   /usr/bin/ods2csv rix,
+  /usr/bin/sxw2txt rix,
 
   # ms docs
   /usr/bin/catdoc r,

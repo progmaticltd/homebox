@@ -52,11 +52,11 @@
     doveadm index -u "{{ users[1].uid }}" 'INBOX'
 
 # Now, we do a search inside the emais using the uuid,
-# this should return at least one result
+# this should return one result
 - name: Search inside the emails for the uuid ({{ attachment.description }})
   register: email_found
   shell: >-
-    doveadm search -u "{{ users[1].uid }}" text "{{ attachment.uid }}"
+    doveadm search -u "{{ users[1].uid }}" text "{{ attachment.search | default(attachment.uid) }}"
     | grep -E '[a-f0-9-]+\s[0-9]'
   until: email_found.rc == 0
   retries: 10
