@@ -2,6 +2,11 @@
 The main configuration file to create is in the config folder. There is an example
 named [system-example.yml](config/system-example.yml) ready to copy to customise.
 
+There is also a configuration file [defaults.yml](config/defaults.yml).
+This file contains all the possible options, and **is merged with your
+configuration** on deployment. Therefore, you can override any default
+value without having to copy entire branches.
+
 ```sh
 cd config
 cp system-example.yml system.yml
@@ -77,6 +82,8 @@ You can also [import accounts from other platforms](external-accounts.md).
 
 ## Email options
 
+Here an example of the email options you can override:
+
 ```yaml
 
 ###############################################################################
@@ -87,92 +94,14 @@ mail:
   autodiscover: false       # Support MS Outlook automatic configuration (uses https)
   quota:
     default: 1G             # Maximum allowed mailbox size for your users.
-                            # The safe maximum value will be automatically computed in a next version.
-  discard_duplicates: true  # Discard duplicates messages. It is safe, but you can disable if you are worried
-                            # The default timerange is 1h
-  antivirus:                # Check inbound and outbound emails for viruses
-    active: true            # or false
-    action: drop            # Action to do when a virus is found in an email: bounce or drop
-                            # be careful, bouncing external emails is a way to expose clamav usage
-    send_warnings: false    # Send a warning email to - internal - users who are sending viruses
-    quarantine: yes         # Place emails with a virus in quarantine, for further analysis
-  impersonate:              # Activate dovecot "master" user feature, ideal for families and communities
-    active: false           # https://wiki2.dovecot.org/Authentication/MasterUsers
-    master: master          # master user name
-    separator: '*'          # Separation char between master user / real user name. I personally use '/'
-  #############################################################################
-  import:                   # If you have users with "import" email active scripts, set this flag to true
-    active: false           # A master user, with reduced rights will be created, to append miported emails
-                            # in user's mailboxes.
-  #############################################################################
-  advanced_features: false  # Use some advanced features that will need the latest version of dovecot
-                            # from stretch-backports, like those below.
-                            # like sending emails to an international addresses (e.g. andré@homebox.space)
-  recipient_delimiter: '+'  # The characters you want to use to split email address from mailbox, i.e.:
-                            # when receiving a message to john+lists@example.com, it should go directly to
-                            # the 'lists' folder... I personally use '~'
-
-###############################################################################
-
 ```
 
-Once again, the file should be self documented.
-
-## Password policies
-
-Password policies are enforced at two levels, when you change your
-password via the Roundcube webmail interface, and from the command
-line, if you are connected through SSH or in the console.
-
-```yaml
-
-# Default password policies for users
-passwords_min_length: 8
-passwords_max_age: 365 # days
-passwords_max_failure: 5
-passwords_expire_warning: 7 # days
-passwords_require_nonalpha: true
-
-# Keep track of the passwords you have used before.
-# They are stored using salted SHA512, which is safe enough.
-# If you do not want, set this value to 0
-passwords_remember: 12
-
-# Strong system enforcement of passwords
-# See: https://www.networkworld.com/article/3198444/linux/the-complexity-of-password-complexity.html
-passwords_quality_check: true
-passwords_quality_minclass: 3
-passwords_quality_maxrepeat: 3
-passwords_quality_maxclassrepeat: 4
-passwords_quality_lcredit: 1
-passwords_quality_ucredit: 1
-passwords_quality_ocredit: 3
-passwords_quality_dcredit: 1
-passwords_quality_difok: 3
-
-```
-
-## System parameters
-
-This section should only be used for development and debugging purposes.
-
-```yaml
-###############################################################################
-# System related
-system:
-  release: stretch
-  ssl: letsencrypt
-  devel: false
-  debug: false
-```
-
-- Debian version to use: stretch.
-- ssl provider to use: letsencrypt by default.
-- devel: If you set this value to true, it will have a different behaviour in the deployment.
-  This is detailed in the [development](development.md) page.
-
+The most up to date options are in the [defaults.yml](config/defaults.yml) configuration
+file.
 
 ## DNS automatic update
+
+If you are using Gandi, you can automate your DNS records update.
 
 ```yaml
 ###############################################################################
@@ -221,71 +150,10 @@ webmail:
   type: roundcube
 ```
 
-## Roundcube plugins configuration
-
-The plugins in roundcube can be customised as well, although some of them have 
-not been thoroughly tested.
-
-
-```yaml
-###############################################################################
-# roundcube_install: true
-roundcube_plugins:
-  - password
-  - archive
-  - jqueryui
-  - markasjunk
-  - newmail_notifier
-  - autologon
-  - subscriptions_option
-  - emoticons
-  - new_user_identity
-  - managesieve
-  - contextmenu
-  - thunderbird_labels
-```
-
-```yaml
-###############################################################################
-# Dictionaries to install in the system
-dictionaries:
-  - name: English
-    id: en
-  - name: French
-    id: fr
-  - name: Spanish
-    id: es
-```
-
-Other plugins available include:
-
-- keyboard_shortcuts
-- dkimstatus
-- hide_blockquote
-- enigma
-- zipdownload
-- new_user_dialog
-- additional_message_headers
-- acl
-- vcard_attachments
-- database_attachments
-- debug_logger
-- filesystem_attachments
-- help
-- hide_blockquote
-- http_authentication
-- show_additional_headers
-- squirrelmail_usercopy
-- userinfo
-- virtuser_file
-- virtuser_query
-
 ## Backup configuration
 
 By default, there is a backup of the whole home partition / folder.
-
 The detailed instructions are on the [backup documentation](backup.md) page.
-
 Here a quick overview of the configuration
 
 ```yaml

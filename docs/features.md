@@ -113,8 +113,8 @@ You can also access your sieve filters with the _ManageSieve_ protocol, and the
 ## Full text search
 
 The server implements full text search inside your emails _and_ your attachments.
-Full text search is also done inside attached archives (zip, rar, etc)
-following attachments types are actually recognised:
+Full text search is also done inside attached archives (zip, rar, etc). The following
+attachments types are actually recognised:
 
 - PDF files.
 - Text, XML and HTML files (various encoding)
@@ -125,6 +125,8 @@ following attachments types are actually recognised:
 - Attached emails (eml)
 - Archives: (zip, tar, rar, gzip)
 - Old microsoft archive format: tnef (aka winmail.dat)
+
+Archives are opened recursively, until finding documents to parse.
 
 __Notes and Limitations:__
 

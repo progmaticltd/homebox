@@ -35,10 +35,6 @@
 
 - name: Wait for the freshclam service to have downloaded daily update on the first installation
   when: clamav_packages.changed
-<<<<<<< HEAD
-  register: clamav_freshclam
-=======
->>>>>>> dev
   wait_for:
     path: /var/lib/clamav/daily.cvd
     sleep: 1

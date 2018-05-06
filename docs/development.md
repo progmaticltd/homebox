@@ -220,14 +220,15 @@ This playbook do the opposite of dev-support, by uninstalling the packages used 
 development, and restoring the bashrc to its default state. You probably want to run this
 script before putting your server in production.
 
-## Tests / Diagnostic playbook.
+## Tests / Diagnostic playbooks.
 
-There is also a test playbook 'tests.yml'. This playbook runs a list of system and
-integration tests on your server. This is useful for diagnostic purposes, and also during
-the development phase, to be sure nothing is broken.
+There is also a tests folder that contains test playbooks.
+These playbooks are running a list of system and integration tests on your development server.
+This is useful for diagnostic purposes and also during the development phase, to be sure nothing
+is broken before committing anything.
 
 It does not replace a full test suite in a pre-production environment, but has been enough
-so far to catch common mistakes made in scripts.
+so far to catch common mistakes made in the scripts.
 
 The following roles are run:
 
@@ -248,11 +249,12 @@ The following roles are run:
 - Web Site "autodiscover" for Outlook: HTTPS certificate, check the validity of the XML
   generated
 - Antivirus tests, for instance check that an email with a virus is bounced.
+- Full text search inside attachments
 
-## Some tools to consider
+## Some development tools to consider
 
 - The fantastic tmux, mandatory IMHO: [tmux github page](https://github.com/tmux).
 - Emacs or vim, but if you are not ready, [VisualStudio
   code](https://code.visualstudio.com/) is not too bad as well, and is very well
-  integrated in Debian.
+  integrated in Debian / Ubuntu.
 - Test your SMTP server compliance: [mxtoolbox.com](http://mxtoolbox.com/).
