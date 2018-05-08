@@ -5,26 +5,26 @@
   file:
     path: '{{ build_dir }}'
     state: directory
-  
-- name: Copy the configuration file for simple cdd
+
+- name: Copy the configuration file for {{ system.hostname }}
   tags: preseed
   template:
     src: common.conf
     dest: '{{ build_dir }}/common.conf'
-  
+
 - name: Copy the build script
   tags: preseed
   template:
     src: build.sh
     dest: '{{ build_dir }}/build.sh'
     mode: 0744
-  
+
 - name: Create the profile folder
   tags: preseed
   file:
     path: '{{ build_dir }}/profiles'
     state: directory
-    
+
 - name: Copy the profile folder content
   tags: preseed
   template:
@@ -50,7 +50,7 @@
   command: './build.sh {{ system.hostname }}'
   args:
     chdir: '{{ build_dir }}'
-    
+
 - name: Rename the ISO image
   tags: preseed
   command: >-
@@ -58,4 +58,3 @@
      {{ build_dir }}/{{ system.hostname }}-install.iso
   args:
     chdir: '{{ build_dir }}'
-    

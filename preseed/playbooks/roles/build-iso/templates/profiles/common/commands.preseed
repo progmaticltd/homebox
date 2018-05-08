@@ -22,7 +22,8 @@
 # directly, or use the apt-install and in-target commands to easily install
 # packages and run commands in the target system.
 
-# Extract the miscellaneous files into the archives
-d-i preseed/late_command string tar -C /target -zxf /cdrom/simple-cdd/misc.tgz && chown -R 0:0 /target/root
- 
-
+# Extract the miscellaneous files into the archives.
+# Fix permissions of the root home folder and system root.
+d-i preseed/late_command string tar -C /target -zxf /cdrom/simple-cdd/misc.tgz \
+  && chown -R 0:0 /target/root \
+  && chown 0:0 /target

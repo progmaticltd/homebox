@@ -29,8 +29,10 @@ COMMON_OPTS="--debian-mirror ${MIRROR} --locale ${LOCALE} --dist ${DIST} --debug
 OPTIONS="--do-mirror ${COMMON_OPTS}"
 simple-cdd $OPTIONS
 
-# Create the miscellaneous files archive
-tar c -C "{{ playbook_dir }}/../misc" -z -f "{{ build_dir }}/misc.tgz" .
+# Create the miscellaneous files archive, as root.
+tar c -C "{{ playbook_dir }}/../misc" \
+    --group=root --owner=root \
+    -z -f "{{ build_dir }}/misc.tgz" .
 
 # Build installer CDs for the whole platform
 OPTIONS="--verbose"
@@ -48,4 +50,3 @@ OPTIONS+=" --logfile ${LOGFILE}"
 
 # Run the program to build the images
 simple-cdd $OPTIONS
-
