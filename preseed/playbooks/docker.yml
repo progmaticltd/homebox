@@ -5,4 +5,3 @@
     - '{{ playbook_dir }}/../config/system.yml'
   roles:
     - build-iso
-
