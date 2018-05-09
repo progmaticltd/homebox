@@ -1,9 +1,9 @@
 ---
 
-# Install and configure postfix
+# Install and configure oendkim
 - hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
-    - ports-assign
     - opendkim

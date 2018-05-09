@@ -61,12 +61,17 @@ mail_default:
   autoconfig: true          # Support Thunderbird automatic configuration
   autodiscover: false       # Support MS Outlook automatic configuration (uses https)
   quota:
+    port: 30000             # port used by dovecot for the quota daemon
     default: 1G             # Maximum allowed mailbox size for your users.
                             # The safe maximum value will be automatically computed in a next version.
   discard_duplicates: true  # Discard duplicates messages. It is safe, but you can disable if you are worried
                             # The default timerange is 1h
   #############################################################################
+  antispam:                 # Check inbound and outbound emails for viruses
+    port: 33000             # port to use for the antivirus daemon
+  #############################################################################
   antivirus:                # Check inbound and outbound emails for viruses
+    port: 34000             # port to use for the antivirus daemon
     active: true            # or false
     action: drop            # Action to do when a virus is found in an email: bounce or drop
                             # be careful, bouncing external emails is a way to expose clamav usage
@@ -235,4 +240,10 @@ dkim_default:
   selector: main
   note: 'main DKIM key for the domain {{ network.domain }}'
   milter:
-    port: '{{ milter_dkim_port }}'
+    port: 31000
+
+###############################################################################
+# DMARC keys default parameters
+dmarc_default:
+  milter:
+    port: 32000

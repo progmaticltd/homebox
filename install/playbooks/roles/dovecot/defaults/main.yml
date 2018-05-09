@@ -1,8 +1,8 @@
 # User storage quotas for email
-quota:
-  per_user: '{{ mail.quota.default }}'
-  listener:
-    port: '{{ mails_quota_port }}'
+# quota:
+#   per_user: '{{ mail.quota.default }}'
+#   listener:
+#     port: '{{ mail.quota.port }}'
 
 
 sieve:
@@ -26,5 +26,5 @@ dovecot:
     - dovecot-ldap
   settings:
     mail_max_userip_connections: 10
-    lda_mailbox_autocreate: yes
-    lda_mailbox_autosubscribe: yes
+    lda_mailbox_autocreate: no
+    lda_mailbox_autosubscribe: no

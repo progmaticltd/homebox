@@ -1,9 +1,0 @@
----
-
-# DKIM keys parameters
-dkim:
-  key_size: 4096
-  selector: main
-  note: 'main DKIM key for the domain {{ network.domain }}'
-  milter:
-    port: '{{ milter_dkim_port }}'
