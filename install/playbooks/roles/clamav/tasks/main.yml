@@ -38,7 +38,7 @@
   wait_for:
     path: /var/lib/clamav/daily.cvd
     sleep: 1
-    timeout: 120
+    timeout: 180
 
 - name: Start clamav service
   service:

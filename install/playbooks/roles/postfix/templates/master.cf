@@ -137,7 +137,7 @@ scan      unix  -       -       n       -       16      smtp
   -o smtp_enforce_tls=no
 
 # Antivirus scanner: Injecting mail back into postfix from the filter
-127.0.0.1:{{ filter_antivirus_port }} inet  n -       n       -       16      smtpd 
+127.0.0.1:{{ mail.antivirus.port }} inet  n -       n       -       16      smtpd 
   -o content_filter= 
   -o receive_override_options=no_unknown_recipient_checks,no_header_body_checks
   -o smtpd_helo_restrictions= 

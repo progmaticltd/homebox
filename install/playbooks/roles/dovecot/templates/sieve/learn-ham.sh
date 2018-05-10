@@ -1,3 +1,3 @@
 #!/bin/dash
 
-exec /usr/bin/rspamc -h localhost:{{ milter_antispam_port }} learn_ham
+exec /usr/bin/rspamc -h localhost:{{ mail.antispam.port }} learn_ham

@@ -6,5 +6,4 @@
     - '{{ playbook_dir }}/../../config/defaults.yml'
     - '{{ playbook_dir }}/../../config/system.yml'
   roles:
-    - ../install/playbooks/roles/ports-assign
     - postfix

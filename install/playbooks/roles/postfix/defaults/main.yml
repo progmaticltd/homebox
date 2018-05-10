@@ -7,7 +7,7 @@ dns_blacklists:
 antispam:
   milter:
     name: rspamd
-    port: '{{ milter_antispam_port }}'
+    port: '{{ mail.antispam.port }}'
 
 master_addresses:
   - postmaster

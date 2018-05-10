@@ -103,7 +103,7 @@
   replace:
     path: /etc/default/opendkim
     regexp: '^SOCKET.*'
-    replace: 'SOCKET="inet:{{ milter_dkim_port }}@localhost"'
+    replace: 'SOCKET="inet:{{ dkim.milter.port }}@localhost"'
 
 - name: Create the keys and signing table
   tags: dkim

@@ -83,17 +83,17 @@ milter_protocol = 6
 
 # A list of Milter applications for new mail that arrives via the Postfix smtpd(8) server
 smtpd_milters =
-    inet:localhost:{{ milter_dkim_port }}
-    inet:localhost:{{ milter_antispam_port }}
-    inet:localhost:{{ milter_dmarc_port }}
+    inet:localhost:{{ dkim.milter.port }}
+    inet:localhost:{{ mail.antispam.port }}
+    inet:localhost:{{ dmarc.milter.port }}
 
 # A list of Milter applications for new mail that does not arrive via the Postfix smtpd(8) server.
 # This includes local submission via the sendmail(1) command line, new mail that arrives via the Postfix
 # qmqpd(8) server, and old mail that is re-injected into the queue with "postsuper -r".
 non_smtpd_milters =
-    inet:localhost:{{ milter_dkim_port }}
-    inet:localhost:{{ milter_antispam_port }}
-    inet:localhost:{{ milter_dmarc_port }}
+    inet:localhost:{{ dkim.milter.port }}
+    inet:localhost:{{ mail.antispam.port }}
+    inet:localhost:{{ dmarc.milter.port }}
 
 # The macros that are sent to Milter applications after the SMTP MAIL FROM command.
 milter_mail_macros =  i {mail_addr} {client_addr} {client_name} {auth_authen} {auth_type}
@@ -111,7 +111,7 @@ smtpd_recipient_restrictions =
     permit_mynetworks
     permit_sasl_authenticated
     reject_unauth_destination
-    check_policy_service inet:localhost:{{ mails_quota_port }}
+    check_policy_service inet:localhost:{{ mail.quota.port }}
     check_policy_service unix:private/policy-spf
 {% for url in dns_blacklists %}
     reject_rbl_client {{ url }}
@@ -119,7 +119,7 @@ smtpd_recipient_restrictions =
     permit
 
 # Content filtering: Antivirus using clamsmtp
-content_filter = scan:127.0.0.1:{{ filter_antivirus_port + 1 }}
+content_filter = scan:127.0.0.1:{{ mail.antivirus.port + 1 }}
 receive_override_options = no_address_mappings
 
 # SPF policies

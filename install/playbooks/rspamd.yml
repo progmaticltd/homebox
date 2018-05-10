@@ -4,5 +4,4 @@
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
-    - ports-assign
     - rspamd
