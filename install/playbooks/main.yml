@@ -22,6 +22,7 @@
 # Create DNS entries (Only Gandi for now)
 - import_playbook: dns-update.yml
 
+# Mail delivery agent (dovecot)
 - import_playbook: cert-pop3.yml
 - import_playbook: cert-imap.yml
 - import_playbook: dovecot.yml

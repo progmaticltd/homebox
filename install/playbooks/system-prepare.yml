@@ -7,4 +7,3 @@
   roles:
     - packages
     - system-prepare
-    - ports-assign

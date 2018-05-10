@@ -248,6 +248,23 @@
   debug:
     var: dkim
 
+
 ################################################################################
-# Set the mail import flag is there is external accounts for at least one user
-# - name: Check if the import flag should be set
+# Merge defaults DMARC keys settings
+- name: Combine default and user defined dmarc settings
+  when: dmarc is defined
+  tags: defaults
+  set_fact:
+    dmarc: '{{ dmarc_default | combine(dmarc, recursive=True) }}'
+
+- name: Use default dmarc settings
+  when: dmarc is not defined
+  tags: defaults
+  set_fact:
+    dmarc: '{{ dmarc_default }}'
+
+- name: Display merged dmarc settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: dmarc
