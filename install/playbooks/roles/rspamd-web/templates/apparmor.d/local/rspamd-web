@@ -1,0 +1,12 @@
+  # Certificates
+  /etc/letsencrypt/archive/rspamd.{{ network.domain }}/* r,
+  /etc/letsencrypt/live/rspamd.{{ network.domain }}/* r,
+
+  # Web content
+  /usr/share/rspamd/www/** r,
+  /usr/share/rspamd/www/js/* r,
+  /usr/share/rspamd/www/css/* r,
+
+  # Log files
+  /var/log/nginx/rspamd-access.log w,
+  /var/log/nginx/rspamd-error.log w,

@@ -1,3 +1,5 @@
+---
+
 # Add antispam filtering via rspamd
 - hosts: homebox
   vars_files:

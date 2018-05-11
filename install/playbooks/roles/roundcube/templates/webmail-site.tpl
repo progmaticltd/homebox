@@ -11,9 +11,9 @@ server {
     # Use Letsencrypt and force https
     rewrite ^ https://$server_name$request_uri? permanent;
 
-    # log files per virtual host: not working yet
-    # acess_log /var/log/nginx/roundcube-access.log;
-    # error_log /var/log/nginx/roundcube-error.log;
+    # log files per virtual host
+    access_log /var/log/nginx/roundcube-access.log;
+    error_log /var/log/nginx/roundcube-error.log;
 }
 {% endif %}
 
@@ -45,9 +45,9 @@ server {
     # Add index.php to the list if you are using PHP
     index index.php index.html;
 
-    # log files per virtual host: not working yet
-    # acess_log /var/log/nginx/roundcube-access.log;
-    # error_log /var/log/nginx/roundcube-error.log;
+    # log files per virtual host
+    access_log /var/log/nginx/roundcube-access.log;
+    error_log /var/log/nginx/roundcube-error.log;
 
     # Do not use a favicon
     location ~ ^/favicon.ico$ {

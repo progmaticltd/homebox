@@ -14,6 +14,10 @@ server {
     {% if system.ssl == 'letsencrypt' %}
     rewrite ^ https://$server_name$request_uri? permanent;
     {% endif %}
+
+    # log files per virtual host
+    access_log /var/log/nginx/website-access.log;
+    error_log /var/log/nginx/website-error.log;
 }
 {% endif %}
 
@@ -75,6 +79,10 @@ server {
         log_not_found off;
         access_log off;
     }
+
+    # log files per virtual host
+    access_log /var/log/nginx/website-access.log;
+    error_log /var/log/nginx/website-error.log;
 }
 
 # Default server configuration for
@@ -135,4 +143,8 @@ server {
         log_not_found off;
         access_log off;
     }
+
+    # log files per virtual host
+    access_log /var/log/nginx/website-access.log;
+    error_log /var/log/nginx/website-error.log;
 }

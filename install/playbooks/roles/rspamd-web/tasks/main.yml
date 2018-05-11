@@ -1,0 +1,48 @@
+---
+
+- name: Create the web site
+  tags: nginx
+  notify:
+    - Check nginx config
+    - Restart nginx
+  template:
+    src: webui-site.tpl
+    dest: /etc/nginx/sites-available/rspamd-web.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy rspamd configuration
+  tags: nginx
+  notify:
+    - Check nginx config
+    - Restart nginx
+  file:
+    src: /etc/nginx/sites-available/rspamd-web.conf
+    dest: /etc/nginx/sites-enabled/rspamd-web.conf
+    state: link
+
+
+# AppArmor configuration ======================================================
+
+- name: Install nginx AppArmor profile
+  when: security.app_armor
+  tags: rspamd, security, apparmor
+  template:
+    src: apparmor.d/local/rspamd-web
+    dest: /etc/apparmor.d/local/rspamd-web
+
+- name: Add rspamd AppAromor specific configuration
+  when: security.app_armor
+  register: aa_config
+  tags: rspamd, security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/rspamd-web>'
+    insertbefore: '# End of local includes for homebox'
+
+- name: Activate AppArmor profiles
+  when: security.app_armor and aa_config.changed
+  tags: rspamd, security, apparmor
+  command: 'aa-enforce usr.sbin.nginx'
+  notify: Restart AppArmor service
