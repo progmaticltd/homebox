@@ -1,5 +1,6 @@
   # Certificates
   /etc/letsencrypt/archive/webmail.{{ network.domain }}/* r,
+  /etc/letsencrypt/live/webmail.{{ network.domain }}/* r,
 
   # Web content
   /usr/share/roundcube/** r,
