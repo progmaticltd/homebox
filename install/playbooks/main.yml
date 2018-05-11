@@ -45,6 +45,10 @@
 - import_playbook: autoconfig.yml
   when: mail.autoconfig
 
+# Install the web frontend for the antispam system
+- import_playbook: rspamd-web.yml
+  when: mail.antispam.webui.active
+
 # Backup script using borg-backup
 - import_playbook: borgbackup.yml
   when: backup.install

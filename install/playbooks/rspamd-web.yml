@@ -1,9 +1,13 @@
 ---
 
-# Install and configure postfix
+# Install rspamd web interface
 - hosts: homebox
+  vars:
+    certificate:
+      type: rspamd
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
-    - postfix
+    - certificates
+    - rspamd-web
