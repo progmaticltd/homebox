@@ -268,3 +268,23 @@
   tags: defaults
   debug:
     var: dmarc
+
+################################################################################
+# Merge defaults ejabberd settings
+- name: Combine default and user defined ejabberd settings
+  when: ejabberd is defined
+  tags: defaults
+  set_fact:
+    ejabberd: '{{ ejabberd_default | combine(ejabberd, recursive=True) }}'
+
+- name: Use default ejabberd settings
+  when: ejabberd is not defined
+  tags: defaults
+  set_fact:
+    ejabberd: '{{ ejabberd_default }}'
+
+- name: Display merged ejabberd settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: ejabberd

@@ -278,6 +278,18 @@ You do not need to configure your mail client to copy emails to the sent folder,
 done automatically for you. This is a lot of time saved, especially when sending big
 emails with attachments: You don't need to upload an email twice.
 
+# XMPP / Jabber server
+
+The installation script installs [ejabberd](https://www.ejabberd.im/),
+a _Rock Solid, Massively Scalable, Infinitely Extensible XMPP Server_.
+
+- The authentication is using the LDAP server.
+- File transfers between members.
+- Automatically create contacts from the directory.
+- Encryption enforcement using TLS 1.2.
+- Server to server communication (aka s2s)
+- Chat rooms.
+
 # Other features
 
 ## DNS automatic update

@@ -1,0 +1,21 @@
+---
+
+# Create the default certificate for the jabber server
+- hosts: homebox
+  vars:
+    certificate:
+      type: '@'
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+  roles:
+    - certificates
+
+
+# Install a ejabberd (https://docs.ejabberd.im)
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+  roles:
+    - ejabberd

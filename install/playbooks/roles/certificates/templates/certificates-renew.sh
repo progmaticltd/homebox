@@ -10,6 +10,7 @@ certificates=$(ls /etc/letsencrypt/live/)
 dovecot_reload="no"
 postfix_reload="no"
 slapd_reload="no"
+ejabberd_reload="no"
 
 # Should we run the renew certificate command
 run_renew="no"
@@ -25,7 +26,7 @@ for cert in $certificates; do
         # If any certificate is expired, we will at least restart nginx,
 	# because it could be a wildcard, or www or even the autodiscover
 	run_renew="yes"
-	
+
         if [ "$cert" = "imap.{{ network.domain }}" ]; then
             dovecot_reload="yes"
         elif [ "$cert" = "pop3.{{ network.domain }}" ]; then
@@ -34,6 +35,8 @@ for cert in $certificates; do
             postfix_reload="yes"
         elif [ "$cert" = "ldap.{{ network.domain }}" ]; then
             slapd_reload="yes"
+        elif [ "$cert" = "xmpp.{{ network.domain }}" ]; then
+            ejabberd_reload="yes"
         fi
     fi
 
@@ -73,7 +76,11 @@ if [ "$slapd_reload" = "yes" ]; then
     systemctl restart slapd
 fi
 
-if [ "$nginx_running" = "no" ]; then
-    systemctl start nginx
+# ejabberd requires both key and certificate in the same file
+if [ "$ejabberd_reload" = "yes" ]; then
+    cd /etc/letsencrypt/live/xmpp*
+    /bin/cat privkey.pem fullchain.pem > /etc/ejabberd/ejabberd.pem
+    chown ejabberd:root /etc/ejabberd/ejabberd.pem
+    chmod 640 /etc/ejabberd/ejabberd.pem
+    systemctl restart ejabberd
 fi
-

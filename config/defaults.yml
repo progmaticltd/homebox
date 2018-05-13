@@ -253,3 +253,10 @@ dkim_default:
 dmarc_default:
   milter:
     port: 32000
+
+###############################################################################
+# Jabber server
+ejabberd_default:
+  install: true
+  allow_contrib_modules: false
+  s2s_use_starttls: required_trusted
