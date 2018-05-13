@@ -1,0 +1,66 @@
+---
+
+- name: Install the packages required for ejabberd
+  apt:
+    name: ejabberd
+    state: installed
+
+- name: Upload ejabberd configuration
+  notify: Restart ejabberd
+  template:
+    src: ejabberd.yml
+    dest: /etc/ejabberd/ejabberd.yml
+    mode: '0600'
+    owner: ejabberd
+    group: ejabberd
+
+################################################################################
+# At this point, the certificates should have been created already #############
+# in order to have SSL and TLS encryption activated.                           #
+
+- name: Remove the self signed certificate
+  when: system.ssl == 'letsencrypt'
+  file:
+    path: /etc/ejabberd/ejabberd.pem
+    state: absent
+
+- name: Create a key / certificate pair
+  notify: Restart ejabberd
+  tags: cert
+  when: system.ssl == 'letsencrypt'
+  shell: >-
+    cd /etc/letsencrypt/live/{{ network.domain }} &&
+    /bin/cat privkey.pem fullchain.pem > /etc/ejabberd/key+fullchain.pem
+  args:
+    creates: /etc/ejabberd/key+fullchain.pem
+#
+# End of TLS / SSL Configuration ###############################################
+
+- name: Open the firewall
+  ufw:
+    rule: allow
+    proto: tcp
+    port: '{{ rule.ports }}'
+    comment: '{{ rule.comment }}'
+  with_items:
+    - ports: 5222
+      comment: Accept XMPP connections from clients (TLS only)
+    - ports: 5269
+      comment: Accept XMPP connections from other servers (trusted TLS certificate required)
+  loop_control:
+    loop_var: rule
+
+# AppArmor configuration ======================================================
+- name: Install ejabberdctl AppArmor profile
+  when: security.app_armor
+  tags: security, apparmor
+  register: aa_templates
+  template:
+    src: 'apparmor.d/local/usr.sbin.ejabberdctl'
+    dest: '/etc/apparmor.d/local/usr.sbin.ejabberdctl'
+
+- name: Activate AppArmor profiles
+  when: security.app_armor and aa_templates.changed
+  tags: security, apparmor
+  notify: Restart AppArmor service
+  command: 'aa-enforce usr.sbin.ejabberdctl'
