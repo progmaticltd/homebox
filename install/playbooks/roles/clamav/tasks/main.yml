@@ -113,7 +113,7 @@
   when: security.app_armor and aa_templates.changed
   tags: security, apparmor
   notify: Restart AppArmor service
-  command: 'aa-complain {{ aa_config }}'
+  command: 'aa-enforce {{ aa_config }}'
   with_items:
     - usr.bin.freshclam
     - usr.sbin.clamd
