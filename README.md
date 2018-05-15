@@ -34,9 +34,9 @@ For a complete list of features, see the
 | Add your GMail, Yahoo, Outlook.com or standard IMAP accounts.  See [external accounts](docs/external-accounts.md)   | Done        |  Manual   |
 | Multiple encrypted incremental backups, with email reporting. See [backup documentation](docs/backup.md) for details| Done        |  Manual   |
 | Dovecot full text search in emails, attachments and attached archives.                                              | Done        | Automatic |
+| Jabber server, probably using [ejabberd](https://www.ejabberd.im/)                                                  | In progress|           |
 | Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned     |           |
 | Web proxy with privacy and parent filtering features                                                                | Planned     |           |
-| Jabber server, probably using [ejabberd](https://www.ejabberd.im/)                                                  | Planned     |           |
 
 ### Prerequisites
 
