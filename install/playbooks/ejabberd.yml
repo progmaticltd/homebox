@@ -11,6 +11,18 @@
   roles:
     - certificates
 
+# When using http download, also create a specific certificate
+# to serve files over https (e.g. xmpp.homebox.space)
+- hosts: homebox
+  vars:
+    certificate:
+      type: 'xmpp'
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+  roles:
+    - certificates
+
 
 # Install a ejabberd (https://docs.ejabberd.im)
 - hosts: homebox

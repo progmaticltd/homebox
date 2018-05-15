@@ -284,8 +284,9 @@ The installation script installs [ejabberd](https://www.ejabberd.im/),
 a _Rock Solid, Massively Scalable, Infinitely Extensible XMPP Server_.
 
 - The authentication is using the LDAP server.
-- File transfers between members.
-- Automatically create contacts from the directory.
+- Live file transfers between members.
+- HTTPS upload transfers on a dedicated sub-domain
+- Automatically create rosters from the directory.
 - Encryption enforcement using TLS 1.2.
 - Server to server communication (aka s2s)
 - Chat rooms.
