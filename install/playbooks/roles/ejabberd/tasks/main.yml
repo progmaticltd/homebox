@@ -5,6 +5,17 @@
     name: ejabberd
     state: installed
 
+- name: Install graphics library for thumbnails generation
+  when:
+  apt:
+    name: '{{ pkg }}'
+    state: installed
+  with_items:
+    - graphicsmagick
+    - graphicsmagick-imagemagick-compat
+  loop_control:
+    loop_var: pkg
+
 - name: Upload ejabberd configuration
   notify: Restart ejabberd
   template:

@@ -79,6 +79,7 @@ listen:
   - port: 5280
     ip: "::"
     module: ejabberd_http
+    tls: false
   - port: {{ ejabberd.http_upload.port }}
     module: ejabberd_http
     tls: false
@@ -142,8 +143,8 @@ ldap_servers:
   - "ldap.{{ network.domain }}"
 ldap_encrypt: none
 ldap_port: 389
-ldap_rootdn: "{{ ldap.manager.dn }}"
-ldap_password: "{{ lookup('password', ldap.managerPasswdParams) }}"
+ldap_rootdn: "{{ ldap.readonly.dn }}"
+ldap_password: "{{ lookup('password', ldap.roPasswdParams) }}"
 ldap_base: "{{ ldap.organization.base }}"
 ldap_filter: "(objectClass=shadowAccount)"
 ldap_uids:
@@ -234,29 +235,9 @@ access_rules:
   ## Only allow to register from localhost
   trusted_network:
     - allow: loopback
-  ## Do not establish S2S connections with bad servers
-  ## s2s:
-  ##   - deny:
-  ##     - ip: "XXX.XXX.XXX.XXX/32"
-  ##   - deny:
-  ##     - ip: "XXX.XXX.XXX.XXX/32"
-  ##   - allow
-
-## By default the frequency of account registrations from the same IP
-## is limited to 1 account every 10 minutes. To disable, specify: infinity
-## registration_timeout: 600
-
-##
-## Define specific Access Rules in a virtual host.
-##
-## host_config:
-##   "localhost":
-##     access:
-##       c2s:
-##         - allow: admin
-##         - deny
-##       register:
-##         - deny
+  ## Default allow from other servers
+  s2s:
+    - allow
 
 ###.  ================
 ###'  DEFAULT LANGUAGE
@@ -282,40 +263,28 @@ modules:
   mod_carboncopy: {}
   mod_client_state: {}
   mod_configure: {} # requires mod_adhoc
-  ##mod_delegation: {} # for xep0356
   mod_disco: {}
   mod_echo: {}
   mod_irc: {}
   mod_http_bind: {}
+  # ejabberd fail2ban module
+  mod_fail2ban:
+    c2s_auth_ban_lifetime: 7200
+    c2s_max_auth_failures: 50
   mod_http_upload:
     docroot: "/var/www/ejabberd/files"
     put_url: "https://xmpp.{{ network.domain }}/upload"
     get_url: "https://xmpp.{{ network.domain }}/upload"
     dir_mode: "0755"
     file_mode: "0644"
-    thumbnail: true
+    thumbnail: {{ ejabberd.http_upload.thumbnail }}
     max_size: {{ ejabberd.http_upload.max_size }}
     secret_length: {{ ejabberd.http_upload.secret_length }}
     access: local
-  # not used yet
-  # mod_http_fileserver:
-  #   docroot: "/var/www/ejabberd/files"
-  #   accesslog: "/var/log/ejabberd/www-access.log"
-  #   directory_indices:
-  #     - "index.html"
-  #     - "main.htm"
-  #   custom_headers:
-  #     "X-Powered-By": "Erlang/OTP"
-  #     "X-Server": "Homebox"
-  #   content_types:
-  #     ".ogg": "audio/ogg"
-  #     ".png": "image/png"
-  #     ".jpg": "image/jpg"
-  #   default_content_type: "text/html"
   mod_mam:
     default: roster
   mod_muc:
-    ## host: "conference.@HOST@"
+    host: "conference.@HOST@"
     access:
       - allow
     access_admin:
@@ -388,11 +357,11 @@ modules:
     ldap_filter: "(objectClass=inetOrgPerson)"
     ## Now we want to define vCard pattern
     ldap_vcard_map:
-     "NICKNAME": {"%u": []} # just use user's part of JID as his nickname
-     "GIVEN": {"%s": ["givenName"]}
-     "FAMILY": {"%s": ["sn"]}
-     "FN": {"%s %s": ["givenName", "sn"]}
-     "EMAIL": {"%s": ["mail"]}
+      "NICKNAME": {"%u": []} # just use user's part of JID as his nickname
+      "GIVEN": {"%s": ["givenName"]}
+      "FAMILY": {"%s": ["sn"]}
+      "FN": {"%s %s": ["givenName", "sn"]}
+      "EMAIL": {"%s": ["mail"]}
     ## Search form
     ldap_search_fields:
       "User ID": "%u"

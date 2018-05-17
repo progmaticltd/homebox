@@ -33,7 +33,6 @@ server {
     server_tokens off;
 
     {% if system.ssl == 'letsencrypt' %}
-
     # SSL configuration
     listen 443 ssl http2;
     ssl_protocols TLSv1.1 TLSv1.2;
@@ -42,8 +41,8 @@ server {
     ssl_trusted_certificate /etc/letsencrypt/live/xmpp.{{ network.domain }}/fullchain.pem;
     {% endif %}
 
-    # Will dynamically fall back to the demo
-    # page if there is no index
+    # There is an empty page to avoid error if accessing the site with
+    # a web browser
     index index.html;
 
     # Do not use a favicon

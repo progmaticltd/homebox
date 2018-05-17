@@ -186,7 +186,7 @@ dictionaries_default:
 dns_default:
   update: false
   test: true
-  add_wildcard: false
+  add_wildcard: true
   gandi:
     handle: JD123-GANDI
     key: zaNGbUVIvi1KbYb6PPMdiQLh
@@ -256,15 +256,18 @@ dmarc_default:
 
 ###############################################################################
 # Jabber server
+# The port numbers are not exposed externally, everything
+# is behind nginx, in https.
 ejabberd_default:
-  install: false
-  allow_contrib_modules: true
+  install: true
+  allow_contrib_modules: false
   s2s_use_starttls: required_trusted
-  # http(s) upload
+  # https upload module
   http_upload:
     port: 5443
     secret_length: 40
     max_size: 104857600
+    thumbnail: false
   # direct file transfer
   file_transfer:
     port: 7778
