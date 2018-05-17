@@ -9,21 +9,6 @@
 ### your copy of ejabberd, and is also available online at
 ### http://www.process-one.net/en/ejabberd/docs/
 
-### The configuration file is written in YAML.
-### Refer to http://en.wikipedia.org/wiki/YAML for the brief description.
-### However, ejabberd treats different literals as different types:
-###
-### - unquoted or single-quoted strings. They are called "atoms".
-###   Example: dog, 'Jupiter', '3.14159', YELLOW
-###
-### - numeric literals. Example: 3, -45.0, .0
-###
-### - quoted or folded strings.
-###   Examples of quoted string: "Lizzard", "orange".
-###   Example of folded string:
-###   > Art thou not Romeo,
-###     and a Montague?
-
 ###.  =======
 ###'  LOGGING
 
@@ -47,62 +32,27 @@ loglevel: 4
 log_rotate_size: 0
 log_rotate_date: ""
 
-##
 ## overload protection: If you want to limit the number of messages per second
 ## allowed from error_logger, which is a good idea if you want to avoid a flood
 ## of messages when system is overloaded, you can set a limit.
 ## 100 is ejabberd's default.
 log_rate_limit: 100
 
-# ## Caching option
-# {% if system.debug %}
-# use_cache: false
-# {% else %}
-# use_cache: true
-# {% endif %}
-
 ## watchdog_admins: Only useful for developers: if an ejabberd process
-## consumes a lot of memory, send live notifications to these XMPP
-## accounts.
-##
-## watchdog_admins:
-##   - "bob@example.com"
-
-###.  ===============
-###'  NODE PARAMETERS
-
-##
-## net_ticktime: Specifies net_kernel tick time in seconds. This options must have
-## identical value on all nodes, and in most cases shouldn't be changed at all from
-## default value.
-##
-## net_ticktime: 60
+## consumes a lot of memory, send live notifications to these XMPP accounts.
+{% if system.devel %}
+watchdog_admins:
+  - "postmaster@{{ network.domain }}"
+{% endif %}
 
 ###.  ================
-###'  SERVED HOSTNAMES
-
-##
-## hosts: Domains served by ejabberd.
-## You can define one or several, for example:
-## hosts:
-##   - "example.net"
-##   - "example.com"
-##   - "example.org"
-##
+###'  SERVED HOSTNAME
 hosts:
   - "{{ network.domain }}"
-
-##
-## route_subdomains: Delegate subdomains to other XMPP servers.
-## For example, if this ejabberd serves example.org and you want
-## to allow communication with an XMPP server called im.example.org.
-##
-## route_subdomains: s2s
 
 ###.  ===============
 ###'  LISTENING PORTS
 
-##
 ## listen: The ports ejabberd will listen on, which service each is handled
 ## by and what options to start it with.
 ##
@@ -126,6 +76,15 @@ listen:
   - port: 5269
     ip: "::"
     module: ejabberd_s2s_in
+  - port: 5280
+    ip: "::"
+    module: ejabberd_http
+    tls: false
+  - port: {{ ejabberd.http_upload.port }}
+    module: ejabberd_http
+    tls: false
+    request_handlers:
+      "upload": mod_http_upload
 
 ## Disabling digest-md5 SASL authentication. digest-md5 requires plain-text
 ## password storage (see auth_password_format option).
@@ -182,41 +141,22 @@ s2s_protocol_options:
 auth_method: ldap
 ldap_servers:
   - "ldap.{{ network.domain }}"
-## Encryption of connection to LDAP servers.
-# not yet supported
 ldap_encrypt: none
-##
-## Port to connect to on LDAP servers:
 ldap_port: 389
-##
-## LDAP manager:
-ldap_rootdn: "{{ ldap.manager.dn }}"
-##
-## Password of LDAP manager:
-ldap_password: "{{ lookup('password', ldap.managerPasswdParams) }}"
-##
-## Search base of LDAP directory:
+ldap_rootdn: "{{ ldap.readonly.dn }}"
+ldap_password: "{{ lookup('password', ldap.roPasswdParams) }}"
 ldap_base: "{{ ldap.organization.base }}"
-##
-## LDAP attribute that holds user ID:
+ldap_filter: "(objectClass=shadowAccount)"
 ldap_uids:
   - "uid"
-##
-## LDAP filter:
-ldap_filter: "(objectClass=shadowAccount)"
 
 ###.  ===============
 ###'  TRAFFIC SHAPERS
 
 shaper:
-  ## The "normal" shaper limits traffic speed to 1000 B/s
-  normal: 1000
-
-  ## The "fast" shaper limits traffic speed to 50000 B/s
-  fast: 50000
-
-  # file transfer speed
-  proxyrate: 10240
+  normal: {{ ejabberd.shaper.normal }}
+  fast:  {{ ejabberd.shaper.fast }}
+  proxyrate:  {{ ejabberd.shaper.proxyrate }}  # file transfer speed
 
 
 ## This option specifies the maximum number of elements in the queue
@@ -229,8 +169,8 @@ acl:
   ## The 'admin' ACL grants administrative privileges to XMPP accounts.
   ## You can put here as many accounts as you want.
   admin:
-     user:
-       - "@localhost"
+    user:
+      - "@localhost"
   local_users:
     server:
       - "{{ network.domain }}"
@@ -295,29 +235,9 @@ access_rules:
   ## Only allow to register from localhost
   trusted_network:
     - allow: loopback
-  ## Do not establish S2S connections with bad servers
-  ## s2s:
-  ##   - deny:
-  ##     - ip: "XXX.XXX.XXX.XXX/32"
-  ##   - deny:
-  ##     - ip: "XXX.XXX.XXX.XXX/32"
-  ##   - allow
-
-## By default the frequency of account registrations from the same IP
-## is limited to 1 account every 10 minutes. To disable, specify: infinity
-## registration_timeout: 600
-
-##
-## Define specific Access Rules in a virtual host.
-##
-## host_config:
-##   "localhost":
-##     access:
-##       c2s:
-##         - allow: admin
-##         - deny
-##       register:
-##         - deny
+  ## Default allow from other servers
+  s2s:
+    - allow
 
 ###.  ================
 ###'  DEFAULT LANGUAGE
@@ -326,31 +246,6 @@ access_rules:
 ## language: Default language used for server messages.
 ##
 language: "{{ dictionaries[0].id }}"
-
-##
-## Set a different default language in a virtual host.
-##
-## host_config:
-##   "localhost":
-##     language: "ru"
-
-###.  =======
-###'  CAPTCHA
-
-##
-## Full path to a script that generates the image.
-##
-## captcha_cmd: "/usr/share/ejabberd/captcha.sh"
-
-##
-## Host for the URL and port where ejabberd listens for CAPTCHA requests.
-##
-## captcha_host: "example.org:5280"
-
-##
-## Limit CAPTCHA calls per minute for JID/IP to avoid DoS.
-##
-## captcha_limit: 5
 
 ###.  =======
 ###'  MODULES
@@ -368,19 +263,28 @@ modules:
   mod_carboncopy: {}
   mod_client_state: {}
   mod_configure: {} # requires mod_adhoc
-  ##mod_delegation: {} # for xep0356
   mod_disco: {}
   mod_echo: {}
   mod_irc: {}
   mod_http_bind: {}
-  ## mod_http_fileserver:
-  ##   docroot: "/var/www"
-  ##   accesslog: "/var/log/ejabberd/access.log"
-  mod_last: {}
+  # ejabberd fail2ban module
+  mod_fail2ban:
+    c2s_auth_ban_lifetime: 7200
+    c2s_max_auth_failures: 50
+  mod_http_upload:
+    docroot: "/var/www/ejabberd/files"
+    put_url: "https://xmpp.{{ network.domain }}/upload"
+    get_url: "https://xmpp.{{ network.domain }}/upload"
+    dir_mode: "0755"
+    file_mode: "0644"
+    thumbnail: {{ ejabberd.http_upload.thumbnail }}
+    max_size: {{ ejabberd.http_upload.max_size }}
+    secret_length: {{ ejabberd.http_upload.secret_length }}
+    access: local
   mod_mam:
     default: roster
   mod_muc:
-    ## host: "conference.@HOST@"
+    host: "conference.@HOST@"
     access:
       - allow
     access_admin:
@@ -402,7 +306,7 @@ modules:
     host: "proxy.{{ network.domain }}"
     name: "File Transfer Proxy"
     ip: "::"
-    port: 7778
+    port: {{ ejabberd.file_transfer.port }}
     max_connections: 5
     access: proxy65_access
     shaper: proxy65_shaper
@@ -418,7 +322,7 @@ modules:
       - "hometree"
       - "pep" # pep requires mod_caps
   mod_roster:
-    versioning: false
+    versioning: true
     access:
       - allow
   # Add contacts from the same directory
@@ -445,42 +349,35 @@ modules:
     ldap_base: "{{ ldap.users.dn }}"
     ## uidattr: user's part of JID is located in the "mail" attribute
     ## uidattr_format: common format for our emails
-    ldap_uids:
-      "mail": "%u@{{ network.domain }}"
+    ldap_uids: { "mail": "%u@{{ network.domain }}" }
+    ## ldap_uids:
+    ##   uid: "%u"
     ## We have to define empty filter here, because entries in addressbook does not
     ## belong to shadowAccount object class
     ldap_filter: "(objectClass=inetOrgPerson)"
     ## Now we want to define vCard pattern
     ldap_vcard_map:
-     "NICKNAME": {"%u": []} # just use user's part of JID as his nickname
-     "GIVEN": {"%s": ["givenName"]}
-     "FAMILY": {"%s": ["sn"]}
-     "FN": {"%s %s": ["givenName", "sn"]}
-     "EMAIL": {"%s": ["mail"]}
+      "NICKNAME": {"%u": []} # just use user's part of JID as his nickname
+      "GIVEN": {"%s": ["givenName"]}
+      "FAMILY": {"%s": ["sn"]}
+      "FN": {"%s %s": ["givenName", "sn"]}
+      "EMAIL": {"%s": ["mail"]}
     ## Search form
     ldap_search_fields:
-      "User": "%u"
-      "Name": "givenName"
-      "Family Name": "sn"
+      "User ID": "%u"
+      "First Name": "givenName"
+      "Last Name": "sn"
       "Email": "mail"
     ## vCard fields to be reported
     ## Note that JID is always returned with search results
     ldap_search_reported:
-      "Full Name": "FN"
-      "Nickname": "NICKNAME"
+      "User ID": "%u"
+      "First Name": "givenName"
+      "Last Name": "sn"
+      "Email": "mail"
   mod_version: {}
 
-##
 ## Enable modules management via ejabberdctl for installation and
 ## uninstallation of public/private contributed modules
 ## (enabled by default)
-##
-
 allow_contrib_modules: '{{ ejabberd.allow_contrib_modules }}'
-
-###.
-###'
-### Local Variables:
-### mode: yaml
-### End:
-### vim: set filetype=yaml tabstop=8 foldmarker=###',###. foldmethod=marker:

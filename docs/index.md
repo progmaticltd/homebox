@@ -3,7 +3,8 @@ secure mail server at home or online.
 
 This project is for you if:
 
-- You are interested to host your emails yourself, for privacy, security or any other reason.
+- You are interested to host your emails yourself, for privacy, security or any
+  other reason.
 - You want your server to be secure against both physical and remote intrusion.
 - You want a low maintanance box that keep itself updated automatically.
 - You prefer security and stability over latest features.
@@ -21,9 +22,9 @@ This project is for you if:
   against remote intrusion, even when using 0-day vulnerabilities.
 - You can set up multiple backup destination, local and remote, all
   encrypted.
-- A lot of default choices made towards simplicity and [KISS
-  principle](https://en.wikipedia.org/wiki/KISS_principle).  and
-  safety.
+- A lot of default choices made towards simplicity and
+  [KISS principle](https://en.wikipedia.org/wiki/KISS_principle).
+  and safety.
 - Attention to details, keep focused on the nitty-gritty features of
   self hosting.
 
@@ -36,6 +37,7 @@ This project is for you if:
 - Antispam: RSpamd
 - Antivirus: ClamAV
 - Webmail: RoundCube
+- Jabber: ejabberd
 
 ## Other projects to mention
 
@@ -50,5 +52,5 @@ interesting projects on internet, for instance:
   hosting, but very good as well.
 - [and many...](https://github.com/Kickball/awesome-selfhosted)
 
-All have plenty of features, although a different approach to
+All have plenty of features, but a maybe different approach to
 self-hosting, though.

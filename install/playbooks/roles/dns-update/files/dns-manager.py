@@ -376,10 +376,12 @@ def main(args):
         manager.WriteSRVRecord('pop3s',      'tcp', 20, 0, 995, 'pop3')
         manager.WriteSRVRecord('pop3',       'tcp', 20, 0, 110, 'pop3')
 
-        # Add SRV records for the jabber/xmpp server
-        manager.WriteCNameRecord('xmpp', 'main')
-        manager.WriteSRVRecord('xmpp-client', 'tcp', 5, 0, 5222, 'xmpp')
-        manager.WriteSRVRecord('xmpp-server', 'tcp', 5, 0, 5269, 'xmpp')
+        # Add SRV and CNAME records for the jabber/xmpp server
+        if args.addXMPP:
+            manager.WriteCNameRecord('xmpp', 'main')
+            manager.WriteCNameRecord('conference', 'main')
+            manager.WriteSRVRecord('xmpp-client', 'tcp', 5, 0, 5222, 'xmpp')
+            manager.WriteSRVRecord('xmpp-server', 'tcp', 5, 0, 5269, 'xmpp')
 
         # TODO: Add a backup MX record
 

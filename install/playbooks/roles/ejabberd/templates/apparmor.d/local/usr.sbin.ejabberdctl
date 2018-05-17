@@ -1,2 +1,9 @@
 
+  # Default certificate
   /etc/ejabberd/key+fullchain.pem r,
+
+  # When http file upload is activated
+  /var/www/ejabberd/files/ rwkl,
+  /var/www/ejabberd/files/ ra,
+  /var/www/ejabberd/files/** rwkl,
+  /var/www/ejabberd/files/** ra,
