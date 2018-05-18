@@ -61,6 +61,7 @@ listen:
     ip: "::"
     module: ejabberd_c2s
     certfile: "/etc/ejabberd/key+fullchain.pem"
+    dhfile: "/etc/ejabberd/c2s-dh.pem"
     starttls: true
     starttls_required: true
     protocol_options:
@@ -80,6 +81,7 @@ listen:
     ip: "::"
     module: ejabberd_http
     tls: false
+    web_admin: true
   - port: {{ ejabberd.http_upload.port }}
     module: ejabberd_http
     tls: false
@@ -99,6 +101,7 @@ disable_sasl_mechanisms: "digest-md5"
 ## You must specify a certificate file.
 ##
 s2s_use_starttls: '{{ ejabberd.s2s_use_starttls }}'
+s2s_dhfile: "/etc/ejabberd/s2s-dh.pem"
 
 ##
 ## s2s_certfile: Specify a certificate file.
@@ -277,7 +280,7 @@ modules:
     get_url: "https://xmpp.{{ network.domain }}/upload"
     dir_mode: "0755"
     file_mode: "0644"
-    thumbnail: {{ ejabberd.http_upload.thumbnail }}
+    thumbnail: {{ ejabberd.http_upload.thumbnail | ternary('true','false') }}
     max_size: {{ ejabberd.http_upload.max_size }}
     secret_length: {{ ejabberd.http_upload.secret_length }}
     access: local
@@ -380,4 +383,4 @@ modules:
 ## Enable modules management via ejabberdctl for installation and
 ## uninstallation of public/private contributed modules
 ## (enabled by default)
-allow_contrib_modules: '{{ ejabberd.allow_contrib_modules }}'
+allow_contrib_modules: {{ ejabberd.allow_contrib_modules }}
