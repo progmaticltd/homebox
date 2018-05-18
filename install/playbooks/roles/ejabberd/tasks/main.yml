@@ -6,7 +6,7 @@
     state: installed
 
 - name: Install graphics library for thumbnails generation
-  when:
+  when: ejabberd.http_upload.thumbnail
   apt:
     name: '{{ pkg }}'
     state: installed
@@ -37,13 +37,44 @@
 
 - name: Create a key / certificate pair
   notify: Restart ejabberd
-  tags: cert
+  tags: ssl
   when: system.ssl == 'letsencrypt'
   shell: >-
     cd /etc/letsencrypt/live/{{ network.domain }} &&
-    /bin/cat privkey.pem fullchain.pem > /etc/ejabberd/key+fullchain.pem
+    /bin/cat privkey.pem fullchain.pem > /etc/ejabberd/key+fullchain.pem &&
+    /bin/chmod 0400 /etc/ejabberd/key+fullchain.pem
+    /bin/chown ejabberd:ejabberd /etc/ejabberd/key+fullchain.pem
   args:
     creates: /etc/ejabberd/key+fullchain.pem
+
+- name: Create a secure DH file
+  notify: Restart ejabberd
+  tags: ssl
+  shell: >-
+    openssl dhparam -out {{ dhfile }} 2048
+  args:
+    creates: '{{ dhfile }}'
+  with_items:
+    - /etc/ejabberd/s2s-dh.pem
+    - /etc/ejabberd/c2s-dh.pem
+  loop_control:
+    loop_var: dhfile
+
+- name: Ensure sensitive files has proper owner and permissions
+  notify: Restart ejabberd
+  tags: ssl
+  file:
+    path: '{{ file }}'
+    owner: root
+    group: ejabberd
+    mode: '0440'
+  with_items:
+    - /etc/ejabberd/key+fullchain.pem
+    - /etc/ejabberd/s2s-dh.pem
+    - /etc/ejabberd/c2s-dh.pem
+  loop_control:
+    loop_var: file
+
 #
 # End of TLS / SSL Configuration ###############################################
 
@@ -75,7 +106,6 @@
     owner: root
     group: root
     mode: 0644
-
 
 # Firewall configuration ======================================================
 - name: Open the firewall
