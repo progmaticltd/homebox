@@ -34,7 +34,7 @@ For a complete list of features, see the
 | Add your GMail, Yahoo, Outlook.com or standard IMAP accounts.  See [external accounts](docs/external-accounts.md)   | Done        |  Manual   |
 | Multiple encrypted incremental backups, with email reporting. See [backup documentation](docs/backup.md) for details| Done        |  Manual   |
 | Dovecot full text search in emails, attachments and attached archives.                                              | Done        | Automatic |
-| Jabber server, using [ejabberd](https://www.ejabberd.im/) with LDAP authentication and file transfer                | In progress |           |
+| Jabber server, using [ejabberd](https://www.ejabberd.im/) with LDAP authentication and file transfer                | Done        |  Manual   |
 
 ### Prerequisites
 

@@ -50,6 +50,10 @@ watchdog_admins:
 hosts:
   - "{{ network.domain }}"
 
+host_config:
+  "conference.{{ network.domain }}":
+    domain_certfile: "/etc/ejabberd/conference.pem"
+
 ###.  ===============
 ###'  LISTENING PORTS
 
@@ -60,7 +64,7 @@ listen:
   - port: 5222
     ip: "::"
     module: ejabberd_c2s
-    certfile: "/etc/ejabberd/key+fullchain.pem"
+    certfile: "/etc/ejabberd/default.pem"
     dhfile: "/etc/ejabberd/c2s-dh.pem"
     starttls: true
     starttls_required: true
@@ -74,9 +78,11 @@ listen:
     access: c2s
     zlib: true
     resend_on_timeout: if_offline
+{% if ejabberd.s2s.active %}
   - port: 5269
     ip: "::"
     module: ejabberd_s2s_in
+{% endif %}
   - port: 5280
     ip: "::"
     module: ejabberd_http
@@ -95,21 +101,12 @@ disable_sasl_mechanisms: "digest-md5"
 ###.  ==================
 ###'  S2S GLOBAL OPTIONS
 
-##
-## s2s_use_starttls: Enable STARTTLS + Dialback for S2S connections.
-## Allowed values are: false optional required required_trusted
-## You must specify a certificate file.
-##
-s2s_use_starttls: '{{ ejabberd.s2s_use_starttls }}'
+{% if ejabberd.s2s.active %}
+s2s_use_starttls: '{{ ejabberd.s2s.use_starttls }}'
 s2s_dhfile: "/etc/ejabberd/s2s-dh.pem"
-
-##
-## s2s_certfile: Specify a certificate file.
-##
-s2s_certfile: "/etc/ejabberd/key+fullchain.pem"
+s2s_certfile: "/etc/ejabberd/default.pem"
 
 ## Custom OpenSSL options
-##
 s2s_protocol_options:
   - "no_sslv3"
   - "no_sslv2"
@@ -134,6 +131,7 @@ s2s_protocol_options:
 ##   - ipv4
 ##   - ipv6
 ## outgoing_s2s_timeout: 10000
+{% endif %}
 
 ###.  ==============
 ###'  AUTHENTICATION
@@ -174,17 +172,28 @@ acl:
   admin:
     user:
       - "@localhost"
+      - "postmaster": "{{ network.domain }}"
+  ## Users from the domain
   local_users:
     server:
       - "{{ network.domain }}"
-
   ## Local users: don't modify this.
   local:
     user_regexp: ""
-
+  ## Loopback IP address
   loopback:
     ip:
       - "127.0.0.0/8"
+{% if ejabberd.s2s.active %}
+{% if not ejabberd.s2s.public %}
+  ## trusted servers for s2s
+  trusted_servers:
+    server:
+{% for server in ejabberd.s2s.trust %}
+      - "{{ server }}"
+{% endfor %}
+{% endif %}
+{% endif %}
 
 ###.  ============
 ###'  SHAPER RULES
@@ -201,7 +210,9 @@ shaper_rules:
     - none: admin
     - normal
   ## All S2S connections use the "fast" shaper
+{% if ejabberd.s2s.active %}
   s2s_shaper: fast
+{% endif %}
   # proxy users for file transfer
   proxy65_shaper:
     - proxyrate: local_users
@@ -226,6 +237,9 @@ access_rules:
   muc_create:
     - allow: local
     - allow: local_users
+  ## Only administrators can access MUC logs
+  muc_log:
+    - allow: admin
   ## Only accounts on the local ejabberd server can create Pubsub nodes:
   pubsub_createnode:
     - allow: local
@@ -238,9 +252,15 @@ access_rules:
   ## Only allow to register from localhost
   trusted_network:
     - allow: loopback
-  ## Default allow from other servers
+  ## Allow or restrict access to/from other Jabber servers
+{% if ejabberd.s2s.active %}
   s2s:
+{% if ejabberd.s2s.public %}
     - allow
+{% else %}
+    - allow: trusted_servers
+{% endif %}
+{% endif %}
 
 ###.  ================
 ###'  DEFAULT LANGUAGE
@@ -257,23 +277,28 @@ language: "{{ dictionaries[0].id }}"
 ## Modules enabled in all ejabberd virtual hosts.
 ##
 modules:
+  ### Base modules
   mod_adhoc: {}
   mod_admin_extra: {}
   mod_announce: # recommends mod_adhoc
     access: announce
+  mod_privacy: {}
+  mod_private: {}
   mod_blocking: {} # requires mod_privacy
   mod_caps: {}
   mod_carboncopy: {}
   mod_client_state: {}
+  mod_last: {}
   mod_configure: {} # requires mod_adhoc
   mod_disco: {}
   mod_echo: {}
   mod_irc: {}
   mod_http_bind: {}
-  # ejabberd fail2ban module
+  ### ejabberd fail2ban module
   mod_fail2ban:
     c2s_auth_ban_lifetime: 7200
     c2s_max_auth_failures: 50
+  ### Offline file sharing on a specific directory
   mod_http_upload:
     docroot: "/var/www/ejabberd/files"
     put_url: "https://xmpp.{{ network.domain }}/upload"
@@ -284,27 +309,32 @@ modules:
     max_size: {{ ejabberd.http_upload.max_size }}
     secret_length: {{ ejabberd.http_upload.secret_length }}
     access: local
+  ### Message Archive Management
   mod_mam:
     default: roster
+  ### Multi-user chat options
   mod_muc:
-    host: "conference.@HOST@"
+    host: "conference.{{ network.domain }}"
     access:
       - allow
     access_admin:
       - allow: admin
     access_create: muc_create
     access_persistent: muc_create
-  ## mod_muc_log: {}
-  mod_muc_admin: {}
-  ## mod_multicast: {}
+  ### Multicast options
+  # service for Extended Stanza Addressing (XEP-0033)
+  # mod_multicast: {}
+  ### Offline message storage (XEP-0160)
   mod_offline:
     access_max_user_messages: max_user_offline_messages
+  ### Support for XMPP Ping (XEP-0199) and periodic keepalives
   mod_ping: {}
-  ## mod_pres_counter:
-  ##   count: 5
-  ##   interval: 60
-  mod_privacy: {}
-  mod_private: {}
+  ### detects flood/spam in presence subscription stanza traffic
+  # mod_pres_counter:
+  #   count: 5
+  #   interval: 60
+  ### Implements SOCKS5 Bytestreams (XEP-0065). It allows ejabberd to act as
+  ### a file transfer proxy between two XMPP clients.
   mod_proxy65:
     host: "proxy.{{ network.domain }}"
     name: "File Transfer Proxy"
@@ -313,22 +343,24 @@ modules:
     max_connections: 5
     access: proxy65_access
     shaper: proxy65_shaper
+  ### Publish-Subscribe Service (XEP-0060)
   mod_pubsub:
     access_createnode: pubsub_createnode
-    ## reduces resource comsumption, but XEP incompliant
+    # reduces resource comsumption, but XEP incompliant
     ignore_pep_from_offline: true
-    ## XEP compliant, but increases resource comsumption
-    ## ignore_pep_from_offline: false
+    # XEP compliant, but increases resource comsumption
+    # ignore_pep_from_offline: false
     last_item_cache: false
     plugins:
       - "flat"
       - "hometree"
       - "pep" # pep requires mod_caps
+  ### Roster management (RFC 6121) and versioning (XEP-0237).
   mod_roster:
     versioning: true
     access:
       - allow
-  # Add contacts from the same directory
+  ### Add contacts from the same directory
   mod_shared_roster_ldap:
     ldap_rfilter: "(&(objectClass=posixGroup)(memberUid=%u))"
     ldap_gfilter: "(&(objectClass=posixGroup)(cn=%g))"
@@ -338,47 +370,40 @@ modules:
     ldap_groupdesc: "displayName"
     ldap_userdesc: "cn"
     ldap_useruid: "uid"
+  ### Statistics Gathering (XEP-0039).
   mod_stats: {}
+  ### Support for Entity Time (XEP-0202), discover the time at another entity’s location.
   mod_time: {}
+  ### Map LDAP attributes to vCard fields
   mod_vcard_ldap:
-    ## We use the same server and port, but want to bind anonymously because
-    ## our LDAP server accepts anonymous requests to
-    ## "ou=AddressBook,dc=example,dc=org" subtree.
     search: true
-    # matches: infinity
-    ldap_rootdn: "{{ ldap.readonly.dn }}"
-    ldap_password: "{{ lookup('password', ldap.roPasswdParams) }}"
-    ## define the addressbook's base
+    matches: "infinity"
     ldap_base: "{{ ldap.users.dn }}"
-    ## uidattr: user's part of JID is located in the "mail" attribute
-    ## uidattr_format: common format for our emails
-    ldap_uids: { "mail": "%u@{{ network.domain }}" }
-    ## ldap_uids:
-    ##   uid: "%u"
-    ## We have to define empty filter here, because entries in addressbook does not
-    ## belong to shadowAccount object class
-    ldap_filter: "(objectClass=inetOrgPerson)"
-    ## Now we want to define vCard pattern
+    # VCARD pattern
     ldap_vcard_map:
-      "NICKNAME": {"%u": []} # just use user's part of JID as his nickname
-      "GIVEN": {"%s": ["givenName"]}
-      "FAMILY": {"%s": ["sn"]}
-      "FN": {"%s %s": ["givenName", "sn"]}
-      "EMAIL": {"%s": ["mail"]}
-    ## Search form
+      "NICKNAME": { "%u": [] } # just use user's part of JID as his nickname
+      "GIVEN":    { "%s": [ "givenName" ] }
+      "FAMILY":   { "%s": [ "sn" ] }
+      "FN":       { "%s %s": [ "givenName", "sn" ] }
+      "EMAIL":    { "%s": [ "mail" ] }
+      "PHOTO":    { "%s": [ "jpegPhoto"] }
+    # Search form
     ldap_search_fields:
       "User ID": "%u"
       "First Name": "givenName"
       "Last Name": "sn"
       "Email": "mail"
-    ## vCard fields to be reported
-    ## Note that JID is always returned with search results
+    # vCard fields to be reported. Note that JID is always returned with search results
     ldap_search_reported:
       "User ID": "%u"
       "First Name": "givenName"
       "Last Name": "sn"
       "Email": "mail"
-  mod_version: {}
+  ### Store an avatar in the user vCard
+  mod_vcard_xupdate: {}
+  ### Show eJabberd version, but not the OS
+  mod_version:
+    show_os: false
 
 ## Enable modules management via ejabberdctl for installation and
 ## uninstallation of public/private contributed modules

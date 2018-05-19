@@ -283,13 +283,28 @@ emails with attachments: You don't need to upload an email twice.
 The installation script installs [ejabberd](https://www.ejabberd.im/),
 a _Rock Solid, Massively Scalable, Infinitely Extensible XMPP Server_.
 
+## Client to Server
+
 - The authentication is using the LDAP server.
-- Live file transfers between members.
-- HTTPS upload transfers on a dedicated sub-domain
-- Automatically create rosters from the directory.
-- Encryption enforcement using TLS 1.2.
-- Server to server communication (aka s2s)
-- Chat rooms.
+- Generate a 2048 bits Diffie-Helman key.
+- Encryption enforcement, at least TLS 1.2.
+- Jabber Fail2Ban integration
+- Grade A on [IM Observatory](https://xmpp.net/index.php) client and server reports.
+- SOCKS5 Bytestreams file transfers with image thumbnails (pidgin, empathy, etc.).
+- Offline file sending using https on a dedicated sub-domain (Android Conversations, etc.).
+- Automatically add contact (rosters) from the shared directory.
+- VCard generation from the LDAP server.
+- Message archives on the server, with archive management from the client (MAM).
+- User avatars are stored on the server.
+- Conference / chat rooms between multiple domains.
+
+## Server to Server
+
+The installation scripts can also activates server to server communication (aka s2s).
+This is optional but activated by default. It is also possible to restrict access
+to trusted servers, by specifying a list of domain names you want to trust.
+
+Some clients: [XMPP client software](https://xmpp.org/software/clients.html).
 
 # Other features
 

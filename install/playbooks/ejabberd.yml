@@ -24,6 +24,18 @@
     - certificates
 
 
+# Chat rooms behind a certificate
+- hosts: homebox
+  vars:
+    certificate:
+      type: conference
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+  roles:
+    - certificates
+
+
 # Install a ejabberd (https://docs.ejabberd.im)
 - hosts: homebox
   vars_files:
