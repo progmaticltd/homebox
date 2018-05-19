@@ -184,7 +184,7 @@ dictionaries_default:
 # test: test mode: does not activate the DNS zone straight
 # add_wildcard:  Create a wildcard entry to redirect all traffic to your box
 dns_default:
-  update: false
+  update: true
   test: true
   add_wildcard: true
   gandi:
@@ -258,16 +258,30 @@ dmarc_default:
 # Jabber server
 # The port numbers are not exposed externally, everything
 # is behind nginx, in https.
+# By default, the server is open to other servers (public flag to true).
+# To restrict to only a few domains, set the flag to false, and
+# enter the list of domains in the trust array
 ejabberd_default:
   install: true
   allow_contrib_modules: false
-  s2s_use_starttls: required_trusted
+  # Ban clients after too much authentication failures (1h after 10 attempts)
+  fail2ban:
+    active: true
+    lifetime: 3600
+    failures: 10
+  # Server-to-server communication
+  s2s:
+    active: true
+    use_starttls: required_trusted
+    public: true
+    trust:
+      - jabber.org
   # https upload module
   http_upload:
     port: 5443
     secret_length: 40
     max_size: 104857600
-    thumbnail: false
+    thumbnail: true
   # direct file transfer
   file_transfer:
     port: 7778

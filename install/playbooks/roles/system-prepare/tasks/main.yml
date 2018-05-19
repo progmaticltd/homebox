@@ -38,12 +38,14 @@
 
 # Update packages cache, and install any security update
 - name: Update packages cache and install security updates
+  register: packages_cache
   tags: apt
   apt:
     update_cache: yes
     cache_valid_time: 3600
 
 - name: Upgrade the distribution, and install security updates if needed
+  when: packages_cache.changed
   tags: apt
   apt:
     upgrade: yes

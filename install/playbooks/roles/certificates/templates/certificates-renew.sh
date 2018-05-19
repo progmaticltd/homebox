@@ -37,6 +37,8 @@ for cert in $certificates; do
             slapd_reload="yes"
         elif [ "$cert" = "xmpp.{{ network.domain }}" ]; then
             ejabberd_reload="yes"
+        elif [ "$cert" = "conference.{{ network.domain }}" ]; then
+            ejabberd_reload="yes"
         fi
     fi
 
