@@ -3,20 +3,21 @@
 # Initialise the packages repository to a standard,
 # including backports, contrib and non-free software
 - name: Initialise default repositories
+  register: repositories
   tags: apt
   template:
     src: sources.list
     dest: /etc/apt/sources.list
-                
+
 - name: Update packages repositories
-  tags: apt
   register: packages_cache
+  tags: apt
   apt:
     update_cache: yes
+    cache_valid_time: 3600
 
 - name: Upgrade the distribution
-  tags: apt
   when: packages_cache.changed
+  tags: apt
   apt:
     upgrade: yes
-
