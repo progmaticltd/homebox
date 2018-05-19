@@ -1,0 +1,185 @@
+---
+
+- name: Install the packages required for ejabberd
+  apt:
+    name: ejabberd
+    state: installed
+
+- name: Install graphics library for thumbnails generation
+  when: ejabberd.http_upload.thumbnail
+  apt:
+    name: '{{ pkg }}'
+    state: installed
+  with_items:
+    - graphicsmagick
+    - graphicsmagick-imagemagick-compat
+  loop_control:
+    loop_var: pkg
+
+- name: Upload ejabberd configuration
+  notify: Restart ejabberd
+  template:
+    src: ejabberd.yml
+    dest: /etc/ejabberd/ejabberd.yml
+    mode: '0600'
+    owner: ejabberd
+    group: ejabberd
+
+################################################################################
+# At this point, the certificates should have been created already #############
+# in order to have SSL and TLS encryption activated.                           #
+
+- name: Remove the self signed certificate
+  when: system.ssl == 'letsencrypt'
+  file:
+    path: /etc/ejabberd/ejabberd.pem
+    state: absent
+
+- name: Create a key / certificate pair
+  notify: Restart ejabberd
+  tags: ssl
+  when: system.ssl == 'letsencrypt'
+  shell: >-
+    cd /etc/letsencrypt/live/{{ network.domain }} &&
+    /bin/cat privkey.pem fullchain.pem > /etc/ejabberd/default.pem
+  args:
+    creates: /etc/ejabberd/default.pem
+
+- name: Create a key / certificate pair
+  notify: Restart ejabberd
+  tags: ssl
+  when: system.ssl == 'letsencrypt'
+  shell: >-
+    cd /etc/letsencrypt/live/conference.{{ network.domain }} &&
+    /bin/cat privkey.pem fullchain.pem > /etc/ejabberd/conference.pem
+  args:
+    creates: /etc/ejabberd/conference.pem
+
+- name: Create a secure DH file
+  notify: Restart ejabberd
+  tags: ssl
+  shell: >-
+    openssl dhparam -out {{ dhfile }} 2048
+  args:
+    creates: '{{ dhfile }}'
+  with_items:
+    - /etc/ejabberd/s2s-dh.pem
+    - /etc/ejabberd/c2s-dh.pem
+  loop_control:
+    loop_var: dhfile
+
+- name: Ensure sensitive files has proper owner and permissions
+  notify: Restart ejabberd
+  tags: ssl
+  file:
+    path: '{{ file }}'
+    owner: root
+    group: ejabberd
+    mode: '0440'
+  with_items:
+    - /etc/ejabberd/default.pem
+    - /etc/ejabberd/conference.pem
+    - /etc/ejabberd/s2s-dh.pem
+    - /etc/ejabberd/c2s-dh.pem
+  loop_control:
+    loop_var: file
+
+#
+# End of TLS / SSL Configuration ###############################################
+
+
+# File upload configuration ===================================================
+- name: Create the jabber site frontend configuration file
+  tags: jabber
+  notify: Restart nginx
+  template:
+    src: frontend.tpl
+    dest: /etc/nginx/sites-available/jabber-frontend.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable nginx site
+  tags: jabber
+  notify: Restart nginx
+  file:
+    src: /etc/nginx/sites-available/jabber-frontend.conf
+    dest: /etc/nginx/sites-enabled/jabber-frontend.conf
+    state: link
+
+- name: Create the http upload directory
+  tags: jabber
+  file:
+    path: /var/www/ejabberd/files
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Create the http upload jabber site
+  tags: jabber
+  template:
+    src: upload-home.html
+    dest: /var/www/ejabberd/files/index.html
+    owner: root
+    group: root
+    mode: '0644'
+
+# Firewall configuration ======================================================
+- name: Open the firewall for s2c communication
+  ufw:
+    rule: allow
+    proto: tcp
+    port: '{{ rule.ports }}'
+    comment: '{{ rule.comment }}'
+  with_items:
+    - ports: 5222
+      comment: Accept XMPP connections from clients (TLS only)
+  loop_control:
+    loop_var: rule
+
+- name: Open the firewall for s2s communication when necessary
+  ufw:
+    rule: allow
+    proto: tcp
+    port: '{{ rule.ports }}'
+    comment: '{{ rule.comment }}'
+    delete: '{{ ejabberd.s2s.active == false }}'
+  with_items:
+    - ports: 5269
+      comment: Accept XMPP connections from other servers
+  loop_control:
+    loop_var: rule
+
+# AppArmor configuration ======================================================
+- name: Install ejabberdctl AppArmor profile
+  when: security.app_armor
+  tags: security, apparmor
+  register: aa_templates
+  template:
+    src: 'apparmor.d/local/usr.sbin.ejabberdctl'
+    dest: '/etc/apparmor.d/local/usr.sbin.ejabberdctl'
+
+- name: Activate AppArmor profiles
+  when: security.app_armor and aa_templates.changed
+  tags: security, apparmor
+  notify: Restart AppArmor service
+  command: 'aa-enforce usr.sbin.ejabberdctl'
+
+# AppArmor configuration (web frontend) =======================================
+- name: Install ejabberdctl AppArmor profile
+  when: security.app_armor
+  tags: security, apparmor
+  register: aa_templates
+  template:
+    src: 'apparmor.d/local/jabber-frontend'
+    dest: '/etc/apparmor.d/local/jabber-frontend'
+
+- name: Add ejabberd AppArmor specific configuration
+  when: security.app_armor
+  notify: Restart AppArmor service
+  tags: roundcube, security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/jabber-frontend>'
+    insertbefore: '# End of local includes for homebox'

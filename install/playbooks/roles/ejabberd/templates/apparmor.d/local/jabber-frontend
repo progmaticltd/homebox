@@ -1,0 +1,9 @@
+
+
+  # When http file upload is activated
+  /var/www/ejabberd/files/ r,
+  /var/www/ejabberd/files/** r,
+
+  # Certificate for https frontend
+  /etc/letsencrypt/archive/xmpp.{{ network.domain }}/* r,
+  /etc/letsencrypt/live/xmpp.{{ network.domain }}/* r,

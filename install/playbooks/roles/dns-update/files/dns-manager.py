@@ -1,50 +1,5 @@
 #!/usr/bin/env python3
 
-# DNS manager
-# usage: dns-manager.py [-h] --config CONFIG
-#                       [--dkim-public-key-file DKIMPUBLICKEY]
-#                       [--log-file LOGFILE] [--log-level LOGLEVEL] [--ip IP]
-#                       [--ttl TTL] [--spf-policy {fail,softfail,neutral}]
-#                       [--auto-discover {none,thunderbird,outlook,all}]
-#                       [--test TEST]
-
-# Gandi DNS updater for homebox
-
-# optional arguments:
-#   -h, --help            show this help message and exit
-#   --config CONFIG       Location of the config file for the domain you want to
-#                         update. This file should contain the API key from Gandi. See below for examples
-#   --dkim-public-key-file DKIMPUBLICKEY
-#                         Path to the OpenDKIM public key file (not mandatory,
-#                         not create a record by default)
-#   --log-file LOGFILE    Path to the log file (default /var/log/gandi-dns-
-#                         manager.log)
-#   --log-level LOGLEVEL  Log level to use, like DEBUG, INFO, NOTICE, etc. (INFO
-#                         by default)
-#   --ip IP               External IP address (automatically detected by
-#                         default)
-#   --ttl TTL             TTL value, in seconds, default is set to 3600, i.e.
-#                         one hour
-#   --spf-policy {fail,softfail,neutral}
-#                         Type of SPF record to create (fail by default, i.e.
-#                         "-all")
-#   --auto-discover {none,thunderbird,outlook,all}
-#                         Type of autodiscover entries to create (create all by
-#                         default)
-#   --test TEST           Testing mode: Create the new version, but does not
-#                         activate it
-#
-# Simplest example of a config file (ini format):
-# -----------------------------------------------
-# [main]
-# provider = gandi
-# domain = mydomain.com
-#
-# [gandi]
-# key = JQ50u5Ri8Q9ShsnRzcTeIHTQ
-# -----------------------------------------------
-
-
 # To parse the initial configuration file
 from configparser import ConfigParser
 
@@ -421,6 +376,13 @@ def main(args):
         manager.WriteSRVRecord('pop3s',      'tcp', 20, 0, 995, 'pop3')
         manager.WriteSRVRecord('pop3',       'tcp', 20, 0, 110, 'pop3')
 
+        # Add SRV and CNAME records for the jabber/xmpp server
+        if args.addXMPP:
+            manager.WriteCNameRecord('xmpp', 'main')
+            manager.WriteCNameRecord('conference', 'main')
+            manager.WriteSRVRecord('xmpp-client', 'tcp', 5, 0, 5222, 'xmpp')
+            manager.WriteSRVRecord('xmpp-server', 'tcp', 5, 0, 5269, 'xmpp')
+
         # TODO: Add a backup MX record
 
         # Create the DKIM record if provided, and then DMARC record
@@ -528,6 +490,14 @@ parser.add_argument(
     dest = 'createWildcard',
     default = False,
     help = 'Add a wildcard entry *.example.com to redirect all traffic to your box (default is false)')
+
+# Create SRV records for the jabber server
+parser.add_argument(
+    '--add-xmpp',
+    type = bool,
+    dest = 'addXMPP',
+    default = False,
+    help = 'Add SRV records for XMPP/Jabber server (default is false)')
 
 # Testing mode: Create the new version, but does not activate it
 parser.add_argument(

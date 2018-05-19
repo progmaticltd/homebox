@@ -194,7 +194,7 @@
     src: apparmor.d/local/roundcube
     dest: /etc/apparmor.d/local/roundcube
 
-- name: Add roundcube AppAromor specific configuration
+- name: Add roundcube AppArmor specific configuration
   when: security.app_armor
   register: aa_config
   tags: roundcube, security, apparmor

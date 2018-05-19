@@ -38,7 +38,7 @@
   wait_for:
     path: /var/lib/clamav/daily.cvd
     sleep: 1
-    timeout: 180
+    timeout: 300
 
 - name: Start clamav service
   service:
@@ -113,7 +113,7 @@
   when: security.app_armor and aa_templates.changed
   tags: security, apparmor
   notify: Restart AppArmor service
-  command: 'aa-complain {{ aa_config }}'
+  command: 'aa-enforce {{ aa_config }}'
   with_items:
     - usr.bin.freshclam
     - usr.sbin.clamd

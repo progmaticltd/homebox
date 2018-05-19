@@ -1,0 +1,16 @@
+---
+
+- name: Restart ejabberd
+  service:
+    name: ejabberd
+    state: restarted
+
+- name: Restart AppArmor service
+  service:
+    name: apparmor
+    state: restarted
+
+- name: Restart nginx
+  service:
+    name: nginx
+    state: restarted

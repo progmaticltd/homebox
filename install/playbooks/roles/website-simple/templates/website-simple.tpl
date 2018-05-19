@@ -6,7 +6,7 @@
 {% if system.ssl == 'letsencrypt' %}
 server {
 
-    # Webmail FQDN
+    # Web site FQDN
     listen 80;
     server_name www.{{ network.domain }} {{ network.domain }};
 
