@@ -294,10 +294,12 @@ modules:
   mod_echo: {}
   mod_irc: {}
   mod_http_bind: {}
+{% if ejabberd.fail2ban.active %}
   ### ejabberd fail2ban module
   mod_fail2ban:
-    c2s_auth_ban_lifetime: 7200
-    c2s_max_auth_failures: 50
+    c2s_auth_ban_lifetime: {{ ejabberd.fail2ban.lifetime }}
+    c2s_max_auth_failures: {{ ejabberd.fail2ban.failures }}
+{% endif %}
   ### Offline file sharing on a specific directory
   mod_http_upload:
     docroot: "/var/www/ejabberd/files"

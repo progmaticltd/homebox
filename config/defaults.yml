@@ -184,7 +184,7 @@ dictionaries_default:
 # test: test mode: does not activate the DNS zone straight
 # add_wildcard:  Create a wildcard entry to redirect all traffic to your box
 dns_default:
-  update: false
+  update: true
   test: true
   add_wildcard: true
   gandi:
@@ -264,6 +264,11 @@ dmarc_default:
 ejabberd_default:
   install: true
   allow_contrib_modules: false
+  # Ban clients after too much authentication failures (1h after 10 attempts)
+  fail2ban:
+    active: true
+    lifetime: 3600
+    failures: 10
   # Server-to-server communication
   s2s:
     active: true
