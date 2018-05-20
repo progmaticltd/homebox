@@ -379,7 +379,6 @@ modules:
   ### Map LDAP attributes to vCard fields
   mod_vcard_ldap:
     search: true
-    matches: "infinity"
     ldap_base: "{{ ldap.users.dn }}"
     # VCARD pattern
     ldap_vcard_map:

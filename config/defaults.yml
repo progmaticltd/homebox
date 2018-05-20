@@ -281,7 +281,7 @@ ejabberd_default:
     port: 5443
     secret_length: 40
     max_size: 104857600
-    thumbnail: true
+    thumbnail: false
   # direct file transfer
   file_transfer:
     port: 7778
