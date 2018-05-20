@@ -6,10 +6,9 @@
     state: installed
 
 - name: Install graphics library for thumbnails generation
-  when: ejabberd.http_upload.thumbnail
   apt:
     name: '{{ pkg }}'
-    state: installed
+    state: '{{ ejabberd.http_upload.thumbnail | ternary("present", "absent") }}'
   with_items:
     - graphicsmagick
     - graphicsmagick-imagemagick-compat
