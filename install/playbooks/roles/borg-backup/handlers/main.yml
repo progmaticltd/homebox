@@ -1,0 +1,9 @@
+---
+
+- name: Reload Systemd
+  shell: systemctl daemon-reload
+
+- name: Restart Systemd local fs target
+  service:
+    name: local-fs.target
+    state: restarted

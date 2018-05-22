@@ -152,12 +152,16 @@ users:
 #   install: true
 #   type: borgbackup
 #   locations:
+
+# Exemple 1: backup on the local disk. Useful for small backup only
 #   - name: local
 #     url: dir://var/backups/homebox
 #     active: yes                      # The backup is currently active
 #     frequency: daily                 # Run the backup every day
 #     keep_daily: 3                    # Keep the last three days locally
 #     compression: lz4                 # Compression scheme to use (lz4 by default)
+
+# Example 2: Backup on a remote location, over SSH
 #   - name: router
 #     url: ssh://fw.office.pm:/home/backup/homebox
 #     active: yes                      # The backup is currently active
@@ -166,8 +170,19 @@ users:
 #     keep_weekly: 4                   # Keep the last four weeks (default value)
 #     keep_monthly: 6                  # Keep the last six months (12 by default)
 #     compression: lz4                 # Compression scheme to use (lz4 by default)
+
+# Example 3: Backup on a network NAS mounted via Samba / CIFS
 #   - name: nas
 #     url: smb://backup:giuwh97kwerr@ftp.office.pm:/home/backup/homebox
+#     active: yes                      # The backup is currently active
+#     frequency: weekly                # Run the backup every week
+#     keep_weekly: 4                   # Keep the last four weeks (default value)
+#     keep_monthly: 6                  # Keep the last six months (12 by default)
+#     compression: zlib,6              # Compression scheme to use (lz4 by default)
+
+# Exemple 4: Backup on a USB stick labelled as "backup", when inserted or periodically
+#   - name: usb-backup
+#     url: usb://media/backup/
 #     active: yes                      # The backup is currently active
 #     frequency: weekly                # Run the backup every week
 #     keep_weekly: 4                   # Keep the last four weeks (default value)

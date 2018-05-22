@@ -6,7 +6,7 @@
     protocol: '{{ location.url | urlsplit("scheme") }}'
     location_host: '{{ location.url | urlsplit("hostname") }}'
     location_user: '{{ location.url | urlsplit("username") | default("backup") }}'
-    path: '{{ location.url | urlsplit("path") }}'
+    location_path: '{{ location.url | urlsplit("path") }}'
     location_details: '{{ location.url | urlsplit }}'
 
 - name: Create the backup config into /etc/homebox
@@ -39,7 +39,7 @@
 - name: Create the local backup directory
   when: protocol == 'dir'
   file:
-    path:  '{{ path }}'
+    path:  '{{ location_path }}'
     state: directory
     mode: 0700
     owner: root
@@ -96,13 +96,29 @@
     state: latest
 
 ###############################################################################
-# For usb drives, we will use autofs feature
-# Not implemented yet
-# - name: Install the required file systems
-#   when: protocol == 'usb'
-#   apt:
-#     name: 'autofs'
-#     state: latest
+# For USB drive, we add a line into fstab to automatically mount it
+# Automatically guess filesystem by default
+# The file system on the key should be named the same as the name of the
+# backup location
+
+- name: Add line to fstab to mount the USB stick automatically
+  when: protocol == 'usb'
+  notify:
+    - Reload Systemd
+    - Restart Systemd local fs target
+  mount:
+    boot: false
+    fstype: 'auto'
+    opts: defaults,noauto,sync,x-systemd.automount
+    path: '/media/{{ location.name }}'
+    src: 'LABEL={{ location.name }}'
+    state: present
+
+- name: Create the mounting point
+  when: protocol == 'usb'
+  file:
+    path: '/media/{{ location.name }}'
+    state: directory
 
 ###############################################################################
 # To backup on S3
