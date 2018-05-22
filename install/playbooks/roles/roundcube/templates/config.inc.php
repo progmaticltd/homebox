@@ -35,7 +35,7 @@ include_once("/etc/roundcube/debian-db-roundcube.php");
 {% if system.ssl != False %}
 $config['default_host'] = 'tls://imap.{{ network.domain }}:1143/';
 {% else %}
-$config['default_host'] = 'imap://imap.{{ network.domain }}/';
+$config['default_host'] = 'imap://imap.{{ network.domain }}:1143/';
 {% endif %}
 // SMTP server host (for sending mails).
 // To use SSL/TLS connection, enter hostname with prefix ssl:// or tls://
