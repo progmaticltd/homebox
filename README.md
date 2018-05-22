@@ -35,8 +35,9 @@ For a complete list of features, see the
 | Multiple encrypted incremental backups, with email reporting. See [backup documentation](docs/backup.md) for details| Done        |  Manual   |
 | Dovecot full text search in emails, attachments and attached archives.                                              | Done        | Automatic |
 | Jabber server, using [ejabberd](https://www.ejabberd.im/) with LDAP authentication and file transfer                | Done        |  Manual   |
-| Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned     |           |
+| Embedded DNS server with DNSSEC support                                                                             | Planned     |           |
 | Web proxy with privacy and parent filtering features                                                                | Planned     |           |
+| Automatic home router configuration using [upnp](https://github.com/flyte/upnpclient).                              | Planned     |           |
 
 ### Prerequisites
 
@@ -63,6 +64,7 @@ no particular order:
   [openvpn](https://openvpn.net/),
   [Syncthing](https://syncthing.net/), etc).
 - Use Lexicon for DNS updates: https://github.com/AnalogJ/lexicon.
+- Images for Raspberry / Banana Pi
 
 ## Other projects to mention
 
