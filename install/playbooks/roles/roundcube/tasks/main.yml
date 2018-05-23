@@ -189,6 +189,9 @@
 
 - name: Install nginx AppArmor profile
   when: security.app_armor
+  notify:
+    - Restart AppArmor service
+    - Activate AppArmor profile
   tags: roundcube, security, apparmor
   template:
     src: apparmor.d/local/roundcube
@@ -196,15 +199,11 @@
 
 - name: Add roundcube AppArmor specific configuration
   when: security.app_armor
-  register: aa_config
+  notify:
+    - Restart AppArmor service
+    - Activate AppArmor profile
   tags: roundcube, security, apparmor
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
     line: '  #include <local/roundcube>'
     insertbefore: '# End of local includes for homebox'
-
-- name: Activate AppArmor profiles
-  when: security.app_armor and aa_config.changed
-  tags: roundcube, security, apparmor
-  command: 'aa-enforce usr.sbin.nginx'
-  notify: Restart AppArmor service

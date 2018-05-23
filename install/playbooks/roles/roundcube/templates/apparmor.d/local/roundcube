@@ -8,3 +8,7 @@
   # Log files
   /var/log/nginx/roundcube-access.log w,
   /var/log/nginx/roundcube-error.log w,
+
+  # nginx/PHP is using fastcgi folder
+  /var/lib/nginx/fastcgi/ r,
+  /var/lib/nginx/fastcgi/** rwk,
