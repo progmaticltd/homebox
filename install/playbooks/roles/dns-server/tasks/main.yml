@@ -1,0 +1,21 @@
+---
+
+- name: Install a DNS server
+  apt:
+    name: bind9
+    state: present
+
+- name: Copy the configuration template
+  notify: Restart bind
+  template:
+    src: named.conf.options
+    dest: /etc/bind/named.conf.options
+
+- name: Allow queries to the DNS server from outside
+  ufw:
+    from_ip: any
+    to_ip: any
+    proto: udp
+    to_port: 53
+    comment: 'Allow DNS queries from outside'
+    rule: allow

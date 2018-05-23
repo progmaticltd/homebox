@@ -1,6 +1,6 @@
 ---
 
-- name: Create the emails migration and imports folders
+- name: Create the emails migration and import folders
   file:
     path: '{{ path }}'
     owner: '{{ user.uid }}'

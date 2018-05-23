@@ -288,3 +288,23 @@
   tags: defaults
   debug:
     var: ejabberd
+
+################################################################################
+# Merge defaults bind settings
+- name: Combine default and user defined bind settings
+  when: bind is defined
+  tags: defaults
+  set_fact:
+    bind: '{{ bind_default | combine(bind, recursive=True) }}'
+
+- name: Use default bind settings
+  when: bind is not defined
+  tags: defaults
+  set_fact:
+    bind: '{{ bind_default }}'
+
+- name: Display merged bind settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: bind

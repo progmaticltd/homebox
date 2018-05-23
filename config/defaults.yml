@@ -291,3 +291,12 @@ ejabberd_default:
     normal: 1000
     fast: 50000
     proxyrate: 10240 # file transfer proxy
+
+###############################################################################
+# Bind server defaults
+bind_default:
+  install: false
+  forward:
+    - 1.1.1.1
+    - 8.8.8.8
+    - 8.8.4.4
