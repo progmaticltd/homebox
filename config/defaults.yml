@@ -64,8 +64,9 @@ mail_default:
     port: 30000             # port used by dovecot for the quota daemon
     default: 1G             # Maximum allowed mailbox size for your users.
                             # The safe maximum value will be automatically computed in a next version.
-  discard_duplicates: true  # Discard duplicates messages. It is safe, but you can disable if you are worried
-                            # The default timerange is 1h
+  discard_duplicates: false # Discard duplicates messages. It is safe, but has some side effects when you are
+                            # sending a message to a mailing list. This is now disabled by default.
+                            # The default timerange to search duplicated messages is one hour.
   #############################################################################
   antispam:                 # Check inbound and outbound emails for viruses
     port: 33000             # port to use for the antivirus daemon
