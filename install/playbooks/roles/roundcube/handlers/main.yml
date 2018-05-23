@@ -15,6 +15,9 @@
     name: apparmor
     state: restarted
 
+- name: Activate AppArmor profile
+  command: 'aa-enforce usr.sbin.nginx'
+
 - name: Restart php-fpm
   service:
     name: php7.0-fpm
