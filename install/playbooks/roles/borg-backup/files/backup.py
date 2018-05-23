@@ -18,7 +18,7 @@ class BackupManager(object):
     def __init__(self, configName):
         """ Constructor """
 
-        # This should be common to all DNS providers
+        # Global configuration
         self.configName = configName
         self.key = None
         self.repositoryPath = None
@@ -60,6 +60,9 @@ class BackupManager(object):
     # Mount the backup folder, if the location is remote
     def mountRepository(self):
         """Mount the remote location if necessary"""
+
+        # The backup location can be a remote directory mounted locally
+        # or even a local partition
         if self.location.scheme == 'dir':
             self.repositoryPath = self.location.path
             self.repositoryMounted = True
@@ -68,6 +71,13 @@ class BackupManager(object):
         # Create a temporary directory to mount the location
         self.mountPath = '/mnt/' + self.configName
         os.makedirs(self.mountPath, exist_ok=True)
+
+        # The location is a USB device mounted automatically using systemd
+        if self.location.scheme == 'usb':
+            self.repositoryPath = '/media' + self.location.path
+            self.mountPath = '/media/' + self.configName
+            self.repositoryMounted = os.path.ismount(self.mountPath)
+            return self.repositoryMounted
 
         # Check if the directory is already mounted
         # In this case, we return true, and we will expect the

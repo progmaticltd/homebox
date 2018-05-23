@@ -29,6 +29,7 @@
 
 - name: Generate an SSH key for backup
   when: not key_upload.changed
+  register: ssh_keygen
   tags: ssh-keygen
   shell: >-
     ssh-keygen
@@ -54,3 +55,16 @@
       - '--exclude=*'
       - '--no-motd'
       - '--update'
+
+- name: Send the public key to the postmaster
+  when: ssh_keygen.changed
+  mail:
+    from: 'root@{{ network.domain }}'
+    subject: 'Public SSH key for {{ key.user }}'
+    to: 'postmaster@{{ network.domain }}'
+    body: >-
+      Find attached the public SSH key for the {{ key.user }} user.
+      This will be used for backup purposes. The user name will be
+      "{{ key.name }}"
+    attach:
+      - '{{ key.path }}{{ key.name }}.rsa.pub'
