@@ -31,6 +31,13 @@ backup:
     keep_weekly: 4                   # Keep the last four weeks (1 by default)
     keep_monthly: 6                  # Keep the last six months (1 by default)
     compression: zlib,9              # Use the good but slow compression for weekly backups
+  - name: corsair
+    url: usb://media/corsair/homebox.space
+    active: yes                      # The backup is currently active
+    frequency: weekly                # Run the backup every week
+    keep_weekly: 4                   # the last four weeks (1 by default)
+    keep_monthly: 6                  # the last six months (1 by default)
+    compression: zlib,6              # the good but slow compression for weekly backups
 ```
 
 The locations currently supported are:
@@ -38,17 +45,62 @@ The locations currently supported are:
 - local: local drive, useful for quick and short time backup.
 - ssh: remote backup on another server through SSH.
 - smb: samba share, probably on your local network.
-
-Planned / Envisaged:
-
-- s3: backup on Amazon S3 storage
-- usb: backup on USB stick when the server is at home
+- usb: named USB stick automatically mounted upon backup.
 
 You can have different backup frequencies, for instance daily, weekly or monthly.
 
+## Details for each implementation
+
+For any backup type, the final destination need to be created first.
+
+All the backups are encrypted using the same encryption key, for each device.
+
+### Backup over the network using SSH
+
+For SSH backup, the authentication scheme used is public key authentication, i.e. no password.
+
+If you have one SSH backup set, the script creates a private/public key for the root user,
+and send the public key to the postmaster, by email. You need to copy the key to the
+desired location.
+
+The private and public keys are also saved in the deployment backup folder.
+
+### Backup on a USB drive
+
+To backup on a usb drive, you need to have a partition named by the name of your backup on
+it. The system will automatically mount this partition before doing the backup:
+
+For instance, if you choose to backup on USB stick named 'safe01', in a folder named with
+your domain (e.g. dbcooper.home)
+
+```yaml
+...
+  - name: corsair
+    url: usb://media/safe01/dbcooper.home
+    active: yes                      # The backup is currently active
+    frequency: weekly                # Run the backup every week
+    keep_weekly: 4                   # the last four weeks (1 by default)
+    keep_monthly: 6                  # the last six months (1 by default)
+    compression: zlib,6              # the good but slow compression for weekly backups
+...
+```
+
+First, on your workstation, format the USB drive, mount it and create the folder for your
+final backup:
+
+```bash
+mkfs.ext4 /dev/sdb1 -L safe01
+mount /dev/sdb1 /mnt
+mkdir /mnt/dbcooper.home
+umount /mnt
+```
+
+You can then plug the USB drive on your homebox.
+
 ## Emails reporting
 
-By default, backup jobs are run overnight, and an email is sent to the postmaster, with a summary of the backup job:
+By default, backup jobs are run overnight, and an email is sent to the postmaster, with a
+summary of the backup job:
 
 ### Example of backup success email
 
