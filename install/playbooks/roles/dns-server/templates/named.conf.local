@@ -1,0 +1,10 @@
+# DNS configuration for {{ network.domain }}
+zone    "{{ network.domain }}"   {
+        type master;
+	        file    "/etc/bind/forward.{{ network.domain }}";
+		 };
+
+zone   "{{ bind.reverse_ip }}.in-addr.arpa"        {
+        type master;
+                file    "/etc/bind/reverse.{{ network.domain }}";
+	         };

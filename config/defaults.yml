@@ -294,9 +294,22 @@ ejabberd_default:
 
 ###############################################################################
 # Bind server defaults
+# Note: Automatic external IP address is not active yet, and need to be filled:
+# Example:
+#   main_ip: 115.238.245.2
+#   reverse_ip: 2.245.238
 bind_default:
   install: false
   forward:
     - 1.1.1.1
     - 8.8.8.8
     - 8.8.4.4
+  # Outside network
+  main_ip: ~
+  reverse_ip: ~
+  # timing configuration
+  refresh: 604821
+  retry: 86600
+  expire: 2419600
+  neg_cache_ttl: 604600
+  ttl: 604800

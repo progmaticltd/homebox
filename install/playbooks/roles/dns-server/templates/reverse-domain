@@ -1,0 +1,18 @@
+$TTL    {{ bind.ttl }}
+
+@       IN      SOA     {{ network.domain }}. root.{{ network.domain }}. (
+                        {{ serial }}
+                        {{ bind.refresh }}
+                        {{ bind.retry }}
+                        {{ bind.expire }}
+                        {{ bind.neg_cache_ttl }} )
+
+;Name Server Information
+@       IN      NS      primary.{{ network.domain }}.
+primary IN      A       {{ bind.main_ip }}
+
+;Reverse Lookup for Your DNS Server
+10      IN      PTR     primary.{{ network.domain }}.
+
+;PTR Record IP address to HostName
+20      IN      PTR     main.{{ network.domain }}.

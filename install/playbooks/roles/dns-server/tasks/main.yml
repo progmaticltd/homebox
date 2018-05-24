@@ -7,9 +7,20 @@
 
 - name: Copy the configuration template
   notify: Restart bind
+  vars:
+    serial: "{{ lookup('pipe', 'date +%s') }}"
   template:
-    src: named.conf.options
-    dest: /etc/bind/named.conf.options
+    src: '{{ file.src }}'
+    dest: '/etc/bind/{{ file.dest | default(file.src) }}'
+  with_items:
+    - src: named.conf.options
+    - src: named.conf.local
+    - src: forward-domain
+      dest: 'forward.{{ network.domain }}'
+    - src: reverse-domain
+      dest: 'reverse.{{ network.domain }}'
+  loop_control:
+    loop_var: file
 
 - name: Allow queries to the DNS server from outside
   ufw:
