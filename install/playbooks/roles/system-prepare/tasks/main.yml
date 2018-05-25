@@ -184,3 +184,9 @@
     path: /etc/locale.gen
     regexp: '# en_US.UTF-8 UTF-8'
     replace: 'en_US.UTF-8 UTF-8'
+
+- name: Create a composition directory for bind
+  when: bind.install
+  file:
+    path: /etc/bind/forward.d
+    state: directory

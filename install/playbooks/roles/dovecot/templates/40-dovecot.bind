@@ -1,0 +1,4 @@
+_imap._tcp 3600 IN SRV 10 0 143 imap.{{ network.domain }}.
+_imaps._tcp 3600 IN SRV 10 0 993 imap.{{ network.domain }}.
+_pop3._tcp 3600 IN SRV 20 0 110 pop3.{{ network.domain }}.
+_pop3s._tcp 3600 IN SRV 20 0 995 pop3.{{ network.domain }}.

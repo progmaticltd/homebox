@@ -7,20 +7,21 @@ $TTL    {{ bind.ttl }}
                         {{ bind.expire }}
                         {{ bind.neg_cache_ttl }} )
 
-;Name Server Information
+;; Name Server Information
 @       IN      NS      main.{{ network.domain }}.
 
-;IP address of Your Domain Name Server(DNS)
+;; IP address of Your Domain Name Server(DNS)
 primary IN       A      {{ bind.main_ip }}
 
-;Mail Server MX (Mail exchanger) Record
+;; Mail Server MX (Mail exchanger) Record
 {{ network.domain }}. IN  MX  {{ bind.mx_priority }}  main.{{ network.domain }}.
 
 
-;Main A Record for where everything goes
+;; Main A Record for where everything goes
 @              IN      A        {{ bind.main_ip }}
 main           IN      A        {{ bind.main_ip }}
 
-;CNAME Records: use a wildcard
+;; CNAME Records: use a wildcard
 *              IN      CNAME    main.{{ network.domain }}.
 
+;; DKIM Keys for {{ network.domain }}

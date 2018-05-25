@@ -194,3 +194,11 @@
     - postfix-rbl
   loop_control:
     loop_var: section
+
+# Create entries for the DNS server ===========================================
+- name: Generate DNS records for bind
+  tags: bind
+  when: bind.install
+  template:
+    src: 30-postfix.bind
+    dest: /etc/bind/forward.d/30-postfix.bind

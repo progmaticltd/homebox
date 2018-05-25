@@ -252,6 +252,24 @@ dkim_default:
 ###############################################################################
 # DMARC keys default parameters
 dmarc_default:
+  domain:
+    # none, quarantine or reject
+    policy: quarantine
+  subdomain:
+    # none, quarantine or reject
+    policy: quarantine
+  rua:
+    email: 'postmaster@{{ network.domain }}'
+    max_size: 10M
+  ruf:
+    email: 'postmaster@{{ network.domain }}'
+    max_size: 10M
+  reporting:
+    format: afrf    # or iodef
+    interval: 86400
+    percent: 100
+  dkim_align: strict
+  spf_align: relaxed
   milter:
     port: 32000
 
