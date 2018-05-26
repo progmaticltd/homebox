@@ -190,3 +190,17 @@
   file:
     path: /etc/bind/forward.d
     state: directory
+
+# External IP address detection
+- name: Copy the configuration file
+  tags: scripts
+  copy:
+    src: external-ip.conf
+    dest: /etc/homebox/external-ip.conf
+
+- name: Copy the external IP address detection script
+  tags: scripts
+  copy:
+    src: external-ip
+    dest: /usr/local/bin/external-ip
+    mode: 0755
