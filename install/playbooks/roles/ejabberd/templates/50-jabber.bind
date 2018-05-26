@@ -1,3 +1,7 @@
+;; SMTP server IP address, MX should point to a proper A record
+xmpp    IN       A      {{ external_ip }}
+
+;; RFC 6186 entries, should point to an "A" record
 _xmpp-client._tcp 3600 IN SRV 5 0 5222 xmpp.{{ network.domain }}.
 {% if ejabberd.s2s.active %}
 _xmpp-server._tcp 3600 IN SRV 5 0 5269 xmpp.{{ network.domain }}.

@@ -9,7 +9,7 @@ $TTL    {{ bind.ttl }}
 
 ;Name Server Information
 @       IN      NS      primary.{{ network.domain }}.
-primary IN      A       {{ bind.main_ip }}
+primary IN      A       {{ external_ip }}
 
 ;Reverse Lookup for Your DNS Server
 10      IN      PTR     primary.{{ network.domain }}.

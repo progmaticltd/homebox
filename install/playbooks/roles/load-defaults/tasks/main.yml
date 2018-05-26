@@ -8,6 +8,47 @@
 
 ################################################################################
 # Merge user options with default options
+- name: Combine default and user defined network settings
+  when: network is defined
+  tags: defaults
+  set_fact:
+    network: '{{ network_default | combine(network, recursive=True) }}'
+
+- name: Use default network settings
+  when: network is not defined
+  tags: defaults
+  set_fact:
+    network: '{{ network_default }}'
+
+- name: Display merged network settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: network
+
+################################################################################
+# Get the external IP address
+- name: Run the script to get the external IP address automatically
+  tags: facts
+  when: network.external_ip == "auto"
+  register: external_ip_facts
+  shell: >-
+    /usr/local/bin/external-ip -u /etc/homebox/external-ip.conf
+
+- name: Get the external IP address automatically
+  tags: facts
+  when: network.external_ip == "auto"
+  set_fact:
+    external_ip: '{{ external_ip_facts.stdout }}'
+
+- name: Get the external IP address automatically
+  tags: facts
+  when: network.external_ip != "auto"
+  set_fact:
+    external_ip: '{{ network.external_ip }}'
+
+################################################################################
+# Merge user options with default options
 - name: Combine default and user defined mail settings
   when: mail is defined
   tags: defaults

@@ -11,15 +11,15 @@ $TTL    {{ bind.ttl }}
 @       IN      NS      main.{{ network.domain }}.
 
 ;; IP address of Your Domain Name Server(DNS)
-primary IN       A      {{ bind.main_ip }}
+primary IN       A      {{ external_ip }}
 
 ;; Mail Server MX (Mail exchanger) Record
 {{ network.domain }}. IN  MX  {{ bind.mx_priority }}  main.{{ network.domain }}.
 
 
 ;; Main A Record for where everything goes
-@              IN      A        {{ bind.main_ip }}
-main           IN      A        {{ bind.main_ip }}
+@              IN      A        {{ external_ip }}
+main           IN      A        {{ external_ip }}
 
 ;; CNAME Records: use a wildcard
 *              IN      CNAME    main.{{ network.domain }}.

@@ -1,0 +1,94 @@
+---
+
+- name: Install a DNS server
+  apt:
+    name: bind9
+    state: present
+
+- name: Build the reverse IP address
+  when: bind.reverse_ip == "auto"
+  tags: facts
+  set_fact:
+    reverse_ip: '{{ external_ip | regex_replace("([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)", "\3.\2.\1") }}'
+
+- name: Build the reverse IP address
+  when: bind.reverse_ip == "auto"
+  tags: facts
+  set_fact:
+    reverse_ip: bind.reverse_ip
+
+- name: Copy the configuration template
+  notify: Restart bind
+  vars:
+    serial: "{{ lookup('pipe', 'date +%s') }}"
+  template:
+    src: '{{ file.src }}'
+    dest: '/etc/bind/{{ file.dest | default(file.src) }}'
+  with_items:
+    - src: named.conf.options
+    - src: named.conf.local
+    - src: forward-head
+      dest: 'forward.d/00-head.bind'
+    - src: reverse-domain
+      dest: 'reverse.{{ network.domain }}'
+  loop_control:
+    loop_var: file
+
+- name: Build the final bind configuration
+  assemble:
+    src: '/etc/bind/forward.d'
+    dest: '/etc/bind/forward.{{ network.domain }}'
+    delimiter: '\n;---'
+    regexp: '^.*\.bind$'
+
+- name: Purge the keys folder if exists
+  tags: encryption
+  file:
+    path: /etc/bind/keys
+    state: absent
+
+- name: Create the folder for the keys
+  tags: encryption
+  file:
+    path: /etc/bind/keys
+    state: directory
+    mode: '0750'
+    owner: root
+    group: bind
+
+- name: Generate the main key
+  tags: encryption
+  register: main_key_facts
+  shell: >-
+    dnssec-keygen -q -a {{ bind.dnssec.algo }} -b 1024 {{ network.domain }}
+  args:
+    chdir: /etc/bind/keys
+
+- name: Set the permissions on the key file generated
+  file:
+    path: '/etc/bind/keys/{{ main_key_facts.stdout }}.private'
+    group: bind
+    mode: g+r
+
+- name: Generate the second key (key signing key)
+  register: ksk_facts
+  tags: encryption
+  shell: >-
+    dnssec-keygen -q -a {{ bind.dnssec.algo }} -f KSK -b 2048 {{ network.domain }}
+  args:
+    chdir: /etc/bind/keys
+
+- name: Set the permissions on the KSK file generated
+  file:
+    path: '/etc/bind/keys/{{ ksk_facts.stdout }}.private'
+    group: bind
+    mode: g+r
+
+- name: Allow queries to the DNS server from outside
+  ufw:
+    from_ip: any
+    to_ip: any
+    proto: udp
+    to_port: 53
+    comment: 'Allow DNS queries from outside'
+    rule: allow

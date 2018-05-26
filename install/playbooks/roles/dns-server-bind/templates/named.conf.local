@@ -1,0 +1,13 @@
+# DNS configuration for {{ network.domain }}
+zone    "{{ network.domain }}" {
+        type master;
+        file "/etc/bind/forward.{{ network.domain }}";
+        key-directory "/etc/bind/keys";
+        inline-signing yes;
+        auto-dnssec maintain;
+        };
+
+zone    "{{ bind.reverse_ip }}.in-addr.arpa" {
+        type master;
+        file "/etc/bind/reverse.{{ network.domain }}";
+        };
