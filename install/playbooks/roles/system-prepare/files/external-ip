@@ -4,15 +4,20 @@ OPTIONS=uvmh
 LONGOPTIONS=urls-file,verbose,min-confidence,help
 
 usage() {
-    echo "Usage: xxx"
+    echo "Usage: $0 -[v|u|h|m]"
+    echo "\t-u|--urls-file: A file that contains a list of URLs to call to get the IP address."
+    echo "\t-v|--verbose: Verbose execution, display the IP addresses detected for each url."
+    echo "\t-m|--min-confidence: Minimum percentage before considering the IP address as valid, default is 100%."
+    echo "\t-h|--help: This help page."
 }
 
 # Default options
 minConfidence=100
 verbose=0
-urlsFile='/etc/homebox/external-ip.conf'
+urlsFile=''
 
 # Error codes
+ARGUMENT_ERROR=4
 MIN_CONFIDENCE_ERROR=5
 
 PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
@@ -44,6 +49,12 @@ while true; do
             ;;
     esac
 done
+
+if [ "$urlsFile" = "" ]; then
+    echo "Missing list of URLs file path"
+    usage
+    exit $ARGUMENT_ERROR
+fi
 
 # Read the list of external IP addressses
 SERVICES=$(cat $urlsFile | grep -v '^#' | tr '\n' ' ')
