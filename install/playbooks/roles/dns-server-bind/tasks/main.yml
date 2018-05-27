@@ -78,8 +78,16 @@
       - '--ignore-existing'
       - '--update'
 
+- name: Make sure the ZSK file is linked in the live directory
+  shell: >-
+    test -f /etc/bind/keys/*key
+    && ( grep -l "zone-signing key" /etc/bind/keys/*key
+    | xargs -I {} ln -s /etc/bind/keys/{} live/zsk.key )
+  args:
+    chdir: /etc/bind/keys
+    creates: /etc/bind/keys/live/zsk.key
+
 - name: Generate the zone signing key (ZSK)
-  register: main_key_facts
   shell: >-
     (test -f /etc/bind/keys/*key && grep "zone-signing key" /etc/bind/keys/*key )
     || dnssec-keygen -q -a {{ bind.dnssec.algo }} -b 1024 {{ network.domain }}
@@ -88,8 +96,16 @@
     chdir: /etc/bind/keys
     creates: /etc/bind/keys/live/zsk.key
 
+- name: Make sure the KSK file is linked in the live directory
+  shell: >-
+    test -f /etc/bind/keys/*key
+    && ( grep -l "key-signing key" /etc/bind/keys/*key
+    | xargs -I {} ln -s /etc/bind/keys/{} live/ksk.key )
+  args:
+    chdir: /etc/bind/keys
+    creates: /etc/bind/keys/live/ksk.key
+
 - name: Generate the key signing key (KSK)
-  register: ksk_facts
   tags: encryption
   shell: >-
     ( test -f /etc/bind/keys/*key && grep "key-signing key" /etc/bind/keys/*key )
@@ -148,7 +164,6 @@
     loop_var: file
 
 - name: Restart bind
-  when: keys_dir.changed
   service:
     name: bind9
     state: restarted

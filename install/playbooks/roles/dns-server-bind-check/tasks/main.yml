@@ -2,8 +2,13 @@
 
 - name: Use delv to check the status of DNSSEC
   tags: check
-  register: dnssec_facts
   shell: >-
     delv @127.0.0.1 -a /etc/bind/keys/live/authority.key
     +root={{ network.domain }} {{ network.domain }}. SOA +multiline
     | grep '^; fully validated'
+
+- name: Check DNS keys with dig
+  tags: check
+  shell: >-
+    dig @{{ external_ip }} {{ network.domain }}. DNSKEY +multiline +noall +answer
+    | grep 'IN\sDNSKEY'
