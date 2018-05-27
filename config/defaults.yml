@@ -322,15 +322,16 @@ dns_default:
 bind_default:
   install: false
   forward:
-    - 1.1.1.1
     - 8.8.8.8
     - 8.8.4.4
   # Outside network
-  main_ip: ~
-  reverse_ip: ~
-  # timing configuration
-  refresh: 604821
-  retry: 86600
-  expire: 2419600
-  neg_cache_ttl: 604600
-  ttl: 604800
+  reverse_ip: auto
+  # timing configuration (see https://www.ripe.net/publications/docs/ripe-203)
+  refresh: 86400          # 24 hours
+  retry: 7200             # 2 hours
+  expire: 3600000         # 10000 hours
+  neg_cache_ttl: 604600   # 2 days
+  ttl: 3600               # 1 hour
+  mx_priority: 10
+  dnssec:
+    algo: RSASHA256

@@ -201,4 +201,4 @@
   when: bind.install
   template:
     src: 30-postfix.bind
-    dest: /etc/bind/forward.d/30-postfix.bind
+    dest: /etc/homebox/dns-entries.d//30-postfix.bind

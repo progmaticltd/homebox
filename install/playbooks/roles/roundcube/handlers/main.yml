@@ -1,8 +1,17 @@
+---
 
-- name: Restart nginx
-  notify: Restart IMAP proxy
+- name: Activate AppArmor profile
+  command: 'aa-enforce usr.sbin.nginx'
+
+- name: Restart AppArmor service
   service:
-    name: nginx
+    name: apparmor
+    state: restarted
+
+
+- name: Restart php-fpm
+  service:
+    name: php7.0-fpm
     state: restarted
 
 - name: Restart IMAP proxy
@@ -10,15 +19,10 @@
     name: imapproxy
     state: restarted
 
-- name: Restart AppArmor service
+- name: Restart nginx
+  notify:
+    - Restart IMAP proxy
+    - Restart php-fpm
   service:
-    name: apparmor
-    state: restarted
-
-- name: Activate AppArmor profile
-  command: 'aa-enforce usr.sbin.nginx'
-
-- name: Restart php-fpm
-  service:
-    name: php7.0-fpm
+    name: nginx
     state: restarted

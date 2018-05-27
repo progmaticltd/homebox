@@ -189,4 +189,4 @@
   when: bind.install
   template:
     src: 50-jabber.bind
-    dest: /etc/bind/forward.d/50-jabber.bind
+    dest: /etc/homebox/dns-entries.d//50-jabber.bind

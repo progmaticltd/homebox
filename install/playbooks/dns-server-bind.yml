@@ -7,3 +7,4 @@
     - '{{ playbook_dir }}/../../config/system.yml'
   roles:
     - dns-server-bind
+    - dns-server-bind-check

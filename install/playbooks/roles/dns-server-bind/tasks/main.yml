@@ -5,11 +5,17 @@
     name: bind9
     state: present
 
-- name: Build the reverse IP address
+- name: Build the reverse IP address (works only for IPv4)
   when: bind.reverse_ip == "auto"
   tags: facts
   set_fact:
-    reverse_ip: '{{ external_ip | regex_replace("([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)", "\3.\2.\1") }}'
+    ip_regex: '([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)'
+
+- name: Build the reverse IP address (works only for IPv4)
+  when: bind.reverse_ip == "auto"
+  tags: facts
+  set_fact:
+    reverse_ip: '{{ external_ip | regex_replace(ip_regex, "\3.\2.\1") }}'
 
 - name: Build the reverse IP address
   when: bind.reverse_ip == "auto"
@@ -18,43 +24,43 @@
     reverse_ip: bind.reverse_ip
 
 - name: Copy the configuration template
-  notify: Restart bind
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
   template:
     src: '{{ file.src }}'
-    dest: '/etc/bind/{{ file.dest | default(file.src) }}'
+    dest: '{{ file.dest }}'
   with_items:
-    - src: named.conf.options
-    - src: named.conf.local
     - src: forward-head
-      dest: 'forward.d/00-head.bind'
+      dest: '/etc/homebox/dns-entries.d/00-head.bind'
+    - src: named.conf.options
+      dest: '/etc/bind/named.conf.options'
+    - src: named.conf.local
+      dest: '/etc/bind/named.conf.local'
     - src: reverse-domain
-      dest: 'reverse.{{ network.domain }}'
+      dest: '/etc/bind/reverse.{{ network.domain }}'
   loop_control:
     loop_var: file
 
 - name: Build the final bind configuration
   assemble:
-    src: '/etc/bind/forward.d'
+    src: '/etc/homebox/dns-entries.d/'
     dest: '/etc/bind/forward.{{ network.domain }}'
-    delimiter: '\n;---'
+    delimiter: '\n'
     regexp: '^.*\.bind$'
-
-- name: Purge the keys folder if exists
-  tags: encryption
-  file:
-    path: /etc/bind/keys
-    state: absent
 
 - name: Create the folder for the keys
   tags: encryption
   file:
-    path: /etc/bind/keys
+    path: '{{ path }}'
     state: directory
     mode: '0750'
     owner: root
     group: bind
+  with_items:
+    - /etc/bind/keys
+    - /etc/bind/keys/tests
+  loop_control:
+    loop_var: path
 
 - name: Generate the main key
   tags: encryption
@@ -78,6 +84,23 @@
   args:
     chdir: /etc/bind/keys
 
+- name: Copy the KSK for testing
+  file:
+    src: '/etc/bind/keys/{{ ksk_facts.stdout }}.key'
+    dest: /etc/bind/keys/tests/ksk.key
+    state: link
+
+- name: Create the testing key
+  shell: >-
+    cat /etc/bind/keys/tests/ksk.key
+    | sed '/^;/d'
+    | sed 's/IN DNSKEY 257 3 8 /257 3 8 "/'
+    | sed 's/^/trusted-keys { /'
+    | sed 's/$/"; };/'
+    > /etc/bind/keys/tests/testing.key
+  args:
+    creates: /etc/bind/keys/tests/testing.key
+
 - name: Set the permissions on the KSK file generated
   file:
     path: '/etc/bind/keys/{{ ksk_facts.stdout }}.private'
@@ -92,3 +115,19 @@
     to_port: 53
     comment: 'Allow DNS queries from outside'
     rule: allow
+
+- name: Link DNS entries in /var/cache/bin
+  file:
+    src: '/etc/bind/{{ file }}'
+    dest: '/var/cache/bind/{{ file }}'
+    state: link
+  with_items:
+    - 'forward.{{ network.domain }}'
+    - 'reverse.{{ network.domain }}'
+  loop_control:
+    loop_var: file
+
+- name: Restart bind
+  service:
+    name: bind9
+    state: restarted

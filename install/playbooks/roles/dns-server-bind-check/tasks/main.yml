@@ -1,0 +1,8 @@
+---
+
+- name: Use delv to check the status of DNSSEC
+  register: dnssec_facts
+  shell: >-
+    delv @127.0.0.1 -a /etc/bind/keys/tests/testing.key
+    +root={{ network.domain }} {{ network.domain }}. SOA +multiline
+    | grep '^; fully validated'

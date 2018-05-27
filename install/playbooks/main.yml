@@ -2,6 +2,7 @@
 ## Main installation playbook
 
 # Complete list of playbooks to run, in this order
+- import_playbook: external-ip.yml
 - import_playbook: system-prepare.yml
 - import_playbook: ldap.yml
 - import_playbook: homes.yml

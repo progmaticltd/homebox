@@ -37,7 +37,6 @@
 
 - name: Create the webmail site
   tags: roundcube
-  notify: Restart nginx
   template:
     src: webmail-site.tpl
     dest: /etc/nginx/sites-available/roundcube.conf
@@ -176,22 +175,14 @@
   loop_control:
     loop_var: folder
 
-- name: Enable nginx site
-  tags: roundcube
-  notify: Restart nginx
-  file:
-    src: /etc/nginx/sites-available/roundcube.conf
-    dest: /etc/nginx/sites-enabled/roundcube.conf
-    state: link
-
 
 # AppArmor configuration ======================================================
 
 - name: Install nginx AppArmor profile
   when: security.app_armor
   notify:
-    - Restart AppArmor service
     - Activate AppArmor profile
+    - Restart AppArmor service
   tags: roundcube, security, apparmor
   template:
     src: apparmor.d/local/roundcube
@@ -200,10 +191,19 @@
 - name: Add roundcube AppArmor specific configuration
   when: security.app_armor
   notify:
-    - Restart AppArmor service
     - Activate AppArmor profile
+    - Restart AppArmor service
   tags: roundcube, security, apparmor
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
     line: '  #include <local/roundcube>'
     insertbefore: '# End of local includes for homebox'
+
+# Finally restart the nginx server ============================================
+- name: Enable nginx site
+  tags: roundcube
+  notify: Restart nginx
+  file:
+    src: /etc/nginx/sites-available/roundcube.conf
+    dest: /etc/nginx/sites-enabled/roundcube.conf
+    state: link

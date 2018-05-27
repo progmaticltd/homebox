@@ -123,5 +123,5 @@
   when: bind.install
   file:
     src: '/etc/opendkim/keys/{{ dkim.selector }}.txt'
-    dest: '/etc/bind/forward.d/10-dkim.bind'
+    dest: '/etc/homebox/dns-entries.d//10-dkim.bind'
     state: link
