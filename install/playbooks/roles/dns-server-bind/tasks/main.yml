@@ -54,16 +54,16 @@
   file:
     path: '{{ path }}'
     state: directory
-    mode: '0750'
+    mode: '0755'
     owner: root
     group: bind
   with_items:
     - /etc/bind/keys
-    - /etc/bind/keys/tests
+    - /etc/bind/keys/live
   loop_control:
     loop_var: path
 
-- name: If the DKIM have been generated before, copy them on the remote server
+- name: If the DNSSEC keys have been generated before, copy them on the remote server
   tags: backup-push
   synchronize:
     src: '{{ playbook_dir }}/../../backup/dnssec-keys/'
@@ -78,56 +78,44 @@
       - '--ignore-existing'
       - '--update'
 
-- name: Generate the main key
-  when: keys_dir.changed
-  tags: encryption
+- name: Generate the zone signing key (ZSK)
   register: main_key_facts
   shell: >-
-    dnssec-keygen -q -a {{ bind.dnssec.algo }} -b 1024 {{ network.domain }}
+    (test -f /etc/bind/keys/*key && grep "zone-signing key" /etc/bind/keys/*key )
+    || dnssec-keygen -q -a {{ bind.dnssec.algo }} -b 1024 {{ network.domain }}
+    | xargs -I {} ln -s /etc/bind/keys/{}.key live/zsk.key
   args:
     chdir: /etc/bind/keys
+    creates: /etc/bind/keys/live/zsk.key
 
-- name: Set the permissions on the key file generated
-  when: keys_dir.changed
-  file:
-    path: '/etc/bind/keys/{{ main_key_facts.stdout }}.private'
-    group: bind
-    mode: g+r
-
-- name: Generate the second key (key signing key)
-  when: keys_dir.changed
+- name: Generate the key signing key (KSK)
   register: ksk_facts
   tags: encryption
   shell: >-
-    dnssec-keygen -q -a {{ bind.dnssec.algo }} -f KSK -b 2048 {{ network.domain }}
+    ( test -f /etc/bind/keys/*key && grep "key-signing key" /etc/bind/keys/*key )
+    || dnssec-keygen -q -a {{ bind.dnssec.algo }} -f KSK -b 2048 {{ network.domain }}
+    | xargs -I {} ln -s /etc/bind/keys/{}.key live/ksk.key
   args:
     chdir: /etc/bind/keys
+    creates: /etc/bind/keys/live/ksk.key
 
-- name: Copy the KSK for testing
-  when: keys_dir.changed
-  file:
-    src: '/etc/bind/keys/{{ ksk_facts.stdout }}.key'
-    dest: /etc/bind/keys/tests/ksk.key
-    state: link
-
-- name: Create the testing key
-  when: keys_dir.changed
+- name: Set the permissions on the key and private key files
   shell: >-
-    cat /etc/bind/keys/tests/ksk.key
+    chgrp bind /etc/bind/keys/*
+    && chmod g+r /etc/bind/keys/*
+  args:
+    warn: false
+
+- name: Create a key authority for local testing
+  shell: >-
+    cat /etc/bind/keys/live/ksk.key
     | sed '/^;/d'
     | sed 's/IN DNSKEY 257 3 8 /257 3 8 "/'
     | sed 's/^/trusted-keys { /'
     | sed 's/$/"; };/'
-    > /etc/bind/keys/tests/testing.key
+    > /etc/bind/keys/live/authority.key
   args:
-    creates: /etc/bind/keys/tests/testing.key
-
-- name: Set the permissions on the KSK file generated
-  when: keys_dir.changed
-  file:
-    path: '/etc/bind/keys/{{ ksk_facts.stdout }}.private'
-    group: bind
-    mode: g+r
+    creates: /etc/bind/keys/live/authority.key
 
 - name: Allow queries to the DNS server
   ufw:

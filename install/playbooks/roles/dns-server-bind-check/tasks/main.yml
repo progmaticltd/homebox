@@ -1,8 +1,9 @@
 ---
 
 - name: Use delv to check the status of DNSSEC
+  tags: check
   register: dnssec_facts
   shell: >-
-    delv @127.0.0.1 -a /etc/bind/keys/tests/testing.key
+    delv @127.0.0.1 -a /etc/bind/keys/live/authority.key
     +root={{ network.domain }} {{ network.domain }}. SOA +multiline
     | grep '^; fully validated'
