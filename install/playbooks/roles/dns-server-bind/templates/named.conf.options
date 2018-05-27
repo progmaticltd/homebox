@@ -1,4 +1,11 @@
 # Bind 9 configuration file
+acl "trusted" {
+{% for trust in bind.trusted %}
+        # {{ trust.comment | default(None) }}
+        {{ trust.src }};
+{% endfor %}
+};
+
 options {
 
         directory "/var/cache/bind";
@@ -18,6 +25,11 @@ options {
         {{ fwd }};
 {% endfor %}
         };
+
+        # Accept cache and recursion from trusted hosts
+        allow-query { any; };
+        allow-recursion { trusted; };
+        allow-query-cache { trusted; };
 
         //========================================================================
         // If BIND logs error messages about the root key being expired,

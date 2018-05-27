@@ -24,6 +24,7 @@
     reverse_ip: bind.reverse_ip
 
 - name: Copy the configuration template
+  tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
   template:
@@ -42,6 +43,7 @@
     loop_var: file
 
 - name: Build the final bind configuration
+  tags: config
   assemble:
     src: '/etc/homebox/dns-entries.d/'
     dest: '/etc/bind/forward.{{ network.domain }}'

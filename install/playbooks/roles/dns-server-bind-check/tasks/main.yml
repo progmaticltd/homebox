@@ -7,8 +7,14 @@
     +root={{ network.domain }} {{ network.domain }}. SOA +multiline
     | grep '^; fully validated'
 
-- name: Check DNS keys with dig
+- name: Check DNS keys
   tags: check
   shell: >-
     dig @{{ external_ip }} {{ network.domain }}. DNSKEY +multiline +noall +answer
     | grep 'IN\sDNSKEY'
+
+- name: Check DNS signatures
+  tags: check
+  shell: >-
+    dig @{{ external_ip }} {{ network.domain }}. SOA +dnssec +multiline
+    | grep 'IN\sRRSIG'

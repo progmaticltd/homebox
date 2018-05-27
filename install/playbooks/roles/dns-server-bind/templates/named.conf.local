@@ -1,5 +1,5 @@
 # DNS configuration for {{ network.domain }}
-zone    "{{ network.domain }}" {
+zone    "{{ network.domain }}" IN {
         type master;
         file "/var/cache/bind/forward.{{ network.domain }}";
         key-directory "/etc/bind/keys";
