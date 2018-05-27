@@ -308,6 +308,14 @@ Some clients: [XMPP client software](https://xmpp.org/software/clients.html).
 
 # Other features
 
+## DNSSEC Support
+
+If you need a higher level of security and a protection agains DNS cache poisoning, you can
+install a custom DNS server on your box, with support for DNSSEC extensions. Once the
+playbook has been run, an email is sent to postmaster, with the ZSK (Zone Signing Key) and
+KSK (Key Signing Key) attached.
+
+
 ## DNS automatic update
 
 If you are using Gandi as your DNS provider, the installation script can automatically

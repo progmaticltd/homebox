@@ -82,16 +82,17 @@
 
 - name: Make sure the ZSK file is linked in the live directory
   shell: >-
-    test -f /etc/bind/keys/*key
+    ls /etc/bind/keys/*key
     && ( grep -l "zone-signing key" /etc/bind/keys/*key
-    | xargs -I {} ln -s /etc/bind/keys/{} live/zsk.key )
+    | xargs -I {} ln -nsf {} live/zsk.key )
+    || /bin/true
   args:
     chdir: /etc/bind/keys
     creates: /etc/bind/keys/live/zsk.key
 
 - name: Generate the zone signing key (ZSK)
   shell: >-
-    (test -f /etc/bind/keys/*key && grep "zone-signing key" /etc/bind/keys/*key )
+    ( test -f /etc/bind/keys/*key && grep "zone-signing key" /etc/bind/keys/*key )
     || dnssec-keygen -q -a {{ bind.dnssec.algo }} -b 1024 {{ network.domain }}
     | xargs -I {} ln -s /etc/bind/keys/{}.key live/zsk.key
   args:
@@ -100,9 +101,10 @@
 
 - name: Make sure the KSK file is linked in the live directory
   shell: >-
-    test -f /etc/bind/keys/*key
+    ls /etc/bind/keys/*key
     && ( grep -l "key-signing key" /etc/bind/keys/*key
-    | xargs -I {} ln -s /etc/bind/keys/{} live/ksk.key )
+    | xargs -I {} ln -nsf {} live/ksk.key )
+    || /bin/true
   args:
     chdir: /etc/bind/keys
     creates: /etc/bind/keys/live/ksk.key
