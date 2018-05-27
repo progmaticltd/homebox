@@ -49,6 +49,7 @@
     regexp: '^.*\.bind$'
 
 - name: Create the folder for the keys
+  register: keys_dir
   tags: encryption
   file:
     path: '{{ path }}'
@@ -62,7 +63,23 @@
   loop_control:
     loop_var: path
 
+- name: If the DKIM have been generated before, copy them on the remote server
+  tags: backup-push
+  synchronize:
+    src: '{{ playbook_dir }}/../../backup/dnssec-keys/'
+    dest: '/etc/bind/keys/'
+    mode: push
+    owner: no
+    group: no
+    perms: yes
+    rsync_opts:
+      - '--no-motd'
+      - '--checksum'
+      - '--ignore-existing'
+      - '--update'
+
 - name: Generate the main key
+  when: keys_dir.changed
   tags: encryption
   register: main_key_facts
   shell: >-
@@ -71,12 +88,14 @@
     chdir: /etc/bind/keys
 
 - name: Set the permissions on the key file generated
+  when: keys_dir.changed
   file:
     path: '/etc/bind/keys/{{ main_key_facts.stdout }}.private'
     group: bind
     mode: g+r
 
 - name: Generate the second key (key signing key)
+  when: keys_dir.changed
   register: ksk_facts
   tags: encryption
   shell: >-
@@ -85,12 +104,14 @@
     chdir: /etc/bind/keys
 
 - name: Copy the KSK for testing
+  when: keys_dir.changed
   file:
     src: '/etc/bind/keys/{{ ksk_facts.stdout }}.key'
     dest: /etc/bind/keys/tests/ksk.key
     state: link
 
 - name: Create the testing key
+  when: keys_dir.changed
   shell: >-
     cat /etc/bind/keys/tests/ksk.key
     | sed '/^;/d'
@@ -102,21 +123,32 @@
     creates: /etc/bind/keys/tests/testing.key
 
 - name: Set the permissions on the KSK file generated
+  when: keys_dir.changed
   file:
     path: '/etc/bind/keys/{{ ksk_facts.stdout }}.private'
     group: bind
     mode: g+r
 
-- name: Allow queries to the DNS server from outside
+- name: Allow queries to the DNS server
   ufw:
     from_ip: any
     to_ip: any
     proto: udp
     to_port: 53
-    comment: 'Allow DNS queries from outside'
+    comment: 'Allow DNS queries'
+    rule: allow
+
+- name: Allow DNS zones transfer
+  ufw:
+    from_ip: any
+    to_ip: any
+    proto: tcp
+    to_port: 53
+    comment: 'Allow DNS zone transfers'
     rule: allow
 
 - name: Link DNS entries in /var/cache/bin
+  when: keys_dir.changed
   file:
     src: '/etc/bind/{{ file }}'
     dest: '/var/cache/bind/{{ file }}'
@@ -128,6 +160,22 @@
     loop_var: file
 
 - name: Restart bind
+  when: keys_dir.changed
   service:
     name: bind9
     state: restarted
+
+- name: Backup the keys on your local machine
+  tags: backup-pull
+  synchronize:
+    mode: pull
+    src: '/etc/bind/keys/{{ item }}'
+    dest: '{{ playbook_dir }}/../../backup/dnssec-keys/'
+    perms: yes
+    rsync_opts:
+      - '--no-motd'
+      - '--exclude=readme.md'
+      - '--update'
+  with_items:
+    - '*.key'
+    - '*.private'
