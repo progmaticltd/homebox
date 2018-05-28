@@ -1,27 +1,21 @@
 $TTL    {{ bind.ttl }}
+$ORIGIN {{ network.domain }}.
 
-@       IN      SOA     primary.{{ network.domain }}. root.primary.{{ network.domain }}. (
+@       IN      SOA     main.{{ network.domain }}. hostmaster.{{ network.domain }}. (
                         {{ serial }}
                         {{ bind.refresh }}
                         {{ bind.retry }}
                         {{ bind.expire }}
                         {{ bind.neg_cache_ttl }} )
 
-;; Name Server Information
+;; Name Server and IP address mapping (GLUE)
 @       IN      NS      main.{{ network.domain }}.
+main    IN      A       {{ external_ip }}
+@       IN      NS      backup.{{ network.domain }}.
+backup  IN      A       {{ external_ip }}
 
-;; IP address of Your Domain Name Server(DNS)
-primary IN       A      {{ external_ip }}
+;; Main A Record for where everything goes
+@       IN      A       {{ external_ip }}
 
 ;; Mail Server MX (Mail exchanger) Record
 {{ network.domain }}. IN  MX  {{ bind.mx_priority }}  main.{{ network.domain }}.
-
-
-;; Main A Record for where everything goes
-@              IN      A        {{ external_ip }}
-main           IN      A        {{ external_ip }}
-
-;; CNAME Records: use a wildcard
-*              IN      CNAME    main.{{ network.domain }}.
-
-;; DKIM Keys for {{ network.domain }}

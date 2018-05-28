@@ -1,11 +1,11 @@
 ---
 
 - name: Check if opendkim has been installed
-  tags: apt,opendkim
+  tags: apt, opendkim
   shell: dpkg -s opendkim
 
-- name: Check if the rspamd service is up and running
-  tags: systemctl,opendkim
+- name: Check if the opendkim service is up and running
+  tags: systemctl, opendkim
   shell: systemctl status opendkim
 
 - name: Test opendkim key files exists and are readable

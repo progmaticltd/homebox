@@ -177,6 +177,7 @@
   loop_control:
     loop_var: dict
 
+# This is needed by some programs later
 - name: Set the US locales for some UTF8 scripts
   tags: lang
   notify: Rebuild locales
@@ -190,3 +191,15 @@
   file:
     path: /etc/homebox/dns-entries.d/
     state: directory
+
+- name: Create the SSHFP records for bind
+  when: bind.install
+  register: ssh_keygen
+  shell: >-
+    ssh-keygen -r {{ network.domain }} | sed 's/ /. /'
+
+- name: Add the SSHFP records
+  when: bind.install
+  template:
+    src: sshfp.bind
+    dest: /etc/homebox/dns-entries.d/01-sshfp.bind

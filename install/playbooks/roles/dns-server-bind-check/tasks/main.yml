@@ -1,6 +1,7 @@
 ---
 
 - name: Use delv to check the status of DNSSEC
+  when: bind.dnssec.active
   tags: check
   shell: >-
     delv @127.0.0.1 -a /etc/bind/keys/live/authority.key
@@ -8,18 +9,21 @@
     | grep '^; fully validated'
 
 - name: Check DNS keys
+  when: bind.dnssec.active
   tags: check
   shell: >-
     dig @{{ external_ip }} {{ network.domain }}. DNSKEY +multiline +noall +answer
     | grep 'IN\sDNSKEY'
 
 - name: Check DNS signatures
+  when: bind.dnssec.active
   tags: check
   shell: >-
     dig @{{ external_ip }} {{ network.domain }}. SOA +dnssec +multiline
     | grep 'IN\sRRSIG'
 
 - name: Send the keys to the postmaster, by email
+  when: bind.dnssec.active
   tags: mail
   mail:
     from: 'root@{{ network.domain }}'

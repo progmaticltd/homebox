@@ -332,7 +332,7 @@ bind_default:
   refresh: 86400          # 24 hours
   retry: 7200             # 2 hours
   expire: 3600000         # 10000 hours
-  neg_cache_ttl: 604600   # 2 days
+  neg_cache_ttl: 172800   # 2 days
   ttl: 3600               # 1 hour
   # General configuration
   mx_priority: 10
@@ -347,4 +347,5 @@ bind_default:
   #    comment: https://dnssec-analyzer.verisignlabs.com
   # DNSSEC options
   dnssec:
+    active: false
     algo: RSASHA256
