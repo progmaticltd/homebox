@@ -51,6 +51,8 @@ don't need to be forwarded by your router during the development time:
 - TCP/4190 : ManageSieve. Used to remotely access your mail filters, for instance with
   [thunderbird sieve plugin](https://addons.mozilla.org/en-US/thunderbird/addon/sieve/).
 - TCP/443 : HTTPS access for the webmail and also Outlook autodiscover feature.
+- TCP/5222 and TCP/5269 : Jabber, clients to server and server to server implementation.
+- UDP/53 and TCP/53 : DNS Server.
 
 ### Bridging your workstation
 
@@ -70,6 +72,8 @@ your virtual machine.
 
 The initial creation of DNS records for certificate generation should take some time. So,
 it is better to do this before anything else.
+
+Otherwise, you can use the DNS server implemented with Bind.
 
 ### Create your hosts file
 
@@ -162,52 +166,6 @@ The script also configures a basic bashrc / zshrc.
 The main playbook 'main.yml' and includes all other playbooks, with some of them
 conditional, as some components are optional.
 
-```yaml
-
-# Complete list of playbooks to run, in this order
-- import_playbook: system-prepare.yml
-- import_playbook: ldap.yml
-- import_playbook: homes.yml
-
-# System protection: antispam
-- import_playbook: rspamd.yml
-
-# System protection: antivirus
-- import_playbook: clamav.yml
-  when: mail.antivirus.active
-
-# Email server: MTA
-- import_playbook: opendkim.yml
-- import_playbook: opendmarc.yml
-- import_playbook: cert-smtp.yml
-- import_playbook: postfix.yml
-
-# Create DNS entries (Only Gandi for now)
-- import_playbook: dns-update.yml
-
-- import_playbook: cert-pop3.yml
-- import_playbook: cert-imap.yml
-- import_playbook: dovecot.yml
-
-# Install nginx as the default web server, if needed
-- import_playbook: nginx.yml
-  when: webmail.install or mail.autodiscover or mail.autoconfig
-
-# Install the selected webmail
-- import_playbook: roundcube.yml
-  when: webmail.install and webmail.type == 'roundcube'
-
-# Automatic configuration for email clients.
-- import_playbook: autodiscover.yml
-  when: mail.autodiscover
-- import_playbook: autoconfig.yml
-  when: mail.autoconfig
-
-# Add the old emails import scripts for each users
-- import_playbook: import-accounts.yml
-
-```
-
 ## Automatic backup
 
 Once the script has been run, the backup folder contains important files, like
@@ -250,6 +208,7 @@ The following roles are run:
   generated
 - Antivirus tests, for instance check that an email with a virus is bounced.
 - Full text search inside attachments
+- DNS records when the DNS server is installed.
 
 ## Some development tools to consider
 
@@ -258,3 +217,5 @@ The following roles are run:
   code](https://code.visualstudio.com/) is not too bad as well, and is very well
   integrated in Debian / Ubuntu.
 - Test your SMTP server compliance: [mxtoolbox.com](http://mxtoolbox.com/).
+- DNSSEC records debugger : https://dnssec-analyzer.verisignlabs.com/
+- DNS propagation checker: https://www.whatsmydns.net/

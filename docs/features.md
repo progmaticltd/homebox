@@ -317,6 +317,8 @@ install a custom DNS server on your box, with support for DNSSEC extensions. Onc
 playbook has been run, an email is sent to postmaster, with the ZSK (Zone Signing Key) and
 KSK (Key Signing Key) attached.
 
+The server installed is bind9. When activated, the server also publishes
+[SSHFP](https://en.wikipedia.org/wiki/SSHFP_record) records for extra security.
 
 ## DNS automatic update
 
