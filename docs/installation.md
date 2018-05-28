@@ -34,6 +34,9 @@ The repository contains a few folders you should be familiar with:
   the passwords and certificates generated when deploying the
   system. This allows you to "replay" the deployment on a new server
   after a disaster, without loosing any information.
+  This folder is generated automatically on the first deployment,
+  and ignored by git
+- tests: Ansible playbooks to test the platform.
 - sandbox: Put anything you don't want to commit here.
 - docs: This project documentation.
 
