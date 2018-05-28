@@ -35,3 +35,19 @@
 # Test autodiscover
 - import_playbook: autodiscover.yml
   when: mail.autodiscover
+
+# Test DNS records
+- import_playbook: dns-records-email.yml
+  when: bind.install
+
+- import_playbook: dns-records-jabber.yml
+  when: bind.install and ejabberd.install
+
+- import_playbook: dns-records-sshfp.yml
+  when: bind.install and bind.dnssec.active
+
+- import_playbook: dns-records-autoconfig.yml
+  when: bind.install and mail.autoconfig
+
+- import_playbook: dns-records-autoconfig.yml
+  when: bind.install and mail.autoconfig

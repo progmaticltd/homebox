@@ -1,0 +1,28 @@
+---
+
+# Test the DNS server for Jabber records
+
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+    - '{{ playbook_dir }}/../../config/system.yml'
+  vars:
+    records:
+      type: A
+      list:
+        - xmpp
+  roles:
+    - dns-records
+
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+    - '{{ playbook_dir }}/../../config/system.yml'
+  vars:
+    records:
+      type: SRV
+      list:
+        - '_xmpp-client._tcp'
+        - '_xmpp-server._tcp'
+  roles:
+    - dns-records

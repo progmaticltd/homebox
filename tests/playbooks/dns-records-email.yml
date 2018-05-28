@@ -1,0 +1,62 @@
+---
+
+# Test the DNS server for mail records
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+    - '{{ playbook_dir }}/../../config/system.yml'
+  vars:
+    records:
+      type: A
+      list:
+        - main
+        - imap
+        - smtp
+        - pop3
+        - xmpp
+  roles:
+    - dns-records
+
+
+# Test the DNS server for service records
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+    - '{{ playbook_dir }}/../../config/system.yml'
+  vars:
+    records:
+      type: SRV
+      list:
+        - _imap._tcp
+        - _imaps._tcp
+        - _pop3._tcp
+        - _pop3s._tcp
+        - _submission._tcp
+  roles:
+    - dns-records
+
+# Test the DNS server for service records
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+    - '{{ playbook_dir }}/../../config/system.yml'
+  vars:
+    records:
+      type: TXT
+      list:
+        - _dmarc
+        - '{{ dkim.selector }}._domainkey'
+  roles:
+    - dns-records
+
+# Test the DNS server for MX records, should return at least one record
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+    - '{{ playbook_dir }}/../../config/system.yml'
+  vars:
+    records:
+      type: MX
+      count: '[12]'
+  roles:
+    - dns-records
