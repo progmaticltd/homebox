@@ -2,6 +2,11 @@
 # These are the default values, you can copy and paste into your system.yml
 # configuration file for customisation.
 
+# Default network settings
+# If you are behind a NAT, perhaps you will want to
+# replace "auto" by your real external IP address
+network_default:
+  external_ip: auto
 
 # Standard policies
 policies:
@@ -179,20 +184,6 @@ dictionaries_default:
     id: en
 
 ###############################################################################
-# Gandi automatic DNS update
-# Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
-# update: Automatic update of your DNS server
-# test: test mode: does not activate the DNS zone straight
-# add_wildcard:  Create a wildcard entry to redirect all traffic to your box
-dns_default:
-  update: true
-  test: true
-  add_wildcard: true
-  gandi:
-    handle: JD123-GANDI
-    key: zaNGbUVIvi1KbYb6PPMdiQLh
-
-###############################################################################
 # Install a static web site on www.yourdomain.com
 # Still requests two certificates:
 # One for for https://yourdomain.com/ and one for https://www.yourdomain.com
@@ -252,6 +243,24 @@ dkim_default:
 ###############################################################################
 # DMARC keys default parameters
 dmarc_default:
+  domain:
+    # none, quarantine or reject
+    policy: quarantine
+  subdomain:
+    # none, quarantine or reject
+    policy: quarantine
+  rua:
+    email: 'postmaster@{{ network.domain }}'
+    max_size: 10M
+  ruf:
+    email: 'postmaster@{{ network.domain }}'
+    max_size: 10M
+  reporting:
+    format: afrf    # or iodef
+    interval: 86400
+    percent: 100
+  dkim_align: strict
+  spf_align: relaxed
   milter:
     port: 32000
 
@@ -291,3 +300,52 @@ ejabberd_default:
     normal: 1000
     fast: 50000
     proxyrate: 10240 # file transfer proxy
+
+###############################################################################
+# Gandi automatic DNS update
+# Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
+# update: Automatic update of your DNS server
+# test: test mode: does not activate the DNS zone straight
+# add_wildcard:  Create a wildcard entry to redirect all traffic to your box
+dns_default:
+  update: true
+  test: true
+  add_wildcard: true
+  gandi:
+    handle: JD123-GANDI
+    key: zaNGbUVIvi1KbYb6PPMdiQLh
+
+###############################################################################
+# Bind server defaults
+bind_default:
+  # Bind is actually in testing phase, feedback welcome
+  install: false
+  # Default servers to forward queries
+  forward:
+    - 8.8.8.8
+    - 8.8.4.4
+    - 1.1.1.1
+  # Actually, reverse IP address creation only works for IPv4
+  # If you are using IPv6, create the reverse IP block here
+  reverse_ip: auto
+  # Timing configuration (see https://www.ripe.net/publications/docs/ripe-203)
+  refresh: 86400          # 24 hours
+  retry: 7200             # 2 hours
+  expire: 3600000         # 10000 hours
+  neg_cache_ttl: 172800   # 2 days
+  ttl: 3600               # 1 hour
+  # General configuration
+  mx_priority: 10
+  # List of trusted servers to accept cache / recursive queries
+  trusted:
+    - src: 192.168.0.0/16
+      comment: LAN
+    - src: localhost
+    - src: localnets
+      comment: Local networks
+  #  - src: 72.13.58.64
+  #    comment: https://dnssec-analyzer.verisignlabs.com
+  # DNSSEC options
+  dnssec:
+    active: false
+    algo: RSASHA256

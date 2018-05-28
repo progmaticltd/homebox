@@ -8,6 +8,26 @@
 
 ################################################################################
 # Merge user options with default options
+- name: Combine default and user defined network settings
+  when: network is defined
+  tags: defaults
+  set_fact:
+    network: '{{ network_default | combine(network, recursive=True) }}'
+
+- name: Use default network settings
+  when: network is not defined
+  tags: defaults
+  set_fact:
+    network: '{{ network_default }}'
+
+- name: Display merged network settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: network
+
+################################################################################
+# Merge user options with default options
 - name: Combine default and user defined mail settings
   when: mail is defined
   tags: defaults
@@ -288,3 +308,23 @@
   tags: defaults
   debug:
     var: ejabberd
+
+################################################################################
+# Merge defaults bind settings
+- name: Combine default and user defined bind settings
+  when: bind is defined
+  tags: defaults
+  set_fact:
+    bind: '{{ bind_default | combine(bind, recursive=True) }}'
+
+- name: Use default bind settings
+  when: bind is not defined
+  tags: defaults
+  set_fact:
+    bind: '{{ bind_default }}'
+
+- name: Display merged bind settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: bind

@@ -1,3 +1,5 @@
+---
+
 # Create the accounts
 # If you set the optino -e clean_users=true then
 # the script will drop the users from the database first

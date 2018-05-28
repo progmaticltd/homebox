@@ -1,0 +1,1 @@
+_dmarc.{{ network.domain }}. 3600 IN TXT "v=DMARC1; p={{ dmarc.domain.policy }}; sp={{ dmarc.domain.policy }}; adkim={{ dmarc.dkim_align[0] }}; rua=mailto:{{ dmarc.rua.email }}!{{ dmarc.rua.max_size }}; ruf=mailto:{{ dmarc.ruf.email }}!{{ dmarc.ruf.max_size }}; rf={{ dmarc.reporting.format }}; pct={{ dmarc.reporting.percent }}; ri={{ dmarc.reporting.interval }}"

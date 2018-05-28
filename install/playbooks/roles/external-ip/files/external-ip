@@ -1,0 +1,109 @@
+#!/bin/dash
+
+OPTIONS=uvmh
+LONGOPTIONS=urls-file,verbose,min-confidence,help
+
+usage() {
+    echo "Usage: $0 -[v|u|h|m]"
+    echo "\t-u|--urls-file: A file that contains a list of URLs to call to get the IP address."
+    echo "\t-v|--verbose: Verbose execution, display the IP addresses detected for each url."
+    echo "\t-m|--min-confidence: Minimum percentage before considering the IP address as valid, default is 100%."
+    echo "\t-h|--help: This help page."
+}
+
+# Default options
+minConfidence=100
+verbose=0
+urlsFile=''
+
+# Error codes
+ARGUMENT_ERROR=4
+MIN_CONFIDENCE_ERROR=5
+
+PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
+
+# read getopt’s output this way to handle the quoting right:
+# eval set -- "$PARSED"
+
+# now enjoy the options in order and nicely split until we see --
+while true; do
+    case "$1" in
+        -v|--verbose)
+            verbose=1
+            shift
+            ;;
+        -u|--urls-file)
+            urlsFile="$2"
+            shift 2
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+	-m|--min-confidence)
+	    minConfidence=$2
+	    shift 2
+	    ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+if [ "$urlsFile" = "" ]; then
+    echo "Missing list of URLs file path"
+    usage
+    exit $ARGUMENT_ERROR
+fi
+
+# Read the list of external IP addressses
+SERVICES=$(cat $urlsFile | grep -v '^#' | tr '\n' ' ')
+
+# Default options for wget
+WGET_OPTIONS="-q -O - --timeout=1"
+WGET_OPTIONS="$WGET_OPTIONS --dns-timeout=1"
+WGET_OPTIONS="$WGET_OPTIONS --connect-timeout=1"
+WGET_OPTIONS="$WGET_OPTIONS --read-timeout=1"
+WGET_OPTIONS="$WGET_OPTIONS --no-proxy"
+
+# Test if dnsutils is installed
+DETECTED=""
+COUNT=0
+
+# Call all services to get the IP address
+for url in $SERVICES; do
+
+    IP="$(wget $WGET_OPTIONS $url 2>/dev/null | tr -d '[:space:]')"
+    COUNT=$(($COUNT + 1))
+
+    if [ "$verbose" = "1" ]; then
+	echo "$url\t$IP"
+    fi
+
+    # Concatenate to the list of detected IP addresses
+    if [ "$DETECTED" = "" ]; then
+        DETECTED="$IP"
+    else
+        DETECTED="$DETECTED;$IP"
+    fi
+
+done
+
+# Count the number of occurences of each IP addresses
+SUMMARY=$(echo $DETECTED | tr ';' '\n' | sort | uniq -c | sed -E 's/^(\t|\s)+//g' | sort -n | tail -n 1)
+DETECTED_COUNT=$(echo $SUMMARY | tail -n 1 | cut -d ' ' -f 1)
+confidence=$((100 * $COUNT / $DETECTED_COUNT))
+
+if [ "$confidence" -lt "$minConfidence" ]; then
+   echo "Confidence required not fulfilled (${confidence} < ${minConfidence}%)"
+   exit $MIN_CONFIDENCE_ERROR
+fi
+
+EXTERNAL_IP=$(echo $SUMMARY | tail -n 1 | cut -d ' ' -f 2)
+
+if [ "$verbose" = "1" ]; then
+    echo "Confidence: ${confidence}%"
+    echo "IP Address: $EXTERNAL_IP"
+else
+    echo "$EXTERNAL_IP"
+fi

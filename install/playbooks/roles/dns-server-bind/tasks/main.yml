@@ -1,0 +1,207 @@
+---
+
+- name: Install a DNS server
+  apt:
+    name: bind9
+    state: present
+
+- name: Build the reverse IP address (works only for IPv4)
+  when: bind.reverse_ip == "auto"
+  tags: facts
+  set_fact:
+    ip_regex: '([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)'
+
+- name: Build the reverse IP address (works only for IPv4)
+  when: bind.reverse_ip == "auto"
+  tags: facts
+  set_fact:
+    reverse_ip: '{{ external_ip | regex_replace(ip_regex, "\4.\3.\2") }}'
+
+- name: Build the reverse IP address
+  when: bind.reverse_ip != "auto"
+  tags: facts
+  set_fact:
+    reverse_ip: bind.reverse_ip
+
+- name: Copy the configuration template
+  tags: config
+  vars:
+    serial: "{{ lookup('pipe', 'date +%s') }}"
+    # serial: "{{ lookup('pipe', 'date +%Y%m%d%M') }}"
+  template:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+  with_items:
+    - src: forward-head
+      dest: '/etc/homebox/dns-entries.d/00-head.bind'
+    - src: named.conf.options
+      dest: '/etc/bind/named.conf.options'
+    - src: named.conf.local
+      dest: '/etc/bind/named.conf.local'
+    - src: reverse-domain
+      dest: '/etc/bind/reverse.{{ network.domain }}'
+  loop_control:
+    loop_var: file
+
+- name: Build the final bind configuration
+  tags: config
+  assemble:
+    src: '/etc/homebox/dns-entries.d/'
+    dest: '/etc/bind/forward.{{ network.domain }}'
+    delimiter: '\n'
+    regexp: '^.*\.bind$'
+
+- name: Create the folder for the keys
+  when: bind.dnssec.active
+  register: keys_dir
+  tags: encryption
+  file:
+    path: '{{ path }}'
+    state: directory
+    mode: '0755'
+    owner: root
+    group: bind
+  with_items:
+    - /etc/bind/keys
+    - /etc/bind/keys/live
+  loop_control:
+    loop_var: path
+
+- name: Create the loging directory
+  file:
+    path: /var/log/named/
+    state: directory
+    mode: '0755'
+    owner: bind
+    group: bind
+
+- name: If the DNSSEC keys have been generated before, copy them on the remote server
+  when: bind.dnssec.active
+  tags: backup-push
+  synchronize:
+    src: '{{ playbook_dir }}/../../backup/dnssec-keys/'
+    dest: '/etc/bind/keys/'
+    mode: push
+    owner: no
+    group: no
+    perms: yes
+    rsync_opts:
+      - '--no-motd'
+      - '--checksum'
+      - '--ignore-existing'
+      - '--update'
+
+- name: Make sure the ZSK file is linked in the live directory
+  when: bind.dnssec.active
+  shell: >-
+    ls /etc/bind/keys/*key
+    && ( grep -l "zone-signing key" /etc/bind/keys/*key
+    | xargs -I {} ln -nsf {} live/zsk.key )
+    || /bin/true
+  args:
+    chdir: /etc/bind/keys
+    creates: /etc/bind/keys/live/zsk.key
+
+- name: Generate the zone signing key (ZSK)
+  when: bind.dnssec.active
+  shell: >-
+    ( test -f /etc/bind/keys/*key && grep "zone-signing key" /etc/bind/keys/*key )
+    || dnssec-keygen -q -a {{ bind.dnssec.algo }} -b 1024 {{ network.domain }}
+    | xargs -I {} ln -s /etc/bind/keys/{}.key live/zsk.key
+  args:
+    chdir: /etc/bind/keys
+    creates: /etc/bind/keys/live/zsk.key
+
+- name: Make sure the KSK file is linked in the live directory
+  when: bind.dnssec.active
+  shell: >-
+    ls /etc/bind/keys/*key
+    && ( grep -l "key-signing key" /etc/bind/keys/*key
+    | xargs -I {} ln -nsf {} live/ksk.key )
+    || /bin/true
+  args:
+    chdir: /etc/bind/keys
+    creates: /etc/bind/keys/live/ksk.key
+
+- name: Generate the key signing key (KSK)
+  when: bind.dnssec.active
+  tags: encryption
+  shell: >-
+    ( test -f /etc/bind/keys/*key && grep "key-signing key" /etc/bind/keys/*key )
+    || dnssec-keygen -q -a {{ bind.dnssec.algo }} -f KSK -b 2048 {{ network.domain }}
+    | xargs -I {} ln -s /etc/bind/keys/{}.key live/ksk.key
+  args:
+    chdir: /etc/bind/keys
+    creates: /etc/bind/keys/live/ksk.key
+
+- name: Set the permissions on the key and private key files
+  when: bind.dnssec.active
+  shell: >-
+    chgrp bind /etc/bind/keys/*
+    && chmod g+r /etc/bind/keys/*
+  args:
+    warn: false
+
+- name: Create a key authority for local testing
+  when: bind.dnssec.active
+  shell: >-
+    cat /etc/bind/keys/live/ksk.key
+    | sed '/^;/d'
+    | sed 's/IN DNSKEY 257 3 8 /257 3 8 "/'
+    | sed 's/^/trusted-keys { /'
+    | sed 's/$/"; };/'
+    > /etc/bind/keys/live/authority.key
+  args:
+    creates: /etc/bind/keys/live/authority.key
+
+- name: Allow queries to the DNS server
+  ufw:
+    from_ip: any
+    to_ip: any
+    proto: udp
+    to_port: 53
+    comment: 'Allow DNS queries'
+    rule: allow
+
+- name: Allow DNS zones transfer
+  ufw:
+    from_ip: any
+    to_ip: any
+    proto: tcp
+    to_port: 53
+    comment: 'Allow DNS zone transfers'
+    rule: allow
+
+- name: Copy DNS entries in /var/cache/bin
+  copy:
+    src: '/etc/bind/{{ file }}'
+    dest: '/var/cache/bind/{{ file }}'
+    owner: bind
+    group: bind
+    remote_src: true
+  with_items:
+    - 'forward.{{ network.domain }}'
+    - 'reverse.{{ network.domain }}'
+  loop_control:
+    loop_var: file
+
+- name: Restart bind
+  service:
+    name: bind9
+    state: restarted
+
+- name: Backup the keys on your local machine
+  when: bind.dnssec.active
+  tags: backup-pull
+  synchronize:
+    mode: pull
+    src: '/etc/bind/keys/{{ item }}'
+    dest: '{{ playbook_dir }}/../../backup/dnssec-keys/'
+    perms: yes
+    rsync_opts:
+      - '--no-motd'
+      - '--exclude=readme.md'
+      - '--update'
+  with_items:
+    - '*.key'
+    - '*.private'

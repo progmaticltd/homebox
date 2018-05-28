@@ -2,3 +2,4 @@
 
 dependencies:
   - { role: load-defaults }
+  - { role: external-ip }

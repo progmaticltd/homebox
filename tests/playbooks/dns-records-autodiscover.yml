@@ -1,0 +1,14 @@
+---
+
+# Check if there is an autodiscover record
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+    - '{{ playbook_dir }}/../../config/system.yml'
+  vars:
+    records:
+      type: CNAME
+      list:
+        - autodiscover
+  roles:
+    - dns-records

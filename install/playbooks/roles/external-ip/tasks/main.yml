@@ -1,0 +1,36 @@
+---
+
+################################################################################
+# Get the external IP address, from configuration file,
+# or automatically through a script
+
+- name: Copy the configuration file
+  tags: scripts
+  copy:
+    src: external-ip.conf
+    dest: /etc/external-ip.conf
+
+- name: Copy the external IP address detection script
+  tags: scripts
+  copy:
+    src: external-ip
+    dest: /usr/local/bin/external-ip
+    mode: 0755
+
+- name: Run the script to get the external IP address automatically
+  tags: facts
+  when: network.external_ip == "auto"
+  register: external_ip_facts
+  shell: /usr/local/bin/external-ip -u /etc/external-ip.conf
+
+- name: Get the external IP address automatically
+  tags: facts
+  when: network.external_ip == "auto"
+  set_fact:
+    external_ip: '{{ external_ip_facts.stdout }}'
+
+- name: Get the external IP address automatically
+  tags: facts
+  when: network.external_ip != "auto"
+  set_fact:
+    external_ip: '{{ network.external_ip }}'

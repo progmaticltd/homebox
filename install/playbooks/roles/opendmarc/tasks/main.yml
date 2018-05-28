@@ -33,4 +33,9 @@
     path: /etc/opendmarc.conf
     line: 'Socket inet:{{ dmarc.milter.port }}@localhost'
 
-
+- name: Generate DMARC record from settings
+  tags: bind
+  when: bind.install
+  template:
+    src: 20-dmarc.bind
+    dest: /etc/homebox/dns-entries.d//20-dmarc.bind

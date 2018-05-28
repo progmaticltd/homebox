@@ -22,7 +22,12 @@
     group: root
     mode: 0644
 
-- name: Enable nginx sit
+- name: Ensure autodiscover resolves to localhost for the reverse proxy
+  lineinfile:
+    path: /etc/hosts
+    line: '127.0.0.1    autodiscover.{{ network.domain }}'
+
+- name: Enable nginx site
   file:
     src: /etc/nginx/sites-available/autodiscover.conf
     dest: /etc/nginx/sites-enabled/autodiscover.conf
@@ -52,3 +57,10 @@
   command: 'aa-enforce usr.sbin.nginx'
   notify: Restart AppArmor service
 
+# Create entries for the DNS server ===========================================
+- name: Generate DNS records for bind
+  tags: bind
+  when: bind.install
+  template:
+    src: 70-autodiscover.bind
+    dest: /etc/homebox/dns-entries.d/70-autodiscover.bind

@@ -11,7 +11,7 @@
     - opendkim-tools
   loop_control:
     loop_var: pkg
-    
+
 - name: Create directory to install the keys
   tags: dkim
   notify: Restart opendkim
@@ -118,3 +118,10 @@
   loop_control:
     loop_var: file
 
+- name: Link the DKIM key file in the fordward directory
+  tags: bind
+  when: bind.install
+  file:
+    src: '/etc/opendkim/keys/{{ dkim.selector }}.txt'
+    dest: '/etc/homebox/dns-entries.d//10-dkim.bind'
+    state: link

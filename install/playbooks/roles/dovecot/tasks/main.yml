@@ -409,3 +409,11 @@
     - sieve
   loop_control:
     loop_var: section
+
+# Create entries for the DNS server ===========================================
+- name: Generate DNS records for bind
+  tags: bind
+  when: bind.install
+  template:
+    src: 40-dovecot.bind
+    dest: /etc/homebox/dns-entries.d//40-dovecot.bind
