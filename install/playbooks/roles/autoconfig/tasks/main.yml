@@ -25,6 +25,11 @@
     group: root
     mode: 0644
 
+- name: Ensure autoconfig resolves to localhost
+  lineinfile:
+    path: /etc/hosts
+    line: '127.0.0.1    autoconfig.{{ network.domain }}'
+
 - name: Enable nginx site
   tags: autoconfig
   file:
@@ -56,3 +61,10 @@
   command: 'aa-enforce usr.sbin.nginx'
   notify: Restart AppArmor service
 
+# Create entries for the DNS server ===========================================
+- name: Generate DNS records for bind
+  tags: bind
+  when: bind.install
+  template:
+    src: 60-autoconfig.bind
+    dest: /etc/homebox/dns-entries.d/60-autoconfig.bind
