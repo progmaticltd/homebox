@@ -7,7 +7,7 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - sudo apt -y install ansible
+  - pip install ansible==2.5.2
 
 script:
   - ansible-playbook --syntax-check -i config/hosts-example.yml install/playbooks/main.yml
