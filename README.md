@@ -1,4 +1,6 @@
+
 ![Documentation status](https://readthedocs.org/projects/homebox/badge/?version=latest)
+[![Build Status](https://travis-ci.org/progmaticltd/homebox.svg?branch=master)](https://travis-ci.org/progmaticltd/homebox)
 
 Official documentation and user's guide: http://homebox.readthedocs.io/en/latest/
 
@@ -36,6 +38,7 @@ For a complete list of features, see the
 | Dovecot full text search in emails, attachments and attached archives.                                              | Done        | Automatic |
 | Jabber server, using [ejabberd](https://www.ejabberd.im/) with LDAP authentication and file transfer                | Done        |  Manual   |
 | Embedded DNS server with DNSSEC and SSHFP records support                                                           | Done        | Automatic |
+
 
 ### Prerequisites
 
