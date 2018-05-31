@@ -1,4 +1,4 @@
 ---
 
 dependencies:
-  - { role: ../install/playbooks/roles/load-defaults }
+  - { role: '{{ playbook_dir }}/../../install/playbooks/roles/load-defaults' }

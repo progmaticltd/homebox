@@ -1,0 +1,9 @@
+---
+
+language: python
+python: "2.7"
+script:
+  - ansible-playbook --syntax-check -i config/hosts-example.yml install/playbooks/main.yml
+  - ansible-playbook --syntax-check -i config/hosts-example.yml tests/playbooks/main.yml
+  - ansible-playbook --syntax-check -i config/hosts-example.yml tests/playbooks/dev-support.yml
+  - ansible-playbook --syntax-check -i config/hosts-example.yml tests/playbooks/dev-cleanup.yml
