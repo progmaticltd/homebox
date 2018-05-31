@@ -2,6 +2,13 @@
 
 language: python
 python: "2.7"
+
+before_install:
+  - sudo apt-get update -qq
+
+install:
+  - sudo apt -y install ansible
+
 script:
   - ansible-playbook --syntax-check -i config/hosts-example.yml install/playbooks/main.yml
   - ansible-playbook --syntax-check -i config/hosts-example.yml tests/playbooks/main.yml
