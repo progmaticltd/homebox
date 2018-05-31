@@ -10,6 +10,7 @@ install:
   - pip install ansible==2.5.2
 
 script:
+  - cp config/system-example.yml  config/system.yml
   - ansible-playbook --syntax-check -i config/hosts-example.yml install/playbooks/main.yml
   - ansible-playbook --syntax-check -i config/hosts-example.yml tests/playbooks/main.yml
   - ansible-playbook --syntax-check -i config/hosts-example.yml tests/playbooks/dev-support.yml
