@@ -79,7 +79,7 @@
   when: bind.dnssec.active
   tags: backup-push
   synchronize:
-    src: '{{ playbook_dir }}/../../backup/dnssec-keys/'
+    src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/dnssec-keys/'
     dest: '/etc/bind/keys/'
     mode: push
     owner: no
@@ -196,7 +196,7 @@
   synchronize:
     mode: pull
     src: '/etc/bind/keys/{{ item }}'
-    dest: '{{ playbook_dir }}/../../backup/dnssec-keys/'
+    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/dnssec-keys/'
     perms: yes
     rsync_opts:
       - '--no-motd'

@@ -5,7 +5,7 @@
   register: backup_ssh_dir
   delegate_to: localhost
   file:
-    path: '{{ playbook_dir }}/../../backup/ssh-keys/{{ key.user }}/'
+    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/ssh-keys/{{ key.user }}/'
     state: directory
 
 
@@ -15,7 +15,7 @@
   register: key_upload
   when: not backup_ssh_dir.changed
   synchronize:
-    src: '{{ playbook_dir }}/../../backup/ssh-keys/{{ key.user }}/'
+    src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/ssh-keys/{{ key.user }}/'
     dest: '{{ key.path }}'
     owner: no
     group: no
@@ -48,7 +48,7 @@
   synchronize:
     mode: pull
     src: '{{ key.path }}'
-    dest: '{{ playbook_dir }}/../../backup/ssh-keys/{{ key.user }}/'
+    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/ssh-keys/{{ key.user }}/'
     perms: yes
     rsync_opts:
       - '--include={{ key.name }}.rsa*'

@@ -4,7 +4,7 @@
   tags: cert
   delegate_to: localhost
   file:
-    path: '{{ playbook_dir }}/../../backup/certificates/'
+    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/certificates/'
     state: directory
 
 # The "--ignore-existing" option skip the files already existing,
@@ -13,7 +13,7 @@
 - name: If the certificates have been generated before, copy them on the remote server
   tags: cert,sync
   synchronize:
-    src: '{{ playbook_dir }}/../../backup/certificates/'
+    src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/certificates/'
     dest: /etc
     owner: no
     group: no
@@ -106,7 +106,7 @@
   synchronize:
     mode: pull
     src: /etc/letsencrypt
-    dest: '{{ playbook_dir }}/../../backup/certificates/'
+    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/certificates/'
     perms: yes
     rsync_opts:
       - '--no-motd'

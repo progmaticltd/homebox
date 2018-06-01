@@ -3,7 +3,7 @@
 - name: Create a directory for ldap passwords backup if it does not exists
   delegate_to: localhost
   file:
-    path: '{{ playbook_dir }}/../../backup/ldap/'
+    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/'
     state: directory
 
 - name: Display LDAP tree settings

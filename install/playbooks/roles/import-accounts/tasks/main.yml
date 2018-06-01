@@ -12,7 +12,7 @@
 # Get the import master account password
 - name: Initialise the import user password parameters
   set_fact:
-    import_password_params: "{{ playbook_dir }}/../../backup/ldap/import.pwd {{ policies.system.password }}"
+    import_password_params: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/import.pwd {{ policies.system.password }}"
 
 - name: Create the import master user account password
   set_fact:

@@ -4,7 +4,7 @@
   tags: rspamd
   delegate_to: localhost
   file:
-    path: '{{ playbook_dir }}/../../backup/rspamd/'
+    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/rspamd/'
     state: directory
 
 - name: Add rspamd GPG key
@@ -34,7 +34,7 @@
 - name: Set facts for rspamd password generation
   tags: rspamd
   set_fact:
-    password_path: "{{ playbook_dir }}/../../backup/rspamd/admin.pwd"
+    password_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/rspamd/admin.pwd"
     password_params: "length=16 chars=ascii_letters,digits"
 
 - name: Generate a random password for rspamd

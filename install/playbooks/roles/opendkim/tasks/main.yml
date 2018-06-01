@@ -26,13 +26,13 @@
   tags: dkim
   delegate_to: localhost
   file:
-    path: '{{ playbook_dir }}/../../backup/dkim-keys/'
+    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/dkim-keys/'
     state: directory
 
 - name: If the DKIM have been generated before, copy them on the remote server
   tags: dkim
   synchronize:
-    src: '{{ playbook_dir }}/../../backup/dkim-keys/'
+    src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/dkim-keys/'
     dest: '/etc/opendkim/keys/'
     mode: push
     owner: no
@@ -80,7 +80,7 @@
   synchronize:
     mode: pull
     src: '/etc/opendkim/keys/{{ item }}'
-    dest: '{{ playbook_dir }}/../../backup/dkim-keys/'
+    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/dkim-keys/'
     perms: yes
     rsync_opts:
       - '--no-motd'

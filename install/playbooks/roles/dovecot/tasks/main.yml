@@ -168,7 +168,7 @@
   when: mail.impersonate.active
   tags: impersonate
   set_fact:
-    master_password_params: "{{ playbook_dir }}/../../backup/ldap/master.pwd {{ policies.system.password }}"
+    master_password_params: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/master.pwd {{ policies.system.password }}"
 
 - name: Create the master user account password
   when: mail.impersonate.active
@@ -196,7 +196,7 @@
   when: mail.import.active
   tags: impersonate
   set_fact:
-    import_password_params: "{{ playbook_dir }}/../../backup/ldap/import.pwd {{ policies.system.password }}"
+    import_password_params: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/import.pwd {{ policies.system.password }}"
 
 - name: Create the import user account password
   when: mail.import.active
