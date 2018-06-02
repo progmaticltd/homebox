@@ -259,6 +259,9 @@ dmarc_default:
     format: afrf    # or iodef
     interval: 86400
     percent: 100
+    # The following parameters are for reports sending
+    sending: true
+    organisation: 'rspamd / homebox'
   dkim_align: strict
   spf_align: relaxed
   milter:

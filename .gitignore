@@ -1,21 +1,19 @@
-# Host file is per user
-hosts
-
-# Ignore the local configuration files
-config/system.yml
-config/hosts.yml
+# Ignore everything on the config folder, except sample and default files
+config/*
+!config/defaults.yml
+!config/*-example.yml
 
 # Ignore ansible error files
 *.retry
 
-# Ignore editors files
+# Ignore markdown preview files
 README.html
 .markdown-preview.html
 
-# Sandbox folder to tests
+# Sandbox folder for user tests
 sandbox/*
 !sandbox/readme.md
 
-# Backup folder:
+# Backup folder for deployment files
 backup/*
 !backup/readme.md

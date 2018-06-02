@@ -2,81 +2,71 @@
 ![Documentation status](https://readthedocs.org/projects/homebox/badge/?version=latest)
 [![Build Status](https://travis-ci.org/progmaticltd/homebox.svg?branch=master)](https://travis-ci.org/progmaticltd/homebox)
 
-Official documentation and user's guide: http://homebox.readthedocs.io/en/latest/
 
 A set of Ansible scripts to setup a secure email and personal files server. This project is for you if:
 
 - You are interested to host your emails yourself, for privacy, security or any other reason.
 - You want your server to be secure against both physical and remote intrusion.
 - You want a low maintenance box that keep itself updated automatically.
-- You trust the Debian community to push security updates.
+- You trust the Debian community to publish security updates.
+
+[Official documentation and user's guide](http://homebox.readthedocs.io/en/latest/)
 
 ## Current status and supported features
 
 For a complete list of features, see the
-[official documentation](http://homebox.readthedocs.io/en/latest/features/).
+[features page](http://homebox.readthedocs.io/en/latest/features/)
+in the official documentation.
 
+### System installation and features
 
-| Current feature, implemented and planned                                                                            | Status      |  Tested   |
-| ------------------------------------------------------------------------------------------------------------------- | :---------: | :-------: |
-| LDAP users database, SSL & TLS certificates, password policies, integration with the system and PAM.                | Done        | Automatic |
-| SSL Certificates generation with [letsencrypt](https://letsencrypt.org), automatic local backup and publication.    | Done        | Automatic |
-| DKIM keys generation and automatic local backup and publication on Gandi                                            | Done        | Automatic |
-| SPF records generation and publication on Gandi                                                                     | Done        | Automatic |
-| DMARC record generation and publication on Gandi, *the reports generation is planned for a future version*          | Done        | Automatic |
-| Generation and publication of automatic Thunderbird (autoconfig) and Outlook (autodiscover) configuration           | Done        | Automatic |
-| Postfix configuration and installation, with LDAP lookups, and protocols STARTTLS/Submission/SMTPS                  | Done        | Automatic |
-| Automatic copy of sent emails into the sent folderm ala GMail                                                       | Done        | Automatic |
-| Powerful and light antispam system with [rspamd](https://rspamd.com/)                                               | Done        |  Manual   |
-| Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, Spam and ham autolearn, Sieve auto answers, impersonate   | Done        |  Basic    |
-| Roundcube webmail, https, sieve filters management, password change, automatic identity creation                    | Done        |  Basic    |
-| AppArmor securisation for rspamd, nginx, dovecot, postfix, clamav                                                   | Done        |  Manual   |
-| ISO image builder, for automatic Debian installation and a fully encrypted with LUKS ([preseed](docs/preseed.md))   | Done        |  Manual   |
-| Antivirus for inbound / outbound emails with [clamav](https://www.clamav.net/) without blocking the SMTP session.   | Done        | Automatic |
-| Add your GMail, Yahoo, Outlook.com or standard IMAP accounts.  See [external accounts](docs/external-accounts.md)   | Done        |  Manual   |
-| Multiple encrypted incremental backups, with email reporting. See [backup documentation](docs/backup.md) for details| Done        |  Manual   |
-| Dovecot full text search in emails, attachments and attached archives.                                              | Done        | Automatic |
-| Jabber server, using [ejabberd](https://www.ejabberd.im/) with LDAP authentication and file transfer                | Done        |  Manual   |
-| Embedded DNS server with DNSSEC and SSHFP records support                                                           | Done        | Automatic |
+- Custom Debian installer generation with full disk encryption and fully automatic installation.
+- Install packages only from Debian stable (Stretch) or officially maintained repositories (rspamd).
+- Automatic SSL Certificates generation with [letsencrypt](https://letsencrypt.org).
+- Automatic security updates (optional).
+- Single Sign On with an LDAP users database, SSL certificate, password policies, PAM
+  integration.
+- AppArmor activated by default, profiles for all daemons.
+- Automatic backup of the deployment data to replay the installation with the same data.
+- Can be used at home, on a dedicated or virtual server hosted online.
 
+### Emails
 
-### Prerequisites
+- Postfix configuration and installation, with LDAP lookups, internationalised email aliases,
+  fully SSL compliant.
+- Generate DKIM keys, SPF and DMARC DNS records.
+- Automatic copy of sent emails into the sent folder.
+- Automatic creation of the postmaster account and special email addresses using
+  [RFC 2142](https://tools.ietf.org/html/rfc2142) specifications.
+- Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, simple spam and ham learning
+  by moving emails in and out the Junk folder, sieve and vacation scripts.
+- Email addresses with recipient delimiter included.
+- Optional master user creation, e.g. for families with children or moderated communities.
+- Server side full text search inside emails, attached documents and files and
+  compressed archives, with better results than GMail.
+- Optional Roundcube webmail with sieve filters management, password change form, automatic identity
+  creation, master account access, etc.
+- Automatic import emails from Google Mail, Yahoo, Outlook.com or any other standard IMAP account.
+- Powerful and light antispam system with [rspamd](https://rspamd.com/) and optional access to the web interface.
+- Antivirus for inbound _and_ outbound emails with [clamav](https://www.clamav.net/) and email alerts.
+- Automatic configuration for Thunderbird and Outlook using published XML and other clients with
+  special DNS records ([RFC 6186](https://tools.ietf.org/html/rfc6186)).
 
-- A workstation to run the Ansible scripts.
-- If you want to host the server at home, a static IP address from your ISP.
-- A server plugged on your router or a virtual machine for testing.
+### Other optional features
 
-#### Note on AppArmor
+- Incremental backups, encrypted, on multiple destination (SFTP, Samba share or USB drive), with email reporting.
+  See [backup documentation](docs/backup.md) for details.
+- Jabber server, using [ejabberd](https://www.ejabberd.im/), with LDAP authentication,
+  direct or offline file transfer and optional server to server communication.
+- Embedded DNS server with DNSSEC and SSHFP (SSH fingerprint) records support
+- Automatic publication of DNS entries to Gandi DNS.
+- External IP address detection.
+- Static web site skeleton configuration, with https certificates.
 
-AppArmor is activated by default, unless you disable it in the
-configuration file.  The script will reboot the server to activate
-AppArmor if it is not active.  If you have installed the system using
-the _preseed_ installer, your server has already activated AppArmor on
-boot.
+### Development
 
-## Future versions
-
-I am planning to test / try / add the following features, in *almost*
-no particular order:
-
-- Install [Sogo](https://sogo.nu/) for caldav / carddav server, with
-  of course LDAP authentication.
-- Add optional components (e.g. [Gogs](https://gogs.io/),
-  [openvpn](https://openvpn.net/),
-  [Syncthing](https://syncthing.net/), etc).
-- Use Lexicon for DNS updates: https://github.com/AnalogJ/lexicon.
-- Images for Raspberry / Banana Pi
-
-## Other projects to mention
-
-There are other similar projects on internet and especially github you could check, for instance:
-
-- [Sovereign](https://github.com/sovereign/sovereign): A different
-  target, but a similar deployment approach using Ansible.
-- [yunohost](https://yunohost.org/): Contains a lot of plugins and
-  features, not all of them are stable, but it is worth testing.
-- [mailinabox](https://mailinabox.email/), more oriented to online
-  hosting, but very good as well.
-- [and many...](https://github.com/Kickball/awesome-selfhosted)
-
-All have plenty of modern features that may suits you as well.
+- YAML files validation on each commit, using [travis-ci](https://travis-ci.org/progmaticltd/homebox).
+- End to end integration tests for the majority of components.
+- Playbooks to facilitate the installation or removal of development packages.
+- Global debug flag to activate the debug mode of all components.
+- Fully open source Ansible scripts licensed under GPLv3.
