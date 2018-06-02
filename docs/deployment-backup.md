@@ -2,7 +2,12 @@ The files in these folders are excluded from the git repository. When deploying 
 first time, they will contain some important files, to avoid being regenerated every time
 you are running the Ansible scripts.
 
-This is useful, both for archiving purposes and during the development phase.
+This is useful, both for archiving purposes and during the development phase. It will also
+alows you to restore your server, with all the data, user accounts, certificates,
+passwords, encryption keys. etc. very easily.
+
+A sub-folder named after your domain is created in this "backup" folder. So you can use
+the same repository to work on multiple domains.
 
 ## Certificates
 
@@ -20,7 +25,7 @@ For instance, this is the certificates generated, for the domain "homebox.space"
 - <span>www</span>.homebox.space and homebox.space
   (When activating the option simple web site)
 
-## DKIM Keys: 'dkim-keys'
+## DKIM Keys
 
 This folder contains the DKIM keys generated on the server. The installation script will
 compare these DKIM public key with the one recorded in your DNS, and will update it only
@@ -39,8 +44,14 @@ LDAP directory
 - postmaster.pwd: Postmaster account, that receives, for instance, emails like
   postmaster@domain.com or webmaster@domain.com.
 
-## Password for the rspamd administration interface
+## Rspamd administration interface
 
 The Antispam comes with an excellent [web interface](https://www.rspamd.com/webui/) that
 provides basic functions for setting metric actions, scores, viewing statistic and
 learning.
+
+## SSH Keys
+
+This folder contains the ssh keys generated for the root user, when you are using backup
+via an SFTP folder. You can copy the public ssh key on the backup server, for a user named
+"backup". This is explained in more details in the [backup documentation](/backup/).

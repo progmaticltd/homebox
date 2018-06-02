@@ -38,4 +38,4 @@
   when: bind.install
   template:
     src: 20-dmarc.bind
-    dest: /etc/homebox/dns-entries.d//20-dmarc.bind
+    dest: /etc/homebox/dns-entries.d/20-dmarc.bind

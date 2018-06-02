@@ -6,7 +6,10 @@ You can generate an ISO image to install Debian on your server, using a simple c
 file in YAML format.
 
 This will make a quick re-installation disk for the system. It will configure for you full
-disk encryption and *AppArmor* support straight on the first boot.
+disk encryption and *AppArmor* support straight on the first boot. It is not made to
+install the software stack, that need to be deployed with Ansible, from a remote
+workstation. Although it might be possible to integrate the deployment scripts into the ISO
+image.
 
 ## Deployment information backup
 
@@ -64,7 +67,8 @@ to re-use the same passwords or use a password too similar than the previous one
 ## Automatic security update
 
 Once your system is installed, any security update will be installed in background,
-without you having to do anything. This is set using the Debian unattended upgrades
+without you having to do anything. This is set using the
+[Debian unattended upgrades](https://wiki.debian.org/UnattendedUpgrades)
 package.  If you prefer to install security updates yourself, you can disable this
 behaviour in your system.yml file.
 
@@ -109,6 +113,15 @@ use.
 
 You can also access your sieve filters with the _ManageSieve_ protocol, and the
 [Thunderbird extension](https://addons.mozilla.org/en-US/thunderbird/addon/sieve/).
+
+For instance, you can automaticaly:
+
+- move/copy messages to specified folder
+- redirect/copy messages to another account
+- discard messages with a specific error message
+- reply automatically, using vacation at specific dates
+- delete messages
+- sett flags (e.g. flag, mark as read, etc.)
 
 ## Full text search
 
@@ -371,11 +384,10 @@ server, and test the following:
 - Postfix configuration
 - IMAP access (dovecot
 - Autoconfig and Autodiscover
-
-You can even run the tests on a production server.
+- DNS records when the DNS server is installed
 
 ## Development support playbook
 
-A playbook will add support for development packages, necessary to debug and diagnostic
+A playbook add support for development packages, necessary to debug and diagnostic
 the system while you are developing it, like SMTP or DNS tools. Once the development is
 finished, another playbook remove these packages and cleanup the system.
