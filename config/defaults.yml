@@ -260,7 +260,8 @@ dmarc_default:
     interval: 86400
     percent: 100
     # The following parameters are for reports sending
-    sending: true
+    # Not activated yet until fully tested on a live system
+    sending: false
     organisation: 'rspamd / homebox'
   dkim_align: strict
   spf_align: relaxed

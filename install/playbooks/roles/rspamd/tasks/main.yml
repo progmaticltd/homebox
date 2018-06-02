@@ -52,7 +52,7 @@
   set_fact:
     rspamd_password: rspamd_password_fact.stdout
 
-- name: Create some configuration files
+- name: Create local configuration files
   tags: rspamd
   notify: Restart rspamd
   template:
@@ -70,9 +70,10 @@
     - url_tags.conf
     - phishing.conf
     - redis.conf
+    - logging.conf
   loop_control:
     loop_var: file
-    
+
 - name: Install rspamd AppArmor profile
   when: security.app_armor
   tags: rspamd, security, apparmor
@@ -80,9 +81,13 @@
   template:
     src: apparmor.d/usr.bin.rspamd
     dest: /etc/apparmor.d/usr.bin.rspamd
-    
+
 - name: Activate AppArmor profiles
   when: security.app_armor
   tags: rspamd, security, apparmor
   notify: Restart AppArmor service
   command: 'aa-enforce rspamd'
+
+- name: Include DMARC reporting if activated
+  when: dmarc.send_reports.active
+  include_tasks: roles/rspamd/tasks/dmarc-reporting.yml
