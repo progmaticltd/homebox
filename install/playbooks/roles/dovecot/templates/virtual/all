@@ -1,0 +1,4 @@
+# Return all emails
+*
+- Search/*
+  all younger {{ 86400 * mail.virtual_folders.all_limit }}

@@ -1,5 +1,10 @@
 ---
 
+- name: Network settings
+  tags: debug
+  debug:
+    var: network
+
 - name: Create a directory for ldap passwords backup if it does not exists
   delegate_to: localhost
   file:

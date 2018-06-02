@@ -3,6 +3,12 @@
   /home/users/*/mails/maildir/ r,
   /home/users/*/mails/maildir/** rwkl,
 
+{% if mail.virtual_folders.active %}
+  # Virtual mailboxes hierarchy
+  /home/users/*/mails/virtual/ r,
+  /home/users/*/mails/virtual/** rwkl,
+{% endif %}
+
   # Mail dir size access
   /home/users/*/mails/maildir/maildirsize rw,
   /home/users/*/mails/maildir/maildirsize ra,
@@ -26,5 +32,5 @@
   /home/users/*/mails/indexes/** rak,
   /home/users/*/mails/indexes/** rwkl,
 
-  # the imap daemon wants to read this folder
+  # The imap daemon wants to read this folder
   /home/users/*/ r,
