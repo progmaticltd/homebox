@@ -48,16 +48,16 @@ ldap:
       - 'root@{{ network.domain }}'
 
   # password params
-  roPasswdParams: "{{ playbook_dir }}/../../backup/ldap/readonly.pwd {{ policies.system.password }}"
-  managerPasswdParams: "{{ playbook_dir }}/../../backup/ldap/manager.pwd {{ policies.system.password }}"
-  adminPasswdParams: "{{ playbook_dir }}/../../backup/ldap/admin.pwd {{ policies.system.password }}"
-  postmasterPasswdParams: "{{ playbook_dir }}/../../backup/ldap/postmaster.pwd {{ policies.system.password }}"
+  roPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/readonly.pwd {{ policies.system.password }}"
+  managerPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/manager.pwd {{ policies.system.password }}"
+  adminPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/admin.pwd {{ policies.system.password }}"
+  postmasterPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/postmaster.pwd {{ policies.system.password }}"
 
 
 # Encryption parameters
 encryption:
-  systemKeyParams: "{{ playbook_dir }}/../../backup/encryption/system-key.pwd {{ policies.system.passphrase }}"
-  backupKeyParams: "{{ playbook_dir }}/../../backup/encryption/backup-key.pwd {{ policies.system.passphrase }}"
+  systemKeyParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/encryption/system-key.pwd {{ policies.system.passphrase }}"
+  backupKeyParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/encryption/backup-key.pwd {{ policies.system.passphrase }}"
 
 ###############################################################################
 # Email related default options
@@ -68,9 +68,9 @@ mail_default:
   quota:
     port: 30000             # port used by dovecot for the quota daemon
     default: 1G             # Maximum allowed mailbox size for your users.
-                            # The safe maximum value will be automatically computed in a next version.
-  discard_duplicates: false # Discard duplicates messages. It is safe, but has some side effects when you are
-                            # sending a message to a mailing list. This is now disabled by default.
+  discard_duplicates: false # Discard duplicates messages. It is safe, but has some side
+                            # effects when you are sending a message to a mailing list.
+                            # This is now disabled by default.
                             # The default timerange to search duplicated messages is one hour.
   #############################################################################
   antispam:                 # Check inbound and outbound emails for viruses
@@ -86,18 +86,23 @@ mail_default:
     port: 34000             # port to use for the antivirus daemon
     active: true            # or false
     action: drop            # Action to do when a virus is found in an email: bounce or drop
-                            # be careful, bouncing external emails is a way to expose clamav usage
-    send_warnings: false    # Send a warning email to - internal - users who are sending viruses
+                            # be careful, bouncing external emails is a way to expose clamav
+                            # usage
+    send_warnings: false    # Send a warning email to - internal - users who are sending
+                            # viruses
     quarantine: yes         # Place emails with a virus in quarantine, for further analysis
   #############################################################################
-  impersonate:              # Activate dovecot "master" user feature, ideal for families and communities
+  impersonate:              # Activate dovecot "master" user feature, ideal for families and
+                            # communities
     active: false           # https://wiki2.dovecot.org/Authentication/MasterUsers
     master: master          # master user name
-    separator: '*'          # Separation char between master user / real user name. I personally use '/'
+    separator: '*'          # Separation char between master user / real user name.
   #############################################################################
-  import:                   # If you have users with "import" email active scripts, set this flag to true
+  import:                   # If you have users with "import" email active scripts,
+                            # set this flag to true
     username: import        # The name of the user that import emails
-    active: false           # A master user, with reduced rights will be created, to append miported emails
+    active: false           # A master user, with reduced rights will be created, to append
+                            # imported emails
                             # in user's mailboxes.
   #############################################################################
   # Dovecot / solr FTS (Full Text search)
@@ -109,11 +114,22 @@ mail_default:
       - id: en
         name: English
   #############################################################################
-  advanced_features: false  # Use some advanced features that will need the latest version of dovecot
+  # Virtual folders
+  virtual_folders:          # Create virtual IMAP folders, like flagged,
+    active: false           # deleted, unread, conversations, etc.
+    all_limit: 3650         # The maximum number of days to include the the Search/All folder.
+                            # It is useful to put a limit here if you have a lot of messages
+                            # and limited hardware resources
+  #############################################################################
+  advanced_features: false  # Use some advanced features that will need the latest version
+                            # of dovecot
                             # from stretch-backports, like those below.
-                            # like sending emails to an international addresses (e.g. andré@homebox.space)
-  recipient_delimiter: '+'  # The characters you want to use to split email address from mailbox, i.e.:
-                            # when receiving a message to john+lists@example.com, it should go directly to
+                            # like sending emails to an international addresses
+                            # (e.g. andré@homebox.space)
+  recipient_delimiter: '+'  # The characters you want to use to split email address from
+                            # mailbox, i.e.:
+                            # when receiving a message to john+lists@example.com,
+                            # it should go directly to
                             # the 'lists' folder... I personally use '~'
 
 ###############################################################################
@@ -129,7 +145,6 @@ passwords_default:
   # Passwords are stored using salted SHA512, safe enough
   remember: 12
   # Password quality module
-  # See: https://www.networkworld.com/article/3198444/linux/the-complexity-of-password-complexity.html
   quality:
     enforce: true
     params:
