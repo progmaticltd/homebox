@@ -119,3 +119,33 @@
     - uid: postmaster
   loop_control:
     loop_var: user
+
+- name: Add virtual folders for each 'important' emails
+  tags: virtual
+  notify: Restart dovecot
+  file:
+    path: '/home/users/{{ user.uid }}/mails/virtual/Important'
+    owner: '{{ user.uid }}'
+    group: users
+    state: directory
+    mode: 0700
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Create virtual folder file for 'important' emails
+  tags: virtual
+  notify: Restart dovecot
+  template:
+    src: virtual/important
+    dest: '/home/users/{{ user.uid }}/mails/virtual/Important/dovecot-virtual'
+    owner: '{{ user.uid }}'
+    group: users
+    mode: '0644'
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user

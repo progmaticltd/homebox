@@ -1,0 +1,3 @@
+# Display messages tagged with the label "Important"
+Search/All
+  OR (OR KEYWORD $IMPORTANT KEYWORD important) KEYWORD $label1
