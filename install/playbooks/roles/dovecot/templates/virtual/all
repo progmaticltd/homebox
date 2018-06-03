@@ -1,4 +1,6 @@
-# Return all emails
+# Return all emails except deleted and junk.
 *
-- Search/*
+-Junk
+-Trash
+-Trash/*
   all younger {{ 86400 * mail.virtual_folders.all_limit }}

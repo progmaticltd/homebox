@@ -1,8 +1,8 @@
 ---
 
 - name: Add virtual folders for each 'all' emails
-  when: mail.virtual_folders.active
   tags: virtual
+  notify: Restart dovecot
   file:
     path: '/home/users/{{ user.uid }}/mails/virtual/All'
     owner: '{{ user.uid }}'
@@ -16,8 +16,8 @@
     loop_var: user
 
 - name: Create virtual folder file for 'all' emails
-  when: mail.virtual_folders.active
   tags: virtual
+  notify: Restart dovecot
   template:
     src: virtual/all
     dest: '/home/users/{{ user.uid }}/mails/virtual/All/dovecot-virtual'
@@ -31,8 +31,8 @@
     loop_var: user
 
 - name: Add virtual folders for each 'flagged' emails
-  when: mail.virtual_folders.active
   tags: virtual
+  notify: Restart dovecot
   file:
     path: '/home/users/{{ user.uid }}/mails/virtual/Flagged'
     owner: '{{ user.uid }}'
@@ -46,8 +46,8 @@
     loop_var: user
 
 - name: Create virtual folder file for 'flagged' emails
-  when: mail.virtual_folders.active
   tags: virtual
+  notify: Restart dovecot
   template:
     src: virtual/flagged
     dest: '/home/users/{{ user.uid }}/mails/virtual/Flagged/dovecot-virtual'
@@ -61,8 +61,8 @@
     loop_var: user
 
 - name: Add virtual folders for each 'conversations' emails
-  when: mail.virtual_folders.active
   tags: virtual
+  notify: Restart dovecot
   file:
     path: '/home/users/{{ user.uid }}/mails/virtual/Conversations'
     owner: '{{ user.uid }}'
@@ -76,8 +76,8 @@
     loop_var: user
 
 - name: Create virtual folder file for 'conversations' emails
-  when: mail.virtual_folders.active
   tags: virtual
+  notify: Restart dovecot
   template:
     src: virtual/conversations
     dest: '/home/users/{{ user.uid }}/mails/virtual/Conversations/dovecot-virtual'
@@ -91,8 +91,8 @@
     loop_var: user
 
 - name: Add virtual folders for each 'unread' emails
-  when: mail.virtual_folders.active
   tags: virtual
+  notify: Restart dovecot
   file:
     path: '/home/users/{{ user.uid }}/mails/virtual/Unread'
     owner: '{{ user.uid }}'
@@ -106,8 +106,8 @@
     loop_var: user
 
 - name: Create virtual folder file for 'unread' emails
-  when: mail.virtual_folders.active
   tags: virtual
+  notify: Restart dovecot
   template:
     src: virtual/unread
     dest: '/home/users/{{ user.uid }}/mails/virtual/Unread/dovecot-virtual'
