@@ -54,6 +54,10 @@
 - import_playbook: rspamd-web.yml
   when: mail.antispam.webui.active
 
+# Install the DNS server
+- import_playbook: dns-server-bind.yml
+  when: bind.install
+
 # Backup script using borg-backup
 - import_playbook: borgbackup.yml
   when: backup.install

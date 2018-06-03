@@ -40,7 +40,8 @@ in the official documentation.
   [RFC 2142](https://tools.ietf.org/html/rfc2142) specifications.
 - Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, simple spam and ham learning
   by moving emails in and out the Junk folder, sieve and vacation scripts.
-- Virtual folders for server search: unread messages, conversations view, all messages, flagged messages.
+- Virtual folders for server search: unread messages, conversations view, all messages, flagged
+  and messages labelled as "important".
 - Email addresses with recipient delimiter included, e.g. john.doe+lists@dbcooper.com.
 - Optional master user creation, e.g. for families with children or moderated communities.
 - Server side full text search inside emails, attached documents and files and
