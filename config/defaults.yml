@@ -116,7 +116,7 @@ mail_default:
   #############################################################################
   # Virtual folders
   virtual_folders:          # Create virtual IMAP folders, like flagged,
-    active: false           # deleted, unread, conversations, etc.
+    active: true            # deleted, unread, conversations, etc.
     all_limit: 3650         # The maximum number of days to include the the Search/All folder.
                             # It is useful to put a limit here if you have a lot of messages
                             # and limited hardware resources
@@ -275,7 +275,8 @@ dmarc_default:
     interval: 86400
     percent: 100
     # The following parameters are for reports sending
-    sending: true
+    # Not activated yet until fully tested on a live system
+    sending: false
     organisation: 'rspamd / homebox'
   dkim_align: strict
   spf_align: relaxed

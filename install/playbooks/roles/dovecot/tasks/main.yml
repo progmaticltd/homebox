@@ -88,6 +88,23 @@
   loop_control:
     loop_var: file
 
+- name: Create the initial list of mail_plugins
+  tags: config
+  set_fact:
+    mail_plugins: $mail_plugins quota
+
+- name: Add fts to the list of mail plugins
+  tags: config
+  when: mail.fts.active
+  set_fact:
+    mail_plugins: "{{ mail_plugins }} fts fts_solr"
+
+- name: Add virtual mailboxes to the list of mail plugins
+  tags: config
+  when: mail.virtual_folders.active
+  set_fact:
+    mail_plugins: "{{ mail_plugins }} virtual"
+
 - name: Create dovecot conf.d configuration files
   tags: config
   notify: Restart dovecot
@@ -366,6 +383,13 @@
       dest: /etc/solr/conf/schema.xml
   loop_control:
     loop_var: file
+
+# Virtual mailboxes creation ==================================================
+
+- name: Include virtual mailboxes tasks
+  tags: virtual
+  when: mail.virtual_folders.active
+  include_tasks: roles/dovecot/tasks/virtual.yml
 
 # AppArmor configuration ======================================================
 - name: Install dovecot indexer AppArmor profile

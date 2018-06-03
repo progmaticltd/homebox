@@ -16,6 +16,15 @@
   /home/users/*/mails/maildir/**/dovecot-uidlist rw,
   /home/users/*/mails/maildir/**/dovecot-uidlist.lock rw,
 
+{% if mail.virtual_folders.active %}
+  # Virtual mailboxes hierarchy
+  /home/users/*/mails/virtual/dovecot-uidlist rw,
+  /home/users/*/mails/virtual/dovecot-uidlist.lock rw,
+  /home/users/*/mails/virtual/**/dovecot-uidlist rw,
+  /home/users/*/mails/virtual/**/dovecot-uidlist.lock rw,
+  /home/users/*/mails/virtual/ r,
+  /home/users/*/mails/virtual/**/dovecot-virtual r,
+{% endif %}
 
   /home/users/*/mails/maildir/maildirsize ra,
   /home/users/*/mails/maildir/new/ r,
