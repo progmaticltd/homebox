@@ -91,7 +91,3 @@
   lineinfile:
     dest: /etc/pam.d/common-account
     line: 'session    required    pam_mkhomedir.so skel=/etc/skel/ umask=0022'
-
-- name: Initialise personal backup for some users
-  tags: backup
-  include_tasks: roles/homes/tasks/personal-backup.yml
