@@ -28,6 +28,16 @@ users:
       password: ebsipmfwuqsopxsg
       get_junk: true
       get_trash: true
+  # Allow access to backup
+  backup_ssh_key:
+    type: ssh-rsa
+    comment: jdoe-backup-key
+    data: >-
+      AAAAB3NzaC1yc2EAAAADAQOSPAABAQDLQ/Odv+oOWbNdaBwegtwBryh/NsRkM6NNRd30kgoza39+
+      TtOIXNcLsnProh6ynJxNBdxxx6wa6/dkA/3opbdprovU676WfWEFOpjNzABGtrgU6uIzihc51nm49/
+      SsP7rNLXfh0ZfQlCjhR6oL+oe3ggnnrPwtEpsZSDjR8Qx4gYCxZ+2H4C5QcvotZ6i/9pc7uv9Gh2Rd
+      iDAoQDIeedZFygruhpFK5VEQnXf2KB8z4MCT1Nwk5/7VUE1xTB0AHoUBMLF4RMmkPrfhfPfGbXL97e
+      BaxeEVdIurdEoYi7EPc3ZT/NI2Rh136mMZLUb7QupinA0yfTc1FEhkDCvE9L/5
 - uid: jane
   cn: Jane Doe
   first_name: Jane
