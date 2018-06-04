@@ -1,0 +1,43 @@
+---
+
+- name: Add the SSH keys for users' remote access
+  tags: backup
+  file:
+    path: '/home/users/{{ user.uid }}/.ssh'
+    owner: '{{ user.uid }}'
+    group: users
+    state: directory
+    mode: 0755
+  with_items:
+    - '{{ users | selectattr("backup_ssh_key", "defined") | list }}'
+  loop_control:
+    loop_var: user
+
+- name: Add the backup folder for the users
+  tags: backup
+  file:
+    path: '/home/users/{{ user.uid }}/backup'
+    owner: '{{ user.uid }}'
+    group: users
+    state: directory
+    mode: 0755
+  with_items:
+    - '{{ users | selectattr("backup_ssh_key", "defined") | list }}'
+  loop_control:
+    loop_var: user
+
+- name: Add the authorised key
+  tags: backup
+  authorized_key:
+    user: '{{ user.uid }}'
+    state: present
+    key: >-
+      {{ user.backup_ssh_key.type }}
+      {{ user.backup_ssh_key.data | regex_replace(" ") }}
+      {{ user.backup_ssh_key.comment }}
+    key_options: >-
+      command="borg serve --restrict-to-path /home/users/{{ user.uid }}/backup",restrict
+  with_items:
+    - '{{ users | selectattr("backup_ssh_key", "defined") | list }}'
+  loop_control:
+    loop_var: user

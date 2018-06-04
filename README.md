@@ -24,7 +24,7 @@ in the official documentation.
 - Install packages only from Debian stable (Stretch) or officially maintained repositories (rspamd).
 - Automatic SSL Certificates generation with [letsencrypt](https://letsencrypt.org).
 - Automatic security updates (optional).
-- Single Sign On with an LDAP users database, SSL certificate, password policies, PAM
+- Centralised authentication with an LDAP users database, SSL certificate, password policies, PAM
   integration.
 - AppArmor activated by default, profiles for all daemons.
 - Automatic backup of the deployment data to replay the installation with the same data.
@@ -64,6 +64,7 @@ in the official documentation.
 - Automatic publication of DNS entries to Gandi DNS.
 - External IP address detection.
 - Static web site skeleton configuration, with https certificates.
+- Personal backup server for each user, using borgbackup.
 
 ### Development
 

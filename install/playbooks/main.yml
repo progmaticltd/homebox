@@ -7,6 +7,11 @@
 - import_playbook: ldap.yml
 - import_playbook: homes.yml
 
+# Configure SSH for remote access using borgbackup,
+# But only for users with an ssh key provided.
+# See system-example.yml configuration file
+- import_playbook: backup-server.yml
+
 # System protection: antispam
 - import_playbook: rspamd.yml
 
