@@ -368,3 +368,10 @@ bind_default:
   dnssec:
     active: false
     algo: RSASHA256
+
+###############################################################################
+# Gogs installation with LDAP authentication
+# Beta feature, work in progress
+# The super administrator is "postmaster" for now.
+gogs_default:
+  install: false
