@@ -1,0 +1,151 @@
+---
+
+- name: Get the passwords generated in the accounts tasks
+  set_fact:
+    roPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
+
+- name: Make sure we can install packages through https
+  tags: apt
+  apt:
+    name: apt-transport-https
+    state: present
+
+- name: Add gogs GPG key
+  register: apt_config
+  tags: apt
+  apt_key:
+    url: https://dl.packager.io/srv/pkgr/gogs/key
+    state: present
+
+- name: Add gogs repository
+  when: apt_config.changed
+  tags: apt
+  apt_repository:
+    repo: deb https://dl.packager.io/srv/deb/pkgr/gogs/pkgr/debian 9 main
+    state: present
+    filename: gogs
+
+- name: Update packages cache
+  tags: apt
+  apt:
+    update_cache: true
+    name: gogs
+    state: present
+
+# PostgreSQL installation =====================================================
+- name: Update packages cache
+  tags: postgresql
+  apt:
+    name: python-psycopg2
+    state: present
+
+- name: Set facts for postgresql password generation
+  tags: postgresql
+  set_fact:
+    password_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/postgresql/admin.pwd"
+    password_params: "length=16 chars=ascii_letters,digits"
+
+- name: Generate a random password for postgresql gogs user
+  tags: postgresql
+  set_fact:
+    gogs_pg_password: '{{ lookup("password", "{{ password_path }} {{ password_params }}") }}'
+
+- name: Create the database user
+  tags: postgresql
+  become: true
+  become_user: postgres
+  postgresql_user:
+    name: gogs
+    password: '{{ gogs_pg_password }}'
+
+- name: Create the Gogs database
+  tags: postgresql
+  become: true
+  become_user: postgres
+  postgresql_db:
+    name: gogs
+    owner: gogs
+
+# Gogs configuration ==========================================================
+- name: Create a session key for the web server
+  tags: password
+  notify: Restart nginx
+  shell: makepasswd --chars=32
+  register: makepasswd
+
+- name: Create the configuration folder
+  tags: config
+  file:
+    path: /etc/gogs/conf/auth.d
+    owner: gogs
+    state: directory
+    group: gogs
+    mode: 0755
+
+- name: Copy the gogs configuration
+  tags: config
+  notify:
+    - Restart gogs web service
+    - Restart gogs
+  template:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+    owner: gogs
+    group: gogs
+    mode: 0644
+  with_items:
+    - src: app.ini
+      dest: /etc/gogs/conf/app.ini
+    - src: ldap_bind_dn.conf
+      dest: /etc/gogs/conf/auth.d/ldap_bind_dn.conf
+  loop_control:
+    loop_var: file
+
+# Web site configuration ======================================================
+
+- name: Create the web site
+  tags: nginx
+  notify:
+    - Check nginx config
+    - Restart nginx
+  template:
+    src: webui-site.tpl
+    dest: /etc/nginx/sites-available/gogs-web.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy rspamd configuration
+  tags: nginx
+  notify:
+    - Check nginx config
+    - Restart nginx
+  file:
+    src: /etc/nginx/sites-available/gogs-web.conf
+    dest: /etc/nginx/sites-enabled/gogs-web.conf
+    state: link
+
+
+# AppArmor configuration ======================================================
+
+- name: Install nginx AppArmor profile
+  when: security.app_armor
+  tags: security, apparmor
+  register: aa_config
+  template:
+    src: apparmor.d/local/gogs-web
+    dest: /etc/apparmor.d/local/gogs-web
+
+- name: Add gogs AppAromor specific configuration
+  when: security.app_armor
+  tags: security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/gogs-web>'
+    insertbefore: '# End of local includes for homebox'
+
+- name: Activate AppArmor profiles
+  when: security.app_armor and aa_config.changed
+  tags: security, apparmor
+  command: 'aa-enforce usr.sbin.nginx'
+  notify: Restart AppArmor service

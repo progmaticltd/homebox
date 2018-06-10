@@ -1,0 +1,15 @@
+  # Certificates
+  /etc/letsencrypt/archive/gogs.{{ network.domain }}/* r,
+  /etc/letsencrypt/live/gogs.{{ network.domain }}/* r,
+
+  # Web content
+  /opt/gogs/public/ r,
+  /opt/gogs/public/** r,
+
+  # Log files
+  /var/log/nginx/gogs-access.log w,
+  /var/log/nginx/gogs-error.log w,
+
+  # Proxy configuration
+  /var/lib/nginx/proxy/ rw,
+  /var/lib/nginx/proxy/** rwk,
