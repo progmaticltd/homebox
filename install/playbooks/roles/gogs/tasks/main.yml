@@ -26,6 +26,7 @@
     filename: gogs
 
 - name: Update packages cache
+  register: gogs_pkg
   tags: apt
   apt:
     update_cache: true
@@ -34,7 +35,8 @@
 
 # PostgreSQL installation =====================================================
 - name: Update packages cache
-  tags: postgresql
+  when: gogs_pkg.changed
+  tags: apt
   apt:
     name: python-psycopg2
     state: present
@@ -65,6 +67,13 @@
   postgresql_db:
     name: gogs
     owner: gogs
+
+- name: Update packages cache
+  when: gogs_pkg.changed
+  tags: apt
+  apt:
+    name: python-psycopg2
+    state: absent
 
 # Gogs configuration ==========================================================
 - name: Create a session key for the web server
@@ -115,7 +124,7 @@
     group: root
     mode: 0644
 
-- name: Copy rspamd configuration
+- name: Copy nginx configuration
   tags: nginx
   notify:
     - Check nginx config
