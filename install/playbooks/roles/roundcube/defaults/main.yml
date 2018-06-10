@@ -1,9 +1,4 @@
-# Default values for passwords
-passwords_min_length: 8
-passwords_max_age: 365 # 365 days max
-passwords_max_failure: 5
-passwords_expire_warning: 3 # 3 days
-passwords_require_nonalpha: true
+---
 
 roundcube_plugins:
   - password

@@ -35,15 +35,6 @@
     upload_max_size: '{{ mail.max_attachment_size }}'
     post_max_size: '{{ 1 + mail.max_attachment_size | int }}'
 
-- name: Create the webmail site
-  tags: roundcube
-  template:
-    src: webmail-site.tpl
-    dest: /etc/nginx/sites-available/roundcube.conf
-    owner: root
-    group: root
-    mode: 0644
-
 - name: Configure the IMAP proxy
   tags: roundcube
   notify: Restart IMAP proxy
