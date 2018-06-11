@@ -73,6 +73,12 @@ mail_default:
                             # This is now disabled by default.
                             # The default timerange to search duplicated messages is one hour.
   #############################################################################
+  # Postfix options
+  postfix:
+    mynetworks: ~           # Authorized IP addresses to send emails without authentication
+                            # e.g. 192.168.0.0/16, 172.16.0.0/12, 10.10.0.0/8
+
+  #############################################################################
   antispam:                 # Check inbound and outbound emails for viruses
     port: 33000             # port to use for the antivirus daemon
     webui:                  # rspamd web interface

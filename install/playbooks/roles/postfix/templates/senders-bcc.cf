@@ -1,3 +1,4 @@
 {% for user in users %}
 {{ user.mail }} {{ user.mail | regex_replace("@", mail.recipient_delimiter + "Sent@") }}
 {% endfor %}
+postmaster@{{ network.domain }} {{ "postmaster" + mail.recipient_delimiter + "Sent@" + network.domain }}
