@@ -13,7 +13,15 @@ server {
     # log files per virtual host
     access_log /var/log/nginx/gogs-access.log;
     error_log /var/log/nginx/gogs-error.log;
+
+    # list of IP addresses to authorize
+{% if gogs.public == false %}
+{% for ip in mail.antispam.webui.allow %}
+    allow {{ ip }};
+{% endfor %}
+    deny all;
 }
+{% endif %}
 {% endif %}
 
 # Default server configuration
@@ -59,4 +67,12 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For "";
     }
+
+    # list of IP addresses to authorize
+{% if gogs.public == false %}
+{% for ip in mail.antispam.webui.allow %}
+    allow {{ ip }};
+{% endfor %}
+    deny all;
+{% endif %}
 }
