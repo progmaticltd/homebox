@@ -61,12 +61,12 @@
 # So the value is max_attachment_size * 1.33 * 1024 * 1024, i.e. max_attachment_size * 1394606
 # Adding 1Kb for the message text, because we are generous (sic)
 - name: Compute max message size from max attachment size
-  tags: postfix
+  tags: config
   set_fact:
     message_size_limit: '{{ 1024 + mail.max_attachment_size * 1394606 | int }}'
 
 - name: Copy configuration template
-  tags: postfix
+  tags: config
   notify: Restart postfix
   template:
     src: "{{ file }}"

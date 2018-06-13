@@ -67,6 +67,10 @@
 - import_playbook: borgbackup.yml
   when: backup.install
 
+# Install Gogs git server
+- import_playbook: gogs.yml
+  when: gogs.install
+
 # Add the old emails import scripts for each users
 # Except when in development mode.
 # It can alter the tests and is CPU intensive if you have

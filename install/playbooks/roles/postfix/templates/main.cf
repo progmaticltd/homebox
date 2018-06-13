@@ -69,9 +69,13 @@ mydestination = $myhostname, localhost.{{ network.domain }}, localhost
 # The maximal size of any local(8) individual mailbox or maildir file
 mailbox_size_limit = 0
 
-# Only listen myself, don't trust any one
-mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+# List of IP addresses allowed to send emails without authentications
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 {{ mail.postfix.mynetworks }}
+
+# Interfaces to listen
 inet_interfaces = all
+
+# Protocols to allow
 inet_protocols = all
 
 # The set of characters that can separate a user name from its extension

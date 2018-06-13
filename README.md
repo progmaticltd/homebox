@@ -65,6 +65,7 @@ in the official documentation.
 - External IP address detection.
 - Static web site skeleton configuration, with https certificates.
 - Personal backup server for each user, using borgbackup.
+- [Gogs git server](https://gogs.io/), a fast and lightweight git server written in Golang.
 
 ### Development
 

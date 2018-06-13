@@ -328,3 +328,24 @@
   tags: defaults
   debug:
     var: bind
+
+
+################################################################################
+# Merge defaults gogs settings
+- name: Combine default and user defined gogs settings
+  when: gogs is defined
+  tags: defaults
+  set_fact:
+    gogs: '{{ gogs_default | combine(gogs, recursive=True) }}'
+
+- name: Use default gogs settings
+  when: gogs is not defined
+  tags: defaults
+  set_fact:
+    gogs: '{{ gogs_default }}'
+
+- name: Display merged gogs settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: gogs
