@@ -36,7 +36,6 @@
 
 # PostgreSQL installation =====================================================
 - name: Update packages cache
-  when: gogs_pkg.changed
   tags: apt
   apt:
     name: python-psycopg2

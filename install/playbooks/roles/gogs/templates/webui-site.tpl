@@ -14,14 +14,14 @@ server {
     access_log /var/log/nginx/gogs-access.log;
     error_log /var/log/nginx/gogs-error.log;
 
-    # list of IP addresses to authorize
 {% if gogs.public == false %}
-{% for ip in mail.antispam.webui.allow %}
+    # list of IP addresses to authorize
+{% for ip in gogs.allow %}
     allow {{ ip }};
 {% endfor %}
     deny all;
-}
 {% endif %}
+}
 {% endif %}
 
 # Default server configuration
@@ -70,7 +70,7 @@ server {
 
     # list of IP addresses to authorize
 {% if gogs.public == false %}
-{% for ip in mail.antispam.webui.allow %}
+{% for ip in gogs.allow %}
     allow {{ ip }};
 {% endfor %}
     deny all;
