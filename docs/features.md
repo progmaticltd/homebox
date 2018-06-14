@@ -295,7 +295,8 @@ emails with attachments: You don't need to upload an email twice.
 
 # XMPP / Jabber server
 
-The installation script installs [ejabberd](https://www.ejabberd.im/),
+The installation script can install an XMPP / Jabber server, by using
+[ejabberd](https://www.ejabberd.im/),
 a _Rock Solid, Massively Scalable, Infinitely Extensible XMPP Server_.
 
 ## Client to Server
@@ -320,6 +321,17 @@ This is optional but activated by default. It is also possible to restrict acces
 to trusted servers, by specifying a list of domain names you want to trust.
 
 Some clients: [XMPP client software](https://xmpp.org/software/clients.html).
+
+# Gogs git server
+
+You can optionally install a small, fast and light git server called
+[gogs](https://gogs.io/). The server is configured with the following features:
+
+- HTTPS certificate
+- LDAP authentication
+- Automatic update
+- Two factors authentication
+- Repository mirror
 
 # Other features
 

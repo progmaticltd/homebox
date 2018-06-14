@@ -7,6 +7,7 @@ pages:
   - Main configuration file: configuration.md
   - Email configuration: email-configuration.md
   - Jabber configuration: jabber-configuration.md
+  - Gogs configuration: gogs-configuration.md
   - DNS Server configuration: bind-configuration.md
   - External accounts: external-accounts.md
   - Backup your emails: backup.md
