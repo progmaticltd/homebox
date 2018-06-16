@@ -333,6 +333,13 @@ You can optionally install a small, fast and light git server called
 - Two factors authentication
 - Repository mirror
 
+# Bittorrent server with a web interface
+
+You can install the trnsmission bittorrent daemon, accessible over https on a dedicated
+domain.
+
+The daemon runs in a proper AppArmor profile.
+
 # Other features
 
 ## DNSSEC Support

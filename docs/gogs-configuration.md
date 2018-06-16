@@ -1,13 +1,11 @@
 # Default configuration
 
-The default configuration for the Jabber server comes with the following options:
+The default configuration for the Gogs server comes with the following options:
 
-- Installed by default
-- Server to server communication active and public by default
-- Socks proxy to transfer file
-- HTTP upload for offline file transfer
+- Not installed by default
+- URL not public by default, only accessible from a local network
 
-Default options for the Jabber server:
+Default options for the Gogs server:
 
 ```yaml
 gogs_default:

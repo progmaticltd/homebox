@@ -66,6 +66,7 @@ in the official documentation.
 - Static web site skeleton configuration, with https certificates.
 - Personal backup server for each user, using borgbackup.
 - [Gogs git server](https://gogs.io/), a fast and lightweight git server written in Golang.
+- [Transmission daemon](https://transmissionbt.com/), accessible over https, with optional public URL and authentication using system accounts.
 
 ### Development
 

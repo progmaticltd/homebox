@@ -1,0 +1,15 @@
+  # Certificates
+  /etc/letsencrypt/archive/transmission.{{ network.domain }}/* r,
+  /etc/letsencrypt/live/transmission.{{ network.domain }}/* r,
+
+  # Web content
+  /usr/share/transmission/web/ r,
+  /usr/share/transmission/web/** r,
+
+  # Log files
+  /var/log/nginx/transmission-access.log w,
+  /var/log/nginx/transmission-error.log w,
+
+  # Proxy configuration
+  /var/lib/nginx/proxy/ rw,
+  /var/lib/nginx/proxy/** rwk,

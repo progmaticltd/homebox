@@ -40,6 +40,9 @@ This project is for you if:
 - Antivirus: ClamAV
 - Webmail: RoundCube
 - Jabber: ejabberd
+- DNS: bind
+- Git server: gogs
+- Bittorrent station: transmission
 
 ## Other projects to mention
 
@@ -54,5 +57,5 @@ interesting projects on internet, for instance:
   hosting, but very good as well.
 - [and many...](https://github.com/Kickball/awesome-selfhosted)
 
-All have plenty of features, but a maybe different approach to
+All have plenty of features, but maybe a different approach to
 self-hosting, though.

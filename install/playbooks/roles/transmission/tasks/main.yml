@@ -1,0 +1,83 @@
+---
+
+- name: Install the transmission package
+  tags: apt
+  apt:
+    update_cache: true
+    name: transmission-daemon
+    state: present
+
+# Web site configuration ======================================================
+
+- name: Create the web site
+  tags: config, nginx
+  notify:
+    - Check nginx config
+    - Restart nginx
+  template:
+    src: webui-site.tpl
+    dest: /etc/nginx/sites-available/transmission-web.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy nginx configuration
+  tags: nginx
+  notify:
+    - Check nginx config
+    - Restart nginx
+  file:
+    src: /etc/nginx/sites-available/transmission-web.conf
+    dest: /etc/nginx/sites-enabled/transmission-web.conf
+    state: link
+
+# Daemon configuration ========================================================
+
+- name: Stop the transmission daemon
+  service:
+    name: transmission-daemon
+    state: stopped
+
+- name: Copy the daemon configuration
+  tags: config
+  notify: Restart transmission daemon
+  template:
+    src: 'settings.json'
+    dest: '/etc/transmission-daemon/settings.json'
+    owner: debian-transmission
+    group: debian-transmission
+    mode: 0600
+
+- name: Start the transmission daemon
+  service:
+    name: transmission-daemon
+    state: started
+
+# AppArmor configuration ======================================================
+
+- name: Install nginx AppArmor profile
+  when: security.app_armor
+  tags: security, apparmor
+  register: aa_config
+  template:
+    src: 'apparmor.d/{{ file }}'
+    dest: '/etc/apparmor.d/{{ file }}'
+  with_items:
+    - local/transmission-web
+    - usr.bin.transmission-daemon
+  loop_control:
+    loop_var: file
+
+- name: Add transmission AppAromor specific configuration
+  when: security.app_armor
+  tags: security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/transmission-web>'
+    insertbefore: '# End of local includes for homebox'
+
+- name: Activate AppArmor profiles
+  when: security.app_armor and aa_config.changed
+  tags: security, apparmor
+  command: 'aa-enforce usr.sbin.nginx'
+  notify: Restart AppArmor service

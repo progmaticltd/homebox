@@ -349,3 +349,24 @@
   tags: defaults
   debug:
     var: gogs
+
+
+################################################################################
+# Merge defaults transmission settings
+- name: Combine default and user defined transmission settings
+  when: transmission is defined
+  tags: defaults
+  set_fact:
+    transmission: '{{ transmission_default | combine(transmission, recursive=True) }}'
+
+- name: Use default transmission settings
+  when: transmission is not defined
+  tags: defaults
+  set_fact:
+    transmission: '{{ transmission_default }}'
+
+- name: Display merged transmission settings
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: transmission
