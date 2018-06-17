@@ -22,10 +22,7 @@ server {
 
 {% if transmission.public == false %}
     # list of IP addresses to authorize
-<<<<<<< HEAD
-=======
     satisfy any;
->>>>>>> dev-arodier
 {% for ip in transmission.allow %}
     allow {{ ip }};
 {% endfor %}
@@ -75,8 +72,6 @@ server {
         add_header Front-End-Https on;
         proxy_buffering off;
 
-<<<<<<< HEAD
-=======
         # Use utf8 as the default charset
         charset utf8;
 
@@ -85,7 +80,6 @@ server {
         auth_pam                "Transmission BitTorrent client";
         auth_pam_service_name   "login";
 
->>>>>>> dev-arodier
         location /upload {
             proxy_pass http://transmission;
         }
@@ -109,8 +103,6 @@ server {
         location /rpc {
             proxy_pass http://127.0.0.1:9091/transmission/rpc;
         }
-<<<<<<< HEAD
-=======
 
         # Serve downloaded files over https
         location /theme/ {
@@ -133,7 +125,6 @@ server {
             # encounter a bug. See https://github.com/Naereen/Nginx-Fancyindex-Theme/issues/10
             fancyindex_name_length 255;
         }
->>>>>>> dev-arodier
     }
 
 {% if transmission.public == false %}

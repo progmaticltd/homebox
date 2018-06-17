@@ -13,8 +13,6 @@
   # Proxy configuration
   /var/lib/nginx/proxy/ rw,
   /var/lib/nginx/proxy/** rwk,
-<<<<<<< HEAD
-=======
 
   # PAM authentication
   /lib/x86_64-linux-gnu/security/pam_*.so m,
@@ -25,4 +23,3 @@
   # Downloaded files
   {{ transmission.download_dir }}/ r,
   {{ transmission.download_dir }}/** r,
->>>>>>> dev-arodier

@@ -21,17 +21,10 @@
     "idle-seeding-limit": 30,
     "idle-seeding-limit-enabled": false,
     "incomplete-dir": "{{ transmission.incomplete_dir }}",
-<<<<<<< HEAD
-    "incomplete-dir-enabled": {{ (transmission.incomplete_dir != "") | lower }},
-    "lpd-enabled": false,
-    "max-peers-global": 200,
-    "message-level": 1,
-=======
     "incomplete-dir-enabled": {{ (transmission.incomplete_dir != None) | lower }},
     "lpd-enabled": false,
     "max-peers-global": 200,
     "message-level": {{ system.debug | ternary(3, 2) }},
->>>>>>> dev-arodier
     "peer-congestion-algorithm": "",
     "peer-id-ttl-hours": 6,
     "peer-limit-global": 200,
@@ -42,11 +35,7 @@
     "peer-port-random-on-start": true,
     "peer-socket-tos": "default",
     "pex-enabled": {{ transmission.pex | lower }},
-<<<<<<< HEAD
-    "port-forwarding-enabled": {{ transmission.port_forwarding | lower  }},
-=======
     "port-forwarding-enabled": {{ transmission.port_forwarding | lower }},
->>>>>>> dev-arodier
     "preallocation": 1,
     "prefetch-enabled": true,
     "queue-stalled-enabled": true,
