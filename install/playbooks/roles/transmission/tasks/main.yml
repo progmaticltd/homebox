@@ -31,14 +31,6 @@
     dest: /etc/nginx/sites-enabled/transmission-web.conf
     state: link
 
-<<<<<<< HEAD
-# Daemon configuration ========================================================
-
-- name: Stop the transmission daemon
-  service:
-    name: transmission-daemon
-    state: stopped
-=======
 # nginx Fancyindex ============================================================
 - name: Install the nginx fancyindex package
   tags: apt
@@ -70,7 +62,6 @@
     loop_var: sysctl
 
 # Daemon configuration ========================================================
->>>>>>> dev-arodier
 
 - name: Copy the daemon configuration
   tags: config
@@ -80,14 +71,6 @@
     dest: '/etc/transmission-daemon/settings.json'
     owner: debian-transmission
     group: debian-transmission
-<<<<<<< HEAD
-    mode: 0600
-
-- name: Start the transmission daemon
-  service:
-    name: transmission-daemon
-    state: started
-=======
     mode: '0600'
 
 - name: Create the directories for downloads complete
@@ -108,7 +91,6 @@
     owner: debian-transmission
     group: debian-transmission
     mode: '0700'
->>>>>>> dev-arodier
 
 # AppArmor configuration ======================================================
 
@@ -116,12 +98,9 @@
   when: security.app_armor
   tags: security, apparmor
   register: aa_config
-<<<<<<< HEAD
-=======
   notify:
     - Check nginx config
     - Restart nginx
->>>>>>> dev-arodier
   template:
     src: 'apparmor.d/{{ file }}'
     dest: '/etc/apparmor.d/{{ file }}'
