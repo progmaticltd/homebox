@@ -71,6 +71,10 @@
 - import_playbook: gogs.yml
   when: gogs.install
 
+# Install Transmission bittorrent daemon
+- import_playbook: transmission.yml
+  when: transmission.install
+
 # Add the old emails import scripts for each users
 # Except when in development mode.
 # It can alter the tests and is CPU intensive if you have

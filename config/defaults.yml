@@ -410,10 +410,11 @@ transmission_default:
   # Directories
   download_dir: /var/lib/transmission-daemon/downloads
   incomplete_dir: /var/lib/transmission-daemon/incomplete
-  # Download limits
+  # Download parameters
   speed_limit_down: 0
   download_limit: 100
   download_queue: 5
+  download_theme: light    # or dark
   # Upload limits
   speed_limit_up: 0
   upload_limit: 100

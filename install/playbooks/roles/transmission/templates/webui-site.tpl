@@ -22,6 +22,7 @@ server {
 
 {% if transmission.public == false %}
     # list of IP addresses to authorize
+    satisfy any;
 {% for ip in transmission.allow %}
     allow {{ ip }};
 {% endfor %}
@@ -71,7 +72,11 @@ server {
         add_header Front-End-Https on;
         proxy_buffering off;
 
-        # Authenticate users agains the pam system
+        # Use utf8 as the default charset
+        charset utf8;
+
+        # Authenticate users against the pam system, except when using the LAN
+        satisfy any;
         auth_pam                "Transmission BitTorrent client";
         auth_pam_service_name   "login";
 
@@ -97,6 +102,28 @@ server {
 
         location /rpc {
             proxy_pass http://127.0.0.1:9091/transmission/rpc;
+        }
+
+        # Serve downloaded files over https
+        location /theme/ {
+            alias /usr/share/transmission/web/download-themes/;
+        }
+
+        location /downloads/ {
+
+            alias {{ transmission.download_dir }}/;
+            fancyindex on;
+            fancyindex_exact_size off;  # Output human-readable file sizes.
+
+            # Specify the path to the header.html and foother.html files, that are server-wise,
+            # ie served from root of the website. Remove the leading '/' otherwise.
+            fancyindex_header "/theme/{{ transmission.download_theme }}/header.html";
+            fancyindex_footer "/theme/{{ transmission.download_theme }}/footer.html";
+
+            # Maximum file name length in bytes, change as you like.
+            # Warning: if you use an old version of ngx-fancyindex, comment the last line if you
+            # encounter a bug. See https://github.com/Naereen/Nginx-Fancyindex-Theme/issues/10
+            fancyindex_name_length 255;
         }
     }
 

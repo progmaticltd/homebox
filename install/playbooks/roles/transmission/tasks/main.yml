@@ -31,6 +31,21 @@
     dest: /etc/nginx/sites-enabled/transmission-web.conf
     state: link
 
+# nginx Fancyindex ============================================================
+- name: Install the nginx fancyindex package
+  tags: apt
+  apt:
+    name: libnginx-mod-http-fancyindex
+    state: present
+
+- name: Copy fancyindex theme
+  tags: fancyindex
+  copy:
+    src: 'download-themes'
+    dest: '/usr/share/transmission/web/'
+    owner: root
+    group: root
+
 # System configuration ========================================================
 - name: Tune the network system limits for transmission
   tags: sysctl
@@ -61,11 +76,11 @@
 - name: Create the directories for downloads complete
   notify: Restart transmission daemon
   file:
-    dest: '{{ transmission.download_dir }}'
+    path: '{{ transmission.download_dir }}'
     state: directory
     owner: debian-transmission
     group: debian-transmission
-    mode: '0700'
+    mode: '0755'
 
 - name: Create the directories for downloads in progress
   notify: Restart transmission daemon

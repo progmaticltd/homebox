@@ -19,3 +19,7 @@
   /etc/pam.d/* r,
   /etc/login.defs r,
   /proc/@{pid}/status r,
+
+  # Downloaded files
+  {{ transmission.download_dir }}/ r,
+  {{ transmission.download_dir }}/** r,
