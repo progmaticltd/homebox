@@ -31,12 +31,22 @@
     dest: /etc/nginx/sites-enabled/transmission-web.conf
     state: link
 
-# Daemon configuration ========================================================
+# System configuration ========================================================
+- name: Tune the network system limits for transmission
+  tags: sysctl
+  sysctl:
+    name: '{{ sysctl.name }}'
+    value: '{{ sysctl.value }}'
+    state: present
+  with_items:
+    - name: net.core.rmem_max
+      value: 4194304
+    - name: net.core.wmem_max
+      value: 4194304
+  loop_control:
+    loop_var: sysctl
 
-- name: Stop the transmission daemon
-  service:
-    name: transmission-daemon
-    state: stopped
+# Daemon configuration ========================================================
 
 - name: Copy the daemon configuration
   tags: config
@@ -46,12 +56,26 @@
     dest: '/etc/transmission-daemon/settings.json'
     owner: debian-transmission
     group: debian-transmission
-    mode: 0600
+    mode: '0600'
 
-- name: Start the transmission daemon
-  service:
-    name: transmission-daemon
-    state: started
+- name: Create the directories for downloads complete
+  notify: Restart transmission daemon
+  file:
+    dest: '{{ transmission.download_dir }}'
+    state: directory
+    owner: debian-transmission
+    group: debian-transmission
+    mode: '0700'
+
+- name: Create the directories for downloads in progress
+  notify: Restart transmission daemon
+  when: transmission.incomplete_dir
+  file:
+    dest: '{{ transmission.incomplete_dir }}'
+    state: directory
+    owner: debian-transmission
+    group: debian-transmission
+    mode: '0700'
 
 # AppArmor configuration ======================================================
 
@@ -59,6 +83,9 @@
   when: security.app_armor
   tags: security, apparmor
   register: aa_config
+  notify:
+    - Check nginx config
+    - Restart nginx
   template:
     src: 'apparmor.d/{{ file }}'
     dest: '/etc/apparmor.d/{{ file }}'

@@ -13,12 +13,15 @@
   /proc/sys/kernel/random/uuid r,
 
   # Downloaded files
+  {{ transmission.download_dir }}/ rw,
   {{ transmission.download_dir }}/** rwkl,
-  {% if transmission.incomplete_dir is defined %}
+{% if transmission.incomplete_dir != None %}
+  {{ transmission.incomplete_dir }}/ rw,
   {{ transmission.incomplete_dir }}/** rwkl,
-  {% endif %}
+{% endif %}
 
   # Active and final configuration
+  /var/lib/transmission-daemon/.config/ rw,
   /var/lib/transmission-daemon/.config/** rw,
   /etc/transmission-daemon/settings.json* rw,
 

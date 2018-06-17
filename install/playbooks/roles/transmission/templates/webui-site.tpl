@@ -71,6 +71,10 @@ server {
         add_header Front-End-Https on;
         proxy_buffering off;
 
+        # Authenticate users agains the pam system
+        auth_pam                "Transmission BitTorrent client";
+        auth_pam_service_name   "login";
+
         location /upload {
             proxy_pass http://transmission;
         }

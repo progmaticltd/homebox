@@ -409,7 +409,7 @@ transmission_default:
   encryption: 2
   # Directories
   download_dir: /var/lib/transmission-daemon/downloads
-  incomplete_dir: ~
+  incomplete_dir: /var/lib/transmission-daemon/incomplete
   # Download limits
   speed_limit_down: 0
   download_limit: 100

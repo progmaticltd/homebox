@@ -13,3 +13,9 @@
   # Proxy configuration
   /var/lib/nginx/proxy/ rw,
   /var/lib/nginx/proxy/** rwk,
+
+  # PAM authentication
+  /lib/x86_64-linux-gnu/security/pam_*.so m,
+  /etc/pam.d/* r,
+  /etc/login.defs r,
+  /proc/@{pid}/status r,
