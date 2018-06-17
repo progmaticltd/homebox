@@ -333,15 +333,7 @@ You can optionally install a small, fast and light git server called
 - Two factors authentication
 - Repository mirror
 
-<<<<<<< HEAD
 # Bittorrent server with a web interface
-
-You can install the trnsmission bittorrent daemon, accessible over https on a dedicated
-domain.
-
-The daemon runs in a proper AppArmor profile.
-=======
-# Bittorrent client with a web interface
 
 You can install the transmission bittorrent daemon, accessible over https on a dedicated
 domain.
@@ -350,7 +342,6 @@ domain.
 - Downloaded files can be accessed within your web browser, still using the LDAP credentials if you are not at home.
 - The daemon runs in a proper AppArmor profile.
 - Easy to use form to search downloaded files in your web browser.
->>>>>>> dev-arodier
 
 # Other features
 
