@@ -1,0 +1,108 @@
+---
+
+
+# AppArmor configuration ======================================================
+
+- name: Install nginx AppArmor profile
+  when: security.app_armor
+  tags: security, apparmor
+  register: aa_config
+  file:
+    path: /etc/apparmor.d/local/gogs-web
+    state: absent
+
+- name: Add gogs AppAromor specific configuration
+  when: security.app_armor
+  tags: security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/gogs-web>'
+    state: absent
+
+- name: Activate AppArmor profiles
+  when: security.app_armor and aa_config.changed
+  tags: security, apparmor
+  command: 'aa-enforce usr.sbin.nginx'
+  notify: Restart AppArmor service
+
+- name: Remove gogs GPG key
+  register: apt_config
+  tags: apt
+  apt_key:
+    id: 6257DF9972462F57A20FFB2AB6D583CCBD33EEB8
+    state: absent
+
+- name: Remove the gogs repository
+  tags: apt
+  apt_repository:
+    repo: deb https://dl.packager.io/srv/deb/pkgr/gogs/pkgr/debian 9 main
+    state: absent
+    filename: gogs
+
+- name: Remove the gogs package
+  register: gogs_pkg
+  tags: apt
+  apt:
+    name: gogs
+    state: absent
+
+# Gogs configuration ==========================================================
+- name: Stop the gogs web service
+  service:
+    name: gogs-web
+    state: stopped
+
+- name: Stop the gogs service
+  service:
+    name: gogs
+    state: stopped
+
+- name: Remove the configuration folder
+  tags: config
+  file:
+    path: /etc/gogs
+    state: absent
+
+# Remove web site configuration ===============================================
+- name: Remove the web site
+  tags: nginx
+  notify:
+    - Check nginx config
+    - Restart nginx
+  file:
+    path: '{{ path }}'
+    state: absent
+  with_items:
+    - /etc/nginx/sites-available/gogs-web.conf
+    - /etc/nginx/sites-enabled/gogs-web.conf
+  loop_control:
+    loop_var: path
+
+# PostgreSQL cleanup ==========================================================
+- name: Update packages cache
+  tags: apt
+  apt:
+    name: python-psycopg2
+    state: present
+
+- name: Delete the Gogs database
+  tags: postgresql
+  become: true
+  become_user: postgres
+  postgresql_db:
+    name: gogs
+    state: absent
+
+- name: Delete the database user
+  tags: postgresql
+  become: true
+  become_user: postgres
+  postgresql_user:
+    name: gogs
+    state: absent
+
+- name: Remove the python package
+  tags: apt
+  apt:
+    name: python-psycopg2
+    state: absent
