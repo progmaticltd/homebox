@@ -9,7 +9,7 @@
   tags: roundcube
   apt:
     name: "{{ pkg }}"
-    state: installed
+    state: present
   with_items:
     - postgresql
     - roundcube-pgsql

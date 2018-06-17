@@ -6,7 +6,7 @@
   notify: Restart postfix
   apt:
     name: "{{ pkg }}"
-    state: installed
+    state: present
   with_items:
     - postfix
     - postfix-cdb
@@ -50,7 +50,7 @@
   notify: Restart postfix
   apt:
     name: "{{ pkg }}"
-    state: installed
+    state: present
   with_items:
     - pfqueue
     - bsd-mailx

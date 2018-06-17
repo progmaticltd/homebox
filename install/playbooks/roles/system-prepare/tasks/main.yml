@@ -1,12 +1,17 @@
 ---
 
 # Install the most required packages
+- name: Update packages cache
+  tags: apt
+  apt:
+    cache_valid_time: 3600
+    update_cache: true
+
 - name: Install common packages
   tags: apt
   apt:
     name: "{{ pkg }}"
-    state: installed
-    cache_valid_time: 3600
+    state: present
   with_items:
     - ufw
     - rsync
@@ -22,7 +27,7 @@
   tags: apt
   apt:
     name: certbot
-    state: installed
+    state: present
 
 - name: Create a homebox directory to store any specific configuration
   file:
@@ -78,7 +83,7 @@
   tags: security
   apt:
     name: "{{ pkg }}"
-    state: installed
+    state: present
   with_items:
     - '{{ defaults.packages }}'
   loop_control:
@@ -172,7 +177,7 @@
   tags: lang
   apt:
     name: 'aspell-{{ dict.id }}'
-    state: installed
+    state: present
   with_items: '{{ dictionaries }}'
   loop_control:
     loop_var: dict

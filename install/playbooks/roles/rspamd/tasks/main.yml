@@ -24,7 +24,7 @@
   tags: rspamd
   apt:
     name: "{{ pkg }}"
-    state: installed
+    state: present
   with_items:
     - redis-server
     - rspamd

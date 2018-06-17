@@ -6,4 +6,4 @@
     - '{{ playbook_dir }}/../../config/defaults.yml'
     - '{{ playbook_dir }}/../../config/system.yml'
   roles:
-    - dns-server-bind
+    - dns-server-bind-refresh

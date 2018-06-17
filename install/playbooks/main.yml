@@ -4,6 +4,12 @@
 # Complete list of playbooks to run, in this order
 - import_playbook: external-ip.yml
 - import_playbook: system-prepare.yml
+
+# Install the DNS server first if requested
+- import_playbook: dns-server-bind.yml
+  when: bind.install
+
+# Start to create users and home directories
 - import_playbook: ldap.yml
 - import_playbook: homes.yml
 
@@ -59,10 +65,6 @@
 - import_playbook: rspamd-web.yml
   when: mail.antispam.webui.active
 
-# Install the DNS server
-- import_playbook: dns-server-bind.yml
-  when: bind.install
-
 # Backup script using borg-backup
 - import_playbook: borgbackup.yml
   when: backup.install
@@ -74,6 +76,10 @@
 # Install Transmission bittorrent daemon
 - import_playbook: transmission.yml
   when: transmission.install
+
+# Build the complete DNS server zones file
+- import_playbook: dns-server-bind-refresh.yml
+  when: bind.install
 
 # Add the old emails import scripts for each users
 # Except when in development mode.

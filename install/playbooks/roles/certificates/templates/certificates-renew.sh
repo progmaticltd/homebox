@@ -17,11 +17,12 @@ run_renew="no"
 
 for cert in $certificates; do
 
+    echo -n "Checking $cert: "
     expired=$(certbot certificates -d $cert 2>&1 | grep 'INVALID: EXPIRED' | wc -l)
 
     if [ "$expired" -eq "1" ]; then
 
-        echo "$cert:expired"
+        echo "expired."
 
         # If any certificate is expired, we will at least restart nginx,
 	# because it could be a wildcard, or www or even the autodiscover
@@ -40,6 +41,8 @@ for cert in $certificates; do
         elif [ "$cert" = "conference.{{ network.domain }}" ]; then
             ejabberd_reload="yes"
         fi
+    else
+	echo "valid."
     fi
 
 done

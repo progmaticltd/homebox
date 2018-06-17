@@ -99,19 +99,6 @@
     name: nginx
     state: started
 
-# In this direction, we should overwrite the symbolic links, in case the certificates
-# have been renewed
-- name: Backup the certificates on your local machine
-  tags: cert,sync
-  synchronize:
-    mode: pull
-    src: /etc/letsencrypt
-    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/certificates/'
-    perms: yes
-    rsync_opts:
-      - '--no-motd'
-      - '--exclude=readme.md'
-      - '--update'
 
 - name: Install a script to renew the certificates when they have expired
   tags: script
@@ -125,6 +112,23 @@
   template:
     src: certificates-renew.cron
     dest: /etc/cron.d/certificates-renew.cron
+
+- name: Run the certificate renewal script if needed
+  shell: /usr/local/sbin/certificates-renew.sh
+
+# In this direction, we should overwrite the symbolic links, in case the certificates
+# have been renewed
+- name: Backup the certificates on your local machine
+  tags: cert,sync
+  synchronize:
+    mode: pull
+    src: /etc/letsencrypt
+    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/certificates/'
+    perms: yes
+    rsync_opts:
+      - '--no-motd'
+      - '--exclude=readme.md'
+      - '--update'
 
 - name: Remove the certbot certificate renew script
   tags: cron

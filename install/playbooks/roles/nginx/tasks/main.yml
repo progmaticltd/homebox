@@ -3,7 +3,7 @@
 - name: Install nginx
   apt:
     name: "{{ pkg }}"
-    state: installed
+    state: present
   with_items:
     - nginx
   loop_control:

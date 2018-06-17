@@ -3,7 +3,7 @@
 - name: Install the packages required for ejabberd
   apt:
     name: ejabberd
-    state: installed
+    state: present
 
 - name: Install graphics library for thumbnails generation
   apt:

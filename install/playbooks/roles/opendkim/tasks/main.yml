@@ -5,7 +5,7 @@
   notify: Restart opendkim
   apt:
     name: "{{ pkg }}"
-    state: installed
+    state: present
   with_items:
     - opendkim
     - opendkim-tools
