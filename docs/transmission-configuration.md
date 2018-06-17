@@ -4,6 +4,12 @@ The default configuration for the Transmission daemon comes with the following o
 
 - Not installed by default
 - URL not public by default, only accessible from a local network
+<<<<<<< HEAD
+=======
+- The web interface and the RPC servers are protected with the LDAP credentials.
+- Downloaded files can be accessed within your web browser, still using the LDAP credentials.
+- The daemon runs in a proper AppArmor profile.
+>>>>>>> dev-arodier
 - Web interface over https
 - Require encryption
 - DHT end PEX options enabled
@@ -69,7 +75,22 @@ Two certificates are created to ensure proper communication with clients and oth
 
 Install the Transmission remote client for Android on [Google Play](https://play.google.com/store/apps/details?id=com.neogb.rtac).
 
+<<<<<<< HEAD
 ## Access from a web browser
 
 You can access the web interface from any web browser, using https://transmission.example.com.
 Authentication is done using the same username and password as your emails.
+=======
+## Monitor and start downloads from a web browser
+
+You can access the web interface from any web browser, using https://transmission.example.com.
+If you are not coming from a trusted IP address, you will have to enter a user name and a password.
+the authentication is done using the LDAP credentials.
+
+## Downloading files from your web browser
+
+You can access the files downloaded from any web browser, using https://transmission.example.com/downloads/.
+If you are not coming from a trusted IP address, you will have to enter a user name and a password.
+the authentication is done using the LDAP credentials.
+A nice and responsive web interface has been added to search files.
+>>>>>>> dev-arodier

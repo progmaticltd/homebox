@@ -1,0 +1,24 @@
+---
+
+- name: Use the default domain name for FQDN
+  when: certificate.type == '@'
+  tags: cert
+  set_fact:
+    certificate_fqdn: "{{ network.domain }}"
+
+- name: Create the certificate fqdn with the subdomain
+  when: certificate.type != '@'
+  tags: cert
+  set_fact:
+    certificate_fqdn: "{{ certificate.type }}.{{ network.domain }}"
+
+# The certbot package need to be installed
+- name: Remove the certificate directories
+  file:
+    path: '{{ path }}'
+    state: absent
+  with_items:
+    - "/etc/letsencrypt/live/{{ certificate_fqdn }}"
+    - "/etc/letsencrypt/archive/{{ certificate_fqdn }}"
+  loop_control:
+    loop_var: path

@@ -409,11 +409,20 @@ transmission_default:
   encryption: 2
   # Directories
   download_dir: /var/lib/transmission-daemon/downloads
+<<<<<<< HEAD
   incomplete_dir: ~
   # Download limits
   speed_limit_down: 0
   download_limit: 100
   download_queue: 5
+=======
+  incomplete_dir: /var/lib/transmission-daemon/incomplete
+  # Download parameters
+  speed_limit_down: 0
+  download_limit: 100
+  download_queue: 5
+  download_theme: light    # or dark
+>>>>>>> dev-arodier
   # Upload limits
   speed_limit_up: 0
   upload_limit: 100
