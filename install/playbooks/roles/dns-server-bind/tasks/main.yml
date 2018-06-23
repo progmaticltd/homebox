@@ -5,6 +5,11 @@
     name: bind9
     state: present
 
+- name: Stop the DNS server before creating the configuration
+  service:
+    name: bind9
+    state: stopped
+
 - name: Build the reverse IP address (works only for IPv4)
   when: bind.reverse_ip == "auto"
   tags: facts
@@ -188,7 +193,7 @@
 - name: Restart bind
   service:
     name: bind9
-    state: restarted
+    state: started
 
 - name: Backup the keys on your local machine
   when: bind.dnssec.active

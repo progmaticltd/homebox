@@ -17,9 +17,8 @@ backup  IN      A       {{ external_ip }}
 ;; Main A Record for where everything goes
 @       IN      A       {{ external_ip }}
 
-;; Wildcard record
-*       IN      A       {{ external_ip }}
-
+;; Wildcard record is a cname to the main IP address
+*       IN      CNAME   main
 
 ;; Mail Server MX (Mail exchanger) Record
 {{ network.domain }}. IN  MX  {{ bind.mx_priority }}  main.{{ network.domain }}.
