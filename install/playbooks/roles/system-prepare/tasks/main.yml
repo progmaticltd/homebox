@@ -193,18 +193,22 @@
 
 - name: Create a composition directory for bind
   when: bind.install
+  tags: bind
   file:
     path: /etc/homebox/dns-entries.d/
     state: directory
 
+# SSHFP (fingerprints) are only active with DNSSEC
 - name: Create the SSHFP records for bind
-  when: bind.install
+  when: bind.install and bind.dnssec.active
+  tags: bind
   register: ssh_keygen
   shell: >-
     ssh-keygen -r {{ network.domain }} | sed 's/ /. /'
 
 - name: Add the SSHFP records
-  when: bind.install
+  when: bind.install and bind.dnssec.active
+  tags: bind
   template:
     src: sshfp.bind
     dest: /etc/homebox/dns-entries.d/01-sshfp.bind

@@ -42,7 +42,7 @@
     src: 'apparmor.d/local/autodiscover'
     dest: '/etc/apparmor.d/local/autodiscover'
 
-- name: Add autodiscover AppAromor specific configuration
+- name: Add autodiscover AppArmor specific configuration
   when: security.app_armor
   tags: security, apparmor
   register: aa_config

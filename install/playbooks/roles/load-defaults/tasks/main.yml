@@ -9,18 +9,21 @@
 ################################################################################
 # Merge user options with default options
 - name: Combine default and user defined network settings
+  run_once: true
   when: network is defined
   tags: defaults
   set_fact:
     network: '{{ network_default | combine(network, recursive=True) }}'
 
 - name: Use default network settings
+  run_once: true
   when: network is not defined
   tags: defaults
   set_fact:
     network: '{{ network_default }}'
 
 - name: Display merged network settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -29,18 +32,21 @@
 ################################################################################
 # Merge user options with default options
 - name: Combine default and user defined mail settings
+  run_once: true
   when: mail is defined
   tags: defaults
   set_fact:
     mail: '{{ mail_default | combine(mail, recursive=True) }}'
 
 - name: Use default mail settings
+  run_once: true
   when: mail is not defined
   tags: defaults
   set_fact:
     mail: '{{ mail_default }}'
 
 - name: Display merged mail settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -49,18 +55,21 @@
 ################################################################################
 # Merge user options with default options
 - name: Combine default and user defined password settings
+  run_once: true
   when: passwords is defined
   tags: defaults
   set_fact:
     passwords: '{{ passwords_default | combine(passwords, recursive=True) }}'
 
 - name: Use default passwords settings
+  run_once: true
   when: passwords is not defined
   tags: defaults
   set_fact:
     passwords: '{{ passwords_default }}'
 
 - name: Display merged password settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -69,18 +78,21 @@
 ################################################################################
 # Merge system defaults
 - name: Combine default and user defined system settings
+  run_once: true
   when: system is defined
   tags: defaults
   set_fact:
     system: '{{ system_default | combine(system, recursive=True) }}'
 
 - name: Use default system settings
+  run_once: true
   when: system is not defined
   tags: defaults
   set_fact:
     system: '{{ system_default }}'
 
 - name: Display merged system settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -89,18 +101,21 @@
 ################################################################################
 # Merge firewall defaults
 - name: Combine default and user defined firewall settings
+  run_once: true
   when: firewall is defined
   tags: defaults
   set_fact:
     firewall: '{{ firewall_default | combine(firewall, recursive=True) }}'
 
 - name: Use default firewall settings
+  run_once: true
   when: firewall is not defined
   tags: defaults
   set_fact:
     firewall: '{{ firewall_default }}'
 
 - name: Display merged firewall settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -109,18 +124,21 @@
 ################################################################################
 # Merge security defaults
 - name: Combine default and user defined security settings
+  run_once: true
   when: security is defined
   tags: defaults
   set_fact:
     security: '{{ security_default | combine(security, recursive=True) }}'
 
 - name: Use default security settings
+  run_once: true
   when: security is not defined
   tags: defaults
   set_fact:
     security: '{{ security_default }}'
 
 - name: Display merged security settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -129,18 +147,21 @@
 ################################################################################
 # Merge dictionaries defaults
 - name: Combine default and user defined dictionaries settings
+  run_once: true
   when: dictionaries is defined
   tags: defaults
   set_fact:
     dictionaries: '{{ dictionaries_default | union(dictionaries) }}'
 
 - name: Use default dictionaries settings
+  run_once: true
   when: dictionaries is not defined
   tags: defaults
   set_fact:
     dictionaries: '{{ dictionaries_default }}'
 
 - name: Display merged dictionaries settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -149,18 +170,21 @@
 ################################################################################
 # Merge DNS defaults
 - name: Combine default and user defined dns settings
+  run_once: true
   when: dns is defined
   tags: defaults
   set_fact:
     dns: '{{ dns_default | combine(dns, recursive=True) }}'
 
 - name: Use default DNS settings
+  run_once: true
   when: dns is not defined
   tags: defaults
   set_fact:
     dns: '{{ dns_default }}'
 
 - name: Display merged dns settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -169,18 +193,21 @@
 ################################################################################
 # Merge webmail defaults
 - name: Combine default and user defined webmail settings
+  run_once: true
   when: webmail is defined
   tags: defaults
   set_fact:
     webmail: '{{ webmail_default | combine(webmail, recursive=True) }}'
 
 - name: Use default webmail settings
+  run_once: true
   when: webmail is not defined
   tags: defaults
   set_fact:
     webmail: '{{ webmail_default }}'
 
 - name: Display merged webmail settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -190,18 +217,21 @@
 ################################################################################
 # Merge website defaults
 - name: Combine default and user defined website settings
+  run_once: true
   when: website is defined
   tags: defaults
   set_fact:
     website: '{{ website_default | combine(website, recursive=True) }}'
 
 - name: Use default website settings
+  run_once: true
   when: website is not defined
   tags: defaults
   set_fact:
     website: '{{ website_default }}'
 
 - name: Display merged website settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -210,18 +240,21 @@
 ################################################################################
 # Merge backup defaults
 - name: Combine default and user defined backup settings
+  run_once: true
   when: backup is defined
   tags: defaults
   set_fact:
     backup: '{{ backup_default | combine(backup, recursive=True) }}'
 
 - name: Use default backup settings
+  run_once: true
   when: backup is not defined
   tags: defaults
   set_fact:
     backup: '{{ backup_default }}'
 
 - name: Display merged backup settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -231,18 +264,21 @@
 ################################################################################
 # Merge defaults development settings
 - name: Combine default and user defined devel settings
+  run_once: true
   when: devel is defined
   tags: defaults
   set_fact:
     devel: '{{ devel_default | combine(devel, recursive=True) }}'
 
 - name: Use default devel settings
+  run_once: true
   when: devel is not defined
   tags: defaults
   set_fact:
     devel: '{{ devel_default }}'
 
 - name: Display merged devel settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -251,18 +287,21 @@
 ################################################################################
 # Merge defaults DKIM keys settings
 - name: Combine default and user defined dkim settings
+  run_once: true
   when: dkim is defined
   tags: defaults
   set_fact:
     dkim: '{{ dkim_default | combine(dkim, recursive=True) }}'
 
 - name: Use default dkim settings
+  run_once: true
   when: dkim is not defined
   tags: defaults
   set_fact:
     dkim: '{{ dkim_default }}'
 
 - name: Display merged dkim settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -272,18 +311,21 @@
 ################################################################################
 # Merge defaults DMARC keys settings
 - name: Combine default and user defined dmarc settings
+  run_once: true
   when: dmarc is defined
   tags: defaults
   set_fact:
     dmarc: '{{ dmarc_default | combine(dmarc, recursive=True) }}'
 
 - name: Use default dmarc settings
+  run_once: true
   when: dmarc is not defined
   tags: defaults
   set_fact:
     dmarc: '{{ dmarc_default }}'
 
 - name: Display merged dmarc settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -292,18 +334,21 @@
 ################################################################################
 # Merge defaults ejabberd settings
 - name: Combine default and user defined ejabberd settings
+  run_once: true
   when: ejabberd is defined
   tags: defaults
   set_fact:
     ejabberd: '{{ ejabberd_default | combine(ejabberd, recursive=True) }}'
 
 - name: Use default ejabberd settings
+  run_once: true
   when: ejabberd is not defined
   tags: defaults
   set_fact:
     ejabberd: '{{ ejabberd_default }}'
 
 - name: Display merged ejabberd settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -312,18 +357,21 @@
 ################################################################################
 # Merge defaults bind settings
 - name: Combine default and user defined bind settings
+  run_once: true
   when: bind is defined
   tags: defaults
   set_fact:
     bind: '{{ bind_default | combine(bind, recursive=True) }}'
 
 - name: Use default bind settings
+  run_once: true
   when: bind is not defined
   tags: defaults
   set_fact:
     bind: '{{ bind_default }}'
 
 - name: Display merged bind settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -333,18 +381,21 @@
 ################################################################################
 # Merge defaults gogs settings
 - name: Combine default and user defined gogs settings
+  run_once: true
   when: gogs is defined
   tags: defaults
   set_fact:
     gogs: '{{ gogs_default | combine(gogs, recursive=True) }}'
 
 - name: Use default gogs settings
+  run_once: true
   when: gogs is not defined
   tags: defaults
   set_fact:
     gogs: '{{ gogs_default }}'
 
 - name: Display merged gogs settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:
@@ -354,18 +405,21 @@
 ################################################################################
 # Merge defaults transmission settings
 - name: Combine default and user defined transmission settings
+  run_once: true
   when: transmission is defined
   tags: defaults
   set_fact:
     transmission: '{{ transmission_default | combine(transmission, recursive=True) }}'
 
 - name: Use default transmission settings
+  run_once: true
   when: transmission is not defined
   tags: defaults
   set_fact:
     transmission: '{{ transmission_default }}'
 
 - name: Display merged transmission settings
+  run_once: true
   when: verbose is defined and verbose == True
   tags: defaults
   debug:

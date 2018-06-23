@@ -114,7 +114,7 @@
     dest: /etc/cron.d/certificates-renew.cron
 
 - name: Run the certificate renewal script if needed
-  shell: /usr/local/sbin/certificates-renew.sh
+  shell: /usr/local/sbin/certificates-renew.sh interactive '{{ certificate.type }}.{{ network.domain }}'
 
 # In this direction, we should overwrite the symbolic links, in case the certificates
 # have been renewed

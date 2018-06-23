@@ -1,4 +1,10 @@
 ---
+- name: Create a directory for DNSSEC keys backup if it does not exists
+  tags: cert
+  delegate_to: localhost
+  file:
+    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/dnssec-keys/'
+    state: directory
 
 - name: Install a DNS server
   apt:
