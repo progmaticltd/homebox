@@ -13,6 +13,8 @@
     name: apparmor
     state: restarted
 
+- name: Activate AppArmor profile
+  command: 'aa-enforce usr.sbin.nginx'
 
 - name: Restart gogs web service
   service:

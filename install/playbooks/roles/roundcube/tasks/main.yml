@@ -174,6 +174,7 @@
   notify:
     - Activate AppArmor profile
     - Restart AppArmor service
+    - Restart nginx
   tags: roundcube, security, apparmor
   template:
     src: apparmor.d/local/roundcube
@@ -184,17 +185,9 @@
   notify:
     - Activate AppArmor profile
     - Restart AppArmor service
+    - Restart nginx
   tags: roundcube, security, apparmor
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
     line: '  #include <local/roundcube>'
     insertbefore: '# End of local includes for homebox'
-
-# Finally restart the nginx server ============================================
-- name: Enable nginx site
-  tags: roundcube
-  notify: Restart nginx
-  file:
-    src: /etc/nginx/sites-available/roundcube.conf
-    dest: /etc/nginx/sites-enabled/roundcube.conf
-    state: link

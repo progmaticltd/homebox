@@ -1,10 +1,17 @@
 #!/bin/dash
 
 # When the context is 'cron', we sleep between 1 and 59 minutes
+# When it is 'interactive', it displays a summary
 context=$1
 
+# Optional argument as the domain name to check
+domain=$2
+if [ "$domain" = "@.{{ network.domain }}" ]; then
+    domain="{{ network.domain }}"
+fi
+
 # Get the list of certificates installed
-certificates=$(ls /etc/letsencrypt/live/)
+certificates=$(ls /etc/letsencrypt/live/$domain)
 
 # Create a list of services to restart if necessary
 dovecot_reload="no"
@@ -17,16 +24,21 @@ run_renew="no"
 
 for cert in $certificates; do
 
-    echo -n "Checking $cert: "
+    if [ "$context" = "interactive" ]; then
+	echo -n "Checking $cert: "
+    fi
+
     expired=$(certbot certificates -d $cert 2>&1 | grep 'INVALID: EXPIRED' | wc -l)
 
     if [ "$expired" -eq "1" ]; then
 
-        echo "expired."
+        if [ "$context" = "interactive" ]; then
+            echo "expired."
+        fi
 
         # If any certificate is expired, we will at least restart nginx,
-	# because it could be a wildcard, or www or even the autodiscover
-	run_renew="yes"
+        # because it could be a wildcard, or www or even the autodiscover
+        run_renew="yes"
 
         if [ "$cert" = "imap.{{ network.domain }}" ]; then
             dovecot_reload="yes"
@@ -41,8 +53,8 @@ for cert in $certificates; do
         elif [ "$cert" = "conference.{{ network.domain }}" ]; then
             ejabberd_reload="yes"
         fi
-    else
-	echo "valid."
+    elif [ "$context" = "interactive" ]; then
+        echo "valid."
     fi
 
 done
@@ -53,8 +65,8 @@ if [ "$run_renew" = "yes" ]; then
     # When running as a cron task, wait max
     # an hour before renewing the certificates
     if [ "$context" = "cron" ]; then
-	wait=$(perl -e 'print int(rand(3600))')
-	sleep $wait
+        wait=$(perl -e 'print int(rand(3600))')
+        sleep $wait
     fi
 
     # Stop the nginx server

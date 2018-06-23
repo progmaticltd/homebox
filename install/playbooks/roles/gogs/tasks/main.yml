@@ -143,6 +143,9 @@
 - name: Install nginx AppArmor profile
   when: security.app_armor
   tags: security, apparmor
+  notify:
+    - Activate AppArmor profile
+    - Restart AppArmor service
   register: aa_config
   template:
     src: apparmor.d/local/gogs-web
@@ -150,14 +153,11 @@
 
 - name: Add gogs AppAromor specific configuration
   when: security.app_armor
+  notify:
+    - Activate AppArmor profile
+    - Restart AppArmor service
   tags: security, apparmor
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
     line: '  #include <local/gogs-web>'
     insertbefore: '# End of local includes for homebox'
-
-- name: Activate AppArmor profiles
-  when: security.app_armor and aa_config.changed
-  tags: security, apparmor
-  command: 'aa-enforce usr.sbin.nginx'
-  notify: Restart AppArmor service
