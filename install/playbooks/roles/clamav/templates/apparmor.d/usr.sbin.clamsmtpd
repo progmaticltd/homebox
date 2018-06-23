@@ -15,7 +15,7 @@
 
 {% if mail.antivirus.active and mail.antivirus.send_warnings %}
   # Run the warning script
-  # FICME: The script is calling dash and can nly run in confined mode.
+  # FIXME: The script is calling dash and can only run in confined mode.
   /usr/local/bin/virus-alert.sh pux,
   /bin/dash rUx,
   /var/log/clamsmtp/virus-alerts.log w,

@@ -25,6 +25,7 @@
   /home/users/*/mails/indexes/ rwkl,
   /home/users/*/mails/indexes/** rak,
   /home/users/*/mails/indexes/** rwkl,
+  /home/users/*/mails/maildir/dovecot-uidlist rw,
 
   # Let managesieve to lock indexes
   /home/users/*/mails/maildir/dovecot.* rwkl,
