@@ -25,8 +25,6 @@ The platform can scan the emails received and sent, using
 - By default, emails with viruses are dropped silently, but you can
   set the action to ‘bounce’ if you wish to send an alert to the
   external senders.
-- If the flag ‘send_warnings’ is set to _true_, a warning email will
-  be sent to _internal users_ who have sent an email with a virus.
 
 # Master users
 
@@ -42,7 +40,7 @@ Example with this configuration:
   impersonate:
     active: true
     master: master
-    separator: '/' 
+    separator: '/'
 
 ```
 
@@ -120,4 +118,3 @@ dovecot:
     lda_mailbox_autosubscribe: no
 
 ```
-

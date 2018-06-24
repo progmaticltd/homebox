@@ -94,8 +94,6 @@ mail_default:
     action: drop            # Action to do when a virus is found in an email: bounce or drop
                             # be careful, bouncing external emails is a way to expose clamav
                             # usage
-    send_warnings: false    # Send a warning email to - internal - users who are sending
-                            # viruses
     quarantine: yes         # Place emails with a virus in quarantine, for further analysis
   #############################################################################
   impersonate:              # Activate dovecot "master" user feature, ideal for families and

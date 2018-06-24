@@ -50,7 +50,7 @@ in the official documentation.
   creation, master account access, etc.
 - Automatic import emails from Google Mail, Yahoo, Outlook.com or any other standard IMAP account.
 - Powerful and light antispam system with [rspamd](https://rspamd.com/) and optional access to the web interface.
-- Antivirus for inbound _and_ outbound emails with [clamav](https://www.clamav.net/) and email alerts.
+- Antivirus for inbound _and_ outbound emails with [clamav](https://www.clamav.net/).
 - Automatic configuration for Thunderbird and Outlook using published XML and other clients with
   special DNS records ([RFC 6186](https://tools.ietf.org/html/rfc6186)).
 
