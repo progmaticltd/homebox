@@ -95,9 +95,9 @@ fi
 
 # ejabberd requires both key and certificate in the same file
 if [ "$ejabberd_reload" = "yes" ]; then
-    cd /etc/letsencrypt/live/xmpp*
-    /bin/cat privkey.pem fullchain.pem > /etc/ejabberd/ejabberd.pem
-    chown ejabberd:root /etc/ejabberd/ejabberd.pem
-    chmod 640 /etc/ejabberd/ejabberd.pem
+    cd /etc/letsencrypt/live/{{ network.domain }}
+    /bin/cat privkey.pem fullchain.pem > /etc/ejabberd/default.pem
+    chown ejabberd:root /etc/ejabberd/default.pem
+    chmod 640 /etc/ejabberd/default.pem
     systemctl restart ejabberd
 fi
