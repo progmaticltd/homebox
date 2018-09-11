@@ -88,14 +88,6 @@
     mode: '0700'
     state: directory
 
-- name: Copy the virus alert script
-  copy:
-    src: virus-alert.sh
-    dest: /usr/local/bin/virus-alert.sh
-    owner: clamsmtp
-    group: clamsmtp
-    mode: '0755'
-
 # AppArmor configuration ======================================================
 - name: Install some dovecot AppArmor profile
   when: security.app_armor
