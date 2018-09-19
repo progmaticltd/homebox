@@ -417,3 +417,14 @@ transmission_default:
   speed_limit_up: 0
   upload_limit: 100
   seed_queue_size: 5
+
+# Default posix groups
+posix_groups_default:
+- gid: mail_users
+  description: Mail users
+  gidNumber: 1001
+  mail: 'users@{{ network.domain }}'
+- gid: administrators
+  description: Administrators
+  gidNumber: 2000
+  mail: 'admin@{{ network.domain }}'

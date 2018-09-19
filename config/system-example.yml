@@ -113,6 +113,11 @@ users:
 #   recipient_delimiter: '+'  # The characters you want to use to split email address from mailbox, i.e.:
 #                             # when receiving a message to john+lists@example.com, it should go directly to
 #                             # the 'lists' folder...
+#############################################################################
+# Allows you to configure postfix completely
+#   postfix_add: |
+#     # Send emails to another domain
+#     recipient_bcc_maps = regexp:/etc/postfix/recipient_bcc
 
 ###############################################################################
 # System related

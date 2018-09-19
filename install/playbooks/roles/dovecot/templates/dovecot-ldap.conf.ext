@@ -151,7 +151,7 @@ pass_attrs = uid=user,userPassword=password,mail=mail
 #  homeDirectory=userdb_home,uidNumber=userdb_uid,gidNumber=userdb_gid,mail=userdb_mail
 
 # Filter for password lookups
-pass_filter = (&(objectClass=posixAccount)(|(uid=%n)(intlMailAddr=%u)(mail=%u)))
+pass_filter = (&(objectClass=posixAccount)(|(uid=%n)(intlMailAddr=%u)(mail=%u)(cn=%u)))
 
 # Attributes and filter to get a list of all users
 #iterate_attrs = uid=user
