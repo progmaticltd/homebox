@@ -1,15 +1,6 @@
-###############################################################################
-# Default posix groups
-posix_groups:
-- gid: mail_users
-  description: Mail users
-  gidNumber: 1001
-  mail: 'users@{{ network.domain }}'
-- gid: administrators
-  description: Administrators
-  gidNumber: 2000
-  mail: 'admin@{{ network.domain }}'
+---
 
+###############################################################################
 users_defaults:
   uid_start: 1001
   gid_start: 1001

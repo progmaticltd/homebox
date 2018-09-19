@@ -56,7 +56,7 @@ $config['password_disabled'] = false;
 
 // LDAP and LDAP_SIMPLE Driver options
 // -----------------------------------
-// LDAP server name to connect to. 
+// LDAP server name to connect to.
 // You can provide one or several hosts in an array in which case the hosts are tried from left to right.
 // Exemple: array('ldap1.exemple.com', 'ldap2.exemple.com');
 // Default: 'localhost'
@@ -142,7 +142,7 @@ $config['password_ldap_search_base'] = '{{ ldap.users.dn }}';
 // '%dc' will be replaced by domain name hierarchal string e.g. "dc=test,dc=domain,dc=com"
 // Example: '(uid=%login)'
 // Example: '(&(objectClass=posixAccount)(uid=%login))'
-$config['password_ldap_search_filter'] = '(uid=%login)';
+$config['password_ldap_search_filter'] = '(|(uid=%login)(cn=%login))';
 
 // The LDAP server is already configured to encrypt passwords, send them in clear text
 // $config['password_ldap_encodage'] = 'clear';
@@ -167,11 +167,9 @@ $config['password_ldap_lchattr'] = 'shadowLastChange';
 // LDAP Samba password attribute, e.g. sambaNTPassword
 // Name of the LDAP's Samba attribute used for storing user password
 $config['password_ldap_samba_pwattr'] = '';
- 
+
 // LDAP Samba Password Last Change Date attribute, e.g. sambaPwdLastSet
 // Some places use an attribute to store the date of the last password change
 // The date is meassured in "seconds since epoch" (an integer value)
 // Whenever the password is changed, the attribute will be updated if set
 $config['password_ldap_samba_lchattr'] = '';
-
-

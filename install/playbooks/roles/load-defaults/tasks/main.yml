@@ -424,3 +424,26 @@
   tags: defaults
   debug:
     var: transmission
+
+################################################################################
+# Merge defaults posix_groups settings
+- name: Combine default and user defined posix_groups settings
+  run_once: true
+  when: posix_groups is defined
+  tags: defaults
+  set_fact:
+    posix_groups: '{{ posix_groups_default | combine(posix_groups, recursive=True) }}'
+
+- name: Use default posix_groups settings
+  run_once: true
+  when: posix_groups is not defined
+  tags: defaults
+  set_fact:
+    posix_groups: '{{ posix_groups_default }}'
+
+- name: Display merged posix_groups settings
+  run_once: true
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: posix_groups
