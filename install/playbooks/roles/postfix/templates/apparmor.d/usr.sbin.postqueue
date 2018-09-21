@@ -1,0 +1,12 @@
+# Last Modified: Fri Sep 21 06:31:01 2018
+#include <tunables/global>
+
+/usr/sbin/postqueue {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/postfix-common>
+
+  /etc/postfix/dynamicmaps.cf.d/ r,
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/sbin/postqueue mr,
+}
