@@ -139,6 +139,7 @@
     - usr.lib.postfix.virtual
     - usr.sbin.sendmail
     - usr.sbin.postdrop
+    - usr.sbin.postqueue
 
 - name: Install some postfix AppArmor profile
   when: security.app_armor
