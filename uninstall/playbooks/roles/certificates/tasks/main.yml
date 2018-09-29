@@ -20,5 +20,6 @@
   with_items:
     - "/etc/letsencrypt/live/{{ certificate_fqdn }}"
     - "/etc/letsencrypt/archive/{{ certificate_fqdn }}"
+    - "/etc/letsencrypt/renewal/{{ certificate_fqdn }}.conf"
   loop_control:
     loop_var: path

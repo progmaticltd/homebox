@@ -17,7 +17,8 @@
     - rsync
     - makepasswd
     - haveged             # speed up password generation
-    - aptitude
+    - nginx
+    - acl
   loop_control:
     loop_var: pkg
 
@@ -28,6 +29,17 @@
   apt:
     name: certbot
     state: present
+
+- name: Make sure letsencrypt directory exists
+  file:
+    path: '{{ path }}'
+    state: directory
+    mode: 0750
+  with_items:
+    - /etc/letsencrypt/archive
+    - /etc/letsencrypt/live
+  loop_control:
+    loop_var: path
 
 - name: Create a homebox directory to store any specific configuration
   file:
@@ -183,13 +195,13 @@
     loop_var: dict
 
 # This is needed by some programs later
-- name: Set the US locales for some UTF8 scripts
-  tags: lang
-  notify: Rebuild locales
-  replace:
-    path: /etc/locale.gen
-    regexp: '# en_US.UTF-8 UTF-8'
-    replace: 'en_US.UTF-8 UTF-8'
+# - name: Set the US locales for some UTF8 scripts
+#   tags: lang
+#   notify: Rebuild locales
+#   replace:
+#     path: /etc/locale.gen
+#     regexp: '# en_US.UTF-8 UTF-8'
+#     replace: 'en_US.UTF-8 UTF-8'
 
 - name: Create a composition directory for bind
   when: bind.install

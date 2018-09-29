@@ -216,6 +216,7 @@ webmail_default:
   type: roundcube
 
 ###############################################################################
+# Act as a backup server
 backup_default:
   install: false
 

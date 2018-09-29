@@ -29,12 +29,14 @@
   tags: cert
   set_fact:
     certificate_fqdn: "{{ network.domain }}"
+    site_root: "/var/www/default"
 
 - name: Create the certificate fqdn with the subdomain
   when: certificate.type != '@'
   tags: cert
   set_fact:
     certificate_fqdn: "{{ certificate.type }}.{{ network.domain }}"
+    site_root: "/var/www/{{ certificate.type }}"
 
 - name: Check if the certificate has been copied from a previous backup
   tags: cert
@@ -42,19 +44,80 @@
   stat:
     path: "/etc/letsencrypt/live/{{ certificate_fqdn }}/cert.pem"
 
-- name: Check if nginx has been already installed
+- name: Create a directory for the site if it does not exists
   tags: cert
-  register: nginx_stat
-  stat:
-    path: /usr/sbin/nginx
+  file:
+    path: "{{ site_root }}/.well-known/acme-challenge/"
+    state: directory
 
-- name: Stop the nginx server if installed
-  when: nginx_stat.stat["exists"] == True and cert_stat.stat["exists"] == False
-  register: nginx_state
+- name: Check if there is already a site associated with this certificate
+  tags: cert
+  register: site_stat
+  stat:
+    path: "/etc/nginx/sites-available/{{ certificate_fqdn }}.conf"
+
+- name: Create a simple nginx template site (if not exists)
+  when: site_stat.stat["exists"] == False
+  template:
+    src: nginx-cert.conf
+    dest: "/etc/nginx/sites-available/{{ certificate_fqdn }}.conf"
+    force: no
+
+- name: Make sure the site is enabled
+  file:
+    src: "/etc/nginx/sites-available/{{ certificate_fqdn }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ certificate_fqdn }}.conf"
+    state: link
+
+# AppArmor configuration ======================================================
+
+- name: Install web site AppArmor profile
+  when: security.app_armor
+  tags: security, apparmor
+  template:
+    src: apparmor-cert.conf
+    dest: "/etc/apparmor.d/local/nginx-{{ certificate_fqdn }}"
+
+- name: Add website AppArmor specific configuration
+  when: security.app_armor
+  register: aa_config
+  tags: security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/nginx-{{ certificate_fqdn }}>'
+    insertbefore: '# End of local includes for homebox'
+
+- name: Activate AppArmor profiles
+  when: security.app_armor and aa_config.changed
+  tags: security, apparmor
+  command: 'aa-enforce usr.sbin.nginx'
+
+- name: Restart the nginx server to load the new configuration
   tags: cert
   service:
     name: nginx
-    state: stopped
+    state: restarted
+
+# End of appArmor configuration ===============================================
+
+- name: Create the folder for renewal hooks
+  file:
+    path: /etc/letsencrypt/renewal-hooks/deploy
+    state: directory
+
+- name: Install the certificate renewal hook
+  tags: script
+  template:
+    src: renewal-hook.sh
+    dest: /etc/letsencrypt/renewal-hooks/deploy/renewal-hook.sh
+    mode: 0755
+
+- name: Restart the nginx server
+  when: site_stat.stat["exists"] == False
+  tags: cert
+  service:
+    name: nginx
+    state: restarted
 
 - name: Open the port 80 if necessary
   when: cert_stat.stat["exists"] == False
@@ -74,7 +137,8 @@
   command: >-
     /usr/bin/certbot certonly
     --non-interactive
-    --standalone
+    --webroot
+    --webroot-path "{{ site_root }}"
     --domain "{{ certificate_fqdn }}"
     --email "admin@{{ network.domain }}"
     --agree-tos
@@ -92,32 +156,28 @@
     delete: yes
     comment: Allow LetsEncrypt temporarily
 
-- name: Restart the nginx server if installed and previously stopped
-  when: nginx_stat.stat["exists"] == True and nginx_state.changed and cert_stat.stat["exists"] == False
-  tags: cert
-  service:
-    name: nginx
-    state: started
+- name: Remove the templated files from any old version
+  tags: upgrade
+  file:
+    path: '{{ old_file }}'
+    state: absent
+  with_items:
+    - /etc/cron.d/certificates-renew.cron
+    - /usr/local/sbin/certificates-renew.sh
+  loop_control:
+    loop_var: old_file
 
-
-- name: Install a script to renew the certificates when they have expired
-  tags: script
+- name: Copy the original certificate renewal script from certbot package
   template:
-    src: certificates-renew.sh
-    dest: /usr/local/sbin/certificates-renew.sh
-    mode: 0755
-
-- name: Use cron to renew the certificate
-  tags: cron
-  template:
-    src: certificates-renew.cron
-    dest: /etc/cron.d/certificates-renew.cron
+    src: cron-certbot
+    dest: /etc/cron.d/certbot
+    force: no
 
 - name: Run the certificate renewal script if needed
-  shell: /usr/local/sbin/certificates-renew.sh interactive '{{ certificate.type }}.{{ network.domain }}'
+  shell: certbot renew
 
-# In this direction, we should overwrite the symbolic links, in case the certificates
-# have been renewed
+# In this direction, we should overwrite the symbolic links,
+# in case the certificates have been renewed
 - name: Backup the certificates on your local machine
   tags: cert,sync
   synchronize:
@@ -129,9 +189,3 @@
       - '--no-motd'
       - '--exclude=readme.md'
       - '--update'
-
-- name: Remove the certbot certificate renew script
-  tags: cron
-  file:
-    path: /etc/cron.d/certbot
-    state: absent

@@ -432,7 +432,7 @@
   when: posix_groups is defined
   tags: defaults
   set_fact:
-    posix_groups: '{{ posix_groups_default | combine(posix_groups, recursive=True) }}'
+    posix_groups: '{{ posix_groups_default | union(posix_groups) }}'
 
 - name: Use default posix_groups settings
   run_once: true

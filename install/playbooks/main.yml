@@ -5,9 +5,21 @@
 - import_playbook: external-ip.yml
 - import_playbook: system-prepare.yml
 
+# Install nginx as the default web server,
+# it is needed to obtain certificates with certbot.
+- import_playbook: nginx.yml
+
 # Install the DNS server first if requested
 - import_playbook: dns-server-bind.yml
   when: bind.install
+
+# Check if the DNS entries are now propagated on internet
+- import_playbook: dns-server-check-propagation.yml
+  when: bind.install
+
+# At this point, if you have installed bind,
+# perhaps you should wait a few hours until
+# the DNS propagation is complete.
 
 # Start to create users and home directories
 - import_playbook: ldap.yml
@@ -21,6 +33,10 @@
 # System protection: antispam
 - import_playbook: rspamd.yml
 
+  # Install the web frontend for the antispam system
+- import_playbook: rspamd-web.yml
+  when: mail.antispam.webui.active
+
 # System protection: antivirus
 - import_playbook: clamav.yml
   when: mail.antivirus.active
@@ -33,15 +49,12 @@
 
 # Create DNS entries (Only Gandi for now)
 - import_playbook: dns-update.yml
+  when: not bind.install
 
 # Mail delivery agent (dovecot)
 - import_playbook: cert-pop3.yml
 - import_playbook: cert-imap.yml
 - import_playbook: dovecot.yml
-
-# Install nginx as the default web server, if needed
-- import_playbook: nginx.yml
-  when: webmail.install or mail.autodiscover or mail.autoconfig or website.install
 
 # Install the selected webmail
 - import_playbook: roundcube.yml
@@ -60,10 +73,6 @@
   when: mail.autodiscover
 - import_playbook: autoconfig.yml
   when: mail.autoconfig
-
-# Install the web frontend for the antispam system
-- import_playbook: rspamd-web.yml
-  when: mail.antispam.webui.active
 
 # Backup script using borg-backup
 - import_playbook: borgbackup.yml
