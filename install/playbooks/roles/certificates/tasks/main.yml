@@ -26,14 +26,14 @@
 
 - name: Use the default domain name for FQDN
   when: certificate.type == '@'
-  tags: cert
+  tags: cert, facts
   set_fact:
     certificate_fqdn: "{{ network.domain }}"
     site_root: "/var/www/default"
 
 - name: Create the certificate fqdn with the subdomain
   when: certificate.type != '@'
-  tags: cert
+  tags: cert, facts
   set_fact:
     certificate_fqdn: "{{ certificate.type }}.{{ network.domain }}"
     site_root: "/var/www/{{ certificate.type }}"
@@ -172,6 +172,27 @@
     src: cron-certbot
     dest: /etc/cron.d/certbot
     force: no
+
+- name: Use webroot to upgrade the certificates
+  tags: upgrade
+  register: renewal_config
+  replace:
+    path: '/etc/letsencrypt/renewal/{{ certificate_fqdn }}.conf'
+    regexp: authenticator = standalone
+    replace: authenticator = webroot
+
+- name: Add missing lines when changed from standalone to webroot
+  tags: upgrade
+  when: renewal_config.changed
+  lineinfile:
+    path: '/etc/letsencrypt/renewal/{{ certificate_fqdn }}.conf'
+    line: '{{ line }}'
+  with_items:
+    - 'webroot_path = {{ site_root }},'
+    - '[[webroot_map]]'
+    - '{{ certificate_fqdn }} = {{ site_root }}'
+  loop_control:
+    loop_var: line
 
 - name: Run the certificate renewal script if needed
   shell: certbot renew

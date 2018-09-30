@@ -13,21 +13,28 @@ server {
     listen 80;
     server_name transmission.{{ network.domain }};
 
-    # Use Letsencrypt and force https
-    rewrite ^ https://$server_name$request_uri? permanent;
+    # Certificate renewal
+    location /.well-known {
+        alias /var/www/transmission/.well-known;
+    }
 
-    # log files per virtual host
-    access_log /var/log/nginx/transmission-access.log;
-    error_log /var/log/nginx/transmission-error.log;
+    location / {
+        # Use Letsencrypt and force https
+        rewrite ^ https://$server_name$request_uri? permanent;
+
+        # log files per virtual host
+        access_log /var/log/nginx/transmission-access.log;
+        error_log /var/log/nginx/transmission-error.log;
 
 {% if transmission.public == false %}
-    # list of IP addresses to authorize
-    satisfy any;
+        # list of IP addresses to authorize
+        satisfy any;
 {% for ip in transmission.allow %}
-    allow {{ ip }};
+        allow {{ ip }};
 {% endfor %}
-    deny all;
+        deny all;
 {% endif %}
+    }
 }
 {% endif %}
 

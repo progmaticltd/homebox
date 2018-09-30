@@ -35,6 +35,11 @@
   loop_control:
     loop_var: pkg
 
+- name: Allow mail damon to access the users directory
+  file:
+    path: /home/users
+    mode: 0755
+
 ################################################################################
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #

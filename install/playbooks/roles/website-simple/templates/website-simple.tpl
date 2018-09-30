@@ -10,14 +10,21 @@ server {
     listen 80;
     server_name www.{{ network.domain }} {{ network.domain }};
 
-    # Use Letsencrypt and force https
-    {% if system.ssl == 'letsencrypt' %}
-    rewrite ^ https://$server_name$request_uri? permanent;
-    {% endif %}
+    # Certificate renewal
+    location /.well-known {
+        alias /var/www/transmission/.well-known;
+    }
 
-    # log files per virtual host
-    access_log /var/log/nginx/website-access.log;
-    error_log /var/log/nginx/website-error.log;
+    location / {
+        # Use Letsencrypt and force https
+        {% if system.ssl == 'letsencrypt' %}
+        rewrite ^ https://$server_name$request_uri? permanent;
+        {% endif %}
+
+        # log files per virtual host
+        access_log /var/log/nginx/website-access.log;
+        error_log /var/log/nginx/website-error.log;
+    }
 }
 {% endif %}
 

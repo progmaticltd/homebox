@@ -8,12 +8,19 @@ server {
     listen 80;
     server_name {{ roundcube.url }};
 
-    # Use Letsencrypt and force https
-    rewrite ^ https://$server_name$request_uri? permanent;
+    # Certificate renewal
+    location /.well-known {
+        alias /var/www/webmail/.well-known;
+    }
 
-    # log files per virtual host
-    access_log /var/log/nginx/roundcube-access.log;
-    error_log /var/log/nginx/roundcube-error.log;
+    location / {
+        # Use Letsencrypt and force https
+        rewrite ^ https://$server_name$request_uri? permanent;
+
+        # log files per virtual host
+        access_log /var/log/nginx/roundcube-access.log;
+        error_log /var/log/nginx/roundcube-error.log;
+    }
 }
 {% endif %}
 

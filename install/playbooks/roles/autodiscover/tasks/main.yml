@@ -17,7 +17,7 @@
   notify: Restart nginx server
   template:
     src: autodiscover.conf
-    dest: /etc/nginx/sites-available/autodiscover.conf
+    dest: '/etc/nginx/sites-available/autodiscover.{{ network.domain }}.conf'
     owner: root
     group: root
     mode: 0644
@@ -29,8 +29,8 @@
 
 - name: Enable nginx site
   file:
-    src: /etc/nginx/sites-available/autodiscover.conf
-    dest: /etc/nginx/sites-enabled/autodiscover.conf
+    src: '/etc/nginx/sites-available/autodiscover.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/autodiscover.{{ network.domain }}.conf'
     state: link
 
 # AppArmor configuration ======================================================
