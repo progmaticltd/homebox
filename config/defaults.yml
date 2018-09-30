@@ -285,6 +285,8 @@ dmarc_default:
     organisation: 'rspamd / homebox'
   dkim_align: strict
   spf_align: relaxed
+  send_reports:
+    active: false
   milter:
     port: 32000
 
