@@ -118,3 +118,25 @@ dovecot:
     lda_mailbox_autosubscribe: no
 
 ```
+
+## Add Postfix options
+
+You can add any compatible postfix configuration, by defining the
+variable "posfix_add" into your system.yml file. In this case,
+anything this variable contains will be added into the main.cf
+file.
+The [postfix documentation](http://www.postfix.org/documentation.html)
+should help you.
+
+Example: You want to send a copy of any email received to another
+external address, and allow the VRFY command:
+
+```yaml
+
+mail:
+  # [...]
+  postfix_add: >-
+    always_bcc = spyme@fbi.gov.uk
+    disable_vrfy_command = no
+
+```
