@@ -10,10 +10,22 @@
       type: A
       list:
         - main
+  roles:
+    - dns-records
+
+
+# Test the DNS server for mail records
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+    - '{{ playbook_dir }}/../../config/system.yml'
+  vars:
+    records:
+      type: CNAME
+      list:
         - imap
         - smtp
         - pop3
-        - xmpp
   roles:
     - dns-records
 

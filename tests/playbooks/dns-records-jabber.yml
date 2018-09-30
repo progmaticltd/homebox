@@ -8,7 +8,7 @@
     - '{{ playbook_dir }}/../../config/system.yml'
   vars:
     records:
-      type: A
+      type: CNAME
       list:
         - xmpp
   roles:
