@@ -21,9 +21,9 @@ ldap:
     domain: '{{ network.domain }}'
     base: 'dc={{ network.domain | regex_replace("\.", ",dc=") }}'
   users:
-    dn: 'ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+    dn: 'ou=users,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
   groups:
-    dn: 'ou=groups, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+    dn: 'ou=groups,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
   manager:
     uid: manager
     dn: 'cn=manager account, ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
