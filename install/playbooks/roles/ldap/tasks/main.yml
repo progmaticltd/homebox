@@ -83,6 +83,7 @@
     - ldapscripts
     - libpam-pwquality
     - cracklib-runtime
+    - ldapvi
 
 # Changes in the database will be stored there
 - name: Create the ldap config changes folder
@@ -566,3 +567,10 @@
     path: /etc/pam.d/common-password
     regexp: '^(password.*pam_unix.so.*sha512.*)$'
     replace: '\1 remember={{ passwords.remember }}'
+
+- name: Add a script to edit users
+  tags: script
+  template:
+    src: ldap-user-edit
+    dest: /usr/local/sbin/ldap-user-edit
+    mode: 0700

@@ -72,6 +72,21 @@ ansible-playbook -v -i ../config/hosts.yml playbooks/home.yml
 
 The home playbook create the home directories for this user.
 
+### Modifying a user account on the server
+
+If you want to directly modify a user account specified in your LDAP
+settings, there is a script installed in
+__/usr/local/sbin/ldap-user-edit__. With his script, you can directly
+modify an LDAP user account, from your system.
+
+It is a wrapper around ldapvi, so you will be able to quicly edit any
+user, for instance to update an email address or an alias, or to fix a
+typo in the username. This is not meant to major modifications.
+
+_Remember: Any modification made this way will not be part of a
+disaster recovery. You will need to reflect the change in your
+system.yml too_
+
 ### Removing user accounts
 
 There is not yet an Ansible script to remove a user account, this will be added soon. In

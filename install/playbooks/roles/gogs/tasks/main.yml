@@ -122,7 +122,7 @@
     - Restart nginx
   template:
     src: webui-site.tpl
-    dest: /etc/nginx/sites-available/gogs-web.conf
+    dest: '/etc/nginx/sites-available/gogs.{{ network.domain }}.conf'
     owner: root
     group: root
     mode: 0644
@@ -133,8 +133,8 @@
     - Check nginx config
     - Restart nginx
   file:
-    src: /etc/nginx/sites-available/gogs-web.conf
-    dest: /etc/nginx/sites-enabled/gogs-web.conf
+    src: '/etc/nginx/sites-available/gogs.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/gogs.{{ network.domain }}.conf'
     state: link
 
 

@@ -8,18 +8,25 @@ server {
     listen 80;
     server_name rspamd.{{ network.domain }};
 
-    # Use Letsencrypt and force https
-    rewrite ^ https://$server_name$request_uri? permanent;
+    # Certificate renewal
+    location /.well-known {
+        alias /var/www/rspamd/.well-known;
+    }
 
-    # log files per virtual host
-    access_log /var/log/nginx/rspamd-access.log;
-    error_log /var/log/nginx/rspamd-error.log;
+    location / {
+        # Use Letsencrypt and force https
+        rewrite ^ https://$server_name$request_uri? permanent;
 
-    # list of IP addresses to authorize
+        # log files per virtual host
+        access_log /var/log/nginx/rspamd-access.log;
+        error_log /var/log/nginx/rspamd-error.log;
+
+        # list of IP addresses to authorize
 {% for ip in mail.antispam.webui.allow %}
-    allow {{ ip }};
+        allow {{ ip }};
 {% endfor %}
-    deny all;
+        deny all;
+    }
 }
 {% endif %}
 

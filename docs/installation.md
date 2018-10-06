@@ -73,7 +73,7 @@ than hosting at your home:
 
 ## Choose your domain name
 
-The first thin you need is a domain name and a DNS provider, there are
+The first thing you need is a domain name and a DNS provider, there are
 many options available.  For now, using Gandi has some advantages,
 especially if you are not very technical.
 
@@ -140,12 +140,14 @@ you can directly connect to your server remotely.
 
 The detailed documentation is available in the [preseed section](preseed.md).
 
-__Notes__
+### Notes
 
 I have tested the installer both on a virtual and a physical
 machine. In the second case, the hardware differences sometimes stops
-and the installer asks questions.  Just answer appropriately, and the
+and the installer asks questions. Just answer appropriately, and the
 installation procedure will continue further.
+
+Do not hesitate to send me feedback about the questions asked.
 
 If the installation crashes in the middle, try to disable ACPI, add/or
 the following boot parameters in the installer:
@@ -214,7 +216,8 @@ Initially, the following TCP ports are required:
 - Once installed, the webmail is accessible in http (port 80), but
   redirects you directly to https (port 443).
 
-## After the installation
+## The next step
 
-Once the scripts have finish to run, your server is ready to receive
-emails.  You do not need to restart it.
+The next step is to link your domain name (e.g homebox.me) register
+your server, using the static IP address that has been assigned to
+you. This is the topif of the next section.

@@ -1,0 +1,9 @@
+---
+
+- name: Check DNS propagation
+  shell: >-
+    host main.{{ network.domain }} 8.8.8.8
+
+# - name: Display a warning to wait until DNS propagation
+#   dbg:
+#     msg: "Now, wait for the DNS propagation, visible here: https://www.whatsmydns.net/#A/main.{{ network.domain }}"

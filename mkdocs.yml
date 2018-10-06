@@ -3,6 +3,7 @@ pages:
   - Home: index.md
   - Features: features.md
   - Installation: installation.md
+  - Wait for DNS propagation: dns-propagation.md
   - Debian preseed: preseed.md
   - Main configuration file: configuration.md
   - Email configuration: email-configuration.md

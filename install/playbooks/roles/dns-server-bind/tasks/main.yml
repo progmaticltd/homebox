@@ -1,4 +1,5 @@
 ---
+
 - name: Create a directory for DNSSEC keys backup if it does not exists
   tags: cert
   delegate_to: localhost

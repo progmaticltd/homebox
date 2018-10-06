@@ -10,12 +10,20 @@ server {
     listen 80;
     server_name xmpp.{{ network.domain }};
 
-    # Use Letsencrypt and force https
-    rewrite ^ https://$server_name$request_uri? permanent;
 
-    # log files per virtual host
-    access_log /var/log/nginx/jabber-access.log;
-    error_log /var/log/nginx/jabber-error.log;
+    # Certificate renewal
+    location /.well-known {
+        alias /var/www/xmpp/.well-known;
+    }
+
+    location / {
+        # Use Letsencrypt and force https
+        rewrite ^ https://$server_name$request_uri? permanent;
+
+        # log files per virtual host
+        access_log /var/log/nginx/jabber-access.log;
+        error_log /var/log/nginx/jabber-error.log;
+    }
 }
 {% endif %}
 

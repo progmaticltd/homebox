@@ -2,6 +2,9 @@
   /etc/letsencrypt/archive/webmail.{{ network.domain }}/* r,
   /etc/letsencrypt/live/webmail.{{ network.domain }}/* r,
 
+  # Certificate renewal
+  /var/www/webmail/.well-known/** r,
+
   # Web content
   /usr/share/roundcube/** r,
 

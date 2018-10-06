@@ -47,13 +47,20 @@
 
 - name: Copy roundcube configuration
   tags: roundcube
-  notify: Restart nginx
   template:
     src: webmail-site.tpl
-    dest: /etc/nginx/sites-available/roundcube.conf
+    dest: '/etc/nginx/sites-available/webmail.{{ network.domain }}.conf'
     owner: root
     group: root
     mode: 0644
+
+- name: Activate roundcube web site
+  tags: roundcube
+  notify: Restart nginx
+  file:
+    src: '/etc/nginx/sites-available/webmail.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/webmail.{{ network.domain }}.conf'
+    state: link
 
 - name: Create a session key for roundcube
   tags: roundcube
