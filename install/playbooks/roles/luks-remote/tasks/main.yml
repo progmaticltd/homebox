@@ -1,0 +1,60 @@
+---
+
+- name: Install the required package
+  tags: apt
+  apt:
+    update_cache: true
+    name: '{{ pkg }}'
+    state: present
+  with_items:
+    - busybox
+    - dropbear
+    - dropbear-initramfs
+  loop_control:
+    loop_var: pkg
+
+- name: Copy the ssh public key for authentication
+  copy:
+    src: /root/.ssh/authorized_keys
+    dest: /etc/dropbear-initramfs/authorized_keys
+    remote_src: yes
+
+- name: Set the keys to convert
+  set_fact:
+    keys_convert:
+    - src: ssh_host_ecdsa_key
+      dest: dropbear_ecdsa_host_key
+    - src: ssh_host_rsa_key
+      dest: dropbear_rsa_host_key
+
+- name: Remove dropbear default keys
+  file:
+    path: /etc/dropbear-initramfs/{{ key }}
+    state: absent
+  with_items:
+      - dropbear_ecdsa_host_key
+      - dropbear_rsa_host_key
+      - dropbear_dss_host_key
+  loop_control:
+    loop_var: key
+
+- name: Convert the openssh key already existing for dropbear
+  shell: >-
+    /usr/lib/dropbear/dropbearconvert openssh dropbear
+    /etc/ssh/{{ key.src }} /etc/dropbear-initramfs/{{ key.dest }}
+  with_items:
+    - '{{ keys_convert }}'
+  loop_control:
+    loop_var: key
+
+- name: Convert the openssh key already existing for dropbear
+  shell: >-
+    /usr/lib/dropbear/dropbearconvert openssh dropbear
+    /etc/ssh/{{ key.src }} /etc/dropbear/{{ key.dest }}
+  with_items:
+    - '{{ keys_convert }}'
+  loop_control:
+    loop_var: key
+
+- name: Update initramfs
+  shell: update-initramfs -u
