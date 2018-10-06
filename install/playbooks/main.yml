@@ -5,6 +5,9 @@
 - import_playbook: external-ip.yml
 - import_playbook: system-prepare.yml
 
+# Install dropbear to remotely unlock the system
+- import_playbook: luks-remote.yml
+
 # Install nginx as the default web server,
 # it is needed to obtain certificates with certbot.
 - import_playbook: nginx.yml

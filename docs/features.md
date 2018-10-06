@@ -39,6 +39,12 @@ encrypted using LUKS, with the passphrase specified in a configuration file.
 This make your server fully secure against physical intrusion, even if your hardware is
 lost or stolen.
 
+You do not have to plug a screen and a keyboard to unlock your server. Once it is booted,
+the server starts a small SSH server to connect, and let you enter the passphrase. The SSH
+server is the excellent [dropbear](https://matt.ucc.asn.au/dropbear/dropbear.html),
+and shares the public key with OpenSSH:
+_You will not have the usual SSH warnings staying the signature has changed_.
+
 ## AppArmor enforcement
 
 All the daemons are carefully configured with an AppArmor profile, in enforce mode. This
