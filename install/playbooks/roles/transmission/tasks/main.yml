@@ -63,6 +63,16 @@
 
 # Daemon configuration ========================================================
 
+- name: Check if transmission is already running
+  register: transmission_status
+  shell: systemctl --quiet is-active transmission-daemon && echo Running || echo None
+
+- name: Stop transmission daemon
+  when: transmission_status == "Running"
+  service:
+    name: transmission-daemon
+    state: stopped
+
 - name: Copy the daemon configuration
   tags: config
   notify: Restart transmission daemon

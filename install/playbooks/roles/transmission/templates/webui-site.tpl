@@ -116,6 +116,10 @@ server {
             alias /usr/share/transmission/web/download-themes/;
         }
 
+        location /downloads {
+            return 301 "/downloads/";
+        }
+
         location /downloads/ {
 
             alias {{ transmission.download_dir }}/;
