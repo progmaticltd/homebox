@@ -93,6 +93,12 @@
 - import_playbook: dns-server-bind-refresh.yml
   when: bind.install
 
+# Install tor and privoxy
+- import_playbook: tor.yml
+  when: tor.install
+- import_playbook: privoxy.yml
+  when: privoxy.install
+
 # Add the old emails import scripts for each users
 # Except when in development mode.
 # It can alter the tests and is CPU intensive if you have
