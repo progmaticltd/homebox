@@ -447,3 +447,49 @@
   tags: defaults
   debug:
     var: posix_groups
+
+################################################################################
+# Merge defaults privoxy settings
+- name: Combine default and user defined privoxy settings
+  run_once: true
+  when: privoxy is defined
+  tags: defaults
+  set_fact:
+    privoxy: '{{ privoxy_default | combine(transmission, recursive=True) }}'
+
+- name: Use default privoxy settings
+  run_once: true
+  when: privoxy is not defined
+  tags: defaults
+  set_fact:
+    privoxy: '{{ privoxy_default }}'
+
+- name: Display merged privoxy settings
+  run_once: true
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: privoxy
+
+################################################################################
+# Merge defaults tor settings
+- name: Combine default and user defined tor settings
+  run_once: true
+  when: tor is defined
+  tags: defaults
+  set_fact:
+    tor: '{{ tor_default | combine(transmission, recursive=True) }}'
+
+- name: Use default tor settings
+  run_once: true
+  when: tor is not defined
+  tags: defaults
+  set_fact:
+    tor: '{{ tor_default }}'
+
+- name: Display merged tor settings
+  run_once: true
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: tor

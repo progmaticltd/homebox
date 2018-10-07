@@ -431,3 +431,22 @@ posix_groups_default:
   description: Administrators
   gidNumber: 2000
   mail: 'admin@{{ network.domain }}'
+
+# The onion router
+tor_default:
+  install: false
+  port: 9050
+  accept_from:
+    - 127.0.0.1
+
+# Privoxy privacy proxy
+privoxy_default:
+  install: false
+  port: 8118
+  accept_from:
+    - 10.0.0.0/8
+    - 192.168.0.0/16
+    - 172.16.0.0/20
+  custom_settings: |
+    # Put anything you want here,
+    # even on multiple lines

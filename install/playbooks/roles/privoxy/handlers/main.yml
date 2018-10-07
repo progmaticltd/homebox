@@ -1,0 +1,11 @@
+---
+
+- name: Restart privoxy
+  service:
+    name: privoxy
+    state: restarted
+
+- name: Restart AppArmor service
+  service:
+    name: apparmor
+    state: restarted

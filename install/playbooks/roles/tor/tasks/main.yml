@@ -1,0 +1,9 @@
+---
+
+- name: Install tor in its default configuration
+  apt:
+    name: tor
+    state: present
+
+- name: Activate AppArmor profile for tor
+  shell: aa-enforce system_tor
