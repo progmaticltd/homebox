@@ -1,0 +1,22 @@
+# AppArmor template for Privoxy
+#include <tunables/global>
+
+/usr/sbin/privoxy {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  # System capabilities
+  capability setgid,
+  capability setuid,
+
+  # Binaries
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/sbin/privoxy mr,
+
+  # Configuration files
+  /etc/privoxy/** r,
+
+  # Logging
+  /var/log/privoxy/** rwkl,
+  /run/privoxy.pid w,
+}

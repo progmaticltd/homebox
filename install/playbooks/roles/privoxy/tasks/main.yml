@@ -1,0 +1,46 @@
+---
+
+- name: Install privoxy
+  apt:
+    name: privoxy
+    state: present
+
+- name: Save original privoxy configuration
+  copy:
+    src: /etc/privoxy/config
+    dest: /etc/privoxy/config-default
+    remote_src: true
+
+- name: Configure privoxy
+  notify: Restart privoxy
+  template:
+    src: privoxy-config
+    dest: /etc/privoxy/config
+
+- name: Allow proxy access from LAN
+  ufw:
+    rule: allow
+    proto: tcp
+    port: '{{ privoxy.port }}'
+    comment: Privoxy proxy server
+    src: '{{ src }}'
+    direction: in
+  with_items:
+      - '{{ privoxy.accept_from }}'
+  loop_control:
+    loop_var: src
+
+- name: Activate the privoxy AppArmor profile
+  when: security.app_armor
+  register: aa_template
+  tags: security, apparmor
+  notify: Restart AppArmor service
+  template:
+    src: 'apparmor-privoxy'
+    dest: '/etc/apparmor.d/usr.sbin.privoxy'
+
+- name: Activate AppArmor profiles
+  when: security.app_armor and aa_template.changed
+  tags: dovecot, security, apparmor
+  notify: Restart AppArmor service
+  command: 'aa-enforce usr.sbin.privoxy'
