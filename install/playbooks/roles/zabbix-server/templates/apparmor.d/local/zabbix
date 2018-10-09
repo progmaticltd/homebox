@@ -1,0 +1,17 @@
+  # Certificates
+  /etc/letsencrypt/archive/zabbix.{{ network.domain }}/* r,
+  /etc/letsencrypt/live/zabbix.{{ network.domain }}/* r,
+
+  # Certificate renewal
+  /var/www/zabbix/.well-known/** r,
+
+  # Web content
+  /usr/share/zabbix/** r,
+
+  # Log files
+  /var/log/nginx/zabbix-access.log w,
+  /var/log/nginx/zabbix-error.log w,
+
+  # nginx/PHP is using fastcgi folder
+  /var/lib/nginx/fastcgi/ r,
+  /var/lib/nginx/fastcgi/** rwk,

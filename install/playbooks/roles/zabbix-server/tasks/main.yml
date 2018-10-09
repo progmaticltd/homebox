@@ -1,0 +1,52 @@
+---
+
+- name: Install Zabbix packages
+  apt:
+    name: "{{ pkg }}"
+    state: present
+  with_items:
+    - zabbix-server-pgsql
+    - zabbix-agent
+    - zabbix-frontend-php
+  loop_control:
+    loop_var: pkg
+
+- name: Install a simple nginx frontend
+  template:
+    src: webfrontend.conf.j2
+    dest: '/etc/nginx/sites-available/zabbix.{{ network.domain }}.conf'
+
+- name: Activate web frontend
+  tags: roundcube
+  notify:
+    - Restart nginx
+    - Restart php-fpm
+  file:
+    src: '/etc/nginx/sites-available/zabbix.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/zabbix.{{ network.domain }}.conf'
+    state: link
+
+# AppArmor configuration ======================================================
+
+- name: Install nginx AppArmor profile
+  when: security.app_armor
+  notify:
+    - Activate AppArmor profile
+    - Restart AppArmor service
+    - Restart nginx
+  tags: zabbix, security, apparmor
+  template:
+    src: apparmor.d/local/zabbix
+    dest: /etc/apparmor.d/local/zabbix
+
+- name: Add zabbix AppArmor specific configuration
+  when: security.app_armor
+  notify:
+    - Activate AppArmor profile
+    - Restart AppArmor service
+    - Restart nginx
+  tags: zabbix, security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/zabbix>'
+    insertbefore: '# End of local includes for homebox'

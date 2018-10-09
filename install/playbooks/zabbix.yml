@@ -1,0 +1,20 @@
+---
+
+# Create a certificate for Zabbix
+- hosts: homebox
+  vars:
+    certificate:
+      type: zabbix
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+  roles:
+    - certificates
+
+# Install the zabbix server
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+  roles:
+    - zabbix-server

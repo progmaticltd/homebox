@@ -1,0 +1,58 @@
+
+server {
+
+    listen 80;
+    server_name zabbix.{{ network.domain }};
+
+    # Certificate renewal
+    location /.well-known {
+        alias /var/www/zabbix/.well-known;
+    }
+
+    location / {
+        # Use Letsencrypt and force https
+        rewrite ^ https://$server_name$request_uri? permanent;
+
+        # log files per virtual host
+        access_log /var/log/nginx/zabbix-access.log;
+        error_log /var/log/nginx/zabbix-error.log;
+    }
+}
+
+server {
+
+    listen 443;
+    server_name zabbix.{{ network.domain }};
+    access_log  /var/log/nginx/zabbix-access.log;
+    error_log   /var/log/nginx/zabbix-error.log;
+
+    ssl on;
+    ssl_certificate /etc/letsencrypt/live/zabbix.homebox.space/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/zabbix.homebox.space/privkey.pem;
+
+    root /usr/share/zabbix/;
+    index index.php;
+
+    client_max_body_size 5m;
+    client_body_buffer_size 128k;
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param SCRIPT_NAME $fastcgi_script_name;
+    }
+
+    location ~*  \.(jpg|jpeg|png|gif|css|js|ico)$ {
+        expires max;
+        log_not_found off;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+
+    location ~ /\. {
+        deny all;
+    }
+}
