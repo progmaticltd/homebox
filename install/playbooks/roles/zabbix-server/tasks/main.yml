@@ -50,3 +50,25 @@
     path: /etc/apparmor.d/usr.sbin.nginx
     line: '  #include <local/zabbix>'
     insertbefore: '# End of local includes for homebox'
+
+- name: Get the current timezone
+  tags: tz
+  register: timezone
+  shell: cat /etc/timezone
+
+- name: Update PHP configuration
+  tags: tz
+  notify: Restart php-fpm
+  replace:
+    path: /etc/php/7.0/fpm/php.ini
+    regexp: '{{ option.regexp }}'
+    replace: '{{ option.replace }}'
+  with_items:
+    - regexp: '^max_execution_time\s=\s[0-9]+'
+      replace: 'max_execution_time = 300'
+    - regexp: '^max_input_time\s=\s[0-9]+'
+      replace: 'max_imput_time = 300'
+    - regexp: '^;?date.timezone\s=.*'
+      replace: 'date.timezone = {{ timezone.stdout }}'
+  loop_control:
+    loop_var: option
