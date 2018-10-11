@@ -1,6 +1,25 @@
 ---
 
-- name: Install Zabbix packages
+- name: Create a directory for the zabbix passwords
+  tags: backup
+  delegate_to: localhost
+  file:
+    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/zabbix/'
+    state: directory
+
+- name: Set facts for zabbix password generation
+  tags: password
+  set_fact:
+    password_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/zabbix/postgres.pwd"
+    password_params: "length=16 chars=ascii_letters,digits"
+
+- name: Generate a random password for zabbix
+  tags: password
+  set_fact:
+    zabbixdb_password: '{{ lookup("password", "{{ password_path }} {{ password_params }}") }}'
+
+- name: Install the required packages
+  tags: apt
   apt:
     name: "{{ pkg }}"
     state: present
@@ -8,6 +27,8 @@
     - zabbix-server-pgsql
     - zabbix-agent
     - zabbix-frontend-php
+    - python-psycopg2
+    - postgresql-client
   loop_control:
     loop_var: pkg
 
@@ -52,12 +73,10 @@
     insertbefore: '# End of local includes for homebox'
 
 - name: Get the current timezone
-  tags: tz
   register: timezone
   shell: cat /etc/timezone
 
 - name: Update PHP configuration
-  tags: tz
   notify: Restart php-fpm
   replace:
     path: /etc/php/7.0/fpm/php.ini
@@ -72,3 +91,63 @@
       replace: 'date.timezone = {{ timezone.stdout }}'
   loop_control:
     loop_var: option
+
+- name: Create the database
+  register: zabbixdb
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_db:
+    encoding: utf8
+    name: zabbix
+
+- name: Create the database user
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_user:
+    name: zabbix
+    db: zabbix
+    password: '{{ zabbixdb_password }}'
+    role_attr_flags: LOGIN
+    priv: ALL
+
+- name: Initialise the database
+  when: zabbixdb.changed
+  tags: postgres
+  become: true
+  become_user: postgres
+  shell: >-
+    zcat /usr/share/zabbix-server-pgsql/{{ sql_file }}.sql.gz
+    > /tmp/zabbix-{{ sql_file }}.sql &&
+    psql -d zabbix -f /tmp/zabbix-{{ sql_file }}.sql
+    -o /tmp/zabbix-{{ sql_file }}-install.log
+  with_items:
+    - schema
+    - images
+    - data
+  loop_control:
+    loop_var: sql_file
+
+- name: Initialise grants
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_privs:
+    type: database
+    db: zabbix
+    privs: ALL
+    roles: zabbix
+
+- name: Initialise Zabbix configuration
+  tags: config
+  replace:
+    path: /etc/zabbix/zabbix_server.conf
+    regexp: '^[#\s]*DBPassword\s?=.*'
+    replace: 'DBPassword={{ zabbixdb_password }}'
+
+# - name: Remove the python / psycopg2 package
+#   tags: apt
+#   apt:
+#     name: python-psycopg2
+#     state: absent
