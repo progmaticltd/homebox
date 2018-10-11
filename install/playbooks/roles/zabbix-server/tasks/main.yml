@@ -92,6 +92,17 @@
   loop_control:
     loop_var: option
 
+- name: Create the database user
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_user:
+    name: zabbix
+    # db: zabbix
+    password: '{{ zabbixdb_password }}'
+    role_attr_flags: LOGIN
+    # priv: 'SELECT,INSERT,UPDATE,DELETE'
+
 - name: Create the database
   register: zabbixdb
   tags: postgres
@@ -100,17 +111,7 @@
   postgresql_db:
     encoding: utf8
     name: zabbix
-
-- name: Create the database user
-  tags: postgres
-  become: true
-  become_user: postgres
-  postgresql_user:
-    name: zabbix
-    db: zabbix
-    password: '{{ zabbixdb_password }}'
-    role_attr_flags: LOGIN
-    priv: ALL
+    owner: zabbix
 
 - name: Initialise the database
   when: zabbixdb.changed
@@ -119,9 +120,7 @@
   become_user: postgres
   shell: >-
     zcat /usr/share/zabbix-server-pgsql/{{ sql_file }}.sql.gz
-    > /tmp/zabbix-{{ sql_file }}.sql &&
-    psql -d zabbix -f /tmp/zabbix-{{ sql_file }}.sql
-    -o /tmp/zabbix-{{ sql_file }}-install.log
+    | psql -d zabbix -o /tmp/zabbix-{{ sql_file }}-install.log
   with_items:
     - schema
     - images
@@ -134,17 +133,23 @@
   become: true
   become_user: postgres
   postgresql_privs:
-    type: database
     db: zabbix
+    objs: ALL_IN_SCHEMA
     privs: ALL
-    roles: zabbix
+    role: zabbix
 
 - name: Initialise Zabbix configuration
   tags: config
+  notify: Restart Zabbix server
   replace:
     path: /etc/zabbix/zabbix_server.conf
     regexp: '^[#\s]*DBPassword\s?=.*'
     replace: 'DBPassword={{ zabbixdb_password }}'
+
+- name: Initialise the zabbix configuration
+  template:
+    src: zabbix.conf.php
+    dest: /etc/zabbix/zabbix.conf.php
 
 # - name: Remove the python / psycopg2 package
 #   tags: apt

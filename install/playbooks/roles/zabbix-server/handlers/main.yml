@@ -18,3 +18,8 @@
   service:
     name: nginx
     state: restarted
+
+- name: Restart Zabbix server
+  service:
+    name: zabbix-server
+    state: restarted
