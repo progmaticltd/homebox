@@ -10,13 +10,16 @@
 - name: Set facts for zabbix password generation
   tags: password
   set_fact:
-    password_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/zabbix/postgres.pwd"
-    password_params: "length=16 chars=ascii_letters,digits"
+    db_password_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/zabbix/postgres.pwd"
+    db_password_params: "length=16 chars=ascii_letters,digits"
+    admin_password_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/zabbix/admin.pwd"
+    admin_password_params: "length={{ 16 + 16 | random }} chars=ascii_letters,digits,punctuation"
 
 - name: Generate a random password for zabbix
   tags: password
   set_fact:
-    zabbixdb_password: '{{ lookup("password", "{{ password_path }} {{ password_params }}") }}'
+    zabbixdb_password: '{{ lookup("password", "{{ db_password_path }} {{ db_password_params }}") }}'
+    zabbix_admin_password: '{{ lookup("password", "{{ admin_password_path }} {{ admin_password_params }}") }}'
 
 - name: Install the required packages
   tags: apt
@@ -72,36 +75,14 @@
     line: '  #include <local/zabbix>'
     insertbefore: '# End of local includes for homebox'
 
-- name: Get the current timezone
-  register: timezone
-  shell: cat /etc/timezone
-
-- name: Update PHP configuration
-  notify: Restart php-fpm
-  replace:
-    path: /etc/php/7.0/fpm/php.ini
-    regexp: '{{ option.regexp }}'
-    replace: '{{ option.replace }}'
-  with_items:
-    - regexp: '^max_execution_time\s=\s[0-9]+'
-      replace: 'max_execution_time = 300'
-    - regexp: '^max_input_time\s=\s[0-9]+'
-      replace: 'max_imput_time = 300'
-    - regexp: '^;?date.timezone\s=.*'
-      replace: 'date.timezone = {{ timezone.stdout }}'
-  loop_control:
-    loop_var: option
-
 - name: Create the database user
   tags: postgres
   become: true
   become_user: postgres
   postgresql_user:
     name: zabbix
-    # db: zabbix
     password: '{{ zabbixdb_password }}'
     role_attr_flags: LOGIN
-    # priv: 'SELECT,INSERT,UPDATE,DELETE'
 
 - name: Create the database
   register: zabbixdb
@@ -151,8 +132,24 @@
     src: zabbix.conf.php
     dest: /etc/zabbix/zabbix.conf.php
 
-# - name: Remove the python / psycopg2 package
-#   tags: apt
-#   apt:
-#     name: python-psycopg2
-#     state: absent
+- name: Delete the guest account
+  tags: postgres
+  shell: psql -d zabbix -c "delete from users where alias='guest'"
+  become: true
+  become_user: postgres
+
+- name: Change the admin password
+  tags: postgres, password
+  shell: >-
+    psql -d zabbix -c "update users set
+    passwd='{{ zabbix_admin_password | md5 }}'
+    where alias='Admin'"
+  become: true
+  become_user: postgres
+
+- name: Remove the python / psycopg2 package
+  when: system.devel == False
+  tags: apt
+  apt:
+    name: python-psycopg2
+    state: absent

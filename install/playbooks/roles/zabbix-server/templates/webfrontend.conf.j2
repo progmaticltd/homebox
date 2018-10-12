@@ -33,14 +33,21 @@ server {
     root /usr/share/zabbix/;
     index index.php;
 
+    # redirect errors to the home page
+    error_page 403 404 502 503 504 /index.php;
+
     client_max_body_size 5m;
     client_body_buffer_size 128k;
 
     location ~ \.php$ {
+        fastcgi_index index.php;
         fastcgi_pass unix:/run/php/php7.0-fpm.sock;
         include fastcgi_params;
+        expires epoch;
+	fastcgi_intercept_errors on;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_param SCRIPT_NAME $fastcgi_script_name;
+	fastcgi_param PHP_VALUE "max_execution_time=300\nmax_input_time=300\npost_max_size=16M";
     }
 
     location ~*  \.(jpg|jpeg|png|gif|css|js|ico)$ {
