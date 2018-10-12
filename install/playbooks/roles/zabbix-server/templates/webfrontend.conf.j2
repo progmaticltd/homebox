@@ -27,8 +27,8 @@ server {
     error_log   /var/log/nginx/zabbix-error.log;
 
     ssl on;
-    ssl_certificate /etc/letsencrypt/live/zabbix.homebox.space/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/zabbix.homebox.space/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/zabbix.{{ network.domain }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/zabbix.{{ network.domain }}/privkey.pem;
 
     root /usr/share/zabbix/;
     index index.php;

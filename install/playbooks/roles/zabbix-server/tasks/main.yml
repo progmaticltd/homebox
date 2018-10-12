@@ -36,12 +36,16 @@
     loop_var: pkg
 
 - name: Install a simple nginx frontend
+  tags: nginx
+  notify:
+    - Restart nginx
+    - Restart php-fpm
   template:
     src: webfrontend.conf.j2
     dest: '/etc/nginx/sites-available/zabbix.{{ network.domain }}.conf'
 
 - name: Activate web frontend
-  tags: roundcube
+  tags: nginx
   notify:
     - Restart nginx
     - Restart php-fpm
