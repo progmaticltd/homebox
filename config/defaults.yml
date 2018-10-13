@@ -5,8 +5,11 @@
 # Default network settings
 # If you are behind a NAT, perhaps you will want to
 # replace "auto" by your real external IP address
+# The backup IP address is often necessary if
+# you are hosting your own DNS server.
 network_default:
   external_ip: auto
+  backup_ip: ~
 
 # Standard policies
 policies:
