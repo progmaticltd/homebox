@@ -70,6 +70,7 @@
   with_items:
     - local/nginx-zabbix
     - usr.sbin.zabbix_agentd
+    - usr.sbin.zabbix_server
   loop_control:
     loop_var: file
 
