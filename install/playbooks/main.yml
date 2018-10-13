@@ -99,6 +99,10 @@
 - import_playbook: privoxy.yml
   when: privoxy.install
 
+# Zabbix monitor, with email and jabber alerts
+- import_playbook: zabbix.yml
+  when: zabbix.install
+
 # Add the old emails import scripts for each users
 # Except when in development mode.
 # It can alter the tests and is CPU intensive if you have

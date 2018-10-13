@@ -1,0 +1,169 @@
+---
+
+- name: Create a directory for the zabbix passwords
+  tags: backup
+  delegate_to: localhost
+  file:
+    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/zabbix/'
+    state: directory
+
+- name: Set facts for zabbix password generation
+  tags: password
+  set_fact:
+    db_password_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/zabbix/postgres.pwd"
+    db_password_params: "length=16 chars=ascii_letters,digits"
+    admin_password_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/zabbix/admin.pwd"
+    admin_password_params: "length={{ 16 + 16 | random }} chars=ascii_letters,digits,punctuation"
+
+- name: Generate a random password for zabbix
+  tags: password
+  set_fact:
+    zabbixdb_password: '{{ lookup("password", "{{ db_password_path }} {{ db_password_params }}") }}'
+    zabbix_admin_password: '{{ lookup("password", "{{ admin_password_path }} {{ admin_password_params }}") }}'
+
+- name: Install the required packages
+  tags: apt
+  apt:
+    name: "{{ pkg }}"
+    state: present
+  with_items:
+    - zabbix-server-pgsql
+    - zabbix-agent
+    - zabbix-frontend-php
+    - python-psycopg2
+    - postgresql-client
+    - lm-sensors
+  loop_control:
+    loop_var: pkg
+
+- name: Install a simple nginx frontend
+  tags: nginx
+  notify:
+    - Restart nginx
+    - Restart php-fpm
+  template:
+    src: webfrontend.conf.j2
+    dest: '/etc/nginx/sites-available/zabbix.{{ network.domain }}.conf'
+
+- name: Activate web frontend
+  tags: nginx
+  notify:
+    - Restart nginx
+    - Restart php-fpm
+  file:
+    src: '/etc/nginx/sites-available/zabbix.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/zabbix.{{ network.domain }}.conf'
+    state: link
+
+# AppArmor configuration ======================================================
+
+- name: Install nginx AppArmor profile
+  when: security.app_armor
+  notify:
+    - Activate AppArmor profile
+    - Restart AppArmor service
+    - Restart nginx
+  tags: zabbix, security, apparmor
+  template:
+    src: 'apparmor.d/{{ file }}'
+    dest: '/etc/apparmor.d/{{ file }}'
+  with_items:
+    - local/nginx-zabbix
+    - usr.sbin.zabbix_agentd
+    - usr.sbin.zabbix_server
+  loop_control:
+    loop_var: file
+
+- name: Add zabbix AppArmor specific configuration
+  when: security.app_armor
+  notify:
+    - Activate AppArmor profile
+    - Restart AppArmor service
+    - Restart nginx
+  tags: zabbix, security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/nginx-zabbix>'
+    insertbefore: '# End of local includes for homebox'
+
+# End of AppArmor configuration ===============================================
+
+- name: Create the database user
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_user:
+    name: zabbix
+    password: '{{ zabbixdb_password }}'
+    role_attr_flags: LOGIN
+
+- name: Create the database
+  register: zabbixdb
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_db:
+    encoding: utf8
+    name: zabbix
+    owner: zabbix
+
+- name: Initialise the database
+  when: zabbixdb.changed
+  tags: postgres
+  become: true
+  become_user: postgres
+  shell: >-
+    zcat /usr/share/zabbix-server-pgsql/{{ sql_file }}.sql.gz
+    | psql -d zabbix -o /tmp/zabbix-{{ sql_file }}-install.log
+  with_items:
+    - schema
+    - images
+    - data
+  loop_control:
+    loop_var: sql_file
+
+- name: Initialise grants
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_privs:
+    db: zabbix
+    objs: ALL_IN_SCHEMA
+    privs: ALL
+    role: zabbix
+
+- name: Initialise Zabbix configuration
+  tags: config
+  notify: Restart Zabbix server
+  replace:
+    path: /etc/zabbix/zabbix_server.conf
+    regexp: '^[#\s]*DBPassword\s?=.*'
+    replace: 'DBPassword={{ zabbixdb_password }}'
+
+- name: Initialise the zabbix configuration
+  template:
+    src: zabbix.conf.php
+    dest: /etc/zabbix/zabbix.conf.php
+
+- name: Delete the guest account
+  when: zabbix.guest_account == False
+  tags: postgres
+  shell: psql -d zabbix -c "delete from users where alias='guest'"
+  become: true
+  become_user: postgres
+
+- name: Change the admin password for a strong one
+  tags: postgres, password
+  shell: >-
+    psql -d zabbix -c "update users set
+    passwd='{{ zabbix_admin_password | md5 }}'
+    where alias='Admin'"
+  become: true
+  become_user: postgres
+
+- name: Remove the python / psycopg2 package
+  when: system.devel == False
+  tags: apt
+  apt:
+    name: python-psycopg2
+    state: absent

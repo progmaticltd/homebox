@@ -68,7 +68,7 @@
   shell: makepasswd --chars=24
   register: makepasswd
 
-- name: Create the directoru for dovecot_impersonate plugin
+- name: Create the directory for dovecot_impersonate plugin
   when: mail.impersonate.active
   tags: roundcube
   file:

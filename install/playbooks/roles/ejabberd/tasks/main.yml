@@ -93,7 +93,7 @@
   notify: Restart nginx
   template:
     src: frontend.tpl
-    dest: /etc/nginx/sites-available/jabber-frontend.conf
+    dest: '/etc/nginx/sites-available/xmpp.{{ network.domain }}.conf'
     owner: root
     group: root
     mode: 0644
@@ -102,8 +102,8 @@
   tags: jabber
   notify: Restart nginx
   file:
-    src: /etc/nginx/sites-available/jabber-frontend.conf
-    dest: /etc/nginx/sites-enabled/jabber-frontend.conf
+    src: '/etc/nginx/sites-available/xmpp.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/xmpp.{{ network.domain }}.conf'
     state: link
 
 - name: Create the http upload directory

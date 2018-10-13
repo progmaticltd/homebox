@@ -16,7 +16,7 @@
     - Restart nginx
   template:
     src: webui-site.tpl
-    dest: /etc/nginx/sites-available/transmission-web.conf
+    dest: '/etc/nginx/sites-available/transmission.{{ network.domain }}.conf'
     owner: root
     group: root
     mode: 0644
@@ -27,8 +27,8 @@
     - Check nginx config
     - Restart nginx
   file:
-    src: /etc/nginx/sites-available/transmission-web.conf
-    dest: /etc/nginx/sites-enabled/transmission-web.conf
+    src: '/etc/nginx/sites-available/transmission.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/transmission.{{ network.domain }}.conf'
     state: link
 
 # nginx Fancyindex ============================================================
@@ -62,6 +62,16 @@
     loop_var: sysctl
 
 # Daemon configuration ========================================================
+
+- name: Check if transmission is already running
+  register: transmission_status
+  shell: systemctl --quiet is-active transmission-daemon && echo Running || echo None
+
+- name: Stop transmission daemon
+  when: transmission_status == "Running"
+  service:
+    name: transmission-daemon
+    state: stopped
 
 - name: Copy the daemon configuration
   tags: config
