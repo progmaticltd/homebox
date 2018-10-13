@@ -29,6 +29,15 @@ bind_default:
   ttl: 3600               # 1 hour
   # General configuration
   mx_priority: 10
+  # List of backup MX records, if the server is unreachable
+  # The default is an empty list
+  mx_backup: []
+  # Example of records
+  # mx_backup:
+  #   - fqdn: spool.mail.gandi.net
+  #     priority: 10
+  #   - fqdn: fb.mail.gandi.net
+  #     priority: 50
   # List of trusted servers to accept cache / recursive queries
   trusted:
     - src: 192.168.0.0/16
@@ -49,6 +58,17 @@ bind_default:
 By default, the Google public DNS servers are used, as well as the one from cloudflare.
 
 More choice here: [Public DNS](https://en.wikipedia.org/wiki/Google_Public_DNS#See_also).
+
+### Backup MX records
+
+If your server is not online, for instance due to an internet outage,
+you can use this option to redirect emails reception to another
+server. In this case, the other MTA should be configured to accept
+emails for your domain.
+
+If you use this option, you will probably consider importing the emails
+delivered to these "backup servers", to your own server, using the
+[external account](external-accounts.md) functionality.
 
 ### Trusted servers
 

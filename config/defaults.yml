@@ -5,7 +5,7 @@
 # Default network settings
 # If you are behind a NAT, perhaps you will want to
 # replace "auto" by your real external IP address
-# The backup IP address is often necessary if
+# The backup IP address is interesting if
 # you are hosting your own DNS server.
 network_default:
   external_ip: auto
@@ -363,8 +363,17 @@ bind_default:
   expire: 3600000         # 10000 hours
   neg_cache_ttl: 172800   # 2 days
   ttl: 3600               # 1 hour
-  # General configuration
+  # General MX configuration
   mx_priority: 10
+  # List of backup MX records, if the server is unreachable
+  # The default is an empty list
+  mx_backup: []
+  # Example of records
+  # mx_backup:
+  #   - fqdn: spool.mail.gandi.net
+  #     priority: 10
+  #   - fqdn: fb.mail.gandi.net
+  #     priority: 50
   # List of trusted servers to accept cache / recursive queries
   trusted:
     - src: 192.168.0.0/16
