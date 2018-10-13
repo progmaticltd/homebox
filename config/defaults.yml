@@ -450,3 +450,13 @@ privoxy_default:
   custom_settings: |
     # Put anything you want here,
     # even on multiple lines
+
+# Zabbix monitoring
+zabbix_default:
+  install: false
+  guest_account: false  # Allow guest account or not
+  public: false         # not open to public by default
+  allow:                # a list of IP address that can access the web interface
+    - 192.168.0.0/16    # RFC1918 local networks
+    - 172.16.0.0/12
+    - 10.0.0.0/8

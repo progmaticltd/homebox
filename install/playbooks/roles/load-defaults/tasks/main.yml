@@ -493,3 +493,26 @@
   tags: defaults
   debug:
     var: tor
+
+################################################################################
+# Merge defaults zabbix settings
+- name: Combine default and user defined zabbix settings
+  run_once: true
+  when: zabbix is defined
+  tags: defaults
+  set_fact:
+    zabbix: '{{ zabbix_default | combine(transmission, recursive=True) }}'
+
+- name: Use default zabbix settings
+  run_once: true
+  when: zabbix is not defined
+  tags: defaults
+  set_fact:
+    zabbix: '{{ zabbix_default }}'
+
+- name: Display merged zabbix settings
+  run_once: true
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: zabbix

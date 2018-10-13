@@ -32,6 +32,7 @@
     - zabbix-frontend-php
     - python-psycopg2
     - postgresql-client
+    - lm-sensors
   loop_control:
     loop_var: pkg
 
@@ -64,8 +65,13 @@
     - Restart nginx
   tags: zabbix, security, apparmor
   template:
-    src: apparmor.d/local/zabbix
-    dest: /etc/apparmor.d/local/zabbix
+    src: 'apparmor.d/{{ file }}'
+    dest: '/etc/apparmor.d/{{ file }}'
+  with_items:
+    - local/nginx-zabbix
+    - usr.sbin.zabbix_agentd
+  loop_control:
+    loop_var: file
 
 - name: Add zabbix AppArmor specific configuration
   when: security.app_armor
@@ -76,8 +82,10 @@
   tags: zabbix, security, apparmor
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
-    line: '  #include <local/zabbix>'
+    line: '  #include <local/nginx-zabbix>'
     insertbefore: '# End of local includes for homebox'
+
+# End of AppArmor configuration ===============================================
 
 - name: Create the database user
   tags: postgres
@@ -137,12 +145,13 @@
     dest: /etc/zabbix/zabbix.conf.php
 
 - name: Delete the guest account
+  when: zabbix.guest_account == False
   tags: postgres
   shell: psql -d zabbix -c "delete from users where alias='guest'"
   become: true
   become_user: postgres
 
-- name: Change the admin password
+- name: Change the admin password for a strong one
   tags: postgres, password
   shell: >-
     psql -d zabbix -c "update users set

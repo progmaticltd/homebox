@@ -33,6 +33,15 @@ server {
     root /usr/share/zabbix/;
     index index.php;
 
+{# Remote access or not #}
+{% if zabbix.public == false %}
+    # list of IP addresses to authorize
+{% for ip in zabbix.allow %}
+    allow {{ ip }};
+{% endfor %}
+    deny all;
+{% endif %}
+
     # redirect errors to the home page
     error_page 403 404 502 503 504 /index.php;
 
