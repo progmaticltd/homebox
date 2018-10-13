@@ -25,15 +25,6 @@ server {
         # log files per virtual host
         access_log /var/log/nginx/transmission-access.log;
         error_log /var/log/nginx/transmission-error.log;
-
-{% if transmission.public == false %}
-        # list of IP addresses to authorize
-        satisfy any;
-{% for ip in transmission.allow %}
-        allow {{ ip }};
-{% endfor %}
-        deny all;
-{% endif %}
     }
 }
 {% endif %}
@@ -67,7 +58,21 @@ server {
         root /usr/share/transmission/web/images/;
     }
 
+    # When not using the LAN, authenticate users against the system with PAM
+    satisfy any;
+    auth_pam "Transmission BitTorrent client";
+    auth_pam_service_name "login";
+
+{% if transmission.public == false %}
+    # list of IP addresses to authorize
+{% for ip in transmission.allow %}
+    allow {{ ip }};
+{% endfor %}
+    deny all;
+{% endif %}
+
     location ^~ / {
+
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -81,12 +86,6 @@ server {
 
         # Use utf8 as the default charset
         charset utf8;
-
-        # Authenticate users against the pam system, except when using the LAN
-        satisfy any;
-        auth_pam                "Transmission BitTorrent client";
-        auth_pam_service_name   "login";
-
         location /upload {
             proxy_pass http://transmission;
         }
@@ -137,12 +136,4 @@ server {
             fancyindex_name_length 255;
         }
     }
-
-{% if transmission.public == false %}
-    # list of IP addresses to authorize
-{% for ip in transmission.allow %}
-    allow {{ ip }};
-{% endfor %}
-    deny all;
-{% endif %}
 }

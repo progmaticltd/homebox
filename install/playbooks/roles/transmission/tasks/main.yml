@@ -16,7 +16,7 @@
     - Restart nginx
   template:
     src: webui-site.tpl
-    dest: /etc/nginx/sites-available/transmission-web.conf
+    dest: '/etc/nginx/sites-available/transmission.{{ network.domain }}.conf'
     owner: root
     group: root
     mode: 0644
@@ -27,8 +27,8 @@
     - Check nginx config
     - Restart nginx
   file:
-    src: /etc/nginx/sites-available/transmission-web.conf
-    dest: /etc/nginx/sites-enabled/transmission-web.conf
+    src: '/etc/nginx/sites-available/transmission.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/transmission.{{ network.domain }}.conf'
     state: link
 
 # nginx Fancyindex ============================================================
