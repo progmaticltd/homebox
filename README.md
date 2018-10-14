@@ -69,6 +69,7 @@ in the official documentation.
 - Personal backup server for each user, using borgbackup.
 - [Gogs git server](https://gogs.io/), a fast and lightweight git server written in Golang.
 - [Transmission daemon](https://transmissionbt.com/), accessible over https, public or private over your LAN. Files can be downloaded directly with a web browser, using LDAP credentials for authentication or whitelisted IP addresses (e.g. LAN).
+- Monitoring with [Zabbix](https://www.zabbix.com/), with email and Jabber alerts.
 
 ### Development
 

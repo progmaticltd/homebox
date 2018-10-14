@@ -36,13 +36,16 @@ This project is for you if:
 - Authentication: OpenLDAP
 - Mail transfer agent: Postfix
 - Mail delivery agent: Dovecot
+- Monitoring: Zabbix
 - Antispam: RSpamd
 - Antivirus: ClamAV
 - Webmail: RoundCube
 - Jabber: ejabberd
-- DNS: bind
+- DNS: bind9
 - Git server: gogs
 - Bittorrent station: transmission
+- Proxy: Privoxy / Tor
+- Backup: Borgbackup
 
 ## Other projects to mention
 

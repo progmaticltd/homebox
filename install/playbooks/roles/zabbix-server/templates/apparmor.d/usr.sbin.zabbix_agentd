@@ -1,0 +1,50 @@
+# Last Modified: Sat Oct 13 07:42:14 2018
+#include <tunables/global>
+
+/usr/sbin/zabbix_agentd {
+
+  #include <abstractions/base>
+
+  # custom commands
+  /bin/dash mr,
+  /bin/dash rix,
+
+  # Other commands run
+  /usr/bin/who mr,
+  /usr/bin/who rix,
+  /usr/bin/wc mr,
+  /usr/bin/wc rix,
+
+  # what need to be run from the commads above
+  /run/utmp r,
+  /run/utmp k,
+
+  # Configuration files
+  /etc/zabbix/zabbix_agentd.conf r,
+  /etc/zabbix/zabbix_agentd.conf.d/ r,
+  /etc/gai.conf r,
+  /etc/passwd r,
+
+  # Binaries
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/sbin/zabbix_agentd mr,
+
+  # /proc file system
+  /proc/ r,
+  /proc/*/cmdline r,
+  /proc/*/mounts r,
+  /proc/*/net/dev r,
+  /proc/*/status r,
+  /proc/*/task/*/cmdline r,
+  /proc/*/task/*/status r,
+  /proc/cmdline r,
+  /proc/loadavg r,
+  /proc/sys/fs/file-max r,
+  /proc/sys/kernel/pid_max r,
+
+  /sys/devices/system/** r,
+
+  # Logs and status file
+  /run/zabbix/zabbix_agentd.pid rwkl,
+  /var/log/zabbix-agent/zabbix_agentd.log rwkl,
+}

@@ -14,7 +14,7 @@
     mode: 0644
 
 - name: Create the autodiscover site
-  notify: Restart nginx server
+  notify: Restart nginx
   template:
     src: autodiscover.conf
     dest: '/etc/nginx/sites-available/autodiscover.{{ network.domain }}.conf'
@@ -38,24 +38,26 @@
 - name: Install nginx AppArmor profile
   when: security.app_armor
   tags: security, apparmor
+  notify:
+    - Activate AppArmor profile
+    - Restart AppArmor service
+    - Restart nginx
   template:
     src: 'apparmor.d/local/autodiscover'
-    dest: '/etc/apparmor.d/local/autodiscover'
+    dest: '/etc/apparmor.d/local/nginx-autodiscover'
 
 - name: Add autodiscover AppArmor specific configuration
   when: security.app_armor
   tags: security, apparmor
   register: aa_config
+  notify:
+    - Activate AppArmor profile
+    - Restart AppArmor service
+    - Restart nginx
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
-    line: '  #include <local/autodiscover>'
+    line: '  #include <local/nginx-autodiscover>'
     insertbefore: '# End of local includes for homebox'
-
-- name: Activate AppArmor profiles
-  when: security.app_armor and aa_config.changed
-  tags: security, apparmor
-  command: 'aa-enforce usr.sbin.nginx'
-  notify: Restart AppArmor service
 
 # Create entries for the DNS server ===========================================
 - name: Generate DNS records for bind
