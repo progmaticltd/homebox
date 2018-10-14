@@ -30,6 +30,7 @@
   apt:
     name: "{{ pkg }}"
     state: latest
+    default_release: '{{ dovecot_repository }}'
   with_items:
     - dovecot-solr
   loop_control:

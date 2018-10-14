@@ -4,6 +4,7 @@
 # Complete list of playbooks to run, in this order
 - import_playbook: external-ip.yml
 - import_playbook: system-prepare.yml
+- import_playbook: remote-access.yml
 
 # Install dropbear to remotely unlock the system
 - import_playbook: luks-remote.yml
@@ -98,6 +99,10 @@
   when: tor.install
 - import_playbook: privoxy.yml
   when: privoxy.install
+
+# Zabbix monitor, with email and jabber alerts
+- import_playbook: zabbix.yml
+  when: zabbix.install
 
 # Add the old emails import scripts for each users
 # Except when in development mode.

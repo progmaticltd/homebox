@@ -5,8 +5,11 @@
 # Default network settings
 # If you are behind a NAT, perhaps you will want to
 # replace "auto" by your real external IP address
+# The backup IP address is interesting if
+# you are hosting your own DNS server.
 network_default:
   external_ip: auto
+  backup_ip: ~
 
 # Standard policies
 policies:
@@ -78,6 +81,12 @@ mail_default:
     mynetworks: ~           # Authorized IP addresses to send emails without authentication
                             # e.g. 192.168.0.0/16, 172.16.0.0/12, 10.10.0.0/8
 
+                            # Put anything you want here, even on multiple lines, this will
+                            # be added on main.cf. See the example here:
+    # extra_settings: |
+    #   disable_vrfy_command = no
+    #   frozen_delivered_to = no
+
   #############################################################################
   antispam:                 # Check inbound and outbound emails for viruses
     port: 33000             # port to use for the antivirus daemon
@@ -130,11 +139,12 @@ mail_default:
                             # from stretch-backports, like those below.
                             # like sending emails to an international addresses
                             # (e.g. andré@homebox.space)
-  recipient_delimiter: '+'  # The characters you want to use to split email address from
-                            # mailbox, i.e.:
+  recipient_delimiter: '+'  # The character you want to use to split email address
+                            # from mailbox, i.e.:
                             # when receiving a message to john+lists@example.com,
-                            # it should go directly to
-                            # the 'lists' folder... I personally use '~'
+                            # it should go directly to the 'lists' folder.
+                            # It is also useful to track which sites are selling or sharing your
+                            # email address to other sites.
 
 ###############################################################################
 # Default password policies for users
@@ -183,12 +193,15 @@ system_default:
   debug: false
 
 ###############################################################################
-# Once the system is in place, it is possible to use 'limit' for the rule, instead of any.
-# It is also possible to use fail2ban, which is installed anyway
+# Once the system is in place, it is possible to use 'limit' for the rule,
+# instead of allow. It is also possible to use fail2ban, which is installed anyway
+# You can have as many sources as you want, with a comment to easily keep track
+# of your rules
 firewall_default:
   ssh:
-    from: any
-    rule: allow
+    - src: any
+      rule: allow
+      comment: allow SSH from anywhere
 
 ###############################################################################
 # Extra security values
@@ -360,8 +373,17 @@ bind_default:
   expire: 3600000         # 10000 hours
   neg_cache_ttl: 172800   # 2 days
   ttl: 3600               # 1 hour
-  # General configuration
+  # General MX configuration
   mx_priority: 10
+  # List of backup MX records, if the server is unreachable
+  # The default is an empty list
+  mx_backup: []
+  # Example of records
+  # mx_backup:
+  #   - fqdn: spool.mail.gandi.net
+  #     priority: 10
+  #   - fqdn: fb.mail.gandi.net
+  #     priority: 50
   # List of trusted servers to accept cache / recursive queries
   trusted:
     - src: 192.168.0.0/16
@@ -450,3 +472,13 @@ privoxy_default:
   custom_settings: |
     # Put anything you want here,
     # even on multiple lines
+
+# Zabbix monitoring
+zabbix_default:
+  install: false
+  guest_account: false  # Allow guest account or not
+  public: false         # not open to public by default
+  allow:                # a list of IP address that can access the web interface
+    - 192.168.0.0/16    # RFC1918 local networks
+    - 172.16.0.0/12
+    - 10.0.0.0/8

@@ -11,8 +11,11 @@ $ORIGIN {{ network.domain }}.
 ;; Name Server and IP address mapping (GLUE)
 @       IN      NS      main.{{ network.domain }}.
 main    IN      A       {{ external_ip }}
+
+{% if backup_ip is defined %}
 @       IN      NS      backup.{{ network.domain }}.
-backup  IN      A       {{ external_ip }}
+backup  IN      A       {{ backup_ip }}
+{% endif %}
 
 ;; Main A Record for where everything goes
 @       IN      A       {{ external_ip }}
@@ -22,3 +25,8 @@ backup  IN      A       {{ external_ip }}
 
 ;; Mail Server MX (Mail exchanger) Record
 {{ network.domain }}. IN  MX  {{ bind.mx_priority }}  main.{{ network.domain }}.
+
+;; Backup records if the server is unreachable
+{% for bmx in bind.mx_backup %}
+@ IN  MX  {{ bmx.priority }}  {{ bmx.fqdn }}.
+{% endfor %}

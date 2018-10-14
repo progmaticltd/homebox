@@ -202,6 +202,19 @@
     name: bind9
     state: started
 
+- name: Ensure the main record resolves to me
+  tags: hosts
+  lineinfile:
+    path: /etc/hosts
+    line: '127.0.0.1    main.{{ network.domain }}'
+
+- name: Ensure the backup record resolves to me
+  when: backup_ip is defined
+  tags: hosts
+  lineinfile:
+    path: /etc/hosts
+    line: '127.0.0.1    backup.{{ network.domain }}'
+
 - name: Backup the keys on your local machine
   when: bind.dnssec.active
   tags: backup-pull

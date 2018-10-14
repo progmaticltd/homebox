@@ -34,3 +34,9 @@
   when: network.external_ip != "auto"
   set_fact:
     external_ip: '{{ network.external_ip }}'
+
+- name: Get the backup IP address
+  tags: facts
+  when: network.backup_ip != None
+  set_fact:
+    backup_ip: '{{ network.backup_ip }}'

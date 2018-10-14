@@ -122,9 +122,8 @@ dovecot:
 ## Add Postfix options
 
 You can add any compatible postfix configuration, by defining the
-variable "posfix_add" into your system.yml file. In this case,
-anything this variable contains will be added into the main.cf
-file.
+variable "extra-settings" into your system.yml file. In this case,
+anything this variable contains will be added into the main.cf file.
 The [postfix documentation](http://www.postfix.org/documentation.html)
 should help you.
 
@@ -135,8 +134,10 @@ external address, and allow the VRFY command:
 
 mail:
   # [...]
-  postfix_add: >-
-    always_bcc = spyme@fbi.gov.uk
-    disable_vrfy_command = no
+  postfix:
+    ...
+    extra_settings: |
+      always_bcc = spyme@fbi.gov.uk
+      disable_vrfy_command = no
 
 ```
