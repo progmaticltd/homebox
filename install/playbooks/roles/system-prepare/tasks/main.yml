@@ -101,16 +101,6 @@
   loop_control:
     loop_var: pkg
 
-- name: Configure the firewall for SSH access
-  tags: security
-  ufw:
-    proto: tcp
-    rule: '{{ firewall.ssh.rule }}'
-    src: '{{ firewall.ssh.from }}'
-    port: 22
-    comment: Allow SSH access
-    state: enabled
-
 - name: Install AppArmor packages
   when: security.app_armor
   tags: security

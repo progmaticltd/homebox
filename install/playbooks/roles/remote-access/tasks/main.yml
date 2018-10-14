@@ -1,0 +1,15 @@
+---
+
+- name: Configure the firewall for SSH access
+  tags: security
+  ufw:
+    proto: tcp
+    port: 22
+    src: '{{ access.src }}'
+    rule: '{{ access.rule | default("allow") }}'
+    comment: '{{ access.comment }}'
+    state: enabled
+  with_items:
+    - '{{ firewall.ssh }}'
+  loop_control:
+    loop_var: access
