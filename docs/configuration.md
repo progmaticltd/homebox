@@ -120,13 +120,16 @@ dns:
 
 ```yaml
 ###############################################################################
-# Once the system is in place, it is possible to use 'limit' for the rule, instead of any.
-# It is also possible to use fail2ban, which is installed anyway
+# Once the system is in place, it is possible to use 'limit' for the rule,
+# instead of allow. It is also possible to use fail2ban, which is installed anyway
+# You can have as many sources as you want, with a comment to easily keep track
+# of your rules
 firewall:
   ssh:
-    from: any
-    rule: allow
+    - src: 192.168.1.0/24
+      comment: 'Allow from the LAN'
 ```
+
 ## Security options
 
 ```yaml
@@ -191,4 +194,3 @@ backup:
     keep_monthly: 6                  # Keep the last six months (12 by default)
     compression: zlib,6              # Compression scheme to use (lz4 by default)
 ```
-

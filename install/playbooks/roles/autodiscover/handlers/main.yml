@@ -10,5 +10,5 @@
     name: nginx
     state: restarted
 
-- name: Activate AppArmor profiles
+- name: Activate AppArmor profile
   command: 'aa-enforce usr.sbin.nginx'
