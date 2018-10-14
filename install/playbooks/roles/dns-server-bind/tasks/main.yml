@@ -209,7 +209,7 @@
     line: '127.0.0.1    main.{{ network.domain }}'
 
 - name: Ensure the backup record resolves to me
-  when: backup_ip != None
+  when: backup_ip is defined
   tags: hosts
   lineinfile:
     path: /etc/hosts

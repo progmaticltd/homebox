@@ -184,15 +184,6 @@
   loop_control:
     loop_var: dict
 
-# This is needed by some programs later
-# - name: Set the US locales for some UTF8 scripts
-#   tags: lang
-#   notify: Rebuild locales
-#   replace:
-#     path: /etc/locale.gen
-#     regexp: '# en_US.UTF-8 UTF-8'
-#     replace: 'en_US.UTF-8 UTF-8'
-
 - name: Create a composition directory for bind
   when: bind.install
   tags: bind

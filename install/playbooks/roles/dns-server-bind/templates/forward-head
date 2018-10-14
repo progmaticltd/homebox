@@ -12,7 +12,7 @@ $ORIGIN {{ network.domain }}.
 @       IN      NS      main.{{ network.domain }}.
 main    IN      A       {{ external_ip }}
 
-{% if backup_ip != None %}
+{% if backup_ip is defined %}
 @       IN      NS      backup.{{ network.domain }}.
 backup  IN      A       {{ backup_ip }}
 {% endif %}

@@ -7,7 +7,7 @@
     port: 22
     src: '{{ access.src }}'
     rule: '{{ access.rule | default("allow") }}'
-    comment: '{{ access.comment }}'
+    comment: '{{ access.comment | default("") }}'
     state: enabled
   with_items:
     - '{{ firewall.ssh }}'
