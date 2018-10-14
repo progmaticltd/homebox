@@ -141,7 +141,7 @@ message_size_limit = {{ message_size_limit }}
 smtputf8_enable = yes
 smtputf8_autodetect_classes = verify
 
-{% if mail.postfix_add is defined %}
+{% if mail.postfix.extra_settings is defined %}
 # Additional postfix configuration
-{{ mail.postfix_add }}
+{{ mail.postfix.extra_settings }}
 {% endif %}

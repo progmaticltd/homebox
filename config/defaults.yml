@@ -81,6 +81,12 @@ mail_default:
     mynetworks: ~           # Authorized IP addresses to send emails without authentication
                             # e.g. 192.168.0.0/16, 172.16.0.0/12, 10.10.0.0/8
 
+                            # Put anything you want here, even on multiple lines, this will
+                            # be added on main.cf. See the example here:
+    # extra_settings: |
+    #   disable_vrfy_command = no
+    #   frozen_delivered_to = no
+
   #############################################################################
   antispam:                 # Check inbound and outbound emails for viruses
     port: 33000             # port to use for the antivirus daemon
@@ -133,11 +139,12 @@ mail_default:
                             # from stretch-backports, like those below.
                             # like sending emails to an international addresses
                             # (e.g. andré@homebox.space)
-  recipient_delimiter: '+'  # The characters you want to use to split email address from
-                            # mailbox, i.e.:
+  recipient_delimiter: '+'  # The character you want to use to split email address
+                            # from mailbox, i.e.:
                             # when receiving a message to john+lists@example.com,
-                            # it should go directly to
-                            # the 'lists' folder... I personally use '~'
+                            # it should go directly to the 'lists' folder.
+                            # It is also useful to track which sites are selling or sharing your
+                            # email address to other sites.
 
 ###############################################################################
 # Default password policies for users
