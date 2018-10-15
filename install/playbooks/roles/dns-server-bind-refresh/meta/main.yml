@@ -1,5 +1,5 @@
 ---
 
 dependencies:
-  - { role: load-defaults }
+  - { role: load-defaults, when: defaults_loaded is not defined }
   - { role: external-ip }
