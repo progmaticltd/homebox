@@ -455,7 +455,7 @@
   when: privoxy is defined
   tags: defaults
   set_fact:
-    privoxy: '{{ privoxy_default | combine(transmission, recursive=True) }}'
+    privoxy: '{{ privoxy_default | combine(privoxy, recursive=True) }}'
 
 - name: Use default privoxy settings
   run_once: true
@@ -478,7 +478,7 @@
   when: tor is defined
   tags: defaults
   set_fact:
-    tor: '{{ tor_default | combine(transmission, recursive=True) }}'
+    tor: '{{ tor_default | combine(tor, recursive=True) }}'
 
 - name: Use default tor settings
   run_once: true
@@ -501,7 +501,7 @@
   when: zabbix is defined
   tags: defaults
   set_fact:
-    zabbix: '{{ zabbix_default | combine(transmission, recursive=True) }}'
+    zabbix: '{{ zabbix_default | combine(zabbix, recursive=True) }}'
 
 - name: Use default zabbix settings
   run_once: true
@@ -516,3 +516,11 @@
   tags: defaults
   debug:
     var: zabbix
+
+################################################################################
+# Marking the default settings as loaded should increase the speed of the deployment
+- name: Mark the default settings as loaded
+  run_once: true
+  tags: defaults
+  set_fact:
+    defaults_loaded: true
