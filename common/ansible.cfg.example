@@ -1,0 +1,41 @@
+[defaults]
+retry_files_enabled = False
+stdout_callback = yaml
+# Other values
+# actionable
+# context_demo
+# debug
+# default
+# dense
+# foreman
+# full_skip
+# hipchat
+# jabber
+# json
+# junit
+# logentries
+# log_plays
+# logstash
+# mail
+# minimal
+# oneline
+# osx_say
+# profile_roles
+# profile_tasks
+# selective
+# ski.py
+# slack
+# stderr
+# syslog_json
+# timer
+# tree
+
+verbose = bright blue
+warn = bright purple
+error = bright yellow
+debug = light gray
+deprecate = purple
+skip = cyan
+unreachable = bright red
+ok = bright green
+changed = bright yellow
