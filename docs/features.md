@@ -81,6 +81,16 @@ behaviour in your system.yml file.
 Only the security updates are installed, new packages versions still need to be installed
 manually.
 
+# Monitoring
+
+The installer can deploy a complete monitoring solution, [Zabbix](https://zabbix.com).
+
+- You can set up email or XMPP alerts, on various events.
+- You can add other servers / machines to your monitoring server.
+- You can set-up SMS alerts if, for instance, your internet connection goes down.
+
+By default, the guest account is deleted, and a strong password is generated.
+
 # Email features
 
 ## Digital signature
@@ -176,61 +186,6 @@ autoconfig.xml, autodiscover.xml and DNS records
 The emails received are automatically checked for viruses, and are discarded by default
 if they are infected. The emails sent by your users are checked as well, avoiding your
 IP address to be blacklisted if one of your account is compromised.
-
-In the later case, the system can also send a warning with the IP address of the sender
-for a remote address:
-
-```html
-
-Hello,
-
-A virus has been sent using your email address (andre@homebox.space).
-
-- The virus is identified by ClamAV as "Clamav.Test.File-6".
-- The remote IP address is "106.57.174.35".
-- The intended recipient(s) were:
-  - mirina@homebox.space
-
-The email has been discarded and not transferred, please:
-
-- Check your workstation for viruses,
-- Change your password, using https://webmail.homebox.space/
-- Download an antivirus, for instance at https://www.clamav.net/
-
-More details about the source IP address:
-https://getmyipaddress.org/ipwhois.php?ip=106.57.174.35
-
---
-The Postmaster
-
-```
-
-When the email is sent from your network, the MAC address is added to the email warning:
-
-```html
-
-Hello,
-
-A virus has been sent using your email address (andre@homebox.space).
-
-- The virus is identified by ClamAV as "Clamav.Test.File-6".
-- The remote IP address is "172.16.1.39".
-- The intended recipient(s) were:
-  - john@homebox.space
-
-The email has been discarded and not transferred, please:
-
-- Check your workstation for viruses,
-- Change your password, using https://webmail.homebox.space/
-- Download an antivirus, for instance at https://www.clamav.net/
-
-More details about the source IP address:
-MAC address: 26:ac:5b:6a:4d:ac
-
---
-The Postmaster
-
-```
 
 You can also choose to explicitly reject (bounce) emails containing viruses. In all case,
 the analysis is done after the email queue, making the process non blocking and efficient
@@ -348,6 +303,14 @@ domain.
 - Downloaded files can be accessed within your web browser, still using the LDAP credentials if you are not at home.
 - The daemon runs in a proper AppArmor profile.
 - Easy to use form to search downloaded files in your web browser.
+
+# Tor / Privoxy server
+
+The platform configures Tor and Privoxy, so you can use these privacy protection applications
+with any device on your network.
+
+- Chain the proxy together
+- Allow you to override any privoxy or tor options
 
 # Other features
 
