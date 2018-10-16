@@ -10,7 +10,10 @@ A set of Ansible scripts to setup a secure email and personal files server. This
 - You want a low maintenance box that keep itself updated automatically.
 - You trust the Debian community to publish security updates.
 
-[Official documentation and user's guide](http://homebox.readthedocs.io/en/latest/)
+## Official documentation and user's guide
+
+- [Development branch](http://homebox.readthedocs.io/en/dev/)
+- [Stable branch](http://homebox.readthedocs.io/en/latest/)
 
 ## Current status and supported features
 
