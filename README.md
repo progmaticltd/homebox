@@ -1,7 +1,5 @@
 
 ![Documentation status](https://readthedocs.org/projects/homebox/badge/?version=latest)
-[![Build Status](https://travis-ci.org/progmaticltd/homebox.svg?branch=master)](https://travis-ci.org/progmaticltd/homebox)
-
 
 A set of Ansible scripts to setup a secure email and personal files server. This project is for you if:
 
