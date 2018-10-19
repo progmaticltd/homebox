@@ -7,9 +7,10 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - pip install ansible==2.5.2
+  - pip install ansible==2.6.3
 
 script:
+  - cp common/ansible.cfg ansible.cfg
   - cp config/system-example.yml  config/system.yml
   - ansible-playbook --syntax-check -i config/hosts-example.yml install/playbooks/main.yml
   - ansible-playbook --syntax-check -i config/hosts-example.yml tests/playbooks/main.yml
