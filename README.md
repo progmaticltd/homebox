@@ -13,10 +13,10 @@ A set of Ansible scripts to setup a secure email and personal files server. This
 
 ## Current project status
 
-| Version     | Documentation Build                                                       | Ansible files syntax checking                                          |
-| ----------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Stable      | ![status](https://readthedocs.org/projects/homebox/badge/?version=master) | ![status](https://travis-ci.org/progmaticltd/homebox.svg?branch=master)|
-| Development | ![status](https://readthedocs.org/projects/homebox/badge/?version=dev)    | ![status](https://travis-ci.org/progmaticltd/homebox.svg?branch=dev)   |
+| Task                          | Development                                                               | Stable                                                                    |
+| -----------                   | ------------------------------------------------------------------------- | ----------------------------------------------------------------------    |
+| Documentation Build           | ![status](https://readthedocs.org/projects/homebox/badge/?version=dev)    | ![status](https://readthedocs.org/projects/homebox/badge/?version=master) |
+| Ansible files syntax checking | ![status](https://travis-ci.org/progmaticltd/homebox.svg?branch=dev)      | ![status](https://travis-ci.org/progmaticltd/homebox.svg?branch=master)   |
 
 ## Current status and supported features
 
