@@ -10,7 +10,7 @@ install:
   - pip install ansible==2.6.3
 
 script:
-  - cp common/ansible.cfg  ~/.ansible.cfg
+  - cp common/ansible-travis.cfg  ~/.ansible.cfg
   - cp config/system-example.yml  config/system.yml
   - ansible-playbook -v --syntax-check -i config/hosts-example.yml install/playbooks/main.yml
   - ansible-playbook -v --syntax-check -i config/hosts-example.yml tests/playbooks/main.yml
