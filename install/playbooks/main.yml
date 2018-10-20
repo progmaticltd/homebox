@@ -6,6 +6,12 @@
 - import_playbook: system-prepare.yml
 - import_playbook: remote-access.yml
 
+# Install fwknop (Single Packet Authorization)
+- import_playbook: fwknop-client.yml
+  when: firewall.fwknop.install
+- import_playbook: fwknop-server.yml
+  when: firewall.fwknop.install
+
 # Install dropbear to remotely unlock the system
 - import_playbook: luks-remote.yml
 

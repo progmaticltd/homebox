@@ -1,0 +1,32 @@
+---
+
+- name: Install fwknop client
+  tags: apt
+  apt:
+    name: fwknop-client
+
+- name: Create a directory for fwknop backup if it does not exists
+  file:
+    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/'
+    state: directory
+
+- name: Retrieve the key from the backup if exists
+  shell: >-
+    test -f '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/fwknoprc' &&
+    cp '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/fwknoprc' ~/.fwknoprc ||
+    /bin/true
+  args:
+    creates: ~/.fwknoprc
+
+- name: Generate the initial key pair on the client machine
+  shell: >-
+    fwknop -A tcp/22 -D main.{{ network.domain }}
+    --key-gen --use-hmac --save-rc-stanza
+  args:
+    creates: ~/.fwknoprc
+
+- name: Backup the key for next deployment
+  shell: >-
+    cp  ~/.fwknoprc '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/fwknoprc'
+  args:
+    creates: '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/fwknoprc'

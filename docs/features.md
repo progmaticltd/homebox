@@ -324,6 +324,18 @@ KSK (Key Signing Key) attached.
 The server installed is bind9. When activated, the server also publishes
 [SSHFP](https://en.wikipedia.org/wiki/SSHFP_record) records for extra security.
 
+## Single Packet Authorization port knocking
+
+SPA is essentially next generation port knocking. It is using encryption and HMAC keys,
+to open your firewall for an SSH connection.
+
+- Supports HMAC authenticated encryption for both Rijndael and
+  GnuPG.
+- Replay attacks are detected and thwarted by SHA-256 digest
+  comparison of valid incoming SPA packets.
+
+More details explained on the [Comprehensive Guide](http://www.cipherdyne.org/fwknop/docs/fwknop-tutorial.html).
+
 ## DNS automatic update
 
 If you are using Gandi as your DNS provider, the installation script can automatically

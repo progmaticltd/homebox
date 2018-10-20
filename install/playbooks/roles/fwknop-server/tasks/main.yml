@@ -1,0 +1,77 @@
+---
+
+- name: Install required packages
+  tags: apt
+  apt:
+    name: '{{ pkg }}'
+  with_items:
+    - fwknop-apparmor-profile
+    - fwknop-server
+  loop_control:
+    loop_var: pkg
+
+- name: Get the information required from the client file
+  delegate_to: localhost
+  register: key_base64
+  shell: >-
+    cat ~/.fwknoprc | grep ^KEY_BASE64 | sed 's/^KEY_BASE64\s\+//'
+
+- name: Get the information required from the client file
+  delegate_to: localhost
+  register: hmac_key_base64
+  shell: >-
+    cat ~/.fwknoprc | grep ^HMAC_KEY_BASE64 | sed 's/^HMAC_KEY_BASE64\s\+//'
+
+- name: Set the initial key
+  notify: Restart fwknop server
+  replace:
+    path: /etc/fwknop/access.conf
+    regexp: '^KEY_BASE64(\s+).*'
+    replace: 'KEY_BASE64\1{{ key_base64.stdout }}'
+
+- name: Set the HMAC key
+  notify: Restart fwknop server
+  replace:
+    path: /etc/fwknop/access.conf
+    regexp: '^HMAC_KEY_BASE64(\s+).*'
+    replace: 'HMAC_KEY_BASE64\1{{ hmac_key_base64.stdout }}'
+
+- name: Set the HMAC key
+  notify: Restart fwknop server
+  lineinfile:
+    path: /etc/fwknop/access.conf
+    insertafter: '^HMAC_KEY_BASE64.*'
+    line: 'REQUIRE_SOURCE_ADDRESS Y'
+
+- name: Set the network interface
+  notify: Restart fwknop server
+  replace:
+    path: /etc/fwknop/fwknopd.conf
+    regexp: '^#?PCAP_INTF.*'
+    replace: 'PCAP_INTF {{ ansible_default_ipv4.interface }}'
+
+- name: Activate the daemon by default
+  replace:
+    path: /etc/default/fwknop-server
+    regexp: START_DAEMON="no"
+    replace: START_DAEMON="yes"
+
+# I filled this bug report: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=911485
+# The daemon trying to read /var/fwknop/fwknopd.pid might be a bug in the fwknop-server
+- name: Add some missing permissions in the apparmor profile
+  when: security.app_armor
+  notify: Restart AppArmor service
+  tags: apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.fwknopd
+    line: '{{ line }}'
+    insertbefore: '^}'
+  with_items:
+    - '# Missing permissions added by homebox'
+    - '  /run/xtables.lock wk,'
+    - '  /var/fwknop/fwknopd.pid r,'
+    - '  /var/fwknop/fwknopd.pid wkl,'
+    - '  /var/fwknop/digest.cache r,'
+    - '  /var/fwknop/digest.cache wkl,'
+  loop_control:
+    loop_var: line

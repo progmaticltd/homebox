@@ -1,0 +1,14 @@
+---
+
+# Unfortunately, the standard command to restart the service does not work in my tests.
+# I filled this bug report: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=911483
+
+- name: Restart fwknop server
+  shell: >-
+    kill `pidof /usr/sbin/fwknopd` &&
+    systemctl restart fwknop-server
+
+- name: Restart AppArmor service
+  service:
+    name: apparmor
+    state: restarted
