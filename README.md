@@ -27,7 +27,7 @@ in the official documentation.
 ### System installation and features
 
 - Custom Debian installer generation with full disk encryption and fully automatic installation.
-- Enter the passphrase through SSH when the server boots, no need to keyboard / monitor.
+- Unlock the system remotely, by entering the passphrase through SSH when the server boots, no need to keyboard / monitor.
 - Install packages only from Debian stable (Stretch) or officially maintained repositories (rspamd).
 - Automatic SSL Certificates generation with [letsencrypt](https://letsencrypt.org).
 - Automatic security updates (optional).
@@ -76,6 +76,7 @@ in the official documentation.
 - [Gogs git server](https://gogs.io/), a fast and lightweight git server written in Golang.
 - [Transmission daemon](https://transmissionbt.com/), accessible over https, public or private over your LAN. Files can be downloaded directly with a web browser, using LDAP credentials for authentication or whitelisted IP addresses (e.g. LAN).
 - Monitoring with [Zabbix](https://www.zabbix.com/), with email and Jabber alerts.
+- Hide the SSH server with Single Packet Authorization, using [fwknop](http://www.cipherdyne.org/fwknop/).
 
 ### Development
 
