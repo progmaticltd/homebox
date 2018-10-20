@@ -200,6 +200,7 @@ system_default:
 firewall_default:
   fwknop:
     install: false
+    nic: '{{ ansible_default_ipv4.interface }}'
   ssh:
     - src: any
       rule: allow

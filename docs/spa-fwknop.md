@@ -37,6 +37,7 @@ Alow direct SSH access from the local network, use fwknop otherwise.
 firewall:
   fwknop:
     install: true
+    nic: enp3s0
   ssh:
     - src: 192.168.42.0/24
       rule: allow
@@ -51,6 +52,7 @@ Only allow SSH access using fwknop
 firewall:
   fwknop:
     install: true
+    nic: eth0
   ssh:
     - src: any
       rule: deny
@@ -64,6 +66,7 @@ firewall:
 firewall_default:
   fwknop:
     install: false
+    nic: '{{ ansible_default_ipv4.interface }}'
   ssh:
     - src: any
       rule: allow
@@ -73,8 +76,9 @@ firewall_default:
 ## Keys backup
 
 When running the installation script, fwnkop credentials are stored in
-your home folder, in .fknoprc, and a backup is copied in your
-installation backup folder, `fwknop/fwknoprc`.
+your home folder, in a file named after your domain, like ~/.fknop-main.<domain>.rc,
+(e.g. ~/.fknop-main.homebox.space.rc.)
+A backup is copied in your installation backup folder, `fwknop/fwknoprc`.
 
 Here an example:
 
@@ -95,10 +99,11 @@ USE_HMAC                    Y
 
 Accessing your server, from the LAN or outside is slighly different
 
-From the LAN, you can specify local IP address, for instance:
+From the LAN, you can specify local IP address, here 192.168.66.33,
+and the remote IP address, 192.168.66.1. For instance:
 
 ```sh
-fwknop -v -a 192.168.66.33 -n 192.168.66.1 ; ssh 192.168.66.1
+fwknop -v -a 192.168.66.33 -n main.homebox.space -D 192.168.66.1 ; ssh 192.168.66.1
 ```
 
 From outside, you can use the automatic IP address lookup of www.cipherdyne.org:

@@ -5,7 +5,7 @@
 
 - name: Restart fwknop server
   shell: >-
-    kill `pidof /usr/sbin/fwknopd` &&
+    pidof /usr/sbin/fwknopd && kill `pidof /usr/sbin/fwknopd` ;
     systemctl restart fwknop-server
 
 - name: Restart AppArmor service
