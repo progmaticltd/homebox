@@ -201,6 +201,7 @@ firewall_default:
   fwknop:
     install: false
     nic: '{{ ansible_default_ipv4.interface }}'
+    port: random
   ssh:
     - src: any
       rule: allow

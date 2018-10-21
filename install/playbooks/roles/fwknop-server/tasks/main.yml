@@ -50,6 +50,22 @@
     regexp: '^#?PCAP_INTF.*'
     replace: 'PCAP_INTF {{ firewall.fwknop.nic }}'
 
+- name: Allow to use a random port
+  when: firewall.fwknop.port == 'random'
+  notify: Restart fwknop server
+  replace:
+    path: /etc/fwknop/fwknopd.conf
+    regexp: '^#?PCAP_FILTER\s*udp .*;'
+    replace: 'PCAP_FILTER udp dst portrange 10000-65535;'
+
+- name: Use a fixed port
+  when: firewall.fwknop.port != 'random'
+  notify: Restart fwknop server
+  replace:
+    path: /etc/fwknop/fwknopd.conf
+    regexp: '^#?PCAP_FILTER\s*udp .*;'
+    replace: 'PCAP_FILTER udp port {{ firewall.fwknop.port }};'
+
 - name: Activate the daemon by default
   replace:
     path: /etc/default/fwknop-server
@@ -71,6 +87,7 @@
     path: /etc/apparmor.d/usr.sbin.fwknopd
     line: '{{ line }}'
     insertbefore: '^}'
+    regexp: '{{ line }}'
   with_items:
     - '# Missing permissions added by homebox'
     - '  /run/xtables.lock r,'

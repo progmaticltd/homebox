@@ -8,4 +8,3 @@ all:
       ansible_host: homebox.example.home
       ansible_user: root
       ansible_port: 22
-
