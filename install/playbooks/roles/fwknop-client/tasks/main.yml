@@ -12,21 +12,24 @@
 
 - name: Retrieve the key from the backup if exists
   shell: >-
-    test -f '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/fwknoprc' &&
-    cp '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/fwknoprc' ~/.fwknoprc ||
-    /bin/true
+    test -f '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/fwknoprc'
+    && cp '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/fwknoprc'
+    ~/.fwknop-{{ network.domain }}.rc
+    || /bin/true
   args:
-    creates: ~/.fwknoprc
+    creates: '~/.fwknop-{{ network.domain }}.rc'
 
 - name: Generate the initial key pair on the client machine
   shell: >-
     fwknop -A tcp/22 -D main.{{ network.domain }}
     --key-gen --use-hmac --save-rc-stanza
+    --rc-file ~/.fwknop-{{ network.domain }}.rc
   args:
-    creates: ~/.fwknoprc
+    creates: '~/.fwknop-{{ network.domain }}.rc'
 
 - name: Backup the key for next deployment
   shell: >-
-    cp  ~/.fwknoprc '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/fwknoprc'
+    cp  ~/.fwknop-{{ network.domain }}.rc
+    '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/fwknoprc'
   args:
     creates: '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/fwknoprc'

@@ -1,5 +1,9 @@
 # Single Packet Authorization with fwknop
 
+__First of all a little warning. If don’t know what are you doing
+be very carefull because one mistake will cause your SSH is gone
+for good and there will no chance how to manage your server.__
+
 This method of authorization is based around a default-drop packet
 filter and libpcap. SPA is essentially next generation port
 knocking.
@@ -30,6 +34,7 @@ More features detailed on the
 ### Configuration examples
 
 Alow direct SSH access from the local network, use fwknop otherwise.
+Monitor only queries sent to port number 33001.
 
 ```yaml
 
@@ -37,13 +42,16 @@ Alow direct SSH access from the local network, use fwknop otherwise.
 firewall:
   fwknop:
     install: true
+    nic: enp3s0
+    port: 33001
   ssh:
     - src: 192.168.42.0/24
       rule: allow
       comment: allow SSH from the LAN only
 ```
 
-Only allow SSH access using fwknop
+Only allow SSH access using fwknop.
+Allow to send the query to a random port number, between 10000 and 65535 by default.
 
 ```yaml
 
@@ -51,6 +59,7 @@ Only allow SSH access using fwknop
 firewall:
   fwknop:
     install: true
+    nic: eth0
   ssh:
     - src: any
       rule: deny
@@ -64,6 +73,8 @@ firewall:
 firewall_default:
   fwknop:
     install: false
+    nic: '{{ ansible_default_ipv4.interface }}'
+    port: random
   ssh:
     - src: any
       rule: allow
@@ -73,8 +84,9 @@ firewall_default:
 ## Keys backup
 
 When running the installation script, fwnkop credentials are stored in
-your home folder, in .fknoprc, and a backup is copied in your
-installation backup folder, `fwknop/fwknoprc`.
+your home folder, in a file named after your domain, like ~/.fwknop-main.<domain>.rc,
+(e.g. ~/.fwknop-main.homebox.space.rc.)
+A backup is copied in your installation backup folder, `fwknop/fwknoprc`.
 
 Here an example:
 
@@ -93,16 +105,109 @@ USE_HMAC                    Y
 
 ## Knocking your server
 
+### On Linux
+
 Accessing your server, from the LAN or outside is slighly different
 
-From the LAN, you can specify local IP address, for instance:
+From the LAN, you can specify local IP address, here 192.168.66.33,
+and the remote IP address, 192.168.66.1. For instance:
 
 ```sh
-fwknop -v -a 192.168.66.33 -n 192.168.66.1 ; ssh 192.168.66.1
+fwknop -v --rc-file ~/.fwknop-homebox.space.rc -a 192.168.66.33 -n main.homebox.space -D 192.168.66.1
+ssh 192.168.66.1
 ```
 
 From outside, you can use the automatic IP address lookup of www.cipherdyne.org:
 
 ```sh
-fwknop -v -R --wget-cmd /usr/bin/wget -n main.homebox.space ; ssh main.homebox.space
+fwknop -v --rc-file ~/.fwknop-homebox.space.rc -R --wget-cmd /usr/bin/wget -n main.homebox.space
+ssh main.homebox.space
+```
+
+### On Android
+
+You can also ‘knock’ your server from Android, using the excellent
+[fwknop2 package](https://play.google.com/store/apps/details?id=org.cipherdyne.fwknop2).
+
+The configuration is simple, see the example: [android client example](img/fwknop/android-client.png)
+
+## Advanced
+
+### Using the port knoker with Ansible
+
+It is possible to use fwknop during the development phase.
+In this case, you should use fwknop client to knock the server, before the SSH connection.
+
+Hopefully, homebox comes with a fwknop connection plugin for Ansible, ready to use.
+There are two modifications to make:
+
+The host file, specify the fwknop parameters:
+```yaml
+all:
+  hosts:
+    homebox:
+      ansible_host: homebox.example.home
+      ansible_user: root
+      ansible_port: 22
+      # special parameters when using fwknop port knocking
+      fwknop_src: 192.168.14.55   # or 'auto' when connecting to a remote host over internet.
+      fwknop_config_name: main.example.home
+      fwknop_dest: main.example.home
+      fwknop_rc_file: /home/andre/.fwknop-example.home.rc
+      fwknop_verbose: true
+```
+See the file `config/hosts-fwknop-example.yml` for a complete list of possible options.
+
+Then, when running ansible, use the `-c` parameter to specify the connection method, and use ‘ssh_fwknop’.
+The source code is in `common/connection_plugins`.
+
+```sh
+ansible-playbook -c ssh_fwknop -vvv -i ../config/hosts.yml playbooks/fwknop-server.yml
+```
+
+With the following output, for instance:
+
+```sh
+$ ansible-playbook -c ssh_fwknop -vvv -i ../config/hosts.yml playbooks/fwknop-server.yml
+ansible-playbook 2.6.3
+  config file = /home/andre/Projects/homebox/install/ansible.cfg
+  configured module search path = [u'/home/andre/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python2.7/dist-packages/ansible
+  executable location = /usr/bin/ansible-playbook
+  python version = 2.7.13 (default, Sep 26 2018, 18:42:22) [GCC 6.3.0 20170516]
+Using /home/andre/Projects/homebox/install/ansible.cfg as config file
+Parsed /home/andre/Projects/homebox/config/hosts.yml inventory source with yaml plugin
+Read vars_file '{{ playbook_dir }}/../../config/system.yml'
+Read vars_file '{{ playbook_dir }}/../../config/defaults.yml'
+
+PLAYBOOK: fwknop-server.yml ********************************
+1 plays in playbooks/fwknop-server.yml
+Read vars_file '{{ playbook_dir }}/../../config/system.yml'
+Read vars_file '{{ playbook_dir }}/../../config/defaults.yml'
+
+PLAY [homebox] *********************************************
+Read vars_file '{{ playbook_dir }}/../../config/system.yml'
+Read vars_file '{{ playbook_dir }}/../../config/defaults.yml'
+
+TASK [Gathering Facts] *************************************
+task path: /home/andre/Projects/homebox/install/playbooks/fwknop-server.yml:4
+<192.168.63.100> ssh_fwknop connection plugin is used for this host
+Running '/usr/bin/fwknop -v -a 192.168.64.55 -D main.homebox.space --rc-file /home/andre/.fwknop-homebox.space.rc -n main.homebox.space
+SPA Field Values:
+=================
+   Random Value: 4839788853776469
+       Username: andre
+      Timestamp: 1540127737
+    FKO Version: 3.0.0
+   Message Type: 1 (Access msg)
+ Message String: 192.168.64.55,tcp/22
+     Nat Access: <NULL>
+    Server Auth: <NULL>
+ Client Timeout: 0
+    Digest Type: 3 (SHA256)
+      HMAC Type: 3 (SHA256)
+Encryption Type: 1 (Rijndael)
+Encryption Mode: 2 (CBC)
+...
+
 ```
