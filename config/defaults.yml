@@ -198,6 +198,10 @@ system_default:
 # You can have as many sources as you want, with a comment to easily keep track
 # of your rules
 firewall_default:
+  fwknop:
+    install: false
+    nic: '{{ ansible_default_ipv4.interface }}'
+    port: random
   ssh:
     - src: any
       rule: allow
