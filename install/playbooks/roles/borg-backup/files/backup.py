@@ -340,9 +340,10 @@ class BackupManager(object):
 
         # Build a simple reporting backup info
         msg = MIMEMultipart()
-        msg.preamble = 'Backup report for {0}: {1}'.format(
+        subject = 'Backup report for {0}: {1}'.format(
             self.configName,
             'Success' if success else 'Error')
+        msg.preamble = subject
 
         for message in messages:
             msg.preamble += "\r\n" + message
@@ -364,7 +365,7 @@ class BackupManager(object):
             msg.attach(pruneReport)
             pruneReport.add_header('X-Postmaster-Alert', 'backup')
 
-        msg['Subject'] = 'Backup report for %s' % self.configName
+        msg['Subject'] = subject
         msg['From'] = 'root'
         msg['To'] = 'postmaster'
 
