@@ -1,6 +1,8 @@
 ---
 
+# Build the ISO image inside the docker container
 - hosts: localhost
+  connection: local
   vars_files:
     - '{{ playbook_dir }}/../config/system.yml'
   roles:

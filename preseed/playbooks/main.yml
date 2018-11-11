@@ -1,8 +1,0 @@
----
-
-- hosts: cdbuilder
-  vars_files:
-    - '{{ playbook_dir }}/../../config/preseed.yml'
-  roles:
-    - build-iso
-
