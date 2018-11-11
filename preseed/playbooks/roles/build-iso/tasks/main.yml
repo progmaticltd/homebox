@@ -15,9 +15,14 @@
 - name: Copy the build script
   tags: preseed
   template:
-    src: build.sh
-    dest: '{{ build_dir }}/build.sh'
+    src: '{{ file }}'
+    dest: '{{ build_dir }}/{{ file }}'
     mode: 0744
+  with_items:
+    - build-mirror.sh
+    - build-cd.sh
+  loop_control:
+    loop_var: file
 
 - name: Create the profile folder
   tags: preseed
@@ -44,17 +49,9 @@
     src: '{{ playbook_dir }}/../misc'
     dest: '{{ build_dir }}'
 
-# Run the script to create the iso images
-- name: Run the command to create the iso file
-  tags: preseed
-  command: './build.sh {{ system.hostname }}'
-  args:
-    chdir: '{{ build_dir }}'
-
-- name: Rename the ISO image
-  tags: preseed
-  command: >-
-     mv {{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso
-     {{ build_dir }}/{{ system.hostname }}-install.iso
-  args:
-    chdir: '{{ build_dir }}'
+- name: Create a symbolic link for the build directory
+  when: system.hostname != 'homebox'
+  file:
+    src: '{{ build_dir }}'
+    dest: '/tmp/build-homebox'
+    state: link

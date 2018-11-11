@@ -334,7 +334,7 @@ to open your firewall for an SSH connection.
 - Replay attacks are detected and thwarted by SHA-256 digest
   comparison of valid incoming SPA packets.
 
-More details explained on the [Comprehensive Guide](http://www.cipherdyne.org/fwknop/docs/fwknop-tutorial.html).
+More details explained on the [Comprehensive Guide](spa-fwknop).
 
 ## DNS automatic update
 
