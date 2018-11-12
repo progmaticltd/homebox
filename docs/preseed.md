@@ -78,8 +78,8 @@ Then, run this command to build the ISO image:
 
 ```sh
 
-docker-compose build cdbuild
-docker run -v /tmp:/tmp -t -i cdbuild:latest
+cd preseed
+./build.sh
 
 ```
 
@@ -89,4 +89,3 @@ for instance `/tmp/homebox/homebox-install.iso`
 The whole installation should be automatic, with LVM and software RAID.
 For LVM, there is a volume called "reserved" you can remove. This will let
 you resize the other volumes according to your needs.
-
