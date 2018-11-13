@@ -17,6 +17,15 @@
   debug:
     var: ldap
 
+- name: Update LDAP configuration for debugging
+  tags: debug
+  when: system.debug
+  notify: Restart the ldap service
+  replace:
+    path: /etc/default/slapd
+    regexp: SLAPD_OPTIONS=""
+    replace: SLAPD_OPTIONS="-d 8 -d 64 -d 2048"
+
 - name: Ensure the LDAP server FQDN resolves to localhost
   lineinfile:
     path: /etc/hosts
@@ -105,6 +114,7 @@
     permissions: rx
     state: present
   with_items:
+      - /etc/letsencrypt
       - /etc/letsencrypt/archive
       - /etc/letsencrypt/live
   loop_control:
