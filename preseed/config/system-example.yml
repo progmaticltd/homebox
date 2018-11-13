@@ -33,7 +33,7 @@
 # system:
 #   hostname: mail
 #   preseed: luks
-#   version: 9.4
+#   version: 9.6
 #   arch: amd64
 #   boot_timeout: 5   # In seconds
 #   passphrase: I will not give you my password
@@ -44,11 +44,27 @@
 
 # System configuration sample 2: Software RAID
 # WORK IN PROGRESS, NOT FULLY TESTED YET
-# TODO: Add encryption support (luks? / ext4? / ecryptfs?)
+# TODO: Add encryption support (ecryptfs?)
 # system:
 #   hostname: mail
 #   preseed: raid
-#   version: 9.4
+#   version: 9.6
+#   arch: amd64
+#   boot_timeout: 5   # In seconds
+#   hw:
+#     disks:
+#       - name: vda
+#         size: 500G
+#       - name: vdb
+#         size: 500G
+
+# System configuration sample 3: Simple LVM
+# WORK IN PROGRESS, NOT FULLY TESTED YET
+# TODO: Add encryption support (ecryptfs?)
+# system:
+#   hostname: mail
+#   preseed: lvm
+#   version: 9.6
 #   arch: amd64
 #   boot_timeout: 5   # In seconds
 #   hw:
