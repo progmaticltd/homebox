@@ -50,7 +50,7 @@
   when: system.ssl == 'letsencrypt'
   vars:
     details:
-      - [ /etc/letsencrypt/archive, /etc/letsencrypt/live ]
+      - [ /etc/letsencrypt, /etc/letsencrypt/archive, /etc/letsencrypt/live ]
       - [ dovecot ]
   acl:
     path: '{{ item[0] }}'
