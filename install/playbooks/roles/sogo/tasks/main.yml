@@ -8,9 +8,12 @@
   with_items:
     - sogo-common
     - sogo
+    - memcached
     - python-psycopg2
   loop_control:
     loop_var: pkg
+
+# Web server configuration ====================================================
 
 - name: Copy nginx configuration
   tags: nginx
@@ -21,7 +24,15 @@
     group: root
     mode: 0644
 
-# Web server configuration ====================================================
+- name: Activate sogo web site
+  tags: nginx
+  notify: Restart nginx
+  file:
+    src: '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/sogo.{{ network.domain }}.conf'
+    state: link
+
+# Database configuration ======================================================
 
 - name: Initialise the sogo database password parameters
   set_fact:
@@ -31,15 +42,6 @@
 - name: Create the sogo database account password
   set_fact:
     sogo_db_password: '{{ lookup("password", sogo_password_params) }}'
-
-- name: Copy sogo configuration
-  notify: Restart sogo service
-  template:
-    src: sogo.conf
-    dest: '/etc/sogo/sogo.conf'
-    owner: root
-    group: sogo
-    mode: 0640
 
 - name: Create the database user
   tags: postgres
@@ -87,17 +89,21 @@
     privs: ALL
     role: sogo
 
+# Other configuration =========================================================
 
-# Web server configuration ====================================================
+- name: Copy sogo configuration
+  notify: Restart sogo service
+  template:
+    src: sogo.conf
+    dest: '/etc/sogo/sogo.conf'
+    owner: root
+    group: sogo
+    mode: 0640
 
-- name: Activate sogo web site
-  tags: nginx
-  notify: Restart nginx
-  file:
-    src: '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'
-    dest: '/etc/nginx/sites-enabled/sogo.{{ network.domain }}.conf'
-    state: link
-
+- name: Copy sogo cron table
+  template:
+    src: sogo.cron
+    dest: '/etc/cron.d/sogo'
 
 # AppArmor configuration ======================================================
 
