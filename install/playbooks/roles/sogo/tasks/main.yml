@@ -26,6 +26,7 @@
 - name: Initialise the sogo database password parameters
   set_fact:
     sogo_password_params: "{{ playbook_dir }}/../../backup/{{ network.domain }}/postgresql/sogo.pwd {{ policies.system.password }}"
+    roPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
 
 - name: Create the sogo database account password
   set_fact:
@@ -59,20 +60,22 @@
     name: sogo
     owner: sogo
 
-# - name: Initialise the database
-#   when: sogodb.changed
-#   tags: postgres
-#   become: true
-#   become_user: postgres
-#   shell: >-
-#     zcat /usr/share/sogo-server-pgsql/{{ sql_file }}.sql.gz
-#     | psql -d sogo -o /tmp/sogo-{{ sql_file }}-install.log
-#   with_items:
-#     - schema
-#     - images
-#     - data
-#   loop_control:
-#     loop_var: sql_file
+- name: Copy the database initialisation script
+  tags: postgres
+  template:
+    src: db-init.sql
+    dest: /tmp/sogo-db-init.sql
+
+- name: Initialise the database
+  when: sogodb.changed
+  tags: postgres
+  become: true
+  become_user: postgres
+  shell: >-
+    cat /tmp/sogo-db-init.sql
+    | psql -d sogo -o /tmp/sogo-db-install.log
+  args:
+    creates: /tmp/sogo-db-install.log
 
 - name: Initialise grants
   tags: postgres
