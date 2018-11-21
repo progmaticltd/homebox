@@ -91,6 +91,14 @@
 
 # Other configuration =========================================================
 
+- name: Get server's timezone
+  register: tz_command
+  command: cat /etc/timezone
+
+- name: Get the server timezone
+  set_fact:
+    server_time_zone: '{{ tz_command.stdout }}'
+
 - name: Copy sogo configuration
   notify: Restart sogo service
   template:

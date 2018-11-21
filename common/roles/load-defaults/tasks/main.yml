@@ -518,6 +518,29 @@
     var: zabbix
 
 ################################################################################
+# Merge defaults sogo settings
+- name: Combine default and user defined sogo settings
+  run_once: true
+  when: sogo is defined
+  tags: defaults
+  set_fact:
+    sogo: '{{ sogo_default | combine(sogo, recursive=True) }}'
+
+- name: Use default sogo settings
+  run_once: true
+  when: sogo is not defined
+  tags: defaults
+  set_fact:
+    sogo: '{{ sogo_default }}'
+
+- name: Display merged sogo settings
+  run_once: true
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: sogo
+
+################################################################################
 # Marking the default settings as loaded should increase the speed of the deployment
 - name: Mark the default settings as loaded
   run_once: true
