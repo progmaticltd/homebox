@@ -40,6 +40,7 @@ This project is for you if:
 - Antispam: RSpamd
 - Antivirus: ClamAV
 - Webmail: RoundCube
+- Groupware: Sogo
 - Jabber: ejabberd
 - DNS: bind9
 - Git server: gogs

@@ -1,0 +1,146 @@
+---
+
+- name: Start by installing the required packages
+  tags: apt
+  apt:
+    name: '{{ pkg }}'
+    state: present
+  with_items:
+    - sogo-common
+    - sogo
+    - memcached
+    - python-psycopg2
+  loop_control:
+    loop_var: pkg
+
+# Web server configuration ====================================================
+
+- name: Copy nginx configuration
+  tags: nginx
+  template:
+    src: nginx.conf
+    dest: '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Activate sogo web site
+  tags: nginx
+  notify: Restart nginx
+  file:
+    src: '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/sogo.{{ network.domain }}.conf'
+    state: link
+
+# Database configuration ======================================================
+
+- name: Initialise the sogo database password parameters
+  set_fact:
+    sogo_password_params: "{{ playbook_dir }}/../../backup/{{ network.domain }}/postgresql/sogo.pwd {{ policies.system.password }}"
+    roPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
+
+- name: Create the sogo database account password
+  set_fact:
+    sogo_db_password: '{{ lookup("password", sogo_password_params) }}'
+
+- name: Create the database user
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_user:
+    name: sogo
+    password: '{{ sogo_db_password }}'
+    role_attr_flags: LOGIN
+
+- name: Create the database
+  register: sogodb
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_db:
+    encoding: utf8
+    name: sogo
+    owner: sogo
+
+- name: Copy the database initialisation script
+  tags: postgres
+  template:
+    src: db-init.sql
+    dest: /tmp/sogo-db-init.sql
+
+- name: Initialise the database
+  when: sogodb.changed
+  tags: postgres
+  become: true
+  become_user: postgres
+  shell: >-
+    cat /tmp/sogo-db-init.sql
+    | psql -d sogo -o /tmp/sogo-db-install.log
+  args:
+    creates: /tmp/sogo-db-install.log
+
+- name: Initialise grants
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_privs:
+    db: sogo
+    objs: ALL_IN_SCHEMA
+    privs: ALL
+    role: sogo
+
+# Other configuration =========================================================
+
+- name: Get server's timezone
+  register: tz_command
+  command: cat /etc/timezone
+
+- name: Get the server timezone
+  set_fact:
+    server_time_zone: '{{ tz_command.stdout }}'
+
+- name: Copy sogo configuration
+  notify: Restart sogo service
+  template:
+    src: sogo.conf
+    dest: '/etc/sogo/sogo.conf'
+    owner: root
+    group: sogo
+    mode: 0640
+
+- name: Copy sogo cron table
+  template:
+    src: sogo.cron
+    dest: '/etc/cron.d/sogo'
+
+# AppArmor configuration ======================================================
+
+- name: Install nginx AppArmor profile
+  when: security.app_armor
+  notify:
+    - Activate AppArmor profile
+    - Restart AppArmor service
+    - Restart nginx
+  tags: security, apparmor
+  template:
+    src: apparmor.d/local/sogo
+    dest: '/etc/apparmor.d/local/nginx-sogo.{{ network.domain }}'
+
+- name: Add sogo AppArmor specific configuration
+  when: security.app_armor
+  notify:
+    - Activate AppArmor profile
+    - Restart AppArmor service
+    - Restart nginx
+  tags: security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/nginx-sogo.{{ network.domain }}>'
+    insertbefore: '# End of local includes for homebox'
+
+- name: Remove the python / psycopg2 package
+  when: system.devel == False
+  tags: apt
+  apt:
+    name: python-psycopg2
+    state: absent

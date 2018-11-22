@@ -1,0 +1,15 @@
+---
+
+# Install Sogo sute
+- hosts: homebox
+  vars:
+    certificate:
+      type: sogo
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+  roles:
+    - role: certificates
+      tags: certificates
+    - role: sogo
+      tags: sogo

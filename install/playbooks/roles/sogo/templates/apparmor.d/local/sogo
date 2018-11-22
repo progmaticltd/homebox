@@ -1,0 +1,20 @@
+  # Certificates
+  /etc/letsencrypt/archive/sogo.{{ network.domain }}/* r,
+  /etc/letsencrypt/live/sogo.{{ network.domain }}/* r,
+
+  # Certificate renewal
+  /var/www/sogo/.well-known/** r,
+
+  # Web content
+  /usr/share/GNUstep/SOGo/WebServerResources/ r,
+  /usr/share/GNUstep/SOGo/WebServerResources/** r,
+
+  # Log files
+  /var/log/nginx/sogo-access.log rwkl,
+  /var/log/nginx/sogo-error.log rwkl,
+
+  # Active sync log file
+  /var/log/nginx/sogo-activesync.log ra,
+  /var/log/nginx/sogo-activesync.log rwkl,
+  /var/log/nginx/sogo-activesync-error.log ra,
+  /var/log/nginx/sogo-activesync-error.log rwkl,

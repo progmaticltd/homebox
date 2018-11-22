@@ -486,3 +486,15 @@ zabbix_default:
     - 192.168.0.0/16    # RFC1918 local networks
     - 172.16.0.0/12
     - 10.0.0.0/8
+
+# Default settings for SOGo groupware
+sogo_default:
+  appointment_send_email_notifications: true
+  vacation: true
+  forward: true
+  sieve_scripts: true
+  first_day_of_week: 1
+  day_start_time: 9
+  day_end_time: 17
+  refresh_view_check: manually
+  mail_auxiliary_accounts: false
