@@ -117,15 +117,26 @@
 # AppArmor configuration ======================================================
 
 - name: Install nginx AppArmor profile
+  tags: security, apparmor
   when: security.app_armor
   notify:
     - Activate AppArmor profile
     - Restart AppArmor service
     - Restart nginx
-  tags: security, apparmor
   template:
-    src: apparmor.d/local/sogo
-    dest: '/etc/apparmor.d/local/nginx-sogo.{{ network.domain }}'
+    src: '{{ profile.src }}'
+    dest: '{{ profile.dest }}'
+  with_items:
+    - src: apparmor.d/local/nginx-sogo
+      dest: '/etc/apparmor.d/local/nginx-sogo.{{ network.domain }}'
+    - src: apparmor.d/usr.sbin.sogod
+      dest: '/etc/apparmor.d/usr.sbin.sogod'
+    - src: apparmor.d/usr.sbin.sogo-ealarms-notify
+      dest: '/etc/apparmor.d/usr.sbin.sogo-ealarms-notify'
+    - src: apparmor.d/usr.sbin.sogo-slapd-sockd
+      dest: '/etc/apparmor.d/usr.sbin.sogo-slapd-sockd'
+  loop_control:
+    loop_var: profile
 
 - name: Add sogo AppArmor specific configuration
   when: security.app_armor
