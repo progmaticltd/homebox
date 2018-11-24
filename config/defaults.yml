@@ -496,5 +496,10 @@ sogo_default:
   first_day_of_week: 1
   day_start_time: 9
   day_end_time: 17
-  refresh_view_check: manually
-  mail_auxiliary_accounts: false
+  time_format: '%H:%M'
+  refresh_view_check: every_minute
+  auxiliary_accounts: false
+  # Possible values: https://sogo.nu/files/docs/SOGoInstallationGuide.html#_general_preferences
+  language: English
+  enable_public_access: false
+  password_change: true
