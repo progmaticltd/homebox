@@ -10,6 +10,7 @@
     - sogo
     - memcached
     - python-psycopg2
+    - zip
   loop_control:
     loop_var: pkg
 
@@ -75,9 +76,9 @@
   become_user: postgres
   shell: >-
     cat /tmp/sogo-db-init.sql
-    | psql -d sogo -o /tmp/sogo-db-install.log
+    | psql -d sogo -o /var/log/sogo/db-install.log
   args:
-    creates: /tmp/sogo-db-install.log
+    creates: /var/log/sogo/db-install.log
 
 - name: Initialise grants
   tags: postgres
