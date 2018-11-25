@@ -35,7 +35,8 @@
   /var/log/sogo/sogo.log rwkl,
   /var/log/sogo/sogo.log w,
 
-  # Temporary files creation
+  # Temporary files
   /var/spool/sogo/** rwk,
+  /tmp/ rwk,
   /tmp/* rwk,
 }

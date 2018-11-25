@@ -135,6 +135,10 @@
       dest: '/etc/apparmor.d/usr.sbin.sogo-ealarms-notify'
     - src: apparmor.d/usr.sbin.sogo-slapd-sockd
       dest: '/etc/apparmor.d/usr.sbin.sogo-slapd-sockd'
+    - src: apparmor.d/usr.sbin.sogo-tool
+      dest: '/etc/apparmor.d/usr.sbin.sogo-tool'
+    - src: apparmor.d/usr.sbin.sogo-backup
+      dest: '/etc/apparmor.d/usr.sbin.sogo-backup'
   loop_control:
     loop_var: profile
 
