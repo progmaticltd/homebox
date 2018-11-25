@@ -498,9 +498,8 @@ sogo_default:
   day_end_time: 17
   time_format: '%H:%M'
   refresh_view_check: every_minute
-  auxiliary_accounts: false
+  auxiliary_accounts: true
   # Possible values: https://sogo.nu/files/docs/SOGoInstallationGuide.html#_general_preferences
   language: English
   enable_public_access: false
   password_change: true
-  auxiliary_accounts: true

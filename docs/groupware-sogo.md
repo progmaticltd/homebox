@@ -17,13 +17,69 @@ information.
 These settings are loaded by default when installing SOGo:
 
 ```yaml
-# Default settings for SOGo groupware
 sogo:
-  appointment_send_email_notifications: true
+  appointment_send_emails: true
   vacation: true
   forward: true
   sieve_scripts: true
-  first_day_of_week: 1
-  refresh_view_check: manually
-  mail_auxiliary_accounts: false
+  first_day_of_week: 1 # 1 is Monday
+  day_start_time: 9
+  day_end_time: 17
+  time_format: '%H:%M'
+  refresh_view_check: every_minute
+  auxiliary_accounts: false
+  language: English
+  enable_public_access: false
+  password_change: true
+  auxiliary_accounts: true
 ```
+# Flags explanation
+
+**appointment_send_emails**
+
+Send emails when apointments are created.
+
+**vacation**
+
+Activate vacation functionality in the web interface.
+
+**forward**
+
+Activate automatic forward functionality in the web interface.
+
+**sieve_scripts**
+
+Allow you to filter your emails using advanced server side filters.
+
+**first_day_of_week**
+
+Set the first day of the week in the interface. Default is Monday, 1. Set it to 0 for Sunday.
+
+**day_start_time and day_end_time**
+
+The working hours, in 24h notation.
+
+**time_format**
+
+The format used to display the time. See the [strftime](http://strftime.org/) function for format.
+
+**refresh_view_check**
+
+The time interval to check for new emails.
+
+**auxiliary_accounts**
+
+Allow you to retrieve emails from external accounts, directly from the web interface.
+
+**language**
+
+The defaut language of the web interface. Possible values are defined in the
+[SOGo installation guide](https://sogo.nu/files/docs/SOGoInstallationGuide.html#_general_preferences)
+
+**enable_public_access**
+
+Allow public access to your calendars and address books, using a specific URL.
+
+**password_change**
+
+Allow you to change your passwors from the web interface.
