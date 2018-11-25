@@ -74,6 +74,10 @@
 - import_playbook: roundcube.yml
   when: webmail.install and webmail.type == 'roundcube'
 
+# Install SOGo if chosen
+- import_playbook: sogo.yml
+  when: sogo.install
+
 # Install ejabberd, with LDAP authentication
 - import_playbook: ejabberd.yml
   when: ejabberd.install

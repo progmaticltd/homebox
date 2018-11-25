@@ -207,10 +207,11 @@ appear in your account.
 Because the folders hierarchy will be copied as well, it is possible to migrate from
 another account very easily.
 
-## Webmail
+## Roundcube Webmail
 
-The current webmail installed is RoundCube, with the following plugins / features
-activated by default:
+There are two webmail available. RoundCube, and SOGo.
+
+RoundCube, comes with the following plugins / features activated by default:
 
 - Archive
 - Context Menu
@@ -247,12 +248,57 @@ plugins:
 - virtuser_file
 - virtuser_query
 
-
 ## Automatic copy to the sent folder
 
 You do not need to configure your mail client to copy emails to the sent folder, this is
 done automatically for you. This is a lot of time saved, especially when sending big
 emails with attachments: You don't need to upload an email twice.
+
+# Calendars and address books
+
+## SOGo groupware
+
+It is also possible to install SOGo, which offer collaborative features,
+calendaring and address books. There are both accessible using respectively
+CalDAV and CardDAV standards.
+
+You can use any client compatible with these standards:
+
+### On Linux
+
+- [Evolution](https://wiki.gnome.org/Apps/Evolution/)
+- [Thunderbird](https://www.thunderbird.net/)
+
+### On Windows
+
+- [Thunderbird](https://www.thunderbird.net/)
+- [eM Client](https://www.emclient.com/) (Not open source)
+- Microsoft Outlook (Don't use this very bad software unless you really have to)
+
+### On Android
+
+- [CalDAV Sync](https://play.google.com/store/apps/details?id=org.dmfs.caldav.lib)
+- [CardDAV sync](https://play.google.com/store/apps/details?id=org.dmfs.carddav.sync)
+- [OpenTasks](https://play.google.com/store/apps/details?id=org.dmfs.tasks)
+
+### On MacOS / iOS
+
+- Apple Calendar
+- Contacts.app
+- [Thunderbird](https://www.thunderbird.net/)
+- [eM Client](https://www.emclient.com/) (Not open source)
+
+### Features of SOGo activated:
+
+- Send emails reminder on events
+- Vacation messages
+- Forward your messages to another email address
+- Sieve scripts editor
+- Use the same web interface to access other emails
+- Change your password from the web interface
+
+More details on the [SOGo home page](https://sogo.nu/) and
+on the official [documentation page](https://sogo.nu/support.html#/v3).
 
 # XMPP / Jabber server
 

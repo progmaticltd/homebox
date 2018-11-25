@@ -489,6 +489,7 @@ zabbix_default:
 
 # Default settings for SOGo groupware
 sogo_default:
+  install: true
   appointment_send_emails: true
   vacation: true
   forward: true
