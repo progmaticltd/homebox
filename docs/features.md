@@ -262,32 +262,6 @@ It is also possible to install SOGo, which offer collaborative features,
 calendaring and address books. There are both accessible using respectively
 CalDAV and CardDAV standards.
 
-You can use any client compatible with these standards:
-
-### On Linux
-
-- [Evolution](https://wiki.gnome.org/Apps/Evolution/)
-- [Thunderbird](https://www.thunderbird.net/)
-
-### On Windows
-
-- [Thunderbird](https://www.thunderbird.net/)
-- [eM Client](https://www.emclient.com/) (Not open source)
-- Microsoft Outlook (Don't use this very bad software unless you really have to)
-
-### On Android
-
-- [CalDAV Sync](https://play.google.com/store/apps/details?id=org.dmfs.caldav.lib)
-- [CardDAV sync](https://play.google.com/store/apps/details?id=org.dmfs.carddav.sync)
-- [OpenTasks](https://play.google.com/store/apps/details?id=org.dmfs.tasks)
-
-### On MacOS / iOS
-
-- Apple Calendar
-- Contacts.app
-- [Thunderbird](https://www.thunderbird.net/)
-- [eM Client](https://www.emclient.com/) (Not open source)
-
 ### Features of SOGo activated:
 
 - Send emails reminder on events

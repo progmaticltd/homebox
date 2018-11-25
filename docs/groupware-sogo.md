@@ -33,6 +33,36 @@ sogo:
   password_change: true
   auxiliary_accounts: true
 ```
+
+# Clients
+
+You can use any client compatible with these standards:
+
+### On Linux
+
+- [Evolution](https://wiki.gnome.org/Apps/Evolution/)
+- [Thunderbird](https://www.thunderbird.net/)
+
+### On Windows
+
+- [Thunderbird](https://www.thunderbird.net/)
+- [eM Client](https://www.emclient.com/) (Not open source)
+- Microsoft Outlook (Don't use this very bad software unless you really have to)
+
+### On Android
+
+- [DavDroid](https://www.davdroid.com/)
+- [CalDAV Sync](https://play.google.com/store/apps/details?id=org.dmfs.caldav.lib)
+- [CardDAV sync](https://play.google.com/store/apps/details?id=org.dmfs.carddav.sync)
+- [OpenTasks](https://play.google.com/store/apps/details?id=org.dmfs.tasks)
+
+### On MacOS / iOS
+
+- Apple Calendar
+- Contacts.app
+- [Thunderbird](https://www.thunderbird.net/)
+- [eM Client](https://www.emclient.com/) (Not open source)
+
 # Flags explanation
 
 **appointment_send_emails**
