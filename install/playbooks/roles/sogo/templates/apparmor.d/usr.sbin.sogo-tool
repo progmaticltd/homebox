@@ -12,6 +12,9 @@
   # Configuration
   /etc/GNUstep/GNUstep.conf r,
   /etc/sogo/sogo.conf r,
+  /etc/timezone r,
+
+  # Not sure why this is necessary
   audit allow / r,
 
   # static content

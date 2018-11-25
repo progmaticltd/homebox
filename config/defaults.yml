@@ -489,11 +489,11 @@ zabbix_default:
 
 # Default settings for SOGo groupware
 sogo_default:
-  appointment_send_email_notifications: true
+  appointment_send_emails: true
   vacation: true
   forward: true
   sieve_scripts: true
-  first_day_of_week: 1
+  first_day_of_week: 1 # 1 is Monday
   day_start_time: 9
   day_end_time: 17
   time_format: '%H:%M'
@@ -503,3 +503,4 @@ sogo_default:
   language: English
   enable_public_access: false
   password_change: true
+  auxiliary_accounts: true
