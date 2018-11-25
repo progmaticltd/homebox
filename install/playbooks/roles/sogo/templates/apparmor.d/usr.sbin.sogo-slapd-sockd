@@ -1,0 +1,23 @@
+# Last Modified: Sat Nov 24 20:52:07 2018
+#include <tunables/global>
+
+/usr/sbin/sogo-slapd-sockd {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  # main executable and libs
+  /usr/sbin/sogo-slapd-sockd mr,
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+
+  # configuration
+  /etc/GNUstep/GNUstep.conf r,
+  /etc/sogo/sogo.conf r,
+
+  # gnustep configuration
+  /usr/share/GNUstep/** r,
+
+  # proc and run filesystem
+  /proc/@{pid}/cmdline r,
+  /proc/@{pid}/stat r,
+  /run/sogo/sogo-sockd.sock rwkl,
+}
