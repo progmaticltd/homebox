@@ -24,6 +24,8 @@
   # proc and run filesystem
   /proc/@{pid}/cmdline r,
   /proc/@{pid}/stat r,
+  /proc/@{pid}/status r,
+  /proc/@{pid}/mounts r,
   /run/sogo/ r,
   /run/sogo/** rwk,
 

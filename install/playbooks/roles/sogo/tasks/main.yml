@@ -18,6 +18,7 @@
 
 - name: Copy nginx configuration
   tags: nginx
+  notify: Restart nginx
   template:
     src: nginx.conf
     dest: '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'
@@ -160,3 +161,11 @@
   apt:
     name: python-psycopg2
     state: absent
+
+# Create entries for the DNS server ===========================================
+- name: Generate DNS records for bind
+  tags: bind
+  when: bind.install
+  template:
+    src: 50-sogo.bind
+    dest: /etc/homebox/dns-entries.d/50-sogo.bind
