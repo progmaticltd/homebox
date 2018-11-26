@@ -1,0 +1,32 @@
+# Last Modified: Sun Nov 25 10:31:21 2018
+#include <tunables/global>
+
+/usr/sbin/sogo-tool {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  # Executable
+  /usr/sbin/sogo-tool mr,
+  /usr/lib/GNUstep/** mr,
+
+  # Configuration
+  /etc/GNUstep/GNUstep.conf r,
+  /etc/sogo/sogo.conf r,
+  /etc/timezone r,
+
+  # Not sure why this is necessary
+  audit allow / r,
+
+  # static content
+  /usr/share/GNUstep/** r,
+
+  # SSL
+  /etc/ssl/openssl.cnf r,
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+
+  # prox and run filesystems
+  /proc/@{pid}/cmdline r,
+
+  /run/sogo/GNUstep/Defaults/ r,
+  /run/sogo/GNUstep/Defaults/** rw,
+}

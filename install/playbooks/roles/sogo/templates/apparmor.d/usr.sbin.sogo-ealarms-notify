@@ -1,0 +1,32 @@
+# Last Modified: Sat Nov 24 17:33:25 2018
+#include <tunables/global>
+
+/usr/sbin/sogo-ealarms-notify {
+
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  # Configuration file access
+  /etc/GNUstep/GNUstep.conf r,
+  /etc/sogo/sogo.conf r,
+  /etc/timezone r,
+  /etc/ssl/openssl.cnf r,
+
+  # I am not sure why SOGo need to read the attributes of the root folder…
+  audit allow / r,
+
+  # Resources access
+  /usr/share/GNUstep/** r,
+
+  # Binary files
+  /usr/sbin/sogo-ealarms-notify mr,
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/lib/GNUstep/** m,
+  /usr/lib/GNUstep/** mr,
+
+  # proc and run filesystem
+  /proc/@{pid}/cmdline r,
+  /run/sogo/GNUstep/Defaults/ r,
+  /run/sogo/GNUstep/Defaults/** r,
+  /run/sogo/GNUstep/Defaults/** w,
+}

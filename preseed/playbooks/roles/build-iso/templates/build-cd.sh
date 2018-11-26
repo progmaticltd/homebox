@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # The first parameter is the name of the server to build the iso image
-HOSTNAME=$1
+export HOSTNAME={{ system.hostname }}
 
 {% if debug %}
 set -x
@@ -19,15 +19,11 @@ export http_proxy='{{ network.proxy }}'
 DIST='{{ repo.release }}'
 LOCALE='{{ locale.id }}'
 
-# Mirror (TODO: Check httpredir ?)
+# Build the default mirror URL
 MIRROR='http://{{ repo.main }}/debian/'
 
 # Common options
 COMMON_OPTS="--debian-mirror ${MIRROR} --locale ${LOCALE} --dist ${DIST} --debug"
-
-# Build the mirror repositories
-OPTIONS="--do-mirror ${COMMON_OPTS}"
-simple-cdd $OPTIONS
 
 # Create the miscellaneous files archive, as root.
 tar c -C "{{ playbook_dir }}/../misc" \
@@ -35,18 +31,18 @@ tar c -C "{{ playbook_dir }}/../misc" \
     -z -f "{{ build_dir }}/misc.tgz" .
 
 # Build installer CDs for the whole platform
-OPTIONS="--verbose"
-OPTIONS+=" --build-only ${COMMON_OPTS}"
-OPTIONS+=" --dvd --conf common.conf"
+BUILD_OPTIONS="--verbose"
+BUILD_OPTIONS+=" --build-only ${COMMON_OPTS}"
+BUILD_OPTIONS+=" --conf common.conf"
 
 # Set keyboard configuration
-OPTIONS+=" --keyboard {{ locale.keymap }}"
+BUILD_OPTIONS+=" --keyboard {{ locale.keymap }}"
 
 # Where to save the logs:
 LOGFILE="{{ build_dir }}/logs/${HOSTNAME}-cdd.log"
 test -d "{{ build_dir }}/logs" || mkdir "{{ build_dir }}/logs"
 
-OPTIONS+=" --logfile ${LOGFILE}"
+BUILD_OPTIONS+=" --logfile ${LOGFILE}"
 
 # Run the program to build the images
-simple-cdd $OPTIONS
+simple-cdd $BUILD_OPTIONS

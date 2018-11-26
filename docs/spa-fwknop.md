@@ -133,6 +133,21 @@ The configuration is simple, see the example: [android client example](img/fwkno
 
 ## Advanced
 
+### Automatically knocking your server before connecting
+
+While you can do this with a script, it is nicer to use the SSH ProxyCommand integration.
+For instance, you can use this configuration on your `~/.ssh/config`:
+
+```conf
+Host homebox.space
+  User root
+  VerifyHostKeyDNS yes
+  ProxyCommand sh -c "fwknop -R -D main.homebox.space --rc-file ~/.fwknop-homebox.space.rc -n main.homebox.space ; /bin/nc %h %p"
+
+```
+
+The configuration above also uses the SSHFP DNS records, if you are using the bind server in homebox.
+
 ### Using the port knoker with Ansible
 
 It is possible to use fwknop during the development phase.

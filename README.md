@@ -54,11 +54,19 @@ in the official documentation.
   compressed archives, with better results than GMail.
 - Optional Roundcube webmail with sieve filters management, password change form, automatic identity
   creation, master account access, etc.
+- Optional SOGo webmail with sieve filters management, password change form, Calendar and Address book management, GUI to import other account emails.
 - Automatic import emails from Google Mail, Yahoo, Outlook.com or any other standard IMAP account.
 - Powerful and light antispam system with [rspamd](https://rspamd.com/) and optional access to the web interface.
 - Antivirus for inbound _and_ outbound emails with [clamav](https://www.clamav.net/).
 - Automatic configuration for Thunderbird and Outlook using published XML and other clients with
   special DNS records ([RFC 6186](https://tools.ietf.org/html/rfc6186)).
+
+### Calendar and Address book
+
+- Install and configure a CalDAV / CardDAV server, with automatic discovery ([RFC 6186](https://tools.ietf.org/html/rfc6764)).
+- Groupware functionality in a web interface, with [SOGo](https://sogo.nu/).
+- Recurring events, email alerts, shared address books and calendars.
+- Mobile devices compatibility: Android, Apple iOS, BlackBerry 10 and Windows mobile through Microsoft ActiveSync.
 
 ### Other optional features
 

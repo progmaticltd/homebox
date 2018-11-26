@@ -1,0 +1,44 @@
+# Last Modified: Sat Nov 24 17:33:26 2018
+#include <tunables/global>
+
+/usr/sbin/sogod {
+
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  # Configuration files
+  /etc/GNUstep/ r,
+  /etc/GNUstep/* r,
+  /etc/sogo/sogo.conf r,
+  /etc/ssl/openssl.cnf r,
+  /etc/ldap/ldap.conf r,
+
+  # I am not sure why SOGo need to read the attributes of the root folder…
+  audit allow / r,
+
+  # Executable and librairies
+  /usr/sbin/sogod mr,
+  /usr/lib/GNUstep/** mr,
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+
+  # proc and run filesystem
+  /proc/@{pid}/cmdline r,
+  /proc/@{pid}/stat r,
+  /proc/@{pid}/status r,
+  /proc/@{pid}/mounts r,
+  /run/sogo/ r,
+  /run/sogo/** rwk,
+
+  # Web content
+  /usr/share/GNUstep/** r,
+  /usr/share/GNUstep/SOGo/** r,
+
+  # Logging
+  /var/log/sogo/sogo.log rwkl,
+  /var/log/sogo/sogo.log w,
+
+  # Temporary files
+  /var/spool/sogo/** rwk,
+  /tmp/ rwk,
+  /tmp/* rwk,
+}

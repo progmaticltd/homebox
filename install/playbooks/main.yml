@@ -1,6 +1,10 @@
 ---
 ## Main installation playbook
 
+# Load default settings once, this is needed to defined
+# some conditional flags used below
+- import_playbook: load-defaults.yml
+
 # Complete list of playbooks to run, in this order
 - import_playbook: external-ip.yml
 - import_playbook: system-prepare.yml
@@ -8,9 +12,9 @@
 
 # Install fwknop (Single Packet Authorization)
 - import_playbook: fwknop-client.yml
-  when: firewall.fwknop.install
+  when: firewall.fwknop is defined and firewall.fwknop.install
 - import_playbook: fwknop-server.yml
-  when: firewall.fwknop.install
+  when: firewall.fwknop is defined and firewall.fwknop.install
 
 # Install dropbear to remotely unlock the system
 - import_playbook: luks-remote.yml
@@ -69,6 +73,10 @@
 # Install the selected webmail
 - import_playbook: roundcube.yml
   when: webmail.install and webmail.type == 'roundcube'
+
+# Install SOGo if chosen
+- import_playbook: sogo.yml
+  when: sogo.install
 
 # Install ejabberd, with LDAP authentication
 - import_playbook: ejabberd.yml

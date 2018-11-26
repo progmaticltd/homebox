@@ -1,0 +1,60 @@
+# Last Modified: Sun Nov 25 10:31:20 2018
+#include <tunables/global>
+
+/usr/sbin/sogo-backup flags=(complain) {
+  #include <abstractions/base>
+  #include <abstractions/bash>
+  #include <abstractions/consoles>
+  #include <abstractions/nameservice>
+
+  # Executables
+  /usr/sbin/sogo-backup r,
+  /usr/sbin/sogo-tool mr,
+  /usr/sbin/sogo-tool rix,
+
+  # system executables
+  /bin/bash ix,
+  /bin/cat mr,
+  /bin/cat rix,
+  /bin/date mr,
+  /bin/date rix,
+  /bin/mkdir mr,
+  /bin/mkdir rix,
+  /usr/bin/basename mr,
+  /usr/bin/basename rix,
+  /usr/bin/find mr,
+  /usr/bin/find rix,
+  /usr/bin/tty mr,
+  /usr/bin/tty rix,
+
+  # Executables
+  /usr/lib/x86_64-linux-gnu/gconv/*.so mr,
+  /usr/lib/GNUstep/** m,
+
+  # folders (for stats?)
+  / r,
+  /usr/ r,
+  /usr/lib/ r,
+  /usr/sbin/ r,
+  /var/log/ r,
+  /usr/share/ r,
+
+  # Configuration files
+  /etc/GNUstep/GNUstep.conf r,
+  /etc/ldap/ldap.conf r,
+  /etc/sogo/sogo.conf r,
+  /etc/ssl/openssl.cnf r,
+
+  # proc and run filesystems
+  /proc/@{pid}/cmdline r,
+  /proc/filesystems r,
+
+  # Gnustep shared files
+  /usr/share/GNUstep/ r,
+  /usr/share/GNUstep/** r,
+
+  # backup folders
+  /var/backups/sogo/ r,
+  /var/backups/sogo/** r,
+  /var/backups/sogo/** rw,
+}

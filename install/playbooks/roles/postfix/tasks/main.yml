@@ -26,7 +26,7 @@
   when: system.ssl == 'letsencrypt'
   vars:
     details:
-      - [ /etc/letsencrypt/archive, /etc/letsencrypt/live ]
+      - [ /etc/letsencrypt, /etc/letsencrypt/archive, /etc/letsencrypt/live ]
       - [ postfix ]
   acl:
     path: '{{ item[0] }}'

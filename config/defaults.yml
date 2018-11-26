@@ -288,10 +288,10 @@ dmarc_default:
     policy: quarantine
   rua:
     email: 'postmaster@{{ network.domain }}'
-    max_size: 10M
+    max_size: 10240
   ruf:
     email: 'postmaster@{{ network.domain }}'
-    max_size: 10M
+    max_size: 10240
   reporting:
     format: afrf    # or iodef
     interval: 86400
@@ -486,3 +486,21 @@ zabbix_default:
     - 192.168.0.0/16    # RFC1918 local networks
     - 172.16.0.0/12
     - 10.0.0.0/8
+
+# Default settings for SOGo groupware
+sogo_default:
+  install: true
+  appointment_send_emails: true
+  vacation: true
+  forward: true
+  sieve_scripts: true
+  first_day_of_week: 1 # 1 is Monday
+  day_start_time: 9
+  day_end_time: 17
+  time_format: '%H:%M'
+  refresh_view_check: every_minute
+  auxiliary_accounts: true
+  # Possible values: https://sogo.nu/files/docs/SOGoInstallationGuide.html#_general_preferences
+  language: English
+  enable_public_access: false
+  password_change: true
