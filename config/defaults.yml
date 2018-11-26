@@ -288,10 +288,10 @@ dmarc_default:
     policy: quarantine
   rua:
     email: 'postmaster@{{ network.domain }}'
-    max_size: 10M
+    max_size: 10240
   ruf:
     email: 'postmaster@{{ network.domain }}'
-    max_size: 10M
+    max_size: 10240
   reporting:
     format: afrf    # or iodef
     interval: 86400
