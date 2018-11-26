@@ -446,4 +446,4 @@
   when: bind.install
   template:
     src: 40-dovecot.bind
-    dest: /etc/homebox/dns-entries.d//40-dovecot.bind
+    dest: /etc/homebox/dns-entries.d/40-dovecot.bind

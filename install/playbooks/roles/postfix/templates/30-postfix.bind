@@ -3,3 +3,6 @@ smtp    IN       A      {{ external_ip }}
 
 ;; RFC 6186 entries, should point to an "A" record
 _submission._tcp 3600 IN SRV 0 0 587 smtp.{{ network.domain }}.
+
+;; SPF record
+@       IN       TXT    "v=spf1 mx -all"
