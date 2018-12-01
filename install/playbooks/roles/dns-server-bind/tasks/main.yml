@@ -7,39 +7,48 @@
     path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/dnssec-keys/'
     state: directory
 
-- name: Install a DNS server
+- name: Install the required packages
   apt:
-    name: bind9
+    name: '{{ pkg }}'
     state: present
+  with_items:
+    - bind9
+    - dnsutils
+  loop_control:
+    loop_var: pkg
 
 - name: Stop the DNS server before creating the configuration
   service:
     name: bind9
     state: stopped
 
-- name: Build the reverse IP address (works only for IPv4)
-  when: bind.reverse_ip == "auto"
-  tags: facts
-  set_fact:
-    ip_regex: '([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)'
+- name: Build reverse IP address using shell
+  shell: >-
+    dig -x {{ external_ip }}
+    | awk 'f{print;f=0} /^;; QUESTION SECTION:/{f=1}'
+    | sed -E 's/(^;| IN.*)//g'
+  register: reverse_ip
 
-- name: Build the reverse IP address (works only for IPv4)
-  when: bind.reverse_ip == "auto"
+- name: Build the reverse IP address (works for IPv4 or IPv6)
   tags: facts
   set_fact:
-    reverse_ip: '{{ external_ip | regex_replace(ip_regex, "\4.\3.\2") }}'
+    reverse_ip: "{{ reverse_ip.stdout }}"
 
-- name: Build the reverse IP address
-  when: bind.reverse_ip != "auto"
-  tags: facts
+- name: Set external IP address type (A or AAAA)
+  register: ip_type
+  shell:
+    echo {{ external_ip }}
+    | grep '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'
+    && echo A || echo AAAA
+
+- name: Set external IP address type (A or AAAA)
   set_fact:
-    reverse_ip: bind.reverse_ip
+    external_ip_type: '{{ (ip_type.stdout) }}'
 
 - name: Copy the configuration template
   tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
-    # serial: "{{ lookup('pipe', 'date +%Y%m%d%M') }}"
   template:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'

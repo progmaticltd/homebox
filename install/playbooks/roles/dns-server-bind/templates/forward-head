@@ -10,15 +10,15 @@ $ORIGIN {{ network.domain }}.
 
 ;; Name Server and IP address mapping (GLUE)
 @       IN      NS      main.{{ network.domain }}.
-main    IN      A       {{ external_ip }}
+main    IN      {{ "%-4s" | format(external_ip_type) }}    {{ external_ip }}
 
 {% if backup_ip is defined %}
 @       IN      NS      backup.{{ network.domain }}.
-backup  IN      A       {{ backup_ip }}
+backup  IN      {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
 {% endif %}
 
-;; Main A Record for where everything goes
-@       IN      A       {{ external_ip }}
+;; Main {{ external_ip_type }} Record for where everything goes
+@       IN      {{ "%-4s" | format(external_ip_type) }}    {{ external_ip }}
 
 ;; Wildcard record is a cname to the main IP address
 *       IN      CNAME   main

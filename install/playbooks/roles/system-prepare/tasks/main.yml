@@ -119,6 +119,7 @@
   loop_control:
     loop_var: pkg
 
+# FIXME: This should not add multiple times the same value
 - name: Enable AppArmor at boot
   register: grub_config
   when: security.app_armor
