@@ -22,33 +22,17 @@
     name: bind9
     state: stopped
 
-- name: Build reverse IP address using shell
-  shell: >-
-    dig -x {{ external_ip }}
-    | awk 'f{print;f=0} /^;; QUESTION SECTION:/{f=1}'
-    | sed -E 's/(^;| IN.*)//g'
-  register: reverse_ip
-
-- name: Build the reverse IP address (works for IPv4 or IPv6)
-  tags: facts
-  set_fact:
-    reverse_ip: "{{ reverse_ip.stdout }}"
-
-- name: Set external IP address type (A or AAAA)
-  register: ip_type
-  shell:
-    echo {{ external_ip }}
-    | grep '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'
-    && echo A || echo AAAA
-
-- name: Set external IP address type (A or AAAA)
-  set_fact:
-    external_ip_type: '{{ (ip_type.stdout) }}'
+- name: Build main and reverse IP address information
+  include_tasks: build-ip-info.yml
 
 - name: Copy the configuration template
   tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
+    record_name: main
+    reverse_ip_address: '{{ reverse_ip }}'
+    external_ip_address: '{{ external_ip }}'
+    ptr_id: 10
   template:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
@@ -60,7 +44,25 @@
     - src: named.conf.local
       dest: '/etc/bind/named.conf.local'
     - src: reverse-domain
-      dest: '/etc/bind/reverse.{{ network.domain }}'
+      dest: '/etc/bind/reverse-main.{{ network.domain }}'
+  loop_control:
+    loop_var: file
+
+- name: Copy the configuration template
+  when: backup_ip is defined
+  tags: config
+  vars:
+    serial: "{{ lookup('pipe', 'date +%s') }}"
+    record_name: backup
+    reverse_ip_address: '{{ reverse_backup_ip }}'
+    external_ip_address: '{{ backup_ip }}'
+    ptr_id: 20
+  template:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+  with_items:
+    - src: reverse-domain
+      dest: '/etc/bind/reverse-backup.{{ network.domain }}'
   loop_control:
     loop_var: file
 
@@ -193,7 +195,7 @@
     comment: 'Allow DNS zone transfers'
     rule: allow
 
-- name: Copy DNS entries in /var/cache/bin
+- name: Copy DNS entries in bind cache directory (main IP)
   copy:
     src: '/etc/bind/{{ file }}'
     dest: '/var/cache/bind/{{ file }}'
@@ -202,7 +204,20 @@
     remote_src: true
   with_items:
     - 'forward.{{ network.domain }}'
-    - 'reverse.{{ network.domain }}'
+    - 'reverse-main.{{ network.domain }}'
+  loop_control:
+    loop_var: file
+
+- name: Copy DNS entries in bind cache directory (backup IP)
+  when: backup_ip is defined
+  copy:
+    src: '/etc/bind/{{ file }}'
+    dest: '/var/cache/bind/{{ file }}'
+    owner: bind
+    group: bind
+    remote_src: true
+  with_items:
+    - 'reverse-backup.{{ network.domain }}'
   loop_control:
     loop_var: file
 
