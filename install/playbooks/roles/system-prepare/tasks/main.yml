@@ -1,11 +1,19 @@
 ---
 
+
 # Install the most required packages
 - name: Update packages cache
   tags: apt
   apt:
     cache_valid_time: 3600
     update_cache: true
+
+# Install swap if not enough memory available
+- name: Install memory swap package
+  when: ansible_memtotal_mb < 2048
+  apt:
+    name: dphys-swapfile
+    state: latest
 
 - name: Upgrade the distribution
   tags: apt
@@ -119,6 +127,7 @@
   loop_control:
     loop_var: pkg
 
+# FIXME: This should not add multiple times the same value
 - name: Enable AppArmor at boot
   register: grub_config
   when: security.app_armor

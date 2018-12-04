@@ -17,15 +17,6 @@
   debug:
     var: ldap
 
-- name: Update LDAP configuration for debugging
-  tags: debug
-  when: system.debug
-  notify: Restart the ldap service
-  replace:
-    path: /etc/default/slapd
-    regexp: SLAPD_OPTIONS=""
-    replace: SLAPD_OPTIONS="-d 8 -d 64 -d 2048"
-
 - name: Ensure the LDAP server FQDN resolves to localhost
   lineinfile:
     path: /etc/hosts
@@ -127,6 +118,15 @@
   template:
     src: default-slapd
     dest: /etc/default/slapd
+
+- name: Update LDAP configuration for debugging
+  tags: debug
+  when: system.debug
+  notify: Restart the ldap service
+  replace:
+    path: /etc/default/slapd
+    regexp: SLAPD_OPTIONS=""
+    replace: SLAPD_OPTIONS="-d 8 -d 64 -d 2048"
 
 - name: Copy the ldap ssl config on the server before running it
   when: system.ssl == 'letsencrypt'

@@ -368,9 +368,6 @@ bind_default:
     - 8.8.8.8
     - 8.8.4.4
     - 1.1.1.1
-  # Actually, reverse IP address creation only works for IPv4
-  # If you are using IPv6, create the reverse IP block here
-  reverse_ip: auto
   # Timing configuration (see https://www.ripe.net/publications/docs/ripe-203)
   refresh: 86400          # 24 hours
   retry: 7200             # 2 hours

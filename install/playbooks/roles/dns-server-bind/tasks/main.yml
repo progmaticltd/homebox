@@ -7,39 +7,32 @@
     path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/dnssec-keys/'
     state: directory
 
-- name: Install a DNS server
+- name: Install the required packages
   apt:
-    name: bind9
+    name: '{{ pkg }}'
     state: present
+  with_items:
+    - bind9
+    - dnsutils
+  loop_control:
+    loop_var: pkg
 
 - name: Stop the DNS server before creating the configuration
   service:
     name: bind9
     state: stopped
 
-- name: Build the reverse IP address (works only for IPv4)
-  when: bind.reverse_ip == "auto"
-  tags: facts
-  set_fact:
-    ip_regex: '([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)'
-
-- name: Build the reverse IP address (works only for IPv4)
-  when: bind.reverse_ip == "auto"
-  tags: facts
-  set_fact:
-    reverse_ip: '{{ external_ip | regex_replace(ip_regex, "\4.\3.\2") }}'
-
-- name: Build the reverse IP address
-  when: bind.reverse_ip != "auto"
-  tags: facts
-  set_fact:
-    reverse_ip: bind.reverse_ip
+- name: Build main and reverse IP address information
+  include_tasks: build-ip-info.yml
 
 - name: Copy the configuration template
   tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
-    # serial: "{{ lookup('pipe', 'date +%Y%m%d%M') }}"
+    record_name: main
+    reverse_ip_address: '{{ reverse_ip }}'
+    external_ip_address: '{{ external_ip }}'
+    ptr_id: 10
   template:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
@@ -51,7 +44,25 @@
     - src: named.conf.local
       dest: '/etc/bind/named.conf.local'
     - src: reverse-domain
-      dest: '/etc/bind/reverse.{{ network.domain }}'
+      dest: '/etc/bind/reverse-main.{{ network.domain }}'
+  loop_control:
+    loop_var: file
+
+- name: Copy the configuration template
+  when: backup_ip is defined
+  tags: config
+  vars:
+    serial: "{{ lookup('pipe', 'date +%s') }}"
+    record_name: backup
+    reverse_ip_address: '{{ reverse_backup_ip }}'
+    external_ip_address: '{{ backup_ip }}'
+    ptr_id: 20
+  template:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+  with_items:
+    - src: reverse-domain
+      dest: '/etc/bind/reverse-backup.{{ network.domain }}'
   loop_control:
     loop_var: file
 
@@ -184,7 +195,7 @@
     comment: 'Allow DNS zone transfers'
     rule: allow
 
-- name: Copy DNS entries in /var/cache/bin
+- name: Copy DNS entries in bind cache directory (main IP)
   copy:
     src: '/etc/bind/{{ file }}'
     dest: '/var/cache/bind/{{ file }}'
@@ -193,7 +204,20 @@
     remote_src: true
   with_items:
     - 'forward.{{ network.domain }}'
-    - 'reverse.{{ network.domain }}'
+    - 'reverse-main.{{ network.domain }}'
+  loop_control:
+    loop_var: file
+
+- name: Copy DNS entries in bind cache directory (backup IP)
+  when: backup_ip is defined
+  copy:
+    src: '/etc/bind/{{ file }}'
+    dest: '/var/cache/bind/{{ file }}'
+    owner: bind
+    group: bind
+    remote_src: true
+  with_items:
+    - 'reverse-backup.{{ network.domain }}'
   loop_control:
     loop_var: file
 

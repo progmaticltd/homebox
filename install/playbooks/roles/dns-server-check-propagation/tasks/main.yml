@@ -1,9 +1,24 @@
 ---
 
+# This is checking that the DNS server has been fully propagated
 - name: Check DNS propagation
   shell: >-
-    host main.{{ network.domain }} 8.8.8.8
+    host main.{{ network.domain }} {{ server }}
+  with_items:
+    - 8.8.8.8
+    - 8.8.4.4
+    - 1.1.1.1
+  loop_control:
+    loop_var: server
 
-# - name: Display a warning to wait until DNS propagation
-#   dbg:
-#     msg: "Now, wait for the DNS propagation, visible here: https://www.whatsmydns.net/#A/main.{{ network.domain }}"
+# This is checking that the DNS server has been fully propagated
+- name: Check DNS propagation for backup IP address
+  when: network.backup_ip is defined
+  shell: >-
+    host backup.{{ network.domain }} {{ server }}
+  with_items:
+    - 8.8.8.8
+    - 8.8.4.4
+    - 1.1.1.1
+  loop_control:
+    loop_var: server
