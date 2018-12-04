@@ -23,10 +23,6 @@ backup  IN      {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
 @       IN      {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
 {% endif %}
 
-;; Wildcard record is a cname to the main IP address(es)
-*       IN      CNAME   main
-
-
 ;; Mail Server MX (Mail exchanger) Record(s)
 {{ network.domain }}. IN  MX  {{ bind.mx_priority }}  main.{{ network.domain }}.
 {% if backup_ip is defined %}

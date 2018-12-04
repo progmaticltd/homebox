@@ -1,0 +1,2 @@
+;; Wildcard record is a cname to the main IP address(es)
+*       IN      CNAME   main
