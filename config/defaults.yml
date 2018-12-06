@@ -83,6 +83,8 @@ mail_default:
 
                             # Put anything you want here, even on multiple lines, this will
                             # be added on main.cf. See the example here:
+    submission:
+      port: 587
     # extra_settings: |
     #   disable_vrfy_command = no
     #   frozen_delivered_to = no
