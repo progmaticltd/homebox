@@ -102,7 +102,7 @@
     - comment: Allow encrypted SMTP
       port: 465
     - comment: Allow submission
-      port: '{{ postfix.submission.port }}'
+      port: '{{ mail.postfix.submission.port }}'
   loop_control:
     loop_var: rule
 

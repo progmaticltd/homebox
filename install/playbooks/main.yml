@@ -47,6 +47,7 @@
 
 # System protection: antispam
 - import_playbook: rspamd.yml
+  when: mail.antispam.active
 
   # Install the web frontend for the antispam system
 - import_playbook: rspamd-web.yml

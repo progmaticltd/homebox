@@ -91,6 +91,7 @@ mail_default:
 
   #############################################################################
   antispam:                 # Check inbound and outbound emails for viruses
+    active: true            # or false
     port: 33000             # port to use for the antivirus daemon
     webui:                  # rspamd web interface
       active: true          # Activate or not
