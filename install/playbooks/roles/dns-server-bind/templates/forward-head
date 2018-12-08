@@ -12,13 +12,13 @@ $ORIGIN {{ network.domain }}.
 @       IN      NS      main.{{ network.domain }}.
 main    IN      {{ "%-4s" | format(external_ip_type) }}    {{ external_ip }}
 
-{% if backup_ip is defined %}
+{% if backup_ip is defined and backup_ip != "" %}
 @       IN      NS      backup.{{ network.domain }}.
 backup  IN      {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
 {% endif %}
 
 ;; Main record(s) for where everything goes by default
 @       IN      {{ "%-4s" | format(external_ip_type) }}    {{ external_ip }}
-{% if backup_ip is defined %}
+{% if backup_ip is defined and backup_ip != "" %}
 @       IN      {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
 {% endif %}
