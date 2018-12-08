@@ -41,7 +41,7 @@
     <!-- SMTP: Submission only -->
     <outgoingServer type="smtp">
       <hostname>smtp.{{ network.domain }}</hostname>
-      <port>{{ postfix.submission.port }</port>
+      <port>{{ mail.postfix.submission.port }}</port>
       <socketType>STARTTLS</socketType>
       <username>%EMAILLOCALPART%</username>
       <authentication>password-cleartext</authentication>

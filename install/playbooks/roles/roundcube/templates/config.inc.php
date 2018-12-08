@@ -55,7 +55,7 @@ $config['smtp_server'] = 'smtp.{{ network.domain }}';
 
 // SMTP port (default is 25; use 587 for STARTTLS or 465 for the
 // deprecated SSL over SMTP (aka SMTPS))
-$config['smtp_port'] = {{ postfix.submission.port }};
+$config['smtp_port'] = {{ mail.postfix.submission.port }};
 
 // SMTP username (if required) if you use %u as the username Roundcube
 // will use the current username for login
