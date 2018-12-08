@@ -99,13 +99,38 @@
   loop_control:
     loop_var: conf
 
+- name: Get the locale value on the current machine
+  tags: locale
+  delegate_to: localhost
+  set_fact:
+    locale: "{{ lookup('env','LANG') }}"
+
+# We are going to install the "unattended-upgrades" package, and to
+# configure it to install security updates automatically.
+- name: Configure locales
+  tags: locale
+  debconf:
+    name: locales
+    question: '{{ conf.question }}'
+    value: '{{ conf.value }}'
+    vtype: '{{ conf.type }}'
+  with_items:
+    - question: locales/locales_to_be_generated
+      value: '{{ locale }}'
+      type: multiselect
+    - question: locales/default_environment_locale
+      value: '{{ locale }}'
+      type: boolean
+  loop_control:
+    loop_var: conf
+
 # Install the firewall, but do not configure any rule.
 # The other tasks will setup the rules themselves
 # We are also installing fail2ban, so the other services might use it, like postfix, dovecot and roundcube
 # The package 'unattended-upgrades' download and install security updates by default
 
 - name: Install ufw / fail2ban and automatic security updates
-  tags: security
+  tags: apt, security
   apt:
     name: "{{ pkg }}"
     state: present

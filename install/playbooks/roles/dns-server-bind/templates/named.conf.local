@@ -15,7 +15,7 @@ zone    "{{ reverse_ip }}" {
         file "reverse-main.{{ network.domain }}";
         };
 
-{% if backup_ip is defined %}
+{% if backup_ip is defined and backup_ip != "" %}
 # Backup IP reverse DNS entries
 zone    "{{ reverse_backup_ip }}" {
         type master;

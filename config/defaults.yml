@@ -83,12 +83,15 @@ mail_default:
 
                             # Put anything you want here, even on multiple lines, this will
                             # be added on main.cf. See the example here:
+    submission:
+      port: 587
     # extra_settings: |
     #   disable_vrfy_command = no
     #   frozen_delivered_to = no
 
   #############################################################################
   antispam:                 # Check inbound and outbound emails for viruses
+    active: true            # or false
     port: 33000             # port to use for the antivirus daemon
     webui:                  # rspamd web interface
       active: true          # Activate or not
@@ -200,7 +203,7 @@ system_default:
 firewall_default:
   fwknop:
     install: false
-    nic: '{{ ansible_default_ipv4.interface }}'
+    nic: '{{ ansible_default_ipv4.interface | default(ansible_default_ipv6.interface) }}'
     port: random
   ssh:
     - src: any

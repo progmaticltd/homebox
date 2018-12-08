@@ -45,6 +45,8 @@
       dest: '/etc/bind/named.conf.local'
     - src: reverse-domain
       dest: '/etc/bind/reverse-main.{{ network.domain }}'
+    - src: forward-tail
+      dest: '/etc/homebox/dns-entries.d/99-tail.bind'
   loop_control:
     loop_var: file
 

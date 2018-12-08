@@ -1,11 +1,26 @@
 ;; SMTP server IP address, MX should point to a proper A record
 smtp    IN       {{ "%-4s" | format(external_ip_type) }}      {{ external_ip }}
-{% if backup_ip is defined %}
-smtp    IN       {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
+
+;; Mail Server MX (Mail exchanger) Record(s)
+@       IN  MX   {{ bind.mx_priority }}  smtp.{{ network.domain }}.
+
+{% if backup_ip is defined and backup_ip != "" %}
+;; Second IP address record
+smtp2   IN       {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
+@       IN  MX   {{ bind.mx_priority + 10 }}  smtp2.{{ network.domain }}.
 {% endif %}
 
 ;; RFC 6186 entries, should point to a proper A/AAAA record
-_submission._tcp 3600 IN SRV 0 0 587 smtp.{{ network.domain }}.
+_submission._tcp 3600 IN SRV 0 0 {{ mail.postfix.submission.port }} smtp.{{ network.domain }}.
 
 ;; SPF record
 @       IN       TXT    "v=spf1 mx -all"
+
+{% if bind.mx_backup.count > 0 %}
+;; Backup records if the server is unreachable
+;; Allows you to redirect to your emails to another
+;; server if your one is offline.
+{% for bmx in bind.mx_backup %}
+@ IN  MX  {{ bmx.priority }}  {{ bmx.fqdn }}.
+{% endfor %}
+{% endif %}
