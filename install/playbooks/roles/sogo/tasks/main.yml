@@ -138,7 +138,7 @@
     dest: '{{ profile.dest }}'
   with_items:
     - src: apparmor.d/local/nginx-sogo
-      dest: '/etc/apparmor.d/local/nginx-sogo.{{ network.domain }}'
+      dest: '/etc/apparmor.d/local/sogo.{{ network.domain }}'
     - src: apparmor.d/usr.sbin.sogod
       dest: '/etc/apparmor.d/usr.sbin.sogod'
     - src: apparmor.d/usr.sbin.sogo-ealarms-notify
@@ -161,7 +161,7 @@
   tags: security, apparmor
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
-    line: '  #include <local/nginx-sogo.{{ network.domain }}>'
+    line: '  #include <local/sogo.{{ network.domain }}>'
     insertbefore: '# End of local includes for homebox'
 
 - name: Remove the python / psycopg2 package
