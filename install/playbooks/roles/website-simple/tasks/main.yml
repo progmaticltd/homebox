@@ -21,7 +21,6 @@
   stat:
     path: /var/www/default/index.html
 
-
 - name: Get remote environment locale
   when: not index_page.stat.exists
   tags: website
@@ -64,7 +63,7 @@
     loop_var: path
 
 - name: Create the website site configuration file
-  tags: website
+  tags: nginx
   notify: Restart nginx
   template:
     src: website-simple.tpl
@@ -74,7 +73,7 @@
     mode: 0644
 
 - name: Enable nginx site
-  tags: website
+  tags: nginx
   notify: Restart nginx
   file:
     src: /etc/nginx/sites-available/website-simple.conf

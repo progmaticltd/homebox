@@ -47,13 +47,13 @@
     external_ip_type: '{{ (main_ip_type.stdout) }}'
 
 - name: Get the backup IP address
+  when: network.backup_ip != None
   tags: facts
-  when: network.backup_ip is defined
   set_fact:
     backup_ip: '{{ network.backup_ip }}'
 
 - name: Set external IP address type (A or AAAA)
-  when: network.backup_ip is defined
+  when: network.backup_ip != None
   register: backup_ip_type
   shell:
     echo {{ backup_ip }}
@@ -61,6 +61,6 @@
     && echo A || echo AAAA
 
 - name: Set external IP address type (A or AAAA)
-  when: network.backup_ip is defined
+  when: network.backup_ip != None
   set_fact:
     backup_ip_type: '{{ (backup_ip_type.stdout) }}'
