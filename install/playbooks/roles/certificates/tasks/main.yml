@@ -181,6 +181,7 @@
     regexp: authenticator = standalone
     replace: authenticator = webroot
 
+# TODO: Remove this part, the certificates are now deployed "standalone"
 - name: Add missing lines when changed from standalone to webroot
   tags: upgrade
   when: renewal_config.changed
@@ -194,8 +195,10 @@
   loop_control:
     loop_var: line
 
-- name: Run the certificate renewal script if needed
-  shell: certbot renew
+# FIXME: Call the custom script for this domain instead
+# - name: Run the certificate renewal script if needed
+#   shell: >-
+#     certbot certonly -d {{ certificate_fqdn }}
 
 # In this direction, we should overwrite the symbolic links,
 # in case the certificates have been renewed
