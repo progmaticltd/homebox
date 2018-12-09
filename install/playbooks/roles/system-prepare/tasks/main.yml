@@ -196,10 +196,12 @@
   when: security.app_armor and aa_enabled.rc == 1
   tags: security, apparmor
   shell: >-
-    systemctl reboot --message "Restarting the system to activate AppArmor"
-  async: 1
+    sleep 2 &&
+    systemctl reboot --message
+    "Restarting the system to activate AppArmor"
+  async: 60
   poll: 0
-  failed_when: false
+  ignore_errors: true
 
 - name: Wait for the server to come back online
   when: security.app_armor and aa_enabled.rc == 1
