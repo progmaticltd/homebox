@@ -124,6 +124,17 @@
   loop_control:
     loop_var: conf
 
+- name: Update /etc/locales
+  tags: locale
+  replace:
+    path: /etc/locale.gen
+    regexp: '^# {{ locale | regex_replace("\.", "\\.") }}'
+    replace: '{{ locale }}'
+
+- name: Configure locales
+  tags: locale
+  shell: dpkg-reconfigure -phigh locales
+
 # Install the firewall, but do not configure any rule.
 # The other tasks will setup the rules themselves
 # We are also installing fail2ban, so the other services might use it, like postfix, dovecot and roundcube
@@ -184,9 +195,11 @@
 - name: Reboot to activate AppArmor if not already active
   when: security.app_armor and aa_enabled.rc == 1
   tags: security, apparmor
-  shell: systemctl reboot --message "Restarting the system to activate AppArmor"
+  shell: >-
+    systemctl reboot --message "Restarting the system to activate AppArmor"
   async: 1
   poll: 0
+  failed_when: false
 
 - name: Wait for the server to come back online
   when: security.app_armor and aa_enabled.rc == 1
