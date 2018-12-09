@@ -6,6 +6,7 @@
     name: '{{ pkg }}'
     state: present
   with_items:
+    - postgresql
     - sogo-common
     - sogo
     - memcached
@@ -73,13 +74,21 @@
 - name: Initialise the database
   when: sogodb.changed
   tags: postgres
+  register: db_init
   become: true
   become_user: postgres
   shell: >-
     cat /tmp/sogo-db-init.sql
-    | psql -d sogo -o /var/log/sogo/db-install.log
+    | psql -a -d sogo -o /tmp/sogo-db-install.log
   args:
-    creates: /var/log/sogo/db-install.log
+    creates: /tmp/sogo-db-install.log
+
+- name: Keep the DB logs
+  when: db_init.changed
+  copy:
+    src: /tmp/sogo-db-install.log
+    dest: /var/log/sogo/db-install.log
+    remote_src: true
 
 - name: Initialise grants
   tags: postgres
