@@ -127,7 +127,9 @@ smtpd_recipient_restrictions =
     permit
 
 # Content filtering: Antivirus using clamsmtp
+{% if mail.antivirus.active %}
 content_filter = scan:127.0.0.1:{{ mail.antivirus.port + 1 }}
+{% endif %}
 receive_override_options = no_address_mappings
 
 # SPF policies

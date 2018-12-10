@@ -4,8 +4,11 @@
 {% if system.ssl == 'letsencrypt' %}
 server {
 
-    # Webmail FQDN
+    # Lisent on IPv4 and IPv6
     listen 80;
+    listen [::]:80;
+
+    # Webmail FQDN
     server_name {{ roundcube.url }};
 
     # Certificate renewal
@@ -28,6 +31,10 @@ server {
 #
 server {
 
+    # Lisent on IPv4 and IPv6
+    listen 443 ssl http2;
+    listen [::]:443 ssl;
+
     # Webmail FQDN
     server_name {{ roundcube.url }};
 
@@ -42,7 +49,6 @@ server {
 
     {% if system.ssl == 'letsencrypt' %}
     # SSL configuration
-    listen 443 ssl http2;
     ssl_protocols TLSv1.1 TLSv1.2;
     ssl_certificate /etc/letsencrypt/live/{{ roundcube.url }}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/{{ roundcube.url }}/privkey.pem;

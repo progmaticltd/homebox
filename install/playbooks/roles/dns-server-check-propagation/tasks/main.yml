@@ -3,22 +3,10 @@
 # This is checking that the DNS server has been fully propagated
 - name: Check DNS propagation
   shell: >-
-    host main.{{ network.domain }} {{ server }}
-  with_items:
-    - 8.8.8.8
-    - 8.8.4.4
-    - 1.1.1.1
-  loop_control:
-    loop_var: server
+    host main.{{ network.domain }}
 
 # This is checking that the DNS server has been fully propagated
 - name: Check DNS propagation for backup IP address
   when: network.backup_ip is defined
   shell: >-
-    host backup.{{ network.domain }} {{ server }}
-  with_items:
-    - 8.8.8.8
-    - 8.8.4.4
-    - 1.1.1.1
-  loop_control:
-    loop_var: server
+    host backup.{{ network.domain }}
