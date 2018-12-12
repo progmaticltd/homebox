@@ -81,7 +81,7 @@ behaviour in your system.yml file.
 Only the security updates are installed, new packages versions still need to be installed
 manually.
 
-# Monitoring
+## Monitoring
 
 The installer can deploy a complete monitoring solution, [Zabbix](https://zabbix.com).
 
@@ -90,6 +90,16 @@ The installer can deploy a complete monitoring solution, [Zabbix](https://zabbix
 - You can set-up SMS alerts if, for instance, your internet connection goes down.
 
 By default, the guest account is deleted, and a strong password is generated.
+
+## Multiple IP scheme
+
+Homebox can be configured with two static IP addresses, with a mix of IPv4 amd IPv6.
+
+This is useful if you are using a VPN that provides you a static IP address or if you
+are using 3G / 4G as a backup connection.
+
+IPv6 is actually tested on [vultr.com](https://vultr.com/), a provider that supports full IPv6,
+on virtual servers. Digital Ocean does not allows SMTP or Submission on IPv6.
 
 # Email features
 
