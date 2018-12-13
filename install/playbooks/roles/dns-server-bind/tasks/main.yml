@@ -7,10 +7,13 @@
     path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/dnssec-keys/'
     state: directory
 
+# When IPv6 is used, bind9 should be taken from backports
+# TODO: Configure this automatically
 - name: Install the required packages
   apt:
     name: '{{ pkg }}'
     state: present
+    default_release: stretch-backports
   with_items:
     - bind9
     - dnsutils
