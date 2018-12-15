@@ -9,8 +9,11 @@ upstream transmission  {
 {% if system.ssl == 'letsencrypt' %}
 server {
 
-    # transmission FQDN
+    # Listen on IPv4 and IPv6
     listen 80;
+    listen [::]:80;
+
+    # transmission FQDN
     server_name transmission.{{ network.domain }};
 
     # Certificate renewal
@@ -32,6 +35,10 @@ server {
 # Default server configuration
 server {
 
+    # Listen on IPv4 and IPv6
+    listen 443 ssl http2;
+    listen [::]:443 ssl;
+
     # transmission FQDN
     server_name transmission.{{ network.domain }};
 
@@ -43,7 +50,6 @@ server {
 
     {% if system.ssl == 'letsencrypt' %}
     # SSL configuration
-    listen 443 ssl http2;
     ssl_protocols TLSv1.1 TLSv1.2;
     ssl_certificate /etc/letsencrypt/live/transmission.{{ network.domain }}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/transmission.{{ network.domain }}/privkey.pem;
