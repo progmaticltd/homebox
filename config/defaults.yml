@@ -348,12 +348,14 @@ ejabberd_default:
 
 ###############################################################################
 # Gandi automatic DNS update
+# This is now obsolete, as Homebox come with its own DNS server
+# However, we could keep this for Glue records management
 # Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
 # update: Automatic update of your DNS server
 # test: test mode: does not activate the DNS zone straight
 # add_wildcard:  Create a wildcard entry to redirect all traffic to your box
 dns_default:
-  update: true
+  update: false
   test: true
   add_wildcard: true
   gandi:
