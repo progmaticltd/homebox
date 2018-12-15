@@ -5,12 +5,14 @@
 # or automatically through a script
 
 - name: Copy the configuration file
+  when: network.external_ip == "auto"
   tags: scripts
   copy:
     src: external-ip.conf
     dest: /etc/external-ip.conf
 
 - name: Copy the external IP address detection script
+  when: network.external_ip == "auto"
   tags: scripts
   copy:
     src: external-ip
@@ -36,6 +38,7 @@
     external_ip: '{{ network.external_ip }}'
 
 - name: Set external IP address type (A or AAAA)
+  tags: facts
   register: main_ip_type
   shell:
     echo {{ external_ip }}
@@ -43,6 +46,7 @@
     && echo A || echo AAAA
 
 - name: Set external IP address type (A or AAAA)
+  tags: facts
   set_fact:
     external_ip_type: '{{ (main_ip_type.stdout) }}'
 
@@ -54,6 +58,7 @@
 
 - name: Set external IP address type (A or AAAA)
   when: network.backup_ip != None
+  tags: facts
   register: backup_ip_type
   shell:
     echo {{ backup_ip }}
@@ -61,6 +66,7 @@
     && echo A || echo AAAA
 
 - name: Set external IP address type (A or AAAA)
+  tags: facts
   when: network.backup_ip != None
   set_fact:
     backup_ip_type: '{{ (backup_ip_type.stdout) }}'
