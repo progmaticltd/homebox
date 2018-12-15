@@ -33,6 +33,7 @@
     - python-psycopg2
     - postgresql-client
     - lm-sensors
+    - php-ldap
   loop_control:
     loop_var: pkg
 
