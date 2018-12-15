@@ -1,5 +1,9 @@
 ---
 
+- hosts: homebox
+  roles:
+    - external-ip-type
+
 # Test the DNS server for mail records
 - hosts: homebox
   vars_files:
@@ -7,7 +11,8 @@
     - '{{ playbook_dir }}/../../config/system.yml'
   vars:
     records:
-      type: A
+      type: '{{ external_ip_type }}'
+      count: '[12]'
       list:
         - main
   roles:
@@ -21,7 +26,8 @@
     - '{{ playbook_dir }}/../../config/system.yml'
   vars:
     records:
-      type: CNAME
+      type: '{{ external_ip_type }}'
+      count: '[12]'
       list:
         - imap
         - smtp
@@ -38,6 +44,7 @@
   vars:
     records:
       type: SRV
+      count: '[12]'
       list:
         - _imap._tcp
         - _imaps._tcp

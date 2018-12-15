@@ -23,17 +23,18 @@
 # Test mail related certificates
 - import_playbook: mail-certificates.yml
 
-# Test mail related certificates
+# Test MTA (postfix) functions
 - import_playbook: postfix.yml
 
-# Test mail related certificates
+# Test MDA (dovecot) functions
 - import_playbook: dovecot.yml
+- import_playbook: dovecot-fts.yml
 
-# Test autoconfiguration
+# Test autoconfiguration server
 - import_playbook: autoconfig.yml
   when: mail.autoconfig
 
-# Test autodiscover
+# Test autodiscover server
 - import_playbook: autodiscover.yml
   when: mail.autodiscover
 
