@@ -8,7 +8,7 @@
   vars:
     records:
       type: SSHFP
-      count: 5
+      count: 6
       list:
         - ''
   roles:

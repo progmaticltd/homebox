@@ -28,7 +28,7 @@ This project is for you if:
   [KISS principle](https://en.wikipedia.org/wiki/KISS_principle).
   and safety.
 - Attention to details, keep focused on the nitty-gritty features of
-  self hosting.
+  self hosting, like full IPv6 support.
 
 ## Main components
 

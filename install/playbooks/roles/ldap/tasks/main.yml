@@ -414,6 +414,17 @@
     dn: 'cn=manager account,{{ ldap.users.dn }}'
     state: absent
 
+- name: Create the default postmaster aliases
+  tags: postmaster
+  set_fact:
+    postmaster_aliases: '{{ ldap.postmaster.mailAliases }}'
+
+- name: Extend the postmaster aliases when sogo is installed
+  when: sogo.install
+  tags: postmaster
+  set_fact:
+    postmaster_aliases: '{{ postmaster_aliases | union(["sogo@" + network.domain]) }}'
+
 - name: Create the postmaster account
   tags: postmaster
   ldap_entry:
@@ -432,7 +443,7 @@
       uidNumber: '{{ users_defaults.uid_start + 999 }}'
       gidNumber: '{{ users_defaults.gid_start }}'
       mail: 'postmaster@{{ network.domain }}'
-      intlMailAddr: '{{ ldap.postmaster.mailAliases }}'
+      intlMailAddr: '{{ postmaster_aliases }}'
       shadowMin: 0
       shadowMax: 999999
       shadowWarning: 7
