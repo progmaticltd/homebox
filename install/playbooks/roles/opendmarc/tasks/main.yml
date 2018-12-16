@@ -31,7 +31,12 @@
   tags: opendmarc
   lineinfile:
     path: /etc/opendmarc.conf
-    line: 'Socket inet:{{ dmarc.milter.port }}@localhost'
+    line: '{{ line }}'
+  with_items:
+    - 'Socket inet:{{ dmarc.milter.port }}@localhost'
+    - 'AutoRestart 1'
+  loop_control:
+    loop_var: line
 
 - name: Generate DMARC record from settings
   tags: bind
