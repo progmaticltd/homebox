@@ -8,3 +8,31 @@
     dest: '/etc/bind/forward.{{ network.domain }}'
     delimiter: '\n'
     regexp: '^.*\.bind$'
+
+- name: Copy DNS entries in bind cache directory (main IP)
+  notify: Restart bind
+  copy:
+    src: '/etc/bind/{{ file }}'
+    dest: '/var/cache/bind/{{ file }}'
+    owner: bind
+    group: bind
+    remote_src: true
+  with_items:
+    - 'forward.{{ network.domain }}'
+    - 'reverse-main.{{ network.domain }}'
+  loop_control:
+    loop_var: file
+
+- name: Copy DNS entries in bind cache directory (backup IP)
+  notify: Restart bind
+  when: backup_ip is defined
+  copy:
+    src: '/etc/bind/{{ file }}'
+    dest: '/var/cache/bind/{{ file }}'
+    owner: bind
+    group: bind
+    remote_src: true
+  with_items:
+    - 'reverse-backup.{{ network.domain }}'
+  loop_control:
+    loop_var: file

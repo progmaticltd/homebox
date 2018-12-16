@@ -11,7 +11,7 @@ $TTL    {{ bind.ttl }}
 
 ;Name Server Information
 @       IN      NS      {{ record_name }}.{{ network.domain }}.
-{{ "%-6s" | format(record_name) }}  IN      {{ "%-4s" | format(external_ip_type) }}    {{ external_ip_address }}
+{{ "%-6s" | format(record_name) }}  IN      {{ "%-4s" | format(ip_type) }}    {{ external_ip_address }}
 
 ;Reverse lookup ({{ record_name }} IP address)
 {{ ptr_id }}      IN      PTR     {{ record_name }}.{{ network.domain }}.

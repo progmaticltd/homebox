@@ -4,7 +4,7 @@
   tags: systemctl, autodiscover
   apt:
     name: '{{ pkg }}'
-    state: installed
+    state: present
   with_items:
     - libxml2-utils
   loop_control:
