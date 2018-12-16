@@ -39,15 +39,19 @@
   template:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
+    mode: '{{ file.mode | default("0640") }}'
   with_items:
     - src: forward-head
       dest: '/etc/homebox/dns-entries.d/00-head.bind'
     - src: named.conf.options
       dest: '/etc/bind/named.conf.options'
+      mode: '0640'
     - src: named.conf.local
       dest: '/etc/bind/named.conf.local'
+      mode: '0640'
     - src: reverse-domain
       dest: '/etc/bind/reverse-main.{{ network.domain }}'
+      mode: '0640'
     - src: forward-tail
       dest: '/etc/homebox/dns-entries.d/99-tail.bind'
   loop_control:
