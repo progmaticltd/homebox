@@ -215,6 +215,7 @@ security_default:
   auto_update: true
   app_armor: true
   ssh_disable_root_access_with_password: true
+  lock_root_password: true
 
 ###############################################################################
 # Dictionaries to install in the system
