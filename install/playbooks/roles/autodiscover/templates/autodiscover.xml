@@ -25,7 +25,7 @@
   <Protocol>
     <Type>SMTP</Type>
     <Server>smtp.{{ network.domain }}</Server>
-    <Port>587</Port>
+    <Port>{{ mail.postfix.submission.port }}</Port>
     <DomainRequired>off</DomainRequired>
     <SPA>off</SPA>
     <SSL>on</SSL>

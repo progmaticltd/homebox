@@ -10,23 +10,15 @@ $ORIGIN {{ network.domain }}.
 
 ;; Name Server and IP address mapping (GLUE)
 @       IN      NS      main.{{ network.domain }}.
-main    IN      A       {{ external_ip }}
+main    IN      {{ "%-4s" | format(external_ip_type) }}    {{ external_ip }}
 
-{% if backup_ip is defined %}
+{% if backup_ip is defined and backup_ip != "" %}
 @       IN      NS      backup.{{ network.domain }}.
-backup  IN      A       {{ backup_ip }}
+backup  IN      {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
 {% endif %}
 
-;; Main A Record for where everything goes
-@       IN      A       {{ external_ip }}
-
-;; Wildcard record is a cname to the main IP address
-*       IN      CNAME   main
-
-;; Mail Server MX (Mail exchanger) Record
-{{ network.domain }}. IN  MX  {{ bind.mx_priority }}  main.{{ network.domain }}.
-
-;; Backup records if the server is unreachable
-{% for bmx in bind.mx_backup %}
-@ IN  MX  {{ bmx.priority }}  {{ bmx.fqdn }}.
-{% endfor %}
+;; Main record(s) for where everything goes by default
+@       IN      {{ "%-4s" | format(external_ip_type) }}    {{ external_ip }}
+{% if backup_ip is defined and backup_ip != "" %}
+@       IN      {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
+{% endif %}

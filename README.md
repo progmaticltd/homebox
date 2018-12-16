@@ -35,6 +35,7 @@ in the official documentation.
 - AppArmor activated by default, profiles for all daemons.
 - Automatic backup of the deployment data to replay the installation with the same data.
 - Can be used at home, on a dedicated or virtual server hosted online.
+- Flexible IP address support: IPv4, IPv6, IPv4+IPv4, IPv4+IPv6.
 
 ### Emails
 

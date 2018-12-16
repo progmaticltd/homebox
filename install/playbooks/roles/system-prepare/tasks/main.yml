@@ -1,11 +1,19 @@
 ---
 
+
 # Install the most required packages
 - name: Update packages cache
   tags: apt
   apt:
     cache_valid_time: 3600
     update_cache: true
+
+# Install swap if not enough memory available
+- name: Install memory swap package
+  when: ansible_memtotal_mb < 2048
+  apt:
+    name: dphys-swapfile
+    state: latest
 
 - name: Upgrade the distribution
   tags: apt
@@ -91,13 +99,49 @@
   loop_control:
     loop_var: conf
 
+- name: Get the locale value on the current machine
+  tags: locale
+  delegate_to: localhost
+  set_fact:
+    locale: "{{ lookup('env','LANG') }}"
+
+# We are going to install the "unattended-upgrades" package, and to
+# configure it to install security updates automatically.
+- name: Configure locales
+  tags: locale
+  debconf:
+    name: locales
+    question: '{{ conf.question }}'
+    value: '{{ conf.value }}'
+    vtype: '{{ conf.type }}'
+  with_items:
+    - question: locales/locales_to_be_generated
+      value: '{{ locale }}'
+      type: multiselect
+    - question: locales/default_environment_locale
+      value: '{{ locale }}'
+      type: boolean
+  loop_control:
+    loop_var: conf
+
+- name: Update /etc/locales
+  tags: locale
+  replace:
+    path: /etc/locale.gen
+    regexp: '^# {{ locale | regex_replace("\.", "\\.") }}'
+    replace: '{{ locale }}'
+
+- name: Configure locales
+  tags: locale
+  shell: dpkg-reconfigure -phigh locales
+
 # Install the firewall, but do not configure any rule.
 # The other tasks will setup the rules themselves
 # We are also installing fail2ban, so the other services might use it, like postfix, dovecot and roundcube
 # The package 'unattended-upgrades' download and install security updates by default
 
 - name: Install ufw / fail2ban and automatic security updates
-  tags: security
+  tags: apt, security
   apt:
     name: "{{ pkg }}"
     state: present
@@ -119,6 +163,7 @@
   loop_control:
     loop_var: pkg
 
+# FIXME: This should not add multiple times the same value
 - name: Enable AppArmor at boot
   register: grub_config
   when: security.app_armor
@@ -150,9 +195,13 @@
 - name: Reboot to activate AppArmor if not already active
   when: security.app_armor and aa_enabled.rc == 1
   tags: security, apparmor
-  shell: systemctl reboot --message "Restarting the system to activate AppArmor"
-  async: 1
+  shell: >-
+    sleep 2 &&
+    systemctl reboot --message
+    "Restarting the system to activate AppArmor"
+  async: 60
   poll: 0
+  ignore_errors: true
 
 - name: Wait for the server to come back online
   when: security.app_armor and aa_enabled.rc == 1

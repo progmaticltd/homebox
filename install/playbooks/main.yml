@@ -12,11 +12,12 @@
 
 # Install fwknop (Single Packet Authorization)
 - import_playbook: fwknop-client.yml
-  when: firewall.fwknop is defined and firewall.fwknop.install
+  when: firewall.fwknop.install
 - import_playbook: fwknop-server.yml
-  when: firewall.fwknop is defined and firewall.fwknop.install
+  when: firewall.fwknop.install
 
-# Install dropbear to remotely unlock the system
+# Install dropbear to remotely unlock the system.
+# Will not do anything if the drive is not encrypted
 - import_playbook: luks-remote.yml
 
 # Install nginx as the default web server,
@@ -46,8 +47,9 @@
 
 # System protection: antispam
 - import_playbook: rspamd.yml
+  when: mail.antispam.active
 
-  # Install the web frontend for the antispam system
+# Install the web frontend for the antispam system
 - import_playbook: rspamd-web.yml
   when: mail.antispam.webui.active
 
@@ -124,3 +126,8 @@
 # defined a lot of accounts.
 - import_playbook: import-accounts.yml
   when: mail.import.active and not system.devel
+
+
+
+# Clean up the system before going live
+- import_playbook: system-cleanup.yml

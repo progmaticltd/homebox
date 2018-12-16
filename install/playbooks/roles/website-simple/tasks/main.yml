@@ -21,12 +21,11 @@
   stat:
     path: /var/www/default/index.html
 
-
 - name: Get remote environment locale
   when: not index_page.stat.exists
   tags: website
   set_fact:
-    website_language: '{{ ansible_env.LANGUAGE | regex_replace("_.*", "") }}'
+    website_language: '{{ ansible_env.LANG | regex_replace("_.*", "") }}'
     website_charset: '{{ ansible_env.LC_CTYPE | regex_replace(".*\.", "") }}'
 
 # Create the real one, and name it index.html. it will not be overwritten if you redeploy
@@ -64,7 +63,7 @@
     loop_var: path
 
 - name: Create the website site configuration file
-  tags: website
+  tags: nginx
   notify: Restart nginx
   template:
     src: website-simple.tpl
@@ -74,7 +73,7 @@
     mode: 0644
 
 - name: Enable nginx site
-  tags: website
+  tags: nginx
   notify: Restart nginx
   file:
     src: /etc/nginx/sites-available/website-simple.conf

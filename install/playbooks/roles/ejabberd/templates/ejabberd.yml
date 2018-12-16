@@ -148,7 +148,7 @@ ldap_rootdn: "{{ ldap.readonly.dn }}"
 ldap_password: "{{ lookup('password', ldap.roPasswdParams) }}"
 ldap_base: "{{ ldap.organization.base }}"
 ldap_filter: "(objectClass=shadowAccount)"
-ldap_uids: '[{"uid","%u"}]'
+ldap_uids: '[{"mail","%u@{{ network.domain }}"}]'
 
 ###.  ===============
 ###'  TRAFFIC SHAPERS
@@ -183,6 +183,7 @@ acl:
   loopback:
     ip:
       - "127.0.0.0/8"
+      - "::1/128"
 {% if ejabberd.s2s.active %}
 {% if not ejabberd.s2s.public %}
   ## trusted servers for s2s

@@ -55,7 +55,7 @@ $config['smtp_server'] = 'smtp.{{ network.domain }}';
 
 // SMTP port (default is 25; use 587 for STARTTLS or 465 for the
 // deprecated SSL over SMTP (aka SMTPS))
-$config['smtp_port'] = 25;
+$config['smtp_port'] = {{ mail.postfix.submission.port }};
 
 // SMTP username (if required) if you use %u as the username Roundcube
 // will use the current username for login
@@ -131,9 +131,11 @@ $config['ldap_public']['users'] = [
     ]
 ];
 
+{% if mail.advanced_features %}
 // Disables saving sent messages in Sent folder (like gmail)
 // The SMTP server does that already
 $config['no_save_sent_messages'] = true;
+{% endif %}
 
 // Allow browser-autocompletion on login form.
 $config['login_autocomplete'] = 2;

@@ -2,6 +2,7 @@
 server {
 
     listen 80;
+    listen [::]:80;
     server_name zabbix.{{ network.domain }};
 
     # Certificate renewal
@@ -21,7 +22,8 @@ server {
 
 server {
 
-    listen 443;
+    listen 443 ssl;
+    listen [::]:443 ssl;
     server_name zabbix.{{ network.domain }};
     access_log  /var/log/nginx/zabbix-access.log;
     error_log   /var/log/nginx/zabbix-error.log;

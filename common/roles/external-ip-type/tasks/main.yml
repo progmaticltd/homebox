@@ -4,21 +4,6 @@
 # Get the external IP address, from configuration file,
 # or automatically through a script
 
-- name: Copy the configuration file
-  when: network.external_ip == "auto"
-  tags: scripts
-  copy:
-    src: external-ip.conf
-    dest: /etc/external-ip.conf
-
-- name: Copy the external IP address detection script
-  when: network.external_ip == "auto"
-  tags: scripts
-  copy:
-    src: external-ip
-    dest: /usr/local/bin/external-ip
-    mode: 0755
-
 - name: Run the script to get the external IP address automatically
   tags: facts
   when: network.external_ip == "auto"
@@ -56,7 +41,7 @@
   set_fact:
     backup_ip: '{{ network.backup_ip }}'
 
-- name: Set external IP address type (A or AAAA)
+- name: Set backup IP address type (A or AAAA)
   when: network.backup_ip != None
   tags: facts
   register: backup_ip_type
@@ -65,7 +50,7 @@
     | grep -E '^[0-9\.]+$' 2>&1 >/dev/null
     && echo A || echo AAAA
 
-- name: Set external IP address type (A or AAAA)
+- name: Set backup IP address type (A or AAAA)
   tags: facts
   when: network.backup_ip != None
   set_fact:

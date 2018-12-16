@@ -1,74 +1,62 @@
 ---
 
-# Test the DNS server for mail records
 - hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../../config/defaults.yml'
-    - '{{ playbook_dir }}/../../config/system.yml'
-  vars:
-    records:
-      type: A
-      list:
-        - main
   roles:
-    - dns-records
-
+    - external-ip-type
 
 # Test the DNS server for mail records
 - hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../../config/defaults.yml'
-    - '{{ playbook_dir }}/../../config/system.yml'
   vars:
     records:
-      type: CNAME
+      type: '{{ external_ip_type }}'
       list:
-        - imap
-        - smtp
-        - pop3
+        - 'main.{{ network.domain }}'
   roles:
     - dns-records
 
+# Test the DNS server for mail records
+- hosts: homebox
+  vars:
+    records:
+      type: '{{ external_ip_type }}'
+      list:
+        - 'imap.{{ network.domain }}'
+        - 'smtp.{{ network.domain }}'
+        - 'pop3.{{ network.domain }}'
+  roles:
+    - dns-records
 
 # Test the DNS server for service records
 - hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../../config/defaults.yml'
-    - '{{ playbook_dir }}/../../config/system.yml'
   vars:
     records:
       type: SRV
       list:
-        - _imap._tcp
-        - _imaps._tcp
-        - _pop3._tcp
-        - _pop3s._tcp
-        - _submission._tcp
+        - '_imap._tcp.{{ network.domain }}'
+        - '_imaps._tcp.{{ network.domain }}'
+        - '_pop3._tcp.{{ network.domain }}'
+        - '_pop3s._tcp.{{ network.domain }}'
+        - '_submission._tcp.{{ network.domain }}'
   roles:
     - dns-records
 
 # Test the DNS server for service records
 - hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../../config/defaults.yml'
-    - '{{ playbook_dir }}/../../config/system.yml'
   vars:
     records:
       type: TXT
       list:
-        - _dmarc
-        - '{{ dkim.selector }}._domainkey'
+        - '_dmarc.{{ network.domain }}'
+        - '{{ dkim.selector }}._domainkey.{{ network.domain }}'
   roles:
     - dns-records
 
 # Test the DNS server for MX records, should return at least one record
 - hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../../config/defaults.yml'
-    - '{{ playbook_dir }}/../../config/system.yml'
   vars:
     records:
       type: MX
-      count: '[12]'
+      list:
+        - '{{ network.domain }}'
   roles:
     - dns-records

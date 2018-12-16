@@ -31,7 +31,6 @@ compatibility_level = 2
 smtpd_tls_cert_file=/etc/letsencrypt/live/smtp.{{ network.domain }}/fullchain.pem
 smtpd_tls_key_file=/etc/letsencrypt/live/smtp.{{ network.domain }}/privkey.pem
 smtpd_tls_CAfile=/etc/letsencrypt/live/smtp.{{ network.domain }}/fullchain.pem
-smtpd_use_tls=yes
 
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
@@ -88,16 +87,20 @@ milter_protocol = 6
 # A list of Milter applications for new mail that arrives via the Postfix smtpd(8) server
 smtpd_milters =
     inet:localhost:{{ dkim.milter.port }}
-    inet:localhost:{{ mail.antispam.port }}
     inet:localhost:{{ dmarc.milter.port }}
+{% if mail.antispam.active %}
+    inet:localhost:{{ mail.antispam.port }}
+{% endif %}
 
 # A list of Milter applications for new mail that does not arrive via the Postfix smtpd(8) server.
 # This includes local submission via the sendmail(1) command line, new mail that arrives via the Postfix
 # qmqpd(8) server, and old mail that is re-injected into the queue with "postsuper -r".
 non_smtpd_milters =
     inet:localhost:{{ dkim.milter.port }}
-    inet:localhost:{{ mail.antispam.port }}
     inet:localhost:{{ dmarc.milter.port }}
+{% if mail.antispam.active %}
+    inet:localhost:{{ mail.antispam.port }}
+{% endif %}
 
 # The macros that are sent to Milter applications after the SMTP MAIL FROM command.
 milter_mail_macros =  i {mail_addr} {client_addr} {client_name} {auth_authen} {auth_type}
@@ -123,7 +126,9 @@ smtpd_recipient_restrictions =
     permit
 
 # Content filtering: Antivirus using clamsmtp
+{% if mail.antivirus.active %}
 content_filter = scan:127.0.0.1:{{ mail.antivirus.port + 1 }}
+{% endif %}
 receive_override_options = no_address_mappings
 
 # SPF policies

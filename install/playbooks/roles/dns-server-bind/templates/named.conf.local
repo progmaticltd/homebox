@@ -9,7 +9,16 @@ zone    "{{ network.domain }}" IN {
 {% endif %}
         };
 
-zone    "{{ bind.reverse_ip }}.in-addr.arpa" {
+# Main IP reverse DNS entries
+zone    "{{ reverse_ip }}" {
         type master;
-        file "reverse.{{ network.domain }}";
+        file "reverse-main.{{ network.domain }}";
         };
+
+{% if backup_ip is defined and backup_ip != "" %}
+# Backup IP reverse DNS entries
+zone    "{{ reverse_backup_ip }}" {
+        type master;
+        file "reverse-backup.{{ network.domain }}";
+        };
+{% endif %}

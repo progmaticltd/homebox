@@ -17,15 +17,6 @@
   debug:
     var: ldap
 
-- name: Update LDAP configuration for debugging
-  tags: debug
-  when: system.debug
-  notify: Restart the ldap service
-  replace:
-    path: /etc/default/slapd
-    regexp: SLAPD_OPTIONS=""
-    replace: SLAPD_OPTIONS="-d 8 -d 64 -d 2048"
-
 - name: Ensure the LDAP server FQDN resolves to localhost
   lineinfile:
     path: /etc/hosts
@@ -127,6 +118,15 @@
   template:
     src: default-slapd
     dest: /etc/default/slapd
+
+- name: Update LDAP configuration for debugging
+  tags: debug
+  when: system.debug
+  notify: Restart the ldap service
+  replace:
+    path: /etc/default/slapd
+    regexp: SLAPD_OPTIONS=""
+    replace: SLAPD_OPTIONS="-d 8 -d 64 -d 2048"
 
 - name: Copy the ldap ssl config on the server before running it
   when: system.ssl == 'letsencrypt'
@@ -414,6 +414,17 @@
     dn: 'cn=manager account,{{ ldap.users.dn }}'
     state: absent
 
+- name: Create the default postmaster aliases
+  tags: postmaster
+  set_fact:
+    postmaster_aliases: '{{ ldap.postmaster.mailAliases }}'
+
+- name: Extend the postmaster aliases when sogo is installed
+  when: sogo.install
+  tags: postmaster
+  set_fact:
+    postmaster_aliases: '{{ postmaster_aliases | union(["sogo@" + network.domain]) }}'
+
 - name: Create the postmaster account
   tags: postmaster
   ldap_entry:
@@ -432,7 +443,7 @@
       uidNumber: '{{ users_defaults.uid_start + 999 }}'
       gidNumber: '{{ users_defaults.gid_start }}'
       mail: 'postmaster@{{ network.domain }}'
-      intlMailAddr: '{{ ldap.postmaster.mailAliases }}'
+      intlMailAddr: '{{ postmaster_aliases }}'
       shadowMin: 0
       shadowMax: 999999
       shadowWarning: 7

@@ -6,6 +6,7 @@
     name: '{{ pkg }}'
     state: present
   with_items:
+    - postgresql
     - sogo-common
     - sogo
     - memcached
@@ -73,13 +74,21 @@
 - name: Initialise the database
   when: sogodb.changed
   tags: postgres
+  register: db_init
   become: true
   become_user: postgres
   shell: >-
     cat /tmp/sogo-db-init.sql
-    | psql -d sogo -o /var/log/sogo/db-install.log
+    | psql -a -d sogo -o /tmp/sogo-db-install.log
   args:
-    creates: /var/log/sogo/db-install.log
+    creates: /tmp/sogo-db-install.log
+
+- name: Keep the DB logs
+  when: db_init.changed
+  copy:
+    src: /tmp/sogo-db-install.log
+    dest: /var/log/sogo/db-install.log
+    remote_src: true
 
 - name: Initialise grants
   tags: postgres
@@ -129,7 +138,7 @@
     dest: '{{ profile.dest }}'
   with_items:
     - src: apparmor.d/local/nginx-sogo
-      dest: '/etc/apparmor.d/local/nginx-sogo.{{ network.domain }}'
+      dest: '/etc/apparmor.d/local/sogo.{{ network.domain }}'
     - src: apparmor.d/usr.sbin.sogod
       dest: '/etc/apparmor.d/usr.sbin.sogod'
     - src: apparmor.d/usr.sbin.sogo-ealarms-notify
@@ -152,7 +161,7 @@
   tags: security, apparmor
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
-    line: '  #include <local/nginx-sogo.{{ network.domain }}>'
+    line: '  #include <local/sogo.{{ network.domain }}>'
     insertbefore: '# End of local includes for homebox'
 
 - name: Remove the python / psycopg2 package

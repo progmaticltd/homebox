@@ -5,6 +5,7 @@ server {
 
     # gogs FQDN
     listen 80;
+    listen [::]:80;
     server_name gogs.{{ network.domain }};
 
     # Certificate renewal
@@ -35,6 +36,10 @@ server {
 # Default server configuration
 server {
 
+    # SSL configuration
+    listen 443 ssl http2;
+    listen [::]:443 ssl;
+
     # gogs FQDN
     server_name gogs.{{ network.domain }};
 
@@ -45,8 +50,6 @@ server {
     server_tokens off;
 
     {% if system.ssl == 'letsencrypt' %}
-    # SSL configuration
-    listen 443 ssl http2;
     ssl_protocols TLSv1.1 TLSv1.2;
     ssl_certificate /etc/letsencrypt/live/gogs.{{ network.domain }}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/gogs.{{ network.domain }}/privkey.pem;

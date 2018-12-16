@@ -1,23 +1,17 @@
 $TTL    {{ bind.ttl }}
 
-{{ reverse_ip }}.in-addr.arpa. IN      SOA     {{ network.domain }}. hostmaster.{{ network.domain }}. (
+{{ reverse_ip_address }} IN      SOA     {{ network.domain }}. hostmaster.{{ network.domain }}. (
                         {{ (serial | int) + 1 }}
                         {{ bind.refresh }}
                         {{ bind.retry }}
                         {{ bind.expire }}
                         {{ bind.neg_cache_ttl }} )
-;
-{{ reverse_ip }}.in-addr.arpa.       IN      NS      main.{{ network.domain }}.
-{{ reverse_ip }}.in-addr.arpa.       IN      NS      backup.{{ network.domain }}.
+; Main IP address
+{{ reverse_ip_address }}       IN      NS      {{ record_name }}.{{ network.domain }}.
 
 ;Name Server Information
-@       IN      NS      main.{{ network.domain }}.
-main    IN      A       {{ external_ip }}
-@       IN      NS      backup.{{ network.domain }}.
-main    IN      A       {{ external_ip }}
+@       IN      NS      {{ record_name }}.{{ network.domain }}.
+{{ "%-6s" | format(record_name) }}  IN      {{ "%-4s" | format(ip_type) }}    {{ external_ip_address }}
 
-;Reverse Lookup for Your DNS Server
-10      IN      PTR     main.{{ network.domain }}.
-
-;PTR Record IP address to HostName
-20      IN      PTR     backup.{{ network.domain }}.
+;Reverse lookup ({{ record_name }} IP address)
+{{ ptr_id }}      IN      PTR     {{ record_name }}.{{ network.domain }}.

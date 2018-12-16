@@ -43,12 +43,22 @@
     insertafter: '^HMAC_KEY_BASE64.*'
     line: 'REQUIRE_SOURCE_ADDRESS Y'
 
+- name: Get the default NIC (IPv4 version
+  when: ansible_default_ipv4 is defined and ansible_default_ipv4.interface is defined
+  set_fact:
+    default_nic: '{{ ansible_default_ipv4.interface }}'
+
+- name: Get the default NIC (IPv6 version
+  when: ansible_default_ipv6 is defined and ansible_default_ipv6.interface is defined
+  set_fact:
+    default_nic: '{{ ansible_default_ipv6.interface }}'
+
 - name: Set the network interface
   notify: Restart fwknop server
   replace:
     path: /etc/fwknop/fwknopd.conf
     regexp: '^#?PCAP_INTF.*'
-    replace: 'PCAP_INTF {{ firewall.fwknop.nic }}'
+    replace: 'PCAP_INTF {{ default_nic }}'
 
 - name: Allow to use a random port
   when: firewall.fwknop.port == 'random'

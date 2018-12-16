@@ -83,12 +83,15 @@ mail_default:
 
                             # Put anything you want here, even on multiple lines, this will
                             # be added on main.cf. See the example here:
+    submission:
+      port: 587
     # extra_settings: |
     #   disable_vrfy_command = no
     #   frozen_delivered_to = no
 
   #############################################################################
   antispam:                 # Check inbound and outbound emails for viruses
+    active: true            # or false
     port: 33000             # port to use for the antivirus daemon
     webui:                  # rspamd web interface
       active: true          # Activate or not
@@ -200,7 +203,6 @@ system_default:
 firewall_default:
   fwknop:
     install: false
-    nic: '{{ ansible_default_ipv4.interface }}'
     port: random
   ssh:
     - src: any
@@ -212,6 +214,8 @@ firewall_default:
 security_default:
   auto_update: true
   app_armor: true
+  ssh_disable_root_access_with_password: true
+  lock_root_password: true
 
 ###############################################################################
 # Dictionaries to install in the system
@@ -346,12 +350,14 @@ ejabberd_default:
 
 ###############################################################################
 # Gandi automatic DNS update
+# This is now obsolete, as Homebox come with its own DNS server
+# However, we could keep this for Glue records management
 # Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
 # update: Automatic update of your DNS server
 # test: test mode: does not activate the DNS zone straight
 # add_wildcard:  Create a wildcard entry to redirect all traffic to your box
 dns_default:
-  update: true
+  update: false
   test: true
   add_wildcard: true
   gandi:
@@ -368,9 +374,6 @@ bind_default:
     - 8.8.8.8
     - 8.8.4.4
     - 1.1.1.1
-  # Actually, reverse IP address creation only works for IPv4
-  # If you are using IPv6, create the reverse IP block here
-  reverse_ip: auto
   # Timing configuration (see https://www.ripe.net/publications/docs/ripe-203)
   refresh: 86400          # 24 hours
   retry: 7200             # 2 hours

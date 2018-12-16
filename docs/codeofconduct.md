@@ -17,11 +17,9 @@ Any new service should be compatible with
 and to protect from any zero-day vulnerability.
 
 It is also standard compliant, as the system generates and _publish_
-automatically your DKIM, SPF and DMARC records. It is actually using
-the excellent [Gandi](https://gandi.net) DNS provider, but can be
-extended to support more.
+automatically your DKIM, SPF and DMARC records.
 
-Any system should support LDAP for authentication, for single sign on.
+Any system should support LDAP for authentication, for central authentication.
 
 I am privileging stability and security over features, this is why you
 will not have the latest version of RoundCube and other components.

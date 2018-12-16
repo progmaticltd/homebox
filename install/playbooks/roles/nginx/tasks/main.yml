@@ -60,6 +60,7 @@
   template:
     src: 'apparmor.d/usr.sbin.nginx'
     dest: '/etc/apparmor.d/usr.sbin.nginx'
+    force: no
 
 - name: Activate AppArmor profiles
   when: security.app_armor

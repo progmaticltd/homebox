@@ -1,2 +1,2 @@
 ;; SSHFP records
-;{{ ssh_keygen.stdout }}
+{{ ssh_keygen.stdout }}
