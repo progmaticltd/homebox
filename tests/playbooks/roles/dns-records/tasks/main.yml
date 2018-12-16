@@ -1,10 +1,10 @@
 ---
 
-- name: Check if a DNS record exists
+- name: Check if a DNS record exist
   shell: >-
-    dig @127.0.0.1 {{ name }}{{ (name != '') | ternary(".", "") }}{{ network.domain }} {{ records.type }}
-    | grep 'ANSWER: {{ records.count | default(1) }}'
+    dig +noall +answer -t {{ records.type }}
+    @127.0.0.1 {{ name }} | grep '^{{ name }}'
   with_items:
-    - '{{ records.list | default([""]) }}'
+    - '{{ records.list }}'
   loop_control:
     loop_var: name
