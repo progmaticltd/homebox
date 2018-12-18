@@ -163,15 +163,16 @@
   loop_control:
     loop_var: pkg
 
-# FIXME: This should not add multiple times the same value
-- name: Enable AppArmor at boot
+- name: Configure grub to add apparmor by default on boot
   register: grub_config
   when: security.app_armor
   tags: security
-  replace:
+  lineinfile:
     path: /etc/default/grub
-    regexp: 'GRUB_CMDLINE_LINUX_DEFAULT="([^"]*)"'
-    replace: 'GRUB_CMDLINE_LINUX_DEFAULT="\1 apparmor=1 security=apparmor"'
+    backrefs: true
+    regexp: 'GRUB_CMDLINE_LINUX_DEFAULT="(?!apparmor=1 security=apparmor)(.*)"'
+    line: 'GRUB_CMDLINE_LINUX_DEFAULT="apparmor=1 security=apparmor \1"'
+    state: present
 
 # AppArmor will be enabled on the next reboot
 - name: Update grub
