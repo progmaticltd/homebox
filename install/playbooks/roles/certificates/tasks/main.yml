@@ -30,6 +30,7 @@
   set_fact:
     certificate_fqdn: "{{ network.domain }}"
     site_root: "/var/www/default"
+    redirect_to_https: "{{ redirect | default(false) }}"
 
 - name: Create the certificate fqdn with the subdomain
   when: certificate.type != '@'
@@ -37,6 +38,7 @@
   set_fact:
     certificate_fqdn: "{{ certificate.type }}.{{ network.domain }}"
     site_root: "/var/www/{{ certificate.type }}"
+    redirect_to_https: "{{ redirect | default(false) }}"
 
 - name: Check if the certificate has been copied from a previous backup
   tags: cert
@@ -61,7 +63,6 @@
   template:
     src: nginx-cert.conf
     dest: "/etc/nginx/sites-available/{{ certificate_fqdn }}.conf"
-    force: no
 
 - name: Make sure the site is enabled
   file:
