@@ -15,7 +15,6 @@
 - name: Allow the web server to access certificates
   tags: ssl
   notify: Restart nginx
-  when: system.ssl == 'letsencrypt'
   vars:
     details:
       - [ /etc/letsencrypt, /etc/letsencrypt/archive, /etc/letsencrypt/live ]
@@ -51,6 +50,32 @@
       port: 80,443
   loop_control:
     loop_var: rule
+
+
+# Security improvements =======================================================
+
+- name: Generate a strong Diffie Hellman
+  tags: security
+  openssl_dhparam:
+    path: /etc/nginx/dhparams.pem
+    size: 2048
+    mode: 0600
+    owner: root
+    group: root
+
+- name: Use the generated DH for SSL
+  tags: security
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    insertafter: '^(\t|\s)+ssl_.*'
+    line: "\tssl_dhparam /etc/nginx/dhparams.pem;"
+
+- name: Disable weak ciphers
+  tags: security
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    regexp: '^(\t|\s)ssl_protocols TLSv1 TLSv1.1 TLSv1.2.*'
+    line: "\tssl_protocols TLSv1.2;"
 
 # AppArmor configuration ======================================================
 
