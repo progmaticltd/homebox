@@ -3,6 +3,7 @@
 # Install a basic webmail (roundcube)
 - hosts: homebox
   vars:
+    redirect: true
     certificate:
       type: webmail
   vars_files:

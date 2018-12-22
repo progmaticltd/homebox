@@ -47,18 +47,18 @@
 - name: Allow slapd and nslcd daemons to access the certificate directories
   tags: dovecot,ssl
   notify: Restart dovecot
-  when: system.ssl == 'letsencrypt'
-  vars:
-    details:
-      - [ /etc/letsencrypt, /etc/letsencrypt/archive, /etc/letsencrypt/live ]
-      - [ dovecot ]
   acl:
-    path: '{{ item[0] }}'
-    entity: '{{ item[1] }}'
+    path: '{{ path }}'
+    entity: dovecot
     etype: user
     permissions: rx
     state: present
-  with_nested: '{{ details }}'
+  with_items:
+    - /etc/letsencrypt
+    - /etc/letsencrypt/archive
+    - /etc/letsencrypt/live
+  loop_control:
+    loop_var: path
 
 #                                                                              #
 # End of TLS / SSL Configuration ###############################################
@@ -73,7 +73,6 @@
 - name: Activate SSL configuration
   tags: ssl, config
   notify: Restart dovecot
-  when: system.ssl == 'letsencrypt'
   template:
     src: 'conf.d/{{ file }}'
     dest: '/etc/dovecot/conf.d/{{ file }}'

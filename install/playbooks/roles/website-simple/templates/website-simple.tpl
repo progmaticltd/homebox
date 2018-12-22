@@ -1,43 +1,13 @@
 
-# Default server configuration
-#
-# for http://www.{{ network.domain }} and http://{{ network.domain }}
-# redirect everything to https except letsencrypt certificate renewal
-{% if system.ssl == 'letsencrypt' %}
-server {
-
-    # Listen on both IPv4 and IPv6
-    listen 80;
-    listen [::]:80;
-
-    # Web site FQDN
-    server_name www.{{ network.domain }} {{ network.domain }};
-
-    # Certificate renewal
-    location /.well-known {
-        alias /var/www/transmission/.well-known;
-    }
-
-    location / {
-        # Use Letsencrypt and force https
-        {% if system.ssl == 'letsencrypt' %}
-        rewrite ^ https://$server_name$request_uri? permanent;
-        {% endif %}
-
-        # log files per virtual host
-        access_log /var/log/nginx/website-access.log;
-        error_log /var/log/nginx/website-error.log;
-    }
-}
-{% endif %}
-
-# Default server configuration
-# for https://www.{{ network.domain }}
+# Default server configuration for https://www.{{ network.domain }}
 server {
 
     # Listen on both IPv4 and IPv6
     listen 443 ssl;
     listen [::]:443 ssl;
+
+    # HSTS for better security
+    add_header Strict-Transport-Security "max-age=31536000;" always;
 
     # Web site FQDN
     server_name www.{{ network.domain }};
@@ -48,13 +18,10 @@ server {
     # Remove useless tokens for better security feelings ;-)
     server_tokens off;
 
-    {% if system.ssl == 'letsencrypt' %}
     # SSL configuration
-    ssl_protocols TLSv1.1 TLSv1.2;
     ssl_certificate /etc/letsencrypt/live/www.{{ network.domain }}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/www.{{ network.domain }}/privkey.pem;
     ssl_trusted_certificate /etc/letsencrypt/live/www.{{ network.domain }}/fullchain.pem;
-    {% endif %}
 
     # Will dynamically fall back to the demo
     # page if there is no index
@@ -80,13 +47,15 @@ server {
     error_log /var/log/nginx/website-error.log;
 }
 
-# Default server configuration for
-# https://{{ network.domain }}
+# Default server configuration for https://{{ network.domain }}
 server {
 
     # Listen on both IPv4 and IPv6
     listen 443 ssl;
     listen [::]:443 ssl;
+
+    # HSTS for better security
+    add_header Strict-Transport-Security "max-age=31536000;" always;
 
     # Web site FQDN
     server_name {{ network.domain }};
@@ -97,13 +66,10 @@ server {
     # Remove useless tokens for better security feelings ;-)
     server_tokens off;
 
-    {% if system.ssl == 'letsencrypt' %}
     # SSL configuration
-    ssl_protocols TLSv1.1 TLSv1.2;
     ssl_certificate /etc/letsencrypt/live/{{ network.domain }}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/{{ network.domain }}/privkey.pem;
     ssl_trusted_certificate /etc/letsencrypt/live/{{ network.domain }}/fullchain.pem;
-    {% endif %}
 
     # Will dynamically fall back to the demo
     # page if there is no index

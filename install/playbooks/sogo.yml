@@ -3,6 +3,7 @@
 # Install Sogo sute
 - hosts: homebox
   vars:
+    redirect: true
     certificate:
       type: sogo
   vars_files:

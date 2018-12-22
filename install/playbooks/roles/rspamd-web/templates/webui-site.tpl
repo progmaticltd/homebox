@@ -1,40 +1,6 @@
 
 # Default server configuration
 #
-{% if system.ssl == 'letsencrypt' %}
-server {
-
-    # Listen on both IPv4 and IPv6
-    listen 80;
-    listen [::]:80;
-
-    # Webmail FQDN
-    server_name rspamd.{{ network.domain }};
-
-    # Certificate renewal
-    location /.well-known {
-        alias /var/www/rspamd/.well-known;
-    }
-
-    location / {
-        # Use Letsencrypt and force https
-        rewrite ^ https://$server_name$request_uri? permanent;
-
-        # log files per virtual host
-        access_log /var/log/nginx/rspamd-access.log;
-        error_log /var/log/nginx/rspamd-error.log;
-
-        # list of IP addresses to authorize
-{% for ip in mail.antispam.webui.allow %}
-        allow {{ ip }};
-{% endfor %}
-        deny all;
-    }
-}
-{% endif %}
-
-# Default server configuration
-#
 server {
 
     # Webmail FQDN
@@ -47,16 +13,17 @@ server {
     # Default rspamd location on Debian
     root /usr/share/rspamd/www/;
 
+    # HSTS for better security
+    add_header Strict-Transport-Security "max-age=31536000;" always;
+
     # Remove useless tokens for better security feelings ;-)
     server_tokens off;
 
-    {% if system.ssl == 'letsencrypt' %}
     # SSL configuration
     ssl_protocols TLSv1.1 TLSv1.2;
     ssl_certificate /etc/letsencrypt/live/rspamd.{{ network.domain }}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/rspamd.{{ network.domain }}/privkey.pem;
     ssl_trusted_certificate /etc/letsencrypt/live/rspamd.{{ network.domain }}/fullchain.pem;
-    {% endif %}
 
     # Add index.php to the list if you are using PHP
     index index.html;

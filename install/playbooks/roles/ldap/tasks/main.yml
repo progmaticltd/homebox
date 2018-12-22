@@ -84,6 +84,7 @@
     - libpam-pwquality
     - cracklib-runtime
     - ldapvi
+    - nscd
 
 # Changes in the database will be stored there
 - name: Create the ldap config changes folder
@@ -95,7 +96,6 @@
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
 - name: Allow slapd daemons to access the certificate directories
-  when: system.ssl == 'letsencrypt'
   notify: Restart the ldap service
   tags: cert
   acl:
@@ -112,7 +112,6 @@
     loop_var: path
 
 - name: Configure the ldap server for SSL / TLS
-  when: system.ssl == 'letsencrypt'
   notify: Restart the ldap service
   tags: cert
   template:
@@ -129,7 +128,6 @@
     replace: SLAPD_OPTIONS="-d 8 -d 64 -d 2048"
 
 - name: Copy the ldap ssl config on the server before running it
-  when: system.ssl == 'letsencrypt'
   notify: Restart the ldap service
   tags: cert
   register: ldap_ssl
@@ -138,7 +136,7 @@
     dest: /etc/ldap/changes/ssl-config.ldif
 
 - name: Modify the configuration if not already done
-  when: system.ssl == 'letsencrypt' and ldap_ssl.changed
+  when: ldap_ssl.changed
   notify: Restart the ldap service
   tags: cert
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ssl-config.ldif

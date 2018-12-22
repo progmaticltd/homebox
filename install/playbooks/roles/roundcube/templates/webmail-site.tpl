@@ -1,39 +1,14 @@
 
 # Default server configuration
 #
-{% if system.ssl == 'letsencrypt' %}
-server {
-
-    # Lisent on IPv4 and IPv6
-    listen 80;
-    listen [::]:80;
-
-    # Webmail FQDN
-    server_name {{ roundcube.url }};
-
-    # Certificate renewal
-    location /.well-known {
-        alias /var/www/webmail/.well-known;
-    }
-
-    location / {
-        # Use Letsencrypt and force https
-        rewrite ^ https://$server_name$request_uri? permanent;
-
-        # log files per virtual host
-        access_log /var/log/nginx/roundcube-access.log;
-        error_log /var/log/nginx/roundcube-error.log;
-    }
-}
-{% endif %}
-
-# Default server configuration
-#
 server {
 
     # Lisent on IPv4 and IPv6
     listen 443 ssl http2;
     listen [::]:443 ssl;
+
+    # HSTS for better security
+    add_header Strict-Transport-Security "max-age=31536000;" always;
 
     # Webmail FQDN
     server_name {{ roundcube.url }};
@@ -47,13 +22,11 @@ server {
     # Maximum upload size for attachments
     client_max_body_size {{ mail.max_attachment_size }}M;
 
-    {% if system.ssl == 'letsencrypt' %}
     # SSL configuration
     ssl_protocols TLSv1.1 TLSv1.2;
     ssl_certificate /etc/letsencrypt/live/{{ roundcube.url }}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/{{ roundcube.url }}/privkey.pem;
     ssl_trusted_certificate /etc/letsencrypt/live/{{ roundcube.url }}/fullchain.pem;
-    {% endif %}
 
     # Add index.php to the list if you are using PHP
     index index.php index.html;

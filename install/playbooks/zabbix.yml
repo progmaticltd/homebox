@@ -3,6 +3,7 @@
 # Create a certificate for Zabbix
 - hosts: homebox
   vars:
+    redirect: true
     certificate:
       type: zabbix
   vars_files:
