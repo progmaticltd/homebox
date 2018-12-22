@@ -191,7 +191,6 @@ passwords_default:
 system_default:
   release: stretch
   login: true
-  ssl: letsencrypt
   devel: false
   debug: false
 

@@ -15,17 +15,18 @@
 - name: Allow the web server to access certificates
   tags: ssl
   notify: Restart nginx
-  vars:
-    details:
-      - [ /etc/letsencrypt, /etc/letsencrypt/archive, /etc/letsencrypt/live ]
-      - [ www-data ]
   acl:
-    path: '{{ item[0] }}'
-    entity: '{{ item[1] }}'
+    path: '{{ path }}'
+    entity: www-data
     etype: user
     permissions: rx
     state: present
-  with_nested: '{{ details }}'
+  with_items:
+    - /etc/letsencrypt
+    - /etc/letsencrypt/archive
+    - /etc/letsencrypt/live
+  loop_control:
+    loop_var: path
 
 #                                                                              #
 # End of TLS / SSL Configuration ###############################################
@@ -54,7 +55,7 @@
 
 # Security improvements =======================================================
 
-- name: Generate a strong Diffie Hellman
+- name: Generate a strong Diffie Hellman file
   tags: security
   openssl_dhparam:
     path: /etc/nginx/dhparams.pem
@@ -63,19 +64,10 @@
     owner: root
     group: root
 
-- name: Use the generated DH for SSL
-  tags: security
-  lineinfile:
-    path: /etc/nginx/nginx.conf
-    insertafter: '^(\t|\s)+ssl_.*'
-    line: "\tssl_dhparam /etc/nginx/dhparams.pem;"
-
-- name: Disable weak ciphers
-  tags: security
-  lineinfile:
-    path: /etc/nginx/nginx.conf
-    regexp: '^(\t|\s)ssl_protocols TLSv1 TLSv1.1 TLSv1.2.*'
-    line: "\tssl_protocols TLSv1.2;"
+- name: Install nginx secure configuration
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
 
 # AppArmor configuration ======================================================
 

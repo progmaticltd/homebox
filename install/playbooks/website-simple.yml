@@ -3,6 +3,7 @@
 # Install a basic web site in http and https
 - hosts: homebox
   vars:
+    redirect: true
     certificate:
       type: www
   vars_files:
@@ -13,6 +14,7 @@
 
 - hosts: homebox
   vars:
+    redirect: true
     certificate:
       type: '@'
   vars_files:

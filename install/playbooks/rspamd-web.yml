@@ -3,6 +3,7 @@
 # Install rspamd web interface
 - hosts: homebox
   vars:
+    redirect: true
     certificate:
       type: rspamd
   vars_files:

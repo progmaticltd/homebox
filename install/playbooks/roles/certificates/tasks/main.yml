@@ -30,6 +30,7 @@
   set_fact:
     certificate_fqdn: "{{ network.domain }}"
     site_root: "/var/www/default"
+    redirect_to_https: "{{ redirect | default(false) }}"
 
 - name: Create the certificate fqdn with the subdomain
   when: certificate.type != '@'
@@ -37,6 +38,7 @@
   set_fact:
     certificate_fqdn: "{{ certificate.type }}.{{ network.domain }}"
     site_root: "/var/www/{{ certificate.type }}"
+    redirect_to_https: "{{ redirect | default(false) }}"
 
 - name: Check if the certificate has been copied from a previous backup
   tags: cert
@@ -50,23 +52,15 @@
     path: "{{ site_root }}/.well-known/acme-challenge/"
     state: directory
 
-- name: Check if there is already a site associated with this certificate
-  tags: cert
-  register: site_stat
-  stat:
-    path: "/etc/nginx/sites-available/{{ certificate_fqdn }}.conf"
-
 - name: Create a simple nginx template site (if not exists)
-  when: site_stat.stat["exists"] == False
   template:
     src: nginx-cert.conf
-    dest: "/etc/nginx/sites-available/{{ certificate_fqdn }}.conf"
-    force: no
+    dest: "/etc/nginx/sites-available/{{ certificate_fqdn }}-cert.conf"
 
 - name: Make sure the site is enabled
   file:
-    src: "/etc/nginx/sites-available/{{ certificate_fqdn }}.conf"
-    dest: "/etc/nginx/sites-enabled/{{ certificate_fqdn }}.conf"
+    src: "/etc/nginx/sites-available/{{ certificate_fqdn }}-cert.conf"
+    dest: "/etc/nginx/sites-enabled/{{ certificate_fqdn }}-cert.conf"
     state: link
 
 # AppArmor configuration ======================================================
@@ -113,14 +107,12 @@
     mode: 0755
 
 - name: Restart the nginx server
-  when: site_stat.stat["exists"] == False
   tags: cert
   service:
     name: nginx
     state: restarted
 
 - name: Open the port 80 if necessary
-  when: cert_stat.stat["exists"] == False
   tags: security
   register: ufw_http
   ufw:
@@ -133,7 +125,6 @@
 # The certbot package need to be installed
 - name: Create the certificate
   tags: cert
-  when: system.ssl == 'letsencrypt' and cert_stat.stat["exists"] == False
   command: >-
     /usr/bin/certbot certonly
     --non-interactive
@@ -147,7 +138,7 @@
 
 - name: Remove the firewall rule if it has been added
   tags: security
-  when: ufw_http.changed and cert_stat.stat["exists"] == False
+  when: ufw_http.changed
   ufw:
     proto: tcp
     rule: limit
