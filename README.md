@@ -36,7 +36,7 @@ in the official documentation.
 - Automatic backup of the deployment data to replay the installation with the same data.
 - Can be used at home, on a dedicated or virtual server hosted online.
 - Flexible IP address support: IPv4, IPv6, IPv4+IPv4, IPv4+IPv6.
-- Embedded DNS server, with CAA, DNSSEC and SSHFP support.
+- Embedded DNS server, with CAA, DNSSEC and SSHFP (SSH fingerprint) support.
 - Grade A https sites, HSTS implemented by default.
 
 ### Emails
@@ -78,7 +78,6 @@ in the official documentation.
 - Jabber server, using [ejabberd](https://www.ejabberd.im/), with LDAP authentication,
   direct or offline file transfer and optional server to server communication.
 - Tor and [Privoxy](https://www.privoxy.org/) easy installation.
-- Embedded DNS server with DNSSEC and SSHFP (SSH fingerprint) records support
 - Automatic publication of DNS entries to Gandi DNS.
 - External IP address detection.
 - Static web site skeleton configuration, with https certificates.
