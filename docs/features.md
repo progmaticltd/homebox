@@ -101,6 +101,12 @@ are using 3G / 4G as a backup connection.
 IPv6 is actually tested on [vultr.com](https://vultr.com/), a provider that supports full IPv6,
 on virtual servers. Digital Ocean does not allows SMTP or Submission on IPv6.
 
+# High profiles for SSL / HTTPS
+
+All HTTPS sites are configured to use [HSTS](https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security).
+For nginx and dovecot, a 2048 Diffie-Helman parameter file is generated upon installation.
+Ranked score A on [geekflare.com](https://tools.geekflare.com/) and A+ on [ssllabs.com](https://www.ssllabs.com).
+
 # Email features
 
 ## Digital signature

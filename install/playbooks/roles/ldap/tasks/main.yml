@@ -84,6 +84,7 @@
     - libpam-pwquality
     - cracklib-runtime
     - ldapvi
+    - nscd
 
 # Changes in the database will be stored there
 - name: Create the ldap config changes folder

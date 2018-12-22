@@ -37,6 +37,8 @@ in the official documentation.
 - Automatic backup of the deployment data to replay the installation with the same data.
 - Can be used at home, on a dedicated or virtual server hosted online.
 - Flexible IP address support: IPv4, IPv6, IPv4+IPv4, IPv4+IPv6.
+- Embedded DNS server, with CAA, DNSSEC and SSHFP support.
+- Grade A https sites, HSTS implemented by default.
 
 ### Emails
 
