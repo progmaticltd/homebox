@@ -6,6 +6,9 @@ server {
     listen 443 ssl;
     listen [::]:443 ssl;
 
+    # HSTS for better security
+    add_header Strict-Transport-Security "max-age=31536000;" always;
+
     # Web site FQDN
     server_name www.{{ network.domain }};
 
@@ -50,6 +53,9 @@ server {
     # Listen on both IPv4 and IPv6
     listen 443 ssl;
     listen [::]:443 ssl;
+
+    # HSTS for better security
+    add_header Strict-Transport-Security "max-age=31536000;" always;
 
     # Web site FQDN
     server_name {{ network.domain }};

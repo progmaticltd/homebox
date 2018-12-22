@@ -1,44 +1,13 @@
 
 # Default server configuration
-{% if system.ssl == 'letsencrypt' %}
-server {
-
-    # gogs FQDN
-    listen 80;
-    listen [::]:80;
-    server_name gogs.{{ network.domain }};
-
-    # Certificate renewal
-    location /.well-known {
-        alias /var/www/gogs/.well-known;
-    }
-
-    location / {
-
-        # Use Letsencrypt and force https
-        rewrite ^ https://$server_name$request_uri? permanent;
-
-        # log files per virtual host
-        access_log /var/log/nginx/gogs-access.log;
-        error_log /var/log/nginx/gogs-error.log;
-
-{% if gogs.public == false %}
-        # list of IP addresses to authorize
-{% for ip in gogs.allow %}
-        allow {{ ip }};
-{% endfor %}
-        deny all;
-{% endif %}
-    }
-}
-{% endif %}
-
-# Default server configuration
 server {
 
     # SSL configuration
     listen 443 ssl http2;
     listen [::]:443 ssl;
+
+    # HSTS for better security
+    add_header Strict-Transport-Security "max-age=31536000;" always;
 
     # gogs FQDN
     server_name gogs.{{ network.domain }};
@@ -47,14 +16,9 @@ server {
     root /opt/gogs/public/;
 
     # Remove useless tokens for better security feelings ;-)
-    server_tokens off;
-
-    {% if system.ssl == 'letsencrypt' %}
-    ssl_protocols TLSv1.1 TLSv1.2;
     ssl_certificate /etc/letsencrypt/live/gogs.{{ network.domain }}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/gogs.{{ network.domain }}/privkey.pem;
     ssl_trusted_certificate /etc/letsencrypt/live/gogs.{{ network.domain }}/fullchain.pem;
-    {% endif %}
 
     # log files per virtual host
     access_log /var/log/nginx/gogs-access.log;

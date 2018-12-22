@@ -29,7 +29,6 @@
 # in order to have SSL and TLS encryption activated.                           #
 
 - name: Remove the self signed certificate
-  when: system.ssl == 'letsencrypt'
   file:
     path: /etc/ejabberd/ejabberd.pem
     state: absent
@@ -37,7 +36,6 @@
 - name: Create a key / certificate pair
   notify: Restart ejabberd
   tags: ssl
-  when: system.ssl == 'letsencrypt'
   shell: >-
     cd /etc/letsencrypt/live/{{ network.domain }} &&
     /bin/cat privkey.pem fullchain.pem > /etc/ejabberd/default.pem
@@ -47,13 +45,13 @@
 - name: Create a key / certificate pair
   notify: Restart ejabberd
   tags: ssl
-  when: system.ssl == 'letsencrypt'
   shell: >-
     cd /etc/letsencrypt/live/conference.{{ network.domain }} &&
     /bin/cat privkey.pem fullchain.pem > /etc/ejabberd/conference.pem
   args:
     creates: /etc/ejabberd/conference.pem
 
+# TODO: Use Ansible openssl_dhparam module
 - name: Create a secure DH file
   notify: Restart ejabberd
   tags: ssl

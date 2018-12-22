@@ -19,6 +19,5 @@
   shell: aa-enabled
 
 - name: Check if certbot is installed
-  when: system.ssl == 'letsencrypt'
   tags: apt
   shell: dpkg -s certbot
