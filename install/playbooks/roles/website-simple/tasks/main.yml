@@ -1,6 +1,33 @@
 ---
 
-- name: Create the website site root folder
+- name: Create a directory for web site backup if it does not exists
+  tags: backup
+  delegate_to: localhost
+  file:
+    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/website-simple/'
+    state: directory
+
+# Push the site if already backup up
+- name: If the web site has been generated before, copy the files on the remote server
+  tags: sync
+  synchronize:
+    src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/website-simple/'
+    dest: /var/www/default
+    owner: no
+    group: no
+    perms: yes
+    rsync_opts:
+      - '--no-motd'
+      - '--update'
+
+- name: Check if you have already uploaded a web page named 'index.html'
+  tags: website
+  register: index_page
+  stat:
+    path: /var/www/default/index.html
+
+- name: Create the website site root folder if needed
+  when: not index_page.stat.exists
   tags: website
   file:
     path: '{{ path }}'
@@ -14,12 +41,6 @@
     - /var/www/default/js
   loop_control:
     loop_var: path
-
-- name: Check if you have already uploaded a web page named 'index.html'
-  tags: website
-  register: index_page
-  stat:
-    path: /var/www/default/index.html
 
 - name: Get remote environment locale
   when: not index_page.stat.exists
@@ -103,3 +124,18 @@
   when: security.app_armor and aa_config.changed
   tags: website-simple, security, apparmor
   command: 'aa-enforce usr.sbin.nginx'
+
+# Backup the site locally
+- name: Backup the certificates on your local machine
+  tags: sync
+  synchronize:
+    mode: pull
+    src: /var/www/default/*
+    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/website-simple/'
+    perms: yes
+    archive: false
+    recursive: true
+    rsync_opts:
+      - '--no-motd'
+      - '--update'
+      - '--exclude=*demo*'

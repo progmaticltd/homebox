@@ -28,4 +28,5 @@
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
-    - website-simple
+    - role: website-simple
+      tags: website
