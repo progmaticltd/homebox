@@ -320,6 +320,15 @@
     loop_var: aa_config
 
 ################################################################################
+- name: Activate core dumps or not
+  tags: debug
+  notify: Restart dovecot
+  replace:
+    path: /etc/default/dovecot
+    regexp: '^#?ALLOW_COREDUMPS=[01]'
+    replace: 'ALLOW_COREDUMPS={{ system.debug | ternary(1,0) }}'
+
+################################################################################
 - name: Install packages needed for dovecot fts
   when: mail.fts.active
   apt:
