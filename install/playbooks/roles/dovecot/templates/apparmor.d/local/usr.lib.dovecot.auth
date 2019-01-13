@@ -1,3 +1,8 @@
   # LDAP and certificates access
   /etc/ldap/ldap.conf r,
   /etc/letsencrypt/archive/ldap.{{ network.domain }}/* r,
+{% if mail.impersonate.active %}
+
+  # Master users
+  /etc/dovecot/master-users r,
+{% endif %}
