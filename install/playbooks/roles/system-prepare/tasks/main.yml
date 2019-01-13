@@ -207,7 +207,7 @@
     state: started
     delay: 30
     sleep: 10
-    timeout: 180
+    timeout: '{{ system.reboot_timeout }}'
 
 - name: Create a random password for file encryption on the server
   tags: encryption
