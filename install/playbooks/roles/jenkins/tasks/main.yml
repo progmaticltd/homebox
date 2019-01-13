@@ -1,0 +1,55 @@
+---
+
+- name: Add Jenkins apt key
+  apt_key:
+    url: http://pkg.jenkins-ci.org/debian/jenkins.io.key
+    state: present
+
+- name: Allow https to download packages
+  apt:
+    name: apt-transport-https
+
+- name: Add Jenkins repository
+  apt_repository:
+    repo: deb https://pkg.jenkins.io/debian binary/
+    state: present
+    filename: jenkins
+    update_cache: true
+
+- name: Install the required packages for Jenkins
+  vars:
+    packages:
+      - tomcat8
+      - jenkins
+  apt:
+    name: '{{ packages }}'
+
+- name: Create a Jenkins directory for the frontend
+  file:
+    path: /var/www/jenkins
+    state: directory
+
+- name: Change Jenkins default port
+  notify: Restart Jenkins
+  replace:
+    path: /etc/default/jenkins
+    regexp: '^HTTP_PORT=.*'
+    replace: 'HTTP_PORT={{ 8089 }}'
+
+- name: Create the website site configuration file
+  tags: nginx
+  notify: Restart nginx
+  template:
+    src: nginx.conf
+    dest: '/etc/nginx/sites-available/jenkins.{{ network.domain }}.conf'
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable nginx site
+  tags: nginx
+  notify: Restart nginx
+  file:
+    src: '/etc/nginx/sites-available/jenkins.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/jenkins.{{ network.domain }}.conf'
+    state: link
