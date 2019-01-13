@@ -1,0 +1,19 @@
+---
+
+- name: Create the well-known services site configuration file
+  tags: nginx
+  notify: Restart nginx
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/sites-available/well-known.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable nginx site
+  tags: nginx
+  notify: Restart nginx
+  file:
+    src: /etc/nginx/sites-available/well-known.conf
+    dest: /etc/nginx/sites-enabled/well-known.conf
+    state: link
