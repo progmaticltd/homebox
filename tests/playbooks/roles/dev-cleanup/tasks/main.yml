@@ -1,5 +1,12 @@
 ---
 
+- name: Set the default shell for the root user
+  when: system.devel
+  tags: development
+  user:
+    name: root
+    shell: /bin/dash
+
 - name: Remove Development support packages
   tags: development
   apt:
@@ -11,7 +18,7 @@
   loop_control:
     loop_var: pkg
 
-- name: Install a correct bashrc for root
+- name: Remove rc files
   when: system.devel
   tags: development
   file:
@@ -31,10 +38,3 @@
     remote_src: yes
     src: '/etc/skel/.bashrc'
     dest: '/root/.bashrc'
-
-- name: Set the default shell for the root user
-  when: system.devel
-  tags: development
-  user:
-    name: root
-    shell: /bin/dash

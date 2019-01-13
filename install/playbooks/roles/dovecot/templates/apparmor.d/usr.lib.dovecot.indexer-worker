@@ -13,8 +13,10 @@
 
   /home/users/*/mails/maildir/dovecot-uidlist rw,
   /home/users/*/mails/maildir/dovecot-uidlist.lock rw,
+  /home/users/*/mails/maildir/dovecot-uidlist.tmp rw,
   /home/users/*/mails/maildir/**/dovecot-uidlist rw,
   /home/users/*/mails/maildir/**/dovecot-uidlist.lock rw,
+  /home/users/*/mails/maildir/**/dovecot-uidlist.tmp rw,
 
 {% if mail.virtual_folders.active %}
   # Virtual mailboxes hierarchy
