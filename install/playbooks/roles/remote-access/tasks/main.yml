@@ -24,8 +24,28 @@
   loop_control:
     loop_var: access
 
-- name: Configure the firewall for SSH access
+- name: Lock root account
   tags: security
   user:
     name: root
     password_lock: '{{ security.lock_root_password }}'
+
+- name: Configure firewall output default policy
+  tags: security
+  ufw:
+    policy: '{{ firewall.output.policy }}'
+    direction: outgoing
+
+- name: Configure firewall output rules
+  tags: security
+  ufw:
+    proto: '{{ access.proto | default("tcp") }}'
+    port: '{{ access.port }}'
+    dest: '{{ access.dest }}'
+    rule: '{{ access.rule | default("allow") }}'
+    comment: '{{ access.comment | default("") }}'
+    direction: out
+  with_items:
+    - '{{ firewall.output.rules }}'
+  loop_control:
+    loop_var: access

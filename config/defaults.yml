@@ -203,6 +203,19 @@ firewall_default:
   fwknop:
     install: false
     port: random
+  output:
+    policy: deny
+    rules:
+      - dest: any
+        port: 80,443
+        comment: 'Allow web access (outpout)'
+      - dest: any
+        proto: udp
+        port: 53
+        comment: 'Allow DNS requests (outpout)'
+      - dest: any
+        port: 25
+        comment: 'Allow SMTP connections to other servers (outpout)'
   ssh:
     - src: any
       rule: allow
