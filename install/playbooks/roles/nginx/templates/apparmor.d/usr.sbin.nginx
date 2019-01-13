@@ -33,6 +33,9 @@
   # FastCGI
   /var/lib/nginx/fastcgi/*/ w,
 
+  # Reverse proxying
+  /var/lib/nginx/proxy/** rw,
+
   # Data cache
   /var/lib/nginx/body/* rw,
 

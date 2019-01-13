@@ -193,6 +193,7 @@ system_default:
   login: true
   devel: false
   debug: false
+  reboot_timeout: 180
 
 ###############################################################################
 # Once the system is in place, it is possible to use 'limit' for the rule,
@@ -208,11 +209,15 @@ firewall_default:
     rules:
       - dest: any
         port: 80,443
-        comment: 'Allow web access (outpout)'
+        comment: 'Allow web access'
       - dest: any
         proto: udp
         port: 53
-        comment: 'Allow DNS requests (outpout)'
+        comment: 'Allow DNS requests'
+      - dest: any
+        proto: udp
+        port: 123
+        comment: 'Allow NTP requests'
       - dest: any
         port: 25
         comment: 'Allow SMTP connections to other servers (outpout)'
