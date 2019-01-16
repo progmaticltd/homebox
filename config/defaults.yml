@@ -219,6 +219,11 @@ firewall_default:
         port: 123
         comment: 'Allow NTP requests'
       - dest: any
+        proto: udp
+        from_port: 68
+        port: 67
+        comment: 'Allow DHCP requests'
+      - dest: any
         port: 25
         comment: 'Allow SMTP connections to other servers (outpout)'
   ssh:
