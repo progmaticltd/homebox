@@ -204,6 +204,10 @@ firewall_default:
   fwknop:
     install: false
     port: random
+  ssh:
+    - src: any
+      rule: allow
+      comment: allow SSH from anywhere
   output:
     policy: deny
     rules:
@@ -225,11 +229,10 @@ firewall_default:
         comment: 'Allow DHCP requests'
       - dest: any
         port: 25
-        comment: 'Allow SMTP connections to other servers (outpout)'
-  ssh:
-    - src: any
-      rule: allow
-      comment: allow SSH from anywhere
+        comment: 'Allow SMTP connections to other servers'
+      - dest: any
+        port: 110,995,143,993
+        comment: 'Allow the recuperation of emails on other servers (POP/IMAP)'
 
 ###############################################################################
 # Extra security values
