@@ -256,6 +256,14 @@ website_default:
   install: false
 
 ###############################################################################
+# Install a static web site on www.yourdomain.com using Hugo (https://gohugo.io/)
+# Still requests two certificates:
+# One for for https://yourdomain.com/ and one for https://www.yourdomain.com
+hugo_default:
+  install: false
+  theme: https://github.com/gcushen/hugo-academic.git
+
+###############################################################################
 # Install a webmail, or not...
 webmail_default:
   install: true

@@ -1,0 +1,125 @@
+---
+
+- name: Install hugo packages
+  vars:
+    pkgs:
+      - hugo
+      - git
+  apt:
+    name: '{{ pkgs }}'
+    state: latest
+
+- name: Create a directory for web site backup if it does not exists
+  tags: backup
+  delegate_to: localhost
+  file:
+    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/website-hugo/'
+    state: directory
+
+# Push the site if already backup up
+- name: If the web site has been generated before, copy the files on the remote server
+  tags: sync
+  synchronize:
+    src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/website-hugo/'
+    dest: /var/www/hugo
+    owner: no
+    group: no
+    perms: yes
+    rsync_opts:
+      - '--no-motd'
+      - '--update'
+
+- name: Create the web site content with Hugo
+  file:
+    path: /var/www/hugo/
+    state: directory
+
+- name: Create the web site content with Hugo
+  shell: hugo new site default
+  args:
+    chdir: /var/www/hugo/
+    creates: /var/www/hugo/default/
+
+- name: Get the site language
+  set_fact:
+    lang: '{{ lookup("env", "LANG") | regex_replace("\..*") }}'
+
+- name: Download the chosen theme from online
+  git:
+    repo: '{{ hugo.theme.url }}'
+    dest: '/var/www/hugo/default/themes/{{ hugo.theme.name }}'
+
+- name: Create the configuration
+  template:
+    src: config.toml
+    dest: /var/www/hugo/default/config.toml
+
+- name: Create the web site
+  tags: nginx
+  notify:
+    - Check nginx config
+    - Restart nginx
+  template:
+    src: nginx.conf
+    dest: '/etc/nginx/sites-available/www.{{ network.domain }}.conf'
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Activate the site
+  tags: nginx
+  notify:
+    - Check nginx config
+    - Restart nginx
+  file:
+    src: '/etc/nginx/sites-available/www.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/www.{{ network.domain }}.conf'
+    state: link
+
+- name: Deactivate the website-simple site
+  tags: nginx
+  notify:
+    - Check nginx config
+    - Restart nginx
+  file:
+    path: /etc/nginx/sites-enabled/website-simple.conf
+    state: absent
+
+# AppArmor configuration ======================================================
+
+- name: Install nginx AppArmor profile
+  when: security.app_armor
+  tags: hugo, security, apparmor
+  template:
+    src: apparmor.d/local/hugo-web.cf
+    dest: /etc/apparmor.d/local/hugo-web
+
+- name: Add hugo AppAromor specific configuration
+  when: security.app_armor
+  register: aa_config
+  tags: hugo, security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/hugo-web>'
+    insertbefore: '# End of local includes for homebox'
+
+- name: Activate AppArmor profiles
+  when: security.app_armor and aa_config.changed
+  tags: hugo, security, apparmor
+  command: 'aa-enforce usr.sbin.nginx'
+  notify: Restart AppArmor service
+
+# Backup the site locally
+- name: Backup the certificates on your local machine
+  tags: sync
+  synchronize:
+    mode: pull
+    src: /var/www/hugo/*
+    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/website-hugo/'
+    perms: yes
+    archive: false
+    recursive: true
+    rsync_opts:
+      - '--no-motd'
+      - '--update'
+      - '--exclude=*demo*'

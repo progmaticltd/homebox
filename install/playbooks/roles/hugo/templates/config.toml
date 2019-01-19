@@ -1,0 +1,5 @@
+# Hugo configuration
+languageCode = "{{ lang }}"
+title = "{{ hugo.site_title }}"
+baseurl = "https://www.{{ network.domain }}/"
+theme = "{{ hugo.theme.name }}"
