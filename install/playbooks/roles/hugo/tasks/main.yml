@@ -1,12 +1,8 @@
 ---
 
 - name: Install hugo packages
-  vars:
-    pkgs:
-      - hugo
-      - git
   apt:
-    name: '{{ pkgs }}'
+    name: hugo
     state: latest
 
 - name: Create a directory for web site backup if it does not exists
@@ -19,6 +15,9 @@
 # Push the site if already backup up
 - name: If the web site has been generated before, copy the files on the remote server
   tags: sync
+  notify:
+    - Check nginx config
+    - Restart nginx
   synchronize:
     src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/website-hugo/'
     dest: /var/www/hugo
@@ -28,6 +27,7 @@
     rsync_opts:
       - '--no-motd'
       - '--update'
+      - '--exclude=.git*'
 
 - name: Create the web site content with Hugo
   file:
@@ -44,15 +44,11 @@
   set_fact:
     lang: '{{ lookup("env", "LANG") | regex_replace("\..*") }}'
 
-- name: Download the chosen theme from online
-  git:
-    repo: '{{ hugo.theme.url }}'
-    dest: '/var/www/hugo/default/themes/{{ hugo.theme.name }}'
-
-- name: Create the configuration
+- name: Create the configuration if it does not already exists
   template:
     src: config.toml
     dest: /var/www/hugo/default/config.toml
+    force: no
 
 - name: Create the web site
   tags: nginx
@@ -85,6 +81,21 @@
     path: /etc/nginx/sites-enabled/website-simple.conf
     state: absent
 
+- name: Create the systemd service for Hugo
+  notify:
+    - Reload systemd
+    - Restart hugo service
+  vars:
+    options:
+      - '--bind="127.0.0.1"'
+      - '--baseURL="https://www.{{ network.domain }}/"'
+      - '--port=1313'
+      - '--theme={{ hugo.theme.name }}'
+      - '--appendPort=false'
+  template:
+    src: hugo-server.service
+    dest: /etc/systemd/system/hugo-server.service
+
 # AppArmor configuration ======================================================
 
 - name: Install nginx AppArmor profile
@@ -110,7 +121,7 @@
   notify: Restart AppArmor service
 
 # Backup the site locally
-- name: Backup the certificates on your local machine
+- name: Backup the site on your local machine
   tags: sync
   synchronize:
     mode: pull

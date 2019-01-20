@@ -15,3 +15,13 @@
   service:
     name: nginx
     state: restarted
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: true
+
+- name: Restart hugo service
+  service:
+    name: hugo-server
+    enabled: true
+    state: restarted
