@@ -114,6 +114,13 @@
     line: '  #include <local/hugo-web>'
     insertbefore: '# End of local includes for homebox'
 
+- name: Install Hugo AppArmor profile
+  when: security.app_armor
+  tags: hugo, security, apparmor
+  template:
+    src: apparmor.d/usr.bin.hugo
+    dest: /etc/apparmor.d/usr.bin.hugo
+
 - name: Activate AppArmor profiles
   when: security.app_armor and aa_config.changed
   tags: hugo, security, apparmor
