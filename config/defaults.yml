@@ -259,9 +259,15 @@ website_default:
 # Install a static web site on www.yourdomain.com using Hugo (https://gohugo.io/)
 # Still requests two certificates:
 # One for for https://yourdomain.com/ and one for https://www.yourdomain.com
+# Place your site in the backup folder: backup/<network.domain>/website-hugo/
+# It will be served by the internal Hugo server.
+# Example of a configuration here
+
 hugo_default:
   install: false
-  theme: https://github.com/gcushen/hugo-academic.git
+  site_title: "Site title"
+  theme:
+    name: hugo-tranquilpeak-theme
 
 ###############################################################################
 # Install a webmail, or not...
@@ -270,7 +276,7 @@ webmail_default:
   type: roundcube
 
 ###############################################################################
-# Act as a backup server
+# Act as a backup server using borgbackup (https://www.borgbackup.org/)
 backup_default:
   install: false
 
