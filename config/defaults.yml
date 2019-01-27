@@ -241,6 +241,7 @@ security_default:
   app_armor: true
   ssh_disable_root_access_with_password: true
   lock_root_password: true
+  alerts_email: 'admin@{{ network.domain }}'
 
 ###############################################################################
 # Dictionaries to install in the system
