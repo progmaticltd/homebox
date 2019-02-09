@@ -4,6 +4,8 @@ require [
   "imap4flags",
   "envelope",
   "duplicate",
+  "subaddress",
+  "mailbox",
   "variables"
 ];
 
@@ -26,13 +28,15 @@ if envelope :matches "to" "*@{{ network.domain }}" {
   set "to" "${1}";
 }
 
-# Mark as read and make sure the email is not moved to another folder
-if string :is "${from}{{ mail.recipient_delimiter }}Sent" "${to}" {
+# Sent messages: mark the email as read and move it to the sent folder
+if string :is "${from}{{ mail.recipient_delimiter[0] }}Sent" "${to}" {
   setflag "\\Seen";
+  fileinto "Sent";
   stop;
 }
 
-# Flag the Homebox email alerts as important
+# Flag the Homebox email alerts as important and keep them in inbox
+# This header is used for backup
 if header :matches "X-Postmaster-Alert" "*" {
   addflag "$label1";
   stop;
