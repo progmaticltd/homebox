@@ -1,0 +1,7 @@
+# Minimal Hugo configuration
+# Will not be overwritten
+
+languageCode = "{{ lang }}"
+title = "{{ hugo.site_title }}"
+baseurl = "https://www.{{ network.domain }}/"
+theme = "{{ hugo.theme.name }}"

@@ -6,8 +6,7 @@ echo "Calling renewal hook: Start"
 
 for fqdn in $RENEWED_DOMAINS; do
 
-    domain=$(hostname -d)
-    sub=$(echo $fqdn | sed "s/\\.${domain}//")
+    sub=$(echo $fqdn | sed -r 's/\.?{{ network.domain }}//')
     echo "Domain $fqdn renewed (sub=$sub)"
 
     case $sub in
@@ -39,7 +38,7 @@ for fqdn in $RENEWED_DOMAINS; do
             ;;
 
         # Default nginx site
-        www|$domain)
+        www|$fqdn)
 	    echo "Reloading main web site"
             systemctl restart nginx
             ;;
@@ -83,7 +82,7 @@ for fqdn in $RENEWED_DOMAINS; do
 	    # Exit if jabber server is not running
 	    systemctl status ejabberd >/dev/null 2>&1 || continue
 	    echo "Reloading XMPP ejabberd server"
-	    cd /etc/letsencrypt/live/$domain
+	    cd '/etc/letsencrypt/live/{{ network.domain }}'
 	    /bin/cat privkey.pem fullchain.pem > /etc/ejabberd/default.pem
 	    chown ejabberd:root /etc/ejabberd/default.pem
 	    chmod 640 /etc/ejabberd/default.pem
