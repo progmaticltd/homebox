@@ -1,0 +1,104 @@
+---
+
+- name: Uninstall the packages required for ejabberd
+  apt:
+    name: '{{ pkgs }}'
+    state: present
+  vars:
+    pkgs:
+      - ejabberd
+      - graphicsmagick
+      - graphicsmagick-imagemagick-compat
+
+- name: Upload ejabberd configuration
+  file:
+    path: /etc/ejabberd
+    state: absent
+
+# File upload configuration ===================================================
+- name: Remove the jabber site frontend configuration file
+  notify: Restart nginx
+  file:
+    path: '/etc/nginx/sites-available/xmpp.{{ network.domain }}.conf'
+    state: absent
+
+- name: Remove nginx site
+  notify: Restart nginx
+  file:
+    path: '/etc/nginx/sites-enabled/xmpp.{{ network.domain }}.conf'
+    state: absent
+
+- name: Remove the http upload directory
+  file:
+    path: /var/www/ejabberd
+    state: absent
+
+# Firewall configuration ======================================================
+- name: Remove the firewall rule for s2c communication
+  ufw:
+    rule: allow
+    proto: tcp
+    port: '{{ rule.ports }}'
+    comment: '{{ rule.comment }}'
+    delete: true
+  with_items:
+    - ports: 5222
+      comment: Accept XMPP connections from clients (TLS only)
+  loop_control:
+    loop_var: rule
+
+- name: Remove the firewall rule for s2s communication
+  ufw:
+    rule: allow
+    proto: tcp
+    port: '{{ rule.ports }}'
+    comment: '{{ rule.comment }}'
+    delete: true
+  with_items:
+    - ports: 5269
+      comment: Accept XMPP connections from other servers
+  loop_control:
+    loop_var: rule
+
+# AppArmor configuration ======================================================
+- name: Remove ejabberdctl AppArmor profile
+  when: security.app_armor
+  tags: security, apparmor
+  register: aa_templates
+  file:
+    path: '/etc/apparmor.d/local/usr.sbin.ejabberdctl'
+    state: absent
+
+# AppArmor configuration (web frontend) =======================================
+- name: Install ejabberdctl AppArmor profile
+  when: security.app_armor
+  tags: security, apparmor
+  register: aa_templates
+  file:
+    path: '/etc/apparmor.d/local/jabber-frontend'
+    state: absent
+
+- name: Install ejabberdctl AppArmor profile
+  when: security.app_armor
+  tags: security, apparmor
+  register: aa_templates
+  file:
+    path: '/etc/apparmor.d/usr.sbin.ejabberdctl'
+    state: absent
+
+- name: Add ejabberd AppArmor specific configuration
+  when: security.app_armor
+  notify: Restart AppArmor service
+  tags: roundcube, security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/jabber-frontend>'
+    state: absent
+
+# Create entries for the DNS server ===========================================
+- name: Generate DNS records for bind
+  notify: Restart bind
+  when: bind.install
+  file:
+    dest: /etc/homebox/dns-entries.d/50-jabber.bind
+    state: absent

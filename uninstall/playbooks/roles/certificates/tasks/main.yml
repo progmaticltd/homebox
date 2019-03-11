@@ -23,3 +23,47 @@
     - "/etc/letsencrypt/renewal/{{ certificate_fqdn }}.conf"
   loop_control:
     loop_var: path
+
+# AppArmor configuration ======================================================
+
+- name: Remove web site AppArmor profile
+  when: security.app_armor
+  tags: security, apparmor
+  file:
+    path: "/etc/apparmor.d/local/nginx-{{ certificate_fqdn }}"
+    state: absent
+
+- name: Remove website AppArmor specific configuration
+  when: security.app_armor
+  register: aa_config
+  tags: security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/nginx-{{ certificate_fqdn }}>'
+    insertbefore: '# End of local includes for homebox'
+    state: absent
+
+- name: Activate AppArmor profiles
+  when: security.app_armor and aa_config.changed
+  tags: security, apparmor
+  command: 'aa-enforce usr.sbin.nginx'
+
+- name: Restart the nginx server to load the new configuration
+  tags: cert
+  service:
+    name: nginx
+    state: restarted
+
+# Remove certificates archive =================================================
+- name: Delete the certificates from your local machine
+  tags: cert,sync
+  synchronize:
+    mode: pull
+    src: /etc/letsencrypt
+    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/certificates/'
+    perms: yes
+    delete: true
+    rsync_opts:
+      - '--no-motd'
+      - '--exclude=readme.md'
+      - '--update'
