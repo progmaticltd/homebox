@@ -202,9 +202,6 @@
   tags: security
   local_action:
     module: wait_for_connection
-    host: '{{ ansible_ssh_host }}'
-    port: 22
-    state: started
     delay: 30
     sleep: 10
     timeout: '{{ system.reboot_timeout }}'

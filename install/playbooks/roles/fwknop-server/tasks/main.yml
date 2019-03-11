@@ -3,18 +3,17 @@
 - name: Install required packages
   tags: apt
   apt:
-    name: '{{ pkg }}'
-  with_items:
-    - fwknop-apparmor-profile
-    - fwknop-server
-  loop_control:
-    loop_var: pkg
+    name:
+      - fwknop-apparmor-profile
+      - fwknop-server
+    state: latest
 
 - name: Get the initial key from the client file
   delegate_to: localhost
   register: key_base64
   shell: >-
-    cat ~/.fwknop-{{ network.domain }}.rc | grep ^KEY_BASE64 | sed 's/^KEY_BASE64\s\+//'
+    cat ~/.fwknop-{{ network.domain }}.rc
+    | grep ^KEY_BASE64 | sed 's/^KEY_BASE64\s\+//'
 
 - name: Set the initial key
   notify: Restart fwknop server
@@ -27,7 +26,9 @@
   delegate_to: localhost
   register: hmac_key_base64
   shell: >-
-    cat ~/.fwknop-{{ network.domain }}.rc | grep ^HMAC_KEY_BASE64 | sed 's/^HMAC_KEY_BASE64\s\+//'
+    cat ~/.fwknop-{{ network.domain }}.rc
+    | grep ^HMAC_KEY_BASE64
+    | sed 's/^HMAC_KEY_BASE64\s\+//'
 
 - name: Set the HMAC key
   notify: Restart fwknop server
@@ -43,12 +44,12 @@
     insertafter: '^HMAC_KEY_BASE64.*'
     line: 'REQUIRE_SOURCE_ADDRESS Y'
 
-- name: Get the default NIC (IPv4 version
+- name: Get the default NIC (IPv4 version)
   when: ansible_default_ipv4 is defined and ansible_default_ipv4.interface is defined
   set_fact:
     default_nic: '{{ ansible_default_ipv4.interface }}'
 
-- name: Get the default NIC (IPv6 version
+- name: Get the default NIC (IPv6 version)
   when: ansible_default_ipv6 is defined and ansible_default_ipv6.interface is defined
   set_fact:
     default_nic: '{{ ansible_default_ipv6.interface }}'
