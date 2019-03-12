@@ -113,6 +113,15 @@
     group: root
     mode: '0755'
 
+- name: Allow the jabber server to write in the folder
+  tags: jabber2
+  acl:
+    path: /var/www/ejabberd/files
+    entity: ejabberd
+    etype: user
+    permissions: rwx
+    state: present
+
 - name: Create the http upload jabber site
   tags: jabber
   template:
