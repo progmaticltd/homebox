@@ -51,14 +51,15 @@
   args:
     creates: /etc/ejabberd/conference.pem
 
-# TODO: Use Ansible openssl_dhparam module
-- name: Create a secure DH file
+- name: Generate a strong Diffie Hellman file
   notify: Restart ejabberd
   tags: ssl
-  shell: >-
-    openssl dhparam -out {{ dhfile }} 2048
-  args:
-    creates: '{{ dhfile }}'
+  openssl_dhparam:
+    path: '{{ dhfile }}'
+    size: 2048
+    mode: 0600
+    owner: root
+    group: ejabberd
   with_items:
     - /etc/ejabberd/s2s-dh.pem
     - /etc/ejabberd/c2s-dh.pem
@@ -114,7 +115,7 @@
     mode: '0755'
 
 - name: Allow the jabber server to write in the folder
-  tags: jabber2
+  tags: jabber
   acl:
     path: /var/www/ejabberd/files
     entity: ejabberd
