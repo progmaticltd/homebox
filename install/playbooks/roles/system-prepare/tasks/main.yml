@@ -22,19 +22,18 @@
 
 - name: Install common packages
   tags: apt
+  vars:
+    pkgs:
+      - ufw
+      - rsync
+      - makepasswd
+      - haveged             # speed up password generation
+      - nginx
+      - acl
+      - certbot
   apt:
-    name: "{{ pkg }}"
+    name: "{{ pkgs }}"
     state: present
-  with_items:
-    - ufw
-    - rsync
-    - makepasswd
-    - haveged             # speed up password generation
-    - nginx
-    - acl
-    - certbot
-  loop_control:
-    loop_var: pkg
 
 - name: Make sure letsencrypt directory exists
   file:

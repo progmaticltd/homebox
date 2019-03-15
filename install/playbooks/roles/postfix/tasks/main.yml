@@ -4,18 +4,17 @@
 - name: Install postfix packages
   tags: postfix
   notify: Restart postfix
+  vars:
+    pkgs:
+      - postfix
+      - postfix-cdb
+      - postfix-pcre
+      - postfix-ldap
+      - sasl2-bin
+      - postfix-policyd-spf-python
   apt:
-    name: "{{ pkg }}"
+    name: "{{ pkgs }}"
     state: present
-  with_items:
-    - postfix
-    - postfix-cdb
-    - postfix-pcre
-    - postfix-ldap
-    - sasl2-bin
-    - postfix-policyd-spf-python
-  loop_control:
-    loop_var: pkg
 
 ################################################################################
 # At this point, the certificates should have been created already #############
@@ -48,14 +47,13 @@
 - name: Install postfix packages for local administration
   tags: postfix
   notify: Restart postfix
+  vars:
+    pkgs:
+      - pfqueue
+      - bsd-mailx
   apt:
-    name: "{{ pkg }}"
+    name: "{{ pkgs }}"
     state: present
-  with_items:
-    - pfqueue
-    - bsd-mailx
-  loop_control:
-    loop_var: pkg
 
 # The typical base64 overhead is 33%, and the value in the configuration file is in Mb
 # So the value is max_attachment_size * 1.33 * 1024 * 1024, i.e. max_attachment_size * 1394606

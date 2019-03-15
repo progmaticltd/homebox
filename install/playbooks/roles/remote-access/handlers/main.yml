@@ -4,3 +4,8 @@
   service:
     name: ssh
     state: restarted
+
+- name: Restart UFW
+  service:
+    name: ssh
+    state: restarted

@@ -52,6 +52,7 @@
 
 - name: Allow external echo requests
   tags: security
+  notify: Restart UFW
   lineinfile:
     path: /etc/ufw/before.rules
     line: -A ufw-before-output -p icmp --icmp-type echo-request -j ACCEPT
