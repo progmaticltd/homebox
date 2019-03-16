@@ -7,5 +7,5 @@
 
 - name: Restart UFW
   service:
-    name: ssh
+    name: ufw
     state: restarted

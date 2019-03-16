@@ -72,19 +72,20 @@
 # Install LDAP server
 - name: Install the required packages
   tags: dpkg
+  vars:
+    pkgs:
+      - acl
+      - slapd
+      - python-ldap
+      - python-passlib
+      - ldapscripts
+      - libpam-pwquality
+      - cracklib-runtime
+      - ldapvi
+      - nscd
   apt:
-    name: '{{ item }}'
+    name: '{{ pkgs }}'
     state: latest
-  with_items:
-    - acl
-    - slapd
-    - python-ldap
-    - python-passlib
-    - ldapscripts
-    - libpam-pwquality
-    - cracklib-runtime
-    - ldapvi
-    - nscd
 
 # Changes in the database will be stored there
 - name: Create the ldap config changes folder
@@ -463,13 +464,21 @@
     value: 'passwd, group, shadow'
     vtype: multiselect
 
+- name: Create the run directory if not exists
+  file:
+    path: /var/run/nslcd
+    state: directory
+    owner: nslcd
+    group: nslcd
+
 - name: Install the required packages for interactive login
+  vars:
+    pkgs:
+      - libnss-ldapd
+      - libpam-ldapd
   apt:
-    name: '{{ item }}'
+    name: '{{ pkgs }}'
     state: present
-  with_items:
-    - libnss-ldapd
-    - libpam-ldapd
 
 - name: Update the ldap configuration file
   template:
