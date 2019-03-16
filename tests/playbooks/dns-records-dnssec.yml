@@ -1,5 +1,12 @@
 ---
 
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+    - '{{ playbook_dir }}/../../config/system.yml'
+  roles:
+    - external-ip-type
+
 # Test the DNS server for DNSKEY records
 - hosts: homebox
   vars_files:

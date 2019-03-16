@@ -16,25 +16,17 @@
 - name: Install dovecot packages
   tags: dovecot
   apt:
-    name: "{{ pkg }}"
+    name: '{{ dovecot.packages }}'
     default_release: '{{ dovecot_repository }}'
     state: latest
-  with_items:
-    - '{{ dovecot.packages }}'
-  loop_control:
-    loop_var: pkg
 
 - name: Install dovecot packages for full text search
   when: mail.fts.active
   tags: dovecot
   apt:
-    name: "{{ pkg }}"
+    name: dovecot-solr
     state: latest
     default_release: '{{ dovecot_repository }}'
-  with_items:
-    - dovecot-solr
-  loop_control:
-    loop_var: pkg
 
 - name: Allow mail damon to access the users directory
   file:
@@ -59,6 +51,17 @@
     - /etc/letsencrypt/live
   loop_control:
     loop_var: path
+
+- name: Generate a strong Diffie Hellman file (for dovecot >= 2.3)
+  when: mail.advanced_features
+  notify: Restart dovecot
+  tags: ssl
+  openssl_dhparam:
+    path: /etc/dovecot/private/dh.pem
+    size: 2048
+    mode: 0640
+    owner: root
+    group: dovecot
 
 #                                                                              #
 # End of TLS / SSL Configuration ###############################################
@@ -287,6 +290,7 @@
     - usr.lib.dovecot.quota-status
     - usr.lib.dovecot.script-login
     - usr.lib.dovecot.script
+    - usr.lib.dovecot.stats
   loop_control:
     loop_var: aa_config
 
@@ -316,6 +320,7 @@
     - usr.lib.dovecot.ssl-params
     - usr.lib.dovecot.script-login
     - usr.lib.dovecot.script
+    - usr.lib.dovecot.stats
   loop_control:
     loop_var: aa_config
 
@@ -334,25 +339,8 @@
   apt:
     update_cache: yes
     cache_valid_time: 86400
-    name: '{{ pkg }}'
+    name: '{{ dovecot.fts_packages }}'
     state: latest
-  with_items:
-    - tomcat8
-    - solr-tomcat
-    - dovecot-solr
-    - poppler-utils
-    - catdoc
-    - unzip
-    - docx2txt
-    - odt2txt
-    - xlsx2csv
-    - unrtf
-    - gzip
-    - p7zip-full
-    - p7zip-rar
-    - tnef
-  loop_control:
-    loop_var: pkg
 
 - name: Copy decode2text script
   when: mail.fts.active

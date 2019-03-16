@@ -3,12 +3,8 @@
 - name: Install an XML linter
   tags: systemctl, autodiscover
   apt:
-    name: '{{ pkg }}'
+    name: libxml2-utils
     state: present
-  with_items:
-    - libxml2-utils
-  loop_control:
-    loop_var: pkg
 
 - name: Download the XML autodiscover file
   tags: systemctl, autodiscover

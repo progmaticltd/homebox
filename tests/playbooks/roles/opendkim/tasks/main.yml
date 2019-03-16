@@ -20,11 +20,17 @@
   loop_control:
     loop_var: file
 
+# This need to check if it is still working
+# the first time we deploy a domain
 - name: Test opendkim configuration
   tags: opendkim
   become: yes
   become_method: sudo
   become_user: opendkim
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 30
   shell: >-
     opendkim-testkey -vv -s {{ dkim.selector }}
     -d {{ network.domain }}

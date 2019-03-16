@@ -33,4 +33,4 @@
   replace:
     path: /etc/apticron/apticron.conf
     regexp: '^#?EMAIL=".*"'
-    replace: 'EMAIL="{{ security.alerts_email }}"'
+    replace: EMAIL="{{ security.alerts_email | join(' ') }}"

@@ -2,12 +2,8 @@
 
 - name: Install nginx
   apt:
-    name: "{{ pkg }}"
-    state: present
-  with_items:
-    - nginx
-  loop_control:
-    loop_var: pkg
+    name: nginx
+    state: latest
 
 ################################################################################
 # At this point, the certificates should have been created already #############

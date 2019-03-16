@@ -1,0 +1,8 @@
+#include <tunables/global>
+
+/usr/lib/dovecot/stats {
+  #include <abstractions/base>
+
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/lib/dovecot/stats mr,
+}

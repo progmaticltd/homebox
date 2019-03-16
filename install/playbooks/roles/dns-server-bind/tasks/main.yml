@@ -11,14 +11,11 @@
 # TODO: Configure this automatically
 - name: Install the required packages
   apt:
-    name: '{{ pkg }}'
+    name: 
+      - bind9
+      - dnsutils
     state: present
     default_release: stretch-backports
-  with_items:
-    - bind9
-    - dnsutils
-  loop_control:
-    loop_var: pkg
 
 - name: Stop the DNS server before creating the configuration
   service:
