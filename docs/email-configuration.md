@@ -64,18 +64,13 @@ from the Debian backports repository.
 
 ## International email addresses
 
-The latest versions of dovecot in the Debian backports repository has
-better unicode characters support, for email addresses and domains. If
-you are planning to use them, it is better to set the flag
-advanced_features to true.
+The latest versions of dovecot in the Debian Stretch repository has
+better unicode characters support, for email addresses and domains.
 
-__notes__
+Unfortunately, this is actually working only internally, between two
+users of the same domain.
 
-- This has not been intensively tested, and will require an entire
-  documentation section.
-- Not all major email providers are supporting this, Yahoo mail, for
-  instance, does not support internationalised user names, like
-  __andré@homebox.space__.
+The next Debian version should support full SMTPUTF8.
 
 ## Save emails into mail boxes directly
 
