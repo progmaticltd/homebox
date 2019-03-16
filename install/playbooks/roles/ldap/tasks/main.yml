@@ -464,13 +464,6 @@
     value: 'passwd, group, shadow'
     vtype: multiselect
 
-- name: Create the run directory if not exists
-  file:
-    path: /var/run/nslcd
-    state: directory
-    owner: nslcd
-    group: nslcd
-
 - name: Install the required packages for interactive login
   vars:
     pkgs:
