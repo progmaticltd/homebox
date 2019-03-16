@@ -5,6 +5,6 @@
     dig +noall +answer -t {{ records.type }}
     @127.0.0.1 {{ name }} | grep '^{{ name }}'
   with_items:
-    - '{{ records.list }}'
+    - '{{ records.list | default(["."]) }}'
   loop_control:
     loop_var: name
