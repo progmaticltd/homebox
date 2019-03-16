@@ -3,7 +3,7 @@
 - name: Install the required packages
   tags: apt
   vars:
-    pkg:
+    pkgs:
       - busybox
       - dropbear
       - dropbear-initramfs
