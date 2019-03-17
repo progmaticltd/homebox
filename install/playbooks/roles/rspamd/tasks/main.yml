@@ -22,14 +22,13 @@
 
 - name: Install rspamd packages
   tags: rspamd
+  vars:
+    pkgs:
+      - redis-server
+      - rspamd
   apt:
-    name: "{{ pkg }}"
+    name: "{{ pkgs }}"
     state: present
-  with_items:
-    - redis-server
-    - rspamd
-  loop_control:
-    loop_var: pkg
 
 - name: Set facts for rspamd password generation
   tags: rspamd
