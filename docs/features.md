@@ -393,6 +393,13 @@ You can also use [Hugo](https://gohugo.io/) and its [numerous themes](https://th
 to create your site. The nginx server will be configured as a reverse proxy for your site,
 using a systemd Hugo service.
 
+The hugo web site content need to be placed in the backup folder:
+
+`backup/\<domain-name\>/website-hugo/`
+
+The site will be synchronised on the server, and served by Hugo systemd daemon, protected by
+AppArmor.
+
 ## Modular components
 
 Although All the components are well integrated together, it is possible to replace them
