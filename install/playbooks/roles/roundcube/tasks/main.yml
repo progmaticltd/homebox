@@ -8,26 +8,8 @@
 - name: Install roundcube webmail
   tags: roundcube
   apt:
-    name: "{{ pkg }}"
+    name: "{{ roundcube_packages }}"
     state: present
-  with_items:
-    - postgresql
-    - roundcube-pgsql
-    - roundcube-core
-    - roundcube-plugins
-    - roundcube-plugins-extra
-    - roundcube
-    - imapproxy
-    - php-fpm
-    - php-ldap
-    - php-net-sieve
-    - php-net-ldap2
-    - php-net-ldap3       # For LDAP address book
-    - php7.0-pspell       # For spell checking
-    - aspell
-    - php7.0-zip          # For multiple attachments download
-  loop_control:
-    loop_var: pkg
 
 - name: Compute max upload size from max attachment size
   tags: roundcube

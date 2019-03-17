@@ -35,3 +35,20 @@ roundcube_plugins:
 # - vcard_attachments
 # - virtuser_file
 # - virtuser_query
+
+roundcube_packages:
+  - postgresql
+  - roundcube-pgsql
+  - roundcube-core
+  - roundcube-plugins
+  - roundcube-plugins-extra
+  - roundcube
+  - imapproxy
+  - php-fpm
+  - php-ldap
+  - php-net-sieve
+  - php-net-ldap2
+  - php-net-ldap3       # For LDAP address book
+  - php7.0-pspell       # For spell checking
+  - aspell
+  - php7.0-zip          # For multiple attachments download
