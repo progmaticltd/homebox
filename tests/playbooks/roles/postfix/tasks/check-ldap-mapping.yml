@@ -1,0 +1,43 @@
+---
+
+
+- name: Check the LDAP mapping
+  tags: postfix
+  shell: >-
+    postmap -q '{{ user.mail }}' ldap:/etc/postfix/ldap-aliases.cf
+    | grep '{{ user.uid }}'
+  become: yes
+  become_method: sudo
+  become_user: postfix
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Check the LDAP mapping for email aliases
+  tags: postfix
+  shell: >-
+    postmap -q '{{ user.otherMailBox[0] }}'
+    ldap:/etc/postfix/ldap-aliases.cf
+    | grep '{{ user.uid }}'
+  become: yes
+  become_method: sudo
+  become_user: postfix
+  with_items:
+    - '{{ users | selectattr("otherMailBox", "defined") | list }}'
+  loop_control:
+    loop_var: user
+
+- name: Check the LDAP mapping for email aliases
+  tags: postfix
+  shell: >-
+    postmap -q '{{ user.aliases[0] }}'
+    ldap:/etc/postfix/ldap-aliases.cf
+    | grep '{{ user.uid }}'
+  become: yes
+  become_method: sudo
+  become_user: postfix
+  with_items:
+    - '{{ users | selectattr("aliases", "defined") | list }}'
+  loop_control:
+    loop_var: user

@@ -81,6 +81,7 @@ in the official documentation.
 - Automatic publication of DNS entries to Gandi DNS.
 - External IP address detection.
 - Static web site skeleton configuration, with https certificates.
+- Hugo web site server: [Hugo](https://gohugo.io/) and its [numerous themes](https://themes.gohugo.io/)
 - Personal backup server for each user, using borgbackup.
 - [Gogs git server](https://gogs.io/), a fast and lightweight git server written in Golang.
 - [Transmission daemon](https://transmissionbt.com/), accessible over https, public or private over your LAN. Files can be downloaded directly with a web browser, using LDAP credentials for authentication or whitelisted IP addresses (e.g. LAN).

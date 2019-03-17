@@ -1,0 +1,17 @@
+  # Certificates
+  /etc/letsencrypt/archive/www.{{ network.domain }}/* r,
+  /etc/letsencrypt/live/www.{{ network.domain }}/* r,
+
+  # Certificate renewal
+  /var/www/default/.well-known/** r,
+
+  # Web site content
+  /var/www/hugo/default/layouts/** r,
+  /var/www/hugo/default/content/** r,
+  /var/www/hugo/default/themes/** r,
+  /var/www/hugo/default/layouts/** r,
+  /var/www/hugo/default/static/** r,
+
+  # Log files
+  /var/log/nginx/hugo-access.log w,
+  /var/log/nginx/hugo-error.log w,

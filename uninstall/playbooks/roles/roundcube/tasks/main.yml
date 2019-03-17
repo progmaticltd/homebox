@@ -1,0 +1,56 @@
+---
+
+- name: Install roundcube webmail
+  tags: roundcube
+  apt:
+    name: "{{ pkgs }}"
+    state: absent
+  vars:
+    pkgs:
+      - roundcube-pgsql
+      - roundcube-core
+      - roundcube-plugins
+      - roundcube-plugins-extra
+      - roundcube
+
+- name: Copy roundcube configuration
+  tags: roundcube
+  file:
+    path: '/etc/nginx/sites-available/webmail.{{ network.domain }}.conf'
+    state: absent
+
+- name: Activate roundcube web site
+  tags: roundcube
+  notify: Restart nginx
+  file:
+    path: '/etc/nginx/sites-enabled/webmail.{{ network.domain }}.conf'
+    state: absent
+
+- name: Create the directory for dovecot_impersonate plugin
+  tags: roundcube
+  file:
+    path: /etc/roundcube
+    state: absent
+
+# AppArmor configuration ======================================================
+
+- name: Remove nginx AppArmor profile
+  when: security.app_armor
+  notify:
+    - Activate AppArmor profile
+    - Restart AppArmor service
+    - Restart nginx
+  file:
+    path: /etc/apparmor.d/local/roundcube
+    state: absent
+
+- name: Remove roundcube AppArmor specific configuration
+  when: security.app_armor
+  notify:
+    - Activate AppArmor profile
+    - Restart AppArmor service
+    - Restart nginx
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/roundcube>'
+    state: absent

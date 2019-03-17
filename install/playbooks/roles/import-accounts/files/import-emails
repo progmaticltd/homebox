@@ -41,6 +41,9 @@ imports=$(ls *conf 2>/dev/null)
 # Go back on the import root directory
 cd $HOME/mails/import
 
+# Remove dead lock files
+find . -maxdepth 1 -mmin +60 -name '*lock' -delete
+
 # make the directories I need if they do not exists
 test -d logs || mkdir logs
 test -d status || mkdir status
@@ -57,7 +60,7 @@ for import in $imports; do
     # Lock asap
     touch $lock
 
-    # Log everyhing
+    # Log everything
     logfile="logs/$import.log"
 
     # time the process

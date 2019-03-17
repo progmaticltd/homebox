@@ -137,11 +137,6 @@ mail_default:
                             # It is useful to put a limit here if you have a lot of messages
                             # and limited hardware resources
   #############################################################################
-  advanced_features: false  # Use some advanced features that will need the latest version
-                            # of dovecot
-                            # from stretch-backports, like those below.
-                            # like sending emails to an international addresses
-                            # (e.g. andré@homebox.space)
   recipient_delimiter: '+'  # The character you want to use to split email address
                             # from mailbox, i.e.:
                             # when receiving a message to john+lists@example.com,
@@ -193,6 +188,7 @@ system_default:
   login: true
   devel: false
   debug: false
+  reboot_timeout: 180
 
 ###############################################################################
 # Once the system is in place, it is possible to use 'limit' for the rule,
@@ -203,23 +199,35 @@ firewall_default:
   fwknop:
     install: false
     port: random
+  ssh:
+    - src: any
+      rule: allow
+      comment: allow SSH from anywhere
   output:
     policy: deny
     rules:
       - dest: any
         port: 80,443
-        comment: 'Allow web access (outpout)'
+        comment: 'Allow web access'
       - dest: any
         proto: udp
         port: 53
-        comment: 'Allow DNS requests (outpout)'
+        comment: 'Allow DNS requests'
+      - dest: any
+        proto: udp
+        port: 123
+        comment: 'Allow NTP requests'
+      - dest: any
+        proto: udp
+        from_port: 68
+        port: 67
+        comment: 'Allow DHCP requests'
       - dest: any
         port: 25
-        comment: 'Allow SMTP connections to other servers (outpout)'
-  ssh:
-    - src: any
-      rule: allow
-      comment: allow SSH from anywhere
+        comment: 'Allow SMTP connections to other servers'
+      - dest: any
+        port: 110,995,143,993
+        comment: 'Allow the recuperation of emails on other servers (POP/IMAP)'
 
 ###############################################################################
 # Extra security values
@@ -228,6 +236,8 @@ security_default:
   app_armor: true
   ssh_disable_root_access_with_password: true
   lock_root_password: true
+  alerts_email:
+    - 'admin@{{ network.domain }}'
 
 ###############################################################################
 # Dictionaries to install in the system
@@ -243,13 +253,27 @@ website_default:
   install: false
 
 ###############################################################################
+# Install a static web site on www.yourdomain.com using Hugo (https://gohugo.io/)
+# Still requests two certificates:
+# One for for https://yourdomain.com/ and one for https://www.yourdomain.com
+# Place your site in the backup folder: backup/<network.domain>/website-hugo/
+# It will be served by the internal Hugo server.
+# Example of a configuration here
+
+hugo_default:
+  install: false
+  site_title: "Site title"
+  theme:
+    name: hugo-tranquilpeak-theme
+
+###############################################################################
 # Install a webmail, or not...
 webmail_default:
   install: true
   type: roundcube
 
 ###############################################################################
-# Act as a backup server
+# Act as a backup server using borgbackup (https://www.borgbackup.org/)
 backup_default:
   install: false
 

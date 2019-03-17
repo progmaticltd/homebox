@@ -3,13 +3,9 @@
 - name: Install Development support packages
   tags: development
   apt:
-    name: '{{ pkg }}'
+    name: '{{ devel.packages }}'
     state: latest
     install_recommends: no
-  with_items:
-    - '{{ devel.packages }}'
-  loop_control:
-    loop_var: pkg
 
 - name: Install a correct bashrc for root
   tags: development
@@ -28,3 +24,4 @@
   user:
     name: root
     shell: '{{ devel.root.shell }}'
+

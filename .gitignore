@@ -6,6 +6,9 @@ config/*
 # Ignore ansible error files
 *.retry
 
+# Ignore log files when running in CI environment
+logs/*
+
 # Ignore markdown preview files
 README.html
 .markdown-preview.html

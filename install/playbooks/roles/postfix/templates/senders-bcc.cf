@@ -1,4 +1,4 @@
 {% for user in users %}
-{{ user.mail }} {{ user.mail | regex_replace("@", mail.recipient_delimiter + "Sent@") }}
+{{ user.mail }} {{ user.mail | regex_replace("@", mail.recipient_delimiter[0] + "Sent@") }}
 {% endfor %}
-postmaster@{{ network.domain }} {{ "postmaster" + mail.recipient_delimiter + "Sent@" + network.domain }}
+postmaster@{{ network.domain }} {{ "postmaster" + mail.recipient_delimiter[0] + "Sent@" + network.domain }}

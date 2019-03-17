@@ -1,0 +1,27 @@
+---
+
+- name: Activate AppArmor profile
+  command: 'aa-enforce usr.sbin.nginx'
+
+- name: Restart AppArmor service
+  service:
+    name: apparmor
+    state: restarted
+
+- name: Check nginx config
+  shell: nginx -t
+
+- name: Restart nginx
+  service:
+    name: nginx
+    state: restarted
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: true
+
+- name: Restart hugo service
+  service:
+    name: hugo-server
+    enabled: true
+    state: restarted

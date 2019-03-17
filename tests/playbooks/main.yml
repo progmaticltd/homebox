@@ -23,6 +23,10 @@
 # Test mail related certificates
 - import_playbook: mail-certificates.yml
 
+# Test webmail certificate
+- import_playbook: webmail-certificate.yml
+  when: webmail.install
+
 # Test MTA (postfix) functions
 - import_playbook: postfix.yml
 

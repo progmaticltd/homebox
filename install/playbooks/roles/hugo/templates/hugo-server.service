@@ -1,0 +1,12 @@
+[Unit]
+Description=Hugo service for 'www.{{ network.domain }}' site
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/var/www/hugo/default
+ExecStart=/usr/bin/hugo serve {{ options | join(" ") }}
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

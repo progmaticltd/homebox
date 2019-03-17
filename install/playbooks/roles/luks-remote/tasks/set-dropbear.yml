@@ -1,17 +1,16 @@
 ---
 
-- name: Install the required package
+- name: Install the required packages
   tags: apt
+  vars:
+    pkgs:
+      - busybox
+      - dropbear
+      - dropbear-initramfs
   apt:
     update_cache: true
-    name: '{{ pkg }}'
-    state: present
-  with_items:
-    - busybox
-    - dropbear
-    - dropbear-initramfs
-  loop_control:
-    loop_var: pkg
+    name: '{{ pkgs }}'
+    state: latest
 
 - name: Copy the ssh public key for authentication
   copy:
@@ -38,7 +37,9 @@
   loop_control:
     loop_var: key
 
+# TODO: Add "creates" entry to avoid regenrating the SSH key?
 - name: Convert the openssh key already existing for dropbear
+  register: initramfs_dropbear
   shell: >-
     /usr/lib/dropbear/dropbearconvert openssh dropbear
     /etc/ssh/{{ key.src }} /etc/dropbear-initramfs/{{ key.dest }}
@@ -57,4 +58,5 @@
     loop_var: key
 
 - name: Update initramfs
+  when: initramfs_dropbear.changed
   shell: update-initramfs -u

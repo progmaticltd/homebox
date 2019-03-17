@@ -21,3 +21,16 @@
   tags: apt
   apt:
     upgrade: yes
+
+- name: Install apticron to send email alerts
+  tags: apt
+  apt:
+    name: apticron
+    state: latest
+
+- name: Configure apticron to send email alerts
+  tags: apt
+  replace:
+    path: /etc/apticron/apticron.conf
+    regexp: '^#?EMAIL=".*"'
+    replace: EMAIL="{{ security.alerts_email | join(' ') }}"

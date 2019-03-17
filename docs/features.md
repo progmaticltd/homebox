@@ -383,11 +383,22 @@ Automatically generate certificates for each services, using LetsEncrypt. The ce
 are saved on the deployment workstation as well, and reused if you are deploying your
 server again.
 
-## Static web site creation
+## Basic sites creation
 
 The system can create a skeleton for a static web site for you, with two https
 certificates as well. The certificates created, for instance for the domain example.com,
 will be www.example.com and example.com.
+
+You can also use [Hugo](https://gohugo.io/) and its [numerous themes](https://themes.gohugo.io/)
+to create your site. The nginx server will be configured as a reverse proxy for your site,
+using a systemd Hugo service.
+
+The hugo web site content need to be placed in the backup folder:
+
+`backup/\<domain-name\>/website-hugo/`
+
+The site will be synchronised on the server, and served by Hugo systemd daemon, protected by
+AppArmor.
 
 ## Modular components
 

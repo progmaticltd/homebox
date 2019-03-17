@@ -11,6 +11,7 @@
 # especially the symbolic links in the live folder
 # The '--update' option make sure to not overwrite new certificates.
 - name: If the certificates have been generated before, copy them on the remote server
+  when: system.devel
   tags: cert,sync
   synchronize:
     src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/certificates/'
@@ -123,7 +124,23 @@
     comment: Allow LetsEncrypt temporarily
 
 # The certbot package need to be installed
-- name: Create the certificate
+- name: Create the certificate (staging version)
+  when: system.devel
+  tags: cert
+  command: >-
+    /usr/bin/certbot certonly
+    --non-interactive
+    --webroot
+    --webroot-path "{{ site_root }}"
+    --domain "{{ certificate_fqdn }}"
+    --email "admin@{{ network.domain }}"
+    --test-cert
+    --agree-tos
+  args:
+    creates: "/etc/letsencrypt/live/{{ certificate_fqdn }}/cert.pem"
+
+- name: Create the certificate (live version)
+  when: not system.devel
   tags: cert
   command: >-
     /usr/bin/certbot certonly
@@ -172,20 +189,6 @@
     regexp: authenticator = standalone
     replace: authenticator = webroot
 
-# TODO: Remove this part, the certificates are now deployed "standalone"
-- name: Add missing lines when changed from standalone to webroot
-  tags: upgrade
-  when: renewal_config.changed
-  lineinfile:
-    path: '/etc/letsencrypt/renewal/{{ certificate_fqdn }}.conf'
-    line: '{{ line }}'
-  with_items:
-    - 'webroot_path = {{ site_root }},'
-    - '[[webroot_map]]'
-    - '{{ certificate_fqdn }} = {{ site_root }}'
-  loop_control:
-    loop_var: line
-
 # FIXME: Call the custom script for this domain instead
 # - name: Run the certificate renewal script if needed
 #   shell: >-
@@ -194,6 +197,7 @@
 # In this direction, we should overwrite the symbolic links,
 # in case the certificates have been renewed
 - name: Backup the certificates on your local machine
+  when: system.devel
   tags: cert,sync
   synchronize:
     mode: pull

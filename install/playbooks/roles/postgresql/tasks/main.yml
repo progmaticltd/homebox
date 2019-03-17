@@ -10,4 +10,4 @@
     - postgresql
   loop_control:
     loop_var: pkg
-    
+

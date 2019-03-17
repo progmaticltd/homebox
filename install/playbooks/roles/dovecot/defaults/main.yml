@@ -19,7 +19,24 @@ dovecot:
     - dovecot-managesieved
     - dovecot-sieve
     - dovecot-ldap
+  fts_packages:
+    - tomcat8
+    - solr-tomcat
+    - dovecot-solr
+    - poppler-utils
+    - catdoc
+    - unzip
+    - docx2txt
+    - odt2txt
+    - xlsx2csv
+    - unrtf
+    - gzip
+    - p7zip-full
+    - p7zip-rar
+    - tnef
   settings:
     mail_max_userip_connections: 64
     lda_mailbox_autocreate: no
     lda_mailbox_autosubscribe: no
+  # Authorized characters for the username
+  username_chars: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890.-_@

@@ -1,0 +1,32 @@
+---
+
+- name: Check if the postfix service is up and running
+  tags: systemctl,postfix
+  shell: postfix status
+
+- name: Check the certificate using SMTPS
+  tags: systemctl, postfix
+  shell: >-
+    echo QUIT | openssl s_client
+    -servername smtp.{{ network.domain }}
+    -connect smtp.{{ network.domain }}:465 2>&1
+    | grep 'Verification: OK'
+
+- name: Check the certificate using SMTP and STARTTLS
+  tags: systemctl, postfix
+  shell: >-
+    echo QUIT | openssl s_client
+    -servername smtp.{{ network.domain }}
+    -connect smtp.{{ network.domain }}:25
+    -starttls smtp 2>&1
+    | grep 'Verification: OK'
+
+- name: Check the certificate using SMTP and STARTTLS On submission port
+  tags: systemctl, postfix
+  shell: >-
+    echo QUIT | openssl s_client
+    -servername smtp.{{ network.domain }}
+    -connect smtp.{{ network.domain }}:587
+    -starttls smtp 2>&1
+    | grep 'Verification: OK'
+
