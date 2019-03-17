@@ -1,4 +1,0 @@
----
-
-dependencies:
-  - { role: ../install/playbooks/roles/load-defaults }
