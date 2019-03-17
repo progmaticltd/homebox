@@ -52,6 +52,14 @@ folder, in the file __ldap/master.pwd__.
 
 # Import external accounts
 
+There are two ways of importing other emails. The easiest way is to use SOGo
+web interface. In this case, you will see your other account emails in the web
+interface.
+
+The other option is to use the yaml configuration file. The advantage is once this
+set up, external emails will be automatically imported in your main account,
+regardless of the client you are using.
+
 This is detailed in the section [External accounts](external-accounts.md).
 One important thing to know is that this feature requires the creation
 of a Dovecot _master user_, that will be used to import the emails into the folders.
@@ -64,13 +72,34 @@ from the Debian backports repository.
 
 ## International email addresses
 
-The latest versions of dovecot in the Debian Stretch repository has
-better unicode characters support, for email addresses and domains.
+Your main email address should be without ASCII characters only, but the aliases can contains accents,
+for instance:
 
-Unfortunately, this is actually working only internally, between two
-users of the same domain.
+```yaml
 
-The next Debian version should support full SMTPUTF8.
+users:
+- uid: andre
+  cn: André Rodier
+  first_name: André
+  last_name: Rodier
+  mail: andre@homebox.space
+  password: ***********
+  aliases:
+    - andré.rodier@homebox.space
+    - andré@homebox.space
+
+```
+
+### Notes
+
+This is possible if all the software and the platforms involved support it.
+
+Not all major email providers are supporting this, Yahoo mail, for
+instance, does not even let you send an email with an internationalised user names,
+like __andré@homebox.space__.
+
+This feature is not entirely tested yet, but is working so far between two homebox servers
+and SOGo or evolution.
 
 ## Save emails into mail boxes directly
 
@@ -86,6 +115,7 @@ Example with this configuration:
   recipient_delimiter: '~'
 
 ```
+
 For a user with an email address like __john@homebox.space__, any
 email sent to __john~lists@homebox.space__ will be stored in
 the folder "lists".
@@ -113,6 +143,12 @@ dovecot:
     lda_mailbox_autosubscribe: no
 
 ```
+
+### Warning
+
+Using auto create presents a security risks, as it allows anyone to remote create folders
+on your mail server. It is advised to at least change your recipient delimiter from the
+default one.
 
 ## Add Postfix options
 
