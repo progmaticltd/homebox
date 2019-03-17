@@ -135,12 +135,8 @@
 - name: Install ufw / fail2ban and automatic security updates
   tags: apt, security
   apt:
-    name: "{{ pkg }}"
+    name: "{{ defaults.packages }}"
     state: present
-  with_items:
-    - '{{ defaults.packages }}'
-  loop_control:
-    loop_var: pkg
 
 - name: Install AppArmor packages
   when: security.app_armor

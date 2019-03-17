@@ -18,6 +18,12 @@
   tags: security
   shell: aa-enabled
 
+- name: Check if the firewall is enabled
+  tags: security
+  shell: >-
+    ufw status | head -n 1 |
+    grep "^Status: active$"
+
 - name: Check if certbot is installed
   tags: apt
   shell: dpkg -s certbot
