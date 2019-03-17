@@ -9,6 +9,9 @@
   /usr/bin/hugo mr,
   /lib/x86_64-linux-gnu/ld-*.so mr,
 
+  # temporary files
+  /tmp/hugo_cache/ rwkl,
+
   # configuration files
   /etc/mime.types r,
 
