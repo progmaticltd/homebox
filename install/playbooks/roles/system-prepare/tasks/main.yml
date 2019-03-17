@@ -145,15 +145,14 @@
 - name: Install AppArmor packages
   when: security.app_armor
   tags: security
+  vars:
+    pkgs:
+      - apparmor
+      - apparmor-profiles
+      - apparmor-utils
   apt:
-    name: '{{ pkg }}'
+    name: '{{ pkgs }}'
     state: latest
-  with_items:
-    - apparmor
-    - apparmor-profiles
-    - apparmor-utils
-  loop_control:
-    loop_var: pkg
 
 - name: Configure grub to add apparmor by default on boot
   register: grub_config
