@@ -28,13 +28,3 @@
       type: imap
   roles:
     - certificate
-
-
-- hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../../config/system.yml'
-  vars:
-    certificate:
-      type: webmail
-  roles:
-    - certificate
