@@ -124,11 +124,9 @@ $config['ldap_public']['users'] = [
     ]
 ];
 
-{% if mail.advanced_features %}
 // Disables saving sent messages in Sent folder (like gmail)
 // The SMTP server does that already
 $config['no_save_sent_messages'] = true;
-{% endif %}
 
 // Allow browser-autocompletion on login form.
 $config['login_autocomplete'] = 2;

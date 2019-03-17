@@ -3,21 +3,10 @@
 ################################################################################
 # Install dovecot packages
 # Set the default repository to download dovecot packages
-- name: Use stable repository for dovecot packages
-  when: not mail.advanced_features
-  set_fact:
-    dovecot_repository: stretch
-
-- name: Use backports repository for dovecot advdanced features
-  when: mail.advanced_features
-  set_fact:
-    dovecot_repository: stretch-backports
-
 - name: Install dovecot packages
   tags: dovecot
   apt:
     name: '{{ dovecot.packages }}'
-    default_release: '{{ dovecot_repository }}'
     state: latest
 
 - name: Install dovecot packages for full text search
@@ -26,7 +15,6 @@
   apt:
     name: dovecot-solr
     state: latest
-    default_release: '{{ dovecot_repository }}'
 
 - name: Allow mail damon to access the users directory
   file:
@@ -52,8 +40,7 @@
   loop_control:
     loop_var: path
 
-- name: Generate a strong Diffie Hellman file (for dovecot >= 2.3)
-  when: mail.advanced_features
+- name: Generate a strong Diffie Hellman file
   notify: Restart dovecot
   tags: ssl
   openssl_dhparam:

@@ -138,6 +138,7 @@
     - usr.sbin.sendmail
     - usr.sbin.postdrop
     - usr.sbin.postqueue
+    - usr.sbin.postalias
 
 - name: Install some postfix AppArmor profile
   when: security.app_armor

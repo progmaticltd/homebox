@@ -1,0 +1,16 @@
+# Last Modified: Sat Mar 16 11:12:16 2019
+#include <tunables/global>
+
+/usr/sbin/postalias {
+  #include <abstractions/base>
+
+  # binaries
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/sbin/postalias mr,
+
+  # Configuration files
+  /etc/__db.aliases.db rw,
+  /etc/aliases r,
+  /etc/aliases.db w,
+  /etc/postfix/dynamicmaps.cf.d/ r,
+}

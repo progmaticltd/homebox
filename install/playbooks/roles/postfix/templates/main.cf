@@ -57,6 +57,10 @@ virtual_mailbox_maps = ldap:/etc/postfix/ldap-aliases.cf
 virtual_mailbox_domains = {{ network.domain }}
 virtual_transport = lmtp:unix:private/dovecot-lmtp
 
+# Do not use NIS for now (remove warnings "dict_nis_init: NIS domain name not set - NIS lookups disabled")
+# https://unix.stackexchange.com/questions/244199/postfix-mail-logs-keep-showing-nis-domain-not-set
+alias_maps = hash:/etc/aliases
+
 # Rewrite recipient, remove recipient delimiter and mailbox
 canonical_maps = ldap:/etc/postfix/ldap-aliases.cf
 
@@ -79,7 +83,7 @@ inet_interfaces = all
 inet_protocols = all
 
 # The set of characters that can separate a user name from its extension
-recipient_delimiter = "{{ mail.recipient_delimiter[0] }}"
+recipient_delimiter = {{ mail.recipient_delimiter[0] }}
 
 # DKIM mails signing / rspamd mail filtering
 milter_default_action = accept
@@ -104,7 +108,7 @@ non_smtpd_milters =
 {% endif %}
 
 # The macros that are sent to Milter applications after the SMTP MAIL FROM command.
-milter_mail_macros =  i {mail_addr} {client_addr} {client_name} {auth_authen} {auth_type}
+milter_mail_macros = i {mail_addr} {client_addr} {client_name} {auth_authen} {auth_type}
 
 # Access restrictions for mail relay control that the Postfix SMTP server applies
 # in the context of the RCPT TO command, before smtpd_recipient_restrictions.
@@ -112,8 +116,8 @@ smtpd_relay_restrictions =
     permit_mynetworks
     permit_sasl_authenticated
     defer_unauth_destination
-    check_policy_service inet:localhost:{{ mail.quota.port }}
     check_policy_service unix:private/policy-spf
+    check_policy_service inet:localhost:{{ mail.quota.port }}
 {% for url in dns_blacklists %}
     reject_rbl_client {{ url }}
 {% endfor %}
@@ -136,6 +140,7 @@ sender_bcc_maps = hash:/etc/postfix/senders-bcc.cf
 # Message size, computed from max attachment size and base64 overhead
 message_size_limit = {{ message_size_limit }}
 
+# Help: http://www.postfix.org/SMTPUTF8_README.html
 smtputf8_enable = yes
 smtputf8_autodetect_classes = verify
 
