@@ -127,12 +127,24 @@ system:
 
 ```
 
+### "debug" flag
+
 Setting the debug flag to true will activate a lot of debug options in Dovecot, OpenLDAP,
 Postfix, etc...  You can then filter in the console, using for instance `journalctl -u
 postfix -u dovecot*` to view postfix and dovecot logs respectively.
 
-The devel flag is generating minor modification in the system, for instance the milter
-port numbers being fixed. I'll probably merge the two settings later.
+### "devel" flag
+
+When you set this flag to true, various settings are changed in the development.
+
+- The certificates deployed are staging certificates only, which allows you
+  to request more to LetsEncrypt.
+- The certificates are backed up on your local machine, allowing you to redeploy
+  without asking again the same certificates, which is also faster.
+  
+To test your system from a local computer, you will need to add the LetsEncrypt root 
+certificate authority, the staging version, which can be download on the
+[LetsEncrypt staging environment page](https://letsencrypt.org/docs/staging-environment/).
 
 ## Development playbook
 
@@ -159,7 +171,8 @@ For instance, these packages are installed:
 - colorized-logs
 - bash-completion
 
-The script also configures a basic bashrc / zshrc.
+- The script also configures a basic bashrc / zshrc.
+- It is also adding the LetsEncrypt staging root certificate authority to the system.
 
 ## Installation playbooks
 
@@ -177,6 +190,8 @@ page for details).
 This playbook do the opposite of dev-support, by uninstalling the packages used for
 development, and restoring the bashrc to its default state. You probably want to run this
 script before putting your server in production.
+
+It is also removing the LetsEncrypt staging root certificate authority from the system.
 
 ## Tests / Diagnostic playbooks.
 

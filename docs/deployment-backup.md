@@ -11,9 +11,12 @@ the same repository to work on multiple domains.
 
 ## Certificates
 
-This folder contains the letsencrypt certificates generated on the server. This is also
-very important, to avoid requesting the certificates again and again, and being blocked by
-LetsEncrypt.
+When developing and testing homebox, his folder contains the letsencrypt certificates generated
+on the server. This is also very important, to avoid requesting the certificates again and again,
+and being blocked by LetsEncrypt.
+
+See the system configuration section in the [development page](development.md#system-configuration)
+for more details.
 
 For instance, this is the certificates generated, for the domain "homebox.space"
 
@@ -24,6 +27,9 @@ For instance, this is the certificates generated, for the domain "homebox.space"
 - autodiscover.homebox.space (when using autodiscover from Outlook)
 - <span>www</span>.homebox.space and homebox.space
   (When activating the option simple web site)
+  
+When deploying the live version, the certificates are generated on the server, and not
+backed up.
 
 ## DKIM Keys
 

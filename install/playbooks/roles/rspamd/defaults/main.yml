@@ -6,7 +6,7 @@ rspamd:
     port: '{{ 1 + (mail.antispam.port | int) }}'
   controller:
     port: '{{ 2 + (mail.antispam.port | int) }}'
-      
+
 antispam:
   milter:
     name: rspamd

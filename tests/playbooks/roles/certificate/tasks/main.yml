@@ -1,9 +1,19 @@
 ---
 
+- name: Install the letsencrypt staging root CA when using staging
+  register: root_ca_staging
+  get_url:
+    url: https://letsencrypt.org/certs/fakelerootx1.pem
+    dest:  /usr/local/share/ca-certificates/fakelerootx1.crt
+
+- name: Update certificates list
+  when: root_ca_staging.changed
+  shell: /usr/sbin/update-ca-certificates
+
 - name: Check if certbot is installed
   tags: apt,cert
   shell: dpkg -s certbot
-     
+
 - name: Check if there is a certificate file
   tags: systemctl,cert
   shell: >-
@@ -13,4 +23,3 @@
   tags: systemctl,cert
   shell: >-
     certbot -d "{{ certificate.type }}.{{ network.domain }}" certificates | grep VALID
-

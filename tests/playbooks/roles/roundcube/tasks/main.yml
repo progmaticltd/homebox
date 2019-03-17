@@ -17,11 +17,11 @@
     - nginx
   loop_control:
     loop_var: pkg
-     
+
 - name: Check if the roundcube service is up and running
   tags: systemctl, nginx
   shell: systemctl status nginx
-    
+
 - name: Check the certificate using HTTPS
   tags: systemctl, roundcube
   shell: >-
@@ -29,4 +29,4 @@
     openssl s_client
     -servername webmail.{{ network.domain }} -connect webmail.{{ network.domain }}:443
     | grep 'Verification: OK'
-       
+

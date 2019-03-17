@@ -2,11 +2,52 @@
 
 - name: Check that every home folder has been created
   tags: homes
-  vars:
-    homeBase: /home/users
   shell: >-
-    test -d "{{ homeBase }}/{{ user.uid }}"
-  with_items: '{{ users }}'
+    test -d {{ user.uid }}
+  args:
+    chdir: /home/users
+  with_items:
+    - '{{ users }}'
   loop_control:
     loop_var: user
-     
+
+- name: Check if the permissions are correct
+  tags: homes
+  shell: >-
+    ls -ld {{ user.uid }}
+    | cut -f 1 -d ' '
+    | grep '^drwx------$'
+  args:
+    chdir: /home/users
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Check if the folder owner is correct
+  tags: homes
+  shell: >-
+    ls -dl {{ user.uid }}
+    | sed -E 's/\s+/|/g'
+    | cut -f 3 -d '|'
+    | grep '^{{ user.uid }}$'
+  args:
+    chdir: /home/users
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Check if the folder group correct
+  tags: homes
+  shell: >-
+    ls -dl {{ user.uid }}
+    | sed -E 's/\s+/|/g'
+    | cut -f 4 -d '|'
+    | grep '^users$'
+  args:
+    chdir: /home/users
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user

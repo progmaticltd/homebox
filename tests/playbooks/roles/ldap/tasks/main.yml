@@ -11,7 +11,7 @@
 - name: Check that 'ldap.{{ network.domain }}' resoves to localhost
   tags: ldap
   shell: ping -c 1 ldap.{{ network.domain }} | grep 127.0.0.1
-    
+
 - name: Check that I can bind as readonly and get all uids
   tags: ldap
   shell: >-
@@ -29,7 +29,7 @@
     -D '{{ ldap.manager.dn }}'
     -w{{ lookup("password", ldap.managerPasswdParams) }}
     '(uid=manager)'
-     
+
 - name: Check that I can bind as admin and get all uids
   tags: ldap
   shell: >-
@@ -38,7 +38,7 @@
     -D '{{ ldap.admin.dn }}'
     -w{{ lookup("password", ldap.adminPasswdParams) }}
     'uid'
-     
+
 - name: Check that every user is in the database
   tags: ldap
   shell: >-
@@ -51,7 +51,7 @@
   with_items: '{{ users }}'
   loop_control:
     loop_var: user
-     
+
 - name: Check that I can bind using TLS
   tags: ldap
   shell: >-
@@ -82,7 +82,7 @@
   with_items: '{{ users }}'
   loop_control:
     loop_var: u
-     
+
 - name: Check that I can update the indexes
   tags: indexes
   become: true

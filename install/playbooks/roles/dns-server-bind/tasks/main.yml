@@ -11,7 +11,7 @@
 # TODO: Configure this automatically
 - name: Install the required packages
   apt:
-    name: 
+    name:
       - bind9
       - dnsutils
     state: present
