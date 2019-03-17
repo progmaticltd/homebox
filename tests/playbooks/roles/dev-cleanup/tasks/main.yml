@@ -1,5 +1,15 @@
 ---
 
+- name: Remove the letsencrypt staging root CA
+  register: root_ca_staging
+  file:
+    path:  /usr/local/share/ca-certificates/fakelerootx1.crt
+    state: absent
+
+- name: Update certificates list
+  when: root_ca_staging.changed
+  shell: /usr/sbin/update-ca-certificates
+
 - name: Set the default shell for the root user
   when: system.devel
   tags: development

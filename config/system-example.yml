@@ -107,9 +107,6 @@ users:
 #       - id: en
 #         name: English
 #   #############################################################################
-#   advanced_features: false  # Use some advanced features that will need the latest version of dovecot
-#                             # from stretch-backports, like those below.
-#                             # like sending emails to an international addresses (e.g. andré@homebox.space)
 #   recipient_delimiter: '+'  # The characters you want to use to split email address from mailbox, i.e.:
 #                             # when receiving a message to john+lists@example.com, it should go directly to
 #                             # the 'lists' folder...
@@ -120,6 +117,10 @@ users:
 #     recipient_bcc_maps = regexp:/etc/postfix/recipient_bcc
 
 ###############################################################################
+# During development, only test certificates are created, using the LetsEncrypt
+# staging environment. https://letsencrypt.org/docs/staging-environment/
+# Certificates are only backed up locally when system.devel == true.
+# If you are testing homebox, don't forget to set this flag to true
 # System related
 # system:
 #   devel: true
