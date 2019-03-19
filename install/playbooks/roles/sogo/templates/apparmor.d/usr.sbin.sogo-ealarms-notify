@@ -12,8 +12,9 @@
   /etc/timezone r,
   /etc/ssl/openssl.cnf r,
 
-  # I am not sure why SOGo need to read the attributes of the root folder…
-  audit allow / r,
+  # sogo-ealarms-notify requests read access to the root filesystem.
+  # reported here: https://sogo.nu/bugs/view.php?id=4704
+  allow / r,
 
   # Resources access
   /usr/share/GNUstep/** r,
