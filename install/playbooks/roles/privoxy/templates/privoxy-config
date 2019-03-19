@@ -20,7 +20,7 @@ logfile logfile
 listen-address  *:{{ privoxy.port }}
 listen-address  [::1]:{{ privoxy.port }}
 
-{% if tor.install %}
+{% if tor.install and privoxy.tor_forward %}
 # Forward to the local Tor server
 forward-socks5t / 127.0.0.1:9050 .
 forwarded-connect-retries  0
@@ -40,6 +40,10 @@ split-large-forms 0
 keep-alive-timeout 5
 tolerate-pipelining 1
 socket-timeout 300
+
+{% if system.debug %}
+debug 4096
+{% endif %}
 
 # Custom configuration options
 {{ privoxy.custom_settings }}

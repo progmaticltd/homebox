@@ -507,6 +507,7 @@ tor_default:
 # Privoxy privacy proxy
 privoxy_default:
   install: false
+  tor_forward: false
   port: 8118
   accept_from:
     - 10.0.0.0/8
