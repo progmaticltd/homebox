@@ -17,7 +17,9 @@
     path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/privoxy/'
     state: directory
 
-- name: Deploy custom user.filter and user.action if they exists
+- name: Deploy custom filter and action files if they exists
+  tags: synchronize
+  register: custom_filters_and_actions
   synchronize:
     src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/privoxy/'
     dest: /etc/privoxy
@@ -27,9 +29,12 @@
     rsync_opts:
       - '--no-motd'
       - '--update'
-      - '--exclude=*.*'
-      - '--include=*.action'
-      - '--include=*.filter'
+
+- name: Create a dotfile when the rules have been installed
+  when: custom_filters_and_actions.changed
+  file:
+    path: /etc/privoxy/.rules-installed
+    state: touch
 
 - name: Copy configuration
   tags: config
@@ -71,17 +76,19 @@
   tags: auto-update
   include_tasks: add-adblock-rules.yml
 
-- name: Get custom user.filter and user.action on the local machine
+- name: Get filter and action files from the server
+  tags: synchronize
   synchronize:
-    src: /etc/privoxy
-    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/'
+    src: '/etc/privoxy/*.{action,filter}'
+    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/privoxy/'
+    recursive: false
     mode: pull
     owner: no
     group: no
     perms: yes
     rsync_opts:
       - '--no-motd'
-      - '--update'
-      - '--exclude=*.*'
-      - '--include=*.action'
-      - '--include=*.filter'
+      - '--exclude=default.*'
+      - '--exclude=match-all.*'
+      - '--exclude=regression-tests.*'
+
