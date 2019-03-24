@@ -1,6 +1,6 @@
 ---
 
-- name: Install roundcube webmail
+- name: Uninstall roundcube webmail
   tags: roundcube
   apt:
     name: "{{ pkgs }}"

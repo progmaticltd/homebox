@@ -11,10 +11,36 @@
     dest: /etc/privoxy/config-default
     remote_src: true
 
-- name: Configure privoxy
+- name: Create the local configuration directory if it does not exists
+  delegate_to: localhost
+  file:
+    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/privoxy/'
+    state: directory
+
+- name: Deploy custom filter and action files if they exists
+  tags: synchronize
+  register: custom_filters_and_actions
+  synchronize:
+    src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/privoxy/'
+    dest: /etc/privoxy
+    owner: no
+    group: no
+    perms: yes
+    rsync_opts:
+      - '--no-motd'
+      - '--update'
+
+- name: Create a dotfile when the rules have been installed
+  when: custom_filters_and_actions.changed
+  file:
+    path: /etc/privoxy/.rules-installed
+    state: touch
+
+- name: Copy configuration
+  tags: config
   notify: Restart privoxy
   template:
-    src: privoxy-config
+    src: privoxy.conf
     dest: /etc/privoxy/config
 
 - name: Allow proxy access from LAN
@@ -44,3 +70,25 @@
   tags: dovecot, security, apparmor
   notify: Restart AppArmor service
   command: 'aa-enforce usr.sbin.privoxy'
+
+- name: Run tasks for automatic easyrules update
+  when: privoxy.adblock_rules.install
+  tags: auto-update
+  include_tasks: add-adblock-rules.yml
+
+- name: Get filter and action files from the server
+  tags: synchronize
+  synchronize:
+    src: '/etc/privoxy/*.{action,filter}'
+    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/privoxy/'
+    recursive: false
+    mode: pull
+    owner: no
+    group: no
+    perms: yes
+    rsync_opts:
+      - '--no-motd'
+      - '--exclude=default.*'
+      - '--exclude=match-all.*'
+      - '--exclude=regression-tests.*'
+
