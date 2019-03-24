@@ -1,4 +1,3 @@
-
 A set of Ansible scripts to setup a secure email and personal files server. This project is for you if:
 
 - You are interested to host your emails yourself, for privacy, security or any other reason.
@@ -37,7 +36,7 @@ in the official documentation.
 - Automatic backup of the deployment data to replay the installation with the same data.
 - Can be used at home, on a dedicated or virtual server hosted online.
 - Flexible IP address support: IPv4, IPv6, IPv4+IPv4, IPv4+IPv6.
-- Embedded DNS server, with CAA, DNSSEC and SSHFP support.
+- Embedded DNS server, with CAA, DNSSEC and SSHFP (SSH fingerprint) support.
 - Grade A https sites, HSTS implemented by default.
 
 ### Emails
