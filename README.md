@@ -1,4 +1,3 @@
-
 A set of Ansible scripts to setup a secure email and personal files server. This project is for you if:
 
 - You are interested to host your emails yourself, for privacy, security or any other reason.
@@ -37,7 +36,7 @@ in the official documentation.
 - Automatic backup of the deployment data to replay the installation with the same data.
 - Can be used at home, on a dedicated or virtual server hosted online.
 - Flexible IP address support: IPv4, IPv6, IPv4+IPv4, IPv4+IPv6.
-- Embedded DNS server, with CAA, DNSSEC and SSHFP support.
+- Embedded DNS server, with CAA, DNSSEC and SSHFP (SSH fingerprint) support.
 - Grade A https sites, HSTS implemented by default.
 
 ### Emails
@@ -78,7 +77,8 @@ in the official documentation.
   See [backup documentation](docs/backup.md) for details.
 - Jabber server, using [ejabberd](https://www.ejabberd.im/), with LDAP authentication,
   direct or offline file transfer and optional server to server communication.
-- Tor and [Privoxy](https://www.privoxy.org/) easy installation.
+- [Tor](https://www.torproject.org/) installation out of the box with possible customisation.
+- [Privoxy](https://www.privoxy.org/) easy installation, with adblock rules daily synchronisation, and optional tor chaining.
 - Embedded DNS server with DNSSEC and SSHFP (SSH fingerprint) records support
 - Automatic publication of DNS entries to Gandi DNS.
 - External IP address detection.

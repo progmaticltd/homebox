@@ -340,13 +340,20 @@ domain.
 - The daemon runs in a proper AppArmor profile.
 - Easy to use form to search downloaded files in your web browser.
 
-# Tor / Privoxy server
+# Privoxy server
 
-The platform configures Tor and Privoxy, so you can use these privacy protection applications
-with any device on your network.
+The platform configures Privoxy configured with the easylist rules by default, updated every day. The following rules
+are activated by default:
 
-- Chain the proxy together
-- Allow you to override any privoxy or tor options
+- EasyList
+- EasyPrivacy
+- Fanboy's Annoyance List
+- Fanboy's Social Blocking List
+
+# Tor server
+
+The platform configures Tor as well, and allows you to ooverride any option.
+You can also chain privoxy and tor together.
 
 # Other features
 
