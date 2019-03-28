@@ -1,0 +1,26 @@
+# Homebox opendkim profile
+#include <tunables/global>
+
+/usr/sbin/opendkim {
+  include <abstractions/base>
+  include <abstractions/nameservice>
+
+  # capabilities
+  capability setuid,
+  capability setgid,
+  capability dac_override,
+
+  # binaries
+  /usr/sbin/opendkim mr,
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+
+  # configuration
+  /etc/opendkim.conf r,
+  /etc/opendkim/** r,
+
+  # standard run file
+  /run/opendkim/opendkim.pid rwkl,
+
+  # dns configuration
+  /usr/share/dns/* r,
+}

@@ -124,3 +124,20 @@
     src: '/etc/opendkim/keys/{{ dkim.selector }}.txt'
     dest: '/etc/homebox/dns-entries.d/10-dkim.bind'
     state: link
+
+# AppArmor configuration ======================================================
+
+- name: Install opendkim AppArmor profile
+  when: security.app_armor
+  tags: security, apparmor
+  template:
+    src: 'apparmor.d/usr.sbin.opendkim.cf'
+    dest: '/etc/apparmor.d/usr.sbin.opendkim'
+    force: no
+
+- name: Activate AppArmor profiles
+  when: security.app_armor
+  tags: security, apparmor
+  command: 'aa-enforce usr.sbin.opendkim'
+  notify: Restart AppArmor service
+

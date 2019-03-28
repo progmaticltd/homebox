@@ -1,7 +1,11 @@
 ---
 
 - name: Restart opendkim
-  tags: dkim
   service:
     name: opendkim
+    state: restarted
+
+- name: Restart AppArmor service
+  service:
+    name: apparmor
     state: restarted
