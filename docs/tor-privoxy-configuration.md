@@ -67,6 +67,41 @@ privoxy:
 
 ```
 
+### Chaining privoxy and Tor
+
+It is possible to chain privoxy and tor, to use both proxies at the same time. If you have activated
+the easyprivacy list of privoxy, this will give you a good anonymous and privacy filter, even for
+devices that don't support Tor or SOCKS proxy natively.
+
+For instance:
+
+```yaml
+
+# Privoxy privacy proxy
+privoxy:
+  install: true
+  tor_forward: false
+  adblock_rules:
+    install: true
+    list:
+      - https://easylist.to/easylist/easylist.txt
+      - https://easylist.to/easylist/easyprivacy.txt
+      - https://easylist.to/easylist/fanboy-annoyance.txt
+      - https://easylist.to/easylist/fanboy-social.txt
+      - https://easylist-downloads.adblockplus.org/liste_fr.txt
+  port: 8118
+  accept_from:
+    - 192.168.64.0/24
+    - 192.168.65.0/24
+    - 192.168.66.0/24
+    - 172.16.0.0/16
+    - 172.16.65.0/24
+  custom_settings: |
+    # Put anything you want here,
+    # even on multiple lines
+
+```
+
 ### Default configuration
 
 ```yaml
@@ -98,3 +133,4 @@ privoxy:
     # Put anything you want here,
     # even on multiple lines
 ```
+

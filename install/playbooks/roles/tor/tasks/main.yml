@@ -5,5 +5,24 @@
     name: tor
     state: present
 
+- name: Copy tor configuration file
+  notify: Restart Tor
+  template:
+    src: torrc.conf
+    dest: /etc/tor/torrc
+
+- name: Allow proxy access from LAN
+  ufw:
+    rule: allow
+    proto: tcp
+    port: '{{ tor.port }}'
+    comment: Tor proxy server
+    src: '{{ src }}'
+    direction: in
+  with_items:
+      - '{{ tor.accept_from }}'
+  loop_control:
+    loop_var: src
+
 - name: Activate AppArmor profile for tor
   shell: aa-enforce system_tor

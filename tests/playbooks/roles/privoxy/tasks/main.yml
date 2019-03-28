@@ -15,3 +15,13 @@
   changed_when: false
   args:
     warn: false
+
+- name: Check of requests are correctly forwarded to Tor
+  when: privoxy.tor_forward
+  shell: >-
+    curl -s https://check.torproject.org/
+    | grep "Congratulations. This browser is configured to use Tor."
+  args:
+    warn: false
+  changed_when: false
+
