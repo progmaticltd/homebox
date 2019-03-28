@@ -1,0 +1,22 @@
+# Homebox opendmarc AppArmor profile
+#include <tunables/global>
+
+/usr/sbin/opendmarc {
+  # inherit from abstractions
+  include <abstractions/base>
+  include <abstractions/nameservice>
+
+  # executables
+  /usr/sbin/opendmarc mr,
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+
+  # configuration files
+  /etc/resolv.conf r,
+  /etc/opendmarc.conf r,
+
+  # standard run file
+  /run/opendmarc/opendmarc.pid w,
+  
+  /usr/share/publicsuffix/ r,
+  /usr/share/publicsuffix/** r,
+}

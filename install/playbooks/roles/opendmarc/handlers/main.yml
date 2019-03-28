@@ -1,4 +1,11 @@
+---
+
 - name: Restart OpenDMARC service
   service:
     name: opendmarc
+    state: restarted
+
+- name: Restart AppArmor service
+  service:
+    name: apparmor
     state: restarted

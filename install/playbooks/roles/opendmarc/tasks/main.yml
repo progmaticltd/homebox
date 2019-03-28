@@ -1,17 +1,13 @@
 ---
 
 - name: Install opendmarc related packages
-  tags: opendmarc
+  tags: apt
   apt:
-    name: '{{ pkg }}'
+    name: opendmarc
     state: latest
-  with_items:
-    - opendmarc
-  loop_control:
-    loop_var: pkg
 
 - name: Comment all active socket for DMARC
-  tags: opendmarc
+  tags: config
   notify: Restart OpenDMARC service
   replace:
     path: /etc/default/opendmarc
@@ -19,7 +15,7 @@
     replace: '#SOCKET=\1'
 
 - name: Comment all active socket for DMARC
-  tags: opendmarc
+  tags: config
   notify: Restart OpenDMARC service
   replace:
     path: /etc/opendmarc.conf
@@ -28,7 +24,7 @@
 
 - name: Add tcp interface on localhost
   notify: Restart OpenDMARC service
-  tags: opendmarc
+  tags: config
   lineinfile:
     path: /etc/opendmarc.conf
     line: '{{ line }}'
@@ -38,9 +34,28 @@
   loop_control:
     loop_var: line
 
+# name server config ==========================================================
+
 - name: Generate DMARC record from settings
   tags: bind
   when: bind.install
   template:
     src: 20-dmarc.bind
     dest: /etc/homebox/dns-entries.d/20-dmarc.bind
+
+# AppArmor configuration ======================================================
+
+- name: Install opendmarc AppArmor profile
+  when: security.app_armor
+  tags: security, apparmor
+  template:
+    src: 'apparmor.d/usr.sbin.opendmarc.cf'
+    dest: '/etc/apparmor.d/usr.sbin.opendmarc'
+    force: no
+
+- name: Activate AppArmor profiles
+  when: security.app_armor
+  tags: security, apparmor
+  command: 'aa-enforce usr.sbin.opendmarc'
+  notify: Restart AppArmor service
+
