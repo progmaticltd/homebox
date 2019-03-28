@@ -14,8 +14,9 @@
   /etc/sogo/sogo.conf r,
   /etc/timezone r,
 
-  # Not sure why this is necessary
-  audit allow / r,
+  # sogo-tool regularly requests read access to the root filesystem.
+  # reported here: https://sogo.nu/bugs/view.php?id=4704
+  allow / r,
 
   # static content
   /usr/share/GNUstep/** r,

@@ -1,0 +1,38 @@
+---
+
+- name: Install packages required to autmatically update the rules
+  apt:
+    name: '{{ auto_update_rules_pkgs }}'
+    state: present
+
+- name: Create the list of rules files to read
+  notify: Restart privoxy
+  tags: config
+  template:
+    src: adblock-lists.conf
+    dest: /etc/privoxy/adblock-lists.conf
+    mode: 0644
+
+- name: Copy the privoxy rules update script
+  notify: Restart privoxy
+  tags: scripts
+  copy:
+    src: update-rules.sh
+    dest: /usr/local/bin/privoxy-update-rules.sh
+    mode: 0700
+
+- name: Run the script once to get the filter and actions list
+  notify: Restart privoxy
+  shell: >-
+    /usr/local/bin/privoxy-update-rules.sh
+    && touch /etc/privoxy/.rules-installed
+  changed_when: false
+  args:
+    creates: /etc/privoxy/.rules-installed
+
+- name: Add a cron task to download the rules automatically
+  template:
+    src: update-rules.cron
+    dest: /etc/cron.d/update-rules.cron
+    mode: 0700
+

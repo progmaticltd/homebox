@@ -65,3 +65,10 @@
 # DNS records (Autodiscover)
 - import_playbook: dns-records-autodiscover.yml
   when: bind.install and mail.autoconfig
+
+# Proxies test: privoxy and tor
+- import_playbook: privoxy.yml
+  when: privoxy.install
+  
+- import_playbook: tor.yml
+  when: tor.install

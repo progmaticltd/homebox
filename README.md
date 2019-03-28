@@ -77,7 +77,9 @@ in the official documentation.
   See [backup documentation](docs/backup.md) for details.
 - Jabber server, using [ejabberd](https://www.ejabberd.im/), with LDAP authentication,
   direct or offline file transfer and optional server to server communication.
-- Tor and [Privoxy](https://www.privoxy.org/) easy installation.
+- [Tor](https://www.torproject.org/) installation out of the box with possible customisation.
+- [Privoxy](https://www.privoxy.org/) easy installation, with adblock rules daily synchronisation, and optional tor chaining.
+- Embedded DNS server with DNSSEC and SSHFP (SSH fingerprint) records support
 - Automatic publication of DNS entries to Gandi DNS.
 - External IP address detection.
 - Static web site skeleton configuration, with https certificates.
