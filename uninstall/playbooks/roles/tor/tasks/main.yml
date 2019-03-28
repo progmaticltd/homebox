@@ -1,0 +1,35 @@
+---
+
+- name: Disable AppArmor profile for tor
+  shell: aa-disable system_tor
+
+- name: Uninstall tor
+  tags: apt
+  apt:
+    name: tor
+    state: absent
+    purge: yes
+
+- name: Remove firewall rules
+  ufw:
+    rule: allow
+    proto: tcp
+    port: '{{ tor.port }}'
+    comment: Tor proxy server
+    src: '{{ src }}'
+    direction: in
+    delete: yes
+  with_items:
+      - '{{ tor.accept_from }}'
+  loop_control:
+    loop_var: src
+
+- name: Remove folders
+  file:
+    path: '{{ path }}'
+    state: absent
+  with_items:
+      - /etc/tor
+      - /var/log/tor
+  loop_control:
+    loop_var: path
