@@ -36,4 +36,13 @@
   failed_when: direct_ip.stdout == proxied_ip.stdout or proxied_ip.stdout == ""
   changed_when: false
 
+- name: Check Tor with the official site
+  shell: >-
+    curl -s --socks5 127.0.0.1:9050
+    https://check.torproject.org/
+    | grep "Congratulations. This browser is configured to use Tor."
+  args:
+    warn: false
+  changed_when: false
+
     
