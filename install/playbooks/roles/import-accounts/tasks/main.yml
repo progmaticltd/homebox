@@ -2,12 +2,8 @@
 
 - name: Install isync package
   apt:
-    name: '{{ pkg }}'
+    name: isync
     state: latest
-  with_items:
-    - isync
-  loop_control:
-    loop_var: pkg
 
 # Get the import master account password
 - name: Initialise the import user password parameters

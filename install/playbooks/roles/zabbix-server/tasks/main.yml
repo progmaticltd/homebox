@@ -24,18 +24,17 @@
 - name: Install the required packages
   tags: apt
   apt:
-    name: "{{ pkg }}"
+    name: "{{ pkgs }}"
     state: present
-  with_items:
-    - zabbix-server-pgsql
-    - zabbix-agent
-    - zabbix-frontend-php
-    - python-psycopg2
-    - postgresql-client
-    - lm-sensors
-    - php-ldap
-  loop_control:
-    loop_var: pkg
+  vars:
+    pkgs:
+      - zabbix-server-pgsql
+      - zabbix-agent
+      - zabbix-frontend-php
+      - python-psycopg2
+      - postgresql-client
+      - lm-sensors
+      - php-ldap
 
 - name: Install a simple nginx frontend
   tags: nginx

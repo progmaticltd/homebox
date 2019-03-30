@@ -1,13 +1,12 @@
 ---
 
 - name: Install PostgreSQL database server
+  vars:
+    pkgs:
+      - postgresql-common
+      - postgresql-client
+      - postgresql
   apt:
-    name: "{{ pkg }}"
+    name: "{{ pkgs }}"
     state: present
-  with_items:
-    - postgresql-common
-    - postgresql-client
-    - postgresql
-  loop_control:
-    loop_var: pkg
 
