@@ -45,6 +45,9 @@ server is the excellent [dropbear](https://matt.ucc.asn.au/dropbear/dropbear.htm
 and shares the public key with OpenSSH:
 _You will not have the usual SSH warnings staying the signature has changed_.
 
+It is also possible to use a Yubikey, with or without a passphrase, to decrypt your drive. In
+this case, a safe script to enroll your key is provided.
+
 ## AppArmor enforcement
 
 All the daemons are carefully configured with an AppArmor profile, in enforce mode. This
