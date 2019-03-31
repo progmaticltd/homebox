@@ -564,7 +564,16 @@
     name: nslcd
     state: latest
 
-# Password quality enforcement
+# Password quality enforcement ================================================
+
+- name: Check if AppArmor nginx configuration already contains the line
+  register: line_found
+  shell: >-
+    grep -c pam_pwquality
+    /etc/pam.d/common-password
+  changed_when: false
+  failed_when: false
+
 - name: Build password quality parameters string
   when: passwords.quality.enforce
   tags: password
@@ -574,7 +583,7 @@
     - '{{ passwords.quality.params }}'
 
 - name: Configure password quality module
-  when: passwords.quality.enforce
+  when: passwords.quality.enforce and line_found.stdout == '0'
   tags: password
   replace:
     path: /etc/pam.d/common-password
