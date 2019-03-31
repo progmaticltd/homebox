@@ -22,8 +22,6 @@
   with_items:
     - '/etc/nginx/sites-available/webmail.{{ network.domain }}.conf'
     - '/etc/nginx/sites-enabled/webmail.{{ network.domain }}.conf'
-    - '/etc/nginx/sites-available/webmail.{{ network.domain }}-cert.conf'
-    - '/etc/nginx/sites-enabled/webmail.{{ network.domain }}-cert.conf'
   loop_control:
     loop_var: path
 
