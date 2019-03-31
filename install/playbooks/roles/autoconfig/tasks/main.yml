@@ -44,15 +44,23 @@
   tags: autoconfig, security, apparmor
   template:
     src: 'apparmor.d/local/autoconfig'
-    dest: '/etc/apparmor.d/local/autoconfig'
+    dest: '/etc/apparmor.d/local/nginx-autoconfig'
+
+- name: Check if AppArmor nginx configuration already contains the line
+  register: line_found
+  shell: >-
+    grep -c 'include <local/nginx-autoconfig>'
+    /etc/apparmor.d/usr.sbin.nginx
+  changed_when: false
+  failed_when: false
 
 - name: Add autoconfig AppAromor specific configuration
-  when: security.app_armor
+  when: security.app_armor and line_found.stdout == '0'
   tags: autoconfig, security, apparmor
   register: aa_config
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
-    line: '  #include <local/autoconfig>'
+    line: '  #include <local/nginx-autoconfig>'
     insertbefore: '# End of local includes for homebox'
 
 - name: Activate AppArmor profiles

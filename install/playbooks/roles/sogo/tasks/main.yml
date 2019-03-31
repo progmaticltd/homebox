@@ -137,7 +137,7 @@
     dest: '{{ profile.dest }}'
   with_items:
     - src: apparmor.d/local/nginx-sogo
-      dest: '/etc/apparmor.d/local/sogo.{{ network.domain }}'
+      dest: '/etc/apparmor.d/local/nginx-sogo'
     - src: apparmor.d/usr.sbin.sogod
       dest: '/etc/apparmor.d/usr.sbin.sogod'
     - src: apparmor.d/usr.sbin.sogo-ealarms-notify
@@ -151,8 +151,16 @@
   loop_control:
     loop_var: profile
 
+- name: Check if AppArmor nginx configuration already contains the line
+  register: line_found
+  shell: >-
+    grep -c 'include <local/nginx-sogo>'
+    /etc/apparmor.d/usr.sbin.nginx
+  changed_when: false
+  failed_when: false
+
 - name: Add sogo AppArmor specific configuration
-  when: security.app_armor
+  when: security.app_armor and line_found.stdout == '0'
   notify:
     - Activate AppArmor profile
     - Restart AppArmor service
@@ -160,7 +168,7 @@
   tags: security, apparmor
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
-    line: '  #include <local/sogo.{{ network.domain }}>'
+    line: '  #include <local/nginx-sogo>'
     insertbefore: '# End of local includes for homebox'
 
 - name: Remove the python / psycopg2 package
