@@ -20,13 +20,9 @@
 - name: Remove Development support packages
   tags: development
   apt:
-    name: '{{ pkg }}'
+    name: '{{ devel.packages }}'
     state: absent
     purge: yes
-  with_items:
-    - '{{ devel.packages }}'
-  loop_control:
-    loop_var: pkg
 
 - name: Remove rc files
   when: system.devel

@@ -3,13 +3,12 @@
 - name: Install required packages package
   tags: backup
   apt:
-    name: '{{ pkg }}'
+    name: '{{ pkgs }}'
     state: latest
-  with_items:
-    - borgbackup
-    - python3-psutil
-  loop_control:
-    loop_var: pkg
+  vars:
+    pkgs:
+      - borgbackup
+      - python3-psutil
 
 - name: Create the backup mount point
   tags: backup

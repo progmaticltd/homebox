@@ -11,6 +11,7 @@
   capability setuid,
   capability setgid,
 
+  /home/users/*/mails/maildir/* rw,
   /home/users/*/mails/maildir/dovecot-uidlist rw,
   /home/users/*/mails/maildir/dovecot-uidlist.lock rw,
   /home/users/*/mails/maildir/dovecot-uidlist.tmp rw,

@@ -1,0 +1,60 @@
+---
+
+- name: Check if zabbix has been installed
+  tags: apt
+  shell: dpkg -s '{{ pkg }}'
+  with_items:
+    - zabbix-server-pgsql
+    - zabbix-agent
+    - zabbix-frontend-php
+    - postgresql-client
+    - lm-sensors
+    - php-ldap
+  loop_control:
+    loop_var: pkg
+
+- name: Check if the services are up and running
+  tags: systemctl
+  shell: systemctl status '{{ service }}'
+  with_items:
+    - zabbix-server
+    - zabbix-agent
+  loop_control:
+    loop_var: service
+
+- name: Check the certificate using HTTPS
+  tags: cert
+  shell: >-
+    echo "GET /" |
+    openssl s_client
+    -servername zabbix.{{ network.domain }} -connect zabbix.{{ network.domain }}:443
+    | grep 'Verification: OK'
+
+- name: Set facts for zabbix password generation
+  set_fact:
+    admin_password_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/zabbix/admin.pwd"
+
+- name: Get the zabbix administration password
+  set_fact:
+    zabbix_admin_password: '{{ lookup("password", "{{ admin_password_path }}") }}'
+
+# Even when authentication fail, the API returns 200, and the error message
+# See https://support.zabbix.com/browse/ZBX-15908
+- name: Authenticate agains the API
+  register: login
+  uri:
+    url: 'https://zabbix.{{ network.domain }}/api_jsonrpc.php'
+    method: POST
+    body_format: json
+    body:
+      id: '1'
+      jsonrpc: '2.0'
+      method: 'user.login'
+      params:
+        user: "Admin"
+        password: "{{ zabbix_admin_password }}"
+    status_code: 200
+
+- name: Check if the login has been successful
+  set_fact:
+    result: '{{ login.json.result }}'

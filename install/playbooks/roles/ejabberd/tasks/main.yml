@@ -7,13 +7,12 @@
 
 - name: Install graphics library for thumbnails generation
   apt:
-    name: '{{ pkg }}'
+    name: '{{ pkgs }}'
     state: '{{ ejabberd.http_upload.thumbnail | ternary("present", "absent") }}'
-  with_items:
-    - graphicsmagick
-    - graphicsmagick-imagemagick-compat
-  loop_control:
-    loop_var: pkg
+  vars:
+    pkgs:
+      - graphicsmagick
+      - graphicsmagick-imagemagick-compat
 
 - name: Upload ejabberd configuration
   notify: Restart ejabberd

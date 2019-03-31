@@ -72,3 +72,8 @@
   
 - import_playbook: tor.yml
   when: tor.install
+
+# Zabbix server
+- import_playbook: zabbix.yml
+  when: zabbix.install
+  

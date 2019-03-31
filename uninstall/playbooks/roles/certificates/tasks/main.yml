@@ -24,6 +24,17 @@
   loop_control:
     loop_var: path
 
+- name: Remove nginx configuration
+  tags: nginx
+  file:
+    path: '{{ path }}'
+    state: absent
+  with_items:
+    - '/etc/nginx/sites-available/{{ certificate_fqdn }}-cert.conf'
+    - '/etc/nginx/sites-enabled/{{ certificate_fqdn }}-cert.conf'
+  loop_control:
+    loop_var: path
+
 # AppArmor configuration ======================================================
 
 - name: Remove web site AppArmor profile
@@ -44,18 +55,14 @@
     state: absent
 
 - name: Activate AppArmor profiles
+  notify: Restart nginx
   when: security.app_armor and aa_config.changed
   tags: security, apparmor
   command: 'aa-enforce usr.sbin.nginx'
 
-- name: Restart the nginx server to load the new configuration
-  tags: cert
-  service:
-    name: nginx
-    state: restarted
-
 # Remove certificates archive =================================================
 - name: Delete the certificates from your local machine
+  when: system.devel
   tags: cert,sync
   synchronize:
     mode: pull

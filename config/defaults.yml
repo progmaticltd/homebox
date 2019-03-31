@@ -238,6 +238,9 @@ security_default:
   lock_root_password: true
   alerts_email:
     - 'admin@{{ network.domain }}'
+  # various options when luks is installed
+  luks:
+    yubikey: false
 
 ###############################################################################
 # Dictionaries to install in the system

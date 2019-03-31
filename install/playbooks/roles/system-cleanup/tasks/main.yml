@@ -9,13 +9,11 @@
 - name: Remove useless packages
   tags: apt
   apt:
-    name: '{{ pkg }}'
+    name: '{{ pkgs }}'
     state: absent
-  with_items:
-    - bash-completion
-  loop_control:
-    loop_var: pkg
-
+  vars:
+    pkgs:
+      - bash-completion
 
 # At this point, it might be necessary to reboot
 # To reload all bash instances

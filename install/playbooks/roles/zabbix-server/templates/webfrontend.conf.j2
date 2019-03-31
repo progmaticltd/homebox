@@ -24,6 +24,7 @@ server {
 
 {% if zabbix.public == false %}
     # list of IP addresses to authorize
+    allow 127.0.0.1;
 {% for ip in zabbix.allow %}
     allow {{ ip }};
 {% endfor %}

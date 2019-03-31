@@ -11,8 +11,8 @@
     path: '{{ path }}'
     state: absent
   with_items:
-    - /etc/nginx/sites-available/transmission-web.conf
-    - /etc/nginx/sites-enabled/transmission-web.conf
+    - '/etc/nginx/sites-available/transmission.{{ network.domain }}.conf'
+    - '/etc/nginx/sites-enabled/transmission.{{ network.domain }}.conf'
   loop_control:
     loop_var: path
 
@@ -25,7 +25,7 @@
 - name: Uninstall the transmission package
   tags: apt
   apt:
-    update_cache: true
+    purge: true
     name: transmission-daemon
     state: absent
 

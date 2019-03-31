@@ -2,19 +2,18 @@
 
 - name: Install clamav antivirus suite
   register: clamav_packages
+  vars:
+    pkgs:
+      - clamav
+      - clamav-base
+      - clamav-daemon
+      - clamav-freshclam
+      - clamdscan
+      - clamsmtp
+      - ipcalc
   apt:
-    name: '{{ pkg }}'
+    name: '{{ pkgs }}'
     state: latest
-  with_items:
-    - clamav
-    - clamav-base
-    - clamav-daemon
-    - clamav-freshclam
-    - clamdscan
-    - clamsmtp
-    - ipcalc
-  loop_control:
-    loop_var: pkg
 
 - name: Set up the configuration file
   notify: Restart clamav services
