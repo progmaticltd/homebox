@@ -161,6 +161,12 @@
   become: true
   become_user: postgres
 
+- name: Ensure the zabbix server FQDN resolves to localhost
+  tags: hosts
+  lineinfile:
+    path: /etc/hosts
+    line: '127.0.0.1    zabbix.{{ network.domain }}'
+
 - name: Remove the python / psycopg2 package
   when: system.devel == False
   tags: apt

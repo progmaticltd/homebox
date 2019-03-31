@@ -5,8 +5,8 @@
   apt:
     name: '{{ pkgs }}'
     state: present
-  pkgs:
-    vars:
+  vars:
+    pkgs:
       - postgresql
       - sogo-common
       - sogo

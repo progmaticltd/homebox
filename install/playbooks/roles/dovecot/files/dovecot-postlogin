@@ -12,8 +12,9 @@ DECRYPT_KEY=$(cat /etc/homebox/system-key)
 login_scripts=$(ls /etc/dovecot/login-scripts)
 
 # Call all the scripts in the folder /etc/dovecot/login-scripts,
+# These scrips are non blocking, and run as the user
 for script in $login_scripts; do
-    su $USER -c "DECRYPT_KEY=$DECRYPT_KEY /etc/dovecot/login-scripts/$script" &
+    su -m $USER -c "DECRYPT_KEY=$DECRYPT_KEY /etc/dovecot/login-scripts/$script" &
 done
 
 # Pass the hand back to dovecot
