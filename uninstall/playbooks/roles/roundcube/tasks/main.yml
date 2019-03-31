@@ -5,6 +5,7 @@
   apt:
     name: "{{ pkgs }}"
     state: absent
+    purge: yes
   vars:
     pkgs:
       - roundcube-pgsql
@@ -13,20 +14,20 @@
       - roundcube-plugins-extra
       - roundcube
 
-- name: Copy roundcube configuration
+- name: Remove roundcube nginx configuration
   tags: roundcube
   file:
-    path: '/etc/nginx/sites-available/webmail.{{ network.domain }}.conf'
+    path: '{{ path }}'
     state: absent
+  with_items:
+    - '/etc/nginx/sites-available/webmail.{{ network.domain }}.conf'
+    - '/etc/nginx/sites-enabled/webmail.{{ network.domain }}.conf'
+    - '/etc/nginx/sites-available/webmail.{{ network.domain }}-cert.conf'
+    - '/etc/nginx/sites-enabled/webmail.{{ network.domain }}-cert.conf'
+  loop_control:
+    loop_var: path
 
-- name: Activate roundcube web site
-  tags: roundcube
-  notify: Restart nginx
-  file:
-    path: '/etc/nginx/sites-enabled/webmail.{{ network.domain }}.conf'
-    state: absent
-
-- name: Create the directory for dovecot_impersonate plugin
+- name: Remove the roundcube configuration directory
   tags: roundcube
   file:
     path: /etc/roundcube

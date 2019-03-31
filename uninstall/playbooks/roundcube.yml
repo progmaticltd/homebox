@@ -9,5 +9,7 @@
     certificate:
       type: webmail
   roles:
-    - certificates
-    - roundcube
+    - role: certificates
+      tags: certs
+    - role: roundcube
+      tags: roundcube
