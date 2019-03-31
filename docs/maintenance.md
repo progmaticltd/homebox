@@ -173,8 +173,55 @@ systemctl restart nginx
 
 ## Restarting the system
 
-If you have installed the system with the main drive encrypted using LUKS, the only
-important thing you need to remember is to do this locally only. Your system, when
-booting, will ask for the passphrase to decrypt the system drive.
+If you have installed the system with the main drive encrypted using LUKS, you need to
+keep a way to decrypt your drive, locally or remotely
 
-Doing this remotely would lock you out of your system till you are physically close to it.
+### With physical access to the machine and a passphrase
+
+Plug a screen and a keyboard, and type your passphrase when the system boot.
+
+### With physical access to the machine and a Yubikey
+
+If you choose to decrypt your drive with a Yubikey, a safe script is provided to enroll
+your key. Example:
+
+```sh
+root@osaka:~ # yubikey-enroll.sh
+This script will Register your Yubikey to decrypt the main drive.
+Plug your Yubikey that will be used to decrypt the hard drive. Continue (y/n) ?
+y
+Partition: /dev/sda5
+Key Slot 0: ENABLED
+Key Slot 1: DISABLED
+Key Slot 2: DISABLED
+Key Slot 3: DISABLED
+Key Slot 4: DISABLED
+Key Slot 5: DISABLED
+Key Slot 6: DISABLED
+Key Slot 7: ENABLED
+The key will be registered in the slot 1
+```
+  
+### Remotely over SSH
+
+When the system starts, a small SSH server is started, which allows you to decrypt the
+drive remotely.
+
+Example using a command line SSH client:
+
+```
+andre@london:~ $ ssh root@rodier.me
+
+To unlock root partition, and maybe others like swap, run `cryptroot-unlock`
+
+
+BusyBox v1.22.1 (Debian 1:1.22.0-19+b3) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+~ # cryptroot-unlock
+Please unlock disk sda5_crypt: 
+cryptsetup: sda5_crypt set up successfully
+~ # Connection to 192.168.32.12 closed by remote host.
+Connection to 192.168.32.12 closed.
+
+```

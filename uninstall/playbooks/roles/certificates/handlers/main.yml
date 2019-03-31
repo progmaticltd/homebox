@@ -1,0 +1,7 @@
+---
+
+- name: Restart nginx
+  tags: cert
+  service:
+    name: nginx
+    state: restarted

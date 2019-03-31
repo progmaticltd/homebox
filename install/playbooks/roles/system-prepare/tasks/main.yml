@@ -244,3 +244,18 @@
   template:
     src: sshfp.bind
     dest: /etc/homebox/dns-entries.d/01-sshfp.bind
+
+# LUKS management
+- name: Install Yubikey key decryption
+  tags: luks
+  when: security.luks.yubikey
+  apt:
+    name: yubikey-luks
+    state: present
+
+- name: Add a script to register the Yubikey
+  tags: luks
+  copy:
+    src: yubikey-enroll.sh
+    dest: /usr/local/sbin/yubikey-enroll.sh
+    mode: 0700

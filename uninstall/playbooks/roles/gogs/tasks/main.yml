@@ -73,8 +73,8 @@
     path: '{{ path }}'
     state: absent
   with_items:
-    - /etc/nginx/sites-available/gogs-web.conf
-    - /etc/nginx/sites-enabled/gogs-web.conf
+    - '/etc/nginx/sites-available/gogs.{{ network.domain }}.conf'
+    - '/etc/nginx/sites-enabled/gogs.{{ network.domain }}.conf'
   loop_control:
     loop_var: path
 

@@ -5,12 +5,6 @@
     name: privoxy
     state: present
 
-- name: Save original privoxy configuration
-  copy:
-    src: /etc/privoxy/config
-    dest: /etc/privoxy/config-default
-    remote_src: true
-
 - name: Create the local configuration directory if it does not exists
   delegate_to: localhost
   file:
