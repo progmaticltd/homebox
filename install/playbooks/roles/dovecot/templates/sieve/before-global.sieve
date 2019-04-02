@@ -32,6 +32,7 @@ if envelope :matches "to" "*@{{ network.domain }}" {
 if string :is "${from}{{ mail.recipient_delimiter[0] }}Sent" "${to}" {
   setflag "\\Seen";
   fileinto "Sent";
+  keep;
   stop;
 }
 

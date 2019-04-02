@@ -1,0 +1,3 @@
+# Remove user agent details
+/^User-Agent:/       IGNORE
+/^X-Mailer:/         IGNORE

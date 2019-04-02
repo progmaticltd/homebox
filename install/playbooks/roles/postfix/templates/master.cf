@@ -16,6 +16,7 @@ smtp      inet  n       -       y       -       -       smtpd
 #tlsproxy  unix  -       -       y       -       0       tlsproxy
 submission inet n       -       y       -       -       smtpd
   -o syslog_name=postfix/submission
+  -o header_checks=regexp:/etc/postfix/headers-check.cf
 #  -o smtpd_tls_security_level=encrypt
 #  -o smtpd_sasl_auth_enable=yes
 #  -o smtpd_reject_unlisted_recipient=no
