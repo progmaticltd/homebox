@@ -1,3 +1,3 @@
-# Remove user agent details
-/^User-Agent:/       IGNORE
-/^X-Mailer:/         IGNORE
+# Remove user agent versions
+/^User-Agent: ([a-z-_\s]+).*/           REPLACE User-Agent: $1
+/^X-Mailer: ([a-z-_\s]+).*/             REPLACE X-Mailer: $1
