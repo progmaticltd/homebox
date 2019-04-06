@@ -8,6 +8,7 @@ sieve:
     - report-spam.sieve
     - report-ham.sieve
     - tags-important.sieve
+    - draft-rules.sieve
 
 # Default dovecot packages to install
 dovecot:

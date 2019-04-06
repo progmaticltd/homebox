@@ -143,6 +143,12 @@ mail_default:
                             # it should go directly to the 'lists' folder.
                             # It is also useful to track which sites are selling or sharing your
                             # email address to other sites.
+  #############################################################################
+  # Sieve specific parameters
+  # set debug to true to create log files in the user's mail/sieve/logs.
+  # useful to debug sieve without setting the debug flag system wide
+  sieve:
+    debug: true
 
 ###############################################################################
 # Default password policies for users

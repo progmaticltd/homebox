@@ -141,17 +141,13 @@
     loop_var: file
 
 - name: Copy global sieve custom pipe scripts
-  tags: sieve
+  when: mail.antispam.active
+  tags: sieve, scripts
   notify: Restart dovecot
   template:
-    src: 'sieve/{{ file }}'
-    dest: '/etc/dovecot/sieve/{{ file }}'
+    src: learn-hamorspam.sh
+    dest: /etc/dovecot/sieve/learn-hamorspam.sh
     mode: '0755'
-  with_items:
-    - learn-spam.sh
-    - learn-ham.sh
-  loop_control:
-    loop_var: file
 
 - name: Configure the firewall for default access
   tags: security
