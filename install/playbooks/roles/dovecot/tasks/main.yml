@@ -176,6 +176,11 @@
   when: mail.impersonate.active
   import_tasks: impersonate.yml
     
+# Dovecot TFA implementation ==================================================
+- name: Add TFA 
+  when: mail.tfa.active
+  import_tasks: tfa.yml
+    
 # Import emails from other accounts ===========================================
 
 # This user account will impersonate each user, to store their emails after migration
@@ -298,6 +303,7 @@
 
 ################################################################################
 - name: Install packages needed for dovecot fts
+  tags: tfa
   when: mail.fts.active
   apt:
     update_cache: yes

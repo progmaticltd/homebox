@@ -149,6 +149,10 @@ mail_default:
   # useful to debug sieve without setting the debug flag system wide
   sieve:
     debug: true
+  #############################################################################
+  # Basic Two Factors Authentication
+  tfa:
+    active: false
 
 ###############################################################################
 # Default password policies for users
