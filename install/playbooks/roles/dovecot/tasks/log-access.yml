@@ -1,4 +1,9 @@
 ---
+- name: Install dovecot packages
+  tags: dovecot
+  apt:
+    name: '{{ dovecot.log_access_packages }}'
+    state: latest
 
 - name: Post login script to log access, IP addresses and country
   template:
