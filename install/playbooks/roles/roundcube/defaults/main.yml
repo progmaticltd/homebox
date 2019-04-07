@@ -35,6 +35,7 @@ roundcube_plugins:
 # - vcard_attachments
 # - virtuser_file
 # - virtuser_query
+#  - fail2ban
 
 roundcube_packages:
   - postgresql

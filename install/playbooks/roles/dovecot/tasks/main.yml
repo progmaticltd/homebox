@@ -178,8 +178,8 @@
     
 # Dovecot TFA implementation ==================================================
 - name: Add TFA 
-  when: mail.tfa.active
-  import_tasks: tfa.yml
+  when: mail.log_access.active
+  import_tasks: log-access.yml
     
 # Import emails from other accounts ===========================================
 
@@ -303,7 +303,6 @@
 
 ################################################################################
 - name: Install packages needed for dovecot fts
-  tags: tfa
   when: mail.fts.active
   apt:
     update_cache: yes

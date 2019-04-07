@@ -1,8 +1,0 @@
----
-
-- name: Copy TFA script
-  tags: tfa
-  template:
-    src: tfa.sh
-    dest: /etc/dovecot/login-scripts/00-tfa
-    mode: '0755'

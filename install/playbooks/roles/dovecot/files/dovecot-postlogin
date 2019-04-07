@@ -11,10 +11,44 @@ DECRYPT_KEY=$(cat /etc/homebox/system-key)
 # Get the list of scripts to run
 login_scripts=$(ls /etc/dovecot/login-scripts)
 
+log_error() {
+    echo "$@" 1>&2;
+}
+
 # Call all the scripts in the folder /etc/dovecot/login-scripts,
 # These scrips are non blocking, and run as the user
 for script in $login_scripts; do
-    su -m $USER -c "DECRYPT_KEY=$DECRYPT_KEY /etc/dovecot/login-scripts/$script" &
+
+    # Check the scripts requirements
+    scriptPath="/etc/dovecot/login-scripts/${script}"
+    runAsUser=$(grep -c '^# RunAs: User' "${scriptPath}")
+    runAsPostmaster=$(grep -c '^# RunAs: Postmaster' "${scriptPath}")
+    needDecriptKey=$(grep -c '^# NeedDecryptKey: Yes' "${scriptPath}")
+    blocking=$(grep -c '^# Blocking: Yes' "${scriptPath}")
+
+    # Email import scripts need the decryption key to access the password
+    if [ "$needDecriptKey" = "1" ]; then
+	PASS_ENV="DECRYPT_KEY=$DECRYPT_KEY"
+    fi
+
+    # Email import scripts run as the current user
+    # TFA runs as postmaster
+    if [ "$runAsUser" = "1" ]; then
+	RunAs="${USER}"
+    elif [ "$runAsPostmaster" = "1" ]; then
+	RunAs="postmaster"
+    else
+	# Run as user by default
+	RunAs="${USER}"
+    fi
+
+    # Run the script, in blocking mode or not
+    if [ "$blocking" = "1" ]; then
+	su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}"
+    else
+	su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}" &
+    fi
+    
 done
 
 # Pass the hand back to dovecot

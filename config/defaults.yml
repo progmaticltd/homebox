@@ -150,8 +150,8 @@ mail_default:
   sieve:
     debug: true
   #############################################################################
-  # Basic Two Factors Authentication
-  tfa:
+  # Log access times and IP addresses in the users directory
+  log_access:
     active: false
 
 ###############################################################################

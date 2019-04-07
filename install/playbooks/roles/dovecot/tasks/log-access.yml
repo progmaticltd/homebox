@@ -1,0 +1,7 @@
+---
+
+- name: Post login script to log access, IP addresses and country
+  template:
+    src: log-access.sh
+    dest: /etc/dovecot/login-scripts/00-log-access
+    mode: '0755'

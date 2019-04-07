@@ -1,5 +1,10 @@
 #!/bin/dash
 
+# Post login script for Dovecot
+# RunAs: User
+# NeedDecryptKey: Yes
+# Blocking: No
+
 # This script is run as the current logged in user.
 # It receives a decryption key as an environment variable,
 # to decrypt the account emails import configuration files
@@ -61,7 +66,8 @@ for import in $imports; do
     touch $lock
 
     # Log everything
-    logfile="logs/$import.log"
+    month=$(date --rfc-3339=seconds | cut -f 1,2 -d '-')
+    logfile="logs/${month}-${import}.log"
 
     # time the process
     date=$(date --rfc-3339=seconds)
