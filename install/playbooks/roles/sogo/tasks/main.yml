@@ -112,6 +112,7 @@
   tags: config
   set_fact:
     server_time_zone: '{{ tz_command.stdout }}'
+  changed_when: false
 
 - name: Copy sogo configuration
   tags: config

@@ -30,7 +30,7 @@
 - name: Copy roundcube configuration
   tags: roundcube
   template:
-    src: webmail-site.tpl
+    src: webmail-site.cf
     dest: '/etc/nginx/sites-available/webmail.{{ network.domain }}.conf'
     owner: root
     group: root
