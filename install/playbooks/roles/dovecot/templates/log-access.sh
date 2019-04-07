@@ -13,6 +13,7 @@ log_error() {
     echo "$@" 1>&2;
 }
 
+# Accessed through a webmail
 if [ "${IP}" = "127.0.0.1" ]; then
     exit 0
 fi
@@ -28,10 +29,6 @@ unixtime=$(date +%s)
 day=$(date --rfc-3339=seconds | cut -f 1 -d ' ')
 time=$(date --rfc-3339=seconds | cut -f 2 -d ' ')
 hourmin=$(date --rfc-3339=seconds | cut -f 2 -d ' ' | cut -f 1,2 -d ':')
-
-# Source should be always IMAP, unless when the webmail is used (roundcube or SOGo)
-# Not implemented yet
-source=imap
 
 # Create the security directory for the user
 test -d "${secdir}" || mkdir "${secdir}"
@@ -79,19 +76,28 @@ isIPv6=$(echo "$IP" | grep -c ":")
 if [ "${isPrivate}" = "1" ]; then
     countryCode='-'
     countryName='-'
+    lookup=''
 elif [ "${isIPv6}" = "1" ]; then
     lookup=$(geoiplookup6 "$IP")
 else
     lookup=$(geoiplookup "$IP")
 fi
 
-if [ "${isPrivate}" = "0" ]; then
+# Check if the country is found or not
+notFound=$(echo "${lookup}" | grep -c 'IP Address not found')
+
+if [ "${notFound}" = "1" ]; then
+    # Country not found, use Neverland ;-)
+    countryCode="XX"
+    countryName="Neverland"
+elif [ "${isPrivate}" = "0" ]; then
     countryCode=$(echo "${lookup}" | sed -r 's/.*: ([A-Z]{2}),.*/\1/g')
     countryName=$(echo "${lookup}" | cut -f 2 -d , | sed 's/^ //' | sed 's/ /_/g')
 fi
 
+
 # Add the IP to the list, need validatation
-echo "${day} ${time} ${unixtime} ${IP} ${countryCode} ${countryName} ${source} NEW" >> "${conlog}"
+echo "${day} ${time} ${unixtime} ${IP} ${countryCode} ${countryName} ${SOURCE} NEW" >> "${conlog}"
 sync "${conlog}"
 
 # End processing

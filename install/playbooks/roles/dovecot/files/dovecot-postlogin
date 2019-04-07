@@ -15,6 +15,44 @@ log_error() {
     echo "$@" 1>&2;
 }
 
+# Default source is IMAP
+SOURCE='imap'
+
+# Try to get the IP address from SOGo or Roundcube logs
+if [ "${IP}" = "127.0.0.1" ]; then
+
+    for app in sogo roundcube; do
+
+        logFile="/var/log/nginx/${app}-access.log"
+
+        # If the file does not exists, the software is not installed
+        test -f $logFile || continue
+
+        conDate=$(date +'%d/%b/%Y:%T')
+
+        line=$(grep -G ".*${conDate}.*POST" "${logFile}" | head -n 1)
+
+        # No match
+        if [ "${line}" = "" ]; then
+            # Set the IP to en empty value,
+            # it will try next webmail logs
+            IP="127.0.0.1"
+            SOURCE="Unknown"
+        else
+            # Get the IP from the first line
+            IP=$(echo "$line" | cut -f 1 -d ' ')
+            SOURCE=$app
+            break
+        fi
+    done
+fi
+
+# Let the script do whatever
+if [ "${IP}" = "" ]; then
+    IP="127.0.0.1"
+    SOURCE="Unknown"
+fi
+
 # Call all the scripts in the folder /etc/dovecot/login-scripts,
 # These scrips are non blocking, and run as the user
 for script in $login_scripts; do
@@ -25,28 +63,29 @@ for script in $login_scripts; do
     runAsPostmaster=$(grep -c '^# RunAs: Postmaster' "${scriptPath}")
     needDecriptKey=$(grep -c '^# NeedDecryptKey: Yes' "${scriptPath}")
     blocking=$(grep -c '^# Blocking: Yes' "${scriptPath}")
+    PASS_ENV="SOURCE=${SOURCE}"
 
     # Email import scripts need the decryption key to access the password
     if [ "$needDecriptKey" = "1" ]; then
-	PASS_ENV="DECRYPT_KEY=$DECRYPT_KEY"
+        PASS_ENV="${PASS_ENV} DECRYPT_KEY=$DECRYPT_KEY"
     fi
 
     # Email import scripts run as the current user
     # TFA runs as postmaster
     if [ "$runAsUser" = "1" ]; then
-	RunAs="${USER}"
+        RunAs="${USER}"
     elif [ "$runAsPostmaster" = "1" ]; then
-	RunAs="postmaster"
+        RunAs="postmaster"
     else
-	# Run as user by default
-	RunAs="${USER}"
+        # Run as user by default
+        RunAs="${USER}"
     fi
 
     # Run the script, in blocking mode or not
     if [ "$blocking" = "1" ]; then
-	su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}"
+        su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}"
     else
-	su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}" &
+        su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}" &
     fi
     
 done
