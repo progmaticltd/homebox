@@ -54,3 +54,12 @@
     - postmaster
   loop_control:
     loop_var: uid
+
+- name: Update all account email addresses
+  ldap_attr:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn={{ user.1.cn }},{{ ldap.users.dn }}'
+    name: intlMailAddr
+    values: '{{ user.1.aliases | default([]) }}'
+    state: exact
