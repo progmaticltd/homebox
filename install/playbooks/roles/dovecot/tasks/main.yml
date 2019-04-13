@@ -21,6 +21,13 @@
     path: /home/users
     mode: 0755
 
+- name: Make sure loopback interface is "trusted"
+  notify: Restart dovecot
+  replace:
+    path: /etc/dovecot/dovecot.conf
+    regexp: '^#?\s?login_trusted_networks.*'
+    replace: 'login_trusted_networks = 127.0.0.1 ::1'
+
 ################################################################################
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
@@ -141,17 +148,13 @@
     loop_var: file
 
 - name: Copy global sieve custom pipe scripts
-  tags: sieve
+  when: mail.antispam.active
+  tags: sieve, scripts
   notify: Restart dovecot
   template:
-    src: 'sieve/{{ file }}'
-    dest: '/etc/dovecot/sieve/{{ file }}'
+    src: learn-hamorspam.sh
+    dest: /etc/dovecot/sieve/learn-hamorspam.sh
     mode: '0755'
-  with_items:
-    - learn-spam.sh
-    - learn-ham.sh
-  loop_control:
-    loop_var: file
 
 - name: Configure the firewall for default access
   tags: security
@@ -179,6 +182,11 @@
 - name: Import imersonate tasks
   when: mail.impersonate.active
   import_tasks: impersonate.yml
+    
+# Dovecot TFA implementation ==================================================
+- name: Add TFA 
+  when: mail.log_access.active
+  import_tasks: log-access.yml
     
 # Import emails from other accounts ===========================================
 
@@ -389,13 +397,28 @@
 
 # fail2ban configuration ======================================================
 - name: Activate fail2ban for dovecot
-  tags: security,fail2ban
+  tags: security, fail2ban
   notify: Restart fail2ban
   ini_file:
     path: /etc/fail2ban/jail.conf
     option: enabled
     section: '{{ section }}'
     value: true
+    create: no
+  with_items:
+    - dovecot
+    - sieve
+  loop_control:
+    loop_var: section
+
+- name: Set fail2ban time
+  tags: security, fail2ban
+  notify: Restart fail2ban
+  ini_file:
+    path: /etc/fail2ban/jail.conf
+    option: bantime
+    section: '{{ section }}'
+    value: '{{ mail.fail2ban.time }}'
     create: no
   with_items:
     - dovecot

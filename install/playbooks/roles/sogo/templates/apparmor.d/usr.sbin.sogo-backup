@@ -11,6 +11,8 @@
   /usr/sbin/sogo-backup r,
   /usr/sbin/sogo-tool mr,
   /usr/sbin/sogo-tool rix,
+  /usr/bin/logger mr,
+  /usr/bin/logger rix,
 
   # system executables
   /bin/bash ix,
@@ -27,9 +29,35 @@
   /usr/bin/tty mr,
   /usr/bin/tty rix,
 
-  # Executables
+  # Executables and librairies
   /usr/lib/x86_64-linux-gnu/gconv/*.so mr,
-  /usr/lib/GNUstep/** m,
+  /lib/*/*.so mr,
+  /usr/lib/GNUstep/SaxDrivers-*/libxmlSAXDriver.sax/libxmlSAXDriver mr,
+  /usr/lib/GNUstep/SaxDrivers-*/versitCardsSaxDriver.sax/versitCardsSaxDriver mr,
+  /usr/lib/GNUstep/Frameworks/SOGo.framework/Versions/3/sogo/libSOGo.so.3.2.6 mr,
+  /usr/lib/GNUstep/WOxElemBuilders-*/WEExtensions.wox/WEExtensions mr,
+  /usr/lib/GNUstep/WOxElemBuilders-*/WOExtensions.wox/WOExtensions mr,
+  /usr/lib/GNUstep/WOxElemBuilders-*/SOGoElements.wox/SOGoElements mr,
+  /usr/lib/GNUstep/SoProducts-*/SoCore.sxp/SoCore mr,
+  /usr/lib/GNUstep/GDLAdaptors-*/MySQL.gdladaptor/MySQL mr,
+  /usr/lib/GNUstep/GDLAdaptors-*/PostgreSQL.gdladaptor/PostgreSQL mr,
+  /usr/lib/GNUstep/SOGo/Appointments.SOGo/Appointments mr,
+  /usr/lib/GNUstep/SOGo/ContactsUI.SOGo/ContactsUI mr,
+  /usr/lib/GNUstep/SOGo/CommonUI.SOGo/CommonUI mr,
+  /usr/lib/GNUstep/SOGo/Contacts.SOGo/Contacts mr,
+  /usr/lib/GNUstep/SOGo/MainUI.SOGo/MainUI mr,
+  /usr/lib/GNUstep/SOGo/MailerUI.SOGo/MailerUI mr,
+  /usr/lib/GNUstep/SOGo/AdministrationUI.SOGo/AdministrationUI mr,
+  /usr/lib/GNUstep/SOGo/SchedulerUI.SOGo/SchedulerUI mr,
+  /usr/lib/GNUstep/SOGo/PreferencesUI.SOGo/PreferencesUI mr,
+  /usr/lib/GNUstep/SOGo/MailPartViewers.SOGo/MailPartViewers mr,
+  /usr/lib/GNUstep/SOGo/Mailer.SOGo/Mailer mr,
+
+  # GNUStep files
+  /usr/lib/GNUstep/** r,
+
+  # Zone info
+  /usr/share/zoneinfo/** r,
 
   # folders (for stats?)
   / r,

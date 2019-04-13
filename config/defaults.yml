@@ -11,6 +11,9 @@ network_default:
   external_ip: auto
   backup_ip: ~
 
+# Shortcut notation to the backup directory
+backup_directory: "{{ playbook_dir }}/../../backup/{{ network.domain }}"
+  
 # Standard policies
 policies:
   system:
@@ -51,16 +54,16 @@ ldap:
       - 'root@{{ network.domain }}'
 
   # password params
-  roPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/readonly.pwd {{ policies.system.password }}"
-  managerPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/manager.pwd {{ policies.system.password }}"
-  adminPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/admin.pwd {{ policies.system.password }}"
-  postmasterPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/postmaster.pwd {{ policies.system.password }}"
+  roPasswdParams: "{{ backup_directory }}/ldap/readonly.pwd {{ policies.system.password }}"
+  managerPasswdParams: "{{ backup_directory }}/ldap/manager.pwd {{ policies.system.password }}"
+  adminPasswdParams: "{{ backup_directory }}/ldap/admin.pwd {{ policies.system.password }}"
+  postmasterPasswdParams: "{{ backup_directory }}/ldap/postmaster.pwd {{ policies.system.password }}"
 
 
 # Encryption parameters
 encryption:
-  systemKeyParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/encryption/system-key.pwd {{ policies.system.passphrase }}"
-  backupKeyParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/encryption/backup-key.pwd {{ policies.system.passphrase }}"
+  systemKeyParams: "{{ backup_directory }}/encryption/system-key.pwd {{ policies.system.passphrase }}"
+  backupKeyParams: "{{ backup_directory }}/encryption/backup-key.pwd {{ policies.system.passphrase }}"
 
 ###############################################################################
 # Email related default options
@@ -107,6 +110,7 @@ mail_default:
                             # be careful, bouncing external emails is a way to expose clamav
                             # usage
     quarantine: yes         # Place emails with a virus in quarantine, for further analysis
+    use_proxy: false        # use tor / privoxy to dowload updates
   #############################################################################
   impersonate:              # Activate dovecot "master" user feature, ideal for families and
                             # communities
@@ -143,6 +147,20 @@ mail_default:
                             # it should go directly to the 'lists' folder.
                             # It is also useful to track which sites are selling or sharing your
                             # email address to other sites.
+  #############################################################################
+  # Sieve specific parameters
+  # set debug to true to create log files in the user's mail/sieve/logs.
+  # useful to debug sieve without setting the debug flag system wide
+  sieve:
+    debug: true
+  #############################################################################
+  # Log access times and IP addresses in the users directory
+  log_access:
+    active: false
+  #############################################################################
+  # Fail2ban parameters
+  fail2ban:
+    time: 3600
 
 ###############################################################################
 # Default password policies for users
@@ -421,7 +439,10 @@ bind_default:
   ttl: 3600               # 1 hour
   # General MX configuration
   mx_priority: 10
-  # List of backup MX records, if the server is unreachable
+  # List of backup MX records. If the server is unreachable,
+  # emails will be delivered to this server. Along with email
+  # import (see above), this feature prevent loss of emails
+  # if your server is offline.
   # The default is an empty list
   mx_backup: []
   # Example of records
@@ -440,6 +461,7 @@ bind_default:
   #  - src: 72.13.58.64
   #    comment: https://dnssec-analyzer.verisignlabs.com
   # DNSSEC options
+  # Not fully operational yet, need more testing.
   dnssec:
     active: false
     algo: RSASHA256

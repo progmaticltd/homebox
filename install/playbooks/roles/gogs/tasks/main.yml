@@ -68,7 +68,7 @@
     name: gogs
     owner: gogs
 
-- name: Update packages cache
+- name: Remove Python pgsql package
   when: gogs_pkg.changed
   tags: apt
   apt:
@@ -148,8 +148,19 @@
     - Restart AppArmor service
   register: aa_config
   template:
-    src: apparmor.d/local/gogs-web
-    dest: /etc/apparmor.d/local/nginx-gogs-web
+    src: '{{ profile.src }}'
+    dest: '{{ profile.dest }}'
+  with_items:
+    - src: apparmor.d/local/nginx-gogs-web.cf
+      dest: /etc/apparmor.d/local/nginx-gogs-web
+    - src: apparmor.d/usr.bin.gogs.cf
+      dest: /etc/apparmor.d/usr.bin.gogs
+    - src: apparmor.d/opt.gogs.gogs.cf
+      dest: /etc/apparmor.d/opt.gogs.gogs
+    - src: apparmor.d/opt.gogs.vendor.pkgr.processes.web.cf
+      dest: /etc/apparmor.d/opt.gogs.vendor.pkgr.processes.web
+  loop_control:
+    loop_var: profile
 
 - name: Check if AppArmor nginx configuration already contains the line
   register: line_found

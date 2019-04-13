@@ -77,5 +77,11 @@ server {
         fastcgi_pass unix:/run/php/php7.0-fpm.sock;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_index index.php;
+
+        # forward user's IP address
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        real_ip_header X-ORIGINATING-IP;
     }
 }
