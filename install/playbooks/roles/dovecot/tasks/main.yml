@@ -26,7 +26,7 @@
   replace:
     path: /etc/dovecot/dovecot.conf
     regexp: '^#?\s?login_trusted_networks.*'
-    replace: 'login_trusted_networks = 127.0.0.1'
+    replace: 'login_trusted_networks = 127.0.0.1 ::1'
 
 ################################################################################
 # At this point, the certificates should have been created already #############

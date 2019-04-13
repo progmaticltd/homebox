@@ -7,7 +7,11 @@
 
 # If remote IP is 127.0.0.1, exit
 # This is probably a webmail
-# TODO: pass the IP address from the webmail
+# There is an attempt from the parent script
+# to guess the real IP address , although
+# it can be wrong for sites with a lot of
+# email users, but it should be enough for a family
+# or small numbers of users
 
 log_error() {
     echo "$@" 1>&2;
@@ -24,7 +28,6 @@ fi
 
 # Initialise the environment
 secdir="${HOME}/mails/security"
-conlog="${secdir}/connections.log"
 unixtime=$(date +%s)
 day=$(date --rfc-3339=seconds | cut -f 1 -d ' ')
 time=$(date --rfc-3339=seconds | cut -f 2 -d ' ')
