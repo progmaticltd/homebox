@@ -1,0 +1,12 @@
+# Last Modified: Sat Apr 13 10:16:51 2019
+#include <tunables/global>
+
+/opt/gogs/vendor/pkgr/processes/web {
+  #include <abstractions/base>
+  #include <abstractions/bash>
+
+  /bin/dash ix,
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  
+  /opt/gogs/vendor/pkgr/processes/web r,
+}

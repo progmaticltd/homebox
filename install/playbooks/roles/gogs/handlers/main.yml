@@ -14,7 +14,15 @@
     state: restarted
 
 - name: Activate AppArmor profile
-  command: 'aa-enforce usr.sbin.nginx'
+  shell: >-
+    aa-enforce {{ profile }}
+  with_items:
+    - usr.sbin.nginx
+    - usr.bin.gogs
+    - opt.gogs.gogs
+    - opt.gogs.vendor.pkgr.processes.web
+  loop_control:
+    loop_var: profile
 
 - name: Restart gogs web service
   service:

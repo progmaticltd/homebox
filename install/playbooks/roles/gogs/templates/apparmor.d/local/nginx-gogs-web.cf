@@ -13,3 +13,6 @@
   # Proxy configuration
   /var/lib/nginx/proxy/ rw,
   /var/lib/nginx/proxy/** rwk,
+
+  # Allow to run git with its own profile
+  /usr/bin/git Pix,
