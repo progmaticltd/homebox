@@ -397,13 +397,28 @@
 
 # fail2ban configuration ======================================================
 - name: Activate fail2ban for dovecot
-  tags: security,fail2ban
+  tags: security, fail2ban
   notify: Restart fail2ban
   ini_file:
     path: /etc/fail2ban/jail.conf
     option: enabled
     section: '{{ section }}'
     value: true
+    create: no
+  with_items:
+    - dovecot
+    - sieve
+  loop_control:
+    loop_var: section
+
+- name: Set fail2ban time
+  tags: security, fail2ban
+  notify: Restart fail2ban
+  ini_file:
+    path: /etc/fail2ban/jail.conf
+    option: bantime
+    section: '{{ section }}'
+    value: '{{ mail.fail2ban.time }}'
     create: no
   with_items:
     - dovecot
