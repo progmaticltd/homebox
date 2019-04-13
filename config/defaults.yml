@@ -245,7 +245,7 @@ firewall_default:
         comment: 'Allow SMTP connections to other servers'
       - dest: any
         port: 110,995,143,993
-        comment: 'Allow the recuperation of emails on other servers (POP/IMAP)'
+        comment: 'Allow the retrieval of emails from other servers (POP/IMAP)'
 
 ###############################################################################
 # Extra security values
@@ -578,3 +578,8 @@ sogo_default:
   language: English
   enable_public_access: false
   password_change: true
+
+# Countries policies.
+countries_default:
+  safe: any
+  unsafe: []
