@@ -59,6 +59,8 @@ Fail2ban is integrated and configured, to automatically blacklist IP addresses u
 spammers to attack your server. It makes this kind of attacks inefficient, and saves your
 bandwidth too.
 
+The duration of jail is customisable for jabber and email services.
+
 ## LDAP Authentication
 
 All the user accounts are saved in the LDAP database, using the OpenLDAP package in
@@ -240,8 +242,8 @@ RoundCube, comes with the following plugins / features activated by default:
 - New mail desktop notification
 - Password modification
 - IMAP Subscriptions management
-- Thunderbird labels
 - Hotkeys support (Ctrl+Enter to send an email)
+- Log the real client IP address to the mail server
 
 When the master user functionality has been activated, the impersonate plugin is also
 installed, allowing you to inspect any user's emails from the webmail.
@@ -272,6 +274,14 @@ plugins:
 You do not need to configure your mail client to copy emails to the sent folder, this is
 done automatically for you. This is a lot of time saved, especially when sending big
 emails with attachments: You don't need to upload an email twice.
+
+## Email access logging
+
+Each access to the email server is logged in real time, with the following information:
+
+- Source IP address
+- Country
+- Channel (RoundCube, SOGo or IMAP)
 
 # Calendars and address books
 
