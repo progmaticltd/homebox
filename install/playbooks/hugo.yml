@@ -1,5 +1,18 @@
 ---
 
+# Create the default certificate
+- hosts: homebox
+  vars:
+    redirect: true
+    certificate:
+      type: '@'
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+  roles:
+    - role: certificates
+      tags: certificates
+
 # Use Hugo for the main site (https://gohugo.io/)
 - hosts: homebox
   vars:
