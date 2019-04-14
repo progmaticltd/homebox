@@ -1,12 +1,24 @@
-#!/bin/dash
+#!/bin/bash
+# Postlogin script for Dovecot.
+# This script will calls other scripts in /etc/dovecot/login-scripts
+# Each script may contains specific comments like below:
+# Blocking: Yes
+# RunAsUser: Yes
+# NeedDecryptKey: No
+# Explanation:
+# - Blocking: <Yes|No>
+#   Wait for the script execution to be finished before continuing,
+#   This might be used to block login, for instance from some countries or to use TFA
+# - RunAsUser: <User|Postmaster>
+#   User: Run the script as the user that tries to login, by dropping privileges.
+#   This is useful, for instance to import emails from other servers
+#   Postmaster: Run as the postmaster user, with more privileges
+# - NeedDecryptKey: <Yes|No>
+#   The decryption key is needed for instance when importing emails from other platforms,
+#   to decrypt the import settings (e.g. credentials)
 
-# Very simple post-login script for Dovecot
+# Make sure to remember the previous command
 INITIAL_COMMAND="$@"
-
-# Pass the sytem key to the login scripts,
-# So they can decrypt sensitive content.
-# A future version would probably GPG keys for each user.
-DECRYPT_KEY=$(cat /etc/homebox/system-key)
 
 # Get the list of scripts to run
 login_scripts=$(ls /etc/dovecot/login-scripts)
@@ -18,39 +30,27 @@ log_error() {
 # Default source is IMAP
 SOURCE='imap'
 
-# Try to get the IP address from SOGo or Roundcube logs
 if [ "${IP}" = "127.0.0.1" ]; then
+    # SOGo users can login using their ID or their full name. However, the
+    # SOGo daemon is sending the ID command after the authentication
+    # instead of sending it before.
+    # Details here: https://sogo.nu/bugs/view.php?id=2979
 
-    for app in sogo roundcube; do
+    # This part of the script tries to get the real IP address
+    # from SOGo successful connection entries in the SOGo log file
 
-        logFile="/var/log/nginx/${app}-access.log"
+    # Build a regular expression to get the last successful entry from this user
+    fullName=$(getent passwd "$USER" | cut -f 5 -d :)
+    regex="successful login from '[^']+' for user '(${USER}|${fullName})'"
+    found=$(tail -n 1000 /var/log/sogo/sogo.log | grep -E "$regex" | tail -n 1)
 
-        # If the file does not exists, the software is not installed
-        test -f $logFile || continue
-
-        conDate=$(date +'%d/%b/%Y:%T')
-
-        line=$(grep -G ".*${conDate}.*POST" "${logFile}" | head -n 1)
-
-        # No match
-        if [ "${line}" = "" ]; then
-            # Set the IP to en empty value,
-            # it will try next webmail logs
-            IP="127.0.0.1"
-            SOURCE="Unknown"
-        else
-            # Get the IP from the first line
-            IP=$(echo "$line" | cut -f 1 -d ' ')
-            SOURCE=$app
-            break
-        fi
-    done
-fi
-
-# Let the script do whatever
-if [ "${IP}" = "" ]; then
-    IP="127.0.0.1"
-    SOURCE="Unknown"
+    # If this is empty, then the user might access the platform using a local IMAP connection
+    if [ "$found" = "" ]; then
+        log_error "Cannot find real IP for logged in user '$USER'"
+    else
+        IP=$(echo "$found" | sed -E "s/.*successful login from '([^']+)'.*/\\1/")
+        SOURCE=SOGo
+    fi
 fi
 
 # Call all the scripts in the folder /etc/dovecot/login-scripts,
@@ -67,11 +67,15 @@ for script in $login_scripts; do
 
     # Email import scripts need the decryption key to access the password
     if [ "$needDecriptKey" = "1" ]; then
+        # Pass the sytem key to the login scripts,
+        # So they can decrypt sensitive content.
+        # A future version would probably GPG keys for each user.
+        DECRYPT_KEY=$(cat /etc/homebox/system-key)
         PASS_ENV="${PASS_ENV} DECRYPT_KEY=$DECRYPT_KEY"
     fi
 
     # Email import scripts run as the current user
-    # TFA runs as postmaster
+    # For instance, a TFA could run as postmaster
     if [ "$runAsUser" = "1" ]; then
         RunAs="${USER}"
     elif [ "$runAsPostmaster" = "1" ]; then

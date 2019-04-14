@@ -39,8 +39,8 @@
 - name: Initialise the sogo database password parameters
   tags: facts
   set_fact:
-    sogo_password_params: "{{ playbook_dir }}/../../backup/{{ network.domain }}/postgresql/sogo.pwd {{ policies.system.password }}"
-    roPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
+    sogo_password_params: "{{ backup_directory }}/postgresql/sogo.pwd {{ policies.system.password }}"
+    roPasswdParams: "{{ backup_directory }}/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
 
 - name: Create the sogo database account password
   tags: facts
