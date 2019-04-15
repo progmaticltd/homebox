@@ -156,7 +156,7 @@ mail_default:
   #############################################################################
   # Log access times and IP addresses in the users directory
   log_access:
-    active: true
+    active: false
   #############################################################################
   # Fail2ban parameters
   fail2ban:
