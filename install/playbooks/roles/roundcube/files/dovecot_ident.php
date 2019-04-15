@@ -24,7 +24,8 @@ class dovecot_ident extends rcube_plugin
     {
         $remoteIP = $_SERVER['REMOTE_ADDR'];
         $identInfo = [
-            'x-originating-ip' => $remoteIP
+            'x-originating-ip' => $remoteIP,
+            'x-connected-ip' => '127.0.0.2'
         ];
 
         if ($args['ident']) {

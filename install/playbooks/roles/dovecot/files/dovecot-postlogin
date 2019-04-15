@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 # Postlogin script for Dovecot.
 # This script will calls other scripts in /etc/dovecot/login-scripts
 # Each script may contains specific comments like below:
@@ -42,6 +42,8 @@ if [ "${IP}" = "127.0.0.1" ]; then
     # Build a regular expression to get the last successful entry from this user
     fullName=$(getent passwd "$USER" | cut -f 5 -d :)
     regex="successful login from '[^']+' for user '(${USER}|${fullName})'"
+
+    # Get the last successful entry in the SOGo logs, for this user
     found=$(tail -n 1000 /var/log/sogo/sogo.log | grep -E "$regex" | tail -n 1)
 
     # If this is empty, then the user might access the platform using a local IMAP connection
@@ -51,6 +53,9 @@ if [ "${IP}" = "127.0.0.1" ]; then
         IP=$(echo "$found" | sed -E "s/.*successful login from '([^']+)'.*/\\1/")
         SOURCE=SOGo
     fi
+elif [ "$LOCAL_IP" = "127.0.0.2" ]; then
+    # A simple trick to recognise RoundCube logins
+    SOURCE=Roundcube
 fi
 
 # Call all the scripts in the folder /etc/dovecot/login-scripts,
