@@ -1,0 +1,75 @@
+#!/bin/dash
+
+# Check if the current IP address has changed since the last time, and act accordingly
+current_ip=$1
+
+if [ "$current_ip" = "" ]; then
+    current_ip="auto"
+fi
+
+# File that contains external IP address information
+ip_file=/etc/homebox/external-ip
+
+# Has the IP address changed since the last time?
+changed=0
+
+# The geoip tool must be installed
+test -x /usr/bin/geoiplookup || exit 1
+
+# Get our current IP address from an external web site
+if [ "$current_ip" = "auto" ]; then
+    
+    current_ip=$(/usr/local/bin/external-ip -u /etc/external-ip.conf)
+
+    if [ -f "$ip_file" ]; then
+
+        # Read the previous IP and compare with the previous one
+        previous_ip=$(grep EXTERNAL_IP "$ip_file" | cut -f 2 -d '=')
+
+        if [ "$current_ip" != "$previous_ip" ]; then
+            changed=1
+        fi
+    else
+        changed=1
+    fi
+fi
+
+# Exit if the IP address has not changed
+if [ "$changed" = "0" ]; then
+    exit 0
+fi
+
+# This will be displayed in the logs or sent by email
+if [ "$previous_ip" != "" ]; then
+    echo "External IP address changed: $previous_ip => $current_ip"
+fi
+
+# The IP address has changed, update the IP address file information
+now=$(date --iso-8601=seconds)
+isIPv6=$(echo "$current_ip" | grep -c ":")
+
+# Create a log line with the origin
+if [ "${isIPv6}" = "1" ]; then
+    lookup=$(geoiplookup6 "$current_ip")
+else
+    lookup=$(geoiplookup "$current_ip")
+fi
+
+# Check if the country is found or not
+notFound=$(echo "${lookup}" | grep -c 'IP Address not found')
+
+if [ "${notFound}" = "1" ]; then
+    # Country not found, use Neverland ?
+    countryCode="XX"
+    countryName="Neverland"
+else
+    countryCode=$(echo "${lookup}" | sed -r 's/.*: ([A-Z]{2}),.*/\1/g')
+    countryName=$(echo "${lookup}" | cut -f 2 -d , | sed 's/^ //' | sed 's/ /_/g')
+fi
+
+# Rebuild the external IP information
+echo "# External IP address (updated $now)" >"$ip_file"
+echo "EXTERNAL_IP=$current_ip"   >>"$ip_file"
+echo "COUNTRY_CODE=$countryCode" >>"$ip_file"
+echo "COUNTRY_NAME=$countryName" >>"$ip_file"
+

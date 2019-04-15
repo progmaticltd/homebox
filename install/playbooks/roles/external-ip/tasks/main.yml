@@ -4,6 +4,11 @@
 # Get the external IP address, from configuration file,
 # or automatically through a script
 
+- name: Install the required packages
+  apt:
+    name: '{{ ip_check_packages }}'
+    state: present
+
 - name: Copy the configuration file
   when: network.external_ip == "auto"
   tags: scripts
@@ -11,13 +16,32 @@
     src: external-ip.conf
     dest: /etc/external-ip.conf
 
-- name: Copy the external IP address detection script
-  when: network.external_ip == "auto"
+- name: Copy the external IP address detection scripts
   tags: scripts
   copy:
-    src: external-ip
-    dest: /usr/local/bin/external-ip
+    src: '{{ script }}'
+    dest: '/usr/local/bin/{{ script }}'
     mode: 0755
+  with_items:
+    - external-ip
+    - external-ip-check
+  loop_control:
+    loop_var: script
+
+- name: Configure the daily IP address checking
+  cron:
+    hour: '0'
+    minute: '0'
+    name: External IP check
+    job: /usr/local/bin/external-ip-check '{{ network.external_ip }}'
+    cron_file: external-ip-check
+    user: root
+
+- name: Run the IP check once to get the current IP Address
+  shell: >-
+    /usr/local/bin/external-ip-check '{{ network.external_ip }}'
+  args:
+    creates: /etc/homebox/external-ip
 
 - name: Run the script to get the external IP address automatically
   tags: facts
