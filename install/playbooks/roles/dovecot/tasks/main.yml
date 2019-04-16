@@ -183,11 +183,11 @@
   when: mail.impersonate.active
   import_tasks: impersonate.yml
     
-# Dovecot TFA implementation ==================================================
-- name: Add TFA 
-  when: mail.log_access.active
-  import_tasks: log-access.yml
-    
+# Dovecot access check script =================================================
+- name: Import dovecot access check tasks
+  when: mail.access_check.active
+  import_tasks: access-check.yml
+
 # Import emails from other accounts ===========================================
 
 # This user account will impersonate each user, to store their emails after migration

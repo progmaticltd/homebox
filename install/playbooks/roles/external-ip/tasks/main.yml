@@ -10,7 +10,6 @@
     state: present
 
 - name: Copy the configuration file
-  when: network.external_ip == "auto"
   tags: scripts
   copy:
     src: external-ip.conf

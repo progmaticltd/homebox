@@ -182,8 +182,17 @@
     src: 'apparmor.d/local/jabber-frontend'
     dest: '/etc/apparmor.d/local/nginx-jabber-frontend'
 
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=860951
+- name: Allow ejabberdctl to run su
+  tags: config, apparmor
+  replace:
+    path: /etc/apparmor.d/usr.sbin.ejabberdctl
+    regexp: '(\s+/bin/su\s+)r,$'
+    replace: '\1mr,'
+
 - name: Check if AppArmor nginx configuration already contains the line
   register: line_found
+  tags: facts,apparmor
   shell: >-
     grep -c 'include <local/nginx-jabber-frontend>'
     /etc/apparmor.d/usr.sbin.nginx

@@ -83,6 +83,7 @@
     - /etc/skel/mails/sieve/logs
     - /etc/skel/mails/indexes
     - /etc/skel/mails/import
+    - /etc/skel/mails/security
   loop_control:
     loop_var: dir
 

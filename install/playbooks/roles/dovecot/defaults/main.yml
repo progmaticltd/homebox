@@ -41,7 +41,10 @@ dovecot:
     lda_mailbox_autosubscribe: no
   # Authorized characters for the username
   username_chars: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890.-_@
-  # Packages used to get the country from an IP address
-  log_access_packages:
+  # Packages used to check if the access should be granted or not
+  access_check_packages:
     - geoip-bin
     - geoip-database
+    - ipcalc
+    - makepasswd
+    - sendxmpp

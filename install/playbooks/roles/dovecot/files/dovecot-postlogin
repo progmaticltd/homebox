@@ -23,6 +23,12 @@ INITIAL_COMMAND="$@"
 # Get the list of scripts to run
 login_scripts=$(ls /etc/dovecot/login-scripts)
 
+# Exit codes
+CONTINUE=0
+WARNING=1
+DENIED=2
+ERROR=3
+
 log_error() {
     echo "$@" 1>&2;
 }
@@ -30,7 +36,14 @@ log_error() {
 # Default source is IMAP
 SOURCE='imap'
 
-if [ "${IP}" = "127.0.0.1" ]; then
+if [ "$IP" = "127.0.0.1" ]; then
+    
+    # The first connection with Roundcube uses 127.0.0.1 as a remote IP
+    # just ignores it
+    if [ "$IP" = "127.0.0.2" ]; then
+        exit 0
+    fi
+    
     # SOGo users can login using their ID or their full name. However, the
     # SOGo daemon is sending the ID command after the authentication
     # instead of sending it before.
@@ -47,8 +60,10 @@ if [ "${IP}" = "127.0.0.1" ]; then
     found=$(tail -n 1000 /var/log/sogo/sogo.log | grep -E "$regex" | tail -n 1)
 
     # If this is empty, then the user might access the platform using a local IMAP connection
+    # Do not accept connection from loopback
     if [ "$found" = "" ]; then
         log_error "Cannot find real IP for logged in user '$USER'"
+        exit $CONTINUE
     else
         IP=$(echo "$found" | sed -E "s/.*successful login from '([^']+)'.*/\\1/")
         SOURCE=SOGo
@@ -68,6 +83,11 @@ for script in $login_scripts; do
     runAsPostmaster=$(grep -c '^# RunAs: Postmaster' "${scriptPath}")
     needDecriptKey=$(grep -c '^# NeedDecryptKey: Yes' "${scriptPath}")
     blocking=$(grep -c '^# Blocking: Yes' "${scriptPath}")
+
+    # The file that will contains the warning message to send to the user
+    warningsFile="/home/users/$USER/mails/security/last-warnings.txt"
+    
+    # Add the source (Roundcube/SOGo/IMAP)
     PASS_ENV="SOURCE=${SOURCE}"
 
     # Email import scripts need the decryption key to access the password
@@ -91,9 +111,33 @@ for script in $login_scripts; do
     fi
 
     # Run the script, in blocking mode or not
+    # When running in blocking mode, check the exit code status
+    # or exit
     if [ "$blocking" = "1" ]; then
         su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}"
+        exitCode=$?
+
+        # If the access is denied, send an alert to the user using xmpp
+        if [ "$exitCode" = "$DENIED" ]; then
+            # This may happens when the user has activated restrictions by IP or country
+            log_error "Access denied for user '$USER' by script '$script'"
+            exit $DENIED
+
+        # Send a warning to the user, perhaps using xmpp
+        elif [ "$exitCode" = "$WARNING" ]; then
+            warning_title=$(head -n 1 "/home/users/$USER/mails/security/last-warnings.txt")
+            log_error "Sent warning for user '$USER' by script '$script': $warning_title"
+
+        # An error happened, so this is probably a bug
+        elif [ "$exitCode" = "$ERROR" ]; then
+            log_error "Error when running post-login script '$SCRIPT' for user '$USER'"
+            exit $ERROR
+
+        fi
+    
     else
+        # Run the script without waiting for it to finish.
+        # This is actually used by the external emails import script.
         su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}" &
     fi
     
