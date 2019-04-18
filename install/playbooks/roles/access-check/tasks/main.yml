@@ -39,17 +39,6 @@
   loop_control:
     loop_var: user
 
-- name: Comment out the entries
-  replace:
-    path: '/home/users/{{ user.uid }}/.config/homebox/access-check.conf'
-    regexp: '(^[A-Z].*)'
-    replace: '# \1'
-  with_items:
-    - '{{ users }}'
-    - uid: postmaster
-  loop_control:
-    loop_var: user
-
 - name: Initialise the postmaster user password parameters
   set_fact:
     postmaster_password_params: "{{ backup_directory }}/ldap/postmaster.pwd {{ policies.system.password }}"
@@ -57,7 +46,6 @@
 - name: Create the master user account password
   set_fact:
     postmaster_password: '{{ lookup("password", postmaster_password_params) }}'
-
 
 - name: Create the configuration to send xmpp alerts
   template:
