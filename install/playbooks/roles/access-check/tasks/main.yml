@@ -12,7 +12,7 @@
   template:
     src: access-check.cf
     dest: /etc/homebox/access-check.conf
-    mode: 640
+    mode: 644
 
 - name: Create the customconfiguration directory for the user
   file:
@@ -50,3 +50,18 @@
   loop_control:
     loop_var: user
 
+- name: Initialise the postmaster user password parameters
+  set_fact:
+    postmaster_password_params: "{{ backup_directory }}/ldap/postmaster.pwd {{ policies.system.password }}"
+
+- name: Create the master user account password
+  set_fact:
+    postmaster_password: '{{ lookup("password", postmaster_password_params) }}'
+
+
+- name: Create the configuration to send xmpp alerts
+  template:
+    src: postmaster-sendxmpp.rc
+    dest: /home/users/postmaster/.sendxmpprc
+    mode: '0400'
+    owner: postmaster

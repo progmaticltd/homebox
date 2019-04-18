@@ -43,7 +43,7 @@ REASON=''
 
 # When importing emails, the remote command is always '127.0.0.1'
 # Run the import then exit.
-if [ "MASTER_USER" = "import" ]; then
+if [ "$MASTER_USER" = "import" ]; then
     exec $INITIAL_COMMAND
 fi
 

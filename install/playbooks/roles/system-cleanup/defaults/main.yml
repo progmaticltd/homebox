@@ -6,11 +6,6 @@
 # this seems to remove most errors like :
 # <passwd="*"> request denied by validnames option.
 
-- name: Remove useless packages
-  tags: apt
-  apt:
-    name: '{{ cleanup_packages }}'
-    state: absent
-
-# At this point, it might be necessary to reboot
-# To reload all bash instances
+cleanup_packages:
+  - bash-completion
+  - resolvconf
