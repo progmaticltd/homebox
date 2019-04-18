@@ -203,6 +203,16 @@
     comment: 'Allow DNS zone transfers'
     rule: allow
 
+- name: Allow DNS zones transfer (out)
+  ufw:
+    direction: out
+    from_ip: any
+    to_ip: any
+    proto: tcp
+    to_port: 53
+    comment: 'Allow DNS zone transfers'
+    rule: allow
+
 - name: Copy DNS entries in bind cache directory (main IP)
   copy:
     src: '/etc/bind/{{ file }}'
