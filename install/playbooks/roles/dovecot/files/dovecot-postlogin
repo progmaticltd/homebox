@@ -29,20 +29,25 @@ WARNING=1
 DENIED=2
 ERROR=3
 
+# Maximum number of seconds SOGo use to make a new connection (5s average)
+SOGO_CONNECTIION_SECONDS=10
+
 log_error() {
     echo "$@" 1>&2;
 }
 
-# Default source is IMAP
+# The following variables will be logged by the last script
 SOURCE='imap'
+STATUS='OK'
+REASON=''
+
+# When importing emails, the remote command is always '127.0.0.1'
+# Run the import then exit.
+if [ "MASTER_USER" = "import" ]; then
+    exec $INITIAL_COMMAND
+fi
 
 if [ "$IP" = "127.0.0.1" ]; then
-    
-    # The first connection with Roundcube uses 127.0.0.1 as a remote IP
-    # just ignores it
-    if [ "$IP" = "127.0.0.2" ]; then
-        exit 0
-    fi
     
     # SOGo users can login using their ID or their full name. However, the
     # SOGo daemon is sending the ID command after the authentication
@@ -54,7 +59,7 @@ if [ "$IP" = "127.0.0.1" ]; then
 
     # Build a regular expression to get the last successful entry from this user
     fullName=$(getent passwd "$USER" | cut -f 5 -d :)
-    regex="successful login from '[^']+' for user '(${USER}|${fullName})'"
+    regex="successful login from '[0-9a-f\\.:]+' for user '(${USER}|${fullName})'"
 
     # Get the last successful entry in the SOGo logs, for this user
     found=$(tail -n 1000 /var/log/sogo/sogo.log | grep -E "$regex" | tail -n 1)
@@ -64,10 +69,22 @@ if [ "$IP" = "127.0.0.1" ]; then
     if [ "$found" = "" ]; then
         log_error "Cannot find real IP for logged in user '$USER'"
         exit $CONTINUE
-    else
-        IP=$(echo "$found" | sed -E "s/.*successful login from '([^']+)'.*/\\1/")
-        SOURCE=SOGo
     fi
+
+    # Get the unix time for this entry
+    date=$(echo "$found" | cut -f 1,2,3 -d ' ')
+    conntime=$(date -d "$date" +%s)
+    now=$(date +%s)
+    delay=$(( $now - $conntime ))
+
+    if [ $delay -lt $SOGO_CONNECTIION_SECONDS ]; then
+       IP=$(echo "$found" | sed -E "s/.*successful login from '([^']+)'.*/\\1/")
+       SOURCE=SOGo
+    else
+        log_error "Cannot find real IP for logged in user '$USER' lip: '$LOCAL_IP'"
+        exit $ERROR
+    fi
+    
 elif [ "$LOCAL_IP" = "127.0.0.2" ]; then
     # A simple trick to recognise RoundCube logins
     SOURCE=Roundcube
@@ -83,15 +100,21 @@ for script in $login_scripts; do
     runAsPostmaster=$(grep -c '^# RunAs: Postmaster' "${scriptPath}")
     needDecriptKey=$(grep -c '^# NeedDecryptKey: Yes' "${scriptPath}")
     blocking=$(grep -c '^# Blocking: Yes' "${scriptPath}")
+    scriptDescription=$(grep '^# Description:' "${scriptPath}" | sed 's/.*: //')
+    alwaysRun=$(grep -c '^# AlwaysRun: Yes' "${scriptPath}")
 
-    # The file that will contains the warning message to send to the user
-    warningsFile="/home/users/$USER/mails/security/last-warnings.txt"
-    
-    # Add the source (Roundcube/SOGo/IMAP)
-    PASS_ENV="SOURCE=${SOURCE}"
+    # When the access has been denied by one script, skip the next
+    # scripts, except if it is explitcitly marked as run (e.g. logging script)
+    if [ "$STATUS" = "NO" ] && [ "$alwaysRun" = "0" ]; then
+       continue
+    fi
+
+    # Add the source (Roundcube/SOGo/IMAP) and the current status
+    PASS_ENV="SOURCE=${SOURCE} STATUS=$STATUS REASON='$REASON'"
 
     # Email import scripts need the decryption key to access the password
-    if [ "$needDecriptKey" = "1" ]; then
+    # Pass the decryption key only if the current access is valid
+    if [ "$STATUS" = "OK" ] && [ "$needDecriptKey" = "1" ]; then
         # Pass the sytem key to the login scripts,
         # So they can decrypt sensitive content.
         # A future version would probably GPG keys for each user.
@@ -114,6 +137,7 @@ for script in $login_scripts; do
     # When running in blocking mode, check the exit code status
     # or exit
     if [ "$blocking" = "1" ]; then
+
         su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}"
         exitCode=$?
 
@@ -121,27 +145,33 @@ for script in $login_scripts; do
         if [ "$exitCode" = "$DENIED" ]; then
             # This may happens when the user has activated restrictions by IP or country
             log_error "Access denied for user '$USER' by script '$script'"
-            exit $DENIED
+            REASON="Access denied by $scriptDescription"
+            STATUS=NO
 
         # Send a warning to the user, perhaps using xmpp
         elif [ "$exitCode" = "$WARNING" ]; then
-            warning_title=$(head -n 1 "/home/users/$USER/mails/security/last-warnings.txt")
             log_error "Sent warning for user '$USER' by script '$script': $warning_title"
+            REASON="Access warning by $scriptDescription"
+            STATUS=OK
 
         # An error happened, so this is probably a bug
         elif [ "$exitCode" = "$ERROR" ]; then
             log_error "Error when running post-login script '$SCRIPT' for user '$USER'"
-            exit $ERROR
-
+            REASON="Error returned by $scriptDescription"
+            STATUS=NO
         fi
-    
+
     else
         # Run the script without waiting for it to finish.
         # This is actually used by the external emails import script.
         su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}" &
     fi
-    
 done
 
-# Pass the hand back to dovecot
-exec "$INITIAL_COMMAND"
+# Pass the hand back to dovecot or exit with the last error code
+if [ "$STATUS" = "OK" ]; then
+    exec "$INITIAL_COMMAND"
+fi
+
+# Exit now, the error will be logged.
+exit $DENIED

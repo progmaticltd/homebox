@@ -38,7 +38,7 @@
 
 - name: Run the IP check once to get the current IP Address
   shell: >-
-    /usr/local/bin/external-ip-check '{{ network.external_ip }}'
+    /usr/local/bin/external-ip-check
   args:
     creates: /etc/homebox/external-ip
 

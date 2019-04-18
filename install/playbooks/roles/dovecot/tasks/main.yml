@@ -178,6 +178,11 @@
   loop_control:
     loop_var: rule
 
+- name: Create the post-login script directory
+  file:
+    path: /etc/dovecot/login-scripts
+    state: directory
+
 # Dovecot impersonate feature =================================================
 - name: Import imersonate tasks
   when: mail.impersonate.active
@@ -185,7 +190,7 @@
     
 # Dovecot access check script =================================================
 - name: Import dovecot access check tasks
-  when: mail.access_check.active
+  when: access_check.active
   import_tasks: access-check.yml
 
 # Import emails from other accounts ===========================================
@@ -215,11 +220,6 @@
     group: dovecot
     mode: '0400'
     crypt_scheme: ldap_sha1
-
-- name: Create the post-login script directory
-  file:
-    path: /etc/dovecot/login-scripts
-    state: directory
 
 - name: Copy the default postlogin script
   tags: scripts

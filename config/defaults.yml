@@ -153,26 +153,6 @@ mail_default:
   # useful to debug sieve without setting the debug flag system wide
   sieve:
     debug: true
-  #############################################################################
-  # Check access times and IP addresses, and reject or warn the user
-  # This is greatly improves security of email access.
-  # This will be used to send warning to the user if she/he connects from
-  # a different country or a different IP
-  access_check:
-    active: false
-    unusual: warn         # what to do in when unusual behaviour is detected:
-                          # - warn: Send a warning to the user, using real time protocol like xmpp
-                          # - reject: reject the connection. An SSH script is provided to trust the IP
-    trust_days: 28        # Number of days to trust a new IP address or a country
-    countries:            # Countries check parameters
-      trust: []           # A list of additional countries to trust, the country where the box is
-                          # hosted is trusted by default.
-      trust_home: true    # Trust home country by default (the country where the box is hosted)
-    ip:
-      trust: []           # A list of additional IPs to trust, private networks are trusted
-                          # by default
-      trust_home: true    # Trust local network IP addresses by default
-                          
 
   #############################################################################
   # Fail2ban parameters
@@ -596,7 +576,23 @@ sogo_default:
   enable_public_access: false
   password_change: true
 
-# Countries policies.
-countries_default:
-  safe: any
-  unsafe: []
+#############################################################################
+# Security policies per country / IP address / behaviour / etc
+# Check access times and IP addresses, and reject or warn the user
+# This improves security and auditing of access.
+# This will be used to send warning to the user if she/he connects from
+# a different country or a different IP
+access_check_default:
+  active: false
+  unusual: warn         # what to do in when unusual behaviour is detected:
+  trust_days: 7         # Number of days to trust a new country or IP address (not implemented)
+                        # - warn: Send a warning to the user, using real time protocol like xmpp
+                        # - deny: Deny the connection.
+  countries:            # Countries check parameters
+    trust: []           # A list of additional countries to trust, the country where the box is
+                        # hosted is trusted by default.
+    trust_home: true    # Trust home country by default (the country where the box is hosted)
+  ip:
+    trust: []           # A list of additional IP addresses or CIDR to trust
+    trust_home: true    # Trust local network by default (e.g. 192.168.1.0/24)
+    

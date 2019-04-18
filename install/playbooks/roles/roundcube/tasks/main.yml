@@ -17,15 +17,6 @@
     upload_max_size: '{{ mail.max_attachment_size }}'
     post_max_size: '{{ 1 + mail.max_attachment_size | int }}'
 
-- name: Configure the IMAP proxy
-  notify: Restart IMAP proxy
-  template:
-    src: imapproxy.conf
-    dest: /etc/imapproxy.conf
-    owner: root
-    group: root
-    mode: 0644
-
 - name: Copy roundcube configuration
   tags: nginx
   template:

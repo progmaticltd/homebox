@@ -1,9 +1,0 @@
-# Access check policy for IMAP access
-DEBUG='{{ system.debug | bool | ternary("YES", "NO") }}'
-UNUSUAL='{{ mail.access_check.unusual }}'
-DAYS_TRUST='{{ mail.access_check.trust_days }}'
-COUNTRIES_TRUST='{{ mail.access_check.countries.trust | join(",") }}'
-COUNTRIES_TRUST_HOME='{{ mail.access_check.countries.trust_home | bool | ternary("YES", "NO") }}'
-IPS_TRUST='{{ mail.access_check.ip.trust | join(",") }}'
-IPS_TRUST_HOME='{{ mail.access_check.ip.trust_home | bool | ternary("YES", "NO") }}'
-

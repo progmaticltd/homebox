@@ -1,6 +1,5 @@
 ---
 
-
 # Install the most required packages
 - name: Update packages cache
   tags: apt

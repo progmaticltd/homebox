@@ -1,22 +1,15 @@
 ---
-- name: Install dovecot packages
-  tags: apt
-  apt:
-    name: '{{ dovecot.access_check_packages }}'
-    state: latest
 
-- name: Deploy the global configuration file for access check settings
-  tags: config
-  template:
-    src: access-check.cf
-    dest: /etc/dovecot/access-check.conf
-    owner: dovecot
-    group: dovecot
-    mode: 644
-    
 - name: Post login script to check access, and log IP addresses and country
   tags: scripts
   copy:
-    src: access-check.sh
-    dest: /etc/dovecot/login-scripts/00-access-check
+    src: '{{ script.name }}.sh'
+    dest: '/etc/dovecot/login-scripts/{{ script.order }}-{{ script.name }}'
     mode: '0755'
+  with_items:
+    - name: access-check-country
+      order: 10
+    - name: access-log
+      order: 99
+  loop_control:
+    loop_var: script

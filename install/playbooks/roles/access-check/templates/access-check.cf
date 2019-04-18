@@ -1,0 +1,23 @@
+# Access check policy for Homebox
+
+# Activate debug options (YES/NO)
+DEBUG='{{ system.debug | bool | ternary("YES", "NO") }}'
+
+# What to do when something suspicious is detected: warn (default), or deny
+# Warnings are sent by the postmaster, using XMPP
+UNUSUAL='{{ access_check.unusual }}'
+
+# Number of days to trust a new country or IP address (7 by defaults)
+DAYS_TRUST='{{ access_check.trust_days | default(7) }}'
+
+# A coma separated list of country codes to trust (e.g. FR,DE,GB)
+COUNTRIES_TRUST='{{ access_check.countries.trust | join(",") }}'
+
+# Trust the home country, i.e. the country where the box is hosted (YES/NO)
+COUNTRIES_TRUST_HOME='{{ access_check.countries.trust_home | bool | ternary("YES", "NO") }}'
+
+# A list of additional IP addresses or CIDR to trust (e.g. 12.34.56.78/29,12.45.45.12/32)
+IPS_TRUST='{{ access_check.ip.trust | join(",") }}'
+
+# Trust local network by default (e.g. 192.168.1.0/24)
+IPS_TRUST_HOME='{{ access_check.ip.trust_home | bool | ternary("YES", "NO") }}'
