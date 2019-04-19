@@ -3,22 +3,145 @@
 
 /usr/lib/dovecot/script-login {
 
+  #include <abstractions/authentication>
   #include <abstractions/base>
+  #include <abstractions/bash>
   #include <abstractions/dovecot-common>
+  #include <abstractions/perl>
+  #include <abstractions/wutmp>
 
   # Capabilities
-  capability setuid,
+  capability audit_write,
+  capability dac_override,
+  capability net_admin,
   capability setgid,
+  capability setuid,
+  capability sys_resource,
 
+  # binaries
   /lib/x86_64-linux-gnu/ld-*.so mr,
-  /usr/lib/dovecot/script-login mr,
+  /lib/x86_64-linux-gnu/libc-*.so mr,
+  /{usr/,}lib{,32,64}/** mr,
 
-  # The login script is running unconfined,
-  # but as the Dovecot user
+  # The main scripts
+  /usr/lib/dovecot/script-login mr,
+  /usr/lib/dovecot/script-login rix,
+
+  # The login shell script itself
   /usr/local/sbin/dovecot-postlogin r,
-  /usr/local/sbin/dovecot-postlogin Ux,
+  /usr/local/sbin/dovecot-postlogin ix,
+
+  # Run the login scripts
+  /etc/dovecot/login-scripts/ r,
+  /etc/dovecot/login-scripts/* r,
+
+  # Read sogo log files
+  /var/log/sogo/sogo.log r,
+
+  # allowed by the scripts
+  /bin/dash ix,
+  /bin/dash mr,
+  /bin/cat ix,
+  /bin/cat mr,
+  /bin/date mr,
+  /bin/date rix,
+  /bin/echo mr,
+  /bin/echo rix,
+  /bin/grep mr,
+  /bin/grep rix,
+  /bin/ls mr,
+  /bin/ls rix,
+  /bin/rm mr,
+  /bin/rm rix,
+  /usr/bin/tr mr,
+  /usr/bin/tr rix,
+  /bin/sed mr,
+  /bin/sed rix,
+  /bin/su mr,
+  /bin/su rix,
+  /bin/touch mr,
+  /bin/touch rix,
+  /usr/bin/cut mr,
+  /usr/bin/cut rix,
+  /usr/bin/env mr,
+  /usr/bin/env rix,
+  /usr/bin/geoiplookup mr,
+  /usr/bin/geoiplookup rix,
+  /usr/bin/ipcalc r,
+  /usr/bin/ipcalc rix,
+  /usr/bin/md5sum mr,
+  /usr/bin/md5sum rix,
+  /usr/bin/perl ix,
+  /usr/bin/tail rix,
+  /usr/bin/xargs mr,
+  /usr/bin/xargs rix,
+  /usr/bin/getent mr,
+  /usr/bin/getent rix,
+
+  # Emai reporting
+  /usr/bin/bsd-mailx mr,
+  /usr/bin/bsd-mailx rix,
+  /usr/sbin/sendmail mr,
+  /usr/sbin/sendmail px,
+
+  # Binaries used for import
+  /usr/bin/mbsync mr,
+  /usr/bin/mbsync rix,
+  /usr/bin/find mr,
+  /usr/bin/find rix,
+  /usr/bin/openssl mr,
+  /usr/bin/openssl rix,
+  /bin/sleep mr,
+  /bin/sleep rix,
 
   # Access configuration files
   /etc/passwd r,
+  /etc/security/limits.d/ r,
   /etc/nsswitch.conf r,
+  /etc/environment r,
+  /etc/default/locale r,
+  /etc/ld.so.cache r,
+  /etc/mail.rc r,
+
+  # temporary files
+  /tmp/mail.* rwk,
+  
+  # OpenSSL configuration (mainly for import)
+  /usr/lib/ssl/openssl.cnf r,
+  /usr/share/ca-certificates/** r,
+  /etc/ssl/certs/ca-certificates.crt r,
+  /etc/ssl/openssl.cnf r,
+
+  # homebox config
+  /etc/homebox/* r,
+
+  # read geoip database
+  /usr/share/GeoIP/GeoIP*.dat r,
+  
+  # Children scripts
+  /etc/dovecot/login-scripts/ r,
+  /etc/dovecot/login-scripts/* r,
+  /etc/dovecot/login-scripts/* rix,
+
+  # read user's personal config
+  /home/users/*/.config/homebox/*.lock rw,
+  /home/users/*/.config/homebox/access-check.conf r,
+
+  # read/write user security logs
+  /home/users/*/security/*.lock rw,
+  /home/users/*/security/imap-connections.log rw,
+
+  # import folders
+  /home/users/*/mails/import/ r,
+  /home/users/*/mails/import/** rwkl,
+
+  # Send warnings through XMPP
+  /usr/bin/sendxmpp mr,
+  /usr/bin/sendxmpp Ux,
+  /home/users/postmaster/.sendxmpprc r,
+
+  # proc filesystem
+  /proc/*/fd/ r,
+  /proc/*/limits r,
+  /proc/*/loginuid r,
 }

@@ -21,16 +21,16 @@ log_error() {
 
 # Read the gloabal check access policy
 globalConf='/etc/homebox/access-check.conf'
-export $(grep -v '^#' "$globalConf" | xargs)
+export $(grep -Ev '(^\s*$|^#)' "$globalConf" | xargs)
 
 # Security directory for the user, where the connection logs are saved
 # and the custom comfiguration overriding
 secdir="$HOME/.config/homebox"
 
-# Read the user policy if specified
+# Read the user policy if it has been customised
 userConf="$secdir/access-check.conf"
 if [ -r "$userConf" ]; then
-    export $(grep -v '^#' "$userConf" | xargs)
+    export $(grep -Ev '(^\s*$|^#)' "$userConf" | xargs)
 fi
 
 if [ "$COUNTRIES_TRUST_HOME" = "YES" ]; then
@@ -80,7 +80,7 @@ notFound=$(echo "$lookup" | grep -c 'IP Address not found')
 
 if [ "$notFound" = "1" ]; then
     countryCode="XX"
-    countryName="unknown country"
+    countryName="an unknown country"
 else
     countryCode=$(echo "$lookup" | sed -r 's/.*: ([A-Z]{2}),.*/\1/g')
     countryName=$(echo "$lookup" | cut -f 2 -d , | sed 's/^ //')
@@ -98,13 +98,12 @@ if [ "$trustedCountry" = "1" ]; then
     exit $CONTINUE
 fi
 
-
 if [ "$UNUSUAL" = "warn" ]; then
-    printf "* OK [ALERT] Accepted a connection from %s (IP=%s)\r\n" "$countryName" "$IP"
+    echo "Accepted an IMAP connection, likely from $countryName (IP=$IP)"
     exit $WARNING
 else
-    # Refuse the connection or send a warning to the user
-    printf "* NO [ALERT] Connection from %s not accepted\r\n" "$countryName"
+    # Deny the connection and send a warning to the user
+    echo "Denied an IMAP connection, likely from $countryName (IP=$IP)"
     exit $DENIED
 fi
 

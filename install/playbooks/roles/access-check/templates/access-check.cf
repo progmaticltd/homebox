@@ -21,3 +21,6 @@ IPS_TRUST='{{ access_check.ip.trust | join(",") }}'
 
 # Trust local network by default (e.g. 192.168.1.0/24)
 IPS_TRUST_HOME='{{ access_check.ip.trust_home | bool | ternary("YES", "NO") }}'
+
+# External email / xmpp address to send the alerts
+ALERT_ADDRESS='{{ access_check.alert_address }}'

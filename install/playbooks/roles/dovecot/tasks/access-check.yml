@@ -8,8 +8,10 @@
     mode: '0755'
   with_items:
     - name: access-check-country
-      order: 10
+      order: 100
     - name: access-log
-      order: 99
+      order: 800
+    - name: access-warn
+      order: 900
   loop_control:
     loop_var: script

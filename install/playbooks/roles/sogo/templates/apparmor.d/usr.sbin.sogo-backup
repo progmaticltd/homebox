@@ -82,7 +82,7 @@
   /usr/share/GNUstep/** r,
 
   # backup folders
-  /var/backups/sogo/ r,
+  /var/backups/sogo/ rw,
   /var/backups/sogo/** r,
   /var/backups/sogo/** rw,
 }

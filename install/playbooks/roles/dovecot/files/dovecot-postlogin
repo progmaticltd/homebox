@@ -1,4 +1,5 @@
 #!/bin/dash
+
 # Postlogin script for Dovecot.
 # This script will calls other scripts in /etc/dovecot/login-scripts
 # Each script may contains specific comments like below:
@@ -37,18 +38,37 @@ log_error() {
 }
 
 # The following variables will be logged by the last script
+# Or used to send a warning in real time to the user
 SOURCE='imap'
 STATUS='OK'
 REASON=''
+DETAILS=''
+
+# Get the external xmpp/email alert address
+ALERT_ADDRESS=$(grep ALERT_ADDRESS /etc/homebox/access-check.conf | cut -f 2 -d =)
 
 # When importing emails, the remote command is always '127.0.0.1'
 # Run the import then exit.
 if [ "$MASTER_USER" = "import" ]; then
+
+    # Check the remote IP is local
+    if [ "$IP" = "127.0.0.1" ]; then
+        exec $INITIAL_COMMAND
+    else
+        # TODO: Send an alert to the postmaster and to root!
+        # The import account should be used only locally
+        log_error "Error: remote access with the import account from IP <$IP>"
+        exit $DENIED
+    fi
+fi
+
+# TODO: Send an alert to the user that the master is accessing their account
+if [ "$MASTER_USER" = "master" ]; then
     exec $INITIAL_COMMAND
 fi
 
 if [ "$IP" = "127.0.0.1" ]; then
-    
+
     # SOGo users can login using their ID or their full name. However, the
     # SOGo daemon is sending the ID command after the authentication
     # instead of sending it before.
@@ -67,7 +87,7 @@ if [ "$IP" = "127.0.0.1" ]; then
     # If this is empty, then the user might access the platform using a local IMAP connection
     # Do not accept connection from loopback
     if [ "$found" = "" ]; then
-        log_error "Cannot find real IP for logged in user '$USER'"
+        log_error "Error: cannot find real IP for logged in user '$USER'"
         exit $CONTINUE
     fi
 
@@ -81,7 +101,7 @@ if [ "$IP" = "127.0.0.1" ]; then
        IP=$(echo "$found" | sed -E "s/.*successful login from '([^']+)'.*/\\1/")
        SOURCE=SOGo
     else
-        log_error "Cannot find real IP for logged in user '$USER' lip: '$LOCAL_IP'"
+        log_error "Error: cannot find real IP for logged in user '$USER' lip: '$LOCAL_IP'"
         exit $ERROR
     fi
     
@@ -101,20 +121,26 @@ for script in $login_scripts; do
     needDecriptKey=$(grep -c '^# NeedDecryptKey: Yes' "${scriptPath}")
     blocking=$(grep -c '^# Blocking: Yes' "${scriptPath}")
     scriptDescription=$(grep '^# Description:' "${scriptPath}" | sed 's/.*: //')
+    reportingScript=$(grep -c '^# Reporting: Yes' "${scriptPath}")
     alwaysRun=$(grep -c '^# AlwaysRun: Yes' "${scriptPath}")
 
     # When the access has been denied by one script, skip the next
     # scripts, except if it is explitcitly marked as run (e.g. logging script)
-    if [ "$STATUS" = "NO" ] && [ "$alwaysRun" = "0" ]; then
+    if [ "$STATUS" = "DENIED" ] && [ "$alwaysRun" = "0" ]; then
        continue
     fi
 
     # Add the source (Roundcube/SOGo/IMAP) and the current status
-    PASS_ENV="SOURCE=${SOURCE} STATUS=$STATUS REASON='$REASON'"
+    PASS_ENV="SOURCE=$SOURCE STATUS=$STATUS REASON='$REASON' DETAILS='$DETAILS'"
+
+    # Add the global / external email address to send alerts
+    if [ "$reportingScript" = "1" ]; then
+        PASS_ENV="${PASS_ENV} ALERT_ADDRESS=$ALERT_ADDRESS"
+    fi
 
     # Email import scripts need the decryption key to access the password
     # Pass the decryption key only if the current access is valid
-    if [ "$STATUS" = "OK" ] && [ "$needDecriptKey" = "1" ]; then
+    if [ "$STATUS" != "DENIED" ] && [ "$needDecriptKey" = "1" ]; then
         # Pass the sytem key to the login scripts,
         # So they can decrypt sensitive content.
         # A future version would probably GPG keys for each user.
@@ -138,38 +164,39 @@ for script in $login_scripts; do
     # or exit
     if [ "$blocking" = "1" ]; then
 
-        su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}"
+        log_error "Running foreground script ${scriptPath} as '$RunAs'"
+        DETAILS=$(su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}" 2>&1)
         exitCode=$?
 
         # If the access is denied, send an alert to the user using xmpp
         if [ "$exitCode" = "$DENIED" ]; then
             # This may happens when the user has activated restrictions by IP or country
-            log_error "Access denied for user '$USER' by script '$script'"
+            log_error "Error: access denied for user '$USER' by script '$script'"
             REASON="Access denied by $scriptDescription"
-            STATUS=NO
+            STATUS='DENIED'
 
         # Send a warning to the user, perhaps using xmpp
         elif [ "$exitCode" = "$WARNING" ]; then
-            log_error "Sent warning for user '$USER' by script '$script': $warning_title"
+            log_error "Warning: received warning for user '$USER' by script '$script'"
             REASON="Access warning by $scriptDescription"
-            STATUS=OK
+            STATUS='WARNING'
 
         # An error happened, so this is probably a bug
         elif [ "$exitCode" = "$ERROR" ]; then
-            log_error "Error when running post-login script '$SCRIPT' for user '$USER'"
+            log_error "Error: error when running post-login script '$SCRIPT' for user '$USER'"
             REASON="Error returned by $scriptDescription"
-            STATUS=NO
+            STATUS='DENIED'
         fi
-
     else
         # Run the script without waiting for it to finish.
         # This is actually used by the external emails import script.
-        su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}" &
+        log_error "Running background script ${scriptPath} as '$RunAs'"
+        su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}" 1>&2 &
     fi
 done
 
 # Pass the hand back to dovecot or exit with the last error code
-if [ "$STATUS" = "OK" ]; then
+if [ "$STATUS" = "OK" ] || [ "$STATUS" = "WARNING" ]; then
     exec "$INITIAL_COMMAND"
 fi
 
