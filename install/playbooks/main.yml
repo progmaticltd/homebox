@@ -8,7 +8,7 @@
 # Complete list of playbooks to run, in this order
 - import_playbook: external-ip.yml
 - import_playbook: system-prepare.yml
-- import_playbook: remote-access.ym
+- import_playbook: remote-access.yml
 
 # Install fwknop (Single Packet Authorization)
 - import_playbook: fwknop-client.yml
