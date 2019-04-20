@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/dash
 
 # Log the IP addresses, the country and the client type on every connection
 # The client type can be Roudncube, SOGo or IMAP

@@ -9,19 +9,18 @@
 
 # Exit codes
 CONTINUE=0
-ERROR=3
 
 # Check if this is a private IP address
 isPrivate=$(ipcalc "$IP" | grep -c "Private Internet")
 
 # Ignore private IP addresses
 if [ "$isPrivate" = "1" ]; then
-    exit
+    exit $CONTINUE
 fi
 
 # Ignore normal connections
 if [ "$STATUS" = "OK" ]; then
-    exit
+    exit $CONTINUE
 fi
 
 domain=$(echo "$MAIL" | cut -f 2 -d '@')
@@ -29,7 +28,6 @@ STATUS=$(echo "$STATUS" | tr '[:upper:]' '[:lower:]')
 
 # Check if we can use XMPP to send the alerts
 USE_XMPP=0
-me=$(whoami)
 xmppConfig="/home/users/postmaster/.sendxmpprc"
 if [ -x "/usr/bin/sendxmpp" ] && [ -f "$xmppConfig" ]; then
     logger "Using mail and XMPP to send alerts"
@@ -50,7 +48,7 @@ if [ "${DETAILS}" != "" ]; then
     MSG="${MSG}\n${DETAILS}"
 fi
 
-# TODO: Use a public service
+# TODO: Use a public service or a customisable URL
 MSG="${MSG}\nIP Details: https://whatismyipaddress.com/ip/${IP}"
 
 # Send the alert using XMPP
@@ -64,7 +62,7 @@ subject="Alert from postmaster ($domain)"
 from="postmaster@${domain}"
 echo "$MSG" | mail -r "$from" -s "$subject" "$MAIL"
 
-# Send the alerts to an external account
+# Send the alerts to an external / global account
 if [ "$ALERT_ADDRESS" != "" ]; then
 
     # Send the alert using XMPP

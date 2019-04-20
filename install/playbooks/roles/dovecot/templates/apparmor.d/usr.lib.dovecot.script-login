@@ -85,6 +85,8 @@
   /usr/bin/bsd-mailx rix,
   /usr/bin/mail mr,
   /usr/bin/mail px,
+  /usr/sbin/sendmail mr,
+  /usr/sbin/sendmail px,
   /usr/bin/whoami mr,
   /usr/bin/whoami ix,
 

@@ -1,6 +1,6 @@
 ---
 
-- name: Install packages to send alerts
+- name: Install packages to send alerts using xmpp
   when: ejabberd.install
   tags: apt
   apt:
@@ -14,7 +14,7 @@
     dest: /etc/homebox/access-check.conf
     mode: 644
 
-- name: Create the customconfiguration directory for the user
+- name: Create the custom configuration directory for each user
   file:
     path: '/home/users/{{ user.uid }}/.config/homebox'
     owner: '{{ user.uid }}'
@@ -27,9 +27,21 @@
   loop_control:
     loop_var: user
 
+- name: Create the security directory for each user
+  file:
+    path: '/home/users/{{ user.uid }}/security'
+    owner: '{{ user.uid }}'
+    group: users
+    state: directory
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
 - name: Copy the configuration file in each user directory
   template:
-    src: access-check.cf
+    src: access-check-user.cf
     dest: '/home/users/{{ user.uid }}/.config/homebox/access-check.conf'
     owner: '{{ user.uid }}'
     group: users
@@ -58,8 +70,8 @@
   set_fact:
     postmaster_password: '{{ lookup("password", postmaster_password_params) }}'
 
-
-- name: Create the configuration to send xmpp alerts
+- name: Create the configuration to send xmpp alerts using the local server
+  when: ejabberd.install
   template:
     src: postmaster-sendxmpp.rc
     dest: /home/users/postmaster/.sendxmpprc

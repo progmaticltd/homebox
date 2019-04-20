@@ -19,7 +19,7 @@
 #   to decrypt the import settings (e.g. credentials)
 
 # Make sure to remember the previous command
-INITIAL_COMMAND="$@"
+# INITIAL_COMMAND=$@
 
 # Get the list of scripts to run
 login_scripts=$(ls /etc/dovecot/login-scripts)
@@ -47,13 +47,23 @@ DETAILS=''
 # Get the external xmpp/email alert address
 ALERT_ADDRESS=$(grep ALERT_ADDRESS /etc/homebox/access-check.conf | cut -f 2 -d =)
 
+# Read the user policy if it has been customised.
+# Make sure to sanitize the value
+userConf="$HOME/.config/homebox/access-check.conf"
+USER_ALERT_ADDRESS=$(cat "$userConf" | sed "s/^ALERT_ADDRESS='([a-z@\.-]+)'$/\1/")
+
+if [ "$USER_ALERT_ADDRESS" != "" ]; then
+    ALERT_ADDRESS=$USER_ALERT_ADDRESS
+fi
+
 # When importing emails, the remote command is always '127.0.0.1'
 # Run the import then exit.
 if [ "$MASTER_USER" = "import" ]; then
 
     # Check the remote IP is local
     if [ "$IP" = "127.0.0.1" ]; then
-        exec $INITIAL_COMMAND
+        # exec $INITIAL_COMMAND
+        exec $@
     else
         # TODO: Send an alert to the postmaster and to root!
         # The import account should be used only locally
@@ -64,7 +74,8 @@ fi
 
 # TODO: Send an alert to the user that the master is accessing their account
 if [ "$MASTER_USER" = "master" ]; then
-    exec $INITIAL_COMMAND
+    # exec $INITIAL_COMMAND
+    exec $@
 fi
 
 if [ "$IP" = "127.0.0.1" ]; then
@@ -95,7 +106,7 @@ if [ "$IP" = "127.0.0.1" ]; then
     date=$(echo "$found" | cut -f 1,2,3 -d ' ')
     conntime=$(date -d "$date" +%s)
     now=$(date +%s)
-    delay=$(( $now - $conntime ))
+    delay=$(( now - conntime ))
 
     if [ $delay -lt $SOGO_CONNECTIION_SECONDS ]; then
         IP=$(echo "$found" | sed -E "s/.*successful login from '([^']+)'.*/\\1/")
@@ -183,7 +194,7 @@ for script in $login_scripts; do
 
         # An error happened, so this is probably a bug
         elif [ "$exitCode" = "$ERROR" ]; then
-            log_error "Error: error when running post-login script '$SCRIPT' for user '$USER'"
+            log_error "Error: error when running post-login script '$script' for user '$USER'"
             REASON="Error returned by $scriptDescription"
             STATUS='DENIED'
         fi
@@ -197,7 +208,8 @@ done
 
 # Pass the hand back to dovecot or exit with the last error code
 if [ "$STATUS" = "OK" ] || [ "$STATUS" = "WARNING" ]; then
-    exec "$INITIAL_COMMAND"
+    # exec "$INITIAL_COMMAND"
+    exec $@
 fi
 
 # Exit now, the error will be logged.

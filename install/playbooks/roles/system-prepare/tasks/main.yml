@@ -1,7 +1,7 @@
 ---
 
 # Install the most required packages
-- name: Update packages cache
+- name: Update packages cache if older than 1h
   tags: apt
   apt:
     cache_valid_time: 3600
@@ -19,20 +19,17 @@
   apt:
     upgrade: true
 
-- name: Install common packages
+- name: Install required packages
   tags: apt
-  vars:
-    pkgs:
-      - ufw
-      - rsync
-      - makepasswd
-      - haveged             # speed up password generation
-      - nginx
-      - acl
-      - certbot
   apt:
-    name: "{{ pkgs }}"
+    name: "{{ system_required }}"
     state: present
+
+- name: Remove packages to exclude
+  tags: apt
+  apt:
+    name: "{{ system_excluded }}"
+    state: absent
 
 - name: Make sure letsencrypt directory exists
   file:
@@ -51,7 +48,7 @@
     state: directory
     mode: 0755
 
-- name: Create a homebox directory to store any specific configuration
+- name: Create the configuration file that defines paths to exclude for backup
   tags: backup
   template:
     src: backup-exclude
@@ -130,12 +127,6 @@
 # The other tasks will setup the rules themselves
 # We are also installing fail2ban, so the other services might use it, like postfix, dovecot and roundcube
 # The package 'unattended-upgrades' download and install security updates by default
-
-- name: Install ufw / fail2ban and automatic security updates
-  tags: apt, security
-  apt:
-    name: "{{ defaults.packages }}"
-    state: present
 
 - name: Install AppArmor packages
   when: security.app_armor

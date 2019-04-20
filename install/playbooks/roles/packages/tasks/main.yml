@@ -9,12 +9,12 @@
     src: sources.list
     dest: /etc/apt/sources.list
 
-- name: Update packages repositories
+- name: Update packages cache if older than 1h
   register: packages_cache
   tags: apt
   apt:
-    update_cache: yes
     cache_valid_time: 3600
+    update_cache: yes
 
 - name: Upgrade the distribution
   when: packages_cache.changed

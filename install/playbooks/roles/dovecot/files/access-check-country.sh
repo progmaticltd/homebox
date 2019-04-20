@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/dash
 
 # Check if the connection is from a whitelisted country.
 
@@ -19,9 +19,13 @@ log_error() {
     echo "$@" 1>&2;
 }
 
+
 # Read the gloabal check access policy
 globalConf='/etc/homebox/access-check.conf'
-export $(grep -Ev '(^\s*$|^#)' "$globalConf" | xargs)
+
+# Read global configuration
+# shellcheck disable=SC1090
+. "$globalConf"
 
 # Security directory for the user, where the connection logs are saved
 # and the custom comfiguration overriding
@@ -29,8 +33,21 @@ secdir="$HOME/.config/homebox"
 
 # Read the user policy if it has been customised
 userConf="$secdir/access-check.conf"
-if [ -r "$userConf" ]; then
-    export $(grep -Ev '(^\s*$|^#)' "$userConf" | xargs)
+
+CUSTOM_UNUSUAL=$(grep -c '^UNUSUAL=' "$userConf" )
+CUSTOM_COUNTRIES_TRUST=$(grep -c '^COUNTRIES_TRUST=' "$userConf")
+CUSTOM_COUNTRIES_TRUST_HOME=$(grep -c '^COUNTRIES_TRUST_HOME=' "$userConf")
+
+if [ "$CUSTOM_UNUSUAL" = 1 ]; then
+    UNUSUAL=$(grep '^UNUSUAL=' "$userConf" | cut -f 2 -d =)
+fi
+
+if [ "$CUSTOM_COUNTRIES_TRUST" = 1 ]; then
+    COUNTRIES_TRUST=$(grep '^COUNTRIES_TRUST=' "$userConf" | cut -f 2 -d =)
+fi
+
+if [ "$CUSTOM_COUNTRIES_TRUST_HOME" = 1 ]; then
+    COUNTRIES_TRUST_HOME=$(grep '^COUNTRIES_TRUST_HOME=' "$userConf" | cut -f 2 -d =)
 fi
 
 if [ "$COUNTRIES_TRUST_HOME" = "YES" ]; then

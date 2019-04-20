@@ -1,15 +1,24 @@
 ---
 
-###############################################################################
-defaults:
-  # Defaults packages to install
-  packages:
-    - unattended-upgrades
-    - ufw
-    - fail2ban
-    - rblcheck
-    - locales
+# System required packages
+# the havegd package speed up password generation
+system_required:
+  - unattended-upgrades
+  - locales
+  - rblcheck
+  - fail2ban
+  - ufw
+  - rsync
+  - makepasswd
+  - haveged
+  - nginx
+  - acl
+  - certbot
 
+# Packages to exclude
+system_excluded:
+  - resolvconf
+  
 ###############################################################################
 # Dictionaries to install in the system
 dictionaries:
