@@ -98,13 +98,13 @@ if [ "$IP" = "127.0.0.1" ]; then
     delay=$(( $now - $conntime ))
 
     if [ $delay -lt $SOGO_CONNECTIION_SECONDS ]; then
-       IP=$(echo "$found" | sed -E "s/.*successful login from '([^']+)'.*/\\1/")
-       SOURCE=SOGo
+        IP=$(echo "$found" | sed -E "s/.*successful login from '([^']+)'.*/\\1/")
+        SOURCE=SOGo
     else
         log_error "Error: cannot find real IP for logged in user '$USER' lip: '$LOCAL_IP'"
         exit $ERROR
     fi
-    
+
 elif [ "$LOCAL_IP" = "127.0.0.2" ]; then
     # A simple trick to recognise RoundCube logins
     SOURCE=Roundcube
@@ -127,7 +127,7 @@ for script in $login_scripts; do
     # When the access has been denied by one script, skip the next
     # scripts, except if it is explitcitly marked as run (e.g. logging script)
     if [ "$STATUS" = "DENIED" ] && [ "$alwaysRun" = "0" ]; then
-       continue
+        continue
     fi
 
     # Add the source (Roundcube/SOGo/IMAP) and the current status
@@ -164,7 +164,7 @@ for script in $login_scripts; do
     # or exit
     if [ "$blocking" = "1" ]; then
 
-        log_error "Running foreground script ${scriptPath} as '$RunAs'"
+        logger "Running foreground script ${scriptPath} as '$RunAs'"
         DETAILS=$(su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}" 2>&1)
         exitCode=$?
 
@@ -190,7 +190,7 @@ for script in $login_scripts; do
     else
         # Run the script without waiting for it to finish.
         # This is actually used by the external emails import script.
-        log_error "Running background script ${scriptPath} as '$RunAs'"
+        logger "Running background script ${scriptPath} as '$RunAs'"
         su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}" 1>&2 &
     fi
 done

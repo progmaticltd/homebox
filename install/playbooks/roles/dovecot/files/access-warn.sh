@@ -7,6 +7,10 @@
 # AlwaysRun: Yes
 # Reporting: Yes
 
+# Exit codes
+CONTINUE=0
+ERROR=3
+
 # Check if this is a private IP address
 isPrivate=$(ipcalc "$IP" | grep -c "Private Internet")
 
@@ -20,9 +24,19 @@ if [ "$STATUS" = "OK" ]; then
     exit
 fi
 
-configFile=/home/users/postmaster/.sendxmpprc
 domain=$(echo "$MAIL" | cut -f 2 -d '@')
 STATUS=$(echo "$STATUS" | tr '[:upper:]' '[:lower:]')
+
+# Check if we can use XMPP to send the alerts
+USE_XMPP=0
+me=$(whoami)
+xmppConfig="/home/users/postmaster/.sendxmpprc"
+if [ -x "/usr/bin/sendxmpp" ] && [ -f "$xmppConfig" ]; then
+    logger "Using mail and XMPP to send alerts"
+    USE_XMPP=1
+else
+    logger "Using only mail to send alerts"
+fi
 
 # Build the message
 MSG="Message from postmaster@${domain}:\n"
@@ -36,26 +50,40 @@ if [ "${DETAILS}" != "" ]; then
     MSG="${MSG}\n${DETAILS}"
 fi
 
+# TODO: Use a public service
 MSG="${MSG}\nIP Details: https://whatismyipaddress.com/ip/${IP}"
 
-# Send to the original user
-xmppOutput=$(echo "$MSG" | sendxmpp -t -f "${configFile}" "$MAIL" 2>&1)
-
-if [ "$ALERT_ADDRESS" = "" ]; then
-    ALERT_ADDRESS="andy@rodier.me"
+# Send the alert using XMPP
+if [ "$USE_XMPP" = "1" ]; then
+    xmppOutput=$(echo "$MSG" | sendxmpp -t -f "$xmppConfig" "$MAIL" 2>&1)
 fi
 
+# Send the alert by email first. If the user is logged in,
+# he will be informed
+subject="Alert from postmaster ($domain)"
+from="postmaster@${domain}"
+echo "$MSG" | mail -r "$from" -s "$subject" "$MAIL"
+
+# Send the alerts to an external account
 if [ "$ALERT_ADDRESS" != "" ]; then
 
-    MSG="$MSG\nXMPP output: $xmppOutput"
+    # Send the alert using XMPP
+    if [ "$USE_XMPP" = "1" ]; then
+        # Try to send to the extra recipient if configured
+        xmppOutput=$(echo "$MSG" | sendxmpp -t -f "$xmppConfig" "$ALERT_ADDRESS")
+    fi
+    
+    # This will be in the external recipient email
+    if [ "$xmppOutput" != "" ]; then
+        MSG="$MSG\nXMPP output: $xmppOutput"
+    fi
     
     # Send an email alert as well
     subject="Alert from postmaster ($domain)"
     from="postmaster@${domain}"
-    echo "$MSG" | mail -r "$from" -s "$subject" "$ALERT_ADDRESS"
     
-    # Send to the extra recipient if configured
-    # echo "$MSG" | sendxmpp -t -f "${configFile}" "$ALERT_ADDRESS"
+    echo "$MSG" | mail -r "$from" -s "$subject" "$ALERT_ADDRESS"
+
 fi
 
-exit 0
+exit $CONTINUE

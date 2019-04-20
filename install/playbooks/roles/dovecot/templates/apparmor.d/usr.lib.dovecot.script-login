@@ -77,12 +77,16 @@
   /usr/bin/xargs rix,
   /usr/bin/getent mr,
   /usr/bin/getent rix,
+  /usr/bin/logger mr,
+  /usr/bin/logger rix,
 
-  # Emai reporting
+  # XMPP & Email reporting
   /usr/bin/bsd-mailx mr,
   /usr/bin/bsd-mailx rix,
-  /usr/sbin/sendmail mr,
-  /usr/sbin/sendmail px,
+  /usr/bin/mail mr,
+  /usr/bin/mail px,
+  /usr/bin/whoami mr,
+  /usr/bin/whoami ix,
 
   # Binaries used for import
   /usr/bin/mbsync mr,
@@ -102,6 +106,7 @@
   /etc/default/locale r,
   /etc/ld.so.cache r,
   /etc/mail.rc r,
+  /etc/gai.conf r,
 
   # temporary files
   /tmp/mail.* rwk,
@@ -137,7 +142,7 @@
 
   # Send warnings through XMPP
   /usr/bin/sendxmpp mr,
-  /usr/bin/sendxmpp Ux,
+  /usr/bin/sendxmpp px,
   /home/users/postmaster/.sendxmpprc r,
 
   # proc filesystem

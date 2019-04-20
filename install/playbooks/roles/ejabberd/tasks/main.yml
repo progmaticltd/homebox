@@ -233,7 +233,7 @@
 - name: Add ejabberd AppArmor specific configuration
   when: security.app_armor and line_found.stdout == '0'
   notify: Restart AppArmor service
-  tags: roundcube, security, apparmor
+  tags: nginx, security, apparmor
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
     line: '  #include <local/nginx-jabber-frontend>'

@@ -1,1 +1,1 @@
-postmaster@{{ network.domain }};xmpp.{{ network.domain }} {{ postmaster_password }}
+postmaster@{{ network.domain }} {{ postmaster_password }}
