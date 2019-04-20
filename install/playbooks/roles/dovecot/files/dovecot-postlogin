@@ -50,10 +50,11 @@ ALERT_ADDRESS=$(grep ALERT_ADDRESS /etc/homebox/access-check.conf | cut -f 2 -d 
 # Read the user policy if it has been customised.
 # Make sure to sanitize the value
 userConf="$HOME/.config/homebox/access-check.conf"
-USER_ALERT_ADDRESS=$(cat "$userConf" | sed "s/^ALERT_ADDRESS='([a-z@\.-]+)'$/\1/")
+USER_ALERT_ADDRESS=$(grep '^ALERT_ADDRESS=' "$userConf" | sed -E "s/^ALERT_ADDRESS='([a-z@\.-]+)'$/\1/")
 
 if [ "$USER_ALERT_ADDRESS" != "" ]; then
     ALERT_ADDRESS=$USER_ALERT_ADDRESS
+    logger "Using custom value for user alert addresses: $ALERT_ADDRESS"
 fi
 
 # When importing emails, the remote command is always '127.0.0.1'
