@@ -9,6 +9,10 @@
   with_items:
     - name: access-check-country
       order: 100
+    - name: access-check-rbl
+      order: 110
+    - name: access-check-whitelist
+      order: 120
     - name: access-log
       order: 800
     - name: access-warn

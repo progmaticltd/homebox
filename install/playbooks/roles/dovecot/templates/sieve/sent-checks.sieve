@@ -14,7 +14,7 @@ require [
 if environment :matches "imap.user" "*" {
   set "user" "${1}";
 }
-if string :matches "${user}" "{{ mail.import.username }}" {
+if string :matches "${user}" "import" {
   keep;
   stop;
 }

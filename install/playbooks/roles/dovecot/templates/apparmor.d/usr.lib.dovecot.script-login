@@ -79,6 +79,10 @@
   /usr/bin/getent rix,
   /usr/bin/logger mr,
   /usr/bin/logger rix,
+  /usr/bin/grepcidr mr,
+  /usr/bin/grepcidr rix,
+  /usr/bin/rblcheck mr,
+  /usr/bin/rblcheck rix,
 
   # XMPP & Email reporting
   /usr/bin/bsd-mailx mr,
@@ -109,10 +113,11 @@
   /etc/ld.so.cache r,
   /etc/mail.rc r,
   /etc/gai.conf r,
+  /etc/resolv.conf r,
 
   # temporary files
   /tmp/mail.* rwk,
-  
+
   # OpenSSL configuration (mainly for import)
   /usr/lib/ssl/openssl.cnf r,
   /usr/share/ca-certificates/** r,
@@ -124,7 +129,7 @@
 
   # read geoip database
   /usr/share/GeoIP/GeoIP*.dat r,
-  
+
   # Children scripts
   /etc/dovecot/login-scripts/ r,
   /etc/dovecot/login-scripts/* r,
@@ -134,9 +139,9 @@
   /home/users/*/.config/homebox/*.lock rw,
   /home/users/*/.config/homebox/access-check.conf r,
 
-  # read/write user security logs
-  /home/users/*/security/*.lock rw,
-  /home/users/*/security/imap-connections.log rw,
+  # read/write user security logs and customisation
+  /home/users/*/security/*.{lock,log} rw,
+  /home/users/*/security/* r,
 
   # import folders
   /home/users/*/mails/import/ r,

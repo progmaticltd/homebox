@@ -6,19 +6,21 @@
 # Blocking: Yes
 # RunAsUser: Yes
 # NeedDecryptKey: No
+# Score: Malus
 # Description: Country policy checker
 
 # Exit codes
-CONTINUE=0
-WARNING=1
-DENIED=2
-ERROR=3
+TRUST=0
+NEW_COUNTRY=128
+UNKNOWN_COUNTRY=250
+
+# When an error occurs, refuse the connection
+ERROR=255
 
 # Used to log errors in syslog or mail.log
 log_error() {
     echo "$@" 1>&2;
 }
-
 
 # Read the gloabal check access policy
 globalConf='/etc/homebox/access-check.conf'
@@ -34,14 +36,8 @@ secdir="$HOME/.config/homebox"
 # Read the user policy if it has been customised
 userConf="$secdir/access-check.conf"
 
-CUSTOM_UNUSUAL=$(grep -c '^UNUSUAL=' "$userConf" )
 CUSTOM_COUNTRIES_TRUST=$(grep -c '^COUNTRIES_TRUST=' "$userConf")
 CUSTOM_COUNTRIES_TRUST_HOME=$(grep -c '^COUNTRIES_TRUST_HOME=' "$userConf")
-
-if [ "$CUSTOM_UNUSUAL" = 1 ]; then
-    UNUSUAL=$(grep '^UNUSUAL=' "$userConf" | cut -f 2 -d = | sed "s/'//g")
-    logger "Using custom value for user $USER for unusual behaviour: $UNUSUAL"
-fi
 
 if [ "$CUSTOM_COUNTRIES_TRUST" = 1 ]; then
     COUNTRIES_TRUST=$(grep '^COUNTRIES_TRUST=' "$userConf" | cut -f 2 -d = | sed "s/'//g")
@@ -73,7 +69,7 @@ test -d "$secdir" || mkdir "$secdir"
 # Exit if a script already check this IP address
 ipSig=$(echo "$IP" | md5sum | cut -f 1 -d ' ')
 lockFile="$secdir/$ipSig.lock"
-test -f "$lockFile" && exit $CONTINUE
+test -f "$lockFile" && exit $TRUST
 
 # Start processing, but remove lockfile on exit
 touch "$lockFile"
@@ -82,12 +78,12 @@ trap 'rm -f $lockFile' EXIT
 # If this is a private IP address, pass the hand to
 # the next scripts
 isPrivate=$(ipcalc "$IP" | grep -c "Private Internet")
-isIPv6=$(echo "$IP" | grep -c ":")
 
 if [ "$isPrivate" = "1" ]; then
-    exit $CONTINUE
+    exit $TRUST
 fi
 
+isIPv6=$(echo "$IP" | grep -c ":")
 if [ "$isIPv6" = "1" ]; then
     lookup=$(geoiplookup6 "$IP")
 else
@@ -99,31 +95,26 @@ fi
 notFound=$(echo "$lookup" | grep -c 'IP Address not found')
 
 if [ "$notFound" = "1" ]; then
-    countryCode="XX"
-    countryName="an unknown country"
-else
-    countryCode=$(echo "$lookup" | sed -r 's/.*: ([A-Z]{2}),.*/\1/g')
-    countryName=$(echo "$lookup" | cut -f 2 -d , | sed 's/^ //')
+    echo "IMAP connection from an unknown country (IP=$IP)"
+    exit $UNKNOWN_COUNTRY
 fi
 
+countryCode=$(echo "$lookup" | sed -r 's/.*: ([A-Z]{2}),.*/\1/g')
+countryName=$(echo "$lookup" | cut -f 2 -d , | sed 's/^ //')
+
 # If we trust the same country, just accept the connection
-if [ "$HOME_COUNTRY" = "$countryCode" ] && [ "$COUNTRIES_TRUST_HOME" = "YES" ]; then
-    exit $CONTINUE
+if [ "$HOME_COUNTRY" = "$countryCode" -a "$COUNTRIES_TRUST_HOME" = "YES" ]; then
+    exit $TRUST
 fi
 
 # Check if the country is trusted
 trustedCountry=$(echo "$COUNTRIES_TRUST" | grep -c -E "(^|,)$countryCode(,|$)")
 if [ "$trustedCountry" = "1" ]; then
     # If we trust the country we are in, just accept the connection
-    exit $CONTINUE
+    exit $TRUST
 fi
 
-if [ "$UNUSUAL" = "warn" ]; then
-    echo "Accepted an IMAP connection, likely from $countryName (IP=$IP)"
-    exit $WARNING
-else
-    # Deny the connection and send a warning to the user
-    echo "Denied an IMAP connection, likely from $countryName (IP=$IP)"
-    exit $DENIED
-fi
+echo "IMAP connection from a new country, likely from $countryName (IP=$IP)"
 
+# Return the malus
+exit $NEW_COUNTRY

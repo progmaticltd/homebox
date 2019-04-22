@@ -1,7 +1,7 @@
 #!/bin/dash
 
 # Post login script for Dovecot, this block is parsed by the parent script
-# Blocking: No
+# Blocking: Yes
 # RunAs: Postmaster
 # NeedDecryptKey: No
 # AlwaysRun: Yes
@@ -42,14 +42,14 @@ MSG="${MSG}IMAP connection ${STATUS}\n"
 MSG="${MSG}- User: ${USER} ($MAIL)\n"
 MSG="${MSG}- IP Address: ${IP}\n"
 MSG="${MSG}- Source: ${SOURCE}\n"
-MSG="${MSG}- Reason: ${REASON}"
 
-if [ "${DETAILS}" != "" ]; then
-    MSG="${MSG}\n${DETAILS}"
+
+if [ "$DETAILS" != "" ]; then
+    MSG="${MSG}\nDetails:$DETAILS"
 fi
 
 # TODO: Use a public service or a customisable URL
-MSG="${MSG}\nIP Details: https://whatismyipaddress.com/ip/${IP}"
+MSG="${MSG}\n\nIP Details: https://whatismyipaddress.com/ip/${IP}"
 
 # Send the alert using XMPP
 if [ "$USE_XMPP" = "1" ]; then
@@ -70,16 +70,16 @@ if [ "$ALERT_ADDRESS" != "" ]; then
         # Try to send to the extra recipient if configured
         xmppOutput=$(echo "$MSG" | sendxmpp -t -f "$xmppConfig" "$ALERT_ADDRESS")
     fi
-    
+
     # This will be in the external recipient email
     if [ "$xmppOutput" != "" ]; then
         MSG="$MSG\nXMPP output: $xmppOutput"
     fi
-    
+
     # Send an email alert as well
     subject="Alert from postmaster ($domain)"
     from="postmaster@${domain}"
-    
+
     echo "$MSG" | mail -r "$from" -s "$subject" "$ALERT_ADDRESS"
 
 fi

@@ -6,6 +6,11 @@
 # Blocking: Yes
 # RunAsUser: Yes
 # NeedDecryptKey: No
+# Description: Country policy checker
+# ReportingScript: Yes
+# AlwaysRun: Yes
+# Score: Add
+#
 # Explanation:
 # - Blocking: <Yes|No>
 #   Wait for the script execution to be finished before continuing,
@@ -17,6 +22,15 @@
 # - NeedDecryptKey: <Yes|No>
 #   The decryption key is needed for instance when importing emails from other platforms,
 #   to decrypt the import settings (e.g. credentials)
+# - AlwaysRun: <Yes|No> (default=No)
+#   Called even if one of the previous script failed. Useful to log failures
+# - ReportingScript: <Yes|No> (default=No)
+#   When set to yes, receive the external email address to send security alerts
+# - Score: <Bonus|Malus>
+#   Malus: The script add a "malus" to the reputation of the connection
+#   Bonus: The script add a "bonus" to the reputation of the connection
+#   Once all the scripts have been run the final score is checked against limits
+#   to accept, warn or deny the connection.
 
 # Get the list of scripts to run
 login_scripts=$(ls /etc/dovecot/login-scripts)
@@ -25,7 +39,6 @@ login_scripts=$(ls /etc/dovecot/login-scripts)
 CONTINUE=0
 WARNING=1
 DENIED=2
-ERROR=3
 
 # Maximum number of seconds SOGo use to make a new connection (5s average)
 SOGO_CONNECTIION_SECONDS=10
@@ -38,8 +51,12 @@ log_error() {
 # Or used to send a warning in real time to the user
 SOURCE='imap'
 STATUS='OK'
-REASON=''
-DETAILS=''
+
+# Warning score: score above which a warning is sent to the user
+WARNING_SCORE=128
+
+# Deny score: score above which the connection requires a confirmation
+DENIED_SCORE=255
 
 # Get the external xmpp/email alert address
 ALERT_ADDRESS=$(grep ALERT_ADDRESS /etc/homebox/access-check.conf | cut -f 2 -d =)
@@ -117,37 +134,53 @@ elif [ "$LOCAL_IP" = "127.0.0.2" ]; then
     SOURCE=Roundcube
 fi
 
+# The initial score is 0, meaning the connection
+# is accepted
+score=0
+
+# Will contains all messages from all the scripts, one per line
+fullDetails=""
+
 # Call all the scripts in the folder /etc/dovecot/login-scripts,
 # These scrips are non blocking, and run as the user
 for script in $login_scripts; do
 
     # Check the scripts requirements
-    scriptPath="/etc/dovecot/login-scripts/${script}"
-    runAsUser=$(grep -c '^# RunAs: User' "${scriptPath}")
-    runAsPostmaster=$(grep -c '^# RunAs: Postmaster' "${scriptPath}")
-    needDecriptKey=$(grep -c '^# NeedDecryptKey: Yes' "${scriptPath}")
-    blocking=$(grep -c '^# Blocking: Yes' "${scriptPath}")
-    scriptDescription=$(grep '^# Description:' "${scriptPath}" | sed 's/.*: //')
-    reportingScript=$(grep -c '^# Reporting: Yes' "${scriptPath}")
-    alwaysRun=$(grep -c '^# AlwaysRun: Yes' "${scriptPath}")
+    scriptPath="/etc/dovecot/login-scripts/$script"
+
+    # read script flags
+    runAsUser=$(grep -c '^# RunAs: User' "$scriptPath")
+    runAsPostmaster=$(grep -c '^# RunAs: Postmaster' "$scriptPath")
+    needDecriptKey=$(grep -c '^# NeedDecryptKey: Yes' "$scriptPath")
+    blocking=$(grep -c '^# Blocking: Yes' "$scriptPath")
+    scriptDescription=$(grep '^# Description:' "$scriptPath" | sed 's/.*: //')
+    reportingScript=$(grep -c '^# Reporting: Yes' "$scriptPath")
+    alwaysRun=$(grep -c '^# AlwaysRun: Yes' "$scriptPath")
+
+    # Malus script, add "bad" points to the final score
+    malusScript=$(grep -c '^# Score: Malus' "${scriptPath}")
+
+    # Bonus script, remove points; e.g trusted IP addresses
+    bonusScript=$(grep -c '^# Score: Bonus' "${scriptPath}")
 
     # When the access has been denied by one script, skip the next
     # scripts, except if it is explitcitly marked as run (e.g. logging script)
-    if [ "$STATUS" = "DENIED" ] && [ "$alwaysRun" = "0" ]; then
+    if [ "$STATUS" = "DENIED" -a "$alwaysRun" = "0" ]; then
         continue
     fi
 
-    # Add the source (Roundcube/SOGo/IMAP) and the current status
-    PASS_ENV="SOURCE=$SOURCE STATUS=$STATUS REASON='$REASON' DETAILS='$DETAILS'"
+    # Add the source (Roundcube/SOGo/IMAP) to the environment
+    PASS_ENV="SOURCE=$SOURCE"
 
-    # Add the global / external email address to send alerts
     if [ "$reportingScript" = "1" ]; then
-        PASS_ENV="${PASS_ENV} ALERT_ADDRESS=$ALERT_ADDRESS"
-    fi
+	# Add the global / external email address to send alerts
+	# And the status of the connection
+        PASS_ENV="$PASS_ENV ALERT_ADDRESS=$ALERT_ADDRESS"
+	PASS_ENV="$PASS_ENV STATUS=$STATUS DETAILS='$fullDetails'"
 
     # Email import scripts need the decryption key to access the password
     # Pass the decryption key only if the current access is valid
-    if [ "$STATUS" != "DENIED" ] && [ "$needDecriptKey" = "1" ]; then
+    elif [ "$STATUS" = "OK" -a "$needDecriptKey" = "1" ]; then
         # Pass the sytem key to the login scripts,
         # So they can decrypt sensitive content.
         # A future version would probably GPG keys for each user.
@@ -156,54 +189,76 @@ for script in $login_scripts; do
     fi
 
     # Email import scripts run as the current user
-    # For instance, a TFA could run as postmaster
-    if [ "$runAsUser" = "1" ]; then
-        RunAs="${USER}"
-    elif [ "$runAsPostmaster" = "1" ]; then
+    # But the TFA for instance will run as postmaster
+
+    # Run as user by default
+    RunAs="$USER"
+    if [ "$runAsPostmaster" = "1" ]; then
         RunAs="postmaster"
-    else
-        # Run as user by default
-        RunAs="${USER}"
     fi
 
-    # Run the script, in blocking mode or not
-    # When running in blocking mode, check the exit code status
-    # or exit
-    if [ "$blocking" = "1" ]; then
-
-        logger "Running foreground script ${scriptPath} as '$RunAs'"
-        DETAILS=$(su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}" 2>&1)
-        exitCode=$?
-
-        # If the access is denied, send an alert to the user using xmpp
-        if [ "$exitCode" = "$DENIED" ]; then
-            # This may happens when the user has activated restrictions by IP or country
-            log_error "Error: access denied for user '$USER' by script '$script'"
-            REASON="Access denied by $scriptDescription"
-            STATUS='DENIED'
-
-        # Send a warning to the user, perhaps using xmpp
-        elif [ "$exitCode" = "$WARNING" ]; then
-            log_error "Warning: received warning for user '$USER' by script '$script'"
-            REASON="Access warning by $scriptDescription"
-            STATUS='WARNING'
-
-        # An error happened, so this is probably a bug
-        elif [ "$exitCode" = "$ERROR" ]; then
-            log_error "Error: error when running post-login script '$script' for user '$USER'"
-            REASON="Error returned by $scriptDescription"
-            STATUS='DENIED'
-        fi
-    else
-        # Run the script without waiting for it to finish.
-        # This is actually used by the external emails import script.
-        logger "Running background script ${scriptPath} as '$RunAs'"
-        su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}" 1>&2 &
+    # Launch non blocking script in background and continue.
+    # This is actually used by the external emails import script.
+    if [ "$blocking" = "0" ]; then
+        logger "Launching background script $scriptPath as '$RunAs'"
+        su -m "$RunAs" -c "$PASS_ENV $scriptPath" 1>&2 &
+	continue
     fi
+
+    # Running foreground scripts
+    logger "Running blocking script ${scriptPath} as '$RunAs'"
+    details=$(su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}")
+    scoreCost=$?
+
+    # for debugging
+    logger "Score cost returned by $script for $IP: $scoreCost\n$details"
+
+    # Skip trusted policies
+    if [ "$scoreCost" = "0" ]; then
+	continue
+    fi
+
+    # Build the details list used by the warning script
+    if [ "$details" != "" ]; then
+       fullDetails="$fullDetails\n- $details"
+    fi
+
+    # Compute the current score
+    if [ "$malusScript" = "1" ]; then
+	score=$(( score + scoreCost ))
+	logger "$script: Added $scoreCost to the score, now $score"
+	logger "Details: $details"
+    elif [ "$bonusScript" = "1" ]; then
+	score=$(( score - scoreCost ))
+	logger "$script: Substracted $scoreCost to the score, now $score"
+	logger "Details: $details"
+    else
+	logger "Warning: no bonus/malus type specified in the comments for the script $script (returned $scoreCost)"
+    fi
+
+    # Set the status according to the final score
+    if  [ $score -ge $DENIED_SCORE ]; then
+	STATUS='DENIED'
+    elif [ $score -ge $WARNING_SCORE ]; then
+	STATUS='WARNING'
+    fi
+
 done
 
+
+# If the access is denied, send an alert to the user using xmpp
+if [ "$exitCode" = "$DENIED" ]; then
+    # This may happens when the user has activated restrictions by IP or country
+    log_error "Error: access denied for user '$USER'"
+    STATUS='DENIED'
+elif [ "$exitCode" = "$WARNING" ]; then
+    # Send a warning to the user, perhaps using xmpp
+    log_error "Warning: received warning for user '$USER'"
+    STATUS='WARNING'
+fi
+
 # Pass the hand back to dovecot or exit with the last error code
-if [ "$STATUS" = "OK" ] || [ "$STATUS" = "WARNING" ]; then
+if [ "$STATUS" = "OK" -o "$STATUS" = "WARNING" ]; then
     exec $@
 fi
 

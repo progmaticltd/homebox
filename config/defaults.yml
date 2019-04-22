@@ -13,7 +13,7 @@ network_default:
 
 # Shortcut notation to the backup directory
 backup_directory: "{{ playbook_dir }}/../../backup/{{ network.domain }}"
-  
+
 # Standard policies
 policies:
   system:
@@ -119,11 +119,11 @@ mail_default:
     separator: '*'          # Separation char between master user / real user name.
   #############################################################################
   import:                   # If you have users with "import" email active scripts,
-                            # set this flag to true
-    username: import        # The name of the user that import emails
+                            # set the active flag to true
     active: false           # A master user, with reduced rights will be created, to append
-                            # imported emails
-                            # in user's mailboxes.
+                            # imported emails in user's mailboxes.
+                            # This user can only log-in internally (ip 127.0.0.1),
+                            # any external login with this account will fail and be logged
   #############################################################################
   # Dovecot / solr FTS (Full Text search)
   fts:
@@ -595,4 +595,3 @@ access_check_default:
   ip:
     trust: []           # A list of additional IP addresses or CIDR to trust
     trust_home: true    # Trust local network by default (e.g. 192.168.1.0/24)
-    
