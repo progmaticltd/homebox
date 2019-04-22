@@ -92,7 +92,9 @@
 # The daemon trying to read /var/fwknop/fwknopd.pid might be a bug in the fwknop-server
 - name: Add some missing permissions in the apparmor profile
   when: security.app_armor
-  notify: Restart AppArmor service
+  notify:
+    - Restart AppArmor service
+    - Restart fwknop server
   tags: apparmor
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.fwknopd

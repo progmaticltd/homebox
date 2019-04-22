@@ -9,11 +9,13 @@
     src: sources.list
     dest: /etc/apt/sources.list
 
-- name: Update packages cache if older than 1h
+# Some cloud providers, the cache_valid_time condition
+# is not working just after the installation (vultr)
+- name: Force the packages cache update on the first installation
+  when: repositories.changed
   register: packages_cache
   tags: apt
   apt:
-    cache_valid_time: 3600
     update_cache: yes
 
 - name: Upgrade the distribution

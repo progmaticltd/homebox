@@ -1,5 +1,8 @@
 ---
 
+- name: Set the firewall rules
+  include_tasks: ufw-rules.yml
+
 - name: Remove root password access from SSH
   when: security.ssh_disable_root_access_with_password
   tags: security
@@ -10,50 +13,8 @@
     replace: 'PermitRootLogin without-password'
     mode: 0600
 
-- name: Configure the firewall for SSH access
-  tags: security
-  ufw:
-    proto: tcp
-    port: 22
-    src: '{{ access.src }}'
-    rule: '{{ access.rule | default("allow") }}'
-    comment: '{{ access.comment | default("Allow SSH access") }}'
-    state: enabled
-  with_items:
-    - '{{ firewall.ssh }}'
-  loop_control:
-    loop_var: access
-
 - name: Lock root account
   tags: security
   user:
     name: root
     password_lock: '{{ security.lock_root_password }}'
-
-- name: Configure firewall output default policy
-  tags: security
-  ufw:
-    policy: '{{ firewall.output.policy }}'
-    direction: outgoing
-
-- name: Configure firewall output rules
-  tags: security
-  ufw:
-    proto: '{{ access.proto | default("tcp") }}'
-    port: '{{ access.port }}'
-    dest: '{{ access.dest }}'
-    rule: '{{ access.rule | default("allow") }}'
-    comment: '{{ access.comment | default("") }}'
-    direction: out
-  with_items:
-    - '{{ firewall.output.rules }}'
-  loop_control:
-    loop_var: access
-
-- name: Allow external echo requests
-  tags: security
-  notify: Restart UFW
-  lineinfile:
-    path: /etc/ufw/before.rules
-    line: -A ufw-before-output -p icmp --icmp-type echo-request -j ACCEPT
-    insertbefore: COMMIT
