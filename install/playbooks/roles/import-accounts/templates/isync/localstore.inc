@@ -1,7 +1,7 @@
 # Local server credentials
 IMAPAccount local
 Host imap.{{ network.domain }}
-User "{{ user.uid }}{{ mail.impersonate.separator }}{{ mail.import.username }}"
+User "{{ user.uid }}{{ mail.impersonate.separator }}import"
 Pass "{{ import_password }}"
 
 # The local mail store
