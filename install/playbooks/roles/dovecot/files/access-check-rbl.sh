@@ -41,7 +41,7 @@ listedCount=$?
 
 if [ "$listedCount" != "0" ]; then
     echo "This IP address is blacklisted $listedCount times."
-    cost=$(( 10 * listedCount ))
+    cost=$(( 50 * listedCount ))
     exit $cost
 fi
 

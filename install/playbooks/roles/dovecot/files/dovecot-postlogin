@@ -3,27 +3,24 @@
 # Postlogin script for Dovecot.
 # This script will calls other scripts in /etc/dovecot/login-scripts
 # Each script may contains specific comments like below:
-# Blocking: Yes
-# RunAsUser: Yes
-# NeedDecryptKey: No
+# Blocking: <Yes|No>
+# RunAs: <User*|Postmaster>
+# NeedDecryptKey: <Yes|No*>
 # Description: Country policy checker
-# ReportingScript: Yes
-# AlwaysRun: Yes
-# Score: Add
+# ReportingScript: <Yes|No*>
+# Score: <Bonus|Malus*>
 #
 # Explanation:
 # - Blocking: <Yes|No>
 #   Wait for the script execution to be finished before continuing,
 #   This might be used to block login, for instance from some countries or to use TFA
-# - RunAsUser: <User|Postmaster>
+# - RunAs: <User|Postmaster>
 #   User: Run the script as the user that tries to login, by dropping privileges.
 #   This is useful, for instance to import emails from other servers
 #   Postmaster: Run as the postmaster user, with more privileges
 # - NeedDecryptKey: <Yes|No>
 #   The decryption key is needed for instance when importing emails from other platforms,
 #   to decrypt the import settings (e.g. credentials)
-# - AlwaysRun: <Yes|No> (default=No)
-#   Called even if one of the previous script failed. Useful to log failures
 # - ReportingScript: <Yes|No> (default=No)
 #   When set to yes, receive the external email address to send security alerts
 # - Score: <Bonus|Malus>
@@ -54,11 +51,11 @@ STATUS='OK'
 
 # Warning score: score above which a warning is sent to the user
 # TODO: per user settings
-WARNING_SCORE=128
+WARNING_SCORE=100
 
 # Deny score: score above which the connection requires a confirmation
 # TODO: per user settings
-DENIED_SCORE=255
+DENIED_SCORE=140
 
 # Get the external xmpp/email alert address
 ALERT_ADDRESS=$(grep ALERT_ADDRESS /etc/homebox/access-check.conf | cut -f 2 -d =)
@@ -160,7 +157,6 @@ for script in $login_scripts; do
     blocking=$(grep -c '^# Blocking: Yes' "$scriptPath")
     scriptDescription=$(grep '^# Description:' "$scriptPath" | sed 's/.*: //')
     reportingScript=$(grep -c '^# Reporting: Yes' "$scriptPath")
-    alwaysRun=$(grep -c '^# AlwaysRun: Yes' "$scriptPath")
 
     # By default, scripts are not called for LAN connections
     manageLan=$(grep -c '^# ManageLAN: Yes' "$scriptPath")
@@ -173,7 +169,7 @@ for script in $login_scripts; do
 
     # When the access has been denied by one script, skip the next
     # scripts, except if it is explitcitly marked as run (e.g. logging script)
-    if [ "$STATUS" = "DENIED" -a "$alwaysRun" = "0" ]; then
+    if [ "$STATUS" = "DENIED" -a "$reportingScript" = "0" ]; then
         continue
     fi
 
@@ -187,7 +183,7 @@ for script in $login_scripts; do
     if [ "$reportingScript" = "1" ]; then
 	# Add the global / external email address to send alerts
 	# And the status of the connection
-        PASS_ENV="$PASS_ENV ALERT_ADDRESS=$ALERT_ADDRESS"
+        PASS_ENV="$PASS_ENV ALERT_ADDRESS=$ALERT_ADDRESS SCORE=$score"
 	PASS_ENV="$PASS_ENV STATUS=$STATUS DETAILS='$fullDetails'"
 
     # Email import scripts need the decryption key to access the password
@@ -222,9 +218,6 @@ for script in $login_scripts; do
     details=$(su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}")
     scoreCost=$?
 
-    # for debugging
-    logger "Score cost returned by $script for $IP: $scoreCost\n$details"
-
     # Skip trusted policies
     if [ "$scoreCost" = "0" ]; then
 	continue
@@ -257,20 +250,17 @@ for script in $login_scripts; do
 
 done
 
-
 # If the access is denied, send an alert to the user using xmpp
-if [ "$STATUS" = "$DENIED" ]; then
+if [ "$STATUS" = "DENIED" ]; then
     # This may happens when the user has activated restrictions by IP or country
     log_error "Error: access denied for user '$USER'"
-elif [ "$STATUS" = "$WARNING" ]; then
+    printf "* NO [ALERT] Access denied\r\n"
+    exit 0
+elif [ "$STATUS" = "WARNING" ]; then
     # Send a warning to the user, perhaps using xmpp
     log_error "Warning: received warning for user '$USER'"
-fi
-
-# Pass the hand back to dovecot or exit with the last error code
-if [ "$STATUS" = "OK" -o "$STATUS" = "WARNING" ]; then
+    printf "* OK [ALERT] Warning on this connection\r\n"
+    exec $@
+else
     exec $@
 fi
-
-# Exit now, the error will be logged.
-exit $DENIED

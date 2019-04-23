@@ -32,8 +32,8 @@
 # Blocking: No
 # RunAsUser: Yes
 # NeedDecryptKey: No
-# AlwaysRun: Yes
 # ManageLAN: Yes
+# Reporting: Yes
 
 # Exit codes
 CONTINUE=0
@@ -77,7 +77,7 @@ test -f "$connLogFile" || exit $ERROR
 
 # Check if already logged in from this IP in the last minute
 # Get the last connection from this IP
-lastConnFromThisIP=$(grep "\\<$IP\\>.*\\<$SOURCE\\>" "$connLogFile" | tail -n1 | cut -f 3 -d ' ')
+lastConnFromThisIP=$(grep "\\<$IP\\>.*\\<$SOURCE\\>" "$connLogFile" | tail -n1 | cut -f 3 -d '|')
 
 # Check if already connected from this IP in the last minute, then exit safely
 if [ "0$lastConnFromThisIP" -gt "0$lastMinute" ]; then
@@ -112,4 +112,5 @@ elif [ "$isPrivate" = "0" ]; then
 fi
 
 # Add the IP to the list, need validatation
-echo "$day $time $unixtime $IP $countryCode $countryName $SOURCE $STATUS $DETAILS" >>"$connLogFile"
+details=$(echo "$DETAILS" | tr '\n' ';' | sed -E 's/(^;|;$)//g')
+echo "$day|$time|$unixtime|$IP|$countryCode|$countryName|$SOURCE|$STATUS|$SCORE|$details" >>"$connLogFile"

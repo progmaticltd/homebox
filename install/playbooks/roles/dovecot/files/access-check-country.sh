@@ -11,8 +11,8 @@
 
 # Exit codes
 TRUST=0
-NEW_COUNTRY=128
-UNKNOWN_COUNTRY=250
+NEW_COUNTRY=64
+UNKNOWN_COUNTRY=128
 
 # When an error occurs, refuse the connection
 ERROR=255
