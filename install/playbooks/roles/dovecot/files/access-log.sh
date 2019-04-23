@@ -14,7 +14,7 @@
 #   - Country
 #   - source (SOGo / Roundcube / imap)
 #   - status (OK / WARNING / DENIED)
-#   - reason (why the connection has been blocked or warned)
+#   - details (why the connection has been blocked or warned)
 # Examples:
 #   2019-04-15 20:24:25+01:00 1555356265 92.40.248.238 GB United_Kingdom Roundcube OK
 #   2019-04-17 18:53:42+00:00 1555527222 199.249.230.112 US United_States imap DENIED \
@@ -111,7 +111,4 @@ elif [ "$isPrivate" = "0" ]; then
 fi
 
 # Add the IP to the list, need validatation
-echo "$day $time $unixtime $IP $countryCode $countryName $SOURCE $STATUS $REASON" >>"$connLogFile"
-
-# Return the specified status code
-exit $CONTINUE
+echo "$day $time $unixtime $IP $countryCode $countryName $SOURCE $STATUS $DETAILS" >>"$connLogFile"

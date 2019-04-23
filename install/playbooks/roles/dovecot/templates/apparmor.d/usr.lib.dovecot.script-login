@@ -140,8 +140,7 @@
   /home/users/*/.config/homebox/access-check.conf r,
 
   # read/write user security logs and customisation
-  /home/users/*/security/*.{lock,log} rw,
-  /home/users/*/security/* r,
+  /home/users/*/security/* rw,
 
   # import folders
   /home/users/*/mails/import/ r,

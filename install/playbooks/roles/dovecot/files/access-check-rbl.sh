@@ -40,7 +40,7 @@ rblStatus=$(rblcheck "$IP")
 listedCount=$?
 
 if [ "$listedCount" != "0" ]; then
-    echo "This IP address $IP is blacklisted $listedCount times."
+    echo "This IP address is blacklisted $listedCount times."
     cost=$(( 10 * listedCount ))
     exit $cost
 fi

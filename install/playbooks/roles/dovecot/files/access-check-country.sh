@@ -66,8 +66,9 @@ test -x /usr/bin/ipcalc || exit $ERROR
 test -d "$secdir" || mkdir "$secdir"
 
 # Create a unique lock file name for this IP address
+# and the source used (imap/sogo/roundcube)
 # Exit if a script already check this IP address
-ipSig=$(echo "$IP" | md5sum | cut -f 1 -d ' ')
+ipSig=$(echo "$IP:$SOURCE" | md5sum | cut -f 1 -d ' ')
 lockFile="$secdir/$ipSig.lock"
 test -f "$lockFile" && exit $TRUST
 
@@ -114,7 +115,7 @@ if [ "$trustedCountry" = "1" ]; then
     exit $TRUST
 fi
 
-echo "IMAP connection from a new country, likely from $countryName (IP=$IP)"
+echo "IMAP connection from a different country ($countryName)"
 
 # Return the malus
 exit $NEW_COUNTRY
