@@ -53,9 +53,11 @@ SOURCE='imap'
 STATUS='OK'
 
 # Warning score: score above which a warning is sent to the user
+# TODO: per user settings
 WARNING_SCORE=128
 
 # Deny score: score above which the connection requires a confirmation
+# TODO: per user settings
 DENIED_SCORE=255
 
 # Get the external xmpp/email alert address
@@ -141,6 +143,9 @@ score=0
 # Will contains all messages from all the scripts, one per line
 fullDetails=""
 
+# Check if the connection is local (LAN network)
+isPrivate=$(ipcalc "$IP" | grep -c "Private Internet")
+
 # Call all the scripts in the folder /etc/dovecot/login-scripts,
 # These scrips are non blocking, and run as the user
 for script in $login_scripts; do
@@ -157,6 +162,9 @@ for script in $login_scripts; do
     reportingScript=$(grep -c '^# Reporting: Yes' "$scriptPath")
     alwaysRun=$(grep -c '^# AlwaysRun: Yes' "$scriptPath")
 
+    # By default, scripts are not called for LAN connections
+    manageLan=$(grep -c '^# ManageLAN: Yes' "$scriptPath")
+
     # Malus script, add "bad" points to the final score
     malusScript=$(grep -c '^# Score: Malus' "${scriptPath}")
 
@@ -167,6 +175,10 @@ for script in $login_scripts; do
     # scripts, except if it is explitcitly marked as run (e.g. logging script)
     if [ "$STATUS" = "DENIED" -a "$alwaysRun" = "0" ]; then
         continue
+    fi
+
+    if [ "$isPrivate" = "1" -a "$manageLan" = "0" ]; then
+	continue
     fi
 
     # Add the source (Roundcube/SOGo/IMAP) to the environment
@@ -236,7 +248,7 @@ for script in $login_scripts; do
 	logger "Warning: no bonus/malus type specified in the comments for the script $script (returned $scoreCost)"
     fi
 
-    # Set the status according to the final score
+    # Set the status according to the current score
     if  [ $score -ge $DENIED_SCORE ]; then
 	STATUS='DENIED'
     elif [ $score -ge $WARNING_SCORE ]; then
@@ -247,14 +259,12 @@ done
 
 
 # If the access is denied, send an alert to the user using xmpp
-if [ "$exitCode" = "$DENIED" ]; then
+if [ "$STATUS" = "$DENIED" ]; then
     # This may happens when the user has activated restrictions by IP or country
     log_error "Error: access denied for user '$USER'"
-    STATUS='DENIED'
-elif [ "$exitCode" = "$WARNING" ]; then
+elif [ "$STATUS" = "$WARNING" ]; then
     # Send a warning to the user, perhaps using xmpp
     log_error "Warning: received warning for user '$USER'"
-    STATUS='WARNING'
 fi
 
 # Pass the hand back to dovecot or exit with the last error code

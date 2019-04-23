@@ -33,6 +33,7 @@
 # RunAsUser: Yes
 # NeedDecryptKey: No
 # AlwaysRun: Yes
+# ManageLAN: Yes
 
 # Exit codes
 CONTINUE=0
@@ -56,8 +57,8 @@ time=$(date --rfc-3339=seconds | cut -f 2 -d ' ')
 # Create the security directory for the user
 test -d "$secdir" || mkdir -m 700 "$secdir"
 
-# Create a unique lock file name for this IP address
-ipSig=$(echo "$IP" | md5sum | cut -f 1 -d ' ')
+# Create a unique lock file name for this IP address and source
+ipSig=$(echo "$IP:$SOURCE" | md5sum | cut -f 1 -d ' ')
 lockFile="$secdir/$ipSig.lock"
 test -f "$lockFile" && exit $CONTINUE
 

@@ -47,7 +47,7 @@ fi
 # Check if the IP address is whitelisted
 whitelisted="0"
 if [ -r "$whitelistFile" ]; then
-    whitelisted=$(grep -Ev '(^#.*|^$)' "$whitelistFile" | grepcidr -c "$IP")
+    whitelisted=$(grepcidr -x -c "$IP" "$whitelistFile")
 fi
 
 # Exit directly if the IP address has been whitlisted

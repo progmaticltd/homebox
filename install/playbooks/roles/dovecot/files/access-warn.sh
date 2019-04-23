@@ -10,14 +10,6 @@
 # Exit codes
 CONTINUE=0
 
-# Check if this is a private IP address
-isPrivate=$(ipcalc "$IP" | grep -c "Private Internet")
-
-# Ignore private IP addresses
-if [ "$isPrivate" = "1" ]; then
-    exit $CONTINUE
-fi
-
 # Ignore normal connections
 if [ "$STATUS" = "OK" ]; then
     exit $CONTINUE
@@ -32,7 +24,7 @@ connLogFile="$secdir/warnings.log"
 
 # Initialise the environment
 unixtime=$(date +%s)
-lastMinute=$((unixtime - 60))
+lastDay=$((unixtime - 86400))
 ipSig=$(echo "$IP:$SOURCE" | md5sum | cut -f 1 -d ' ')
 
 # Check if already logged in from this IP
@@ -42,13 +34,13 @@ ipSig=$(echo "$IP:$SOURCE" | md5sum | cut -f 1 -d ' ')
 if [ -f "$connLogFile" ]; then
     lastConnFromThisIP=$(grep "$USER $ipSig" "$connLogFile" | tail -n1 | cut -f 1 -d ' ')
 
-    # Keep the last 100 lines only
-    sed -i -e ':a' -e '$q;N;101,$D;ba' "$connLogFile"
+    # Keep the last 1000 lines only
+    sed -i -e ':a' -e '$q;N;1001,$D;ba' "$connLogFile"
 fi
 
 # Some clients are opening mutlitple connections on startup
-# Send the warning only one time per minute
-if [ "0$lastConnFromThisIP" -gt "0$lastMinute" ]; then
+# Send the warning only one time per day per IP/client
+if [ "0$lastConnFromThisIP" -gt "0$lastDay" ]; then
     exit
 fi
 
