@@ -12,6 +12,9 @@
 # Malus scores
 TRUST=0
 
+# Blacklisted IP address score:
+BLACKLIST_SCORE=$(grep BLACKLIST_MALUS /etc/homebox/access-check.conf | cut -f 2 -d =)
+
 # When an error occurs, refuse the connection
 ERROR=255
 
@@ -84,6 +87,13 @@ fi
 
 countryCode=$(echo "$lookup" | sed -r 's/.*: ([A-Z]{2}),.*/\1/g')
 countryName=$(echo "$lookup" | cut -f 2 -d , | sed 's/^ //')
+
+# Check if the country is blacklisted
+blacklistedCountry=$(echo "$COUNTRIES_BLACKLIST" | grep -c -E "(^|,)$countryCode(,|$)")
+if [ "$blacklistedCountry" = "1" ]; then
+    echo "The country '$countryName' is blacklisted"
+    exit $BLACKLIST_SCORE
+fi
 
 # If we trust the same country, just accept the connection
 if [ "$HOME_COUNTRY" = "$countryCode" -a "$COUNTRIES_TRUST_HOME" = "YES" ]; then

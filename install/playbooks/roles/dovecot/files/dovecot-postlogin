@@ -253,7 +253,7 @@ if [ "$STATUS" = "DENIED" ]; then
     exit 0
 elif [ "$STATUS" = "WARNING" ]; then
     # Send a warning to the user, perhaps using xmpp
-    log_error  "IMAP connectin warning for '$USER@$IP'"
+    log_error  "IMAP connection warning for '$USER@$IP'"
     printf "* OK [ALERT] Warning on this connection\r\n"
     exec $@
 else

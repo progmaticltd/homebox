@@ -10,7 +10,7 @@
 # Description: IP blacklist management
 
 # Blacklisted IP address score:
-BLACKLIST_SCORE=$(grep IPS_BLACKLIST_MALUS /etc/homebox/access-check.conf | cut -f 2 -d =)
+BLACKLIST_SCORE=$(grep BLACKLIST_MALUS /etc/homebox/access-check.conf | cut -f 2 -d =)
 
 # Do not change anything when the IP address is not found
 NEUTRAL=0

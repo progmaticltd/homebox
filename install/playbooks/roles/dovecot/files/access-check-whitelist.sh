@@ -10,7 +10,7 @@
 # Description: IP whitelist management
 
 # Whitelisted IP address score:
-WHITELIST_SCORE=$(grep IPS_WHITELIST_BONUS /etc/homebox/access-check.conf | cut -f 2 -d =)
+WHITELIST_SCORE=$(grep WHITELIST_BONUS /etc/homebox/access-check.conf | cut -f 2 -d =)
 
 # Do not change anything when the IP address is not found
 NEUTRAL=0
