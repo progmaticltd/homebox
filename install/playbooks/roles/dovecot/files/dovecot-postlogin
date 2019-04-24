@@ -44,6 +44,11 @@ log_error() {
     echo "$@" 1>&2;
 }
 
+# TODO: Only display log_debug in debug mode
+log_debug() {
+    logger "$@"
+}
+
 # The following variables will be logged by the last script
 # Or used to send a warning in real time to the user
 SOURCE='imap'
@@ -119,7 +124,8 @@ if [ "$IP" = "127.0.0.1" ]; then
     fi
 
 elif [ "$LOCAL_IP" = "127.0.0.2" ]; then
-    # A simple trick to recognise RoundCube logins
+    # This is a simple trick to recognise RoundCube logins,
+    # see the role roundcube and the plugin dovecot_ident
     SOURCE=Roundcube
 fi
 
@@ -132,6 +138,11 @@ fullDetails=""
 
 # Check if the connection is local (LAN network)
 isPrivate=$(ipcalc "$IP" | grep -c "Private Internet")
+
+# These details will be passed to the scripts
+TIMES_BANNED=$(grep -c "Ban $IP" /var/log/fail2ban.log)
+
+PASS_ENV="TIMES_BANNED=$TIMES_BANNED"
 
 # Call all the scripts in the folder /etc/dovecot/login-scripts,
 # These scrips are non blocking, and run as the user
@@ -157,18 +168,12 @@ for script in $login_scripts; do
     # Bonus script, remove points; e.g trusted IP addresses
     bonusScript=$(grep -c '^# Score: Bonus' "${scriptPath}")
 
-    # When the access has been denied by one script, skip the next
-    # scripts, except if it is explitcitly marked as run (e.g. logging script)
-    if [ "$STATUS" = "DENIED" -a "$reportingScript" = "0" ]; then
-        continue
-    fi
-
     if [ "$isPrivate" = "1" -a "$manageLan" = "0" ]; then
 	continue
     fi
 
     # Add the source (Roundcube/SOGo/IMAP) to the environment
-    PASS_ENV="SOURCE=$SOURCE"
+    PASS_ENV="$PASS_ENV SOURCE=$SOURCE"
 
     if [ "$reportingScript" = "1" ]; then
 	# Add the global / external email address to send alerts
@@ -198,13 +203,13 @@ for script in $login_scripts; do
     # Launch non blocking script in background and continue.
     # This is actually used by the external emails import script.
     if [ "$blocking" = "0" ]; then
-        logger "Launching background script $scriptPath as '$RunAs'"
+        log_debug "Launching background script $scriptPath as '$RunAs'"
         su -m "$RunAs" -c "$PASS_ENV $scriptPath" 1>&2 &
 	continue
     fi
 
     # Running foreground scripts
-    logger "Running blocking script ${scriptPath} as '$RunAs'"
+    log_debug "Running blocking script ${scriptPath} as '$RunAs'"
     details=$(su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}")
     scoreCost=$?
 
@@ -221,14 +226,14 @@ for script in $login_scripts; do
     # Compute the current score
     if [ "$malusScript" = "1" ]; then
 	score=$(( score + scoreCost ))
-	logger "$script: Added $scoreCost to the score, now $score"
-	logger "Details: $details"
+	log_debug "$script: Added $scoreCost to the score, now $score"
+	log_debug "Details: $details"
     elif [ "$bonusScript" = "1" ]; then
 	score=$(( score - scoreCost ))
-	logger "$script: Substracted $scoreCost to the score, now $score"
-	logger "Details: $details"
+	log_debug "$script: Substracted $scoreCost to the score, now $score"
+	log_debug "Details: $details"
     else
-	logger "Warning: no bonus/malus type specified in the comments for the script $script (returned $scoreCost)"
+	log_debug "Warning: no bonus/malus type specified in the comments for the script $script (returned $scoreCost)"
     fi
 
     # Set the status according to the current score
@@ -243,12 +248,12 @@ done
 # If the access is denied, send an alert to the user using xmpp
 if [ "$STATUS" = "DENIED" ]; then
     # This may happens when the user has activated restrictions by IP or country
-    log_error "Error: access denied for user '$USER'"
+    log_error "IMAP connection denied for '$USER@$IP'"
     printf "* NO [ALERT] Access denied\r\n"
     exit 0
 elif [ "$STATUS" = "WARNING" ]; then
     # Send a warning to the user, perhaps using xmpp
-    log_error "Warning: received warning for user '$USER'"
+    log_error  "IMAP connectin warning for '$USER@$IP'"
     printf "* OK [ALERT] Warning on this connection\r\n"
     exec $@
 else

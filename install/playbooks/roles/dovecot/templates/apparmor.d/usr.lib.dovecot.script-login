@@ -35,8 +35,9 @@
   /etc/dovecot/login-scripts/ r,
   /etc/dovecot/login-scripts/* r,
 
-  # Read sogo log files
+  # Read some log files
   /var/log/sogo/sogo.log r,
+  /var/log/fail2ban.log r,
 
   # allowed by the scripts
   /bin/dash ix,

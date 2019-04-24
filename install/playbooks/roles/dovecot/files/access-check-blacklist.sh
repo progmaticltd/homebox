@@ -1,16 +1,16 @@
 #!/bin/dash
 
-# Check if the connection is from a whitelisted IP address or network.
+# Check if the connection is from a blacklisted IP address or network.
 
 # Post login script for Dovecot, this is parsed by the parrent script.
 # Blocking: Yes
 # RunAsUser: Yes
 # NeedDecryptKey: No
-# Score: Bonus
-# Description: IP whitelist management
+# Score: Malus
+# Description: IP blacklist management
 
-# Whitelisted IP address score:
-WHITELIST_SCORE=$(grep IPS_WHITELIST_BONUS /etc/homebox/access-check.conf | cut -f 2 -d =)
+# Blacklisted IP address score:
+BLACKLIST_SCORE=$(grep IPS_BLACKLIST_MALUS /etc/homebox/access-check.conf | cut -f 2 -d =)
 
 # Do not change anything when the IP address is not found
 NEUTRAL=0
@@ -23,17 +23,17 @@ secdir="$HOME/security"
 # Exit if a script already check this IP address
 ipSig=$(echo "$IP" | md5sum | cut -f 1 -d ' ')
 lockFile="$secdir/$ipSig.lock"
-test -f "$lockFile" && exit $WHITELIST_SCORE
+test -f "$lockFile" && exit $BLACKLIST_SCORE
 
 # Start processing, but remove lockfile on exit
 touch "$lockFile"
 trap 'rm -f $lockFile' EXIT
 
 # List of well known and trusted IP addresses
-whitelistFile="$secdir/ip-whitelist.txt"
+blacklistFile="$secdir/ip-blacklist.txt"
 
-# No whitelist defined for this user
-if [ ! -r "$whitelistFile" ]; then
+# No blacklist defined for this user
+if [ ! -r "$blacklistFile" ]; then
     logger "No wtl file"
     exit $NEUTRAL
 fi
@@ -44,16 +44,16 @@ if [ ! -x /usr/bin/grepcidr ]; then
     exit $NEUTRAL
 fi
 
-# Check if the IP address is whitelisted
-whitelisted="0"
-if [ -r "$whitelistFile" ]; then
-    whitelisted=$(grepcidr -x -c "$IP" "$whitelistFile")
+# Check if the IP address is blacklisted
+blacklisted="0"
+if [ -r "$blacklistFile" ]; then
+    blacklisted=$(grepcidr -x -c "$IP" "$blacklistFile")
 fi
 
-# Exit directly if the IP address has been whitelisted
-if [ "$whitelisted" != "0" ]; then
-    echo "IP address is whitelisted by $USER"
-    exit $WHITELIST_SCORE
+# Exit directly if the IP address has been blacklisted
+if [ "$blacklisted" != "0" ]; then
+    echo "IP address is blacklisted by $USER"
+    exit $BLACKLIST_SCORE
 fi
 
 # Continue the normal access by default

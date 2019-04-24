@@ -7,12 +7,19 @@
     dest: '/etc/dovecot/login-scripts/{{ script.order }}-{{ script.name }}'
     mode: '0755'
   with_items:
+    # malus scripts
     - name: access-check-country
       order: 100
     - name: access-check-rbl
       order: 110
-    - name: access-check-whitelist
+    - name: access-check-fail2ban
       order: 120
+    - name: access-check-blacklist
+      order: 130
+    # bonus scripts
+    - name: access-check-whitelist
+      order: 200
+    # logging and reporting scripts
     - name: access-log
       order: 800
     - name: access-warn

@@ -584,15 +584,18 @@ sogo_default:
 # and works with Roundcube / Sogo as well
 access_check_default:
   active: false
-  warning_score: 40     # Score threshold to generate a warning
-  denied_score: 120     # Score threshold to deny a connection
-  countries:            # Countries check parameters
-    trust: []           # A list of additional countries to trust, the country where the box is
-                        # hosted is trusted by default.
-    trust_home: true    # Trust home country by default (the country where the box is hosted)
-    foreign_malus: 40   # The number of points added when connecting from a foreign country
-    unknown_malus: 40   # The number of points added when connecting from not identified
+  warning_score: 40           # Score threshold to generate a warning
+  denied_score: 120           # Score threshold to deny a connection
+  countries:                  # Countries check parameters
+    trust: []                 # A list of additional countries to trust, the country where the box is
+                              # hosted is trusted by default.
+    trust_home: true          # Trust home country by default (the country where the box is hosted)
+    foreign_malus: 40         # The number of points added when connecting from a foreign country
+    unknown_malus: 40         # The number of points added when connecting from not identified
   ip:
-    rbl_malus: 40       # The number of points added to the score when an IP address is blacklisted
-    trust: []           # A list of additional IP addresses or CIDR to trust
-    trust_home: true    # Trust local network by default (e.g. 192.168.1.0/24)
+    rbl_malus: 60             # The number of points added to the score when an IP address is blacklisted
+    fail2ban_malus: 10        # Malus to apply each time an IP address has blacklisted by fail2ban
+    whitelist_bonus: 120      # Bonus to apply when an IP is whitelisted by a user
+    blacklist_malus: 120      # Malus to apply when an IP is blacklisted by a user
+    trust: []                 # A list of additional IP addresses or CIDR to trust
+    trust_home: true          # Trust local network by default (e.g. 192.168.1.0/24)

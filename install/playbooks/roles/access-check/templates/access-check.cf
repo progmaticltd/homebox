@@ -23,6 +23,23 @@ IPS_TRUST='{{ access_check.ip.trust | join(",") }}'
 # Trust local network by default (e.g. 192.168.1.0/24)
 IPS_TRUST_HOME='{{ access_check.ip.trust_home | bool | ternary("YES", "NO") }}'
 
+# Malus to apply each time an IP address has blacklisted by fail2ban
+# The script check for the last log entries
+IPS_FAIL2BAN_MALUS={{ access_check.ip.fail2ban_malus }}
+
+# The score to apply when an IP address is manually whitelisted
+# by the user. Notes:
+# - the user might still receive a warning according to the score
+# - the connection might still be denied, for instance if
+#   the IP address is blacklisted four times
+# You can tune this value on the installation.
+IPS_WHITELIST_BONUS={{ access_check.ip.whitelist_bonus }}
+
+# The score to apply when an IP address is manually blacklisted
+# by the user.
+# You can tune this value on the installation.
+IPS_BLACKLIST_BONUS={{ access_check.ip.blacklist_malus }}
+
 ### Country checks ###
 
 # A coma separated list of country codes to trust (e.g. FR,DE,GB)

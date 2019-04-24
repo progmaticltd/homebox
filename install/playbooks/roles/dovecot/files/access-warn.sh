@@ -1,10 +1,9 @@
 #!/bin/dash
 
 # Post login script for Dovecot, this block is parsed by the parent script
-# Blocking: Yes
+# Blocking: No
 # RunAs: Postmaster
 # NeedDecryptKey: No
-# AlwaysRun: Yes
 # Reporting: Yes
 
 # Exit codes
@@ -25,22 +24,29 @@ connLogFile="$secdir/warnings.log"
 # Initialise the environment
 unixtime=$(date +%s)
 lastDay=$((unixtime - 86400))
+lastHour=$((unixtime - 3600))
 ipSig=$(echo "$IP:$SOURCE" | md5sum | cut -f 1 -d ' ')
 
 # Check if already logged in from this IP
 # and the source used (imap/sogo/roundcube)
-# in the last minute
 # Get the last connection from this IP / source
 if [ -f "$connLogFile" ]; then
-    lastConnFromThisIP=$(grep "$USER $ipSig" "$connLogFile" | tail -n1 | cut -f 1 -d ' ')
+    lastLogEntryFromThisIP=$(grep "$USER $ipSig" "$connLogFile" | tail -n1 | cut -f 1 -d ' ')
 
     # Keep the last 1000 lines only
     sed -i -e ':a' -e '$q;N;1001,$D;ba' "$connLogFile"
 fi
 
 # Some clients are opening mutlitple connections on startup
-# Send the warning only one time per day per IP/client
-if [ "0$lastConnFromThisIP" -gt "0$lastDay" ]; then
+# When status is warning, send the alert only one time per day, IP and source
+if [ "0$lastLogEntryFromThisIP" -gt "0$lastDay" -a "$STATUS" = "WARNING" ]; then
+    exit
+fi
+
+# when the status is DENIED, send the warning once per hour only
+# to avoid DoS. At this time, the user should be warned that his
+# account is compromised
+if [ "0$lastLogEntryFromThisIP" -gt "0$lastHour" -a "$STATUS" = "DENIED" ]; then
     exit
 fi
 
@@ -65,6 +71,7 @@ MSG="IMAP connection ${STATUS}\n"
 MSG="${MSG}- User: ${USER} ($MAIL)\n"
 MSG="${MSG}- IP Address: ${IP}\n"
 MSG="${MSG}- Source: ${SOURCE}\n"
+MSG="${MSG}- Final score: ${SCORE}\n"
 
 
 if [ "$DETAILS" != "" ]; then
@@ -77,6 +84,11 @@ MSG="${MSG}\n\nIP Details: https://whatismyipaddress.com/ip/${IP}"
 # Send the alert using XMPP
 if [ "$USE_XMPP" = "1" ]; then
     xmppOutput=$(echo "$MSG" | sendxmpp -t -f "$xmppConfig" "$MAIL" 2>&1)
+
+    # This will be in the external recipient email
+    if [ "$xmppOutput" != "" ]; then
+        logger -p user.warning "sendxmpp error when sending warning from postmaster to $MAIL: $xmppoutput"
+    fi
 fi
 
 # Send the alert by email first. If the user is logged in,
@@ -94,9 +106,8 @@ if [ "$ALERT_ADDRESS" != "" ]; then
         xmppOutput=$(echo "$MSG" | sendxmpp -t -f "$xmppConfig" "$ALERT_ADDRESS")
     fi
 
-    # This will be in the external recipient email
     if [ "$xmppOutput" != "" ]; then
-        MSG="$MSG\nXMPP output: $xmppOutput"
+        logger -p user.warning "sendxmpp error when sending warning from postmaster to $ALERT_ADDRESS: $xmppoutput"
     fi
 
     # Send an email alert as well
