@@ -16,6 +16,8 @@
       order: 120
     - name: access-check-blacklist
       order: 130
+    - name: access-check-time
+      order: 140
     # bonus scripts
     - name: access-check-whitelist
       order: 200

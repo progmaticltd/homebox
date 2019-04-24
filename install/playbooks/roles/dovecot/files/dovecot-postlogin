@@ -218,22 +218,24 @@ for script in $login_scripts; do
 	continue
     fi
 
-    # Build the details list used by the warning script
-    if [ "$details" != "" ]; then
-       fullDetails="$fullDetails\n- $details"
-    fi
-
     # Compute the current score
     if [ "$malusScript" = "1" ]; then
 	score=$(( score + scoreCost ))
 	log_debug "$script: Added $scoreCost to the score, now $score"
 	log_debug "Details: $details"
+	sign="+"
     elif [ "$bonusScript" = "1" ]; then
 	score=$(( score - scoreCost ))
 	log_debug "$script: Substracted $scoreCost to the score, now $score"
 	log_debug "Details: $details"
+	sign="-"
     else
 	log_debug "Warning: no bonus/malus type specified in the comments for the script $script (returned $scoreCost)"
+    fi
+
+    # Build the details list used by the warning script
+    if [ "$details" != "" ]; then
+       fullDetails="$fullDetails\n- $details (${sign}${scoreCost} points)"
     fi
 
     # Set the status according to the current score
@@ -241,6 +243,8 @@ for script in $login_scripts; do
 	STATUS='DENIED'
     elif [ $score -ge $WARNING_SCORE ]; then
 	STATUS='WARNING'
+    else
+	STATUS='OK'
     fi
 
 done

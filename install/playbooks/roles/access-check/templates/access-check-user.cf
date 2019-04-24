@@ -1,9 +1,5 @@
 # Access check policy for Homebox
 
-# What to do when something suspicious is detected: warn (default), or deny
-# Warnings are sent by the postmaster, using XMPP
-UNUSUAL='{{ access_check.unusual }}'
-
 # A coma separated list of country codes to trust (e.g. FR,DE,GB)
 COUNTRIES_TRUST='{{ access_check.countries.trust | join(",") }}'
 

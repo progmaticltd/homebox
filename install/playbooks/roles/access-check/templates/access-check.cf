@@ -57,3 +57,12 @@ COUNTRIES_FOREIGN_MALUS={{ access_check.countries.foreign_malus }}
 
 # Malus for an unidentified country
 COUNTRIES_UNKNOWN_MALUS={{ access_check.countries.unknown_malus }}
+
+
+### Working time check ###
+
+# imap connections outside these range will be penalised,
+# except if travelling in another country
+WORKING_TIMEZONE={{ access_check.time.zone }}
+WORKING_TIME_START={{ access_check.time.start }}
+WORKING_TIME_END={{ access_check.time.end }}

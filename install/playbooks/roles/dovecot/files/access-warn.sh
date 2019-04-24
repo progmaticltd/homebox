@@ -66,12 +66,12 @@ else
     logger "Using only mail to send alerts"
 fi
 
-# Build the message
+# Build the message with all the details
 MSG="IMAP connection ${STATUS}\n"
 MSG="${MSG}- User: ${USER} ($MAIL)\n"
 MSG="${MSG}- IP Address: ${IP}\n"
 MSG="${MSG}- Source: ${SOURCE}\n"
-MSG="${MSG}- Final score: ${SCORE}\n"
+MSG="${MSG}- Final score: ${SCORE} points\n"
 
 
 if [ "$DETAILS" != "" ]; then
