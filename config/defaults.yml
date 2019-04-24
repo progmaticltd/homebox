@@ -588,13 +588,16 @@ access_check_default:
   blacklist_malus: 255        # Malus to apply when an IP or country is blacklisted. Max value is 255
   warning_score: 40           # Score threshold to generate a warning
   denied_score: 120           # Score threshold to deny a connection
-  time:                       # Standard time range you are normally checking your emails
+  time:                       # Standard time range you are normally checking your emails.
     zone: auto                # The timezone to consider when checking the access time.
-    start: 8                  #   the more you are outside this range, the more malus points
-    end: 18                   #   are added.
+    start: 8                  # start-end:  the more you are outside this range, the more malus points
+    end: 18                   #   are added. 10 points per hour outside the range
+                              #   Perhaps this will generate one warning if you check your emails
+                              #   from home at midnight or at 2am.
   countries:                  # Countries check parameters
-    trust: []                 # A list of additional countries to trust
-    blacklist: []             # A list of blacklisted countries
+    trust: []                 # A list of additional countries to trust, i.e. that will not generate points.
+                              #   However, other restrictions are still applying (e.g. blacklisted IP address)
+    blacklist: []             # A list of blacklisted countries. Connections from these countries will be denied.
     trust_home: true          # Trust home country by default (the country where the box is hosted)
     foreign_malus: 40         # The number of points added when connecting from a foreign country
     unknown_malus: 40         # The number of points added when the country cannot be identified
