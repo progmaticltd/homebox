@@ -1,0 +1,16 @@
+# Last Modified: Sat Apr 20 06:55:59 2019
+#include <tunables/global>
+
+/usr/bin/sendxmpp {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/perl>
+
+  # binaries & libraries
+  /usr/bin/sendxmpp r,
+  /usr/bin/perl ix,
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  
+  # read credentials file
+  /home/users/*/.sendxmpprc r,
+}

@@ -12,4 +12,5 @@
     - '{{ playbook_dir }}/roles/roundcube/variables/main.yml'
   roles:
     - certificates
+    - imapproxy
     - roundcube

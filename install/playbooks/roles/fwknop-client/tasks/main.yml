@@ -7,13 +7,13 @@
 
 - name: Create a directory for fwknop backup if it does not exists
   file:
-    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/'
+    path: '{{ backup_directory }}/fwknop/'
     state: directory
 
 - name: Retrieve the key from the backup if exists
   shell: >-
-    test -f '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/fwknoprc'
-    && cp '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/fwknoprc'
+    test -f '{{ backup_directory }}/fwknop/fwknoprc'
+    && cp '{{ backup_directory }}/fwknop/fwknoprc'
     ~/.fwknop-{{ network.domain }}.rc
     || /bin/true
   args:
@@ -30,6 +30,16 @@
 - name: Backup the key for next deployment
   shell: >-
     cp  ~/.fwknop-{{ network.domain }}.rc
-    '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/fwknoprc'
+    '{{ backup_directory }}/fwknop/fwknoprc'
   args:
-    creates: '{{ playbook_dir }}/../../backup/{{ network.domain }}/fwknop/fwknoprc'
+    creates: '{{ backup_directory }}/fwknop/fwknoprc'
+
+- name: Protect the file
+  file:
+    path: '{{ rcfile }}'
+    mode: 0600
+  with_items:
+    - '{{ backup_directory }}/fwknop/fwknoprc'
+    - '~/.fwknop-{{ network.domain }}.rc'
+  loop_control:
+    loop_var: rcfile

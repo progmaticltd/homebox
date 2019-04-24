@@ -564,6 +564,29 @@
     var: hugo
 
 ################################################################################
+# Merge defaults access_check settings
+- name: Combine default and user defined access_check settings
+  run_once: true
+  when: access_check is defined
+  tags: defaults
+  set_fact:
+    access_check: '{{ access_check_default | combine(access_check, recursive=True) }}'
+
+- name: Use default access_check settings
+  run_once: true
+  when: access_check is not defined
+  tags: defaults
+  set_fact:
+    access_check: '{{ access_check_default }}'
+
+- name: Display merged access_check settings
+  run_once: true
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: access_check
+
+################################################################################
 # Marking the default settings as loaded should increase the speed of the deployment
 - name: Mark the default settings as loaded
   run_once: true

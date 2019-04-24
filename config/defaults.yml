@@ -13,7 +13,7 @@ network_default:
 
 # Shortcut notation to the backup directory
 backup_directory: "{{ playbook_dir }}/../../backup/{{ network.domain }}"
-  
+
 # Standard policies
 policies:
   system:
@@ -119,11 +119,11 @@ mail_default:
     separator: '*'          # Separation char between master user / real user name.
   #############################################################################
   import:                   # If you have users with "import" email active scripts,
-                            # set this flag to true
-    username: import        # The name of the user that import emails
+                            # set the active flag to true
     active: false           # A master user, with reduced rights will be created, to append
-                            # imported emails
-                            # in user's mailboxes.
+                            # imported emails in user's mailboxes.
+                            # This user can only log-in internally (ip 127.0.0.1),
+                            # any external login with this account will fail and be logged
   #############################################################################
   # Dovecot / solr FTS (Full Text search)
   fts:
@@ -153,10 +153,7 @@ mail_default:
   # useful to debug sieve without setting the debug flag system wide
   sieve:
     debug: true
-  #############################################################################
-  # Log access times and IP addresses in the users directory
-  log_access:
-    active: false
+
   #############################################################################
   # Fail2ban parameters
   fail2ban:
@@ -579,7 +576,33 @@ sogo_default:
   enable_public_access: false
   password_change: true
 
-# Countries policies.
-countries_default:
-  safe: any
-  unsafe: []
+#############################################################################
+# Security policies per country / IP address / behaviour / etc
+# Check access times and IP addresses, and reject or warn the user
+# This improves security and auditing of access.
+# This is - actually - used by dovecot to warn or deny IMAP connections
+# and works with Roundcube / Sogo as well
+access_check_default:
+  active: false
+  whitelist_bonus: 255        # Bonus to apply when an IP or country is whitelisted. Max value is 255
+  blacklist_malus: 255        # Malus to apply when an IP or country is blacklisted. Max value is 255
+  warning_score: 40           # Score threshold to generate a warning
+  denied_score: 120           # Score threshold to deny a connection
+  time:                       # Standard time range you are normally checking your emails.
+    zone: auto                # The timezone to consider when checking the access time.
+    start: 8                  # start-end:  the more you are outside this range, the more malus points
+    end: 18                   #   are added. 10 points per hour outside the range
+                              #   Perhaps this will generate one warning if you check your emails
+                              #   from home at midnight or at 2am.
+  countries:                  # Countries check parameters
+    trust: []                 # A list of additional countries to trust, i.e. that will not generate points.
+                              #   However, other restrictions are still applying (e.g. blacklisted IP address)
+    blacklist: []             # A list of blacklisted countries. Connections from these countries will be denied.
+    trust_home: true          # Trust home country by default (the country where the box is hosted)
+    foreign_malus: 40         # The number of points added when connecting from a foreign country
+    unknown_malus: 40         # The number of points added when the country cannot be identified
+  ip:
+    rbl_malus: 60             # The number of points added to the score when an IP address is blacklisted
+    fail2ban_malus: 10        # Malus to apply each time an IP address has blacklisted by fail2ban
+    trust: []                 # A list of additional IP addresses or CIDR to trust
+    trust_home: true          # Trust local network by default (e.g. 192.168.1.0/24)

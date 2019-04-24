@@ -3,6 +3,7 @@
 
 /usr/bin/rspamd {
   #include <abstractions/base>
+  #include <abstractions/nameservice>
 
   /dev/shm/rhm.* rw,
 

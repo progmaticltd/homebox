@@ -133,6 +133,7 @@
 
 # Firewall configuration ======================================================
 - name: Open the firewall for s2c communication
+  tags: ufw
   ufw:
     rule: allow
     proto: tcp
@@ -145,7 +146,37 @@
     loop_var: rule
 
 - name: Open the firewall for s2s communication when necessary
+  tags: ufw
   ufw:
+    rule: allow
+    proto: tcp
+    port: '{{ rule.ports }}'
+    comment: '{{ rule.comment }}'
+    delete: '{{ ejabberd.s2s.active == false }}'
+  with_items:
+    - ports: 5269
+      comment: Accept XMPP connections from other servers
+  loop_control:
+    loop_var: rule
+
+- name: Open the firewall for s2c communication
+  tags: ufw
+  ufw:
+    direction: out
+    rule: allow
+    proto: tcp
+    port: '{{ rule.ports }}'
+    comment: '{{ rule.comment }}'
+  with_items:
+    - ports: 5222
+      comment: Accept XMPP connections from clients (TLS only)
+  loop_control:
+    loop_var: rule
+
+- name: Open the firewall for s2s communication when necessary
+  tags: ufw
+  ufw:
+    direction: out
     rule: allow
     proto: tcp
     port: '{{ rule.ports }}'
@@ -182,8 +213,17 @@
     src: 'apparmor.d/local/jabber-frontend'
     dest: '/etc/apparmor.d/local/nginx-jabber-frontend'
 
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=860951
+- name: Allow ejabberdctl to run su
+  tags: config, apparmor
+  replace:
+    path: /etc/apparmor.d/usr.sbin.ejabberdctl
+    regexp: '(\s+/bin/su\s+)r,$'
+    replace: '\1mr,'
+
 - name: Check if AppArmor nginx configuration already contains the line
   register: line_found
+  tags: facts,apparmor
   shell: >-
     grep -c 'include <local/nginx-jabber-frontend>'
     /etc/apparmor.d/usr.sbin.nginx
@@ -193,7 +233,7 @@
 - name: Add ejabberd AppArmor specific configuration
   when: security.app_armor and line_found.stdout == '0'
   notify: Restart AppArmor service
-  tags: roundcube, security, apparmor
+  tags: nginx, security, apparmor
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
     line: '  #include <local/nginx-jabber-frontend>'

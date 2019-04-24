@@ -1,0 +1,11 @@
+---
+
+# Remove packages that are not needed for a live system:
+# bash-completion:
+# See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=825153
+# this seems to remove most errors like :
+# <passwd="*"> request denied by validnames option.
+
+cleanup_packages:
+  - bash-completion
+  - resolvconf

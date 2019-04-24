@@ -178,16 +178,21 @@
   loop_control:
     loop_var: rule
 
+- name: Create the post-login script directory
+  file:
+    path: /etc/dovecot/login-scripts
+    state: directory
+
 # Dovecot impersonate feature =================================================
 - name: Import imersonate tasks
   when: mail.impersonate.active
   import_tasks: impersonate.yml
-    
-# Dovecot TFA implementation ==================================================
-- name: Add TFA 
-  when: mail.log_access.active
-  import_tasks: log-access.yml
-    
+
+# Dovecot access check script =================================================
+- name: Import dovecot access check tasks
+  when: access_check.active
+  import_tasks: access-check.yml
+
 # Import emails from other accounts ===========================================
 
 # This user account will impersonate each user, to store their emails after migration
@@ -209,17 +214,12 @@
   tags: impersonate
   htpasswd:
     path: /etc/dovecot/master-users
-    name: '{{ mail.import.username }}'
+    name: 'import'
     password: '{{ import_password }}'
     owner: dovecot
     group: dovecot
     mode: '0400'
     crypt_scheme: ldap_sha1
-
-- name: Create the post-login script directory
-  file:
-    path: /etc/dovecot/login-scripts
-    state: directory
 
 - name: Copy the default postlogin script
   tags: scripts
@@ -266,6 +266,7 @@
     - usr.lib.dovecot.script-login
     - usr.lib.dovecot.script
     - usr.lib.dovecot.stats
+    - usr.bin.logger
   loop_control:
     loop_var: aa_config
 

@@ -10,7 +10,6 @@
     state: present
 
 - name: Copy the configuration file
-  when: network.external_ip == "auto"
   tags: scripts
   copy:
     src: external-ip.conf
@@ -39,7 +38,7 @@
 
 - name: Run the IP check once to get the current IP Address
   shell: >-
-    /usr/local/bin/external-ip-check '{{ network.external_ip }}'
+    /usr/local/bin/external-ip-check
   args:
     creates: /etc/homebox/external-ip
 

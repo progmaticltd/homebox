@@ -40,6 +40,10 @@
 - import_playbook: ldap.yml
 - import_playbook: homes.yml
 
+# Access check and logging per country, IP address, etc.
+- import_playbook: access-check.yml
+  when: access_check.active
+
 # Configure SSH for remote access using borgbackup,
 # But only for users with an ssh key provided.
 # See system-example.yml configuration file

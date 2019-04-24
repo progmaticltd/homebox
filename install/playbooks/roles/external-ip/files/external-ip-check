@@ -7,6 +7,9 @@ if [ "$current_ip" = "" ]; then
     current_ip="auto"
 fi
 
+# Make sure the configuration directory exists
+test -d /etc/homebox || mkdir /etc/homebox
+
 # File that contains external IP address information
 ip_file=/etc/homebox/external-ip
 

@@ -75,6 +75,7 @@
 
 - name: Check if AppArmor nginx configuration already contains the line
   register: line_found
+  tags: facts, apparmor
   shell: >-
     grep -c 'include <local/nginx-{{ certificate_fqdn }}>'
     /etc/apparmor.d/usr.sbin.nginx
