@@ -96,21 +96,35 @@ The installer can deploy a complete monitoring solution, [Zabbix](https://zabbix
 
 By default, the guest account is deleted, and a strong password is generated.
 
-## Multiple IP scheme
-
-Homebox can be configured with two static IP addresses, with a mix of IPv4 amd IPv6.
-
-This is useful if you are using a VPN that provides you a static IP address or if you
-are using 3G / 4G as a backup connection.
-
-IPv6 is actually tested on [vultr.com](https://vultr.com/), a provider that supports full IPv6,
-on virtual servers. Digital Ocean does not allows SMTP or Submission on IPv6.
-
-# High profiles for SSL / HTTPS
+## High profiles for SSL / HTTPS
 
 All HTTPS sites are configured to use [HSTS](https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security).
 For nginx and dovecot, a 2048 Diffie-Helman parameter file is generated upon installation.
 Ranked score A on [geekflare.com](https://tools.geekflare.com/) and A+ on [ssllabs.com](https://www.ssllabs.com).
+
+## Automatic detection of unusual behaviour
+
+This advanced feature is unique amongst self-hosting solutions. It is actually restricted to IMAP, but will be extended
+to other services. It is not activated by default yet, as more tests and specific requirements are needed.
+
+It is working by using a "points" system, where more points generate warnings or even deny the connection.
+
+The following behaviour are detected, from the :
+
+- Access from a blacklisted IP address
+- Access from an IP address previously blacklisted by fail2ban
+- Access from a different country than the one the box is hosted
+- Access outside office hours
+
+Although the initial values should be accurate for standard usage, any of the previous checks can be tuned for a
+specific usage. For instance, it is possible to:
+
+- Whitelist / Blacklist countries, globally or per user.
+- Whitelist / Blacklist IP addresses, globally or per user.
+
+Warning and errors are sent in real time, using XMPP and email to the user and the postmaster.
+
+Two factors authentication on unusual behaviour can be implemented later.
 
 # Email features
 
@@ -369,6 +383,16 @@ The platform configures Tor as well, and allows you to ooverride any option.
 You can also chain privoxy and tor together.
 
 # Other features
+
+## Multiple IP scheme
+
+Homebox can be configured with two static IP addresses, with a mix of IPv4 amd IPv6.
+
+This is useful if you are using a VPN that provides you a static IP address or if you
+are using 3G / 4G as a backup connection.
+
+IPv6 is actually tested on [vultr.com](https://vultr.com/), a provider that supports full IPv6,
+on virtual servers. Digital Ocean does not allows SMTP or Submission on IPv6.
 
 ## DNSSEC Support
 
