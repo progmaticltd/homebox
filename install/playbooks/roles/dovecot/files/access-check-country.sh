@@ -9,10 +9,8 @@
 # Score: Malus
 # Description: Country policy checker
 
-# Exit codes
+# Malus scores
 TRUST=0
-NEW_COUNTRY=64
-UNKNOWN_COUNTRY=128
 
 # When an error occurs, refuse the connection
 ERROR=255
@@ -31,58 +29,42 @@ globalConf='/etc/homebox/access-check.conf'
 
 # Security directory for the user, where the connection logs are saved
 # and the custom comfiguration overriding
-secdir="$HOME/.config/homebox"
+userconfDir="$HOME/.config/homebox"
+userlockDir="$HOME/security"
 
 # Read the user policy if it has been customised
-userConf="$secdir/access-check.conf"
+userConf="$userconfDir/access-check.conf"
 
 CUSTOM_COUNTRIES_TRUST=$(grep -c '^COUNTRIES_TRUST=' "$userConf")
 CUSTOM_COUNTRIES_TRUST_HOME=$(grep -c '^COUNTRIES_TRUST_HOME=' "$userConf")
 
+# Allow the use to defined extra trusted countries
 if [ "$CUSTOM_COUNTRIES_TRUST" = 1 ]; then
     COUNTRIES_TRUST=$(grep '^COUNTRIES_TRUST=' "$userConf" | cut -f 2 -d = | sed "s/'//g")
     logger "Using custom value for user $USER for trusted countries: $COUNTRIES_TRUST"
 fi
 
-if [ "$CUSTOM_COUNTRIES_TRUST_HOME" = 1 ]; then
-    COUNTRIES_TRUST_HOME=$(grep '^COUNTRIES_TRUST_HOME=' "$userConf" | cut -f 2 -d = | sed "s/'//g")
-    logger "Using custom value for user $USER for trusting home country: $COUNTRIES_TRUST_HOME"
+# Check if the GeoIP lookup binary is available.
+# The only reason no would be a user customisation.
+# Let's assume he knows what he's doing, but generata a log entry
+if [ ! -x /usr/bin/geoiplookup ]; then
+    logger -p user.warning "Script access-check-country: Cannot find or execute geoiplookup"
+    exit $TRUST
 fi
-
-if [ "$COUNTRIES_TRUST_HOME" = "YES" ]; then
-    # Get the current home country
-    HOME_COUNTRY=$(grep 'COUNTRY_CODE' /etc/homebox/external-ip | cut -f 2 -d =)
-else
-    HOME_COUNTRY='--'
-fi
-
-# Check if the GeoIP lookup binary is available
-test -x /usr/bin/geoiplookup || exit $ERROR
-
-# Needed to detect local IP addresses
-test -x /usr/bin/ipcalc || exit $ERROR
 
 # Create the security directory for the user
-test -d "$secdir" || mkdir "$secdir"
+test -d "$userconfDir" || mkdir "$userconfDir"
 
 # Create a unique lock file name for this IP address
 # and the source used (imap/sogo/roundcube)
 # Exit if a script already check this IP address
 ipSig=$(echo "$IP:$SOURCE" | md5sum | cut -f 1 -d ' ')
-lockFile="$secdir/$ipSig.lock"
+lockFile="$userlockDir/$ipSig.lock"
 test -f "$lockFile" && exit $TRUST
 
 # Start processing, but remove lockfile on exit
 touch "$lockFile"
 trap 'rm -f $lockFile' EXIT
-
-# If this is a private IP address, pass the hand to
-# the next scripts
-isPrivate=$(ipcalc "$IP" | grep -c "Private Internet")
-
-if [ "$isPrivate" = "1" ]; then
-    exit $TRUST
-fi
 
 isIPv6=$(echo "$IP" | grep -c ":")
 if [ "$isIPv6" = "1" ]; then
@@ -118,4 +100,4 @@ fi
 echo "IMAP connection from a different country ($countryName)"
 
 # Return the malus
-exit $NEW_COUNTRY
+exit $FOREIGN_COUNTRY

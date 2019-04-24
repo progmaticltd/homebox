@@ -7,10 +7,10 @@
 # RunAsUser: Yes
 # NeedDecryptKey: No
 # Score: Malus
-# Description: IP rblcheck
+# Description: IP blacklist check
 
-# returns 10 * each time the IP is blacklisted
-BLACKLISTED=10
+# Add this score every time the IP is blacklisted
+BLACKLISTED=$(grep IP_RBL_MALUS /etc/homebox/access-check.conf | cut -f 2 -d =)
 
 # Do not change anything when the IP address is not found
 NEUTRAL=0
@@ -21,7 +21,7 @@ secdir="$HOME/security"
 
 # Create a unique lock file name for this IP address
 # Exit if a script already check this IP address
-ipSig=$(echo "$IP" | md5sum | cut -f 1 -d ' ')
+ipSig=$(echo "$IP:$SOURCE" | md5sum | cut -f 1 -d ' ')
 lockFile="$secdir/$ipSig.lock"
 test -f "$lockFile" && exit $TRUST
 
@@ -41,7 +41,7 @@ listedCount=$?
 
 if [ "$listedCount" != "0" ]; then
     echo "This IP address is blacklisted $listedCount times."
-    cost=$(( 50 * listedCount ))
+    cost=$(( BLACKLISTED * listedCount ))
     exit $cost
 fi
 

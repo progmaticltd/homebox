@@ -3,18 +3,19 @@
 # Activate debug options (YES/NO)
 DEBUG='{{ system.debug | bool | ternary("YES", "NO") }}'
 
-# What to do when something suspicious is detected: warn (default), or deny
-# Warnings are sent by the postmaster, using XMPP
-UNUSUAL='{{ access_check.unusual }}'
+# External email / xmpp address to send the alerts
+ALERT_ADDRESS='{{ access_check.alert_address }}'
 
-# Number of days to trust a new country or IP address (7 by defaults)
-DAYS_TRUST='{{ access_check.trust_days | default(7) }}'
+# Scores above which send a warning
+WARNING_SCORE={{ access_check.warning_score }}
 
-# A coma separated list of country codes to trust (e.g. FR,DE,GB)
-COUNTRIES_TRUST='{{ access_check.countries.trust | join(",") }}'
+# Scores above which the connection is denied
+DENIED_SCORE={{ access_check.denied_score }}
 
-# Trust the home country, i.e. the country where the box is hosted (YES/NO)
-COUNTRIES_TRUST_HOME='{{ access_check.countries.trust_home | bool | ternary("YES", "NO") }}'
+### IP address checks ###
+
+# The number of points to add each time the IP address is blacklisted
+IP_RBL_MALUS={{ access_check.ip.rbl_malus }}
 
 # A list of additional IP addresses or CIDR to trust (e.g. 12.34.56.78/29,12.45.45.12/32)
 IPS_TRUST='{{ access_check.ip.trust | join(",") }}'
@@ -22,5 +23,16 @@ IPS_TRUST='{{ access_check.ip.trust | join(",") }}'
 # Trust local network by default (e.g. 192.168.1.0/24)
 IPS_TRUST_HOME='{{ access_check.ip.trust_home | bool | ternary("YES", "NO") }}'
 
-# External email / xmpp address to send the alerts
-ALERT_ADDRESS='{{ access_check.alert_address }}'
+### Country checks ###
+
+# A coma separated list of country codes to trust (e.g. FR,DE,GB)
+COUNTRIES_TRUST='{{ access_check.countries.trust | join(",") }}'
+
+# Trust the home country, i.e. the country where the box is hosted (YES/NO)
+COUNTRIES_TRUST_HOME='{{ access_check.countries.trust_home | bool | ternary("YES", "NO") }}'
+
+# Malus for a foreign country
+COUNTRIES_FOREIGN_MALUS={{ access_check.countries.foreign_malus }}
+
+# Malus for an unidentified country
+COUNTRIES_UNKNOWN_MALUS={{ access_check.countries.unknown_malus }}

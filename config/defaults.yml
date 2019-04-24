@@ -580,18 +580,19 @@ sogo_default:
 # Security policies per country / IP address / behaviour / etc
 # Check access times and IP addresses, and reject or warn the user
 # This improves security and auditing of access.
-# This will be used to send warning to the user if she/he connects from
-# a different country or a different IP
+# This is - actually - used by dovecot to warn or deny IMAP connections
+# and works with Roundcube / Sogo as well
 access_check_default:
   active: false
-  unusual: warn         # what to do in when unusual behaviour is detected:
-  trust_days: 7         # Number of days to trust a new country or IP address (not implemented)
-                        # - warn: Send a warning to the user, using real time protocol like xmpp
-                        # - deny: Deny the connection.
+  warning_score: 40     # Score threshold to generate a warning
+  denied_score: 120     # Score threshold to deny a connection
   countries:            # Countries check parameters
     trust: []           # A list of additional countries to trust, the country where the box is
                         # hosted is trusted by default.
     trust_home: true    # Trust home country by default (the country where the box is hosted)
+    foreign_malus: 40   # The number of points added when connecting from a foreign country
+    unknown_malus: 40   # The number of points added when connecting from not identified
   ip:
+    rbl_malus: 40       # The number of points added to the score when an IP address is blacklisted
     trust: []           # A list of additional IP addresses or CIDR to trust
     trust_home: true    # Trust local network by default (e.g. 192.168.1.0/24)

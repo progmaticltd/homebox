@@ -3,22 +3,22 @@
 # Postlogin script for Dovecot.
 # This script will calls other scripts in /etc/dovecot/login-scripts
 # Each script may contains specific comments like below:
-# Blocking: <Yes|No>
+# Blocking: <Yes|No*>
 # RunAs: <User*|Postmaster>
 # NeedDecryptKey: <Yes|No*>
-# Description: Country policy checker
+# Description: description of the script
 # ReportingScript: <Yes|No*>
-# Score: <Bonus|Malus*>
+# Score: <Bonus|Malus>
 #
 # Explanation:
-# - Blocking: <Yes|No>
+# - Blocking: <Yes|No> (default=No)
 #   Wait for the script execution to be finished before continuing,
 #   This might be used to block login, for instance from some countries or to use TFA
-# - RunAs: <User|Postmaster>
+# - RunAs: <User|Postmaster> (default=User)
 #   User: Run the script as the user that tries to login, by dropping privileges.
 #   This is useful, for instance to import emails from other servers
 #   Postmaster: Run as the postmaster user, with more privileges
-# - NeedDecryptKey: <Yes|No>
+# - NeedDecryptKey: <Yes|No> (default=No)
 #   The decryption key is needed for instance when importing emails from other platforms,
 #   to decrypt the import settings (e.g. credentials)
 # - ReportingScript: <Yes|No> (default=No)
@@ -50,25 +50,15 @@ SOURCE='imap'
 STATUS='OK'
 
 # Warning score: score above which a warning is sent to the user
-# TODO: per user settings
-WARNING_SCORE=100
+# TODO: maybe per user settings
+WARNING_SCORE=$(grep WARNING /etc/homebox/access-check.conf | cut -f 2 -d =)
 
 # Deny score: score above which the connection requires a confirmation
-# TODO: per user settings
-DENIED_SCORE=140
+# TODO: maybe per user settings
+DENIED_SCORE=$(grep DENIED_SCORE /etc/homebox/access-check.conf | cut -f 2 -d =)
 
 # Get the external xmpp/email alert address
 ALERT_ADDRESS=$(grep ALERT_ADDRESS /etc/homebox/access-check.conf | cut -f 2 -d =)
-
-# Read the user policy if it has been customised.
-# Make sure to sanitize the value
-userConf="$HOME/.config/homebox/access-check.conf"
-USER_ALERT_ADDRESS=$(grep '^ALERT_ADDRESS=' "$userConf" | sed -E "s/^ALERT_ADDRESS='([a-z@\.-]+)'$/\1/")
-
-if [ "$USER_ALERT_ADDRESS" != "" ]; then
-    ALERT_ADDRESS=$USER_ALERT_ADDRESS
-    logger "Using custom value for user alert addresses: $ALERT_ADDRESS"
-fi
 
 # When importing emails, the remote command is always '127.0.0.1'
 # Run the import then exit.
@@ -79,7 +69,7 @@ if [ "$MASTER_USER" = "import" ]; then
         exec $@
     else
         # TODO: Send an alert to the postmaster and to root!
-        # The import account should be used only locally
+        # The import account should be only used to import emails from 127.0.0.1
         log_error "Error: remote access with the import account from IP <$IP>"
         exit $DENIED
     fi
