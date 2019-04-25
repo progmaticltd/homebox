@@ -14,19 +14,6 @@
     dest: /etc/homebox/access-check.conf
     mode: 644
 
-- name: Create the custom configuration directory for each user
-  file:
-    path: '/home/users/{{ user.uid }}/.config/homebox'
-    owner: '{{ user.uid }}'
-    group: users
-    state: directory
-    recurse: true
-  with_items:
-    - '{{ users }}'
-    - uid: postmaster
-  loop_control:
-    loop_var: user
-
 - name: Create the security directory for each user
   file:
     path: '/home/users/{{ user.uid }}/security'
@@ -63,10 +50,12 @@
     loop_var: user
 
 - name: Initialise the postmaster user password parameters
+  when: ejabberd.install
   set_fact:
     postmaster_password_params: "{{ backup_directory }}/ldap/postmaster.pwd {{ policies.system.password }}"
 
 - name: Create the master user account password
+  when: ejabberd.install
   set_fact:
     postmaster_password: '{{ lookup("password", postmaster_password_params) }}'
 
