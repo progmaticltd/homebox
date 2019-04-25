@@ -47,6 +47,18 @@ if [ "$CUSTOM_COUNTRIES_TRUST" = 1 ]; then
     logger "Using custom value for user $USER for trusted countries: $COUNTRIES_TRUST"
 fi
 
+if [ "$CUSTOM_COUNTRIES_TRUST_HOME" = 1 ]; then
+    COUNTRIES_TRUST_HOME=$(grep '^COUNTRIES_TRUST_HOME=' "$userConf" | cut -f 2 -d = | sed "s/'//g")
+    logger "Using custom value for user $USER for trusting home country: $COUNTRIES_TRUST_HOME"
+fi
+
+if [ "$COUNTRIES_TRUST_HOME" = "YES" ]; then
+    # Get the current home country
+    HOME_COUNTRY=$(grep 'COUNTRY_CODE' /etc/homebox/external-ip | cut -f 2 -d =)
+else
+    HOME_COUNTRY='--'
+fi
+
 # Check if the GeoIP lookup binary is available.
 # The only reason no would be a user customisation.
 # Let's assume he knows what he's doing, but generata a log entry
@@ -81,7 +93,7 @@ fi
 notFound=$(echo "$lookup" | grep -c 'IP Address not found')
 
 if [ "$notFound" = "1" ]; then
-    echo "IMAP connection from an unknown country (IP=$IP)"
+    echo "IMAP connection from an unknown country"
     exit $UNKNOWN_COUNTRY
 fi
 

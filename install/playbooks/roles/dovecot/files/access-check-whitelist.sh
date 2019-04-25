@@ -25,6 +25,12 @@ ipSig=$(echo "$IP" | md5sum | cut -f 1 -d ' ')
 lockFile="$secdir/$ipSig.lock"
 test -f "$lockFile" && exit $WHITELIST_SCORE
 
+# Needed the cidr grep executable
+if [ ! -x /usr/bin/grepcidr ]; then
+    logger -p user.warning "The program grepcidr is not found or not executable"
+    exit $NEUTRAL
+fi
+
 # Start processing, but remove lockfile on exit
 touch "$lockFile"
 trap 'rm -f $lockFile' EXIT
@@ -34,13 +40,6 @@ whitelistFile="$secdir/ip-whitelist.txt"
 
 # No whitelist defined for this user
 if [ ! -r "$whitelistFile" ]; then
-    logger "No wtl file"
-    exit $NEUTRAL
-fi
-
-# Needed the cidr grep executable
-if [ ! -x /usr/bin/grepcidr ]; then
-    logger "The program grepcidr is not found or not executable"
     exit $NEUTRAL
 fi
 
