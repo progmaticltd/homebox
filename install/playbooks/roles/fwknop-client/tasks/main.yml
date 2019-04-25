@@ -1,6 +1,14 @@
 ---
 
+- name: Check if the fwknop-client package is installed
+  register: fwknop
+  stat:
+    path: /usr/bin/fwknop
+
 - name: Install fwknop client
+  when: fwknop.stat.exists == false
+  become: true
+  become_method: sudo
   tags: apt
   apt:
     name: fwknop-client
