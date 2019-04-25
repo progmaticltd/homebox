@@ -199,11 +199,12 @@ passwords_default:
 ###############################################################################
 # Default system settings
 system_default:
-  release: stretch
-  login: true
-  devel: false
-  debug: false
-  reboot_timeout: 180
+  release: stretch         # distribution to use (stretch/buster)
+  devel: false             # mark the system as a development machine
+  debug: false             # activate debug options
+  reboot_timeout: 180      # max time to wait when restarting the server
+  keep_certs: false        # keep the letsencrypt certificates locally,
+                           # even when using a live environment
 
 ###############################################################################
 # Once the system is in place, it is possible to use 'limit' for the rule,
