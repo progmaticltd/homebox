@@ -19,6 +19,9 @@ NEUTRAL=0
 # and the custom comfiguration overriding
 secdir="$HOME/security"
 
+# User customisation directory
+userconfDir="$HOME/.config/homebox"
+
 # Create a unique lock file name for this IP address
 # Exit if a script already check this IP address
 ipSig=$(echo "$IP" | md5sum | cut -f 1 -d ' ')
@@ -36,7 +39,7 @@ touch "$lockFile"
 trap 'rm -f $lockFile' EXIT
 
 # List of well known and trusted IP addresses
-whitelistFile="$secdir/ip-whitelist.txt"
+whitelistFile="$userconfDir/ip-whitelist.txt"
 
 # No whitelist defined for this user
 if [ ! -r "$whitelistFile" ]; then

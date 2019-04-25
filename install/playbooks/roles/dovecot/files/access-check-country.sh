@@ -32,11 +32,11 @@ globalConf='/etc/homebox/access-check.conf'
 
 # Security directory for the user, where the connection logs are saved
 # and the custom comfiguration overriding
-userconfDir="$HOME/.config/homebox"
+userConfDir="$HOME/.config/homebox"
 userlockDir="$HOME/security"
 
 # Read the user policy if it has been customised
-userConf="$userconfDir/access-check.conf"
+userConf="$userConfDir/access-check.conf"
 
 CUSTOM_COUNTRIES_TRUST=$(grep -c '^COUNTRIES_TRUST=' "$userConf")
 CUSTOM_COUNTRIES_TRUST_HOME=$(grep -c '^COUNTRIES_TRUST_HOME=' "$userConf")
@@ -68,7 +68,7 @@ if [ ! -x /usr/bin/geoiplookup ]; then
 fi
 
 # Create the security directory for the user
-test -d "$userconfDir" || mkdir "$userconfDir"
+test -d "$userConfDir" || mkdir "$userConfDir"
 
 # Create a unique lock file name for this IP address
 # and the source used (imap/sogo/roundcube)

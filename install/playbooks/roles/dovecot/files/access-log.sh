@@ -15,10 +15,7 @@
 #   - status (OK / WARNING / DENIED)
 #   - score (a high score means the connection is warned or denied)
 #   - details (why the connection has been warned or denied)
-# Examples:
-#   2019-04-15 20:24:25+01:00 1555356265 92.40.248.238 GB United_Kingdom Roundcube OK
-#   2019-04-17 18:53:42+00:00 1555527222 199.249.230.112 US United_States imap DENIED \
-#                             Access denied by Country policy checker
+#
 # When the country is not found, we use XX and "Neverland"
 # The last field is used to check if a connection from this IP address has been done before.
 # Possible implementations:
