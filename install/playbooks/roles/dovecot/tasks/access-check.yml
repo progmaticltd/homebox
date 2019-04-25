@@ -17,12 +17,25 @@
     countryCode  CHAR(2),
     countryName  VARCHAR,
     source       VARCHAR,
-    provider     VARCHAR DEFAULT "",
-    mobile       BOOLEAN DEFAULT false,
+    provider     VARCHAR DEFAULT NULL,
+    mobile       BOOLEAN DEFAULT NULL,
+    type         CHAR(10) DEFAULT NULL,
     status       CHAR(10),
     score        SMALLINT DEFAULT 0,
     details      TEXT DEFAULT ""
-    );'
+    )';
+    sqlite3 -batch
+    /home/users/{{ user.uid }}/security/imap-connections.db
+    'CREATE INDEX unixtime_idx ON connections (unixtime)';
+    sqlite3 -batch
+    /home/users/{{ user.uid }}/security/imap-connections.db
+    'CREATE INDEX ip_idx ON connections (ip)';
+    sqlite3 -batch
+    /home/users/{{ user.uid }}/security/imap-connections.db
+    'CREATE INDEX country_idx ON connections (countryCode)';
+    sqlite3 -batch
+    /home/users/{{ user.uid }}/security/imap-connections.db
+    'CREATE INDEX status_idx ON connections (status)'
   args:
     creates: '/home/users/{{ user.uid }}/security/imap-connections.db'
   with_items:

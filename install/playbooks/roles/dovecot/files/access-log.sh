@@ -71,7 +71,7 @@ fi
 
 # Check if already logged in from this IP in the last minute
 isoLastMinute=$(date -d '1 min ago' --rfc-3339=seconds | sed 's/+.*//')
-condition="unixtime >= '$isoLastMinute' AND source='$SOURCE'"
+condition="unixtime >= '$isoLastMinute' AND source='$SOURCE' AND ip='$IP'"
 query="select count(*) from connections where $condition"
 
 count=$(sqlite3 -batch $connLogFile "$query")
@@ -108,11 +108,17 @@ elif [ "$isPrivate" = "0" ]; then
     countryName=$(echo "$lookup" | cut -f 2 -d , | sed 's/^ //')
 fi
 
+# Remove the new lines from the details before storing them in the database
 details=$(echo "$DETAILS" | tr '\n' ';' | sed -r 's/(^;|;$)//g')
 
+# Prepare the query, and insert the connection record
 columns='ip, countryCode, countryName, source, status, score, details'
 values="'$IP','$countryCode','$countryName','$SOURCE','$STATUS', '$SCORE','$details'"
-
 command="insert into connections ($columns) VALUES ($values);"
 
 sqlite3 -batch "$connLogFile" "$command"
+
+# While we are here, let's do some cleanup and keep one year only
+isoLastYear=$(date -d '1 year ago' --rfc-3339=seconds | sed 's/+.*//')
+query="delete from connections where unixtime <= '$isoLastYear'"
+sqlite3 -batch $connLogFile "$query"

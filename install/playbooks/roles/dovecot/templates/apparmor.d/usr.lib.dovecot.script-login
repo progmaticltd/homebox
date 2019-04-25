@@ -143,6 +143,7 @@
 
   # Access to user databases and customisation files
   # the script run with the user permissions
+  /home/users/*/security/ r,
   /home/users/*/security/* rwk,
 
   # import folders
