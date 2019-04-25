@@ -1,12 +1,11 @@
 #!/bin/dash
 
-# Log the IP addresses, the country and the client type on every connection
-# The client type can be Roudncube, SOGo or IMAP
+# Log various information on every IMAP connection
 # This is using geoip free databases.
-# The lines are going to this file:
-#   /home/users/<user>/mails/security/connections.log
-# Each line is as follow:
-#   - date
+# The file is an sqlite3 database belonging to the user, located at
+#   /home/users/<user>/mails/security/imap-connections.db
+# Informations logged:
+#   - IP address
 #   - time
 #   - unixtime
 #   - IP
@@ -49,12 +48,6 @@ log_error() {
 # and the custom comfiguration overriding
 secdir="$HOME/security"
 
-# Initialise the environment
-unixtime=$(date +%s)
-lastMinute=$((unixtime - 60))
-day=$(date --rfc-3339=seconds | cut -f 1 -d ' ')
-time=$(date --rfc-3339=seconds | cut -f 2 -d ' ')
-
 # Create the security directory for the user
 test -d "$secdir" || mkdir -m 700 "$secdir"
 
@@ -68,20 +61,23 @@ touch "$lockFile"
 trap 'rm -f $lockFile' EXIT
 
 # The file that will contains the connection logs
-connLogFile="$secdir/imap-connections.log"
+connLogFile="$secdir/imap-connections.db"
 
-# Create the file if it not exists
-test -f "$connLogFile" || touch "$connLogFile"
-
-# Exit if I cannot create the log file
-test -f "$connLogFile" || exit $ERROR
+# Create the connection log database
+if [ ! -f "$connLogFile" ]; then
+    logger -p user.warning "Database for user $USER not found"
+    exit $CONTINUE
+fi
 
 # Check if already logged in from this IP in the last minute
-# Get the last connection from this IP
-lastConnFromThisIP=$(grep "\\<$IP\\>.*\\<$SOURCE\\>" "$connLogFile" | tail -n1 | cut -f 3 -d '|')
+isoLastMinute=$(date -d '1 min ago' --rfc-3339=seconds | sed 's/+.*//')
+condition="unixtime >= '$isoLastMinute' AND source='$SOURCE'"
+query="select count(*) from connections where $condition"
+
+count=$(sqlite3 -batch $connLogFile "$query")
 
 # Check if already connected from this IP in the last minute, then exit safely
-if [ "0$lastConnFromThisIP" -gt "0$lastMinute" ]; then
+if [ "0$count" -gt "0" ]; then
     exit $CONTINUE
 fi
 
@@ -109,9 +105,14 @@ if [ "$notFound" = "1" ]; then
     countryName="Neverland"
 elif [ "$isPrivate" = "0" ]; then
     countryCode=$(echo "$lookup" | sed -r 's/.*: ([A-Z]{2}),.*/\1/g')
-    countryName=$(echo "$lookup" | cut -f 2 -d , | sed 's/^ //' | sed 's/ /_/g')
+    countryName=$(echo "$lookup" | cut -f 2 -d , | sed 's/^ //')
 fi
 
-# Add the IP to the list, need validatation
-details=$(echo "$DETAILS" | tr '\n' ';' | sed -E 's/(^;|;$)//g')
-echo "$day|$time|$unixtime|$IP|$countryCode|$countryName|$SOURCE|$STATUS|$SCORE|$details" >>"$connLogFile"
+details=$(echo "$DETAILS" | tr '\n' ';' | sed -r 's/(^;|;$)//g')
+
+columns='ip, countryCode, countryName, source, status, score, details'
+values="'$IP','$countryCode','$countryName','$SOURCE','$STATUS', '$SCORE','$details'"
+
+command="insert into connections ($columns) VALUES ($values);"
+
+sqlite3 -batch "$connLogFile" "$command"

@@ -1,5 +1,48 @@
 ---
 
+- name: Install sqlite database tools
+  tags: apt
+  apt:
+    name: sqlite3
+    state: present
+
+- name: Create the user database that contains the logs
+  tags: sqlite
+  shell: >-
+    sqlite3 -batch
+    /home/users/{{ user.uid }}/security/imap-connections.db
+    'create table if not exists connections (
+    unixtime     timestamp DEFAULT CURRENT_TIMESTAMP,
+    ip           VARCHAR,
+    countryCode  CHAR(2),
+    countryName  VARCHAR,
+    source       VARCHAR,
+    provider     VARCHAR DEFAULT "",
+    mobile       BOOLEAN DEFAULT false,
+    status       CHAR(10),
+    score        SMALLINT DEFAULT 0,
+    details      TEXT DEFAULT ""
+    );'
+  args:
+    creates: '/home/users/{{ user.uid }}/security/imap-connections.db'
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Set the permissions on each database
+  tags: sqlite
+  file:
+    path: '/home/users/{{ user.uid }}/security/imap-connections.db'
+    owner: '{{ user.uid }}'
+    group: users
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
 - name: Post login script to check access, and log IP addresses and country
   tags: scripts
   copy:

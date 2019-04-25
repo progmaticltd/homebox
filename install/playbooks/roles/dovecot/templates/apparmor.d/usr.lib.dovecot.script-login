@@ -84,6 +84,8 @@
   /usr/bin/grepcidr rix,
   /usr/bin/rblcheck mr,
   /usr/bin/rblcheck rix,
+  /usr/bin/sqlite3 mr,
+  /usr/bin/sqlite3 rix,
 
   # XMPP & Email reporting
   /usr/bin/bsd-mailx mr,
@@ -95,7 +97,7 @@
   /usr/bin/whoami mr,
   /usr/bin/whoami ix,
 
-  # Binaries used for import
+  # Binaries used to import emails
   /usr/bin/mbsync mr,
   /usr/bin/mbsync rix,
   /usr/bin/find mr,
@@ -137,11 +139,11 @@
   /etc/dovecot/login-scripts/* rix,
 
   # read user's personal config
-  /home/users/*/.config/homebox/*.lock rw,
   /home/users/*/.config/homebox/access-check.conf r,
 
-  # read/write user security logs and customisation
-  /home/users/*/security/* rw,
+  # Access to user databases and customisation files
+  # the script run with the user permissions
+  /home/users/*/security/* rwk,
 
   # import folders
   /home/users/*/mails/import/ r,
