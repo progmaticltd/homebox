@@ -9,9 +9,11 @@ tune the system according to their needs.
 - It can send you warning, in real time, when something unusual is happening, which is explained below.
 - It can block the connection, for instance from blacklisted IP addresses, and send you a warning in real time.
 - It logs all your connection information in a small database. Each user can then do some querying and reporting easily.
-- A monthly report can be sent the first day of every month, containing the analysis of the previous month.
+- A monthly report can be sent the first day of every month, containing the analysis of the previous month. This will be
+  implemented in a next version
+- When the "impersonate" feature is used to access one user's emails, an alert is sent in real time.
 
-Real time alerts are sent by email _and_ XMPP, to your account and an external account.
+Real time alerts are sent by email _and_ XMPP, to your account and an external account if confiured so.
 
 ## Scoring system
 
@@ -154,7 +156,7 @@ access_check:
     end: 22
 ```
 
-## Other consideration
+## Other considerations
 
 ### Connections from LAN
 
@@ -163,7 +165,7 @@ control.
 
 ### Blacklisting countries
 
-You can blacklist entire countries, but system wide only.
+You can blacklist entire countries, but system wide only for now.
 
 For instance, here how to deny all IMAP connections, on the whole system, to Russia, China and Ukraine:
 
@@ -209,6 +211,9 @@ access_check_default:
   blacklist_malus: 255        # Malus to apply when an IP or country is blacklisted. Max value is 255
   warning_score: 40           # Score threshold to generate a warning
   denied_score: 120           # Score threshold to deny a connection
+  display_score: false        # # Should we display the scores in the alerts ?
+                              # It is more informative for development
+                              # but it might be confusing for new users
   time:                       # Standard time range you are normally checking your emails.
     zone: auto                # The timezone to consider when checking the access time.
     start: 8                  # start-end:  the more you are outside this range, the more malus points
@@ -236,7 +241,8 @@ whitelisting an IP address is respected.
 
 All messages are sent both by email and using XMPP if the Jabber server has been selected for installation.
 
-This is the content of a message when an unusual connection has been detected.
+This is the content of a message when an unusual connection has been detected. In this first example, the points are
+detailed, because the system has been configured with the option `display_score` to true.
 
 ```txt
 IMAP connection warning
@@ -248,21 +254,46 @@ IMAP connection warning
 Details:
 - This IP address is blacklisted 1 times. (+60 points)
 
-IP Details: https://whatismyipaddress.com/ip/81.17.27.131
+IP Details: https://duckduckgo.com/?q=whois+81.17.27.131
 ```
 
-Message when a connection has been denied:
+The second example, this is a message when a connection has been denied, this time without the point details:
 
 ```txt
 IMAP connection denied
 - User: andre (andre@homebox.space)
 - IP Address: 176.63.27.111
 - Source: Roundcube
-- Final score: 200 points
 
 Details:
-- This IP address is blacklisted 3 times. (+180 points)
-- Unusual early connection for Europe/Budapest (06:46) (+20 points)
+- This IP address is blacklisted 3 times.
+- Unusual early connection for Europe/Budapest (06:46)
 
-IP Details: https://whatismyipaddress.com/ip/176.63.27.111
+IP Details: https://duckduckgo.com/?q=whois+176.63.27.111
+```
+
+Last example, this is a message sent to a user, when the master account is used to access their emails:
+
+```txt
+Your emails are opened by the master user
+- IP Address: 176.63.27.152
+- Access: warning
+- Source: Roundcube
+- Status: warning
+
+IP Details: https://duckduckgo.com/?q=whois+176.63.27.152
+```
+
+## Example of a customised access-check.conf
+
+This file will be stored in `~/.config/homebox/access-check.conf`
+
+```sh
+# Access check policy for Homebox
+
+# I will travel in these countries for a few months
+COUNTRIES_TRUST='FR,DE,ES'
+
+# I am travelling, so don't trust home till I come back
+COUNTRIES_TRUST_HOME='NO'
 ```

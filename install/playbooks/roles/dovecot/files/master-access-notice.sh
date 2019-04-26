@@ -68,6 +68,9 @@ MSG="${MSG}- Access: ${STATUS}\n"
 MSG="${MSG}- Source: ${SOURCE}\n"
 MSG="${MSG}- Status: ${STATUS}\n"
 
+# Use duckduckgo to search the IP by default
+MSG="${MSG}\n\nIP Details: https://duckduckgo.com/?q=whois+${IP}"
+
 # Send the alert using XMPP
 if [ "$USE_XMPP" = "1" ]; then
     xmppOutput=$(echo "$MSG" | sendxmpp -t -f "$xmppConfig" "$MAIL" 2>&1)

@@ -81,7 +81,7 @@ if [ "$DETAILS" != "" ]; then
     MSG="${MSG}\nDetails:$DETAILS"
 fi
 
-# Use duckduckgo to search the URL by default
+# Use duckduckgo to search the IP by default
 MSG="${MSG}\n\nIP Details: https://duckduckgo.com/?q=whois+${IP}"
 
 # Send the alert using XMPP
