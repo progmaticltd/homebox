@@ -12,6 +12,11 @@ WARNING_SCORE={{ access_check.warning_score }}
 # Scores above which the connection is denied
 DENIED_SCORE={{ access_check.denied_score }}
 
+# Should we display the scores in the alerts ?
+# It is more informative for development
+# but it might be confusing for new users
+DISPLAY_SCORE={{ access_check.display_score | ternary ("YES", "NO") }}
+
 # The score to apply when an IP address is manually whitelisted
 # by the user. Notes:
 # - the user might still receive a warning according to the score

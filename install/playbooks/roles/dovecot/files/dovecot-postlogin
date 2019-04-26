@@ -55,12 +55,14 @@ SOURCE='imap'
 STATUS='OK'
 
 # Warning score: score above which a warning is sent to the user
-# TODO: maybe per user settings
 WARNING_SCORE=$(grep WARNING /etc/homebox/access-check.conf | cut -f 2 -d =)
 
 # Deny score: score above which the connection requires a confirmation
-# TODO: maybe per user settings
 DENIED_SCORE=$(grep DENIED_SCORE /etc/homebox/access-check.conf | cut -f 2 -d =)
+
+# Should we display the scores in the alerts ?
+# It is more informative for development but it might be confusing for new users
+DISPLAY_SCORE=$(grep DISPLAY_SCORE /etc/homebox/access-check.conf | cut -f 2 -d =)
 
 # Get the external xmpp/email alert address
 ALERT_ADDRESS=$(grep ALERT_ADDRESS /etc/homebox/access-check.conf | cut -f 2 -d =)
@@ -81,9 +83,9 @@ if [ "$MASTER_USER" = "import" ]; then
 fi
 
 # TODO: Send an alert to the user that the master is accessing their account
-if [ "$MASTER_USER" = "master" ]; then
-    exec $@
-fi
+# if [ "$MASTER_USER" = "master" ]; then
+#     exec $@
+# fi
 
 if [ "$IP" = "127.0.0.1" ]; then
 
@@ -146,7 +148,7 @@ else
     TIMES_BANNED=0
 fi
 
-PASS_ENV="TIMES_BANNED=$TIMES_BANNED"
+PASS_ENV="TIMES_BANNED=$TIMES_BANNED DISPLAY_SCORE=$DISPLAY_SCORE"
 
 # Call all the scripts in the folder /etc/dovecot/login-scripts,
 # These scrips are non blocking, and run as the user
@@ -242,9 +244,13 @@ for script in $login_scripts; do
 	log_debug "Warning: no bonus/malus type specified in the comments for the script $script (returned $scoreCost)"
     fi
 
+    if [ "$DISPLAY_SCORE" = "YES" ]; then
+	scoreDetails=" (${sign}${scoreCost} points)"
+    fi
+
     # Build the details list used by the warning script
     if [ "$details" != "" ]; then
-       fullDetails="$fullDetails\n- $details (${sign}${scoreCost} points)"
+       fullDetails="$fullDetails\n- $details$scoreDetails"
     fi
 
     # Set the status according to the current score

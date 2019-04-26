@@ -110,5 +110,7 @@
       order: 800
     - name: access-warn
       order: 900
+    - name: master-access-notice
+      order: 910
   loop_control:
     loop_var: script

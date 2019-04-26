@@ -1,5 +1,7 @@
 #!/bin/dash
 
+# Send a notice to the user when the master account has been used to access their mailbox
+
 # Post login script for Dovecot, this block is parsed by the parent script
 # Blocking: No
 # RunAs: Postmaster
@@ -9,8 +11,8 @@
 # Exit codes
 CONTINUE=0
 
-# Ignore normal connections
-if [ "$STATUS" = "OK" ]; then
+# Ignore when this is not a master user access
+if [ "$MASTER_USER" = "" ]; then
     exit $CONTINUE
 fi
 
@@ -23,9 +25,8 @@ connLogFile="$secdir/warnings.log"
 
 # Initialise the environment
 unixtime=$(date +%s)
-lastDay=$((unixtime - 86400))
 lastHour=$((unixtime - 3600))
-connSig=$(echo "$IP:$SOURCE:$STATUS" | md5sum | cut -f 1 -d ' ')
+connSig=$(echo "$IP:$SOURCE:$STATUS:NOTICE" | md5sum | cut -f 1 -d ' ')
 
 # Check if already logged in from this IP
 # and the source used (imap/sogo/roundcube)
@@ -38,15 +39,8 @@ if [ -f "$connLogFile" ]; then
 fi
 
 # Some clients are opening mutlitple connections on startup
-# When status is warning, send the alert only one time per day, IP and source
-if [ "0$lastLogEntryFromThisIP" -gt "0$lastDay" -a "$STATUS" = "WARNING" ]; then
-    exit
-fi
-
-# when the status is DENIED, send the warning once per hour only
-# to avoid DoS. At this time, the user should be warned that his
-# account is compromised
-if [ "0$lastLogEntryFromThisIP" -gt "0$lastHour" -a "$STATUS" = "DENIED" ]; then
+# When status is warning, send the alert only one time per hour
+if [ "0$lastLogEntryFromThisIP" -gt "0$lastHour" ]; then
     exit
 fi
 
@@ -54,7 +48,6 @@ fi
 echo "$unixtime $USER $connSig" >>"$connLogFile"
 
 domain=$(echo "$MAIL" | cut -f 2 -d '@')
-STATUS=$(echo "$STATUS" | tr '[:upper:]' '[:lower:]')
 
 # Check if we can use XMPP to send the alerts
 USE_XMPP=0
@@ -67,22 +60,13 @@ else
 fi
 
 # Build the message with all the details
-MSG="IMAP connection ${STATUS}\n"
-MSG="${MSG}- User: ${USER} ($MAIL)\n"
+STATUS=$(echo "$STATUS" | tr '[:upper:]' '[:lower:]')
+
+MSG="Your emails are opened by the master user\n"
 MSG="${MSG}- IP Address: ${IP}\n"
+MSG="${MSG}- Access: ${STATUS}\n"
 MSG="${MSG}- Source: ${SOURCE}\n"
-
-# Add the final score when requested
-if [ "$DISPLAY_SCORE" = "YES" ]; then
-    MSG="${MSG}- Final score: ${SCORE} points\n"
-fi
-
-if [ "$DETAILS" != "" ]; then
-    MSG="${MSG}\nDetails:$DETAILS"
-fi
-
-# Use duckduckgo to search the URL by default
-MSG="${MSG}\n\nIP Details: https://duckduckgo.com/?q=whois+${IP}"
+MSG="${MSG}- Status: ${STATUS}\n"
 
 # Send the alert using XMPP
 if [ "$USE_XMPP" = "1" ]; then
@@ -101,29 +85,8 @@ from="postmaster@${domain}"
 
 # Make sure it is properly displayed in standard mail systems
 contentHeader='Content-Type: text/plain; charset="ISO-8859-1"'
-alertHeader="X-Postmaster-Alert: IMAP access $STATUS"
+alertHeader="X-Postmaster-Alert: Master access notice ($STATUS)"
 
 echo "$MSG" | mail -a "$contentHeader" -a "$alertHeader" -r "$from" -s "$subject" "$MAIL"
-
-# Send the alerts to an external / global account
-if [ "$ALERT_ADDRESS" != "" ]; then
-
-    # Send the alert using XMPP
-    if [ "$USE_XMPP" = "1" ]; then
-        # Try to send to the extra recipient if configured
-        xmppOutput=$(echo "$MSG" | sendxmpp -t -f "$xmppConfig" "$ALERT_ADDRESS")
-    fi
-
-    if [ "$xmppOutput" != "" ]; then
-        logger -p user.warning "sendxmpp error when sending warning from postmaster to $ALERT_ADDRESS: $xmppoutput"
-    fi
-
-    # Send an email alert as well
-    subject="Alert from postmaster ($domain)"
-    from="postmaster@${domain}"
-
-    echo "$MSG" | mail -a "$contentHeader" -a "$alertHeader" -r "$from" -s "$subject" "$ALERT_ADDRESS"
-
-fi
 
 exit $CONTINUE
