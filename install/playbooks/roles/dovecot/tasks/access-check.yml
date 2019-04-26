@@ -3,7 +3,7 @@
 - name: Install sqlite database tools
   tags: apt
   apt:
-    name: sqlite3
+    name: '{{ dovecot.access_check_packages }}'
     state: present
 
 - name: Create the user database that contains the logs
@@ -50,6 +50,34 @@
     path: '/home/users/{{ user.uid }}/security/imap-connections.db'
     owner: '{{ user.uid }}'
     group: users
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Add whitelist sample file for each user
+  template:
+    src: 'access-check/ip-whitelist.txt'
+    dest: '/home/users/{{ user.uid }}/.config/homebox/ip-whitelist.txt'
+    owner: '{{ user.uid }}'
+    group: users
+    mode: 0600
+    force: no
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Add blacklist sample file for each user
+  template:
+    src: 'access-check/ip-blacklist.txt'
+    dest: '/home/users/{{ user.uid }}/.config/homebox/ip-blacklist.txt'
+    owner: '{{ user.uid }}'
+    group: users
+    mode: 0600
+    force: no
   with_items:
     - '{{ users }}'
     - uid: postmaster

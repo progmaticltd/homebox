@@ -86,7 +86,6 @@ else
 fi
 
 # Check if the country is found or not
-# Use XX when not found
 notFound=$(echo "$lookup" | grep -c 'IP Address not found')
 
 if [ "$notFound" = "1" ]; then
@@ -116,7 +115,6 @@ if [ "$trustedCountry" = "1" ]; then
     exit $TRUST
 fi
 
+# Return the malus for a foreign country
 echo "IMAP connection from a different country ($countryName)"
-
-# Return the malus
 exit $COUNTRIES_FOREIGN_MALUS

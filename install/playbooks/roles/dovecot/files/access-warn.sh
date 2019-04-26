@@ -25,13 +25,13 @@ connLogFile="$secdir/warnings.log"
 unixtime=$(date +%s)
 lastDay=$((unixtime - 86400))
 lastHour=$((unixtime - 3600))
-ipSig=$(echo "$IP:$SOURCE" | md5sum | cut -f 1 -d ' ')
+connSig=$(echo "$IP:$SOURCE:$STATUS" | md5sum | cut -f 1 -d ' ')
 
 # Check if already logged in from this IP
 # and the source used (imap/sogo/roundcube)
 # Get the last connection from this IP / source
 if [ -f "$connLogFile" ]; then
-    lastLogEntryFromThisIP=$(grep "$USER $ipSig" "$connLogFile" | tail -n1 | cut -f 1 -d ' ')
+    lastLogEntryFromThisIP=$(grep "$USER $connSig" "$connLogFile" | tail -n1 | cut -f 1 -d ' ')
 
     # Keep the last 1000 lines only
     sed -i -e ':a' -e '$q;N;1001,$D;ba' "$connLogFile"
@@ -51,7 +51,7 @@ if [ "0$lastLogEntryFromThisIP" -gt "0$lastHour" -a "$STATUS" = "DENIED" ]; then
 fi
 
 # Add a line to remember this connection has been logged
-echo "$unixtime $USER $ipSig" >>"$connLogFile"
+echo "$unixtime $USER $connSig" >>"$connLogFile"
 
 domain=$(echo "$MAIL" | cut -f 2 -d '@')
 STATUS=$(echo "$STATUS" | tr '[:upper:]' '[:lower:]')
@@ -97,9 +97,10 @@ subject="Alert from postmaster ($domain)"
 from="postmaster@${domain}"
 
 # Make sure it is properly displayed in standard mail systems
-headers='Content-Type: text/plain; charset="ISO-8859-1"'
+contentHeader='Content-Type: text/plain; charset="ISO-8859-1"'
+alertHeader="X-Postmaster-Alert: IMAP access $STATUS"
 
-echo "$MSG" | mail -a "$headers" -r "$from" -s "$subject" "$MAIL"
+echo "$MSG" | mail -a "$contentHeader" -a "$alertHeader" -r "$from" -s "$subject" "$MAIL"
 
 # Send the alerts to an external / global account
 if [ "$ALERT_ADDRESS" != "" ]; then
@@ -118,10 +119,7 @@ if [ "$ALERT_ADDRESS" != "" ]; then
     subject="Alert from postmaster ($domain)"
     from="postmaster@${domain}"
 
-    # Make sure it is properly displayed in standard mail systems
-    headers='Content-Type: text/plain; charset="ISO-8859-1"'
-
-    echo "$MSG" | mail -a "$headers" -r "$from" -s "$subject" "$ALERT_ADDRESS"
+    echo "$MSG" | mail -a "$contentHeader" -a "$alertHeader" -r "$from" -s "$subject" "$ALERT_ADDRESS"
 
 fi
 

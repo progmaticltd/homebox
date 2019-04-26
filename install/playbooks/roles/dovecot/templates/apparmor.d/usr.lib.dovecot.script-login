@@ -139,7 +139,7 @@
   /etc/dovecot/login-scripts/* rix,
 
   # read user's personal config
-  /home/users/*/.config/homebox/access-check.conf r,
+  /home/users/*/.config/homebox/* r,
 
   # Access to user databases and customisation files
   # the script run with the user permissions

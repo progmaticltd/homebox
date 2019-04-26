@@ -33,6 +33,7 @@
     dest: '/home/users/{{ user.uid }}/.config/homebox/access-check.conf'
     owner: '{{ user.uid }}'
     group: users
+    force: no
   with_items:
     - '{{ users }}'
     - uid: postmaster
@@ -56,3 +57,4 @@
     dest: /home/users/postmaster/.sendxmpprc
     mode: '0400'
     owner: postmaster
+    force: no

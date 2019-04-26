@@ -5,6 +5,3 @@
 
 # Trust the home country, i.e. the country where the box is hosted (YES/NO)
 # COUNTRIES_TRUST_HOME='{{ access_check.countries.trust_home | bool | ternary("YES", "NO") }}'
-
-# External email / xmpp address to send the alerts
-# ALERT_ADDRESS='{{ access_check.alert_address | default("postmaster@" + network.domain) }}'
