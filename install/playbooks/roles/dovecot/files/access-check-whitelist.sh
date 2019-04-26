@@ -20,7 +20,7 @@ NEUTRAL=0
 secdir="$HOME/security"
 
 # User customisation directory
-userconfDir="$HOME/.config/homebox"
+userConfDir="$HOME/.config/homebox"
 
 # Create a unique lock file name for this IP address
 # Exit if a script already check this IP address
@@ -39,7 +39,7 @@ touch "$lockFile"
 trap 'rm -f $lockFile' EXIT
 
 # List of well known and trusted IP addresses
-whitelistFile="$userconfDir/ip-whitelist.txt"
+whitelistFile="$userConfDir/ip-whitelist.txt"
 
 # No whitelist defined for this user
 if [ ! -r "$whitelistFile" ]; then

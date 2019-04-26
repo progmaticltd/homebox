@@ -20,6 +20,7 @@
     owner: '{{ user.uid }}'
     group: users
     state: directory
+    mode: 0700
   with_items:
     - '{{ users }}'
     - uid: postmaster
@@ -32,17 +33,6 @@
     dest: '/home/users/{{ user.uid }}/.config/homebox/access-check.conf'
     owner: '{{ user.uid }}'
     group: users
-  with_items:
-    - '{{ users }}'
-    - uid: postmaster
-  loop_control:
-    loop_var: user
-
-- name: Comment out the entries, so the user can see the defaults
-  replace:
-    path: '/home/users/{{ user.uid }}/.config/homebox/access-check.conf'
-    regexp: '(^[A-Z].*)'
-    replace: '# \1'
   with_items:
     - '{{ users }}'
     - uid: postmaster

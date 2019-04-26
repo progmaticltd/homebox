@@ -12,9 +12,6 @@
 # Malus scores
 TRUST=0
 
-# Blacklisted IP address score:
-BLACKLIST_SCORE=$(grep BLACKLIST_MALUS /etc/homebox/access-check.conf | cut -f 2 -d =)
-
 # When an error occurs, refuse the connection
 ERROR=255
 
@@ -94,7 +91,7 @@ notFound=$(echo "$lookup" | grep -c 'IP Address not found')
 
 if [ "$notFound" = "1" ]; then
     echo "IMAP connection from an unknown country"
-    exit $UNKNOWN_COUNTRY
+    exit $COUNTRIES_UNKNOWN_MALUS
 fi
 
 countryCode=$(echo "$lookup" | sed -r 's/.*: ([A-Z]{2}),.*/\1/g')
@@ -104,7 +101,7 @@ countryName=$(echo "$lookup" | cut -f 2 -d , | sed 's/^ //')
 blacklistedCountry=$(echo "$COUNTRIES_BLACKLIST" | grep -c -E "(^|,)$countryCode(,|$)")
 if [ "$blacklistedCountry" = "1" ]; then
     echo "The country '$countryName' is blacklisted"
-    exit $BLACKLIST_SCORE
+    exit $BLACKLIST_MALUS
 fi
 
 # If we trust the same country, just accept the connection
@@ -122,4 +119,4 @@ fi
 echo "IMAP connection from a different country ($countryName)"
 
 # Return the malus
-exit $FOREIGN_COUNTRY
+exit $COUNTRIES_FOREIGN_MALUS

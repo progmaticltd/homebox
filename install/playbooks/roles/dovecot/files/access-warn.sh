@@ -95,7 +95,11 @@ fi
 # he will be informed
 subject="Alert from postmaster ($domain)"
 from="postmaster@${domain}"
-echo "$MSG" | mail -r "$from" -s "$subject" "$MAIL"
+
+# Make sure it is properly displayed in standard mail systems
+headers='Content-Type: text/plain; charset="ISO-8859-1"'
+
+echo "$MSG" | mail -a "$headers" -r "$from" -s "$subject" "$MAIL"
 
 # Send the alerts to an external / global account
 if [ "$ALERT_ADDRESS" != "" ]; then
@@ -114,7 +118,10 @@ if [ "$ALERT_ADDRESS" != "" ]; then
     subject="Alert from postmaster ($domain)"
     from="postmaster@${domain}"
 
-    echo "$MSG" | mail -r "$from" -s "$subject" "$ALERT_ADDRESS"
+    # Make sure it is properly displayed in standard mail systems
+    headers='Content-Type: text/plain; charset="ISO-8859-1"'
+
+    echo "$MSG" | mail -a "$headers" -r "$from" -s "$subject" "$ALERT_ADDRESS"
 
 fi
 

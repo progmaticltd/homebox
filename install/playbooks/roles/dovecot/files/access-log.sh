@@ -60,7 +60,7 @@ trap 'rm -f $lockFile' EXIT
 # The file that will contains the connection logs
 connLogFile="$secdir/imap-connections.db"
 
-# Create the connection log database
+# Chekc if the connections log database exist
 if [ ! -f "$connLogFile" ]; then
     logger -p user.warning "Database for user $USER not found"
     exit $CONTINUE
