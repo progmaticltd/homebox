@@ -1,0 +1,9 @@
+# Example of blacklist file.
+# Lines starting with '#' are ignored
+# You can use ipcalc or whois tools to create CIDR notations
+
+# Blacklist a specific IP address
+# 176.63.27.152
+
+# Blacklist a network.
+# 192.42.116.0/22

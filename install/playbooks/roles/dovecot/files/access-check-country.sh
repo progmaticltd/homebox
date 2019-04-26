@@ -12,9 +12,6 @@
 # Malus scores
 TRUST=0
 
-# Blacklisted IP address score:
-BLACKLIST_SCORE=$(grep BLACKLIST_MALUS /etc/homebox/access-check.conf | cut -f 2 -d =)
-
 # When an error occurs, refuse the connection
 ERROR=255
 
@@ -32,11 +29,11 @@ globalConf='/etc/homebox/access-check.conf'
 
 # Security directory for the user, where the connection logs are saved
 # and the custom comfiguration overriding
-userconfDir="$HOME/.config/homebox"
+userConfDir="$HOME/.config/homebox"
 userlockDir="$HOME/security"
 
 # Read the user policy if it has been customised
-userConf="$userconfDir/access-check.conf"
+userConf="$userConfDir/access-check.conf"
 
 CUSTOM_COUNTRIES_TRUST=$(grep -c '^COUNTRIES_TRUST=' "$userConf")
 CUSTOM_COUNTRIES_TRUST_HOME=$(grep -c '^COUNTRIES_TRUST_HOME=' "$userConf")
@@ -45,6 +42,18 @@ CUSTOM_COUNTRIES_TRUST_HOME=$(grep -c '^COUNTRIES_TRUST_HOME=' "$userConf")
 if [ "$CUSTOM_COUNTRIES_TRUST" = 1 ]; then
     COUNTRIES_TRUST=$(grep '^COUNTRIES_TRUST=' "$userConf" | cut -f 2 -d = | sed "s/'//g")
     logger "Using custom value for user $USER for trusted countries: $COUNTRIES_TRUST"
+fi
+
+if [ "$CUSTOM_COUNTRIES_TRUST_HOME" = 1 ]; then
+    COUNTRIES_TRUST_HOME=$(grep '^COUNTRIES_TRUST_HOME=' "$userConf" | cut -f 2 -d = | sed "s/'//g")
+    logger "Using custom value for user $USER for trusting home country: $COUNTRIES_TRUST_HOME"
+fi
+
+if [ "$COUNTRIES_TRUST_HOME" = "YES" ]; then
+    # Get the current home country
+    HOME_COUNTRY=$(grep 'COUNTRY_CODE' /etc/homebox/external-ip | cut -f 2 -d =)
+else
+    HOME_COUNTRY='--'
 fi
 
 # Check if the GeoIP lookup binary is available.
@@ -56,7 +65,7 @@ if [ ! -x /usr/bin/geoiplookup ]; then
 fi
 
 # Create the security directory for the user
-test -d "$userconfDir" || mkdir "$userconfDir"
+test -d "$userConfDir" || mkdir "$userConfDir"
 
 # Create a unique lock file name for this IP address
 # and the source used (imap/sogo/roundcube)
@@ -77,12 +86,11 @@ else
 fi
 
 # Check if the country is found or not
-# Use XX when not found
 notFound=$(echo "$lookup" | grep -c 'IP Address not found')
 
 if [ "$notFound" = "1" ]; then
-    echo "IMAP connection from an unknown country (IP=$IP)"
-    exit $UNKNOWN_COUNTRY
+    echo "IMAP connection from an unknown country"
+    exit $COUNTRIES_UNKNOWN_MALUS
 fi
 
 countryCode=$(echo "$lookup" | sed -r 's/.*: ([A-Z]{2}),.*/\1/g')
@@ -92,7 +100,7 @@ countryName=$(echo "$lookup" | cut -f 2 -d , | sed 's/^ //')
 blacklistedCountry=$(echo "$COUNTRIES_BLACKLIST" | grep -c -E "(^|,)$countryCode(,|$)")
 if [ "$blacklistedCountry" = "1" ]; then
     echo "The country '$countryName' is blacklisted"
-    exit $BLACKLIST_SCORE
+    exit $BLACKLIST_MALUS
 fi
 
 # If we trust the same country, just accept the connection
@@ -107,7 +115,6 @@ if [ "$trustedCountry" = "1" ]; then
     exit $TRUST
 fi
 
+# Return the malus for a foreign country
 echo "IMAP connection from a different country ($countryName)"
-
-# Return the malus
-exit $FOREIGN_COUNTRY
+exit $COUNTRIES_FOREIGN_MALUS

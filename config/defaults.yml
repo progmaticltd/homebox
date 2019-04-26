@@ -199,11 +199,12 @@ passwords_default:
 ###############################################################################
 # Default system settings
 system_default:
-  release: stretch
-  login: true
-  devel: false
-  debug: false
-  reboot_timeout: 180
+  release: stretch         # distribution to use (stretch/buster)
+  devel: false             # mark the system as a development machine
+  debug: false             # activate debug options
+  reboot_timeout: 180      # max time to wait when restarting the server
+  keep_certs: false        # keep the letsencrypt certificates locally,
+                           # even when using a live environment
 
 ###############################################################################
 # Once the system is in place, it is possible to use 'limit' for the rule,
@@ -588,6 +589,9 @@ access_check_default:
   blacklist_malus: 255        # Malus to apply when an IP or country is blacklisted. Max value is 255
   warning_score: 40           # Score threshold to generate a warning
   denied_score: 120           # Score threshold to deny a connection
+  display_score: false        # # Should we display the scores in the alerts ?
+                              # It is more informative for development
+                              # but it might be confusing for new users
   time:                       # Standard time range you are normally checking your emails.
     zone: auto                # The timezone to consider when checking the access time.
     start: 8                  # start-end:  the more you are outside this range, the more malus points
@@ -604,5 +608,3 @@ access_check_default:
   ip:
     rbl_malus: 60             # The number of points added to the score when an IP address is blacklisted
     fail2ban_malus: 10        # Malus to apply each time an IP address has blacklisted by fail2ban
-    trust: []                 # A list of additional IP addresses or CIDR to trust
-    trust_home: true          # Trust local network by default (e.g. 192.168.1.0/24)

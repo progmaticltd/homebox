@@ -11,7 +11,7 @@
 # especially the symbolic links in the live folder
 # The '--update' option make sure to not overwrite new certificates.
 - name: If the certificates have been generated before, copy them on the remote server
-  when: system.devel
+  when: system.devel or system.keep_certs
   tags: cert,sync
   synchronize:
     src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/certificates/'
@@ -206,7 +206,7 @@
 # In this direction, we should overwrite the symbolic links,
 # in case the certificates have been renewed
 - name: Backup the certificates on your local machine
-  when: system.devel
+  when: system.devel or system.keep_certs
   tags: cert,sync
   synchronize:
     mode: pull

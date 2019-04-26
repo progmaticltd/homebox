@@ -4,13 +4,18 @@
 DEBUG='{{ system.debug | bool | ternary("YES", "NO") }}'
 
 # External email / xmpp address to send the alerts
-ALERT_ADDRESS='{{ access_check.alert_address }}'
+ALERT_ADDRESS='{{ access_check.alert_address | default("postmaster@" + network.domain) }}'
 
 # Scores above which send a warning
 WARNING_SCORE={{ access_check.warning_score }}
 
 # Scores above which the connection is denied
 DENIED_SCORE={{ access_check.denied_score }}
+
+# Should we display the scores in the alerts ?
+# It is more informative for development
+# but it might be confusing for new users
+DISPLAY_SCORE={{ access_check.display_score | ternary ("YES", "NO") }}
 
 # The score to apply when an IP address is manually whitelisted
 # by the user. Notes:
@@ -25,16 +30,11 @@ WHITELIST_BONUS={{ access_check.whitelist_bonus }}
 # You can tune this value on the installation.
 BLACKLIST_MALUS={{ access_check.blacklist_malus }}
 
+
 ### IP address checks ###
 
 # The number of points to add each time the IP address is blacklisted
 IP_RBL_MALUS={{ access_check.ip.rbl_malus }}
-
-# A list of additional IP addresses or CIDR to trust (e.g. 12.34.56.78/29,12.45.45.12/32)
-IPS_TRUST='{{ access_check.ip.trust | join(",") }}'
-
-# Trust local network by default (e.g. 192.168.1.0/24)
-IPS_TRUST_HOME='{{ access_check.ip.trust_home | bool | ternary("YES", "NO") }}'
 
 # Malus to apply each time an IP address has blacklisted by fail2ban
 # The script check for the last log entries
