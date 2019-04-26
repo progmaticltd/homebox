@@ -82,11 +82,6 @@ if [ "$MASTER_USER" = "import" ]; then
     fi
 fi
 
-# TODO: Send an alert to the user that the master is accessing their account
-# if [ "$MASTER_USER" = "master" ]; then
-#     exec $@
-# fi
-
 if [ "$IP" = "127.0.0.1" ]; then
 
     # SOGo users can login using their ID or their full name. However, the
