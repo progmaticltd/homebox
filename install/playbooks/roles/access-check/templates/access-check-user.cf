@@ -7,4 +7,4 @@ COUNTRIES_TRUST='{{ access_check.countries.trust | join(",") }}'
 COUNTRIES_TRUST_HOME='{{ access_check.countries.trust_home | bool | ternary("YES", "NO") }}'
 
 # External email / xmpp address to send the alerts
-ALERT_ADDRESS='{{ access_check.alert_address }}'
+ALERT_ADDRESS='{{ access_check.alert_address | default("postmaster@" + network.domain) }}'

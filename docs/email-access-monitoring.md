@@ -3,6 +3,9 @@
 This optional feature is for users who are genuinely concerned about the confidentiality of their emails, and want to be
 aware as soon as someone else is opening their emails.
 
+The default settings should be appropriate for most users. However, the users who have unusual habits will be able to
+tune the system according to their needs.
+
 - It can send you warning, in real time, when something unusual is happening, which is explained below.
 - It can block the connection, for instance from blacklisted IP addresses, and send you a warning in real time.
 - It logs all your connection information in a small database. Each user can then do some querying and reporting easily.
@@ -30,43 +33,13 @@ Any customisation should be done in the Homebox configuration directory `~/.conf
 - Warning score: 40
 - Deny score: 120
 
-### Detailed settings
-
-These settings are visible in the defaults.yml file, in the repository:
-
-```yaml
-access_check_default:
-  active: false
-  whitelist_bonus: 255        # Bonus to apply when an IP or country is whitelisted. Max value is 255
-  blacklist_malus: 255        # Malus to apply when an IP or country is blacklisted. Max value is 255
-  warning_score: 40           # Score threshold to generate a warning
-  denied_score: 120           # Score threshold to deny a connection
-  time:                       # Standard time range you are normally checking your emails.
-    zone: auto                # The timezone to consider when checking the access time.
-    start: 8                  # start-end:  the more you are outside this range, the more malus points
-    end: 18                   #   are added. 10 points per hour outside the range
-                              #   Perhaps this will generate one warning if you check your emails
-                              #   from home at midnight or at 2am.
-  countries:                  # Countries check parameters
-    trust: []                 # A list of additional countries to trust, i.e. that will not generate points.
-                              #   However, other restrictions are still applying (e.g. blacklisted IP address)
-    blacklist: []             # A list of blacklisted countries. Connections from these countries will be denied.
-    trust_home: true          # Trust home country by default (the country where the box is hosted)
-    foreign_malus: 40         # The number of points added when connecting from a foreign country
-    unknown_malus: 40         # The number of points added when the country cannot be identified
-  ip:
-    rbl_malus: 60             # The number of points added to the score when an IP address is blacklisted
-    fail2ban_malus: 10        # Malus to apply each time an IP address has blacklisted by fail2ban
-    trust_home: true          # Trust local network by default (e.g. 192.168.1.0/24)
-```
-
 ## Unusual behaviours
 
 Unusual behaviours are defined below, from the highest score to the lowest.
 
 ### Connection from a blacklisted IP address
 
-If you are checking your emails from abother place, the system will check the reputation of the IP address, and will
+If you are checking your emails from another place, the system will check the reputation of the IP address, and will
 warn you if the place is not safe. The software used is [rblcheck](https://github.com/logic/rblcheck). The more an IP
 address is blacklisted, the more you are likely to receive a warning.
 
@@ -81,10 +54,14 @@ By default, the following lists are checked:
 * psbl.surriel.com
 * dul.dnsbl.sorbs.net
 
+When an IP address is blacklisted two times, the connection will be denied.
+
 #### Customisation
 
 If for a reason, you need to connect from an IP address you know is blacklisted, you can whitelist the IP address, by
-creating a file `ip-whitelist.txt` inside your homebox configuration directory. This file can look like this:
+creating a file `ip-whitelist.txt` inside your homebox configuration directory `~/.config/homebox`.
+
+This file can look like this:
 
 ```txt
 # Budapest UPC Magyarorszag Kft:
@@ -94,9 +71,9 @@ creating a file `ip-whitelist.txt` inside your homebox configuration directory. 
 81.17.27.131
 ```
 
-Comments are not mandatory and are ignored.
+Comments and blank lines are not mandatory and are ignored. You can also whitelist entire networks using CIDR blocks.
 
-You can also change the blacklisting score:
+Although it is not recommended, you can also change the blacklisting score globally:
 
 ```yaml
 access_check:
@@ -105,18 +82,17 @@ access_check:
     rbl_malus: 40
 ```
 
-
-### Connection from an IP address blacklisted by fail2ban
+### IP addresses blacklisted by fail2ban
 
 If an IP address has been before blacklisted by fail2ban, a score of 10 will be added per blacklist. So, if an IP
 address has been banned 5 time in the last log file, the score will be 50 points.
 
-This is safe to make sure a brute force attack against your email account is rejected, even if the password has been
+This is a safeguard to ensure a brute force attack against your email account is rejected, even if the password has been
 found.
 
 #### Customisation
 
-If you are having troubles with this, you can change the fail2ban score to another value, or even to 0 to disable it
+If you want to tune this, you can change the fail2ban score to another value, or even to 0 to disable it
 entirely:
 
 ```yaml
@@ -129,7 +105,7 @@ access_check:
 
 ### Connection from a foreign country
 
-If you are living in France, there is no reason you would connect from China or Russia, excep if you are often
+If you are living in France, there is no reason you would connect from China or Russia, except if you are often
 travelling in these countries. In this case, you can add the country code to the list of trusted countries.
 
 #### Customisation
@@ -145,7 +121,9 @@ access_check:
 
 ```
 
-If you prefer to do it for one user only you can define a list of "trusted" countries, in the user's configuration file:
+If you prefer to do it for one user only you can define a list of "trusted" countries, in the user's configuration file.
+
+The user configuration file should be called `access-check.conf`, inside the folder `~/.config/homebox`.
 
 ```sh
 # A comma separated list of country codes to trust (e.g. FR,DE,GB)
@@ -197,6 +175,63 @@ access_check:
 
 ```
 
+## Customising the alert address
+
+By defaults, the alerts will be sent to the postmaster _and_ the user under attack, using both email and XMPP.
+
+You can also use an external email address, by specifying the address globally, in the system.yml file:
+
+```yaml
+access_check:
+  ...
+  alert_address: john.doe@protonmail.com
+  ..
+```
+
+Finally, this can be done per user as well, by modifying the `access-check.conf` file, inside the folder
+`~/.config/homebox`:
+
+```sh
+# Send alerts and XMPP warnings to an external address:
+ALERT_ADDRESS='other@protonmail.com'
+```
+
+It is advised to use an external address, to be sure a compromised account cannot be cleared from its alerts.
+
+## Detailed settings
+
+These settings are visible in the defaults.yml file, in the repository:
+
+```yaml
+access_check_default:
+  active: false
+  whitelist_bonus: 255        # Bonus to apply when an IP or country is whitelisted. Max value is 255
+  blacklist_malus: 255        # Malus to apply when an IP or country is blacklisted. Max value is 255
+  warning_score: 40           # Score threshold to generate a warning
+  denied_score: 120           # Score threshold to deny a connection
+  time:                       # Standard time range you are normally checking your emails.
+    zone: auto                # The timezone to consider when checking the access time.
+    start: 8                  # start-end:  the more you are outside this range, the more malus points
+    end: 18                   #   are added. 10 points per hour outside the range
+                              #   Perhaps this will generate one warning if you check your emails
+                              #   from home at midnight or at 2am.
+  countries:                  # Countries check parameters
+    trust: []                 # A list of additional countries to trust, i.e. that will not generate points.
+                              #   However, other restrictions are still applying (e.g. blacklisted IP address)
+    blacklist: []             # A list of blacklisted countries. Connections from these countries will be denied.
+    trust_home: true          # Trust home country by default (the country where the box is hosted)
+    foreign_malus: 40         # The number of points added when connecting from a foreign country
+    unknown_malus: 40         # The number of points added when the country cannot be identified
+  ip:
+    rbl_malus: 60             # The number of points added to the score when an IP address is blacklisted
+    fail2ban_malus: 10        # Malus to apply each time an IP address has blacklisted by fail2ban
+    trust_home: true          # Trust local network by default (e.g. 192.168.1.0/24)
+```
+
+Do not change the blacklist and whitelist scores, unless you know what you are doing. Due to Posix limitations, the
+maximum number returned by a script is 255. However, this number is internally evaluated to 1000, to make sure
+whitelisting an IP address is respected.
+
 ## Example of messages
 
 All messages are sent both by email and using XMPP if the Jabber server has been selected for installation.
@@ -227,7 +262,7 @@ IMAP connection denied
 
 Details:
 - This IP address is blacklisted 3 times. (+180 points)
-- Unusual early connection for Europe/London (06:46) (+20 points)
+- Unusual early connection for Europe/Budapest (06:46) (+20 points)
 
 IP Details: https://whatismyipaddress.com/ip/176.63.27.111
 ```

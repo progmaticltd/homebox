@@ -140,7 +140,11 @@ fullDetails=""
 isPrivate=$(ipcalc "$IP" | grep -c "Private Internet")
 
 # These details will be passed to the scripts
-TIMES_BANNED=$(grep -c "Ban $IP" /var/log/fail2ban.log)
+if [ -r /var/log/fail2ban.log ]; then
+    TIMES_BANNED=$(grep -c "Ban $IP" /var/log/fail2ban.log)
+else
+    TIMES_BANNED=0
+fi
 
 PASS_ENV="TIMES_BANNED=$TIMES_BANNED"
 
@@ -216,6 +220,11 @@ for script in $login_scripts; do
     # Skip trusted policies
     if [ "$scoreCost" = "0" ]; then
 	continue
+    fi
+
+    # If a score is blacklist or whitelist, make sure it is respected
+    if [ "$scoreCost" = "255" ]; then
+	scoreCost=1000
     fi
 
     # Compute the current score

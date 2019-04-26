@@ -4,7 +4,7 @@
 DEBUG='{{ system.debug | bool | ternary("YES", "NO") }}'
 
 # External email / xmpp address to send the alerts
-ALERT_ADDRESS='{{ access_check.alert_address }}'
+ALERT_ADDRESS='{{ access_check.alert_address | default("postmaster@" + network.domain) }}'
 
 # Scores above which send a warning
 WARNING_SCORE={{ access_check.warning_score }}
