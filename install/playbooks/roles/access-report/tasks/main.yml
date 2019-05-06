@@ -1,0 +1,9 @@
+---
+
+- name: Copy the reporting script
+  tags: scripts
+  copy:
+    src: 'access-report.sh'
+    dest: '/usr/local/bin/access-report.sh'
+    mode: '0750'
+

@@ -34,7 +34,6 @@
 
 # Exit codes
 CONTINUE=0
-ERROR=3
 
 # Used to log errors in syslog or mail.log
 log_error() {
