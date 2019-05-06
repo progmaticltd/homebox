@@ -35,6 +35,7 @@ if [ -f "$connLogFile" ]; then
     lastLogEntryFromThisIP=$(grep "$USER $connSig" "$connLogFile" | tail -n1 | cut -f 1 -d ' ')
 
     # Keep the last 1000 lines only
+    # shellcheck disable=SC2016
     sed -i -e ':a' -e '$q;N;1001,$D;ba' "$connLogFile"
 fi
 
@@ -52,6 +53,7 @@ domain=$(echo "$MAIL" | cut -f 2 -d '@')
 # Check if we can use XMPP to send the alerts
 USE_XMPP=0
 xmppConfig="/home/users/postmaster/.sendxmpprc"
+# shellcheck disable=SC2166
 if [ -x "/usr/bin/sendxmpp" -a -r "$xmppConfig" ]; then
     logger "Using mail and XMPP to send alerts"
     USE_XMPP=1
@@ -77,7 +79,7 @@ if [ "$USE_XMPP" = "1" ]; then
 
     # This will be in the external recipient email
     if [ "$xmppOutput" != "" ]; then
-        logger -p user.warning "sendxmpp error when sending warning from postmaster to $MAIL: $xmppoutput"
+        logger -p user.warning "sendxmpp error when sending warning from postmaster to $MAIL: $xmppOutput"
     fi
 fi
 

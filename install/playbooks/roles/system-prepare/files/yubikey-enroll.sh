@@ -5,8 +5,7 @@ slot=$(cryptsetup luksDump "$part" | grep DISABLED | sed -r 's/^[^0-9]+([0-9])[^
 
 # Run the interactive command
 echo "This script will Register your Yubikey to decrypt the main drive."
-echo "Plug your Yubikey that will be used to decrypt the hard drive. Continue (y/n) ?"
-read cont
+read -r cont -p "Plug your Yubikey that will be used to decrypt the hard drive. Continue (y/n) ?"
 
 if [ "$cont" != "y" ]; then
     echo "Operation cancelled"
@@ -19,5 +18,4 @@ cryptsetup luksDump "$part" | grep "^Key Slot"
 echo "The key will be registered in the slot ${slot}"
 
 # Run the command
-yubikey-luks-enroll -d "$partition" -s "$slot"
-  
+yubikey-luks-enroll -d "$part" -s "$slot"

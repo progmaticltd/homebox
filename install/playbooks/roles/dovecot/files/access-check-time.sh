@@ -15,9 +15,6 @@
 # Malus scores
 TRUST=0
 
-# When an error occurs, refuse the connection
-ERROR=255
-
 # Used to log errors in syslog or mail.log
 log_error() {
     echo "$@" 1>&2;
@@ -34,9 +31,6 @@ globalConf='/etc/homebox/access-check.conf'
 # and the custom comfiguration overriding
 userconfDir="$HOME/.config/homebox"
 userlockDir="$HOME/security"
-
-# Read the user policy if it has been customised
-userConf="$userconfDir/access-check.conf"
 
 # Check if the GeoIP lookup binary is available.
 # The only reason no would be a user customisation.
@@ -76,7 +70,6 @@ if [ "$notFound" = "1" ]; then
 fi
 
 countryCode=$(echo "$lookup" | sed -r 's/.*: ([A-Z]{2}),.*/\1/g')
-countryName=$(echo "$lookup" | cut -f 2 -d , | sed 's/^ //')
 
 # We only check working hours in home country for now
 # The timezone might be detected later, using ipify.org
@@ -94,20 +87,21 @@ hour=$(TZ=$WORKING_TIMEZONE date +'%H')
 time=$(TZ=$WORKING_TIMEZONE date +'%H:%M')
 
 # If inside working hours, just exit
-if [ $hour -ge $WORKING_TIME_START -a $hour -le $WORKING_TIME_END ]; then
+# shellcheck disable=SC2166
+if [ "$hour" -ge "$WORKING_TIME_START" -a "$hour" -le "$WORKING_TIME_END" ]; then
     logger "Inside working hours ($time)"
     exit $TRUST
 fi
 
 # Check for too early connection
-if [ $hour -lt $WORKING_TIME_START ]; then
+if [ "$hour" -lt "$WORKING_TIME_START" ]; then
     malus=$(( 10 * (WORKING_TIME_START - hour) ))
     echo "Unusual early connection for $WORKING_TIMEZONE ($time)"
     exit $malus
 fi
 
 # Check for too late connection
-if [ $hour -gt $WORKING_TIME_END ]; then
+if [ "$hour" -gt "$WORKING_TIME_END" ]; then
     malus=$(( 10 * (hour - WORKING_TIME_END) ))
     echo "Unusual late connection for $WORKING_TIMEZONE ($time)"
     exit $malus

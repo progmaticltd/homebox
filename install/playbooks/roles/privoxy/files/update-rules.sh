@@ -2,7 +2,7 @@
 
 sedcmd=${SEDCMD:-sed}
 defaultprivoxydir="/etc/privoxy"
-defaulturls=$(cat /etc/privoxy/adblock-lists.conf | grep -v '#' | tr '\n' ' ')
+defaulturls=$(grep -v '#' /etc/privoxy/adblock-lists.conf | tr '\n' ' ')
 
 #===    FUNCTION    ============================================================
 #            NAME:    cleanup
@@ -51,7 +51,7 @@ function createpidfile() {
         isrunning "${pidfile}" || {
             # No.    Kill the pidfile and relaunch
             rm "${pidfile}"
-            $0 $@
+            $0 "$@"
         }
         exit
     }
@@ -68,7 +68,7 @@ function pidfilename() {
     whoiam=$(whoami)
     mypidfile="/tmp/${myfile}.pid"
     [[ "$whoiam" == 'root' ]] && mypidfile="/var/run/$myfile.pid"
-    echo $mypidfile
+    echo "$mypidfile"
 }
 
 #===    FUNCTION    ============================================================
@@ -190,10 +190,9 @@ function main() {
     [[ "${#urls[@]}" -eq "0" ]] && usage
 
     # perform the operation
-    doconvert $privoxydir "$urls"
+    doconvert "$privoxydir" "$urls"
 }
 
-main $@
+main "$@"
 
 exit 0
-

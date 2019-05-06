@@ -34,8 +34,7 @@ login_scripts=$(ls /etc/dovecot/login-scripts)
 
 # Exit codes
 CONTINUE=0
-WARNING=1
-DENIED=2
+ERROR=1
 
 # Maximum number of seconds SOGo use to make a new connection (5s average)
 SOGO_CONNECTIION_SECONDS=10
@@ -73,13 +72,13 @@ if [ "$MASTER_USER" = "import" ]; then
 
     # Check the remote IP is local
     if [ "$IP" = "127.0.0.1" ]; then
-        exec $@
-    else
-        # TODO: Send an alert to the postmaster and to root!
-        # The import account should be only used to import emails from 127.0.0.1
-        log_error "Error: remote access with the import account from IP <$IP>"
-        exit $DENIED
+        exec "$@"
     fi
+
+    # TODO: Send an alert to the postmaster and to root!
+    # The import account should be only used to import emails from 127.0.0.1
+    log_error "Error: remote access with the import account from IP <$IP>"
+    exit "$DENIED"
 fi
 
 if [ "$IP" = "127.0.0.1" ]; then
@@ -147,6 +146,7 @@ PASS_ENV="TIMES_BANNED=$TIMES_BANNED DISPLAY_SCORE=$DISPLAY_SCORE"
 
 # Call all the scripts in the folder /etc/dovecot/login-scripts,
 # These scrips are non blocking, and run as the user
+# shellcheck disable=SC2166
 for script in $login_scripts; do
 
     # Check the scripts requirements
@@ -199,18 +199,22 @@ for script in $login_scripts; do
     RunAs="$USER"
     if [ "$runAsPostmaster" = "1" ]; then
         RunAs="postmaster"
+    elif [ "$runAsUser" = "1" ]; then
+	RunAs="$USER"
+    else
+	logger "Warning, the script '$script' will be run as '$USER' by default"
     fi
 
     # Launch non blocking script in background and continue.
     # This is actually used by the external emails import script.
     if [ "$blocking" = "0" ]; then
-        log_debug "Launching background script $scriptPath as '$RunAs'"
+        log_debug "Launching background script $scriptPath ($scriptDescription) as '$RunAs'"
         su -m "$RunAs" -c "$PASS_ENV $scriptPath" 1>&2 &
 	continue
     fi
 
     # Running foreground scripts
-    log_debug "Running blocking script ${scriptPath} as '$RunAs'"
+    log_debug "Running blocking script ${scriptPath} ($scriptDescription) as '$RunAs'"
     details=$(su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}")
     scoreCost=$?
 
@@ -249,9 +253,9 @@ for script in $login_scripts; do
     fi
 
     # Set the status according to the current score
-    if  [ $score -ge $DENIED_SCORE ]; then
+    if  [ $score -ge "$DENIED_SCORE" ]; then
 	STATUS='DENIED'
-    elif [ $score -ge $WARNING_SCORE ]; then
+    elif [ "$score" -ge "$WARNING_SCORE" ]; then
 	STATUS='WARNING'
     else
 	STATUS='OK'
@@ -269,7 +273,7 @@ elif [ "$STATUS" = "WARNING" ]; then
     # Send a warning to the user, perhaps using xmpp
     log_error  "IMAP connection warning for '$USER@$IP'"
     printf "* OK [ALERT] Warning on this connection\r\n"
-    exec $@
+    exec "$@"
 else
-    exec $@
+    exec "$@"
 fi

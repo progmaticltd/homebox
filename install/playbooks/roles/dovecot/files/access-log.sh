@@ -106,11 +106,11 @@ elif [ "$isPrivate" = "0" ]; then
 fi
 
 # Remove the new lines from the details before storing them in the database
-details=$(echo "$DETAILS" | tr '\n' ';' | sed -r 's/(^;|;$)//g')
+smallDetails=$(echo "$DETAILS" | tr '\n' ';' | sed -r 's/(^;|;$)//g')
 
 # Prepare the query, and insert the connection record
 columns='ip, countryCode, countryName, source, status, score, details'
-values="'$IP','$countryCode','$countryName','$SOURCE','$STATUS', '$SCORE','$details'"
+values="'$IP','$countryCode','$countryName','$SOURCE','$STATUS', '$SCORE','$smallDetails'"
 command="insert into connections ($columns) VALUES ($values);"
 
 sqlite3 -batch "$connLogFile" "$command"

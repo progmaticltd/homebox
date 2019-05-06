@@ -34,11 +34,13 @@ if [ -f "$connLogFile" ]; then
     lastLogEntryFromThisIP=$(grep "$USER $connSig" "$connLogFile" | tail -n1 | cut -f 1 -d ' ')
 
     # Keep the last 1000 lines only
+    # shellcheck disable=SC2016
     sed -i -e ':a' -e '$q;N;1001,$D;ba' "$connLogFile"
 fi
 
 # Some clients are opening mutlitple connections on startup
 # When status is warning, send the alert only one time per day, IP and source
+# shellcheck disable=SC2166
 if [ "0$lastLogEntryFromThisIP" -gt "0$lastDay" -a "$STATUS" = "WARNING" ]; then
     exit
 fi
@@ -46,6 +48,7 @@ fi
 # when the status is DENIED, send the warning once per hour only
 # to avoid DoS. At this time, the user should be warned that his
 # account is compromised
+# shellcheck disable=SC2166
 if [ "0$lastLogEntryFromThisIP" -gt "0$lastHour" -a "$STATUS" = "DENIED" ]; then
     exit
 fi
@@ -59,6 +62,8 @@ STATUS=$(echo "$STATUS" | tr '[:upper:]' '[:lower:]')
 # Check if we can use XMPP to send the alerts
 USE_XMPP=0
 xmppConfig="/home/users/postmaster/.sendxmpprc"
+
+# shellcheck disable=SC2166
 if [ -x "/usr/bin/sendxmpp" -a -r "$xmppConfig" ]; then
     logger "Using mail and XMPP to send alerts"
     USE_XMPP=1
@@ -90,7 +95,7 @@ if [ "$USE_XMPP" = "1" ]; then
 
     # This will be in the external recipient email
     if [ "$xmppOutput" != "" ]; then
-        logger -p user.warning "sendxmpp error when sending warning from postmaster to $MAIL: $xmppoutput"
+        logger -p user.warning "sendxmpp error when sending warning from postmaster to $MAIL: $xmppOutput"
     fi
 fi
 
@@ -115,7 +120,7 @@ if [ "$ALERT_ADDRESS" != "" ]; then
     fi
 
     if [ "$xmppOutput" != "" ]; then
-        logger -p user.warning "sendxmpp error when sending warning from postmaster to $ALERT_ADDRESS: $xmppoutput"
+        logger -p user.warning "sendxmpp error when sending warning from postmaster to $ALERT_ADDRESS: $xmppOutput"
     fi
 
     # Send an email alert as well

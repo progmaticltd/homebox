@@ -4,6 +4,8 @@
 [dev](https://github.com/progmaticltd/homebox/tree/dev) branch.
 - The master branch is kept for releases.
 
+Starting in May 2019, the approach will be to use gitflow, from the dev branch.
+
 ## Test machine
 
 You can start to develop using a virtual machine on your workstation, for instance using
@@ -141,8 +143,8 @@ When you set this flag to true, various settings are changed in the development.
   to request more to LetsEncrypt.
 - The certificates are backed up on your local machine, allowing you to redeploy
   without asking again the same certificates, which is also faster.
-  
-To test your system from a local computer, you will need to add the LetsEncrypt root 
+
+To test your system from a local computer, you will need to add the LetsEncrypt root
 certificate authority, the staging version, which can be download on the
 [LetsEncrypt staging environment page](https://letsencrypt.org/docs/staging-environment/).
 
