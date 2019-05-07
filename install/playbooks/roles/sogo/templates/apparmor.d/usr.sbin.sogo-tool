@@ -29,5 +29,5 @@
   /proc/@{pid}/cmdline r,
 
   /run/sogo/GNUstep/Defaults/ r,
-  /run/sogo/GNUstep/Defaults/** rw,
+  /run/sogo/GNUstep/Defaults/** rwk,
 }
