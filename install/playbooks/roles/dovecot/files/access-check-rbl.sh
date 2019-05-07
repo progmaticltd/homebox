@@ -23,7 +23,7 @@ secdir="$HOME/security"
 # Exit if a script already check this IP address
 ipSig=$(echo "$IP:$SOURCE" | md5sum | cut -f 1 -d ' ')
 lockFile="$secdir/$ipSig.lock"
-test -f "$lockFile" && exit $TRUST
+test -f "$lockFile" && exit "$NEUTRAL"
 
 # Start processing, but remove lockfile on exit
 touch "$lockFile"
@@ -40,8 +40,13 @@ rblStatus=$(rblcheck "$IP")
 listedCount=$?
 
 if [ "$listedCount" != "0" ]; then
-    echo "This IP address is blacklisted $listedCount times."
+
+    list=$(echo "$rblStatus" | grep "$IP listed by" | sed 's/.*listed by //' | tr '\r' ',')
     cost=$(( BLACKLISTED * listedCount ))
+
+    # This will be in the report
+    echo "This IP address is blacklisted $listedCount times ($list)."
+
     exit $cost
 fi
 

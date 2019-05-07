@@ -61,6 +61,7 @@
   # Configuration files
   /etc/magic r,
   /etc/catdocrc r,
+  /etc/dovecot/fts-mime-types.conf r,
 
   # pdf
   /usr/bin/pdftotext r,

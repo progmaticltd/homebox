@@ -55,7 +55,7 @@ fi
 # Exit directly if the IP address has been whitelisted
 if [ "0$whitelisted" -gt "0" ]; then
     echo "IP address is whitelisted by $USER"
-    exit $WHITELIST_BONUS
+    exit "$WHITELIST_BONUS"
 fi
 
 # Continue the normal access by default

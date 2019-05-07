@@ -34,8 +34,7 @@ login_scripts=$(ls /etc/dovecot/login-scripts)
 
 # Exit codes
 CONTINUE=0
-WARNING=1
-DENIED=2
+ERROR=1
 
 # Maximum number of seconds SOGo use to make a new connection (5s average)
 SOGO_CONNECTIION_SECONDS=10
@@ -73,13 +72,13 @@ if [ "$MASTER_USER" = "import" ]; then
 
     # Check the remote IP is local
     if [ "$IP" = "127.0.0.1" ]; then
-        exec $@
-    else
-        # TODO: Send an alert to the postmaster and to root!
-        # The import account should be only used to import emails from 127.0.0.1
-        log_error "Error: remote access with the import account from IP <$IP>"
-        exit $DENIED
+        exec "$@"
     fi
+
+    # TODO: Send an alert to the postmaster and to root!
+    # The import account should be only used to import emails from 127.0.0.1
+    log_error "Error: remote access with the import account from IP <$IP>"
+    exit "$DENIED"
 fi
 
 if [ "$IP" = "127.0.0.1" ]; then
@@ -147,6 +146,7 @@ PASS_ENV="TIMES_BANNED=$TIMES_BANNED DISPLAY_SCORE=$DISPLAY_SCORE"
 
 # Call all the scripts in the folder /etc/dovecot/login-scripts,
 # These scrips are non blocking, and run as the user
+# shellcheck disable=SC2166
 for script in $login_scripts; do
 
     # Check the scripts requirements
@@ -170,17 +170,17 @@ for script in $login_scripts; do
     bonusScript=$(grep -c '^# Score: Bonus' "${scriptPath}")
 
     if [ "$isPrivate" = "1" -a "$manageLan" = "0" ]; then
-	continue
+        continue
     fi
 
     # Add the source (Roundcube/SOGo/IMAP) to the environment
     PASS_ENV="$PASS_ENV SOURCE=$SOURCE"
 
     if [ "$reportingScript" = "1" ]; then
-	# Add the global / external email address to send alerts
-	# And the status of the connection
+        # Add the global / external email address to send alerts
+        # And the status of the connection
         PASS_ENV="$PASS_ENV ALERT_ADDRESS=$ALERT_ADDRESS SCORE=$score"
-	PASS_ENV="$PASS_ENV STATUS=$STATUS DETAILS='$fullDetails'"
+        PASS_ENV="$PASS_ENV STATUS=$STATUS DETAILS='$fullDetails'"
 
     # Email import scripts need the decryption key to access the password
     # Pass the decryption key only if the current access is valid
@@ -199,48 +199,52 @@ for script in $login_scripts; do
     RunAs="$USER"
     if [ "$runAsPostmaster" = "1" ]; then
         RunAs="postmaster"
+    elif [ "$runAsUser" = "1" ]; then
+        RunAs="$USER"
+    else
+        logger "Warning, the script '$script' will be run as '$USER' by default"
     fi
 
     # Launch non blocking script in background and continue.
     # This is actually used by the external emails import script.
     if [ "$blocking" = "0" ]; then
-        log_debug "Launching background script $scriptPath as '$RunAs'"
+        log_debug "Launching background script $scriptPath ($scriptDescription) as '$RunAs'"
         su -m "$RunAs" -c "$PASS_ENV $scriptPath" 1>&2 &
-	continue
+        continue
     fi
 
     # Running foreground scripts
-    log_debug "Running blocking script ${scriptPath} as '$RunAs'"
+    log_debug "Running blocking script ${scriptPath} ($scriptDescription) as '$RunAs'"
     details=$(su -m "$RunAs" -c "${PASS_ENV} ${scriptPath}")
     scoreCost=$?
 
     # Skip trusted policies
     if [ "$scoreCost" = "0" ]; then
-	continue
+        continue
     fi
 
     # If a score is blacklist or whitelist, make sure it is respected
     if [ "$scoreCost" = "255" ]; then
-	scoreCost=1000
+        scoreCost=1000
     fi
 
     # Compute the current score
     if [ "$malusScript" = "1" ]; then
-	score=$(( score + scoreCost ))
-	log_debug "$script: Added $scoreCost to the score, now $score"
-	log_debug "Details: $details"
-	sign="+"
+        score=$(( score + scoreCost ))
+        log_debug "$script: Added $scoreCost to the score, now $score"
+        log_debug "Details: $details"
+        sign="+"
     elif [ "$bonusScript" = "1" ]; then
-	score=$(( score - scoreCost ))
-	log_debug "$script: Substracted $scoreCost to the score, now $score"
-	log_debug "Details: $details"
-	sign="-"
+        score=$(( score - scoreCost ))
+        log_debug "$script: Substracted $scoreCost to the score, now $score"
+        log_debug "Details: $details"
+        sign="-"
     else
-	log_debug "Warning: no bonus/malus type specified in the comments for the script $script (returned $scoreCost)"
+        log_debug "Warning: no bonus/malus type specified in the comments for the script $script (returned $scoreCost)"
     fi
 
     if [ "$DISPLAY_SCORE" = "YES" ]; then
-	scoreDetails=" (${sign}${scoreCost} points)"
+        scoreDetails=" (${sign}${scoreCost} points)"
     fi
 
     # Build the details list used by the warning script
@@ -249,12 +253,12 @@ for script in $login_scripts; do
     fi
 
     # Set the status according to the current score
-    if  [ $score -ge $DENIED_SCORE ]; then
-	STATUS='DENIED'
-    elif [ $score -ge $WARNING_SCORE ]; then
-	STATUS='WARNING'
+    if  [ $score -ge "$DENIED_SCORE" ]; then
+        STATUS='DENIED'
+    elif [ "$score" -ge "$WARNING_SCORE" ]; then
+        STATUS='WARNING'
     else
-	STATUS='OK'
+        STATUS='OK'
     fi
 
 done
@@ -265,11 +269,14 @@ if [ "$STATUS" = "DENIED" ]; then
     log_error "IMAP connection denied for '$USER@$IP'"
     printf "* NO [ALERT] Access denied\r\n"
     exit 0
-elif [ "$STATUS" = "WARNING" ]; then
+fi
+
+if [ "$STATUS" = "WARNING" ]; then
     # Send a warning to the user, perhaps using xmpp
     log_error  "IMAP connection warning for '$USER@$IP'"
     printf "* OK [ALERT] Warning on this connection\r\n"
-    exec $@
-else
-    exec $@
+    exec "$@"
 fi
+
+# Continue the normal execution process
+exec "$@"

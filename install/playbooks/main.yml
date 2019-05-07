@@ -44,6 +44,8 @@
 # Access check and logging per country, IP address, etc.
 - import_playbook: access-check.yml
   when: access_check.active
+- import_playbook: access-report.yml
+  when: access_check.active
 
 # Configure SSH for remote access using borgbackup,
 # But only for users with an ssh key provided.

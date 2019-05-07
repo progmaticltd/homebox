@@ -55,7 +55,7 @@ fi
 # Exit directly if the IP address has been blacklisted
 if [ "0$blacklisted" -gt "0" ]; then
     echo "IP address is blacklisted by $USER"
-    exit $BLACKLIST_MALUS
+    exit "$BLACKLIST_MALUS"
 fi
 
 # Continue the normal access by default
