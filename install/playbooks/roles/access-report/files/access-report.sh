@@ -234,8 +234,7 @@ buildAndSendReport() {
         report="$report</body></html>"
         
         # Send the email
-        # echo "$report" | mail -a "$contentHeader" -a "$alertHeader" -r "$from" -s "$subject" "$mail"
-        echo "$report" | mail -a "$contentHeader" -a "$alertHeader" -r "$from" -s "$subject" "andre@rodier.me"
+        echo "$report" | mail -a "$contentHeader" -a "$alertHeader" -r "$from" -s "$subject" "$mail"
     fi
 }
 
