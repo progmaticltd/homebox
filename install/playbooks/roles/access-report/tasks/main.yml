@@ -5,5 +5,16 @@
   copy:
     src: 'access-report.sh'
     dest: '/usr/local/bin/access-report.sh'
-    mode: '0750'
+    mode: '0700'
+
+- name: Copy the cron job to send the access reports
+  tags: cron
+  cron:
+    cron_file: access-report
+    name: access-report
+    day: 1
+    hour: 1
+    minute: 0
+    job: '/usr/local/bin/access-report.sh'
+    user: root
 

@@ -9,11 +9,10 @@ tune the system according to their needs.
 - It can send you warning, in real time, when something unusual is happening, which is explained below.
 - It can block the connection, for instance from blacklisted IP addresses, and send you a warning in real time.
 - It logs all your connection information in a small database. Each user can then do some querying and reporting easily.
-- A monthly report can be sent the first day of every month, containing the analysis of the previous month. This will be
-  implemented in a next version
-- When the "impersonate" feature is used to access one user's emails, an alert is sent in real time.
+- A monthly report is sent the first day of every month, containing the analysis of the previous month.
+- When the "impersonate" feature is used to access one user's emails, an alert is sent in real time to this user.
 
-Real time alerts are sent by email _and_ XMPP, to your account and an external account if confiured so.
+Real time alerts are sent by email _and_ XMPP, to your account and an external account if configured so.
 
 ## Scoring system
 
@@ -297,3 +296,18 @@ COUNTRIES_TRUST='FR,DE,ES'
 # I am travelling, so don't trust home till I come back
 COUNTRIES_TRUST_HOME='NO'
 ```
+
+# Monthly reports
+
+The report can contains the following sections:
+
+- Connections per country, if you are travelling.
+- Unknown countries, with the IP addresses identified.
+- Warned and denied connections, with the details of the warnings.
+- Local access
+- Client statustics (Roundcube / SOGo / IMAP)
+- Statistics per hour of the day
+
+## Example of report
+
+![monthly report example](img/access-log/monthly-report-full.png)
