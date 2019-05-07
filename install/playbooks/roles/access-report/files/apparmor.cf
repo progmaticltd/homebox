@@ -47,5 +47,5 @@
   /etc/postfix/main.cf r,
 
   # Read user's databases
-  /home/users/andre/security/imap-connections.db rwk,
+  /home/users/*/security/imap-connections.db rwk,
 }
