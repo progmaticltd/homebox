@@ -1,9 +1,12 @@
 #!/bin/sh
 
-# Description: send a monthly report to the user with the IMAP events
-# Parameter 1: name of the user
+# Description: send a monthly report to each user with the IMAP events
+
+# No parameters: Send the report to all users in the LDAP directory
+# Otherwise, can be the list of users to send the report to
 
 # The report contains:
+# - Connections per IP addresses
 # - Connections per country
 # - Unknown countries
 # - Warned and denied connections
@@ -12,13 +15,12 @@
 # - Statistics per hour of the day
 
 # This script is very simple and probably perfectible,
-# for instance by using Python.
+# for instance by using Python or Perl.
 # TODO: Multilingual and template HTML file
+# It should be possible as well to build the same report in text mode.
 
-
-# Read the domain name from postfix configuration
-domain=$(grep ^myorigin /etc/postfix/main.cf | sed 's/myorigin = //')
-
+# Build an HTML report, and send it by email from the postmaster.
+# Parameter: the name of the user
 buildAndSendReport() {
 
     user=$1
@@ -47,6 +49,8 @@ buildAndSendReport() {
     # Common variables
     lastMonth=$(date -d '1 month ago' +'%Y-%m')
     lastMonthText=$(date -d '1 month ago' +'%B %Y')
+
+    # Start the body of the HTML email
     style="table {border: 1px solid #ddd} tr:nth-child(odd) {background: #eee} th {padding: 0 1ch}"
     report="<html><head><style>$style</style></head><body>"
 
@@ -78,7 +82,7 @@ buildAndSendReport() {
         sendReport=1
     fi
     
-    # Create the per country report
+    # Create the per country report. We skip XX (unknown country),and '-' (LAN connection).
     condition="unixtime like '$lastMonth-%' and countryName != '-' and countryCode != 'XX'"
     query="select count(distinct(countryName)) from connections where $condition"
     nbCountry=$(sqlite3 "$connLogFile" "$query")
@@ -100,7 +104,7 @@ buildAndSendReport() {
         sendReport=1
     fi
     
-    # Unidentified IP addresses
+    # Unidentified countries.
     condition="unixtime like '$lastMonth-%' and countryCode = 'XX'"
     query="select count(distinct(ip)) from connections where $condition"
     nbAddress=$(sqlite3 "$connLogFile" "$query")
@@ -191,7 +195,7 @@ buildAndSendReport() {
         maxHours=$(sqlite3 "$connLogFile" "$maxQuery" | cut -f 2 -d '|')
         
         for hour in $(seq -s ' ' -w 0 23); do
-            count=$(echo "$hourReport" | grep  "^$hour|" | cut -f 2 -d '|')
+            count=$(echo "$hourReport" | grep "^$hour|" | cut -f 2 -d '|')
             tdStyle="width:3ch;vertical-align:bottom;"
         
             if [ "$count" = "" ]; then
@@ -238,8 +242,18 @@ buildAndSendReport() {
     fi
 }
 
-# Get the list of users from LDAP
-users=$(getent passwd -s ldap | cut -f 1 -d : | tr '\n' ' ')
+##############################################################################################################
+# Entry point of the script
+
+# If no users are given, get the list of users from LDAP
+if [ "$1" = "" ]; then
+    users=$(getent passwd -s ldap | cut -f 1 -d : | tr '\n' ' ')
+else
+    users=$*
+fi
+
+# Read the domain name from postfix configuration
+domain=$(grep ^myorigin /etc/postfix/main.cf | sed 's/myorigin = //')
 
 # Build and send the report to each user
 for user in $users; do
