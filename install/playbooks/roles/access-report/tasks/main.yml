@@ -18,3 +18,15 @@
     job: '/usr/local/bin/access-report.sh'
     user: root
 
+- name: Install AppArmor profile for the script
+  tags: security, apparmor
+  register: aa_templates
+  copy:
+    src: apparmor.cf
+    dest: '/etc/apparmor.d/usr.local.bin.access-report.sh'
+
+- name: Activate AppArmor profiles
+  tags: dovecot, security, apparmor
+  notify: Restart AppArmor service
+  command: 'aa-enforce usr.local.bin.access-report.sh'
+
