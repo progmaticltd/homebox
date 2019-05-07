@@ -5,6 +5,7 @@
   #include <abstractions/base>
   #include <abstractions/bash>
   #include <abstractions/nameservice>
+  #include <abstractions/postfix-common>
 
   # Capabilities
   capability dac_override,
@@ -38,6 +39,7 @@
 
   # temporary files
   /tmp/mail.* rwk,
+  /root/dead.letter w,
 
   # Libraries
   /lib/x86_64-linux-gnu/ld-*.so mr,
