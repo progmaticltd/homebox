@@ -20,9 +20,12 @@
 
   # Allow to read configuration and site files
   /etc/nginx/modules-enabled/ r,
-  /usr/share/nginx/modules-available/mod-*.conf r,
-  /usr/share/nginx/sites-available/* r,
   /etc/nginx/** r,
+  /etc/security/capability.conf r,
+
+  # Other configuration
+  /usr/share/nginx/sites-available/* r,
+  /usr/share/nginx/modules-available/mod-*.conf r,
 
   # Binaries
   /usr/share/nginx/modules/ngx_*.so mr,

@@ -52,6 +52,7 @@
 # Security improvements =======================================================
 
 - name: Generate a strong Diffie Hellman file
+  notify: Restart nginx
   tags: security
   openssl_dhparam:
     path: /etc/nginx/dhparams.pem
@@ -61,6 +62,7 @@
     group: root
 
 - name: Install nginx secure configuration
+  notify: Restart nginx
   template:
     src: nginx.conf
     dest: /etc/nginx/nginx.conf
@@ -68,6 +70,7 @@
 # AppArmor configuration ======================================================
 
 - name: Install nginx AppArmor profile
+  notify: Restart nginx
   when: security.app_armor
   tags: security, apparmor
   template:
