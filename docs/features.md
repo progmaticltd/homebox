@@ -104,15 +104,16 @@ Ranked score A on [geekflare.com](https://tools.geekflare.com/) and A+ on [sslla
 
 ## Automatic detection of unusual behaviour
 
-This advanced feature is unique amongst self-hosting solutions. It is actually restricted to IMAP, but will be extended
-to other services. It is not activated by default yet, as more tests and specific requirements are needed.
+This advanced feature is unique amongst both commercial and self-hosted solutions. It is actually restricted to IMAP,
+but will be extended to other services. It is not activated by default yet, as more tests and specific requirements are
+needed.
 
 It is working by using a "points" system, where more points generate warnings or even deny the connection.
 
 The following behaviour are detected, from the :
 
 - Access from a blacklisted IP address
-- Access from an IP address previously blacklisted by fail2ban
+- Access from an IP address recently blacklisted by fail2ban
 - Access from a different country than the one the box is hosted
 - Access outside office hours
 
@@ -121,10 +122,11 @@ specific usage. For instance, it is possible to:
 
 - Whitelist / Blacklist countries, globally or per user.
 - Whitelist / Blacklist IP addresses, globally or per user.
+- Set office hours, globally only at this time.
 
-Warning and errors are sent in real time, using XMPP and email to the user and the postmaster.
+Warning and errors are sent in real time, using XMPP and email to the user and an external email address.
 
-Two factors authentication on unusual behaviour can be implemented later.
+Two factors authentication on unusual behaviour will be implemented later, perhaps using google authenticator.
 
 # Email features
 
@@ -197,17 +199,17 @@ __Notes and Limitations:__
 - Although encrypted archives cannot be opened, the file list is indexed.
 - Powerpoint files before 2003 (.ppt) are not well supported.
 
-More formats could be added once Apache Tika will be included in Debian Stable.
-
 ## Master user
 
 Whatever you use your email server for a community or a family, you can activate the
 "impersonate" function. This function creates a "master" user, with an access to every
 other user's mail boxes.
 
-This feature is disabled by default, and the next version will send an alert in real time
-to the user when this functionality is used. It is mainly meant for family and children
-with an email address.
+This feature is disabled by default, it is meant to be useful for families with children
+with an email address or small communities.
+
+However, as soon as the master user is accessing someone's email address, the user receives an alert by XMPP and an
+email is sent as well.
 
 ## Automatic client configuration
 
@@ -260,7 +262,7 @@ RoundCube, comes with the following plugins / features activated by default:
 - Log the real client IP address to the mail server
 
 When the master user functionality has been activated, the impersonate plugin is also
-installed, allowing you to inspect any user's emails from the webmail.
+installed, allowing you to inspect any user's emails directly from the webmail.
 
 More plugins can be activated very easily, just by specifying their name in the list of
 plugins:
@@ -291,11 +293,19 @@ emails with attachments: You don't need to upload an email twice.
 
 ## Email access logging
 
-Each access to the email server is logged in real time, with the following information:
+Each access to the email server is logged in real time, and contains the following information:
 
 - Source IP address
 - Country
 - Channel (RoundCube, SOGo or IMAP)
+- etc…
+
+A monthly report is sent to each user, the first of each month, with a summary of access and some statistics.
+
+## Privacy features
+
+When emails are sent, the user agent (i.e. Thunderbird, Evolution, etc…) version is removed, both for security and
+privacy.
 
 # Calendars and address books
 
@@ -409,17 +419,10 @@ The server installed is bind9. When activated, the server also publishes
 SPA is essentially next generation port knocking. It is using encryption and HMAC keys,
 to open your firewall for an SSH connection.
 
-- Supports HMAC authenticated encryption for both Rijndael and
-  GnuPG.
-- Replay attacks are detected and thwarted by SHA-256 digest
-  comparison of valid incoming SPA packets.
+- Supports HMAC authenticated encryption for both Rijndael and GnuPG.
+- Replay attacks are detected and thwarted by SHA-256 digest comparison of valid incoming SPA packets.
 
 More details explained on the [Comprehensive Guide](spa-fwknop).
-
-## DNS automatic update
-
-If you are using Gandi as your DNS provider, the installation script can automatically
-create DNS entries for your mail server.
 
 ## LetsEncrypt certificates management
 
@@ -476,9 +479,11 @@ server, and test the following:
 - Certificates for all services
 - DKIM keys (opendkim)
 - Postfix configuration
-- IMAP access (dovecot
+- IMAP access (dovecot)
 - Autoconfig and Autodiscover
-- DNS records when the DNS server is installed
+- DNS records and DNSSEC when the DNS server is installed
+- Privoxy and Tor configuration
+- Zabbix
 
 ## Development support playbook
 
