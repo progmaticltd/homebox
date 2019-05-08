@@ -97,6 +97,9 @@
   /usr/bin/xlsx2csv r,
   /usr/bin/xlsx2csv rix,
 
+  # Poppler (PDF)
+  /usr/share/poppler/** r,
+
   # Archives
   /usr/bin/unzip mr,
   /usr/bin/unzip rix,
