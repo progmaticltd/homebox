@@ -1,0 +1,6 @@
+---
+
+# Packages to install, will add more later.
+
+transmission_packages:
+  - transmission-daemon

@@ -22,12 +22,10 @@
   # Binary files
   /usr/sbin/sogo-ealarms-notify mr,
   /lib/x86_64-linux-gnu/ld-*.so mr,
-  /usr/lib/GNUstep/** m,
   /usr/lib/GNUstep/** mr,
 
   # proc and run filesystem
   /proc/@{pid}/cmdline r,
   /run/sogo/GNUstep/Defaults/ r,
-  /run/sogo/GNUstep/Defaults/** r,
-  /run/sogo/GNUstep/Defaults/** w,
+  /run/sogo/GNUstep/Defaults/** rwk,
 }

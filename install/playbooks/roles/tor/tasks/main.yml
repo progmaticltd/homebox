@@ -1,17 +1,34 @@
 ---
 
 - name: Install tor in its default configuration
+  tags: apt
   apt:
     name: tor
     state: present
-
+    
+# Port flags documentation on this page:
+# https://2019.www.torproject.org/docs/tor-manual.html.en
+- name: Default port flags
+  tags: facts
+  set_fact:
+    tor_flags: ''
+  
+- name: Allow IPv6 Traffic if needed
+  when: ansible_default_ipv6.address is defined
+  tags: facts
+  set_fact:
+    tor_flags: IPv6Traffic
+  
 - name: Copy tor configuration file
+  tags: config
   notify: Restart Tor
   template:
     src: torrc.conf
     dest: /etc/tor/torrc
 
+
 - name: Allow proxy access from LAN
+  tags: ufw
   ufw:
     rule: allow
     proto: tcp

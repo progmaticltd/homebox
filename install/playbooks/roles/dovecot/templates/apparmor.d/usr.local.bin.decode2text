@@ -34,6 +34,7 @@
   /bin/tar rix,
   /bin/cat rix,
   /bin/dash rix,
+  /bin/date rix,
   /bin/grep rix,
   /bin/mktemp rix,
   /bin/rm rix,
@@ -95,6 +96,9 @@
   /usr/bin/pptx2txt rix,
   /usr/bin/xlsx2csv r,
   /usr/bin/xlsx2csv rix,
+
+  # Poppler (PDF)
+  /usr/share/poppler/** r,
 
   # Archives
   /usr/bin/unzip mr,

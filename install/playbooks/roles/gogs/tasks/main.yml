@@ -88,11 +88,16 @@
 - name: Create the configuration folder
   tags: config
   file:
-    path: /etc/gogs/conf/auth.d
-    owner: gogs
+    path: '{{ dir }}'
     state: directory
+    owner: gogs
     group: gogs
     mode: 0755
+  with_items:
+    - /opt/gogs/data
+    - /etc/gogs/conf/auth.d
+  loop_control:
+    loop_var: dir
 
 - name: Copy the gogs configuration
   tags: config
