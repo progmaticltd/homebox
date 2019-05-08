@@ -119,8 +119,7 @@
     regexp: '{{ line }}'
   with_items:
     - '# Missing permissions added by homebox'
-    - '  /run/xtables.lock r,'
-    - '  /run/xtables.lock wk,'
+    - '  /run/xtables.lock rwk,'
     - '  /var/fwknop/fwknopd.pid r,'
     - '  /var/fwknop/fwknopd.pid wkl,'
     - '  /var/fwknop/digest.cache r,'
