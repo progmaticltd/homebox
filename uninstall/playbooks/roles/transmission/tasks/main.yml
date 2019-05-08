@@ -17,10 +17,6 @@
     loop_var: path
 
 # Uninstall daemon ============================================================
-- name: Stop the transmission daemon
-  service:
-    name: transmission-daemon
-    state: stopped
 
 - name: Uninstall the transmission package
   tags: apt
@@ -63,6 +59,16 @@
     name: debian-transmission
     state: absent
 
+# Remove firewall rules =======================================================
+- name: Clean up firewall rules
+  shell: >-
+    ufw status numbered
+    | grep transmission
+    | sed -r 's/^\[(..)\] .*/echo y | ufw delete \1/'
+    | sort -r | sh
+  args:
+    warn: no
+    
 # AppArmor configuration ======================================================
 
 - name: Remove nginx and transmission AppArmor profiles
