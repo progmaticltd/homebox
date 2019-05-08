@@ -57,7 +57,7 @@
   /opt/gogs/** r,
   /opt/gogs/public/ r,
   /opt/gogs/public/** r,
-  /opt/gogs/data/** r,
+  /opt/gogs/data/ rw,
   /opt/gogs/data/** rwkl,
 
   # Repositories access
@@ -66,8 +66,14 @@
   /home/*/gogs-repositories/*/** rwkl,
   /home/gogs/gogs-repositories/*/*.git/hooks/* rix,
 
+  # Create temporary files and directories
+  /tmp/gogs-* rwk,
+  /tmp/gogs-*/** rwkl,
+  /tmp/gogs-*/ rw,
+
   # Proc filesystem
   /proc/sys/net/core/somaxconn r,
+  /proc/sys/kernel/hostname r,
 
   # Log files (with hooks as well)
   /var/log/gogs/** rwkl,
