@@ -1,0 +1,40 @@
+# Main gogs binary
+#include <tunables/global>
+
+/opt/gogs/gogs {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  # Executables
+  /opt/gogs/gogs mr,
+  /usr/bin/git mr,
+  /usr/bin/git rix,
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+
+  # Configuration files
+  /etc/gogs/** r,
+
+  # Some git executables, probably not complete
+  /usr/share/git-core/** r,
+  /usr/lib/git-core/git* rix,
+  /usr/bin/git-* rix,
+
+  # public files
+  /opt/gogs/** r,
+  /opt/gogs/public/ r,
+  /opt/gogs/public/** r,
+  /opt/gogs/data/** r,
+  /opt/gogs/data/** rwkl,
+
+  # Repositories access
+  /home/gogs/ r,
+  /home/gogs/** rwkl,
+  /home/*/gogs-repositories/*/** rwkl,
+  /home/gogs/gogs-repositories/*/*.git/hooks/* rix,
+
+  # Proc filesystem
+  /proc/sys/net/core/somaxconn r,
+
+  # Log files (with hooks as well)
+  /var/log/gogs/** rwkl,
+}

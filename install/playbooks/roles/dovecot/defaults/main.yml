@@ -8,6 +8,7 @@ sieve:
     - report-spam.sieve
     - report-ham.sieve
     - tags-important.sieve
+    - draft-rules.sieve
 
 # Default dovecot packages to install
 dovecot:
@@ -34,6 +35,9 @@ dovecot:
     - p7zip-full
     - p7zip-rar
     - tnef
+  access_check_packages:
+    - grepcidr
+    - sqlite3
   settings:
     mail_max_userip_connections: 64
     lda_mailbox_autocreate: no

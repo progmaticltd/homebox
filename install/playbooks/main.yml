@@ -5,9 +5,10 @@
 # some conditional flags used below
 - import_playbook: load-defaults.yml
 
-# Complete list of playbooks to run, in this order
-- import_playbook: external-ip.yml
+# Prepare the system, get its external IP address,
+# and set up remote access
 - import_playbook: system-prepare.yml
+- import_playbook: external-ip.yml
 - import_playbook: remote-access.yml
 
 # Install fwknop (Single Packet Authorization)
@@ -39,6 +40,12 @@
 # Start to create users and home directories
 - import_playbook: ldap.yml
 - import_playbook: homes.yml
+
+# Access check and logging per country, IP address, etc.
+- import_playbook: access-check.yml
+  when: access_check.active
+- import_playbook: access-report.yml
+  when: access_check.active
 
 # Configure SSH for remote access using borgbackup,
 # But only for users with an ssh key provided.

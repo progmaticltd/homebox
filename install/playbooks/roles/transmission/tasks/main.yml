@@ -4,8 +4,15 @@
   tags: apt
   apt:
     update_cache: true
-    name: transmission-daemon
+    name: '{{ transmission_packages }}'
     state: present
+
+# Create random ports =========================================================
+- name: Set ports configuration
+  set_fact:
+    peer_port: '{{ 40000 + (10000 | random) }}'
+    peer_port_random_low: '{{ 40000 + (10000 | random) }}'
+    peer_port_random_high: '{{ 50000 + (10000 | random) }}'
 
 # Web site configuration ======================================================
 
@@ -101,6 +108,59 @@
     owner: debian-transmission
     group: debian-transmission
     mode: '0700'
+
+# Firewall configuration ======================================================
+
+- name: Configure firewall rules for transmission (output)
+  tags: ufw
+  ufw:
+    comment: Allow transmission output connections
+    from_ip: any
+    to_ip: any
+    direction: out
+    protocol: '{{ protocol }}'
+    rule: allow
+    from_port: '{{ peer_port }}'
+    to_port: '1024:65535'
+  with_items:
+    - tcp
+    - udp
+  loop_control:
+    loop_var: protocol
+
+- name: Allow transmissions files to be received
+  tags: ufw
+  ufw:
+    comment: Allow transmission connections
+    from_ip: any
+    to_ip: any
+    direction: out
+    protocol: '{{ protocol }}'
+    rule: allow
+    from_port: '1024:65535'
+    to_port: '{{ peer_port_random_low }}:{{ peer_port_random_high }}'
+  with_items:
+    - tcp
+    - udp
+  loop_control:
+    loop_var: protocol
+
+- name: Allow transmissions files to be received
+  tags: ufw
+  ufw:
+    comment: Allow transmission connections
+    from_ip: any
+    to_ip: any
+    direction: in
+    protocol: '{{ protocol }}'
+    rule: allow
+    from_port: '1024:65535'
+    to_port: '{{ peer_port_random_low }}:{{ peer_port_random_high }}'
+  with_items:
+    - tcp
+    - udp
+  loop_control:
+    loop_var: protocol
 
 # AppArmor configuration ======================================================
 

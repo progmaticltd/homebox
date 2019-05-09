@@ -13,13 +13,21 @@
       - ipcalc
   apt:
     name: '{{ pkgs }}'
-    state: latest
+    state: present
 
 - name: Set up the configuration file
+  tags: config
   notify: Restart clamav services
   template:
-    src: clamsmtpd.conf
-    dest: /etc/clamsmtpd.conf
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+  with_items:
+    - src: clamsmtpd.conf
+      dest: /etc/clamsmtpd.conf
+    - src: freshclam.conf
+      dest: /etc/clamav/freshclam.conf
+  loop_control:
+    loop_var: file
 
 ###############################################################################
 # See the Debian bug report:
@@ -67,17 +75,6 @@
     owner: clamsmtp
     group: clamsmtp
     mode: '0700'
-
-- name: Copy the virus alert templates
-  template:
-    src: '{{ item }}'
-    dest: '/etc/clamsmtp/virus-alert-default.eml'
-    owner: clamsmtp
-    group: clamsmtp
-    mode: '0600'
-  with_first_found:
-    - 'virus-alert-{{ lang }}.eml'
-    - 'virus-alert-default.eml'
 
 - name: Create the logs folder for clamsmtp
   file:

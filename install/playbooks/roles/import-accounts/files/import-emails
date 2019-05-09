@@ -1,5 +1,10 @@
 #!/bin/dash
 
+# Post login script for Dovecot
+# RunAs: User
+# NeedDecryptKey: Yes
+# Blocking: No
+
 # This script is run as the current logged in user.
 # It receives a decryption key as an environment variable,
 # to decrypt the account emails import configuration files
@@ -24,7 +29,7 @@
 # DECRYPT_KEY=cIy29nzfAnQCxU8v84Q2jTKAyETmf2Cu
 
 # Nothing to import ??
-test -d $HOME/mails/import/safe || exit 0;
+test -d "$HOME/mails/import/safe" || exit 0;
 
 # Exit if no password is specified
 if [ "$DECRYPT_KEY" = "" ]; then
@@ -32,14 +37,11 @@ if [ "$DECRYPT_KEY" = "" ]; then
     exit 2;
 fi
 
-# Start in the import directory
-cd $HOME/mails/import/safe
-
 # Get the list of imports to run
-imports=$(ls *conf 2>/dev/null)
+imports=$(ls ./safe/*conf 2>/dev/null)
 
 # Go back on the import root directory
-cd $HOME/mails/import
+cd "$HOME/mails/import" || exit 0
 
 # Remove dead lock files
 find . -maxdepth 1 -mmin +60 -name '*lock' -delete
@@ -58,28 +60,29 @@ for import in $imports; do
     test -f "$lock" && continue
 
     # Lock asap
-    touch $lock
+    touch "$lock"
 
     # Log everything
-    logfile="logs/$import.log"
+    month=$(date --rfc-3339=seconds | cut -f 1,2 -d '-')
+    logfile="logs/${month}-${import}.log"
 
     # time the process
     date=$(date --rfc-3339=seconds)
-    echo "$date: Starting to import for account '$import'" >>$logfile
+    echo "$date: Starting to import for account '$import'" >> "$logfile"
 
     # decrypt the configuration file using the encryption key passed in the environment
-    openssl $CIPHER -d -in safe/$import -out conf/$import -pass env:DECRYPT_KEY
+    openssl $CIPHER -d -in "safe/$import" -out "conf/$import" -pass env:DECRYPT_KEY
 
     # Start the import command and remove the lock once finished
     # Run in background, if there is multiple accounts
-    (mbsync -q -c "conf/$import" -a >> $logfile 2>&1 ; rm -f $lock) &
+    (mbsync -q -c "conf/$import" -a >> "$logfile" 2>&1 ; rm -f "$lock") &
 
     # Remove the decrypted file as soon as mbsync has loaded it
     sleep 1
-    rm -f conf/$import
+    rm -f "conf/$import"
 
     # time the process
     date=$(date --rfc-3339=seconds)
-    echo "$date: Finished to import for account '${import}'" >>$logfile
+    echo "$date: Finished to import for account '${import}'" >> "$logfile"
 
 done

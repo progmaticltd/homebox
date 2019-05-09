@@ -1,0 +1,15 @@
+---
+
+- name: Install the packages required to send messages over xmpp
+  apt:
+    name: sendxmpp
+    state: present
+
+# AppArmor configuration ======================================================
+- name: Install sendxmpp AppArmor profile
+  when: security.app_armor
+  tags: security, apparmor
+  template:
+    src: 'apparmor.d/usr.bin.sendxmpp'
+    dest: '/etc/apparmor.d/usr.bin.sendxmpp'
+

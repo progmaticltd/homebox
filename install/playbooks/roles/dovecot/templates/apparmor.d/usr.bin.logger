@@ -1,0 +1,14 @@
+# Last Modified: Mon Apr 22 15:11:31 2019
+#include <tunables/global>
+
+/usr/bin/logger {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  # Binaries & libs
+  /usr/bin/logger mr,
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+
+  # proc filesystem
+  /proc/*/loginuid r,
+}

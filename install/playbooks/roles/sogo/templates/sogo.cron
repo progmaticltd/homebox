@@ -1,18 +1,16 @@
 # Sogod cronjobs
 
-# Vacation messages expiration
-# The credentials file should contain the sieve admin credentials (username:passwd)
-# 0 0 * * *      sogo    /usr/sbin/sogo-tool update-autoreply -p /etc/sogo/sieve.creds
+# Vacation messages expiration are handled by Dovecot Sieve
+# 0 0 * * *      sogo    /usr/sbin/sogo-tool update-autoreply
 
-# Session cleanup - runs every minute
+# Session cleanup - runs every hour
 #   - Ajust the nbMinutes parameter to suit your needs
-# Example: Sessions without activity since 60 minutes will be dropped:
-* * * * *      sogo    /usr/sbin/sogo-tool expire-sessions 60
+# Wait 30 seconds, to avoid broken lock files error messages
+0 * * * *      sogo    sleep 30 && /usr/sbin/sogo-tool expire-sessions 60
 
-# Email alarms - runs every minutes
-# If you need to use SMTP AUTH for outgoing mails, specify credentials to use
-# with '-p /path/to/credentialsFile' (same format as the sieve credentials)
-* * * * *      sogo    /usr/sbin/sogo-ealarms-notify
+# Email alarms - runs every five minutes
+# Wait one minute as well, to avoid broken lock files error messages
+*/5 * * * *    sogo    sleep 60 && /usr/sbin/sogo-ealarms-notify
 
 # Daily backups
 #   - writes backups to /var/backups/sogo/

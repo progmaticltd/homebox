@@ -1,0 +1,116 @@
+---
+
+- name: Install sqlite database tools
+  tags: apt
+  apt:
+    name: '{{ dovecot.access_check_packages }}'
+    state: present
+
+- name: Create the user database that contains the logs
+  tags: sqlite
+  shell: >-
+    sqlite3 -batch
+    /home/users/{{ user.uid }}/security/imap-connections.db
+    'create table if not exists connections (
+    unixtime     timestamp DEFAULT CURRENT_TIMESTAMP,
+    ip           VARCHAR,
+    countryCode  CHAR(2),
+    countryName  VARCHAR,
+    source       VARCHAR,
+    provider     VARCHAR DEFAULT NULL,
+    mobile       BOOLEAN DEFAULT NULL,
+    type         CHAR(10) DEFAULT NULL,
+    status       CHAR(10),
+    score        SMALLINT DEFAULT 0,
+    details      TEXT DEFAULT ""
+    )';
+    sqlite3 -batch
+    /home/users/{{ user.uid }}/security/imap-connections.db
+    'CREATE INDEX unixtime_idx ON connections (unixtime)';
+    sqlite3 -batch
+    /home/users/{{ user.uid }}/security/imap-connections.db
+    'CREATE INDEX ip_idx ON connections (ip)';
+    sqlite3 -batch
+    /home/users/{{ user.uid }}/security/imap-connections.db
+    'CREATE INDEX country_idx ON connections (countryCode)';
+    sqlite3 -batch
+    /home/users/{{ user.uid }}/security/imap-connections.db
+    'CREATE INDEX status_idx ON connections (status)'
+  args:
+    creates: '/home/users/{{ user.uid }}/security/imap-connections.db'
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Set the permissions on each database
+  tags: sqlite
+  file:
+    path: '/home/users/{{ user.uid }}/security/imap-connections.db'
+    owner: '{{ user.uid }}'
+    group: users
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Add whitelist sample file for each user
+  template:
+    src: 'access-check/ip-whitelist.txt'
+    dest: '/home/users/{{ user.uid }}/.config/homebox/ip-whitelist.txt'
+    owner: '{{ user.uid }}'
+    group: users
+    mode: 0600
+    force: no
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Add blacklist sample file for each user
+  template:
+    src: 'access-check/ip-blacklist.txt'
+    dest: '/home/users/{{ user.uid }}/.config/homebox/ip-blacklist.txt'
+    owner: '{{ user.uid }}'
+    group: users
+    mode: 0600
+    force: no
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Post login script to check access, and log IP addresses and country
+  tags: scripts
+  copy:
+    src: '{{ script.name }}.sh'
+    dest: '/etc/dovecot/login-scripts/{{ script.order }}-{{ script.name }}'
+    mode: '0755'
+  with_items:
+    # malus scripts
+    - name: access-check-country
+      order: 100
+    - name: access-check-rbl
+      order: 110
+    - name: access-check-fail2ban
+      order: 120
+    - name: access-check-blacklist
+      order: 130
+    - name: access-check-time
+      order: 140
+    # bonus scripts
+    - name: access-check-whitelist
+      order: 200
+    # logging and reporting scripts
+    - name: access-log
+      order: 800
+    - name: access-warn
+      order: 900
+    - name: master-access-notice
+      order: 910
+  loop_control:
+    loop_var: script

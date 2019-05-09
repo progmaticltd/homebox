@@ -61,7 +61,7 @@
 
 - name: Activate AppArmor profiles
   when: security.app_armor and aa_template.changed
-  tags: dovecot, security, apparmor
+  tags: security, apparmor
   notify: Restart AppArmor service
   command: 'aa-enforce usr.sbin.privoxy'
 

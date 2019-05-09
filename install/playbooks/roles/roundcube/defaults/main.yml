@@ -12,10 +12,11 @@ roundcube_plugins:
   - new_user_identity
   - managesieve
   - contextmenu
-  - thunderbird_labels
   - keyboard_shortcuts
+  - dovecot_ident
 
 # Available plugins:
+# - thunderbird_labels
 # - dkimstatus
 # - hide_blockquote
 # - enigma
@@ -35,6 +36,7 @@ roundcube_plugins:
 # - vcard_attachments
 # - virtuser_file
 # - virtuser_query
+#  - fail2ban
 
 roundcube_packages:
   - postgresql

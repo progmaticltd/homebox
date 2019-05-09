@@ -1,0 +1,53 @@
+# Last Modified: Tue May  7 18:17:46 2019
+#include <tunables/global>
+
+/usr/local/bin/access-report.sh {
+  #include <abstractions/base>
+  #include <abstractions/bash>
+  #include <abstractions/nameservice>
+  #include <abstractions/postfix-common>
+
+  # Capabilities
+  capability dac_override,
+
+  # Executables
+  /usr/local/bin/access-report.sh r,
+  /bin/dash ix,
+  /bin/date mr,
+  /bin/date rix,
+  /bin/grep mr,
+  /bin/grep rix,
+  /bin/sed mr,
+  /bin/sed rix,
+
+  # other binaries
+  /usr/bin/cut rix,
+  /usr/bin/getent mr,
+  /usr/bin/getent rix,
+  /usr/bin/sqlite3 mr,
+  /usr/bin/sqlite3 rix,
+  /usr/bin/tr mr,
+  /usr/bin/tr rix,
+  /usr/bin/seq mr,
+  /usr/bin/seq rix,
+  /usr/bin/bsd-mailx mr,
+  /usr/bin/bsd-mailx rix,
+
+  # Postfix sendmail has its own profile
+  /usr/sbin/sendmail mr,
+  /usr/sbin/sendmail px,
+
+  # temporary files
+  /tmp/mail.* rwk,
+  /root/dead.letter w,
+
+  # Libraries
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+
+  # Access postfix configuration files
+  # to get the domain name.
+  /etc/postfix/main.cf r,
+
+  # Read user's databases
+  /home/users/*/security/imap-connections.db rwk,
+}

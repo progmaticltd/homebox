@@ -37,11 +37,13 @@
 # Database configuration ======================================================
 
 - name: Initialise the sogo database password parameters
+  tags: facts
   set_fact:
-    sogo_password_params: "{{ playbook_dir }}/../../backup/{{ network.domain }}/postgresql/sogo.pwd {{ policies.system.password }}"
-    roPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
+    sogo_password_params: "{{ backup_directory }}/postgresql/sogo.pwd {{ policies.system.password }}"
+    roPasswdParams: "{{ backup_directory }}/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
 
 - name: Create the sogo database account password
+  tags: facts
   set_fact:
     sogo_db_password: '{{ lookup("password", sogo_password_params) }}'
 
@@ -102,14 +104,18 @@
 # Other configuration =========================================================
 
 - name: Get server's timezone
+  tags: config
   register: tz_command
   command: cat /etc/timezone
 
 - name: Get the server timezone
+  tags: config
   set_fact:
     server_time_zone: '{{ tz_command.stdout }}'
+  changed_when: false
 
 - name: Copy sogo configuration
+  tags: config
   notify: Restart sogo service
   template:
     src: sogo.conf
@@ -119,6 +125,7 @@
     mode: 0640
 
 - name: Copy sogo cron table
+  tags: config
   template:
     src: sogo.cron
     dest: '/etc/cron.d/sogo'

@@ -1,0 +1,81 @@
+# AppArmor Gogs profile
+#include <tunables/global>
+
+/usr/bin/gogs {
+  #include <abstractions/base>
+  #include <abstractions/bash>
+  #include <abstractions/consoles>
+  #include <abstractions/nameservice>
+
+  # Capabilities
+  capability dac_override,
+  capability sys_chroot,
+  capability setuid,
+  capability setgid,
+  
+  # Executables
+  /usr/bin/gogs mr,
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+
+  # Other executables
+  /usr/bin/cut rix,
+  /usr/bin/id rix,
+  /usr/bin/cut rix,
+  /usr/bin/tr rix,
+  /bin/cat rix,
+  /bin/dash rix,
+  /usr/sbin/chroot rix,
+  /bin/bash rix,
+  /bin/gzip rix,
+  /bin/grep rix,
+
+  # Main git executable
+  /usr/bin/git rix,
+
+  # Main gogs executables
+  /opt/gogs/vendor/pkgr/processes/web rix,
+  /opt/gogs/gogs rix,
+
+  # Configuration files
+  /etc/default/gogs r,
+  /etc/gogs/** r,
+  /etc/mime.types r,
+  /usr/lib/locale/locale-archive r,
+  
+  # Other executables
+  /usr/bin/basename mr,
+  /usr/bin/basename ix,
+
+  # Some git executables, probably not complete
+  /usr/share/git-core/** r,
+  /usr/lib/git-core/git-upload-pack rix,
+  /usr/lib/git-core/git-remote-http rix,
+  /usr/bin/git-receive-pack rix,
+  /usr/lib/git-core/git rix,
+
+  # public files
+  /opt/gogs/** r,
+  /opt/gogs/public/ r,
+  /opt/gogs/public/** r,
+  /opt/gogs/data/ rw,
+  /opt/gogs/data/** rwkl,
+
+  # Repositories access
+  /home/gogs/ r,
+  /home/gogs/** rwkl,
+  /home/*/gogs-repositories/*/** rwkl,
+  /home/gogs/gogs-repositories/*/*.git/hooks/* rix,
+
+  # Create temporary files and directories
+  /tmp/gogs-* rwk,
+  /tmp/gogs-*/** rwkl,
+  /tmp/gogs-*/ rw,
+
+  # Proc filesystem
+  /proc/sys/net/core/somaxconn r,
+  /proc/sys/kernel/hostname r,
+
+  # Log files (with hooks as well)
+  /var/log/gogs/** rwkl,
+}
+

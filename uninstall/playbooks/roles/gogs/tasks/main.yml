@@ -3,20 +3,27 @@
 
 # AppArmor configuration ======================================================
 
-- name: Install nginx AppArmor profile
+- name: Remove AppArmor profile
   when: security.app_armor
   tags: security, apparmor
   register: aa_config
   file:
-    path: /etc/apparmor.d/local/gogs-web
+    path: '{{ profile }}'
     state: absent
+  with_items:
+    - /etc/apparmor.d/local/nginx-gogs-web
+    - /etc/apparmor.d/usr.bin.gogs
+    - /etc/apparmor.d/opt.gogs.vendor.pkgr.processes.web
+    - /etc/apparmor.d/opt.gogs.gogs
+  loop_control:
+    loop_var: profile
 
 - name: Add gogs AppAromor specific configuration
   when: security.app_armor
   tags: security, apparmor
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
-    line: '  #include <local/gogs-web>'
+    line: '  #include <local/nginx-gogs-web>'
     state: absent
 
 - name: Activate AppArmor profiles

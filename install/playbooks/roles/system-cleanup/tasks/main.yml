@@ -9,11 +9,8 @@
 - name: Remove useless packages
   tags: apt
   apt:
-    name: '{{ pkgs }}'
+    name: '{{ cleanup_packages }}'
     state: absent
-  vars:
-    pkgs:
-      - bash-completion
 
 # At this point, it might be necessary to reboot
 # To reload all bash instances

@@ -83,8 +83,22 @@
     - /etc/skel/mails/sieve/logs
     - /etc/skel/mails/indexes
     - /etc/skel/mails/import
+    - /etc/skel/.config/homebox
   loop_control:
     loop_var: dir
+
+- name: Create the custom configuration directory for each user
+  file:
+    path: '/home/users/{{ user.uid }}/.config/homebox'
+    owner: '{{ user.uid }}'
+    group: users
+    state: directory
+    recurse: true
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
 
 - name: Create home directory for users on first login
   tags: ldap

@@ -3,6 +3,7 @@
 
 /usr/sbin/postalias {
   #include <abstractions/base>
+  #include <abstractions/nameservice>
 
   # binaries
   /lib/x86_64-linux-gnu/ld-*.so mr,
@@ -11,6 +12,6 @@
   # Configuration files
   /etc/__db.aliases.db rw,
   /etc/aliases r,
-  /etc/aliases.db w,
-  /etc/postfix/dynamicmaps.cf.d/ r,
+  /etc/aliases.db rwk,
+  /etc/postfix/** r,
 }

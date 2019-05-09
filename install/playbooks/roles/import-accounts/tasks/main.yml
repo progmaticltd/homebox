@@ -26,7 +26,7 @@
   tags: scripts
   copy:
     src: import-emails
-    dest: /etc/dovecot/login-scripts/10-import-emails
+    dest: /etc/dovecot/login-scripts/500-import-emails
     mode: '0755'
     owner: root
     group: root

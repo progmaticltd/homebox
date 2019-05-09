@@ -11,6 +11,7 @@
   /etc/zabbix/zabbix_server.conf.d/ r,
   /etc/zabbix/zabbix_server.conf.d/** r,
   /etc/ldap/ldap.conf r,
+  /etc/snmp/snmp.conf r,
 
   # Certificates access
   /usr/share/ca-certificates/ r,

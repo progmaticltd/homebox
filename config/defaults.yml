@@ -11,6 +11,9 @@ network_default:
   external_ip: auto
   backup_ip: ~
 
+# Shortcut notation to the backup directory
+backup_directory: "{{ playbook_dir }}/../../backup/{{ network.domain }}"
+
 # Standard policies
 policies:
   system:
@@ -51,16 +54,16 @@ ldap:
       - 'root@{{ network.domain }}'
 
   # password params
-  roPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/readonly.pwd {{ policies.system.password }}"
-  managerPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/manager.pwd {{ policies.system.password }}"
-  adminPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/admin.pwd {{ policies.system.password }}"
-  postmasterPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/postmaster.pwd {{ policies.system.password }}"
+  roPasswdParams: "{{ backup_directory }}/ldap/readonly.pwd {{ policies.system.password }}"
+  managerPasswdParams: "{{ backup_directory }}/ldap/manager.pwd {{ policies.system.password }}"
+  adminPasswdParams: "{{ backup_directory }}/ldap/admin.pwd {{ policies.system.password }}"
+  postmasterPasswdParams: "{{ backup_directory }}/ldap/postmaster.pwd {{ policies.system.password }}"
 
 
 # Encryption parameters
 encryption:
-  systemKeyParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/encryption/system-key.pwd {{ policies.system.passphrase }}"
-  backupKeyParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/encryption/backup-key.pwd {{ policies.system.passphrase }}"
+  systemKeyParams: "{{ backup_directory }}/encryption/system-key.pwd {{ policies.system.passphrase }}"
+  backupKeyParams: "{{ backup_directory }}/encryption/backup-key.pwd {{ policies.system.passphrase }}"
 
 ###############################################################################
 # Email related default options
@@ -107,6 +110,7 @@ mail_default:
                             # be careful, bouncing external emails is a way to expose clamav
                             # usage
     quarantine: yes         # Place emails with a virus in quarantine, for further analysis
+    use_proxy: false        # use tor / privoxy to dowload updates
   #############################################################################
   impersonate:              # Activate dovecot "master" user feature, ideal for families and
                             # communities
@@ -115,11 +119,11 @@ mail_default:
     separator: '*'          # Separation char between master user / real user name.
   #############################################################################
   import:                   # If you have users with "import" email active scripts,
-                            # set this flag to true
-    username: import        # The name of the user that import emails
+                            # set the active flag to true
     active: false           # A master user, with reduced rights will be created, to append
-                            # imported emails
-                            # in user's mailboxes.
+                            # imported emails in user's mailboxes.
+                            # This user can only log-in internally (ip 127.0.0.1),
+                            # any external login with this account will fail and be logged
   #############################################################################
   # Dovecot / solr FTS (Full Text search)
   fts:
@@ -143,6 +147,17 @@ mail_default:
                             # it should go directly to the 'lists' folder.
                             # It is also useful to track which sites are selling or sharing your
                             # email address to other sites.
+  #############################################################################
+  # Sieve specific parameters
+  # set debug to true to create log files in the user's mail/sieve/logs.
+  # useful to debug sieve without setting the debug flag system wide
+  sieve:
+    debug: true
+
+  #############################################################################
+  # Fail2ban parameters
+  fail2ban:
+    time: 3600
 
 ###############################################################################
 # Default password policies for users
@@ -184,11 +199,12 @@ passwords_default:
 ###############################################################################
 # Default system settings
 system_default:
-  release: stretch
-  login: true
-  devel: false
-  debug: false
-  reboot_timeout: 180
+  release: stretch         # distribution to use (stretch/buster)
+  devel: false             # mark the system as a development machine
+  debug: false             # activate debug options
+  reboot_timeout: 180      # max time to wait when restarting the server
+  keep_certs: false        # keep the letsencrypt certificates locally,
+                           # even when using a live environment
 
 ###############################################################################
 # Once the system is in place, it is possible to use 'limit' for the rule,
@@ -227,7 +243,7 @@ firewall_default:
         comment: 'Allow SMTP connections to other servers'
       - dest: any
         port: 110,995,143,993
-        comment: 'Allow the recuperation of emails on other servers (POP/IMAP)'
+        comment: 'Allow the retrieval of emails from other servers (POP/IMAP)'
 
 ###############################################################################
 # Extra security values
@@ -421,7 +437,10 @@ bind_default:
   ttl: 3600               # 1 hour
   # General MX configuration
   mx_priority: 10
-  # List of backup MX records, if the server is unreachable
+  # List of backup MX records. If the server is unreachable,
+  # emails will be delivered to this server. Along with email
+  # import (see above), this feature prevent loss of emails
+  # if your server is offline.
   # The default is an empty list
   mx_backup: []
   # Example of records
@@ -439,7 +458,10 @@ bind_default:
       comment: Local networks
   #  - src: 72.13.58.64
   #    comment: https://dnssec-analyzer.verisignlabs.com
-  # DNSSEC options
+  # DNSSEC: enforce origin authentication
+  # https://en.wikipedia.org/wiki/Domain_Name_System_Security_Extensions
+  # If you set it to true, you will have to publish both ZSK and KSK
+  # If you don't know what is it, then just keep this to false.
   dnssec:
     active: false
     algo: RSASHA256
@@ -556,3 +578,35 @@ sogo_default:
   language: English
   enable_public_access: false
   password_change: true
+
+#############################################################################
+# Security policies per country / IP address / behaviour / etc
+# Check access times and IP addresses, and reject or warn the user
+# This improves security and auditing of access.
+# This is - actually - used by dovecot to warn or deny IMAP connections
+# and works with Roundcube / Sogo as well
+access_check_default:
+  active: false
+  whitelist_bonus: 255        # Bonus to apply when an IP or country is whitelisted. Max value is 255
+  blacklist_malus: 255        # Malus to apply when an IP or country is blacklisted. Max value is 255
+  warning_score: 40           # Score threshold to generate a warning
+  denied_score: 120           # Score threshold to deny a connection
+  display_score: false        # # Should we display the scores in the alerts ?
+                              # It is more informative for development
+                              # but it might be confusing for new users
+  time:                       # Standard time range you are normally checking your emails.
+    zone: auto                # The timezone to consider when checking the access time.
+    start: 8                  # start-end:  the more you are outside this range, the more malus points
+    end: 18                   #   are added. 10 points per hour outside the range
+                              #   Perhaps this will generate one warning if you check your emails
+                              #   from home at midnight or at 2am.
+  countries:                  # Countries check parameters
+    trust: []                 # A list of additional countries to trust, i.e. that will not generate points.
+                              #   However, other restrictions are still applying (e.g. blacklisted IP address)
+    blacklist: []             # A list of blacklisted countries. Connections from these countries will be denied.
+    trust_home: true          # Trust home country by default (the country where the box is hosted)
+    foreign_malus: 40         # The number of points added when connecting from a foreign country
+    unknown_malus: 40         # The number of points added when the country cannot be identified
+  ip:
+    rbl_malus: 60             # The number of points added to the score when an IP address is blacklisted
+    fail2ban_malus: 10        # Malus to apply each time an IP address has blacklisted by fail2ban

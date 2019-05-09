@@ -237,6 +237,27 @@
       pwdMaxFailure: '{{ passwords.max_failure }}'
       pwdExpireWarning: '{{ passwords.expire_warning }}'
 
+- name: Create the system account password policy
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: cn=system,ou=pwpolicies,{{ ldap.organization.base }}
+    objectClass:
+      - pwdPolicy
+      - person
+      - top
+    attributes:
+      cn: default
+      sn: default
+      pwdMaxAge: 0
+      pwdInHistory: 0
+      pwdCheckQuality: 0
+      pwdLockoutDuration: 0
+      pwdGraceAuthNLimit: 0
+      pwdFailureCountInterval: 300
+      pwdMinLength: 16
+      pwdAttribute: userPassword
+
 # Users and groups creation
 - name: Make sure we have a parent entry for groups
   ldap_entry:
@@ -397,6 +418,7 @@
     attributes:
       uid: 'readonly'
       userPassword: '{{ lookup("password", ldap.roPasswdParams) }}'
+      pwdPolicySubentry: 'cn=system,ou=pwpolicies,{{ ldap.organization.base }}'
       givenName: Readonly
       sn: Account
     objectClass:
@@ -436,7 +458,7 @@
       givenName: 'Postmaster'
       sn: 'Account'
       userPassword: '{{ lookup("password", ldap.postmasterPasswdParams) }}'
-      pwdPolicySubentry: 'cn=default,ou=pwpolicies,{{ ldap.organization.base }}'
+      pwdPolicySubentry: 'cn=system,ou=pwpolicies,{{ ldap.organization.base }}'
       homeDirectory: '/home/users/postmaster'
       loginShell: '{{ users_defaults.shell }}'
       uidNumber: '{{ users_defaults.uid_start + 999 }}'

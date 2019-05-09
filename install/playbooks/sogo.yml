@@ -12,5 +12,7 @@
   roles:
     - role: certificates
       tags: certificates
+    - role: imapproxy
+      tags: imapproxy
     - role: sogo
       tags: sogo

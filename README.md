@@ -57,12 +57,14 @@ in the official documentation.
   compressed archives, with better results than GMail.
 - Optional Roundcube webmail with sieve filters management, password change form, automatic identity
   creation, master account access, etc.
-- Optional SOGo webmail with sieve filters management, password change form, Calendar and Address book management, GUI to import other account emails.
+- Optional SOGo webmail with sieve filters management, password change form, Calendar and Address book management, GUI
+  to import other account emails.
 - Automatic import emails from Google Mail, Yahoo, Outlook.com or any other standard IMAP account.
 - Powerful and light antispam system with [rspamd](https://rspamd.com/) and optional access to the web interface.
 - Antivirus for inbound _and_ outbound emails with [clamav](https://www.clamav.net/).
 - Automatic configuration for Thunderbird and Outlook using published XML and other clients with
   special DNS records ([RFC 6186](https://tools.ietf.org/html/rfc6186)).
+- Automatic detection of unusual behaviour, with real time warning using XMPP and email to external address.
 
 ### Calendar and Address book
 
@@ -86,7 +88,9 @@ in the official documentation.
 - Hugo web site server: [Hugo](https://gohugo.io/) and its [numerous themes](https://themes.gohugo.io/)
 - Personal backup server for each user, using borgbackup.
 - [Gogs git server](https://gogs.io/), a fast and lightweight git server written in Golang.
-- [Transmission daemon](https://transmissionbt.com/), accessible over https, public or private over your LAN. Files can be downloaded directly with a web browser, using LDAP credentials for authentication or whitelisted IP addresses (e.g. LAN).
+- [Transmission daemon](https://transmissionbt.com/), accessible over https, public or private over your LAN. Files can
+  be downloaded directly with a web browser, using LDAP credentials for authentication or whitelisted IP addresses
+  (e.g. LAN).
 - Monitoring with [Zabbix](https://www.zabbix.com/), with email and Jabber alerts.
 - Hide the SSH server with Single Packet Authorization, using [fwknop](http://www.cipherdyne.org/fwknop/).
 

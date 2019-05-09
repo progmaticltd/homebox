@@ -1,43 +1,33 @@
 ---
 
 - name: Get the passwords generated in the accounts tasks
-  tags: roundcube
+  tags: password
   set_fact:
-    roPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
+    roPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/readonly.pwd"
 
 - name: Install roundcube webmail
-  tags: roundcube
+  tags: apt
   apt:
     name: "{{ roundcube_packages }}"
     state: present
 
 - name: Compute max upload size from max attachment size
-  tags: roundcube
+  tags: config
   set_fact:
     upload_max_size: '{{ mail.max_attachment_size }}'
     post_max_size: '{{ 1 + mail.max_attachment_size | int }}'
 
-- name: Configure the IMAP proxy
-  tags: roundcube
-  notify: Restart IMAP proxy
-  template:
-    src: imapproxy.conf
-    dest: /etc/imapproxy.conf
-    owner: root
-    group: root
-    mode: 0644
-
 - name: Copy roundcube configuration
-  tags: roundcube
+  tags: nginx
   template:
-    src: webmail-site.tpl
+    src: webmail-site.cf
     dest: '/etc/nginx/sites-available/webmail.{{ network.domain }}.conf'
     owner: root
     group: root
     mode: 0644
 
 - name: Activate roundcube web site
-  tags: roundcube
+  tags: nginx
   notify: Restart nginx
   file:
     src: '/etc/nginx/sites-available/webmail.{{ network.domain }}.conf'
@@ -45,14 +35,14 @@
     state: link
 
 - name: Create a session key for roundcube
-  tags: roundcube
+  tags: password
   notify: Restart nginx
   shell: makepasswd --chars=24
   register: makepasswd
 
 - name: Create the directory for dovecot_impersonate plugin
   when: mail.impersonate.active
-  tags: roundcube
+  tags: plugins, impersonate
   file:
     path: /etc/roundcube/plugins/dovecot_impersonate
     owner: root
@@ -61,7 +51,7 @@
     state: directory
 
 - name: Create the dovecot impersonate configuration
-  tags: impersonate
+  tags: plugins, impersonate
   when: mail.impersonate.active
   template:
     src: plugins/dovecot_impersonate.php
@@ -71,15 +61,34 @@
     mode: 0644
 
 - name: Make sure the plugin reads the correct configuration file
-  tags: impersonate
+  tags: plugins, impersonate
   file:
     src: /etc/roundcube/plugins/dovecot_impersonate/config.inc.php
     dest: /usr/share/roundcube/plugins/dovecot-impersonate/config.inc.php
     state: link
     force: yes
 
+- name: Create the Dovecot ident plugin directory
+  tags: plugins
+  file:
+    path: /usr/share/roundcube/plugins/dovecot_ident
+    state: directory
+
+- name: Configure RoundCube to pass the IP address to dovecot
+  tags: plugins
+  copy:
+    src: dovecot_ident.php
+    dest: /usr/share/roundcube/plugins/dovecot_ident/dovecot_ident.php
+
+- name: Create the symbolic link
+  tags: plugins
+  file:
+    src: /usr/share/roundcube/plugins/dovecot_ident
+    dest: /var/lib/roundcube/plugins/dovecot_ident
+    state: link
+
 - name: Copy roundcube configuration
-  tags: roundcube
+  tags: plugins
   notify: Restart nginx
   vars:
     plugins: ' [''{{ roundcube.plugins | join(", "|quote) }}'' ]'
@@ -91,7 +100,7 @@
     mode: 0644
 
 - name: Make sure there is a directory for each of these plugins
-  tags: roundcube
+  tags: plugins
   file:
     path: '/etc/roundcube/plugins/{{ file }}'
     owner: root
@@ -107,7 +116,7 @@
     loop_var: file
 
 - name: Copy roundcube plugins configuration
-  tags: roundcube
+  tags: config
   notify: Restart nginx
   template:
     src: 'plugins/{{ file }}.php'
@@ -124,7 +133,7 @@
     loop_var: file
 
 - name: Replace the upload maximum size in
-  tags: roundcube
+  tags: config
   notify: Restart php-fpm
   replace:
     path: /etc/php/7.0/fpm/php.ini
@@ -139,7 +148,7 @@
     loop_var: line
 
 # There is bugs in the name of the symbolic links on Debian
-# https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=roundcube-plugins-extra;dist=unstable
+# https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=roundcube-plugins-extra;dist=stable
 - name: Make sure the plugins are correctly named
   command: >-
     mv '/var/lib/roundcube/plugins/{{ folder.old }}'

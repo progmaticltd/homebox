@@ -16,7 +16,9 @@
     | grep ^KEY_BASE64 | sed 's/^KEY_BASE64\s\+//'
 
 - name: Set the initial key
-  notify: Restart fwknop server
+  notify:
+    - Stop fwknop server
+    - Restart fwknop server
   replace:
     path: /etc/fwknop/access.conf
     regexp: '^KEY_BASE64.*'
@@ -31,14 +33,18 @@
     | sed 's/^HMAC_KEY_BASE64\s\+//'
 
 - name: Set the HMAC key
-  notify: Restart fwknop server
+  notify:
+    - Stop fwknop server
+    - Restart fwknop server
   replace:
     path: /etc/fwknop/access.conf
     regexp: '^HMAC_KEY_BASE64.*'
     replace: 'HMAC_KEY_BASE64 {{ hmac_key_base64.stdout }}'
 
 - name: Set the HMAC key
-  notify: Restart fwknop server
+  notify:
+    - Stop fwknop server
+    - Restart fwknop server
   lineinfile:
     path: /etc/fwknop/access.conf
     insertafter: '^HMAC_KEY_BASE64.*'
@@ -55,7 +61,9 @@
     default_nic: '{{ ansible_default_ipv6.interface }}'
 
 - name: Set the network interface
-  notify: Restart fwknop server
+  notify:
+    - Stop fwknop server
+    - Restart fwknop server
   replace:
     path: /etc/fwknop/fwknopd.conf
     regexp: '^#?PCAP_INTF.*'
@@ -63,7 +71,9 @@
 
 - name: Allow to use a random port
   when: firewall.fwknop.port == 'random'
-  notify: Restart fwknop server
+  notify:
+    - Stop fwknop server
+    - Restart fwknop server
   replace:
     path: /etc/fwknop/fwknopd.conf
     regexp: '^#?PCAP_FILTER\s*udp .*;'
@@ -71,13 +81,18 @@
 
 - name: Use a fixed port
   when: firewall.fwknop.port != 'random'
-  notify: Restart fwknop server
+  notify:
+    - Stop fwknop server
+    - Restart fwknop server
   replace:
     path: /etc/fwknop/fwknopd.conf
     regexp: '^#?PCAP_FILTER\s*udp .*;'
     replace: 'PCAP_FILTER udp port {{ firewall.fwknop.port }};'
 
 - name: Activate the daemon by default
+  notify:
+    - Stop fwknop server
+    - Restart fwknop server
   replace:
     path: /etc/default/fwknop-server
     regexp: START_DAEMON="no"
@@ -92,7 +107,10 @@
 # The daemon trying to read /var/fwknop/fwknopd.pid might be a bug in the fwknop-server
 - name: Add some missing permissions in the apparmor profile
   when: security.app_armor
-  notify: Restart AppArmor service
+  notify:
+    - Restart AppArmor service
+    - Stop fwknop server
+    - Restart fwknop server
   tags: apparmor
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.fwknopd
@@ -101,8 +119,7 @@
     regexp: '{{ line }}'
   with_items:
     - '# Missing permissions added by homebox'
-    - '  /run/xtables.lock r,'
-    - '  /run/xtables.lock wk,'
+    - '  /run/xtables.lock rwk,'
     - '  /var/fwknop/fwknopd.pid r,'
     - '  /var/fwknop/fwknopd.pid wkl,'
     - '  /var/fwknop/digest.cache r,'

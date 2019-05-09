@@ -10,5 +10,7 @@
     certificate:
       type: gogs
   roles:
-    - certificates
-    - gogs
+    - role: certificates
+      tags: certificates
+    - role: gogs
+      tags: gogs

@@ -14,7 +14,7 @@
   /etc/ldap/ldap.conf r,
 
   # I am not sure why SOGo need to read the attributes of the root folder…
-  audit allow / r,
+  allow / r,
 
   # Executable and librairies
   /usr/sbin/sogod mr,

@@ -8,6 +8,7 @@ pages:
   - Main configuration file: configuration.md
   - Email configuration: email-configuration.md
   - Roundcube Webmail: webmail-roundcube.md
+  - Email access monitoring: email-access-monitoring.md
   - Sogo Groupware: groupware-sogo.md
   - Antispam configuration: antispam-rspamd.md
   - Jabber configuration: jabber-configuration.md

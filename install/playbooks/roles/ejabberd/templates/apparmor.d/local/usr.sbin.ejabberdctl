@@ -7,3 +7,6 @@
   /var/www/ejabberd/files/ ra,
   /var/www/ejabberd/files/** rwkl,
   /var/www/ejabberd/files/** ra,
+
+  # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=860951
+  /bin/su rm,

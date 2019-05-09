@@ -144,3 +144,9 @@ $config['max_message_size'] = '{{ mail.max_attachment_size }}M';
 // 3 - one identity with possibility to edit all params but not email address
 // 4 - one identity with possibility to edit only signature
 $config['identities_level'] = 0;
+
+// Log options
+$config['log_driver'] = 'syslog';
+$config['log_logins'] = true;
+$config['log_sessions'] = true;
+$config['log_session_id'] = 4;
