@@ -18,7 +18,7 @@
   tags: scripts
   copy:
     src: update-rules.sh
-    dest: /usr/local/bin/privoxy-update-rules.sh
+    dest: /usr/local/sbin/privoxy-update-rules.sh
     mode: 0700
 
 - name: Run the script once to get the filter and actions list
@@ -33,6 +33,20 @@
 - name: Add a cron task to download the rules automatically
   template:
     src: update-rules.cron
-    dest: /etc/cron.d/update-rules.cron
-    mode: 0700
+    dest: /etc/cron.d/privoxy-update-rules
+
+- name: Copy the privoxy update rules script AppArmor profile
+  when: security.app_armor
+  register: aa_template
+  tags: security, apparmor
+  notify: Restart AppArmor service
+  template:
+    src: 'apparmor-privoxy-update-rules.cf'
+    dest: '/etc/apparmor.d/usr.local.sbin.privoxy-update-rules.sh'
+
+- name: Activate AppArmor update rules script profiles
+  when: security.app_armor and aa_template.changed
+  tags: security, apparmor
+  notify: Restart AppArmor service
+  command: 'aa-enforce usr.local.sbin.privoxy-update-rules.sh'
 

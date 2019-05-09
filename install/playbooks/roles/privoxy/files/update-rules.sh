@@ -179,7 +179,7 @@ function main() {
                 usage
                 ;;
             :)
-                echo "Option -"$OPTARG" requires an arguemnt." >&2
+                echo "Option -'$OPTARG' requires an arguemnt." >&2
                 usage
                 ;;
         esac
