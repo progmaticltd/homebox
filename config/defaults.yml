@@ -458,8 +458,10 @@ bind_default:
       comment: Local networks
   #  - src: 72.13.58.64
   #    comment: https://dnssec-analyzer.verisignlabs.com
-  # DNSSEC options
-  # Not fully operational yet, need more testing.
+  # DNSSEC: enforce origin authentication
+  # https://en.wikipedia.org/wiki/Domain_Name_System_Security_Extensions
+  # If you set it to true, you will have to publish both ZSK and KSK
+  # If you don't know what is it, then just keep this to false.
   dnssec:
     active: false
     algo: RSASHA256
