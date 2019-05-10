@@ -106,7 +106,6 @@
 # I filled this bug report: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=911485
 # The daemon trying to read /var/fwknop/fwknopd.pid might be a bug in the fwknop-server
 - name: Add some missing permissions in the apparmor profile
-  when: security.app_armor
   notify:
     - Restart AppArmor service
     - Stop fwknop server

@@ -190,7 +190,6 @@
 
 # AppArmor configuration ======================================================
 - name: Install ejabberdctl AppArmor profile
-  when: security.app_armor
   tags: security, apparmor
   register: aa_templates
   template:
@@ -198,7 +197,7 @@
     dest: '/etc/apparmor.d/local/usr.sbin.ejabberdctl'
 
 - name: Activate AppArmor profiles
-  when: security.app_armor and aa_templates.changed
+  when: aa_templates.changed
   tags: security, apparmor
   notify: Restart AppArmor service
   command: 'aa-enforce usr.sbin.ejabberdctl'
@@ -206,7 +205,6 @@
 # AppArmor configuration (web frontend) =======================================
 
 - name: Install ejabberdctl AppArmor profile
-  when: security.app_armor
   tags: security, apparmor
   register: aa_templates
   template:
@@ -231,7 +229,7 @@
   failed_when: false
 
 - name: Add ejabberd AppArmor specific configuration
-  when: security.app_armor and line_found.stdout == '0'
+  when: line_found.stdout == '0'
   notify: Restart AppArmor service
   tags: nginx, security, apparmor
   lineinfile:

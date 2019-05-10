@@ -128,7 +128,6 @@
 # AppArmor configuration ======================================================
 
 - name: Install opendkim AppArmor profile
-  when: security.app_armor
   tags: security, apparmor
   template:
     src: 'apparmor.d/usr.sbin.opendkim.cf'
@@ -136,7 +135,6 @@
     force: no
 
 - name: Activate AppArmor profiles
-  when: security.app_armor
   tags: security, apparmor
   command: 'aa-enforce usr.sbin.opendkim'
   notify: Restart AppArmor service

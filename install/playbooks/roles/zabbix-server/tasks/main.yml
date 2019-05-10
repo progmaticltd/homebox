@@ -58,7 +58,6 @@
 # AppArmor configuration ======================================================
 
 - name: Install nginx AppArmor profile
-  when: security.app_armor
   notify:
     - Activate AppArmor profile
     - Restart AppArmor service
@@ -83,7 +82,7 @@
   failed_when: false
 
 - name: Add zabbix AppArmor specific configuration
-  when: security.app_armor and line_found.stdout == '0'
+  when: line_found.stdout == '0'
   notify:
     - Activate AppArmor profile
     - Restart AppArmor service

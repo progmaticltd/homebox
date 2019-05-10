@@ -86,7 +86,6 @@
 
 # AppArmor configuration ======================================================
 - name: Install some dovecot AppArmor profile
-  when: security.app_armor
   tags: security, apparmor
   register: aa_templates
   template:
@@ -98,7 +97,7 @@
     loop_var: aa_config
 
 - name: Activate AppArmor profiles
-  when: security.app_armor and aa_templates.changed
+  when: aa_templates.changed
   tags: security, apparmor
   notify: Restart AppArmor service
   command: 'aa-enforce {{ aa_config }}'

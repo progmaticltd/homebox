@@ -14,7 +14,6 @@
   shell: dpkg -s ufw
 
 - name: Check if AppArmor is enabled
-  when: security.app_armor
   tags: security
   shell: aa-enabled
 

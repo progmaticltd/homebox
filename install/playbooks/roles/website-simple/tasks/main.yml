@@ -104,7 +104,6 @@
 # AppArmor configuration ======================================================
 
 - name: Install web site AppArmor profile
-  when: security.app_armor
   tags: website-simple, security, apparmor
   template:
     src: apparmor.d/local/website-simple
@@ -119,7 +118,7 @@
   failed_when: false
 
 - name: Add website-simple AppAromor specific configuration
-  when: security.app_armor and line_found.stdout == '0'
+  when: line_found.stdout == '0'
   register: aa_config
   tags: nginx, security, apparmor
   lineinfile:
@@ -129,7 +128,7 @@
 
 - name: Activate AppArmor profiles
   notify: Restart AppArmor service
-  when: security.app_armor and aa_config.changed
+  when: aa_config.changed
   tags: website-simple, security, apparmor
   command: 'aa-enforce usr.sbin.nginx'
 
