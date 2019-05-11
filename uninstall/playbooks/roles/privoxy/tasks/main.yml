@@ -34,7 +34,6 @@
 # AppArmor configuration ======================================================
 
 - name: Remove nginx AppArmor profile
-  when: security.app_armor
   notify: Restart AppArmor service
   file:
     path: /etc/apparmor.d/usr.sbin.privoxy

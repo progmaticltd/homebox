@@ -72,7 +72,6 @@
 # AppArmor configuration ======================================================
 
 - name: Remove nginx and transmission AppArmor profiles
-  when: security.app_armor
   tags: security, apparmor
   register: aa_config
   notify:
@@ -88,7 +87,6 @@
     loop_var: file
 
 - name: Add transmission AppAromor specific configuration
-  when: security.app_armor
   tags: security, apparmor
   lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
@@ -96,7 +94,7 @@
     state: absent
 
 - name: Activate AppArmor profiles
-  when: security.app_armor and aa_config.changed
+  when: aa_config.changed
   tags: security, apparmor
   command: 'aa-enforce usr.sbin.nginx'
   notify: Restart AppArmor service

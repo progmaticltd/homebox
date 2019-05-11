@@ -40,7 +40,6 @@
 # AppArmor configuration ======================================================
 
 - name: Install nginx AppArmor profile
-  when: security.app_armor
   tags: autoconfig, security, apparmor
   template:
     src: 'apparmor.d/local/autoconfig'
@@ -55,7 +54,7 @@
   failed_when: false
 
 - name: Add autoconfig AppAromor specific configuration
-  when: security.app_armor and line_found.stdout == '0'
+  when: line_found.stdout == '0'
   tags: autoconfig, security, apparmor
   register: aa_config
   lineinfile:
@@ -64,7 +63,7 @@
     insertbefore: '# End of local includes for homebox'
 
 - name: Activate AppArmor profiles
-  when: security.app_armor and aa_config.changed
+  when: aa_config.changed
   tags: autoconfig, security, apparmor
   command: 'aa-enforce usr.sbin.nginx'
   notify: Restart AppArmor service

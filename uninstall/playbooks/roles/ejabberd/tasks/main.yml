@@ -62,7 +62,6 @@
 
 # AppArmor configuration ======================================================
 - name: Remove ejabberdctl AppArmor profile
-  when: security.app_armor
   tags: security, apparmor
   register: aa_templates
   file:
@@ -71,7 +70,6 @@
 
 # AppArmor configuration (web frontend) =======================================
 - name: Install ejabberdctl AppArmor profile
-  when: security.app_armor
   tags: security, apparmor
   register: aa_templates
   file:
@@ -79,7 +77,6 @@
     state: absent
 
 - name: Install ejabberdctl AppArmor profile
-  when: security.app_armor
   tags: security, apparmor
   register: aa_templates
   file:
@@ -87,7 +84,6 @@
     state: absent
 
 - name: Add ejabberd AppArmor specific configuration
-  when: security.app_armor
   notify: Restart AppArmor service
   tags: roundcube, security, apparmor
   lineinfile:

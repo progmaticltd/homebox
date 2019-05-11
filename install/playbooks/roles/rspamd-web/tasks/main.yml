@@ -26,7 +26,6 @@
 # AppArmor configuration ======================================================
 
 - name: Install nginx AppArmor profile
-  when: security.app_armor
   tags: rspamd, security, apparmor
   template:
     src: apparmor.d/local/rspamd-web
@@ -41,7 +40,7 @@
   failed_when: false
 
 - name: Add rspamd AppAromor specific configuration
-  when: security.app_armor and line_found.stdout == '0'
+  when: line_found.stdout == '0'
   register: aa_config
   tags: rspamd, security, apparmor
   lineinfile:
@@ -50,7 +49,7 @@
     insertbefore: '# End of local includes for homebox'
 
 - name: Activate AppArmor profiles
-  when: security.app_armor and aa_config.changed
+  when: aa_config.changed
   tags: rspamd, security, apparmor
   command: 'aa-enforce usr.sbin.nginx'
   notify: Restart AppArmor service

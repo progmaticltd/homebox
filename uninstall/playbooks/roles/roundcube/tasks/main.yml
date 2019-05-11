@@ -34,7 +34,6 @@
 # AppArmor configuration ======================================================
 
 - name: Remove nginx AppArmor profile
-  when: security.app_armor
   notify:
     - Activate AppArmor profile
     - Restart AppArmor service
@@ -44,7 +43,6 @@
     state: absent
 
 - name: Remove roundcube AppArmor specific configuration
-  when: security.app_armor
   notify:
     - Activate AppArmor profile
     - Restart AppArmor service

@@ -129,7 +129,6 @@
 # The package 'unattended-upgrades' download and install security updates by default
 
 - name: Install AppArmor packages
-  when: security.app_armor
   tags: security
   vars:
     pkgs:
@@ -142,7 +141,6 @@
 
 - name: Configure grub to add apparmor by default on boot
   register: grub_config
-  when: security.app_armor
   tags: security
   lineinfile:
     path: /etc/default/grub
@@ -157,7 +155,6 @@
   command: update-grub2
 
 - name: Enable AppArmor service
-  when: security.app_armor
   tags: security
   service:
     name: apparmor
@@ -165,13 +162,12 @@
 
 - name: Check if AppArmor is enabled
   register: aa_enabled
-  when: security.app_armor
   tags: security
   shell: aa-enabled
   failed_when: false
 
 - name: Reboot to activate AppArmor if not already active
-  when: security.app_armor and aa_enabled.rc == 1
+  when: aa_enabled.rc == 1
   tags: security, apparmor
   shell: >-
     sleep 2 &&
@@ -182,7 +178,7 @@
   ignore_errors: true
 
 - name: Wait for the server to come back online
-  when: security.app_armor and aa_enabled.rc == 1
+  when: aa_enabled.rc == 1
   tags: security
   local_action:
     module: wait_for_connection

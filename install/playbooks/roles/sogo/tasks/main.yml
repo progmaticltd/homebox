@@ -134,7 +134,6 @@
 
 - name: Install nginx AppArmor profile
   tags: security, apparmor
-  when: security.app_armor
   notify:
     - Activate AppArmor profile
     - Restart AppArmor service
@@ -167,7 +166,7 @@
   failed_when: false
 
 - name: Add sogo AppArmor specific configuration
-  when: security.app_armor and line_found.stdout == '0'
+  when: line_found.stdout == '0'
   notify:
     - Activate AppArmor profile
     - Restart AppArmor service
