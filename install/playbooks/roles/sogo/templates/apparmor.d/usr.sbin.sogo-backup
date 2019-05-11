@@ -1,7 +1,7 @@
 # Last Modified: Sun Nov 25 10:31:20 2018
 #include <tunables/global>
 
-/usr/sbin/sogo-backup flags=(complain) {
+/usr/sbin/sogo-backup {
   #include <abstractions/base>
   #include <abstractions/bash>
   #include <abstractions/consoles>
@@ -10,9 +10,9 @@
   # Executables
   /usr/sbin/sogo-backup r,
   /usr/sbin/sogo-tool mr,
-  /usr/sbin/sogo-tool rix,
+  /usr/sbin/sogo-tool px,
   /usr/bin/logger mr,
-  /usr/bin/logger rix,
+  /usr/bin/logger px,
 
   # system executables
   /bin/bash ix,
