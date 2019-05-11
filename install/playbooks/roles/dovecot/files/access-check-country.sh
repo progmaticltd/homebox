@@ -4,7 +4,7 @@
 
 # Post login script for Dovecot, this is parsed by the parrent script.
 # Blocking: Yes
-# RunAsUser: Yes
+# RunAs: User
 # NeedDecryptKey: No
 # Score: Malus
 # Description: Country policy checker

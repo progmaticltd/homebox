@@ -202,7 +202,7 @@ for script in $login_scripts; do
     elif [ "$runAsUser" = "1" ]; then
         RunAs="$USER"
     else
-        logger "Warning, the script '$script' will be run as '$USER' by default"
+        logger "Warning: the script '$script' will be run as '$USER' by default"
     fi
 
     # Launch non blocking script in background and continue.
