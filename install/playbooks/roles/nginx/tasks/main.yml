@@ -71,7 +71,6 @@
 
 - name: Install nginx AppArmor profile
   notify: Restart nginx
-  when: security.app_armor
   tags: security, apparmor
   template:
     src: 'apparmor.d/usr.sbin.nginx'
@@ -79,7 +78,6 @@
     force: no
 
 - name: Activate AppArmor profiles
-  when: security.app_armor
-  tags: roundcube, security, apparmor
+  tags: security, apparmor
   command: 'aa-enforce usr.sbin.nginx'
   notify: Restart AppArmor service

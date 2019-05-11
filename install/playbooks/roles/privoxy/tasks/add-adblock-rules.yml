@@ -36,7 +36,6 @@
     dest: /etc/cron.d/privoxy-update-rules
 
 - name: Copy the privoxy update rules script AppArmor profile
-  when: security.app_armor
   register: aa_template
   tags: security, apparmor
   notify: Restart AppArmor service
@@ -45,7 +44,7 @@
     dest: '/etc/apparmor.d/usr.local.sbin.privoxy-update-rules.sh'
 
 - name: Activate AppArmor update rules script profiles
-  when: security.app_armor and aa_template.changed
+  when: aa_template.changed
   tags: security, apparmor
   notify: Restart AppArmor service
   command: 'aa-enforce usr.local.sbin.privoxy-update-rules.sh'

@@ -249,7 +249,6 @@ firewall_default:
 # Extra security values
 security_default:
   auto_update: true
-  app_armor: true
   ssh_disable_root_access_with_password: true
   lock_root_password: true
   alerts_email:

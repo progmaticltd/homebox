@@ -7,7 +7,6 @@
 
 # AppArmor configuration ======================================================
 - name: Install sendxmpp AppArmor profile
-  when: security.app_armor
   tags: security, apparmor
   template:
     src: 'apparmor.d/usr.bin.sendxmpp'
