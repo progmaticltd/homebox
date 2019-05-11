@@ -45,7 +45,6 @@ roundcube_packages:
   - roundcube-plugins
   - roundcube-plugins-extra
   - roundcube
-  - imapproxy
   - php-fpm
   - php-ldap
   - php-net-sieve
