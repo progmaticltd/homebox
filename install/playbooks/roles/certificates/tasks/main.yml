@@ -22,6 +22,7 @@
     rsync_opts:
       - '--no-motd'
       - '--exclude=readme.md'
+      - '--exclude=renewal-hooks'
       - '--ignore-existing'
       - '--update'
 
@@ -40,12 +41,6 @@
     certificate_fqdn: "{{ certificate.type }}.{{ network.domain }}"
     site_root: "/var/www/{{ certificate.type }}"
     redirect_to_https: "{{ redirect | default(false) }}"
-
-- name: Check if the certificate has been copied from a previous backup
-  tags: cert
-  register: cert_stat
-  stat:
-    path: "/etc/letsencrypt/live/{{ certificate_fqdn }}/cert.pem"
 
 - name: Create a directory for the site if it does not exists
   tags: cert
@@ -96,6 +91,7 @@
   command: 'aa-enforce usr.sbin.nginx'
 
 - name: Restart the nginx server to load the new configuration
+  when: aa_config.changed
   tags: cert
   service:
     name: nginx
@@ -110,97 +106,21 @@
 
 - name: Install the certificate renewal hook
   tags: script
-  template:
+  copy:
     src: renewal-hook.sh
-    dest: /etc/letsencrypt/renewal-hooks/deploy/renewal-hook.sh
+    dest: /etc/letsencrypt/renewal-hooks/deploy/00-base.sh
     mode: 0755
 
-- name: Restart the nginx server
-  tags: cert
-  service:
-    name: nginx
-    state: restarted
+- name: Check if the certificate already exists and is valid
+  register: is_valid
+  shell: >-
+    certbot certificates -d {{ certificate_fqdn }} 2>&1
+    | grep -c VALID
 
-- name: Open the port 80 if necessary
-  tags: security
-  register: ufw_http
-  ufw:
-    proto: tcp
-    rule: limit
-    src: any
-    port: 80
-    comment: Allow LetsEncrypt temporarily
+- name: Generate the certificate
+  when: is_valid.stdout == "0"
+  include_tasks: gencert.yml
 
-# The certbot package need to be installed
-- name: Create the certificate (staging version)
-  when: system.devel
-  tags: cert
-  command: >-
-    /usr/bin/certbot certonly
-    --non-interactive
-    --webroot
-    --webroot-path "{{ site_root }}"
-    --domain "{{ certificate_fqdn }}"
-    --email "admin@{{ network.domain }}"
-    --test-cert
-    --agree-tos
-  args:
-    creates: "/etc/letsencrypt/live/{{ certificate_fqdn }}/cert.pem"
-
-- name: Create the certificate (live version)
-  when: not system.devel
-  tags: cert
-  command: >-
-    /usr/bin/certbot certonly
-    --non-interactive
-    --webroot
-    --webroot-path "{{ site_root }}"
-    --domain "{{ certificate_fqdn }}"
-    --email "admin@{{ network.domain }}"
-    --agree-tos
-  args:
-    creates: "/etc/letsencrypt/live/{{ certificate_fqdn }}/cert.pem"
-
-- name: Remove the firewall rule if it has been added
-  tags: security
-  when: ufw_http.changed
-  ufw:
-    proto: tcp
-    rule: limit
-    src: any
-    port: 80
-    delete: yes
-    comment: Allow LetsEncrypt temporarily
-
-- name: Remove the templated files from any old version
-  tags: upgrade
-  file:
-    path: '{{ old_file }}'
-    state: absent
-  with_items:
-    - /etc/cron.d/certificates-renew.cron
-    - /usr/local/sbin/certificates-renew.sh
-  loop_control:
-    loop_var: old_file
-
-- name: Copy the original certificate renewal script from certbot package
-  template:
-    src: cron-certbot
-    dest: /etc/cron.d/certbot
-    force: no
-
-- name: Use webroot to upgrade the certificates
-  tags: upgrade
-  register: renewal_config
-  replace:
-    path: '/etc/letsencrypt/renewal/{{ certificate_fqdn }}.conf'
-    regexp: authenticator = standalone
-    replace: authenticator = webroot
-
-# FIXME: Call the custom script for this domain instead
-# - name: Run the certificate renewal script if needed
-#   shell: >-
-#     certbot certonly -d {{ certificate_fqdn }}
 
 # In this direction, we should overwrite the symbolic links,
 # in case the certificates have been renewed
@@ -215,4 +135,5 @@
     rsync_opts:
       - '--no-motd'
       - '--exclude=readme.md'
+      - '--exclude=renewal-hooks'
       - '--update'

@@ -22,7 +22,7 @@ The system configuration file is a complete YAML configuration file containing a
 - Low level system settings, mainly used during the development phase.
 - DNS update credentials (Gandi API key).
 - Firewall policies, especially SSH access.
-- Security settings, like AppArmor activation.
+- Security settings
 - Backup configuration details
 
 The most important settings are the first two sections, the others can be left to their default values.

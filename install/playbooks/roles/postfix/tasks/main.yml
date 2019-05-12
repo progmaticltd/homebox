@@ -35,6 +35,13 @@
   loop_control:
     loop_var: path
 
+- name: Copy the certificate renewal hook
+  tags: cert
+  copy:
+    src: renew-cert.sh
+    dest: /etc/letsencrypt/renewal-hooks/deploy/20-postfix.sh
+    mode: 0755
+
 #                                                                              #
 # End of TLS / SSL Configuration ###############################################
 
