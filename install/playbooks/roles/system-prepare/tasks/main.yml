@@ -54,6 +54,12 @@
     src: backup-exclude
     dest: /etc/homebox/backup-exclude
 
+- name: Create the main configuration file for other services
+  tags: config
+  template:
+    src: main.cf
+    dest: /etc/homebox/main.cf
+
 # Update packages cache, and install any security update
 - name: Update packages cache and install security updates
   register: packages_cache
@@ -82,7 +88,7 @@
       value: 'origin=Debian,codename=${distro_codename},label=Debian-Security'
       type: string
     - question: unattended-upgrades/enable_auto_updates
-      value: '{{ security.auto_update }}'
+      value: '{{ security.auto_update | ternary("true", "false") }}'
       type: boolean
   loop_control:
     loop_var: conf
@@ -165,6 +171,7 @@
   tags: security
   shell: aa-enabled
   failed_when: false
+  changed_when: false
 
 - name: Reboot to activate AppArmor if not already active
   when: aa_enabled.rc == 1
@@ -221,6 +228,7 @@
   when: bind.install and bind.dnssec.active
   tags: bind
   register: ssh_keygen
+  changed_when: false
   shell: >-
     ssh-keygen -r {{ network.domain }} | sed 's/ /. /'
 

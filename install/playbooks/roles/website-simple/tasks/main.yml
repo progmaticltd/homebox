@@ -133,7 +133,7 @@
   command: 'aa-enforce usr.sbin.nginx'
 
 # Backup the site locally
-- name: Backup the certificates on your local machine
+- name: Backup the site content on your local machine
   tags: sync
   synchronize:
     mode: pull

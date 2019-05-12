@@ -19,7 +19,7 @@
   template:
     src: ejabberd.yml
     dest: /etc/ejabberd/ejabberd.yml
-    mode: '0600'
+    mode: 0600
     owner: ejabberd
     group: ejabberd
 
@@ -80,6 +80,13 @@
     - /etc/ejabberd/c2s-dh.pem
   loop_control:
     loop_var: file
+
+- name: Copy the certificate renewal hook
+  tags: scripts
+  copy:
+    src: renewal-hook.sh
+    dest: /etc/letsencrypt/renewal-hooks/deploy/40-ejabberd.sh
+    mode: 0755
 
 #
 # End of TLS / SSL Configuration ###############################################

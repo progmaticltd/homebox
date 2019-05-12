@@ -27,7 +27,7 @@
 
 # Post login script for Dovecot, this block is parsed by the parent script
 # Blocking: No
-# RunAsUser: Yes
+# RunAs: User
 # NeedDecryptKey: No
 # ManageLAN: Yes
 # Reporting: Yes
