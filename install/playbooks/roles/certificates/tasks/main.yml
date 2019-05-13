@@ -113,14 +113,15 @@
 
 - name: Check if the certificate already exists and is valid
   register: is_valid
+  changed_when: false
   shell: >-
     certbot certificates -d {{ certificate_fqdn }} 2>&1
     | grep -c VALID
+  failed_when: false
 
 - name: Generate the certificate
   when: is_valid.stdout == "0"
   include_tasks: gencert.yml
-
 
 # In this direction, we should overwrite the symbolic links,
 # in case the certificates have been renewed
