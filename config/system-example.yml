@@ -215,3 +215,91 @@ users:
 #     id: fr
 #   - name: Spanish
 #     id: es
+
+
+###############################################################################
+# Jabber server
+# ejabberd:
+#   install: true
+
+###############################################################################
+#  Gogs installation with LDAP authentication
+#  The super administrator is "postmaster" for now.
+# gogs:
+#   install: false
+#   public: true
+
+##############################################################################
+#  Transmission installation
+# transmission:
+#   install: false
+
+###############################################################################
+#  Bind server defaults
+# bind:
+#   # Bind is actually in testing phase, feedback welcome
+#   install: true
+#   # Default servers to forward queries
+#   forward:
+#     - 2001:4860:4860::8888
+#     - 2001:4860:4860::8844
+#   # Timing configuration (see https://www.ripe.net/publications/docs/ripe-203)
+#   refresh: 86400          # 24 hours
+#   retry: 7200             # 2 hours
+#   expire: 3600000         # 10000 hours
+#   neg_cache_ttl: 172800   # 2 days
+#   ttl: 3600               # 1 hour
+#   # General configuration
+#   mx_priority: 10
+#   # List of backup MX records, if the server is unreachable
+#   # The default is an empty list
+#   mx_backup:
+#     - fqdn: spool.mail.gandi.net
+#       priority: 20
+#     - fqdn: fb.mail.gandi.net
+#       priority: 50
+#   # List of trusted servers to accept cache / recursive queries
+#   trusted:
+#     - src: localhost
+#     - src: localnets
+#       comment: Local networks
+#   # DNSSEC options
+#   dnssec:
+#     active: true
+#     algo: RSASHA256
+
+# Optional packages
+# tor:
+#   install: false
+
+# Use privoxy
+# privoxy:
+#   install: false
+#   tor_forward: true
+#   accept_from:
+#     - 0.0.0.0/0
+
+# zabbix:
+#   install: false
+#   allow:
+#     - 12.34.56.78/32
+
+# sogo:
+#   install: true
+
+############################################################################
+#  Log access times and IP addresses in the users directory
+# access_check:
+#   active: true
+#   alert_address: andre@example.com
+#   countries:
+#     trust: [ FR, GB ]
+#     trust_home: true
+
+############################################################################
+# Additional certificates to generate
+# extra_certs:
+#   - type: gitlab
+#     redirect: true
+#   - type: packages
+#     redirect: true

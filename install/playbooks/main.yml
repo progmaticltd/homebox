@@ -130,6 +130,10 @@
 - import_playbook: import-accounts.yml
   when: mail.import.active and not system.devel
 
+# Generate additional certificates
+- import_playbook: extra-certs.yml
+  when: extra_certs is defined
+
 # Add well-known services handling
 - import_playbook: well-known-services.yml
 
