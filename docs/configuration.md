@@ -22,7 +22,7 @@ The system configuration file is a complete YAML configuration file containing a
 - Low level system settings, mainly used during the development phase.
 - DNS update credentials (Gandi API key).
 - Firewall policies, especially SSH access.
-- Security settings, like AppArmor activation.
+- Security settings
 - Backup configuration details
 
 The most important settings are the first two sections, the others can be left to their default values.
@@ -194,3 +194,20 @@ backup:
     keep_monthly: 6                  # Keep the last six months (12 by default)
     compression: zlib,6              # Compression scheme to use (lz4 by default)
 ```
+
+## Extra certificates
+
+It is possible to generate more SSL certificates, for instance if you want to deploy other services and want
+the certificates to be generated and renewed automatically.
+
+You only have to add one variable `extra-certs` in your configuration file, for instance:
+
+```yaml
+# Additional certificates to generate
+extra_certs:
+  - type: gitlab
+    redirect: true
+  - type: packages
+    redirect: true
+```
+

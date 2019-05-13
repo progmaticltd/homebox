@@ -1,4 +1,5 @@
 ---
+
 # Prepare the system
 - hosts: homebox
   vars_files:

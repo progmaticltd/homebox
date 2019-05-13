@@ -119,6 +119,13 @@
     src: default-slapd
     dest: /etc/default/slapd
 
+- name: Copy the certificate renewal hook
+  tags: cert
+  copy:
+    src: renew-cert.sh
+    dest: /etc/letsencrypt/renewal-hooks/deploy/10-ldap.sh
+    mode: 0755
+
 - name: Update LDAP configuration for debugging
   tags: debug
   when: system.debug

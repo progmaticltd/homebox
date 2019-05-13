@@ -25,7 +25,7 @@
 - name: Configure each protocol
   include_tasks: install-protocol.yml
   with_items:
-    - '{{ backup.locations }}'
+    - '{{ backup.locations | default([]) }}'
   loop_control:
     loop_var: location
 
@@ -36,7 +36,7 @@
     dest: '/etc/cron.{{ location.frequency | default("daily") }}/backup-{{ location.name }}'
     mode: '0700'
   with_items:
-    - '{{ backup.locations }}'
+    - '{{ backup.locations | default([]) }}'
   loop_control:
     loop_var: location
 

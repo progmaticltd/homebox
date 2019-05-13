@@ -70,10 +70,6 @@
 - import_playbook: cert-smtp.yml
 - import_playbook: postfix.yml
 
-# Create DNS entries (Only Gandi for now)
-- import_playbook: dns-update.yml
-  when: not bind.install
-
 # Mail delivery agent (dovecot)
 - import_playbook: cert-pop3.yml
 - import_playbook: cert-imap.yml
@@ -133,6 +129,10 @@
 # defined a lot of accounts.
 - import_playbook: import-accounts.yml
   when: mail.import.active and not system.devel
+
+# Generate additional certificates
+- import_playbook: extra-certs.yml
+  when: extra_certs is defined
 
 # Add well-known services handling
 - import_playbook: well-known-services.yml

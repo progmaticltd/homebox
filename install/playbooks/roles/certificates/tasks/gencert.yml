@@ -1,0 +1,66 @@
+---
+
+- name: Open the port 80 if necessary
+  tags: security
+  register: ufw_http
+  ufw:
+    proto: tcp
+    rule: limit
+    src: any
+    port: 80
+    comment: Allow LetsEncrypt temporarily
+
+# The certbot package need to be installed
+- name: Create the certificate (staging version)
+  when: system.devel
+  tags: cert
+  command: >-
+    /usr/bin/certbot certonly
+    --non-interactive
+    --webroot
+    --webroot-path "{{ site_root }}"
+    --domain "{{ certificate_fqdn }}"
+    --email "admin@{{ network.domain }}"
+    --test-cert
+    --agree-tos
+  args:
+    creates: "/etc/letsencrypt/live/{{ certificate_fqdn }}/cert.pem"
+
+- name: Create the certificate (live version)
+  when: not system.devel
+  tags: cert
+  command: >-
+    /usr/bin/certbot certonly
+    --non-interactive
+    --webroot
+    --webroot-path "{{ site_root }}"
+    --domain "{{ certificate_fqdn }}"
+    --email "admin@{{ network.domain }}"
+    --agree-tos
+  args:
+    creates: "/etc/letsencrypt/live/{{ certificate_fqdn }}/cert.pem"
+
+- name: Remove the firewall rule if it has been added
+  tags: security
+  when: ufw_http.changed
+  ufw:
+    proto: tcp
+    rule: limit
+    src: any
+    port: 80
+    delete: yes
+    comment: Allow LetsEncrypt temporarily
+
+- name: Copy the original certificate renewal script from certbot package
+  template:
+    src: cron-certbot
+    dest: /etc/cron.d/certbot
+    force: no
+
+- name: Use webroot to upgrade the certificates
+  tags: upgrade
+  register: renewal_config
+  replace:
+    path: '/etc/letsencrypt/renewal/{{ certificate_fqdn }}.conf'
+    regexp: authenticator = standalone
+    replace: authenticator = webroot

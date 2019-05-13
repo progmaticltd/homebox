@@ -57,6 +57,13 @@
     owner: root
     group: dovecot
 
+- name: Copy the certificate renewal hook
+  tags: cert
+  copy:
+    src: renew-cert.sh
+    dest: /etc/letsencrypt/renewal-hooks/deploy/30-dovecot.sh
+    mode: 0755
+
 #                                                                              #
 # End of TLS / SSL Configuration ###############################################
 
