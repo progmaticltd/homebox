@@ -10,8 +10,9 @@ docker-compose build cdbuild
 # Create the temporary folder that will contains the ISO image for the installer
 test -d /tmp/homebox-images || mkdir /tmp/homebox-images
 
-# If your user ID is different from 1000, make sure the group 1000 can create this file:
-chgrp 1000 /tmp/homebox-images
+# Make sure the user's group can create this file:
+mygroup=$(groups | cut -d ' ' -f 1)
+chgrp "$mygroup" /tmp/homebox-images
 chmod g+wx /tmp/homebox-images
 
 # Run the docker container, that will do the following:
