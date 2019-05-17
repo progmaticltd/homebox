@@ -28,7 +28,9 @@ users:
       password: ebsipmfwuqsopxsg
       get_junk: true
       get_trash: true
-  # Allow SSH access and system administration with sudo for this user
+  # This user will be part of the sudo group
+  sudo: true
+  # Allow remote access using SSH
   ssh_key:
     type: ecdsa-sha2-nistp384
     comment: john@homebox

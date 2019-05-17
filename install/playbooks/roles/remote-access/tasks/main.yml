@@ -24,7 +24,6 @@
 # You need to define a public SSH key for each user.
 # see example YAML file
 - name: Add SSH keys for the administrators
-  register: administrators
   authorized_key:
     user: '{{ user.uid }}'
     state: present
@@ -37,19 +36,22 @@
   loop_control:
     loop_var: user
 
+- name: Get the administrators
+  set_fact:
+    administrators: '{{ users | selectattr("sudo", "defined") | selectattr("sudo", "equalto", true) | list }}'
+
 - name: Install the sudo package
-  when: users | selectattr("ssh_key", "defined") | list != []
+  when: administrators != []
   apt:
     name: sudo
     state: latest
 
-- name: Add thes administrators to the sudo group
-  when: users | selectattr("ssh_key", "defined") | list != []
+- name: Add the administrators to the sudo group
   user:
     name: '{{ user.uid }}'
     groups:
       - sudo
   with_items:
-    - '{{ users | selectattr("ssh_key", "defined") | list }}'
+    - '{{ administrators | list }}'
   loop_control:
     loop_var: user
