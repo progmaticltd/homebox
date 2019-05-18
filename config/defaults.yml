@@ -251,8 +251,8 @@ security_default:
   auto_update: true                             # Install security updates automatically, using unattended-upgrades
   ssh_disable_root_access_with_password: true   # Force SSH authentication to use public / private key
   ssh_disable_root_access: false                # At the end of the installation, completely disable remote
-                                                # root access via SSH and for the use of sudo
-  lock_root_password: true                      # Disable console root access by locking root account
+                                                # root access via SSH and force the use of sudo for the administrators
+  lock_root_password: true                      # Disable console root access by locking root password.
   alerts_email:
     - 'admin@{{ network.domain }}'
   # various options when luks is installed
