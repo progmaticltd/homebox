@@ -8,6 +8,7 @@ pages:
   - Main configuration file: configuration.md
   - Email configuration: email-configuration.md
   - Roundcube Webmail: webmail-roundcube.md
+  - Firewall configuration: firewall-configuration.md
   - Email access monitoring: email-access-monitoring.md
   - Sogo Groupware: groupware-sogo.md
   - Antispam configuration: antispam-rspamd.md
@@ -15,7 +16,6 @@ pages:
   - Gogs configuration: gogs-configuration.md
   - Tor / privoxy configuration: tor-privoxy-configuration.md
   - Security configuration: security-configuration.md
-  - Single Packet Authorization: spa-fwknop.md
   - Transmission configuration: transmission-configuration.md
   - DNS Server configuration: bind-configuration.md
   - External accounts: external-accounts.md
