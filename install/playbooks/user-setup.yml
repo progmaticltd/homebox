@@ -1,8 +1,8 @@
 ---
 
-# Create the accounts
+# Set-up user accounts (home, sudo groups, etc)
 - hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
   roles:
-    - homes
+    - user-setup
