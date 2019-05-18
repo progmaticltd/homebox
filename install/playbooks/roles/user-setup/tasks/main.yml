@@ -1,5 +1,9 @@
 ---
 
+- name: Get the administrators
+  set_fact:
+    administrators: '{{ users | selectattr("sudo", "defined") | selectattr("sudo", "equalto", true) | list }}'
+
 - name: Install the sudo package if required
   when: administrators != []
   apt:
@@ -127,10 +131,6 @@
     - '{{ users | selectattr("ssh_key", "defined") | list }}'
   loop_control:
     loop_var: user
-
-- name: Get the administrators
-  set_fact:
-    administrators: '{{ users | selectattr("sudo", "defined") | selectattr("sudo", "equalto", true) | list }}'
 
 - name: Add the administrators to the sudo group
   user:
