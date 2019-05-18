@@ -260,7 +260,6 @@
   debug:
     var: backup
 
-
 ################################################################################
 # Merge defaults development settings
 - name: Combine default and user defined devel settings
