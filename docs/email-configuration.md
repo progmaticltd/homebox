@@ -1,42 +1,35 @@
 # Thunderbird automatic configuration
 
-The option “autoconfig” allows your users to
-automatically configure their email parameters in _Mozilla
-Thunderbird_.
+The option “autoconfig” allows your users to automatically configure their email parameters in _Mozilla Thunderbird_.
 
-For instance, for the domain homebox.space, this will create
-a subdomain entry "autoconfig.homebox.space"
+For instance, for the domain homebox.space, this will create a subdomain entry "autoconfig.homebox.space"
 
 # Outlook automatic configuration
 
-The options “autodiscover” allows your users to
-automatically configure their email parameters in
-_Microsoft Outlook_. For instance, for the domain homebox.space,
-this will create a subdomain entry "autodiscover.homebox.space"
+The options “autodiscover” allows your users to automatically configure their email parameters in _Microsoft
+Outlook_. For instance, for the domain homebox.space, this will create a subdomain entry "autodiscover.homebox.space"
 
 An SSL certificate will be created as well.
 
 # Antivirus configuration
 
-The platform can scan the emails received and sent, using
-[ClamAV](https://clamav.net/).
+The platform can scan the emails received and sent, using [ClamAV](https://clamav.net/).
 
 - You can disable the antivirus, by setting ‘active’ to false.
-- By default, emails with viruses are dropped silently, but you can
-  set the action to ‘bounce’ if you wish to send an alert to the
-  external senders.
+- By default, emails with viruses are dropped silently, but you can set the action to ‘bounce’ if you wish to send an
+  alert to the external senders.
 
 # Master users
 
-As Dovecot is used, it is possible to activate the "impersonate" or
-_master users_ feature.  If you activate this option, a _master_ user
-will be created, allowing you to logon as any user.  The RoundCube
-impersonate plugin will be activated as well.
+As Dovecot is used, it is possible to activate the "impersonate" or _master users_ feature.  If you activate this
+option, a _master_ user will be created, allowing you to logon as any user.  The RoundCube impersonate plugin will be
+activated as well.
 
 Example with this configuration:
 
 ```yaml
-
+mail:
+  …
   impersonate:
     active: true
     master: master
@@ -44,11 +37,9 @@ Example with this configuration:
 
 ```
 
-If one user is called john, you can now login as john, using
-"john/master" and the master user password.
+If one user is called john, you can now login as john, using "john/master" and the master user password.
 
-The password is automatically generated, and saved in the backup
-folder, in the file __ldap/master.pwd__.
+The password is automatically generated, and saved in the backup folder, in the file __ldap/master.pwd__.
 
 # Import external accounts
 
