@@ -12,20 +12,5 @@
     name: '{{ cleanup_packages }}'
     state: absent
 
-- name: Check if some users are configured with remote access
-  set_fact:
-    user_remote: '{{ users | selectattr("ssh_key", "defined") | list != [] }}'
-
-- name: Completely disable root SSH login
-  when: user_remote and security.ssh_disable_root_access
-  tags: security
-  notify: Restart SSH
-  replace:
-    path: /etc/ssh/sshd_config
-    regexp: '^PermitRootLogin without-password'
-    replace: 'PermitRootLogin no'
-    mode: 0600
-
-
 # At this point, it might be necessary to reboot
 # To reload all bash instances
