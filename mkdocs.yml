@@ -14,6 +14,7 @@ pages:
   - Jabber configuration: jabber-configuration.md
   - Gogs configuration: gogs-configuration.md
   - Tor / privoxy configuration: tor-privoxy-configuration.md
+  - Security configuration: security-configuration.md
   - Single Packet Authorization: spa-fwknop.md
   - Transmission configuration: transmission-configuration.md
   - DNS Server configuration: bind-configuration.md

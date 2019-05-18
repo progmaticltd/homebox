@@ -20,7 +20,6 @@ The system configuration file is a complete YAML configuration file containing a
 - Some password policies, like minimum length and complexity.
 - Webmail settings (roundcube).
 - Low level system settings, mainly used during the development phase.
-- DNS update credentials (Gandi API key).
 - Firewall policies, especially SSH access.
 - Security settings
 - Backup configuration details
@@ -99,23 +98,6 @@ mail:
 The most up to date options are in the [defaults.yml](config/defaults.yml) configuration
 file.
 
-## DNS automatic update
-
-If you are using Gandi, you can automate your DNS records update.
-
-```yaml
-###############################################################################
-# Gandi automatic DNS update
-# Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
-dns:
-  update: true          # Automatic update of your DNS server
-  test: true            # test mode: does not activate the DNS zone straight
-  add_wildcard: false   # Create a wildcard entry to redirect all traffic to your box
-  gandi:
-    handle: JD123-GANDI
-    key: zaNGbUVIvi1KbYb6PPMdiQLh
-```
-
 ## Firewall configuration
 
 ```yaml
@@ -132,13 +114,15 @@ firewall:
 
 ## Security options
 
-```yaml
-###############################################################################
-# Extra security values
-security:
-  auto_update: true
-  app_armor: true
-```
+Security options are detailed on the [security page](security-configuration.md).
+The default settings are
+
+- Automatically install security updates using unattended upgrades.
+- Send alerts to the postmaster.
+- Force root SSH login to use public key cryptography, and not a password.
+- Disable the root password.
+
+Other options are possible, see the security page for details.
 
 ## Webmail
 
