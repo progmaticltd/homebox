@@ -1,5 +1,11 @@
 ---
 
+- name: Install the sudo package if required
+  when: administrators != []
+  apt:
+    name: sudo
+    state: latest
+
 - name: Create the group home folders if necessary
   tags: accounts
   file:
@@ -101,7 +107,37 @@
     loop_var: user
 
 - name: Create home directory for users on first login
-  tags: ldap
   lineinfile:
     dest: /etc/pam.d/common-account
     line: 'session    required    pam_mkhomedir.so skel=/etc/skel/ umask=0022'
+
+# These tasks are configuring the system to give access
+# to some administrators, without having to logon as root.
+# You need to define a public SSH key for each user.
+# see example YAML file
+- name: Add SSH keys for the administrators
+  authorized_key:
+    user: '{{ user.uid }}'
+    state: present
+    key: >-
+      {{ user.ssh_key.type }}
+      {{ user.ssh_key.data | regex_replace(" ") }}
+      {{ user.ssh_key.comment }}
+  with_items:
+    - '{{ users | selectattr("ssh_key", "defined") | list }}'
+  loop_control:
+    loop_var: user
+
+- name: Get the administrators
+  set_fact:
+    administrators: '{{ users | selectattr("sudo", "defined") | selectattr("sudo", "equalto", true) | list }}'
+
+- name: Add the administrators to the sudo group
+  user:
+    name: '{{ user.uid }}'
+    groups:
+      - sudo
+  with_items:
+    - '{{ administrators | list }}'
+  loop_control:
+    loop_var: user

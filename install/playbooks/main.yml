@@ -39,7 +39,9 @@
 
 # Start to create users and home directories
 - import_playbook: ldap.yml
-- import_playbook: homes.yml
+
+# Set-up user settings (sudo, home folders. etc.)
+- import_playbook: user-setup.yml
 
 # Access check and logging per country, IP address, etc.
 - import_playbook: access-check.yml

@@ -293,11 +293,6 @@ webmail_default:
   type: roundcube
 
 ###############################################################################
-# Act as a backup server using borgbackup (https://www.borgbackup.org/)
-backup_default:
-  install: false
-
-###############################################################################
 # Default list of development packages to install
 # You can override it in your config/system.yml file
 # they are installed when running the playbook dev-support,
