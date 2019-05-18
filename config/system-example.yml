@@ -28,6 +28,16 @@ users:
       password: ebsipmfwuqsopxsg
       get_junk: true
       get_trash: true
+  # This user will be part of the sudo group
+  sudo: true
+  # Allow remote access using SSH
+  ssh_key:
+    type: ecdsa-sha2-nistp384
+    comment: john@homebox
+    data: >-
+      AAAAE2VjZHNhLXNoYTItbmlzdHAzODQAAAAIbmlzdHAzODQAAABhBE+E0hiYkPywn43g2J5s5t8mGq
+      muUwObvFN05lCYpEQYv002lMeZEcD9rN80ZBGXJ49J0pfHmuRYScHIt3SjP7Eau3UrGebHvXSBzqPI
+      xcLmuv8NO2siwhqWmZfvrXEWlQ==
   # Allow access to backup
   backup_ssh_key:
     type: ssh-rsa
