@@ -37,18 +37,32 @@ Every network subdomain entries, email addresses, etc... will include the domain
 network:
   domain: homebox.space
   hostname: mail.homebox.space
-
+  external_ip: auto
+  backup_ip: ~
 ```
 
 The hostname is important, use the real one. If you used the preseed configuration,
 it should be just mail and your network domain.
 
-## User list
-
-The other information you need to fill first is the user list.
+The external IP address is normally automatically detected. If this is not the case, you can specify it manually:
 
 ```yaml
+network:
+  domain: homebox.space
+  hostname: mail.homebox.space
+  external_ip: 12.34.56.78
+  backup_ip: 2001:15f0:5502:bf1:5400:01ff:feca:dea6
+```
 
+If your server has a second IP address, you can specify it here as well. By default, none is defined. You can mix IPv4
+and IPv6 addresses. DNS entries will be added accordingly.
+
+## User list
+
+The other piece of information you need to fill first is the user list. In its simplest form, you will have something
+like this:
+
+```yaml
 ###############################################################################
 # Users
 # List of users to create in the system
@@ -77,11 +91,15 @@ The file format should be self explanatory. For complex passwords, use quotes, l
 
 The email aliases are the other email addresses that belongs to the same user.
 
-You can also [import accounts from other platforms](external-accounts.md).
+You can also add more advanced features, like:
+
+- [importing accounts from other mail servers](external-accounts.md).
+- [Define some users as administrators](security-configuration.md#defining-administrators)
+- [Grant remote access to certain users](security-configuration.md#grant-some-users-remote-access)
 
 ## Email options
 
-Here an example of the email options you can override:
+This is the second most important settings. Here an example of the email options you can override:
 
 ```yaml
 
@@ -95,22 +113,17 @@ mail:
     default: 1G             # Maximum allowed mailbox size for your users.
 ```
 
-The most up to date options are in the [defaults.yml](config/defaults.yml) configuration
-file.
+All options are detailed on the [email configuration](email-configuration.md) page.
 
 ## Firewall configuration
 
-```yaml
-###############################################################################
-# Once the system is in place, it is possible to use 'limit' for the rule,
-# instead of allow. It is also possible to use fail2ban, which is installed anyway
-# You can have as many sources as you want, with a comment to easily keep track
-# of your rules
-firewall:
-  ssh:
-    - src: 192.168.1.0/24
-      comment: 'Allow from the LAN'
-```
+The firewall is configured by default to deny everything except what is permitted, both in input and output. The backend
+used is "ufw", aka _uncomplicated firewall_. If you have specific requirements, you can define the initial rules
+yourself. See the [firewall configuration](firewall-configuration) page for details.
+
+By default, a firewall rule is automatically added to allow SSH connections from the IP address used for the
+installation, to avoid being locked out of your system. You can remove this rule at the end of the playbook, especially
+if you are [using fwknop](http://localhost:8000/spa-fwknop/) to open your firewall port.
 
 ## Security options
 
@@ -137,47 +150,14 @@ webmail:
   type: roundcube
 ```
 
+More details on the [webmail roundcube](webmail-roundcube.md) page.
+
 ## Backup configuration
 
-By default, there is a backup of the whole home partition / folder.
-The detailed instructions are on the [backup documentation](backup.md) page.
-Here a quick overview of the configuration
+It is possible to regularly backup your emails, for instance locally on a USB drive, or remotely using SSH or Samba.
 
-```yaml
-
-###############################################################################
-# Backup configuration
-# You can have multiple backup configuration:
-# remote (ssh or samba) and local directory
-# All backups will be encrypted
-# Compression: See borg documentation
-
-backup:
-  install: true
-  type: borgbackup
-  locations:
-  - name: local
-    url: dir:///va/backups/homebox
-    active: yes                      # The backup is currently active
-    frequency: daily                 # Run the backup every day
-    keep_daily: 3                    # Keep the last three days locally
-    compression: lz4                 # Compression scheme to use (lz4 by default)
-  - name: router
-    url: ssh://fw.office.pm:/home/backup/homebox
-    active: yes                      # The backup is currently active
-    frequency: daily                 # Run the backup every day
-    keep_daily: 7                    # Keep the last seven days (default value)
-    keep_weekly: 4                   # Keep the last four weeks (default value)
-    keep_monthly: 6                  # Keep the last six months (12 by default)
-    compression: lz4                 # Compression scheme to use (lz4 by default)
-  - name: nas
-    url: smb://backup:giuwh97kwerr@ftp.office.pm:/home/backup/homebox
-    active: yes                      # The backup is currently active
-    frequency: weekly                # Run the backup every week
-    keep_weekly: 4                   # Keep the last four weeks (default value)
-    keep_monthly: 6                  # Keep the last six months (12 by default)
-    compression: zlib,6              # Compression scheme to use (lz4 by default)
-```
+By default, the whole home partition is backed up, but you can add or exclude more folders. The detailed instructions
+are on the [backup documentation](backup.md) page.
 
 ## Extra certificates
 
@@ -195,3 +175,5 @@ extra_certs:
     redirect: true
 ```
 
+By adding this, certificates will be automatically generated for the sub domains "gitlab" and "packages", using
+letsencrypt.

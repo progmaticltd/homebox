@@ -1,7 +1,7 @@
 # Single Packet Authorization with fwknop
 
 __First of all a little warning. If don’t know what are you doing
-be very carefull because one mistake will cause your SSH is gone
+be very careful because one mistake will cause your SSH is gone
 for good and there will no chance how to manage your server.__
 
 This method of authorization is based around a default-drop packet
