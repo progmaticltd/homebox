@@ -33,6 +33,13 @@ class BackupManager(object):
         # Read the domain configuration
         self.config = ConfigParser()
         self.config.read('/etc/homebox/backup.ini')
+
+        # Read default / global configuration
+        self.alerts_from = self.config.get('alerts', 'from')
+        self.alerts_recipient = self.config.get('alerts', 'recipient')
+        self.alerts_jabber = self.config.get('alerts', 'jabber')
+
+        # Read active configuration
         self.url = self.config.get(configName, 'url')
         self.location = urlparse(self.url)
 
@@ -74,8 +81,8 @@ class BackupManager(object):
 
         # The location is a USB device mounted automatically using systemd
         if self.location.scheme == 'usb':
-            self.repositoryPath = '/media' + self.location.path
-            self.mountPath = '/media/' + self.configName
+            self.repositoryPath = '/mnt' + self.location.path
+            self.mountPath = '/mnt/' + self.configName
             self.repositoryMounted = os.path.ismount(self.mountPath)
             return self.repositoryMounted
 
@@ -206,9 +213,12 @@ class BackupManager(object):
         """Check if the repository has been initialised"""
 
         # Check if the directory has any content
-        files = os.listdir(self.repositoryPath)
-        if files == []:
-            return False
+        try:
+            files = os.listdir(self.repositoryPath)
+            if files == []:
+                return False
+        except:
+                return False
 
         # If yes, check if it is a borg repository
         os.environ["BORG_PASSPHRASE"] = self.key
@@ -366,14 +376,48 @@ class BackupManager(object):
             pruneReport.add_header('X-Postmaster-Alert', 'backup')
 
         msg['Subject'] = subject
-        msg['From'] = 'root'
-        msg['To'] = 'postmaster'
+        msg['From'] = self.alerts_from
+        msg['To'] = self.alerts_recipient
 
         # Send the message via our own SMTP server,
         # but don't include the envelope header.
         s = smtplib.SMTP('localhost')
-        s.sendmail('root', ['postmaster'], msg.as_string())
+        s.sendmail(self.alerts_from, [ self.alerts_recipient ], msg.as_string())
         s.quit()
+
+    # Send the backup report over XMPP / Jabber
+    def sendMessage(self, message):
+        """Send instant message using ejabberctl"""
+
+        args = [ 'ejabberdctl', 'send_message', 'chat' ]
+
+        # Send message text. By default the postmaster account is used
+        args.append(self.alerts_from)
+        args.append(self.alerts_recipient)
+
+        # No subject for chat messages
+        args.append('')
+
+        # Add the message content
+        args.append(message)
+
+        # Send the message
+        status = subprocess.run(args,
+            universal_newlines=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+
+        # If not, raise an exception to avoid writing files in a directory
+        if status.returncode != 0:
+            logging.error("Error when sending xmpp message: ", status.stderr)
+            raise RuntimeError(status)
+
+        return status == 0
+
+    def sendJabberAlerts(self):
+        """Check if the manager is configured to send alerts using XMPP"""
+        return self.alerts_jabber
+
 
 
 ################################################################################
@@ -407,6 +451,11 @@ def main(args):
 
         # Make sure there is only one backup of this configuration at a time
         manager.setRunning(True)
+
+        # Send the jabber message
+        if manager.sendJabberAlerts():
+            message = "Starting backup process for location '{0}'".format(args.config)
+            manager.sendMessage(message)
 
         # Load the global key encryption key
         manager.loadKey(args.key_file)
@@ -454,6 +503,15 @@ def main(args):
 
         # Send the email to the postmaster
         manager.sendEmail(success, messages)
+
+        # Send the jabber message
+        if manager.sendJabberAlerts():
+            if success == True:
+                status = "Backup process finished successfully for location '{0}'".format(args.config)
+            else:
+                status = "Backup process failed for location '{0}' (See the email for details)".format(args.config)
+
+            manager.sendMessage(status)
 
 
 ################################################################################

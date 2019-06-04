@@ -124,5 +124,4 @@ The key will be registered in the slot 1
 
 ```
 
-The script will automatically choose a free slot.  
-
+The script will automatically choose a free slot.

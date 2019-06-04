@@ -4,14 +4,17 @@ The platform supports incremental backup of the home directory.
 You can specify multiple backup strategies, and multiple locations:
 
 ## Backup strategy example
+
 ```yaml
 
 backup:
   install: true
   type: borgbackup
   locations:
-  - name: local
-    url: dir:///var/backups/homebox
+  - name: nas1
+    automount: true
+    uuid: 6e2cd39d-1109-43de-aee5-a6491fdec689
+    url: usb:///mnt/backup/nas1/homebox
     active: yes                      # The backup is currently active
     frequency: daily                 # Run the backup every day
     keep_daily: 3                    # Keep the last three days locally
@@ -31,25 +34,18 @@ backup:
     keep_weekly: 4                   # Keep the last four weeks (1 by default)
     keep_monthly: 6                  # Keep the last six months (1 by default)
     compression: zlib,9              # Use the good but slow compression for weekly backups
-  - name: corsair
-    url: usb://media/corsair/homebox.space
-    active: yes                      # The backup is currently active
-    frequency: weekly                # Run the backup every week
-    keep_weekly: 4                   # the last four weeks (1 by default)
-    keep_monthly: 6                  # the last six months (1 by default)
-    compression: zlib,6              # the good but slow compression for weekly backups
 ```
 
 The locations currently supported are:
 
-- local: local drive, useful for quick and short time backup.
+- dir: local drive, useful for quick and short time backup.
 - ssh: remote backup on another server through SSH.
 - smb: samba share, probably on your local network.
 - usb: named USB stick automatically mounted upon backup.
 
 You can have different backup frequencies, for instance daily, weekly or monthly.
 
-## Details for each implementation
+## Backup locations
 
 For any backup type, the final destination need to be created first.
 
@@ -67,35 +63,57 @@ The private and public keys are also saved in the deployment backup folder.
 
 ### Backup on a USB drive
 
-To backup on a usb drive, you need to have a partition named by the name of your backup on
-it. The system will automatically mount this partition before doing the backup:
+This is the recommended way to backup your system when you are restrained to local backup.
 
-For instance, if you choose to backup on USB stick named 'safe01', in a folder named with
-your domain (e.g. dbcooper.home)
+To backup on a USB drive, just use the following syntax:
 
 ```yaml
 ...
-  - name: corsair
-    url: usb://media/safe01/dbcooper.home
+  - name: nas1
+    automount: true
+    uuid: 6d83f6d4-2769-46d0-b07b-675ab0863393
+    url: usb:///mnt/backup/nas1/homebox-backup
     active: yes                      # The backup is currently active
-    frequency: weekly                # Run the backup every week
-    keep_weekly: 4                   # the last four weeks (1 by default)
-    keep_monthly: 6                  # the last six months (1 by default)
-    compression: zlib,6              # the good but slow compression for weekly backups
-...
+    frequency: daily                 # Run the backup every day
+    keep_daily: 3                    # Keep the last three days locally
+    compression: lz4                 # Use the fast compression for daily backups
 ```
 
-First, on your workstation, format the USB drive, mount it and create the folder for your
-final backup:
+The exact syntax for the url takes one drive name and an optional directory name. You can have
+multiple backups on the same device, by using a different sub-directory:
 
-```bash
-mkfs.ext4 /dev/sdb1 -L safe01
-mount /dev/sdb1 /mnt
-mkdir /mnt/dbcooper.home
-umount /mnt
+`url: usb:///mnt/backup/<drive-name>[/sub-directory]`
+
+When you are setting "automount" to true, systemd services are created to automatically mount the
+filesystem on demand, and to umount it after one minute of inactivity. In this case, the
+filesystem UUID should be specified, and the initial folder should already exist on the external
+device.
+
+To obtain the UUID of your external drive, use blkid command. You do not need to be root. For
+instance:
+
+```sh
+$ /sbin/blkid /dev/sdb1
+/dev/sdb1: LABEL="PortableBackup" UUID="6d83f6d4-2769-46d0-b07b-675ab0863393" TYPE="ext4" PARTLABEL="PortableBackup" PARTUUID="01572f1c-bb90-4eda-bccf-6e5953a25f44"
+
 ```
 
-You can then plug the USB drive on your homebox.
+Once the backup is finished, the USB drive be automatically unmounted after 60 seconds. This
+allows you to remove the usb drive safely.
+
+## Backup contents
+
+At this time, only the content of the /home folders is backed up, perhaps the emails. This should
+allow you to restore your emails after a fresh installation or in case of accidental deletion.
+
+Any file stored by the users in their home folders is backed up too.
+
+Some folders are excluded from the backup, like the email indexes and temporary files.
+
+### Notes
+
+- If Gogs repository is installed, the files are excluded from backup
+- If the Transmission bittorrent daemon is installed, the downloaded files are excluded as well.
 
 ## Emails reporting
 
@@ -167,4 +185,40 @@ terminating with success status, rc 0
 Prune errors:
 At least one of the "keep-within", "keep-last", "keep-hourly", "keep-daily", "keep-weekly", "keep-monthly" or "keep-yearly" settings must be specified.
 terminating with error status, rc 2
+```
+
+## Send reports using Jabber.
+
+Homebox comes with the option to send backup status using short messages in real time, using the
+Jabber server embedded in the platform. To do so, use the following settings:
+
+```yaml
+
+backup:
+  install: true
+  type: borgbackup
+→ alerts:
+    from: postmaster@homebox.space
+    recipient: andre@homebox.space
+    jabber: true
+  locations:
+  ...
+```
+
+A first message will be sent just before the backup process starts, and onother one once the
+process is finished, with the status. The last message contains only the status. For a full
+report, you'll still have to check the email.
+
+### Example of success message sent by Jabber
+
+```html
+00:00 postmaster: Starting backup process for location "nas1"
+00:15 postmaster: Backup process finished successfully for location "nas1"
+```
+
+### Example of error message sent by Jabber
+
+```html
+00:00 postmaster: Starting backup process for location "nas1"
+00:03 postmaster: Backup process failed for location 'nas1' (See the email for details)
 ```

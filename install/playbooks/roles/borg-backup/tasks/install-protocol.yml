@@ -96,35 +96,64 @@
     state: latest
 
 ###############################################################################
-# For USB drive, we add a line into fstab to automatically mount it
-# Automatically guess filesystem by default
-# The file system on the key should be named the same as the name of the
-# backup location
+# For USB drives, uses systemd to automaticall mount the drives
 
-- name: Add line to fstab to mount the USB stick automatically
+- name: Set automatic mount locations
   when: protocol == 'usb'
-  notify:
-    - Reload Systemd
-    - Restart Systemd local fs target
-  mount:
-    boot: false
-    fstype: 'auto'
-    opts: defaults,noauto,sync,x-systemd.automount
-    path: '/media/{{ location.name }}'
-    src: 'LABEL={{ location.name }}'
-    state: present
+  tags: systemd
+  set_fact:
+    automount: >-
+     {{ backup.locations
+     | selectattr("automount", "defined")
+     | selectattr("automount", "equalto", true)
+     | list }}
 
-- name: Create the mounting point
+- name: Add mount point definition for this device
   when: protocol == 'usb'
-  file:
-    path: '/media/{{ location.name }}'
-    state: directory
+  register: mount_systemd
+  notify: Reload Systemd
+  tags: systemd
+  template:
+    src: mount-usb.ini
+    dest: '/etc/systemd/system/mnt-backup-{{ mnt.name }}.mount'
+  with_items:
+    - '{{ automount }}'
+  loop_control:
+    loop_var: mnt
 
-###############################################################################
-# To backup on S3
-# Not implemented yet
-# - name: Install the required file systems
-#   when: protocol == 's3'
-#   apt:
-#     name: 's3fs'
-#     state: latest
+- name: Enable the mount service
+  when: protocol == 'usb'
+  tags: systemd
+  systemd:
+    name: 'mnt-backup-{{ mnt.name }}.mount'
+    enabled: true
+    state: started
+  with_items:
+    - '{{ automount }}'
+  loop_control:
+    loop_var: mnt
+
+- name: Add automount definition for this device
+  when: protocol == 'usb'
+  notify: Reload Systemd
+  tags: systemd
+  template:
+    src: mount-auto.ini
+    dest: '/etc/systemd/system/mnt-backup-{{ mnt.name }}.automount'
+  with_items:
+    - '{{ automount }}'
+  loop_control:
+    loop_var: mnt
+
+- name: Enable the automount service
+  when: protocol == 'usb'
+  tags: systemd
+  failed_when: false
+  systemd:
+    name: 'mnt-backup-{{ mnt.name }}.automount'
+    enabled: true
+    state: started
+  with_items:
+    - '{{ automount }}'
+  loop_control:
+    loop_var: mnt

@@ -26,8 +26,9 @@ You can setup multiple backups for your user's home folders, remote or local, wi
 multiple frequencies as well. For instance, one daily backup on your NAS using a Samba
 share, and a weekly backup on a remote server using SSH.<br />
 All the backups are encrypted and managed by the excellent _borgbackup_ package.
-A [summary email](/backup/#emails-reporting) is sent at the end of the backup process,
-both in case of success and failure.
+
+Reporting is done in real time using Jabber, and a [summary email](/backup/#emails-reporting)
+is sent at the end of the backup process, both in case of success and failure.
 
 # Security
 

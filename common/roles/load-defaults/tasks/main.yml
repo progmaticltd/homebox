@@ -563,6 +563,29 @@
     var: access_check
 
 ################################################################################
+# Merge defaults backup settings
+- name: Combine default and user defined backup settings
+  run_once: true
+  when: backup is defined
+  tags: defaults
+  set_fact:
+    backup: '{{ backup_default | combine(backup, recursive=True) }}'
+
+- name: Use default backup settings
+  run_once: true
+  when: backup is not defined
+  tags: defaults
+  set_fact:
+    backup: '{{ backup_default }}'
+
+- name: Display merged backup settings
+  run_once: true
+  when: verbose is defined and verbose == True
+  tags: defaults
+  debug:
+    var: backup
+
+################################################################################
 # Marking the default settings as loaded should increase the speed of the deployment
 - name: Mark the default settings as loaded
   run_once: true

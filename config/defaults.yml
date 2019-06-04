@@ -606,3 +606,13 @@ access_check_default:
   ip:
     rbl_malus: 60             # The number of points added to the score when an IP address is blacklisted
     fail2ban_malus: 10        # Malus to apply each time an IP address has blacklisted by fail2ban
+
+#############################################################################
+# Backup settings. See the documentation to see the possible options
+# You will need an external USB drive or network drive
+backup_default:
+  install: false              # Do not install by default
+  type: borgbackup            # Only borg-backup supported at this time
+  email: ~                    # Email address to send the alerts (postmaster by default)
+  jabber: ~                   # Jabber address to send alerts using the internal jabber server
+  locations: []               # List of backup locations

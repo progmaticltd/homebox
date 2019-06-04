@@ -22,6 +22,24 @@
     path: /root/.ssh/config.d/
     state: directory
 
+- name: Create the backup config into /etc/homebox
+  tags: config
+  ini_file:
+    path: '/etc/homebox/backup.ini'
+    section: 'alerts'
+    option: '{{ option.name }}'
+    value: '{{ option.value }}'
+    mode: '0600'
+  with_items:
+    - name: from
+      value: '{{ backup.alerts.from }}'
+    - name: recipient
+      value: '{{ backup.alerts.recipient }}'
+    - name: jabber
+      value: '{{ backup.alerts.jabber }}'
+  loop_control:
+    loop_var: option
+
 - name: Configure each protocol
   include_tasks: install-protocol.yml
   with_items:
@@ -60,3 +78,12 @@
     src: backup.py
     dest: '/usr/local/sbin/backup'
     mode: '0700'
+
+- name: Create mount points
+  file:
+    path: '/mnt/backup/{{ mnt.name }}'
+    state: directory
+  with_items:
+    - '{{ automount }}'
+  loop_control:
+    loop_var: mnt

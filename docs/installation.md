@@ -17,9 +17,8 @@ If something goes wrong, here a few resources:
 - The [Postfix mailing lists](http://www.postfix.org/lists.html).
 - The [Dovecot mailing lists](https://www.dovecot.org/mailinglists.html).
 - The [Debian mailing lists](https://lists.debian.org/).
-- Our [github page](https://github.com/progmaticltd/homebox)
-- Finally, [Duckduckgo](https://duckduckgo.com/) or
-  [Google](https://google.com/).
+- Our [github page](https://github.com/progmaticltd/homebox).
+- Finally, [Duckduckgo](https://duckduckgo.com/).
 
 ## Folders
 
@@ -82,19 +81,6 @@ providers](https://github.com/AnalogJ/lexicon#providers) you can use.
 
 You can use something traditional, based on your name, or something
 more fancy...
-
-If you opted for Gandi, you can create an "API key", and use the
-scripts provided to updates your domain automatically.
-
-Once you are connected to the [Gandi administration
-interface](https://v4.gandi.net/domain), click on Account Management,
-then API Management.  Use the "Activation of the production API" to
-create your API key.
-
-You should now have something like:
-
-- an identified, like `AR142-GANDI`
-- an API key, like `E0cbH46KEzQxKEYT4fePC8L8`
 
 ## The hardware
 
