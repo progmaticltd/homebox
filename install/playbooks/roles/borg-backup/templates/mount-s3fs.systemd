@@ -1,0 +1,13 @@
+# Systemd mounting for {{ location.name }}
+
+[Unit]
+Description=mount script for {{ location.name }}
+
+[Mount]
+What={{ location.bucket_name }}
+Where=/mnt/backup/{{ location.name }}
+Options={{ mount_options | join(",") }}
+Type=fuse.s3fs
+
+[Install]
+WantedBy=multi-user.target

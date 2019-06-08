@@ -29,6 +29,7 @@ class BackupManager(object):
         self.lastBackupInfo = {}
         self.lastBackupInfo['create'] = None
         self.lastBackupInfo['prune'] = None
+        self.lastBackupInfo['check'] = None
 
         # Read the domain configuration
         self.config = ConfigParser()
@@ -68,75 +69,58 @@ class BackupManager(object):
     def mountRepository(self):
         """Mount the remote location if necessary"""
 
+        ## When using SSH, we do not need to mount remote SSH location.
+        # for this scheme, it is assumed that the remote server has borg installed
+        # otherwise, use SSHFS
+        if self.location.scheme == 'ssh':
+            self.repositoryPath = self.url[6:]
+            self.repositoryMounted = True
+            return True
+
+        # Make sure the directory to mount the backup exists
+        self.mountPath = '/mnt/backup/' + self.configName
+        os.makedirs(self.mountPath, exist_ok=True)
+
         # The backup location can be a remote directory mounted locally
-        # or even a local partition
+        # or even a local partition. This need to be tested thoroughly
+        # and might be removed later.
         if self.location.scheme == 'dir':
             self.repositoryPath = self.location.path
             self.repositoryMounted = True
             return True
 
-        # Create a temporary directory to mount the location
-        self.mountPath = '/mnt/' + self.configName
-        os.makedirs(self.mountPath, exist_ok=True)
-
         # The location is a USB device mounted automatically using systemd
         if self.location.scheme == 'usb':
             self.repositoryPath = '/mnt' + self.location.path
-            self.mountPath = '/mnt/' + self.configName
+            self.mountPath = '/mnt/backup/' + self.configName
             self.repositoryMounted = os.path.ismount(self.mountPath)
             return self.repositoryMounted
+
+        # The location is an S3 bucket mounted automatically using systemd
+        if self.location.scheme == 's3fs':
+            self.repositoryPath = '/mnt' + self.location.path
+            self.mountPath = '/mnt/backup/' + self.configName
+            self.repositoryMounted = os.path.ismount(self.mountPath)
+            return self.repositoryMounted
+
+        ## When using SSHFS, the remote location is mounted using fuse
+        # the mount path and the repository path are the same
+        if self.location.scheme == 'sshfs':
+            self.repositoryPath = '/mnt/backup/' + self.configName
+            self.mountPath = '/mnt/backup/' + self.configName
+            self.repositoryMounted = True
+            return True
 
         # Check if the directory is already mounted
         # In this case, we return true, and we will expect the
         # next functions to check if this is a valid repository
         if os.path.ismount(self.mountPath):
-            logging.warning("Repository already mounted before running the backup")
             self.repositoryPath = self.mountPath
             self.repositoryMounted = True
-            return True;
+            return True
 
-        # Will contains the shell arguments to mount the remote drive
-        args = None
-
-        ## Mount: SSH access via sshfs
-        if self.location.scheme == 'ssh':
-            url = '{0}@{1}:{2}'.format(self.location.username,
-                                    self.location.hostname,
-                                    self.location.path)
-            args = [ 'sshfs', url, self.mountPath ]
-
-        # Mount: smb server via cifs-utils
-        elif self.location.scheme == 'smb':
-            remoteLocation = '//{0}{1}'.format(self.location.hostname, self.location.path)
-            args = [
-                'mount', '-t', 'cifs',
-                '-o', 'user={0},password={1}'.format(self.location.username, self.location.password),
-                remoteLocation, self.mountPath]
-
-        if args == None:
-            logging.error("Unknown or not implemented scheme " + self.location)
-            raise NotImplementedError(self.location)
-
-        # Mount the backup partition
-        status = subprocess.run(args, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        if status.returncode != 0:
-            logging.error("Error when mounting the remote repository: " + status.stderr)
-            raise RuntimeError(status)
-        else:
-            self.repositoryPath = self.mountPath
-            self.repositoryMounted = True
-
-        # Log more details
-        if self.location.password != None:
-            url = self.url.replace(self.location.password, "***")
-        else:
-            url = self.url;
-        logging.info('Successfully mounted remote location: ' + url)
-        logging.info('Using directory for remote repository: ' + self.repositoryPath)
-
-        # Return the current status
-        return self.repositoryMounted
-
+        logging.error("Unknown or not implemented scheme " + self.location)
+        raise NotImplementedError(self.location)
 
     # Umount the remote location
     def umountRepository(self):
@@ -145,7 +129,7 @@ class BackupManager(object):
             return True
 
         # Local directories are never mounted
-        if self.location.scheme == 'dir':
+        if self.location.scheme == 'dir' or self.location.scheme == 'ssh':
             self.repositoryPath = None
             self.repositoryMounted = False
             return True
@@ -153,8 +137,12 @@ class BackupManager(object):
         # umount the current location
         args = [ 'umount', self.mountPath ]
 
-        # Umount the user partition
-        status = subprocess.run(args, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # Umount the user partition, keep stdout / stderr
+        status = subprocess.run(args,
+            universal_newlines=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+
         if status.returncode != 0:
             logging.error("Error when unmounting the remote repository: " + status.stderr)
             return False
@@ -165,13 +153,23 @@ class BackupManager(object):
 
     # Check if the repository exists
     def initRepository(self):
-        """Initialise the repository"""
+        """Initialise the remote repository using borg init"""
+
         os.environ["BORG_PASSPHRASE"] = self.key
 
         logging.info("Initialising repository in " + self.repositoryPath)
 
-        args = [ 'borg', 'init', self.repositoryPath ]
+        args = [ 'borg', 'init']
+
+        # Add encryption type: repository key for now
+        args.append('--encryption')
+        args.append('keyfile')
+
+        # Add repository path
+        args.append(self.repositoryPath)
+
         status = subprocess.run(args, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
         if status.returncode != 0:
             logging.error("Error when initialising the repository: " + status.stderr)
             raise RuntimeError(status)
@@ -186,6 +184,7 @@ class BackupManager(object):
     # Check if this backup is actually running,
     # in this case, exit to avoid two concurrent backups
     def isRunning(self):
+        """Check if the content of the PID file in /run/...is my PID"""
         import psutil
         # Check if the running file is here
         try:
@@ -201,6 +200,7 @@ class BackupManager(object):
             return False
 
     def setRunning(self, running):
+        """Write my PID in /run/..."""
         if running == True:
             import psutil
             with open(self.runFilePath, 'w') as runFile:
@@ -212,24 +212,16 @@ class BackupManager(object):
     def repositoryInitialised(self):
         """Check if the repository has been initialised"""
 
-        # Check if the directory has any content
+        # Check if the repository exists
         try:
-            files = os.listdir(self.repositoryPath)
-            if files == []:
-                return False
+            # If yes, check if it is a borg repository
+            os.environ["BORG_PASSPHRASE"] = self.key
+            args = [ 'borg', 'list', self.repositoryPath ]
+            status = subprocess.run(args, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except:
-                return False
-
-        # If yes, check if it is a borg repository
-        os.environ["BORG_PASSPHRASE"] = self.key
-        args = [ 'borg', 'list', self.repositoryPath ]
-        status = subprocess.run(args, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            return False
 
         # If not, raise an exception to avoid writing files in a directory with user content
-        if status.returncode != 0:
-            logging.error("Error when initialising the repository: " + status.stderr)
-            raise RuntimeError(status)
-
         return status.returncode == 0
 
 
@@ -263,10 +255,11 @@ class BackupManager(object):
 
         args.append(pathSpec)
 
+        # Which path to backup
         args.append('/home')
 
+        # Start he process
         status = subprocess.run(args, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
 
         if status.returncode == 0:
             self.lastBackupInfo['create'] = "Creation status:\n"
@@ -317,7 +310,11 @@ class BackupManager(object):
         # Finally, specify the path
         args.append(pathSpec)
 
-        status = subprocess.run(args, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # Run the process, and keep stdout / stderr
+        status = subprocess.run(args,
+            universal_newlines=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
 
         if status.returncode == 0:
             self.lastBackupInfo['prune'] = "Prune status:\n"
@@ -337,6 +334,48 @@ class BackupManager(object):
             raise RuntimeError(status)
 
         return status.returncode == 0
+
+    # Check if the repository exists
+    def checkBackup(self):
+        """Check the backup consistency"""
+
+        # Use the passphrase saved
+        os.environ["BORG_PASSPHRASE"] = self.key
+
+        # Standard check
+        args = [ 'borg', 'check', '--info' ]
+
+        # Finally add the repository path
+        args.append(self.repositoryPath)
+
+        ## Should we check the data as well ?
+        # args.append('--verify-data')
+
+        # Star the process and keep stdout / stderr
+        status = subprocess.run(args,
+            universal_newlines=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+
+        if status.returncode == 0:
+            self.lastBackupInfo['check'] = "Check status:\n"
+        else:
+            self.lastBackupInfo['check'] = "Check errors:\n"
+
+        # Save details for reporting
+        if status.stdout != None:
+            self.lastBackupInfo['check'] += status.stdout
+        if status.stderr != None:
+            self.lastBackupInfo['check'] += status.stderr
+
+        # If not, raise an exception to avoid writing files in a directory
+        # that is not a repository
+        if status.returncode != 0:
+            logging.error("Error when checking backup: " + status.stderr)
+            raise RuntimeError(status)
+
+        return status.returncode == 0
+
 
     # Send an email if requested
     def sendEmail(self, success, messages):
@@ -373,21 +412,30 @@ class BackupManager(object):
             pruneReport = MIMEText(self.lastBackupInfo['prune'])
             pruneReport.add_header('Content-Disposition', 'inline; filename="prune.log"')
             msg.attach(pruneReport)
-            pruneReport.add_header('X-Postmaster-Alert', 'backup')
 
+        # Add checking log (inline)
+        if self.lastBackupInfo['check'] != None:
+            checkReport = MIMEText(self.lastBackupInfo['check'])
+            checkReport.add_header('Content-Disposition', 'inline; filename="check.log"')
+            msg.attach(checkReport)
+
+        # This can be used for automatic filtering with Sieve
+        msg.add_header('X-Postmaster-Alert', 'backup')
+
+        # Basic headers for the message
         msg['Subject'] = subject
         msg['From'] = self.alerts_from
         msg['To'] = self.alerts_recipient
 
         # Send the message via our own SMTP server,
         # but don't include the envelope header.
-        s = smtplib.SMTP('localhost')
-        s.sendmail(self.alerts_from, [ self.alerts_recipient ], msg.as_string())
-        s.quit()
+        session = smtplib.SMTP('localhost')
+        session.sendmail(self.alerts_from, [ self.alerts_recipient ], msg.as_string())
+        session.quit()
 
     # Send the backup report over XMPP / Jabber
     def sendMessage(self, message):
-        """Send instant message using ejabberctl"""
+        """Send instant message using ejabberctl (from postmaster)"""
 
         args = [ 'ejabberdctl', 'send_message', 'chat' ]
 
@@ -442,12 +490,12 @@ def main(args):
         # Return if the backup is not active
         if not manager.isBackupActive():
             logging.info("Skipping backup '{0}': Not active".format(args.config))
-            return;
+            return
 
         # Return if the backup is already running
         if manager.isRunning():
             logging.info("Skipping backup '{0}': already running".format(args.config))
-            return;
+            return
 
         # Make sure there is only one backup of this configuration at a time
         manager.setRunning(True)
@@ -470,6 +518,9 @@ def main(args):
         # Create the backup, and prune it
         manager.createBackup()
         manager.pruneBackup()
+
+        # Then check it
+        manager.checkBackup()
 
         # unmount the repository as we do not need it anymore
         if not manager.umountRepository():

@@ -16,12 +16,6 @@
     path: /mnt/backup
     state: directory
 
-- name: Create a directory to store all the ssh configuration segments
-  tags: backup
-  file:
-    path: /root/.ssh/config.d/
-    state: directory
-
 - name: Create the backup config into /etc/homebox
   tags: config
   ini_file:
@@ -41,13 +35,13 @@
     loop_var: option
 
 - name: Configure each protocol
-  include_tasks: install-protocol.yml
+  include_tasks: 'install-protocol-{{ location.url | urlsplit("scheme") }}.yml'
   with_items:
     - '{{ backup.locations | default([]) }}'
   loop_control:
     loop_var: location
 
-- name: Add the cron entries
+- name: Add the cron entries to backup the home directory
   tags: config
   template:
     src: cron-script.sh
@@ -78,12 +72,3 @@
     src: backup.py
     dest: '/usr/local/sbin/backup'
     mode: '0700'
-
-- name: Create mount points
-  file:
-    path: '/mnt/backup/{{ mnt.name }}'
-    state: directory
-  with_items:
-    - '{{ automount }}'
-  loop_control:
-    loop_var: mnt

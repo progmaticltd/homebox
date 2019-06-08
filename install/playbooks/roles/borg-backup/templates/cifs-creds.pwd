@@ -1,0 +1,5 @@
+username={{ location_user }}
+password={{ location_password }}
+{% if location_domain != "" %}
+domain={{ location_domain }}
+{% endif %}

@@ -1,0 +1,67 @@
+---
+
+- name: Extract backup location details
+  tags: backup, facts
+  set_fact:
+    protocol: '{{ location.url | urlsplit("scheme") }}'
+    location_host: '{{ location.url | urlsplit("hostname") }}'
+    location_user: '{{ location.url | urlsplit("username") | default("backup") }}'
+    location_path: '{{ location.url | urlsplit("path") }}'
+    location_details: '{{ location.url | urlsplit }}'
+
+- name: Create the backup config into /etc/homebox
+  tags: config
+  ini_file:
+    path: '/etc/homebox/backup.ini'
+    section: '{{ location.name }}'
+    option: '{{ option.name }}'
+    value: '{{ option.value }}'
+    mode: '0600'
+  with_items:
+    - name: url
+      value: '{{ location.url }}'
+    - name: active
+      value: '{{ location.active }}'
+    - name: keep_daily
+      value: '{{ location.keep_daily | default(1) }}'
+    - name: keep_weekly
+      value: '{{ location.keep_weekly | default(1) }}'
+    - name: keep_monthly
+      value: '{{ location.keep_monthly | default(1) }}'
+    - name: compression
+      value: '{{ location.compression | default("lz4") }}'
+  loop_control:
+    loop_var: option
+
+###############################################################################
+# For USB drives, uses systemd to automaticall mount the drives
+
+- name: Add mount point definition for this device
+  register: mount_systemd
+  notify: Reload Systemd
+  tags: systemd
+  template:
+    src: 'mount-usb.systemd'
+    dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.mount'
+
+- name: Enable the mount service
+  tags: systemd
+  systemd:
+    name: 'mnt-backup-{{ location.name }}.mount'
+    enabled: true
+    state: started
+
+- name: Add automount definition for this device
+  notify: Reload Systemd
+  tags: systemd
+  template:
+    src: mount-auto.systemd
+    dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.automount'
+
+- name: Enable the automount service
+  tags: systemd
+  failed_when: false
+  systemd:
+    name: 'mnt-backup-{{ location.name }}.automount'
+    enabled: true
+    state: started

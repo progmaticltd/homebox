@@ -44,6 +44,7 @@
     group: users
     path: '/{{ backup_root }}/{{ user.uid }}/{{ backup_folder }}'
     state: directory
+    mode: 0700
   with_items:
     - '{{ users | selectattr("backup_ssh_key", "defined") | list }}'
   loop_control:
@@ -58,9 +59,9 @@
       {{ user.backup_ssh_key.data | regex_replace(" ") }}
       {{ user.backup_ssh_key.comment }}
     key_options: >-
-      command="borg serve --restrict-to-path
-      /{{ backup_root }}/{{ user.uid }}/{{ backup_folder }}",
-      restrict
+      command="borg serve
+      --restrict-to-path
+      /{{ backup_root }}/{{ user.uid }}/{{ backup_folder }}",restrict
   with_items:
     - '{{ users | selectattr("backup_ssh_key", "defined") | list }}'
   loop_control:

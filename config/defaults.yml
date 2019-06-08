@@ -613,6 +613,8 @@ access_check_default:
 backup_default:
   install: false              # Do not install by default
   type: borgbackup            # Only borg-backup supported at this time
-  email: ~                    # Email address to send the alerts (postmaster by default)
-  jabber: ~                   # Jabber address to send alerts using the internal jabber server
+  alerts:
+    from: 'postmaster@{{ network.domain }}'
+    recipient: '{{ users[0].mail }}'
+    jabber: true
   locations: []               # List of backup locations
