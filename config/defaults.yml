@@ -273,11 +273,6 @@ website_default:
   install: false
 
 ###############################################################################
-# Act as a backup server using borgbackup (https://www.borgbackup.org/)
-backup_default:
-  install: false
-
-###############################################################################
 # Install a static web site on www.yourdomain.com using Hugo (https://gohugo.io/)
 # Still requests two certificates:
 # One for for https://yourdomain.com/ and one for https://www.yourdomain.com

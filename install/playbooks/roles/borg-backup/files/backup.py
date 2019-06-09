@@ -8,6 +8,7 @@ import logging
 import argparse
 import os
 import subprocess
+import time
 
 # To parse backup locations
 from urllib.parse import urlparse
@@ -335,8 +336,8 @@ class BackupManager(object):
 
         return status.returncode == 0
 
-    # Check if the repository exists
-    def checkBackup(self):
+    # Check for errors in the backup content
+    def checkBackup(self, checkData):
         """Check the backup consistency"""
 
         # Use the passphrase saved
@@ -348,8 +349,9 @@ class BackupManager(object):
         # Finally add the repository path
         args.append(self.repositoryPath)
 
-        ## Should we check the data as well ?
-        # args.append('--verify-data')
+        ## Should we check the data as well
+        if checkData == True:
+            args.append('--verify-data')
 
         # Star the process and keep stdout / stderr
         status = subprocess.run(args,
@@ -500,10 +502,15 @@ def main(args):
         # Make sure there is only one backup of this configuration at a time
         manager.setRunning(True)
 
-        # Send the jabber message
-        if manager.sendJabberAlerts():
-            message = "Starting backup process for location '{0}'".format(args.config)
-            manager.sendMessage(message)
+        # This will be used for the short reporting message sent via Jabber
+        # or the email message
+        if args.action == "backup" or args.action == "backup-and-check":
+            actionName = "creation"
+        else:
+            actionName = "verification"
+
+        # Store the backup starting time
+        startTime = time.time()
 
         # Load the global key encryption key
         manager.loadKey(args.key_file)
@@ -516,11 +523,15 @@ def main(args):
             initialised = manager.initRepository()
 
         # Create the backup, and prune it
-        manager.createBackup()
-        manager.pruneBackup()
+        if args.action == "backup" or args.action == "backup-and-check":
+            manager.createBackup()
+            manager.pruneBackup()
 
-        # Then check it
-        manager.checkBackup()
+        # Should we check the consistency of the backup?
+        if args.action == "backup-and-check":
+            manager.checkBackup(False)
+        elif args.action == "check-data":
+            manager.checkBackup(True)
 
         # unmount the repository as we do not need it anymore
         if not manager.umountRepository():
@@ -530,6 +541,9 @@ def main(args):
         # because this block is called if we return because the process
         # is already running
         manager.setRunning(False)
+
+        # Compute the total number of seconds
+        duration = round(time.time() - startTime)
 
         # Will be the email status
         success = True
@@ -555,14 +569,24 @@ def main(args):
         # Send the email to the postmaster
         manager.sendEmail(success, messages)
 
-        # Send the jabber message
-        if manager.sendJabberAlerts():
-            if success == True:
-                status = "Backup process finished successfully for location '{0}'".format(args.config)
-            else:
-                status = "Backup process failed for location '{0}' (See the email for details)".format(args.config)
+        # Exit successfully unless we send the message using Jabber
+        if not manager.sendJabberAlerts():
+            return
 
-            manager.sendMessage(status)
+        # Send the messages via Jabber
+        if success == True:
+            from datetime import timedelta
+            durationText = timedelta(seconds=duration)
+            status = "Backup {0} finished successfully for '{1}' (duration: {2})".format(
+                actionName,
+                args.config,
+                durationText)
+        else:
+            status = "Backup {0} failed for '{1}' (See the email for details)".format(
+                actionName,
+                args.config)
+
+        manager.sendMessage(status)
 
 
 ################################################################################
@@ -583,6 +607,14 @@ parser.add_argument(
     type = str,
     help = 'path to the encryption key file',
     default = '/etc/homebox/backup-key',
+    required=False)
+
+# Key file for encrypted backup
+parser.add_argument(
+    '--action',
+    type = str,
+    help = 'What to do: backup; backup-and-check; check-data (default=backup-and-check)',
+    default = 'backup-and-check',
     required=False)
 
 # Log level (DEBUG, INFO, NOTICE, etc..)

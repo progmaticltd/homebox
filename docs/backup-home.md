@@ -14,13 +14,12 @@ The locations currently supported are:
 For each location, the following procedure is followed:
 
 1. The backup location is mounted by the system.
-2. If Jabber is activated, an IM is sent to inform the backup is starting.
-3. The backup is initialised if it is not existing (borg init).
-4. The backup is created (borg create).
-5. The backup is checked (borg check).
-6. The backup location is unmounted by the system.
-7. An email is sent, with the result of all the steps.
-8. If Jabber is activated, an IM is sent to inform the backup is finished, with the end result.
+2. The backup is initialised if it is not existing (borg init).
+3. The backup is created (borg create).
+4. The backup is checked (borg check).
+5. The backup location is unmounted by the system.
+6. An email is sent, with the result of all the steps.
+7. If Jabber is activated, an IM is sent to inform the backup is finished, with the end result.
 
 # Backup strategy example
 

@@ -44,8 +44,19 @@
 - name: Add the cron entries to backup the home directory
   tags: config
   template:
-    src: cron-script.sh
+    src: cron-backup-script.sh
     dest: '/etc/cron.{{ location.frequency | default("daily") }}/backup-{{ location.name }}'
+    mode: '0700'
+  with_items:
+    - '{{ backup.locations | default([]) }}'
+  loop_control:
+    loop_var: location
+
+- name: Add the cron entries to check the backup
+  tags: config
+  template:
+    src: cron-check-script.sh
+    dest: '/etc/cron.{{ location.check_frequency | default("monthly") }}/backup-check-{{ location.name }}'
     mode: '0700'
   with_items:
     - '{{ backup.locations | default([]) }}'
