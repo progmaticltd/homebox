@@ -123,5 +123,19 @@ cd preseed
 This will create the ISO images in `/tmp/build-${hostname}/${hostname}-install.iso` folder, for instance
 `/tmp/homebox/homebox-install.iso`
 
-The whole installation should be automatic, with LVM and software RAID.  For LVM, there is a volume called “reserved”
+The whole installation should be automatic, with LVM and software RAID.  For LVM, there is a volume called "reserved"
 you can remove. This will let you resize the other volumes according to your needs.
+
+### Notes
+
+The installer has been tested both on a virtual and a physical machine. In the second case, the hardware differences
+sometimes stops and the installer asks questions. Just answer appropriately, and the installation procedure will
+continue further.
+
+Do not hesitate to send me feedback about the questions asked.
+
+If the installation crashes in the middle, try to disable ACPI, add/or the following boot parameters in the installer:
+
+```txt
+intel_idle.max_cstate=1
+```
