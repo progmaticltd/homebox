@@ -1,10 +1,14 @@
-This step is only required if you want to build a Debian installation disc - before running the Ansible scripts. It does not install the homebox server software stack.
+This step is only required if you want to build a Debian installation disc - before running the Ansible scripts. It does
+not install the homebox server software stack.
 
-However, the whole precedure build an automatic installer with the hostname set, the root password, and the drive fully encrypted by the key you specify in the configuration file!
+However, the whole precedure build an automatic installer with the hostname set, the root password, and the drive fully
+encrypted by the key you specify in the configuration file!
 
-This script can be used both for development with a virtual machine or for production to install the operating system base.
+This script can be used both for development with a virtual machine or for production to install the operating system
+base.
 
-Once installed, the system drive will be fully encrypted with [LUKS](https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup).
+Once installed, the system drive will be fully encrypted with
+[LUKS](https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup).
 
 # Customisation
 
@@ -83,9 +87,22 @@ cd preseed
 
 ```
 
-This will create the ISO images in `/tmp/build-${hostname}/${hostname}-install.iso` folder,
-for instance `/tmp/homebox/homebox-install.iso`
+This will create the ISO images in `/tmp/build-${hostname}/${hostname}-install.iso` folder, for instance
+`/tmp/homebox/homebox-install.iso`
 
-The whole installation should be automatic, with LVM and software RAID.
-For LVM, there is a volume called "reserved" you can remove. This will let
-you resize the other volumes according to your needs.
+The whole installation should be automatic, with LVM and software RAID.  For LVM, there is a volume called "reserved"
+you can remove. This will let you resize the other volumes according to your needs.
+
+### Notes
+
+The installer has been tested both on a virtual and a physical machine. In the second case, the hardware differences
+sometimes stops and the installer asks questions. Just answer appropriately, and the installation procedure will
+continue further.
+
+Do not hesitate to send me feedback about the questions asked.
+
+If the installation crashes in the middle, try to disable ACPI, add/or the following boot parameters in the installer:
+
+```txt
+intel_idle.max_cstate=1
+```
