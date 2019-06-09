@@ -1,11 +1,11 @@
+# Configure your system
 
-The main configuration file to create is in the config folder. There is an example
-named [system-example.yml](config/system-example.yml) ready to copy to customise.
+The main configuration file to create is in the config folder. There is an example named
+[system-example.yml](config/system-example.yml) ready to copy to customise.
 
-There is also a configuration file [defaults.yml](config/defaults.yml).
-This file contains all the possible options, and **is merged with your
-configuration** on deployment. Therefore, you can override any default
-value without having to copy entire branches.
+There is also a configuration file [defaults.yml](config/defaults.yml).  This file contains all the possible options,
+and **is recursively merged with your configuration** on deployment. Therefore, you can override any default value
+without having to copy entire branches.
 
 ```sh
 cd config
@@ -26,7 +26,17 @@ The system configuration file is a complete YAML configuration file containing a
 
 The most important settings are the first two sections, the others can be left to their default values.
 
-## Network details
+Once you have modified the file, you can run the main installer:
+
+## Start the installation
+
+```sh
+ansible-playbook -i ../config/hosts.yml playbooks/main.yml
+```
+
+# Details of the sections
+
+## Network configuration
 
 Every network subdomain entries, email addresses, etc... will include the domain name:
 
@@ -139,8 +149,8 @@ Other options are possible, see the security page for details.
 
 ## Webmail
 
-By default, the installation script installs Roundcube, but you can disable it if you want.
-One of the next version will propose Sogo as well.
+By default, the installation script installs Roundcube, but you can disable it if you want. For instance, SOGo is
+available as well, with calendars and address books.
 
 ```yaml
 ###############################################################################
@@ -154,10 +164,11 @@ More details on the [webmail roundcube](webmail-roundcube.md) page.
 
 ## Backup configuration
 
-It is possible to regularly backup your emails, for instance locally on a USB drive, or remotely using SSH or Samba.
+It is possible to regularly backup your emails, for instance locally on a NAS drive, or on internet, using various
+methods.
 
-By default, the whole home partition is backed up, but you can add or exclude more folders. The detailed instructions
-are on the [backup documentation](backup.md) page.
+By default, the whole home partition is back up, but you can add or exclude more folders. The detailed instructions are
+on the [backup documentation](backup.md) page.
 
 ## Extra certificates
 
