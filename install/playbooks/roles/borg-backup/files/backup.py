@@ -86,7 +86,7 @@ class BackupManager(object):
         # or even a local partition. This need to be tested thoroughly
         # and might be removed later.
         if self.location.scheme == 'dir':
-            self.repositoryPath = self.location.path
+            self.repositoryPath = self.url[5:]
             self.repositoryMounted = True
             return True
 

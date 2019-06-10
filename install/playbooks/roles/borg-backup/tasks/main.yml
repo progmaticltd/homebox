@@ -1,14 +1,17 @@
 ---
 
-- name: Install required packages package
-  tags: backup
+- name: Install required python packages
+  tags: apt
   apt:
-    name: '{{ pkgs }}'
+    name: python3-psutil
     state: latest
-  vars:
-    pkgs:
-      - borgbackup
-      - python3-psutil
+
+- name: Install borgbackup package
+  tags: apt
+  apt:
+    name: borgbackup
+    default_release: stretch-backports
+    state: latest
 
 - name: Create the backup mount point
   tags: backup

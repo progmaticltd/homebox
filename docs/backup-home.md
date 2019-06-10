@@ -3,9 +3,8 @@ strategies, and multiple locations.
 
 The locations currently supported are:
 
-- dir: local drive, only useful for testing; does not require another device. Meanwhile, can be
-  a temporary solution if your main homebox drive is mounted in RAID (see [preseed](/preseed#software-raid)).
-- ssh: remote backup on another server through SSH (borg backup need to be installed).
+- dir: local drive, only useful for testing; does not require another device.
+- ssh: remote backup on another server through SSH (borg backup need to be installed on the remote location).
 - sshfs: remote backup on another server through SSH only (does not use remote borg server).
 - cifs: samba share, probably on your local network.
 - usb: named USB stick / NAS drive.
@@ -64,6 +63,24 @@ You can have different backup frequencies, for instance daily, weekly or monthly
 
 For any backup type, the destination directory need to exist. All the backups are encrypted using the same encryption
 key. The encryption key backup is in your [backup directory](/deployment-backup/), in encryption/backup-key.pwd
+
+## Backup in a local directory
+
+This can be a temporary solution unless your main homebox drive is mounted in RAID (see
+[preseed](/preseed#software-raid)) or if you have mounted a remote location yourself.
+
+```yaml
+backup:
+  ...
+  - name: local
+    url: dir://var/backups/homebox
+    active: yes
+    frequency: daily
+    keep_daily: 7
+    keep_monthly: 12
+    idle_sec: 60
+    check_frequency: weekly
+```
 
 ## Backup over the network using SSH
 
