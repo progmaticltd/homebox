@@ -31,6 +31,7 @@ class BackupManager(object):
         self.lastBackupInfo['create'] = None
         self.lastBackupInfo['prune'] = None
         self.lastBackupInfo['check'] = None
+        self.lastBackupInfo['restore'] = None
 
         # Read the domain configuration
         self.config = ConfigParser()
@@ -379,8 +380,74 @@ class BackupManager(object):
         return status.returncode == 0
 
 
+    def getLastBackupID(self):
+        """Return the last backup ID"""
+
+        # Use the passphrase saved
+        os.environ["BORG_PASSPHRASE"] = self.key
+
+        # Standard extractions
+        args = [ 'borg', 'list', '--short', '--last', '1']
+
+        # Finally add the repository path
+        args.append(self.repositoryPath)
+
+        # Star the process and keep stdout / stderr
+        status = subprocess.run(args,
+            universal_newlines=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+
+        # Save details for reporting
+        if status.stdout != None:
+            lastID = status.stdout.replace('\n', '').replace('\r', '')
+
+        return lastID
+
+
+    def restoreBackup(self, version, location="/"):
+        """Restore the content of the backup to a specific location"""
+
+        # Use the passphrase saved
+        os.environ["BORG_PASSPHRASE"] = self.key
+
+        # Change to the target directory
+        os.chdir(location)
+
+        # Standard extractions
+        args = [ 'borg', 'extract', '--info' ]
+
+        # Finally add the repository path
+        args.append(self.repositoryPath + "::" + version)
+
+        # Star the process and keep stdout / stderr
+        status = subprocess.run(args,
+            universal_newlines=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+
+        if status.returncode == 0:
+            self.lastBackupInfo['restore'] = "Restoration status:\n"
+        else:
+            self.lastBackupInfo['restore'] = "Restoration errors:\n"
+
+        # Save details for reporting
+        if status.stdout != None:
+            self.lastBackupInfo['restore'] += status.stdout
+        if status.stderr != None:
+            self.lastBackupInfo['restore'] += status.stderr
+
+        # If not, raise an exception to avoid writing files in a directory
+        # that is not a repository
+        if status.returncode != 0:
+            logging.error("Error when checking backup: " + status.stderr)
+            raise RuntimeError(status)
+
+        return status.returncode == 0
+
     # Send an email if requested
     def sendEmail(self, actionName, success, messages):
+        """Send an email with the result of an action using the local mail server"""
 
         # Import smtplib for the actual sending function
         import smtplib
@@ -421,6 +488,12 @@ class BackupManager(object):
         if self.lastBackupInfo['check'] != None:
             checkReport = MIMEText(self.lastBackupInfo['check'])
             checkReport.add_header('Content-Disposition', 'inline; filename="check.log"')
+            msg.attach(checkReport)
+
+        # Add restoration log (inline)
+        if self.lastBackupInfo['restore'] != None:
+            checkReport = MIMEText(self.lastBackupInfo['restore'])
+            checkReport.add_header('Content-Disposition', 'inline; filename="restore.log"')
             msg.attach(checkReport)
 
         # This can be used for automatic filtering with Sieve
@@ -508,8 +581,10 @@ def main(args):
         # or the email message
         if args.action == "backup" or args.action == "backup-and-check":
             actionName = "creation"
-        else:
+        elif args.action == "check-data":
             actionName = "verification"
+        else:
+            actionName = "restoration"
 
         # Store the backup starting time
         startTime = time.time()
@@ -534,6 +609,13 @@ def main(args):
             manager.checkBackup(False)
         elif args.action == "check-data":
             manager.checkBackup(True)
+
+        # Check if this is a restore attempt
+        if args.action == "restore":
+            lastBackupID = manager.getLastBackupID()
+            if lastBackupID == False:
+                raise RuntimeError("Backup is empty")
+            manager.restoreBackup(lastBackupID, args.location)
 
         # unmount the repository as we do not need it anymore
         if not manager.umountRepository():
@@ -611,12 +693,20 @@ parser.add_argument(
     default = '/etc/homebox/backup-key',
     required=False)
 
-# Key file for encrypted backup
+# The action to run
 parser.add_argument(
     '--action',
     type = str,
-    help = 'What to do: backup; backup-and-check; check-data (default=backup-and-check)',
+    help = 'What to do: backup; backup-and-check; check-data; restore (default=backup-and-check)',
     default = 'backup-and-check',
+    required=False)
+
+# The action to run
+parser.add_argument(
+    '--location',
+    type = str,
+    help = 'Where to restore the backup (only when action=restore; default=/)',
+    default = '/',
     required=False)
 
 # Log level (DEBUG, INFO, NOTICE, etc..)
