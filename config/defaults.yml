@@ -613,8 +613,15 @@ access_check_default:
 backup_default:
   install: false              # Do not install by default
   type: borgbackup            # Only borg-backup supported at this time
-  alerts:
+  key:                        # Default key parameters (use the root account ATM)
+    path: /root/.ssh/
+    user: root
+    comment: SSH key for backup
+    name: backup
+    type: rsa                 # Use dsa, ecdsa, ed25519 or rsa. rsa1 is discouraged
+    size: 2048
+  alerts:                     # Send alerts to the first user by default
     from: 'postmaster@{{ network.domain }}'
     recipient: '{{ users[0].mail }}'
-    jabber: true
+    jabber: true              # The Jabber server need to be installed for this to work
   locations: []               # List of backup locations

@@ -380,7 +380,7 @@ class BackupManager(object):
 
 
     # Send an email if requested
-    def sendEmail(self, success, messages):
+    def sendEmail(self, actionName, success, messages):
 
         # Import smtplib for the actual sending function
         import smtplib
@@ -391,9 +391,11 @@ class BackupManager(object):
 
         # Build a simple reporting backup info
         msg = MIMEMultipart()
-        subject = 'Backup report for {0}: {1}'.format(
+        subject = 'Backup {0} for {1}: {2}'.format(
+            actionName,
             self.configName,
             'Success' if success else 'Error')
+
         msg.preamble = subject
 
         for message in messages:
@@ -567,7 +569,7 @@ def main(args):
     finally:
 
         # Send the email to the postmaster
-        manager.sendEmail(success, messages)
+        manager.sendEmail(actionName, success, messages)
 
         # Exit successfully unless we send the message using Jabber
         if not manager.sendJabberAlerts():

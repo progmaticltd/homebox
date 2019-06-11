@@ -1,7 +1,6 @@
 ---
 
 - name: Install the required file systems
-  when: protocol == 's3fs'
   apt:
     name: 's3fs'
     state: latest
@@ -11,6 +10,12 @@
     src: passwd-s3fs
     dest: '/etc/homebox/s3fs-{{ location.name }}'
     mode: 0600
+
+- name: Create the backup cache folder
+  file:
+    path: /home/.backup-cache/
+    state: directory
+    mode: 0700
 
 - name: Extract backup location details
   tags: backup, facts
@@ -74,13 +79,6 @@
     src: 'mount-s3fs.systemd'
     dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.mount'
 
-- name: Enable the mount service
-  tags: systemd
-  systemd:
-    name: 'mnt-backup-{{ location.name }}.mount'
-    enabled: true
-    state: started
-
 - name: Add automount definition for this device
   notify: Reload Systemd
   tags: systemd
@@ -89,8 +87,16 @@
     dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.automount'
 
 - name: Enable the automount service
+  notify: Reload Systemd
   tags: systemd
   systemd:
     name: 'mnt-backup-{{ location.name }}.automount'
     enabled: true
-    state: restarted
+    state: started
+
+- name: Enable the mount service
+  notify: Reload Systemd
+  tags: systemd
+  systemd:
+    name: 'mnt-backup-{{ location.name }}.mount'
+    enabled: true

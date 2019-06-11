@@ -362,7 +362,7 @@ terminating with error status, rc 2
 Homebox comes with the option to send backup status using short messages in real time, using the
 Jabber server embedded in the platform. To do so, use the following settings:
 
-```yaml hl_lines="4 5"
+```yaml
 backup:
   install: true
   type: borgbackup
