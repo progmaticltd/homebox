@@ -1,5 +1,45 @@
 #!/usr/bin/env python3
 
+'''
+This script is a wrapper around borg backup software, heavily specialised for Homebox.
+It is not meant to be a general purpose script, as borgbackup is already doing this job very well.
+
+Actually, the script is used to do:
+
+- Regular backups creation called by cron.
+- Regular backups verification, called by cron.
+- Backup extraction, called after a system re-installation.
+
+The syntax is fairly simple:
+
+The main parameter is --action <ACTION>, It can be:
+
+- init:              Initialise an empty repository.
+- backup:            Backup data, but don't check the consistency
+- backup-and-check:  Default actkion; init is called before)
+- check-data:        Check the consistency of the backup, and verify the content as well
+- restore:           Restore the backup to a specific location
+
+usage: backup [-h] --config CONFIG [--key-file KEY_FILE] [--action ACTION]
+              [--location LOCATION] [--log-level LOGLEVEL]
+              [--log-file LOGFILE]
+
+Backup manager for homebox
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --config CONFIG       name of the backup configuration to load
+  --key-file KEY_FILE   path to the encryption key file
+  --action ACTION       What to do: backup; backup-and-check; check-data;
+                        init; restore (default=backup-and-check)
+  --location LOCATION   Where to restore the backup (only when action=restore;
+                        default=/)
+  --log-level LOGLEVEL  Log level to use, like DEBUG, INFO, NOTICE, etc. (INFO
+                        by default)
+  --log-file LOGFILE    Path to the log file (default /var/log/backup.log)
+
+'''
+
 # To parse the initial configuration file
 from configparser import ConfigParser
 
@@ -27,11 +67,8 @@ class BackupManager(object):
         self.mountPath = None
 
         # Save backup stdout/stderr for reporting
+        # the keys will be create, prune, check or restore
         self.lastBackupInfo = {}
-        self.lastBackupInfo['create'] = None
-        self.lastBackupInfo['prune'] = None
-        self.lastBackupInfo['check'] = None
-        self.lastBackupInfo['restore'] = None
 
         # Read the domain configuration
         self.config = ConfigParser()
@@ -60,12 +97,19 @@ class BackupManager(object):
         # Save the process information here
         self.runFilePath = '/run/backup-' + self.configName
 
+
     # read backup key
     def loadKey(self, path):
         """Loading repository encryption key"""
-        with open(path) as keyFile:
-            self.key = keyFile.read()
-        logging.info('Successfully loaded encryption key')
+        try:
+            with open(path) as keyFile:
+                self.key = keyFile.read()
+            logging.info('Successfully loaded encryption key')
+            return True
+        except:
+            logging.warning('Could not load encryption key')
+            return False
+
 
     # Mount the backup folder, if the location is remote
     def mountRepository(self):
@@ -124,6 +168,7 @@ class BackupManager(object):
         logging.error("Unknown or not implemented scheme " + self.location)
         raise NotImplementedError(self.location)
 
+
     # Umount the remote location
     def umountRepository(self):
         """Umount the remote location if necessary"""
@@ -153,15 +198,21 @@ class BackupManager(object):
 
         return True
 
-    # Check if the repository exists
+
+    # Initialise a new repository
     def initRepository(self):
         """Initialise the remote repository using borg init"""
+
+        # This can happen if the repository is already initialised
+        # and the script is called with the action set as "init"
+        if self.repositoryInitialised():
+            return True
 
         os.environ["BORG_PASSPHRASE"] = self.key
 
         logging.info("Initialising repository in " + self.repositoryPath)
 
-        args = [ 'borg', 'init']
+        args = [ 'borg', 'init' ]
 
         # Add encryption type: repository key for now
         args.append('--encryption')
@@ -177,11 +228,20 @@ class BackupManager(object):
             raise RuntimeError(status)
 
         logging.info("Repository initialised")
+
         return status.returncode == 0
+
 
     # Check if this current backup is active
     def isBackupActive(self):
         return self.active
+
+
+    # Return true if the manager is configured to send alerts via XMPP
+    def sendJabberAlerts(self):
+        """Check if the manager is configured to send alerts using XMPP"""
+        return self.alerts_jabber
+
 
     # Check if this backup is actually running,
     # in this case, exit to avoid two concurrent backups
@@ -201,6 +261,7 @@ class BackupManager(object):
         except FileNotFoundError as error:
             return False
 
+
     def setRunning(self, running):
         """Write my PID in /run/..."""
         if running == True:
@@ -209,6 +270,7 @@ class BackupManager(object):
                 runFile.write(str(os.getpid()))
         elif os.path.isfile(self.runFilePath):
             os.remove(self.runFilePath)
+
 
     # Check if the repository exists
     def repositoryInitialised(self):
@@ -282,6 +344,7 @@ class BackupManager(object):
 
         return status.returncode == 0
 
+
     # Create the backup
     def pruneBackup(self):
         """Prune the backup"""
@@ -336,6 +399,7 @@ class BackupManager(object):
             raise RuntimeError(status)
 
         return status.returncode == 0
+
 
     # Check for errors in the backup content
     def checkBackup(self, checkData):
@@ -445,6 +509,7 @@ class BackupManager(object):
 
         return status.returncode == 0
 
+
     # Send an email if requested
     def sendEmail(self, actionName, success, messages):
         """Send an email with the result of an action using the local mail server"""
@@ -472,29 +537,12 @@ class BackupManager(object):
         summary = MIMEText(msg.preamble)
         msg.attach(summary)
 
-        # Add create log (inline)
-        if self.lastBackupInfo['create'] != None:
-            createReport = MIMEText(self.lastBackupInfo['create'])
-            createReport.add_header('Content-Disposition', 'inline; filename="create.log"')
-            msg.attach(createReport)
-
-        # Add prune log (inline)
-        if self.lastBackupInfo['prune'] != None:
-            pruneReport = MIMEText(self.lastBackupInfo['prune'])
-            pruneReport.add_header('Content-Disposition', 'inline; filename="prune.log"')
-            msg.attach(pruneReport)
-
-        # Add checking log (inline)
-        if self.lastBackupInfo['check'] != None:
-            checkReport = MIMEText(self.lastBackupInfo['check'])
-            checkReport.add_header('Content-Disposition', 'inline; filename="check.log"')
-            msg.attach(checkReport)
-
-        # Add restoration log (inline)
-        if self.lastBackupInfo['restore'] != None:
-            checkReport = MIMEText(self.lastBackupInfo['restore'])
-            checkReport.add_header('Content-Disposition', 'inline; filename="restore.log"')
-            msg.attach(checkReport)
+        # Add all backup action output / error logs.
+        # This can be create, prune, check or restore
+        for infoName in self.lastBackupInfo.keys():
+            infoReport = MIMEText(self.lastBackupInfo[infoName])
+            infoReport.add_header('Content-Disposition', 'inline; filename="{0}.log"'.format(infoName))
+            msg.attach(infoReport)
 
         # This can be used for automatic filtering with Sieve
         msg.add_header('X-Postmaster-Alert', 'backup')
@@ -509,6 +557,7 @@ class BackupManager(object):
         session = smtplib.SMTP('localhost')
         session.sendmail(self.alerts_from, [ self.alerts_recipient ], msg.as_string())
         session.quit()
+
 
     # Send the backup report over XMPP / Jabber
     def sendMessage(self, message):
@@ -538,10 +587,6 @@ class BackupManager(object):
             raise RuntimeError(status)
 
         return status == 0
-
-    def sendJabberAlerts(self):
-        """Check if the manager is configured to send alerts using XMPP"""
-        return self.alerts_jabber
 
 
 
@@ -579,7 +624,9 @@ def main(args):
 
         # This will be used for the short reporting message sent via Jabber
         # or the email message
-        if args.action == "backup" or args.action == "backup-and-check":
+        if args.action == "init":
+            actionName = "Initialisation"
+        elif args.action == "backup" or args.action == "backup-and-check":
             actionName = "creation"
         elif args.action == "check-data":
             actionName = "verification"
@@ -595,23 +642,23 @@ def main(args):
         # Mount the remote (or local) repository
         manager.mountRepository()
 
-        # Initialise if the repository does not exists
-        if not manager.repositoryInitialised():
-            initialised = manager.initRepository()
+        # Called to just initialise an empty repository
+        if args.action == "init" or not manager.repositoryInitialised():
+            manager.initRepository()
 
         # Create the backup, and prune it
-        if args.action == "backup" or args.action == "backup-and-check":
+        elif args.action == "backup" or args.action == "backup-and-check":
             manager.createBackup()
             manager.pruneBackup()
 
         # Should we check the consistency of the backup?
-        if args.action == "backup-and-check":
+        elif args.action == "backup-and-check":
             manager.checkBackup(False)
         elif args.action == "check-data":
             manager.checkBackup(True)
 
         # Check if this is a restore attempt
-        if args.action == "restore":
+        elif args.action == "restore":
             lastBackupID = manager.getLastBackupID()
             if lastBackupID == False:
                 raise RuntimeError("Backup is empty")
@@ -650,7 +697,7 @@ def main(args):
 
     finally:
 
-        # Send the email to the postmaster
+        # Send the email to the postmaster or to an external account
         manager.sendEmail(actionName, success, messages)
 
         # Exit successfully unless we send the message using Jabber
@@ -676,7 +723,7 @@ def main(args):
 ################################################################################
 # parse arguments, build the manager, and call it
 # Main call with the arguments
-parser = argparse.ArgumentParser(description='Backup manager for borgbackup')
+parser = argparse.ArgumentParser(description='Backup manager for homebox')
 
 # Config path argument (mandatory)
 parser.add_argument(
@@ -697,7 +744,7 @@ parser.add_argument(
 parser.add_argument(
     '--action',
     type = str,
-    help = 'What to do: backup; backup-and-check; check-data; restore (default=backup-and-check)',
+    help = 'What to do: init, backup; backup-and-check (default); check-data; restore',
     default = 'backup-and-check',
     required=False)
 
