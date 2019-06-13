@@ -12,7 +12,8 @@ tune the system according to their needs.
 - A monthly report is sent the first day of every month, containing the analysis of the previous month.
 - When the "impersonate" feature is used to access one user's emails, an alert is sent in real time to this user.
 
-Real time alerts are sent by email _and_ XMPP, to your account and an external account if configured so.
+!!! Note
+    Real time alerts are sent by email and XMPP, to your account or an external account if configured so.
 
 ## Scoring system
 
@@ -55,11 +56,12 @@ By default, the following lists are checked:
 * psbl.surriel.com
 * dul.dnsbl.sorbs.net
 
-When an IP address is blacklisted two times, the connection will be denied.
+!!! Warning
+    When an IP address is blacklisted two times, the connection will be denied.
 
 #### Customisation
 
-If for a reason, you need to connect from an IP address you know is blacklisted, you can whitelist the IP address, by
+If for any reason, you need to connect from an IP address you know is blacklisted, you can whitelist the IP address, by
 creating a file `ip-whitelist.txt` inside your homebox configuration directory `~/.config/homebox`.
 
 This file can look like this:
@@ -76,9 +78,8 @@ Comments and blank lines are not mandatory and are ignored. You can also whiteli
 
 Although it is not recommended, you can also change the blacklisting score globally:
 
-```yaml
+``` yaml hl_lines="3"
 access_check:
-  ...
   ip:
     rbl_malus: 40
 ```
@@ -91,35 +92,26 @@ address has been banned 5 time in the last log file, the score will be 50 points
 This is a safeguard to ensure a brute force attack against your email account is rejected, even if the password has been
 found.
 
-#### Customisation
-
 If you want to tune this, you can change the fail2ban score to another value, or even to 0 to disable it
 entirely:
 
-```yaml
+``` yaml hl_lines="3"
 access_check:
-  ...
   ip:
     fail2ban_malus: 5
-  ...
 ```
 
 ### Connection from a foreign country
 
-If you are living in France, there is no reason you would connect from China or Russia, except if you are often
-travelling in these countries. In this case, you can add the country code to the list of trusted countries.
-
-#### Customisation
+If for instance you are living in France, there is no reason you would connect from China or Russia, except if you are
+often travelling in these countries. In this case, you can add the country code to the list of trusted countries.
 
 You can trust some countries for the whole system, by changing the access_check.countries.trust values:
 
-```yaml
-
+``` yaml hl_lines="3"
 access_check:
-  ...
   countries:
     trust: [ 'FR', 'DE', 'GB', 'ES' ]
-
 ```
 
 If you prefer to do it for one user only you can define a list of "trusted" countries, in the user's configuration file.
@@ -140,16 +132,16 @@ behaviours. For instance, accessing your emails at midnight, from an IP address 
 generate a warning.
 
 Points: 10 points per hour outside the working hours. For instance, if you defined your working hours from 9am to 6pm, a
-connection at 2am will generate 70 points, and a warning will be sent. Only one warning is sent per day.
+connection at 2am will generate 70 points, and a warning will be sent.
 
-#### Customisation:
+!!! Note
+    Warnings are limited to one per day only.
 
 If you have unusual working hours, or if you want to disable this entirely, you can set for instance 0-23. Times are
 specified in 24h mode.
 
-```yaml
+``` yaml hl_lines="2 3 4"
 access_check:
-  ...
   time:
     start: 9
     end: 22
@@ -166,14 +158,12 @@ control.
 
 You can blacklist entire countries, but system wide only for now.
 
-For instance, here how to deny all IMAP connections, on the whole system, to Russia, China and Ukraine:
+For instance, here how to deny all IMAP connections, on the whole system, to Russia and China:
 
-```yaml
+``` yaml
 access_check:
-  ...
   countries:
-    blacklist: [ 'RU', 'CN', 'UA' ]
-
+    blacklist: [ 'RU', 'CN' ]
 ```
 
 ## Customising the alert address
@@ -182,11 +172,11 @@ By defaults, the alerts will be sent to the postmaster _and_ the user under atta
 
 You can also use an external email address, by specifying the address globally, in the system.yml file:
 
-```yaml
+``` yaml hl_lines="3"
 access_check:
   ...
   alert_address: john.doe@protonmail.com
-  ..
+  ...
 ```
 
 Finally, this can be done per user as well, by modifying the `access-check.conf` file, inside the folder
@@ -203,7 +193,7 @@ It is advised to use an external address, to be sure a compromised account canno
 
 These settings are visible in the defaults.yml file, in the repository:
 
-```yaml
+``` yaml
 access_check_default:
   active: false
   whitelist_bonus: 255        # Bonus to apply when an IP or country is whitelisted. Max value is 255
@@ -243,7 +233,7 @@ All messages are sent both by email and using XMPP if the Jabber server has been
 This is the content of a message when an unusual connection has been detected. In this first example, the points are
 detailed, because the system has been configured with the option `display_score` to true.
 
-```txt
+``` txt
 IMAP connection warning
 - User: andre (andre@homebox.space)
 - IP Address: 81.17.27.131
@@ -283,7 +273,7 @@ Your emails are opened by the master user
 IP Details: https://duckduckgo.com/?q=whois+176.63.27.152
 ```
 
-## Example of a customised access-check.conf
+## Customised access-check.conf
 
 This file will be stored in `~/.config/homebox/access-check.conf`
 

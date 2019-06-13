@@ -42,46 +42,36 @@ firewall:
 ```
 
 
-# Single Packet Authorization with fwknop
+# Single Packet Authorization
 
-__First of all a little warning. If don’t know what are you doing
-be very careful because one mistake will cause your SSH is gone
-for good and there will no chance how to manage your server.__
+This method of authorization is based around a default-drop packet filter and libpcap. SPA is essentially next
+generation port knocking.
 
-This method of authorization is based around a default-drop packet
-filter and libpcap. SPA is essentially next generation port
-knocking.
+The fwknop client runs on Linux, Mac OS X, *BSD, and Windows.  In addition, there is a port of the client to both the
+iPhone and Android phones.
 
-The fwknop client runs on Linux, Mac OS X, *BSD, and Windows.
-In addition, there is a port of the client to both the iPhone and Android phones.
+- Supports HMAC authenticated encryption for both Rijndael and GnuPG. The order of operation is
+  encrypt-then-authenticate to avoid various cryptanalytic problems.
+- Replay attacks are detected and thwarted by SHA-256 digest comparison of valid incoming SPA packets. SHA-1 and MD5 are
+  also supported, but SHA-256 is the default.
+- SPA packets are passively sniffed from the wire via libpcap. The fwknop server can also acquire packet data from a
+  file that is written to by a separate Ethernet sniffer (such as with "tcpdump -w <file\>"), or from the iptables ULOG
+  pcap writer.
+- For iptables firewalls, ACCEPT rules added by fwknop are added and deleted (after a configurable timeout) from custom
+  iptables chains so that fwknop does not interfere with any existing iptables policy.
 
-- Supports HMAC authenticated encryption for both Rijndael and
-  GnuPG. The order of operation is encrypt-then-authenticate to avoid
-  various cryptanalytic problems.
-- Replay attacks are detected and thwarted by SHA-256 digest
-  comparison of valid incoming SPA packets. SHA-1 and MD5 are also
-  supported, but SHA-256 is the default.
-- SPA packets are passively sniffed from the wire via libpcap. The
-  fwknop server can also acquire packet data from a file that is
-  written to by a separate Ethernet sniffer (such as with "tcpdump -w
-  <file>"), or from the iptables ULOG pcap writer.
-- For iptables firewalls, ACCEPT rules added by fwknop are added and
-  deleted (after a configurable timeout) from custom iptables chains
-  so that fwknop does not interfere with any existing iptables policy.
+!!! Warning
+    If you don’t know what are you doing, be very careful, because one mistake will cause your SSH gone for good and
+    there will no chance how to manage your server.
 
 
-More features detailed on the
-[fwknop features page](https://www.cipherdyne.org/fwknop/docs/features.html).
+More features detailed on the [fwknop features page](https://www.cipherdyne.org/fwknop/docs/features.html).
 
-## Configuration
+## Configuration examples
 
-### Configuration examples
+Alow direct SSH access from the local network, use fwknop otherwise. Monitor only queries sent to port number 33001.
 
-Alow direct SSH access from the local network, use fwknop otherwise.
-Monitor only queries sent to port number 33001.
-
-```yaml
-
+``` yaml hl_lines="3 4 5 6"
 # Allow SSH only from the LAN, otherwise use fwknop
 firewall:
   fwknop:
@@ -94,11 +84,10 @@ firewall:
       comment: allow SSH from the LAN only
 ```
 
-Only allow SSH access using fwknop.
-Allow to send the query to a random port number, between 10000 and 65535 by default.
+Only allow SSH access using fwknop.  Allow to send the query to a random port number, between 10000 and 65535 by
+default.
 
-```yaml
-
+``` yaml hl_lines="3 4 5"
 # Allow SSH only from the LAN, otherwise use spa fwknopd
 firewall:
   fwknop:
@@ -182,15 +171,11 @@ The configuration is simple, see the example: [android client example](img/fwkno
 While you can do this with a script, it is nicer to use the SSH ProxyCommand integration.
 For instance, you can use this configuration on your `~/.ssh/config`:
 
-```conf
+``` conf
 Host homebox.space
   User root
-  VerifyHostKeyDNS yes
   ProxyCommand sh -c "fwknop -R -D main.homebox.space --rc-file ~/.fwknop-homebox.space.rc -n main.homebox.space ; /bin/nc %h %p"
-
 ```
-
-The configuration above also uses the SSHFP DNS records, if you are using the bind server in homebox.
 
 ### Using the port knoker with Ansible
 

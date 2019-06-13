@@ -418,8 +418,7 @@ dns_default:
 ###############################################################################
 # Bind server defaults
 bind_default:
-  # Bind is actually in testing phase, feedback welcome
-  install: false
+  install: true
   # Default servers to forward queries
   forward:
     - 8.8.8.8

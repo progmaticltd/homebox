@@ -48,17 +48,9 @@ transmission_default:
   seed_queue_size: 5
 ```
 
-## Required domain
-
-If you are entering your DNS records yourself, this is the records you need to create:
-
-| Record       | Type   | Purpose         | Example                    |
-| -----------  | ------ | ---------       | ---------                  |
-| transmission | A      | Web site access | transmission.homebox.space |
-
-
-The domains are created automatically if you are using the DNS update script with Gandi, or if you are
-using the embedded DNS server.
+!!! Note
+    When you install transmission daemon, firewall rules are added automatically, allowing you to safely download
+    content without revealing too much information about your system.
 
 ## Certificates created
 
@@ -74,13 +66,12 @@ Install the Transmission remote client for Android on [Google Play](https://play
 
 ## Monitor and start downloads from a web browser
 
-You can access the web interface from any web browser, using https://transmission.example.com.
-If you are not coming from a trusted IP address, you will have to enter a user name and a password.
-the authentication is done using the LDAP credentials.
+You can access the web interface from any web browser, using https://transmission.example.com.  If you are not coming
+from a trusted IP address, you will have to enter a user name and a password.  the authentication is done using the LDAP
+credentials.
 
 ## Downloading files from your web browser
 
-You can access the files downloaded from any web browser, using https://transmission.example.com/downloads/.
-If you are not coming from a trusted IP address, you will have to enter a user name and a password.
-the authentication is done using the LDAP credentials.
-A nice and responsive web interface has been added to search files.
+You can access the files downloaded from any web browser, using https://transmission.example.com/downloads/.  If you are
+not coming from a trusted IP address, you will have to enter a user name and a password.  the authentication is done
+using the LDAP credentials.  A nice and responsive web interface has been added to search files.

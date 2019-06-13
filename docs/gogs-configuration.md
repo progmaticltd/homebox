@@ -7,8 +7,8 @@ The default configuration for the Gogs server comes with the following options:
 
 Default options for the Gogs server:
 
-```yaml
-gogs_default:
+``` yaml hl_lines="2"
+gogs:
   install: false
   public: false         # not open to public by default
   allow:                # a list of IP address that can access the web interface
@@ -21,21 +21,10 @@ By default, the gogs server is not installed.
 If you install the git server, you can choose to restrict it to your local network (by default),
 or to make your git repository public.
 
-## Required domain
-
-If you are entering your DNS records yourself, this is the records you need to create:
-
-| Record            | Type   | Purpose                                  | Example                      |
-| -----------       | ------ | ---------                                | ---------                    |
-| gogs              | A      | Web site access                          | gogs.homebox.space           |
-
-The domains are created automatically if you are using the DNS update script with Gandi, or if you are
-using the embedded DNS server.
-
-## Certificates created
+# Certificates created
 
 Two certificates are created to ensure proper communication with clients and other servers.
 
-| Record            | Type   | Purpose                                  | Example                      |
-| -----------       | ------ | ---------                                | ---------                    |
-| gogs              | A      | Handle repository access over https      | gogs.homebox.space           |
+| Record      | Type   | Purpose                             | Example            |
+| ----------- | ------ | ---------                           | ---------          |
+| gogs        | A      | Handle repository access over https | gogs.homebox.space |

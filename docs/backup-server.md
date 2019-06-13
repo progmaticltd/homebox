@@ -1,11 +1,7 @@
-# Backup server
-
 The homebox platform can be configured to act as a backup server for your home network, using
 [borg-backup](https://www.borgbackup.org/) software.
 
-## Hardware configuration
-
-### Ideal configuration
+# Ideal configuration
 ![](img/backup-server/schema-ideal.svg)
 
 This configuration allows you to use encryption and incremental backups, with a plain basic local or remote storage,
@@ -14,7 +10,7 @@ like a USB RAID enclosure or a remote samba share.
 It will automatically use the first backup location you have defined. For instance, if you have configured hombox to
 backup on local USB drive and on a remote SAMBA share, the local drive will be used for storage:
 
-### Local backup only
+# Local backup only
 
 ![](img/backup-server/schema-minimal.svg)
 
@@ -24,7 +20,7 @@ the files will be stored in the home folder, for each user, using the same princ
 This is obviously less safe than using a remote or external device to backup. You can mitigate the risk by using
 [software RAID](preseed.md#software-raid) in the preseed file.
 
-## Tutorial
+# Tutorial
 
 In this example, you will see how to set up a backup solution on a USB NAS attached to your homebox.
 
@@ -55,7 +51,7 @@ this is done in the SSH authorized_keys configuration file on the server.
 This is an example on how to back-up a folder in your home directory. You need to have borg-backup installed on your
 workstations, and to have created an SSH key, dedicated for backup.
 
-### Step 1: Configure the SSH connection
+## Step 1: Configure the connection
 
 Example of the syntax to use in your `~/.ssh/config` configuration file:
 
@@ -65,7 +61,7 @@ Host backup.homebox.space
   IdentityFile ~/.ssh/backup.rsa
 ```
 
-### Step 2: Initialise the backup on your local machine
+## Step 2: Initialise the backup
 
 First, you need to initialise a backup repository on your machine:
 
@@ -89,7 +85,7 @@ Write down the passphrase. Store both at safe place(s).
 
 ```
 
-### Step 3: create the first backup
+## Step 3: create the first backup
 
 Then, create the backup itself:
 

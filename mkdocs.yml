@@ -1,11 +1,21 @@
-site_name: homebox
-pages:
+site_name: homebox installation
+repo_url: https://github.com/progmaticltd/homebox/
+site_description: How to install HomeBox self hosting solution
+site_author: André Rodier
+copyright: Creative Commons Attribution-ShareAlike 4.0 International License
+markdown_extensions:
+  - smarty
+  - admonition
+  - codehilite:
+      linenums: true
+extra_css: [ extra.css ]
+theme: readthedocs
+nav:
   - Home: index.md
   - Features: features.md
-  - Prerequisites before the installation: prerequisites.md
-  - Wait for DNS propagation: dns-propagation.md
-  - Debian preseed: preseed.md
-  - Main configuration file: configuration.md
+  - Before the installation: prerequisites.md
+  - Debian OS installation: preseed.md
+  - Homebox Installation: installation.md
   - Email configuration: email-configuration.md
   - Roundcube Webmail: webmail-roundcube.md
   - Firewall configuration: firewall-configuration.md
@@ -27,4 +37,5 @@ pages:
   - Maintenance: maintenance.md
   - Testing and development: development.md
   - Code of conduct: codeofconduct.md
-theme: readthedocs
+
+#   - Wait for DNS propagation: dns-propagation.md

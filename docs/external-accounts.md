@@ -3,13 +3,14 @@
 It is possible to add external accounts (GMail, Outlook, Yahoo, IMAP, etc...) to the platform.
 In this case, your emails will be downloaded in background, every time you logon on your account.
 
-_This is a one way synchronisation only, the remote accounts are not modified._
+!!! Note
+    This is a one way synchronisation only, the remote accounts are not modified.
 
 ## Security
 
-The credentials and the settings are stored on your box only, encrypted with AES 256 bits scheme.
-The description key is stored by the root account. The credentials are decrypted by the user account
-and kept in memory during the synchronisation process.
+The credentials and the settings are stored on your box only, encrypted with AES 256 bits scheme.  The description key
+is stored by the root account. The credentials are decrypted by the user account and kept in memory during the
+synchronisation process.
 
 Behind the scene, the platform is using [isync](http://isync.sourceforge.net/mbsync.html).
 
@@ -18,17 +19,16 @@ downloaded transparently.
 
 The folders hierarchy is reproduced on your server, with some adaptations for GMail, though.
 
-## Notes
-
-- The emails will be imported once only. The system is keeping a record of the emails indexes already imported.
-- If you set up multiple external accounts, they will be all downloaded in parallel.
-- The next version may add cron synchronisation, for instance at office hours, if required.
+!!! Note
+    - The emails will be imported once only. The system is keeping a record of the emails indexes already imported.
+    - Emails from external accounts are downloaded in the background, when you are checking your emails, from any client.
+    - The imported emails are re-filtered using the Sieve filters you have specified,
 
 ## Example
 
 Below is an example for one user named "andre", with multiple external accounts:
 
-```yaml
+``` yaml hl_lines="12"
 users:
 - uid: andre
   cn: André Rodier
@@ -77,6 +77,7 @@ users:
       get_trash: true
       max_messages: 10
 ```
+
 ## Details of the options
 
 There are a few options to download emails detailled below.
@@ -147,4 +148,5 @@ a dedicated folder, the option is called "`get_important`", and set to true by d
 This option is set to true by default. Set it to false if you do not want to download your entire email
 archives.
 
-_Be careful, some email providers will not let you download emails once archived, for instance Zoho._
+!!! Warning
+    Be careful, some email providers will not let you download emails once archived, for instance Zoho.

@@ -1,7 +1,31 @@
+## External mailing lists
+
+If something goes wrong, here a few resources:
+
+- The [Postfix mailing lists](http://www.postfix.org/lists.html).
+- The [Dovecot mailing lists](https://www.dovecot.org/mailinglists.html).
+- The [Debian mailing lists](https://lists.debian.org/).
+- Our [github page](https://github.com/progmaticltd/homebox)
+- Finally, [Duckduckgo](https://duckduckgo.com/) or [Google](https://google.com/).
+
+## Folders content
+
+The repository contains a few folders you should be familiar with:
+
+- config: The main Yaml configuration files for your homebox device.
+- preseed: Docker environment to create an automatic ISO image installer for Debian.
+- install: Ansible scripts to install or test the whole server environment.
+- backup: A very useful folder that contains some important files like the passwords and certificates generated when
+  deploying the system. This allows you to "replay" the deployment on a new server after a disaster, without loosing any
+  information. This folder is generated automatically on the first deployment, and ignored by git
+- tests: Ansible playbooks to test the platform.
+- sandbox: Put anything you don't want to commit here.
+- docs: This project documentation.
+- uninstall: Ansible scripts to uninstall some of the components. This allows you to test them.
+
 ## Branches
 
-- The current developments are done in the
-[dev](https://github.com/progmaticltd/homebox/tree/dev) branch.
+- The current developments are done in the [dev](https://github.com/progmaticltd/homebox/tree/dev) branch.
 - The master branch is kept for releases.
 
 Starting in May 2019, the approach will be to use gitflow, from the dev branch.
@@ -26,7 +50,8 @@ There is a preseed folder that creates an an ISO image for automatic installatio
 using Docker, and builds an automatic installer from a YAML configuration file.
 The [preseed page](preseed.md) give more details about this feature.
 
-_Note: This installer installs Debian only, it does not deploy the platform._
+!!! Note
+    This installer installs Debian only, it does not deploy the platform.
 
 ## Router configuration
 

@@ -5,8 +5,7 @@ The source code is on [GitHub](https://github.com/progmaticltd/homebox).
 
 This project is for you if:
 
-- You are interested to host your emails yourself, for privacy, security or any
-  other reason.
+- You are interested to host your emails yourself, for privacy, security or any other reason.
 - You want your server to be secure against both physical and remote intrusion.
 - You want a low maintanance box that keep itself updated automatically.
 - You prefer security and stability over latest features.
@@ -14,21 +13,16 @@ This project is for you if:
 
 ## Philosophy
 
-- You should be able to upgrade anything installed via apt command. No
-  git clone / wget / curl here, ever.
-- If you are using your own hardware, the disk will be fully encrypted
-  using [LUKS](https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup).
-  Nobody will be able to steal your hardware _and_ your information.
-- AppArmor is activated on the first boot, and all the services
-  are configured to support it.  This makes your server very safe
-  against remote intrusion, even when using 0-day vulnerabilities.
-- You can set up multiple backup destination, local and remote, all
-  encrypted.
-- A lot of default choices made towards simplicity and
-  [KISS principle](https://en.wikipedia.org/wiki/KISS_principle).
+- You should be able to upgrade anything installed via apt command. No git clone / wget / curl here, ever.
+- If you are using your own hardware, the disk will be fully encrypted using
+  [LUKS](https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup). Nobody will be able to steal your hardware _and_ your
+  information.
+- AppArmor is activated on the first boot, and all the services are configured to support it. This makes your server
+  very safe against remote intrusion, even when using 0-day vulnerabilities.
+- You can set up multiple backup destination, local and remote, all encrypted.
+- A lot of default choices made towards simplicity and [KISS principle](https://en.wikipedia.org/wiki/KISS_principle).
   and safety.
-- Attention to details, keep focused on the nitty-gritty features of
-  self hosting, like full IPv6 support.
+- Attention to details, keep focused on the nitty-gritty features of self hosting, like full IPv6 support.
 
 ## Main components
 
