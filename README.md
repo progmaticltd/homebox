@@ -75,12 +75,13 @@ in the official documentation.
 
 ### Other optional features
 
-- Incremental backups, encrypted, on multiple destination (SFTP, Samba share or USB drive), with email reporting.
-  See [backup documentation](docs/backup.md) for details.
-- Jabber server, using [ejabberd](https://www.ejabberd.im/), with LDAP authentication,
-  direct or offline file transfer and optional server to server communication.
+- Incremental backups, encrypted, on multiple destination (SFTP, Samba share or USB drive), with email and Jabber
+  reporting.  See [backup documentation](docs/backup.md) for details.
+- Jabber server, using [ejabberd](https://www.ejabberd.im/), with LDAP authentication, direct or offline file transfer
+  and optional server to server communication.
 - [Tor](https://www.torproject.org/) installation out of the box with possible customisation.
-- [Privoxy](https://www.privoxy.org/) easy installation, with adblock rules daily synchronisation, and optional tor chaining.
+- [Privoxy](https://www.privoxy.org/) easy installation, with adblock rules daily synchronisation, and optional tor
+  chaining.
 - Embedded DNS server with DNSSEC and SSHFP (SSH fingerprint) records support
 - Automatic publication of DNS entries to Gandi DNS.
 - External IP address detection.

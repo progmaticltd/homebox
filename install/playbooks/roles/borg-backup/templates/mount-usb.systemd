@@ -1,0 +1,13 @@
+# Systemd mounting for {{ location.name }}
+
+[Unit]
+Description=mount script for {{ location.name }}
+
+[Mount]
+What=UUID={{ location.uuid }}
+Where=/mnt/backup/{{ location.name }}
+Options={{ location.options | default("defaults") }}
+Type=auto
+
+[Install]
+WantedBy=multi-user.target

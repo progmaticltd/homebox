@@ -1,9 +1,9 @@
 ---
 
-- name: Add the SSH keys for users' remote access
+- name: Add the SSH keys for users remote access
   tags: backup
   file:
-    path: '/home/users/{{ user.uid }}/.ssh'
+    path: "/home/users/{{ user.uid }}/.ssh"
     owner: '{{ user.uid }}'
     group: users
     state: directory
@@ -26,8 +26,31 @@
   loop_control:
     loop_var: user
 
-- name: Add the authorised key
-  tags: backup
+- name: Use the first backup drive for the users
+  when: backup.locations.count > 0
+  set_fact:
+    backup_root: 'mnt/backup/{{ backup.locations[0].name }}'
+    backup_folder: ''
+
+- name: Use the home root folder for the backup server
+  when: backup.locations is not defined
+  set_fact:
+    backup_root: 'home/users'
+    backup_folder: 'backup/'
+
+- name: Create the folders for the user
+  file:
+    owner: '{{ user.uid }}'
+    group: users
+    path: '/{{ backup_root }}/{{ user.uid }}/{{ backup_folder }}'
+    state: directory
+    mode: 0700
+  with_items:
+    - '{{ users | selectattr("backup_ssh_key", "defined") | list }}'
+  loop_control:
+    loop_var: user
+
+- name: Add the authorised key configuration
   authorized_key:
     user: '{{ user.uid }}'
     state: present
@@ -36,7 +59,9 @@
       {{ user.backup_ssh_key.data | regex_replace(" ") }}
       {{ user.backup_ssh_key.comment }}
     key_options: >-
-      command="borg serve --restrict-to-path /home/users/{{ user.uid }}/backup",restrict
+      command="borg serve
+      --restrict-to-path
+      /{{ backup_root }}/{{ user.uid }}/{{ backup_folder }}",restrict
   with_items:
     - '{{ users | selectattr("backup_ssh_key", "defined") | list }}'
   loop_control:

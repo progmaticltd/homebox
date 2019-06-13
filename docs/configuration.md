@@ -168,7 +168,7 @@ It is possible to regularly backup your emails, for instance locally on a NAS dr
 methods.
 
 By default, the whole home partition is back up, but you can add or exclude more folders. The detailed instructions are
-on the [backup documentation](backup.md) page.
+on the [backup documentation](backup-home.md) page.
 
 ## Extra certificates
 

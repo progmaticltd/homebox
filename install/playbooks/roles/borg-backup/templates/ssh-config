@@ -5,4 +5,4 @@ Host {{ location_host }}
   UserKnownHostsFile /dev/null
   CheckHostIP no
   StrictHostKeyChecking no
-  IdentityFile ~/.ssh/backup.rsa
+  IdentityFile ~/.ssh/{{ location.keyName }}

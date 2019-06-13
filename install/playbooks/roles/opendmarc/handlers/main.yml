@@ -4,6 +4,7 @@
   service:
     name: opendmarc
     state: restarted
+    enabled: true
 
 - name: Restart AppArmor service
   service:

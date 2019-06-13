@@ -1,0 +1,83 @@
+---
+
+- name: Extract backup location details
+  tags: backup, facts
+  set_fact:
+    protocol: '{{ location.url | urlsplit("scheme") }}'
+    location_host: '{{ location.url | urlsplit("hostname") }}'
+    location_user: '{{ location.url | urlsplit("username") | default("guest") }}'
+    location_password: '{{ location.url | urlsplit("password") | default("guest") }}'
+    location_path: '{{ location.url | urlsplit("path") }}'
+    location_details: '{{ location.url | urlsplit }}'
+    location_domain: '{{ location.domain | default(None) }}'
+
+- name: Create the backup config into /etc/homebox
+  tags: config
+  ini_file:
+    path: '/etc/homebox/backup.ini'
+    section: '{{ location.name }}'
+    option: '{{ option.name }}'
+    value: '{{ option.value }}'
+    mode: '0600'
+  with_items:
+    - name: url
+      value: '{{ location.url }}'
+    - name: active
+      value: '{{ location.active }}'
+    - name: keep_daily
+      value: '{{ location.keep_daily | default(1) }}'
+    - name: keep_weekly
+      value: '{{ location.keep_weekly | default(1) }}'
+    - name: keep_monthly
+      value: '{{ location.keep_monthly | default(1) }}'
+    - name: compression
+      value: '{{ location.compression | default("lz4") }}'
+  loop_control:
+    loop_var: option
+
+
+# For Samba drives, uses cifs-utils
+- name: Install the required file systems
+  apt:
+    name: 'cifs-utils'
+    state: latest
+
+- name: Create the credentials file
+  template:
+    src: cifs-creds.pwd
+    dest: '/etc/homebox/backup-{{ location.name }}.pwd'
+
+- name: Set mount options for cifs
+  set_fact:
+    mount_options:
+      - 'credentials=/etc/homebox/backup-{{ location.name }}.pwd'
+
+- name: Add mount point definition for this device
+  register: mount_systemd
+  notify: Reload Systemd
+  tags: systemd
+  template:
+    src: 'mount-cifs.systemd'
+    dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.mount'
+
+- name: Enable the mount service
+  tags: systemd
+  systemd:
+    name: 'mnt-backup-{{ location.name }}.mount'
+    enabled: true
+    daemon_reload: true
+
+- name: Add automount definition for this device
+  notify: Reload Systemd
+  tags: systemd
+  template:
+    src: mount-auto.systemd
+    dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.automount'
+
+- name: Enable the automount service
+  tags: systemd
+  systemd:
+    name: 'mnt-backup-{{ location.name }}.automount'
+    enabled: true
+    daemon_reload: true
+    state: restarted

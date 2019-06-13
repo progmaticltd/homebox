@@ -1,1 +1,10 @@
-theme: jekyll-theme-slate
+---
+# mkdocs configuration file
+
+theme:
+  name: mkdocs
+  highlightjs: true
+  hljs_languages:
+    - yaml
+    - bash
+    - json
