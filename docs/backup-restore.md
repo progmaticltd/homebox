@@ -32,10 +32,7 @@ on an encrypted USB drive.
 Let's say you have used Amazon S3 for the daily backup of your system. So, open your system.yml file with your favourite
 editor, and add the line `restore: true` to the backup location you want to restore from. For instance:
 
-```yaml
-
-#############################################################################
-# Example backup settings
+``` yaml hl_lines="9"
 backup:
   install: true
   alerts:
@@ -44,7 +41,7 @@ backup:
     jabber: true
   locations:
   - name: s3main
-  → restore: true
+    restore: true
     url: s3fs://mnt/backup/s3main/casimir.fx
     active: yes
     frequency: daily
@@ -68,4 +65,4 @@ ansible-playbook -v -i ../config/hosts.yml playbooks/main.yml
 The whole installation is taking enough time for you to have a well deserved break. Prepare yourself a nice cup of tea
 or coffee. Once installed, you should have all your emails from the last backup restored.
 
-In this example, an email and a Jabber message is sent after the system has been restored.
+In this example, an email and a Jabber message are sent after the system has been restored.

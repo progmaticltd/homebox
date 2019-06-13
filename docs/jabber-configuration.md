@@ -10,7 +10,7 @@ The default configuration for the Jabber server comes with the following options
 Default options for the Jabber server:
 
 ```yaml
-ejabberd_default:
+ejabberd:
   install: true
   allow_contrib_modules: false
   # Server-to-server communication
@@ -37,36 +37,24 @@ ejabberd_default:
 
 ```
 
-## Required domain
-
-If you are entering your DNS records yourself, this is the records you need to create:
-
-
-| Record            | Type   | Purpose                                  | Example                      |
-| -----------       | ------ | ---------                                | ---------                    |
-| xmpp              | A      | Handle file transfer                     | xmpp.homebox.space           |
-| conference        | A      | S2S conference public URL                | conference.homebox.space     |
-| _xmpp-client._tcp | SRV    | Client to server automatic configuration | 5 0 5222 xmpp.homebox.space  |
-| _xmpp-server._tcp | SRV    | Server to server automatic configuration | 5 0 5269 xmpp.homebox.space  |
-
-The domains are created automatically if you are using the DNS update script with Gandi.
-
 ## Certificates created
 
 Two certificates are created to ensure proper communication with clients and other servers.
 
-| Record            | Type   | Purpose                                  | Example                      |
-| -----------       | ------ | ---------                                | ---------                    |
-| @                 | A      | Default certificate used by the server   | homebox.space                |
-| xmpp              | A      | Handle file transfer over https          | xmpp.homebox.space           |
-| conference        | A      | S2S conference public URL                | conference.homebox.space     |
+| Record      | Type   | Purpose                                | Example                  |
+| ----------- | ------ | ---------                              | ---------                |
+| @           | A      | Default certificate used by the server | homebox.space            |
+| xmpp        | A      | Handle file transfer over https        | xmpp.homebox.space       |
+| conference  | A      | S2S conference public URL              | conference.homebox.space |
 
-## Disabling server to server communication
+## Fine tuning
+
+### Disabling server to server communication
 
 To disable s2s communication, set the flag install to false:
 
-```yaml
-ejabberd_default:
+``` yaml hl_lines="5 6"
+ejabberd:
   install: true
   allow_contrib_modules: false
   # Server-to-server communication
@@ -74,12 +62,12 @@ ejabberd_default:
     active: false
 ```
 
-## Restrict access to only a few servers
+### Restrict access to only a few servers
 
 You can restrict access to a few trusted domains, for instance:
 
-```yaml
-ejabberd_default:
+``` yaml hl_lines="9 10 11"
+ejabberd:
   install: true
   allow_contrib_modules: false
   # Server-to-server communication
@@ -92,12 +80,12 @@ ejabberd_default:
       - exemple.com
 ```
 
-# Traffic shapper
+### Traffic shapper
 
 The traffic shapper values are useful to limit the bandwidth, especially during file transfers:
 
 ```yaml
-  # traffic shaper
+ejabberd:
   shaper:
     normal: 1000
     fast: 50000

@@ -33,16 +33,11 @@ By default, automatic security updates are installed, using the
 
 The changes are sent to the postmaster by default, using the recipient(s) defined in alerts_email variable.
 
-## Root access
-
-The root account is locked by default, which means only SSH access is possible. However, you can define administrators
-of the system, and use the `sudo` command to become root.
-
 ## Defining administrators
 
 This is done by setting a flag `sudo: true` for the users you want to grant administrator's rights, for instance:
 
-```yaml
+``` yaml hl_lines="9"
 # list of users
 users:
 - uid: john
@@ -51,15 +46,14 @@ users:
   last_name: Doe
   mail: john.doe@example.com
   password: 'xIlm*uu7'
-  # This user will be part of the sudo group
-→ sudo: true
+  sudo: true
 ```
 
 ## Grant some users remote access
 
 This is done by adding a public key to the user definition, for instance:
 
-```yaml
+``` yaml hl_lines="10"
 # list of users
 users:
 - uid: john
@@ -69,7 +63,7 @@ users:
   mail: john.doe@example.com
   password: 'xIlm*uu7'
   # Allow remote access using SSH
-→ ssh_key:
+  ssh_key:
     type: ecdsa-sha2-nistp384
     comment: john@homebox
     data: >-
@@ -78,18 +72,21 @@ users:
       xcLmuv8NO2siwhqWmZfvrXEWlQ==
 ```
 
-If you are giving one user remote both sudo and remote access, you can then completely disable root SSH login:
+## Locking root access
+
+The root account is locked by default, which means only SSH access is possible. However, if you have defined
+administrators, you can now activate the `sudo` command to become root for these accounts and completely disable root
+SSH login:
 
 ```yaml
 # Security settings
 security:
-→ ssh_disable_root_access_with_password: true
-→ ssh_disable_root_access: true
-→ lock_root_password: true
-
+  ssh_disable_root_access_with_password: true
+  ssh_disable_root_access: true
+  lock_root_password: true
 ```
 
-## Yubikey
+## Using a Yubikey to boot
 
 If your system is encrypted with LUKS, you can use a [Yubikey](https://en.wikipedia.org/wiki/YubiKey) to decrypt the
 main disk. This will be the simplest and safest option to decrypt your main drive.
@@ -98,15 +95,13 @@ main disk. This will be the simplest and safest option to decrypt your main driv
 # Security settings
 security:
   …
-→ luks:
+  luks:
     yubikey: true
-
 ```
 
 Once the system is installed, run the provided script to "enroll" your key:
 
-```sh
-
+``` sh
 root@osaka:~ # yubikey-enroll.sh
 This script will Register your Yubikey to decrypt the main drive.
 Plug your Yubikey that will be used to decrypt the hard drive. Continue (y/n) ?
@@ -121,7 +116,6 @@ Key Slot 5: DISABLED
 Key Slot 6: DISABLED
 Key Slot 7: ENABLED
 The key will be registered in the slot 1
-
 ```
 
 The script will automatically choose a free slot.

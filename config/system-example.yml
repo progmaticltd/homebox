@@ -247,7 +247,6 @@ users:
 ###############################################################################
 #  Bind server defaults
 # bind:
-#   # Bind is actually in testing phase, feedback welcome
 #   install: true
 #   # Default servers to forward queries
 #   forward:

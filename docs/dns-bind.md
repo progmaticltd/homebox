@@ -2,7 +2,7 @@
 
 The default configuration for the DNS server comes with the following options:
 
-- Not installed by default
+- Installed by default
 - DNSSEC Not activated by default
 
 Default options for the server:
@@ -12,7 +12,7 @@ Default options for the server:
 # Bind server defaults
 bind_default:
   # Bind is actually in testing phase, feedback welcome
-  install: false
+  install: true
   # Default servers to forward queries
   forward:
     - 8.8.8.8

@@ -1,6 +1,8 @@
 The platform supports incremental backup of the home directory. You can specify multiple backup
 strategies, and multiple locations.
 
+# Supported locations
+
 The locations currently supported are:
 
 - dir: local drive, only useful for testing; does not require another device.
@@ -20,7 +22,7 @@ For each location, the following procedure is followed:
 6. An email is sent, with the result of all the steps.
 7. If Jabber is activated, an IM is sent to inform the backup is finished, with the end result.
 
-# Backup strategy example
+# One strategy example
 
 Here a non exhaustive example with multiple locations:
 
@@ -64,7 +66,7 @@ You can have different backup frequencies, for instance daily, weekly or monthly
 For any backup type, the destination directory need to exist. All the backups are encrypted using the same encryption
 key. The encryption key backup is in your [backup directory](/deployment-backup/), in encryption/backup-key.pwd
 
-## Backup in a local directory
+## Local directory
 
 This can be a temporary solution unless your main homebox drive is mounted in RAID (see
 [preseed](/preseed#software-raid)) or if you have mounted a remote location yourself.
@@ -82,10 +84,10 @@ backup:
     check_frequency: weekly
 ```
 
-## Backup over the network using SSH
+## Remote server over SSH
 
-This location scheme is using borg on a remote server, over SSH. Therefore, the borg software need
-to be installed on the remote machine, with the appropriate permissions.
+This location scheme is using borg on a remote server, with an SSH connection. Therefore, the borg software need to be
+installed on the remote machine, with the appropriate permissions.
 
 For instance, you want to backup your system on a sever accessible via backup.homebox.space, with
 the user "alice":
@@ -116,10 +118,10 @@ command="borg serve --restrict-to-path /home/alice/backup",restrict ssh-rsa AAAA
 
 The private and public keys are also saved in the deployment backup folder, into ssh-keys/root.
 
-## Backup over the network using SSHFS
+## Remote server, using SSHFS
 
-This location scheme allows you to backup on a remote system over SSH, wihtout borg being
-installed. Here an example on an internal router:
+This location scheme allows you to backup on a remote system over SSH, but does not need borg to be installed. Here an
+example on an internal router:
 
 ```yaml
 backup:
@@ -147,7 +149,7 @@ Host bkp.router.lan
   IdentityFile ~/.ssh/backup.ecdsa
 ```
 
-## Backup on a USB drive
+## On a USB drive
 
 This is the recommended way to backup your system when you are restrained to local backup. Here
 an example:
@@ -177,7 +179,6 @@ be root. For instance:
 ```sh
 $ /sbin/blkid /dev/sdb1
 /dev/sdb1: LABEL="PortableBackup" UUID="6d83f6d4-2769-46d0-b07b-675ab0863393" TYPE="ext4" PARTLABEL="PortableBackup" PARTUUID="01572f1c-bb90-4eda-bccf-6e5953a25f44"
-
 ```
 
 Once the backup is finished, the USB drive be automatically unmounted after 60 seconds of
@@ -244,12 +245,11 @@ You can use the [Amazon S3 policy generator](https://awspolicygen.s3.amazonaws.c
 As usual, everything is encrypted locally using borg backup. Therefore, no one will be able to
 decrypt your files without the encryption key.
 
-**Notes**
-
-- This location storage is actually under scrutiny, and might be removed if proven unstable.
-- Under the hood, [S3FS](https://github.com/s3fs-fuse/s3fs-fuse) is used, with the cache option activated, and located
-  in /home/.backup-cache/. Because this folder content is about the size if the whole backup, the /home partition should
-  have enough available disk space.
+!!! Note
+    - This location storage is actually under scrutiny, and might be removed if proven unstable.
+    - Under the hood, [S3FS](https://github.com/s3fs-fuse/s3fs-fuse) is used, with the cache option activated, and located
+      in /home/.backup-cache/. Because this folder content is about the size if the whole backup, the /home partition should
+      have enough available disk space.
 
 # Backup contents
 
@@ -260,10 +260,9 @@ Any file stored by the users in their home folders is back up too.
 
 Some folders are excluded from the backup, like the email indexes and temporary files.
 
-## Notes
-
-- If [Gogs](/gogs-configuration/) is installed, the repository files are automatically excluded from backup.
-- If the Transmission bittorrent daemon is installed, the downloaded files are excluded as well.
+!!! Note
+    - If [Gogs](/gogs-configuration/) is installed, the repository files are automatically excluded from backup.
+    - If the Transmission bittorrent daemon is installed, the downloaded files are excluded as well.
 
 # Emails reporting
 
@@ -322,10 +321,9 @@ Archive consistency check complete, no problems found.
 ```
 
 
-## Example of backup success but prune error email
+## Example of backup error email
 
-``` html
-
+```text
 Backup report for router: Error
 Exception when running backup, see logs for details
 Creation status:
@@ -354,15 +352,14 @@ terminating with success status, rc 0
 Prune errors:
 At least one of the "keep-within", "keep-last", "keep-hourly", "keep-daily", "keep-weekly", "keep-monthly" or "keep-yearly" settings must be specified.
 terminating with error status, rc 2
-
 ```
 
 # Send reports using Jabber.
 
-Homebox comes with the option to send backup status using short messages in real time, using the
-Jabber server embedded in the platform. To do so, use the following settings:
+Homebox comes with the option to send backup status using short messages in real time, using the Jabber server embedded
+in the platform. To do so, use the following settings:
 
-```yaml
+``` yaml hl_lines="5"
 backup:
   install: true
   type: borgbackup
@@ -374,20 +371,17 @@ backup:
   ...
 ```
 
-A first message will be sent just before the backup process starts, and onother one once the
-process is finished, with the status. The last message contains only the status. For a full
-report, you'll still have to check the email.
+A first message will be sent just before the backup process starts, and onother one once the process is finished, with
+the status. The last message contains only the status. For a full report, you'll still have to check the email.
 
-## Example of success message sent by Jabber
+## Example of success message
 
-```html
-00:00 postmaster: Starting backup process for location "nas1"
+```text
 00:15 postmaster: Backup process finished successfully for location "nas1"
 ```
 
-## Example of error message sent by Jabber
+## Example of error message
 
-```html
-00:00 postmaster: Starting backup process for location "nas1"
+```text
 00:03 postmaster: Backup process failed for location 'nas1' (See the email for details)
 ```
