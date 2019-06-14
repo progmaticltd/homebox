@@ -112,22 +112,22 @@ If you do not want to import delete emails too, set this option to false. It is 
 This option is useful if you want to test the import / synchronisation, and see how the folders will be synchronised.
 In the example above, the system downloads the last 10 emails, but will reproduce the entire folders hierarchy.
 
-# Special cases
-
-## GMail
+# GMail Special cases
 
 Google Mail (aka GMail) has some specific features, that make the import trickier.
 However, the system makes some choice.
 For instance, the folders hierarchy is reproduced, but without the ugly '[Google Mail]' label.
 
-- [Google Mail]/Sent Mail : /Sent
-- [Google Mail]/Drafts : /Draft
-- [Google Mail]/Archives : /Archives
-- [Google Mail]/Bin : /Trash
-- [Google Mail]/Spam : /Junk
-- [Google Mail]/Chat : Not synchronised.
-- [Google Mail]/Starred : Not synchronised.
-- [Google Mail]/Important : Optionally synchronised.
+| Folder                  | Destination              |
+|-------------------------|--------------------------|
+| [Google Mail]/Sent Mail | /Sent                    |
+| [Google Mail]/Drafts    | /Draft                   |
+| [Google Mail]/Archives  | /Archives                |
+| [Google Mail]/Bin       | /Trash                   |
+| [Google Mail]/Spam      | /Junk                    |
+| [Google Mail]/Chat      | Not synchronised.        |
+| [Google Mail]/Starred   | Not synchronised.        |
+| [Google Mail]/Important | Optionally synchronised. |
 
 The "Starred" folder is a virtual folder that represents a view of your starred emails.
 The same behaviour will be added to this platform.
@@ -137,12 +137,12 @@ into multiple folders, if they have multiple labels.
 There is nothing to do - yet - about this, but it is better to import an email multiple times rather than
 loosing emails.
 
-### Get important emails in a specific folder
+## Important emails
 
 As a corollary, there is an option, specific to GMail, to download the emails marked as "Important" in
 a dedicated folder, the option is called "`get_important`", and set to true by default.
 
-### Get archives: "get_archives"
+## Get archives
 
 This option is set to true by default. Set it to false if you do not want to download your entire email
 archives.
