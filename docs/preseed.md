@@ -146,7 +146,7 @@ If anything goes wrong, use issues on [Github project page](https://github.com/p
     intel_idle.max_cstate=1
     ```
 
-The next step is detailed in the [configuration](configuration.md) section, and is really the installation procedure.
+The next step is detailed in the [installation](installation.md) section, and is really the installation procedure.
 
 # Disk scheme options
 

@@ -1,9 +1,0 @@
-/* Bigger level 2 menu entries */
-.toctree-l2 a {
-  font-size: 100%;
-}
-
-/* Indent level 3 menu entries */
-a.toctree-l3 {
-  text-indent: 15pt;
-}
