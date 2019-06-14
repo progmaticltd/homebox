@@ -57,11 +57,11 @@ users:
     - mike@homebox.space
 ```
 
-Then, run the ldap and user-setup playbooks:
+Then, run the dedicated playbook to update users:
 
 ```sh
-ansible-playbook -v -i ../config/hosts.yml playbooks/ldap.yml
-ansible-playbook -v -i ../config/hosts.yml playbooks/user-setup.yml
+cd install
+ansible-playbook -v -i ../config/hosts.yml playbooks/update-users.yml
 ```
 
 The home playbook create the home directories for this user.

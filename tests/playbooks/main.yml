@@ -32,7 +32,10 @@
 
 # Test MDA (dovecot) functions
 - import_playbook: dovecot.yml
+
+  # Test Full text search
 - import_playbook: dovecot-fts.yml
+  when: mail.fts.active
 
 # Test autoconfiguration server
 - import_playbook: autoconfig.yml
@@ -69,11 +72,10 @@
 # Proxies test: privoxy and tor
 - import_playbook: privoxy.yml
   when: privoxy.install
-  
+
 - import_playbook: tor.yml
   when: tor.install
 
 # Zabbix server
 - import_playbook: zabbix.yml
   when: zabbix.install
-  

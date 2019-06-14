@@ -59,7 +59,11 @@
   ldap_attr:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
-    dn: 'cn={{ user.1.cn }},{{ ldap.users.dn }}'
+    dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
     name: intlMailAddr
-    values: '{{ user.1.aliases | default([]) }}'
+    values: '{{ user.aliases | default([]) }}'
     state: exact
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
