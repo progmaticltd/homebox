@@ -121,5 +121,5 @@ $ sudo apt install ansible rsync
 ```
 
 If you already have a Debian server (Stretch) installed, and you prefer to use it, it's fine, you can skip the next
-section and start the [configuration](configuration.md) directly. Otherwise, click on next to read the OS installation
+section and start the [installation](installation.md) directly. Otherwise, click on next to read the OS installation
 page.

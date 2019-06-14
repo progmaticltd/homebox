@@ -1,0 +1,28 @@
+/* Bigger level 2 menu entries */
+.toctree-l2 a {
+    font-size: 100%;
+}
+
+/* Indent level 3 menu entries */
+a.toctree-l3 {
+    text-indent: 15pt;
+}
+
+div.codehilite {
+    border: 2px solid #ddd;
+    padding: 2px;
+    overflow: hidden;
+    margin-bottom: 2em;
+}
+
+div.codehilite:hover {
+    overflow: auto;
+}
+
+div.codehilite span.hll {
+    margin: auto;
+}
+
+div.wy-nav-content {
+    max-width: 1200px;
+}

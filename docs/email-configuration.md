@@ -100,9 +100,9 @@ users:
     - andré@homebox.space
 ```
 
-!!! Notes
+!!! Note
     This is possible if all the software and the platforms involved support it. Not all major email providers are supporting
-    this, Yahoo mail, for instance, does not even let you send an email with an internationalised user names.
+    this, Yahoo mail, for instance, does not even let you send an email with an internationalised user name.
     This feature is not entirely tested yet, but is working so far between two homebox servers and SOGo or evolution.
 
 ## Email addresses extensions

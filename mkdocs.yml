@@ -6,11 +6,10 @@ copyright: Creative Commons Attribution-ShareAlike 4.0 International License
 markdown_extensions:
   - smarty
   - admonition
-  - codehilite:
-      linenums: true
-extra_css: [ extra.css ]
+  - codehilite
+extra_css: [ css/extra.css ]
 theme: readthedocs
-nav:
+pages:
   - Home: index.md
   - Features: features.md
   - Before the installation: prerequisites.md
@@ -18,13 +17,13 @@ nav:
   - Homebox Installation: installation.md
   - Email configuration: email-configuration.md
   - Roundcube Webmail: webmail-roundcube.md
-  - Firewall configuration: firewall-configuration.md
-  - Email access monitoring: email-access-monitoring.md
   - Sogo Groupware: groupware-sogo.md
+  - Email access monitoring: email-access-monitoring.md
   - Antispam configuration: antispam-rspamd.md
   - Jabber configuration: jabber-configuration.md
   - Gogs configuration: gogs-configuration.md
   - Tor / privoxy configuration: tor-privoxy-configuration.md
+  - Firewall configuration: firewall-configuration.md
   - Security configuration: security-configuration.md
   - Transmission configuration: transmission-configuration.md
   - DNS Server configuration: bind-configuration.md
@@ -37,5 +36,3 @@ nav:
   - Maintenance: maintenance.md
   - Testing and development: development.md
   - Code of conduct: codeofconduct.md
-
-#   - Wait for DNS propagation: dns-propagation.md

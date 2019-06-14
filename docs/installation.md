@@ -26,12 +26,8 @@ installed. See the security section, [Defining administrators](/security-configu
 
 ## Step 2: Describe your system
 
-The main configuration file to create is in the config folder. There is an example named
-[system-example.yml](config/system-example.yml) ready to copy to customise.
-
-There is also a configuration file [defaults.yml](config/defaults.yml). This file contains all the possible options,
-and **is recursively merged with your configuration** on deployment. Therefore, you can override any default value
-without having to copy entire branches.
+The main configuration file to create is in the config folder. There is an example named system-example.yml ready to
+copy to customise. There is also a configuration file defaults.yml. This file contains all the possible options.
 
 ```sh
 cd config
@@ -54,6 +50,13 @@ The system configuration file is a complete YAML configuration file containing a
 The most important settings are the first two sections, the others can be left to their default values.
 
 Once you have modified the file, you are ready to start the installation.
+
+!!! Tip
+    The system.yml file is merged with the default configuration on deployment. Therefore, you can override any default
+    value without having to copy entire branches.
+
+!!! Warning
+    Be careful with the indentation in your Yaml file, the number of spaces is significant.
 
 ## Step 3: Start the installation
 

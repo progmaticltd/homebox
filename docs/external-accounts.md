@@ -1,10 +1,9 @@
-# Downloading emails from external accounts
+# Retrieving emails
 
 It is possible to add external accounts (GMail, Outlook, Yahoo, IMAP, etc...) to the platform.
 In this case, your emails will be downloaded in background, every time you logon on your account.
 
-!!! Note
-    This is a one way synchronisation only, the remote accounts are not modified.
+This is a one way synchronisation only, the remote accounts are not modified.
 
 ## Security
 
