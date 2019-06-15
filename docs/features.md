@@ -1,3 +1,4 @@
+
 # Backup and disaster recovery
 
 ## Debian ISO image builder
@@ -9,7 +10,8 @@ This will make a quick re-installation disk for the system. It will configure fo
 with Ansible, from a remote workstation. Although it might be possible to integrate the deployment scripts into the ISO
 image.
 
-Because this feature can be useful to other projects, a dedicated project has been created on github.
+Because this feature can be useful to other projects, a dedicated project has been created on
+[github](https://github.com/progmaticltd/debian-iso-builder).
 
 ## Deployment replay
 
@@ -27,7 +29,16 @@ emails can be automatically restored from backup location of your choice.
 You can setup multiple backups for your user's home folders, remote or local, with multiple frequencies as well. For
 instance, one daily backup on your NAS using a Samba share, and a weekly backup on a remote server using SSH. All the
 backups are encrypted and managed by the excellent _borgbackup_ package. A [summary email](/backup/#emails-reporting) is
-sent at the end of the backup process, both in case of success and failure.
+sent at the end of the backup process. If you have opted for the Jabber installation, a short message is sent as well,
+notifying you of the job completion.
+
+## Disaster recovery
+
+When you are deploying the system for the first time, all the information generated is saved on the deployment
+workstation. This gives you a way to re-install your system from scratch, without loosing any information.
+
+If you have specified an external backup location, for instance on a remote server through SSH or on Amazon S3, all your
+emails, address books and calendars will be automatically restored from the backup location of your choice.
 
 # Security
 
@@ -43,8 +54,9 @@ server to connect, and let you enter the passphrase. The SSH server is the excel
 [dropbear](https://matt.ucc.asn.au/dropbear/dropbear.html), and shares the public key with OpenSSH: _You will not have
 the usual SSH warnings staying the signature has changed_.
 
-It is also possible to use a Yubikey, with or without a passphrase, to decrypt your drive. In this case, a safe script
-to enroll your key is provided.
+!!! Tip
+    It is also possible to use a [Yubikey](https://yubico.com/), with or without a passphrase, to decrypt your drive. In
+    this case, a safe script to enroll your key is provided.
 
 ## AppArmor enforcement
 
@@ -54,14 +66,14 @@ intrusion and 0-day vulnerabilities as well.
 ## Fail2ban integration
 
 Fail2ban is integrated and configured, to automatically blacklist IP addresses used by spammers to attack your
-server. It makes this kind of attacks inefficient, and saves your bandwidth too.
-
-The duration of jail is customisable for jabber and email services.
+server. It makes this kind of attacks inefficient, and saves your bandwidth too. The duration of jail is customisable for
+jabber and email services.
 
 ## LDAP Authentication
 
-All the user accounts are saved in the LDAP database, using the OpenLDAP package in Debian. A dedicated SSL certificate
-is created during the installation, allowing secure SSL and TLS communication with the server.
+One password per user, for all the services. All the user accounts are saved in the LDAP database, using the OpenLDAP
+package in Debian. A dedicated SSL certificate is created during the installation, allowing secure SSL and TLS
+communication with the server.
 
 ## Password policies
 
@@ -245,25 +257,7 @@ RoundCube, comes with the following plugins / features activated by default:
 When the master user functionality has been activated, the impersonate plugin is also installed, allowing you to inspect
 any user's emails directly from the webmail.
 
-More plugins can be activated very easily, just by specifying their name in the list of plugins:
-
-- dkimstatus
-- hide_blockquote
-- zipdownload
-- new_user_dialog
-- additional_message_headers
-- acl
-- database_attachments
-- debug_logger
-- help
-- hide_blockquote
-- http_authentication
-- show_additional_headers
-- squirrelmail_usercopy
-- userinfo
-- vcard_attachments
-- virtuser_file
-- virtuser_query
+More plugins can be activated very easily, just by specifying their name in the list of plugins.
 
 ## Automatic copy to the sent folder
 

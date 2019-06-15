@@ -30,4 +30,16 @@
 
   /run/sogo/GNUstep/Defaults/ r,
   /run/sogo/GNUstep/Defaults/** rwk,
+
+  # Access LDAP config
+  /etc/ldap/ldap.conf r,
+
+  # Global backup folders
+  /var/backups/sogo/ rw,
+  /var/backups/sogo/** r,
+  /var/backups/sogo/** rw,
+
+  # Personal backup folders
+  /home/users/*/backups/sogo/ rw,
+  /home/users/*/backups/sogo/** rw,
 }

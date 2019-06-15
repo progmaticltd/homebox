@@ -36,33 +36,6 @@
   loop_control:
     loop_var: option
 
-- name: Create the backup keys directory locally if it does not exists
-  register: backup_keys_local_directory
-  delegate_to: localhost
-  tags: sync
-  file:
-    path: '{{ backup_directory }}/backup-keys/'
-    state: directory
-
-# If the folder already existed, upload the keys on the server.
-# The "--ignore-existing" option skip the files already existing,
-# the '--update' option make sure to not overwrite new keys.
-- name: Upload the backup encryption keys if they exists
-  when: not backup_keys_local_directory.changed
-  register: keys_restore
-  tags: sync
-  synchronize:
-    src: '{{ backup_directory }}/backup-keys/'
-    dest: /tmp/backup-keys/
-    owner: no
-    group: no
-    perms: yes
-    rsync_opts:
-      - '--no-motd'
-      - '--ignore-existing'
-      - '--update'
-      - '--include=backup-*.key'
-
 - name: Configure each protocol
   include_tasks: 'install-protocol-{{ location.url | urlsplit("scheme") }}.yml'
   with_items:
@@ -124,34 +97,64 @@
   loop_control:
     loop_var: location
 
+
+- name: Create sync directories to import/export keys
+  tags: sync
+  file:
+    path: '{{ path }}'
+    state: directory
+  with_items:
+    -  /tmp/backup-keys-import
+    -  /tmp/backup-keys-export
+  loop_control:
+    loop_var: path
+
+- name: Create the backup keys directory locally if it does not exists
+  register: backup_keys_local_directory
+  delegate_to: localhost
+  tags: sync
+  file:
+    path: '{{ backup_directory }}/backup-keys/'
+    state: directory
+
+# If the folder already existed, upload the keys on the server.
+- name: Upload the backup encryption keys if they exists
+  when: not backup_keys_local_directory.changed
+  tags: sync
+  register: keys_restore
+  synchronize:
+    src: '{{ backup_directory }}/backup-keys/'
+    dest: /tmp/backup-keys-import/
+    owner: no
+    group: no
+    perms: yes
+    rsync_opts:
+      - '--no-motd'
+      - '--quiet'
+
 - name: Import the backup encryption keys if they already exists
   when: keys_restore.changed and backup.locations is defined and backup.locations != []
-  tags: key, import
+  tags: sync
   shell: >-
-    test -f /tmp/backup-keys/{{ location.name }}.key &&
+    test -f /tmp/backup-keys-import/{{ location.name }}.key &&
     borg key import --info
     {{ location.url | regex_replace("^[a-z0-9]+:/", "") }}
-    /tmp/backup-keys/{{ location.name }}.key
+    /tmp/backup-keys-import/{{ location.name }}.key
     || /bin/true
   with_items:
     - '{{ backup.locations }}'
   loop_control:
     loop_var: location
 
-- name: Create a temporary directory to save the backup keys
-  file:
-    path: /tmp/backup-keys
-    state: directory
-    mode: 0700
-
 - name: Retrieve the backup encryption keys
   when: backup.locations is defined and backup.locations != []
+  tags: sync
   shell: >-
     borg key export
     {{ location.url | regex_replace("^[a-z0-9]+:/", "") }}
-    /tmp/backup-keys/{{ location.name }}.key
+    /tmp/backup-keys-export/{{ location.name }}.key
   args:
-    creates: '/tmp/backup-keys/{{ location.name }}.key'
+    creates: '/tmp/backup-keys-export/{{ location.name }}.key'
   with_items:
     - '{{ backup.locations }}'
   loop_control:
@@ -163,25 +166,25 @@
   tags: sync
   synchronize:
     mode: pull
-    src: /tmp/backup-keys
-    dest: '{{ backup_directory }}'
+    src: /tmp/backup-keys-export/*.key
+    dest: '{{ backup_directory }}/backup-keys/'
     perms: yes
     rsync_opts:
       - '--no-motd'
-      - '--include=backup-*.key'
-      - '--update'
+      - '--quiet'
 
 - name: Remove the backup keys directory, we don't need this anymore
+  tags: sync
   file:
-    path: /tmp/backup-keys
+    path: '{{ path }}'
     state: absent
-
-- name: Restore the home folder from a previous installation
-  when: backup.locations is defined and backup.locations != []
-  tags: restore
-  shell: >-
-    /usr/local/sbin/backup --action restore --config {{ location.name }}
   with_items:
-    - '{{ backup.locations | selectattr("restore", "defined") | selectattr("restore", "equalto", true) | list }}'
+    -  /tmp/backup-keys-import
+    -  /tmp/backup-keys-export
   loop_control:
-    loop_var: location
+    loop_var: path
+
+- name: Restore backups from a previous installation
+  tags: restore
+  when: backup.locations is defined and backup.locations != []
+  include_tasks: 'restore-all.yml'

@@ -282,7 +282,9 @@ class BackupManager(object):
             os.environ["BORG_PASSPHRASE"] = self.key
             args = [ 'borg', 'list', self.repositoryPath ]
             status = subprocess.run(args, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            logging.info("Initialised the repository." + status.stdout)
         except:
+            logging.error("Error when initialising the repository: " + status.stderr)
             return False
 
         # If not, raise an exception to avoid writing files in a directory with user content
@@ -296,7 +298,7 @@ class BackupManager(object):
         args = [ 'borg', 'create' ]
 
         # Build repository path specification
-        pathSpec = self.repositoryPath + '::home-{now}'
+        pathSpec = self.repositoryPath + '::homebox-{now}'
 
         args.append('--filter')
         args.append('AME')
@@ -319,8 +321,9 @@ class BackupManager(object):
 
         args.append(pathSpec)
 
-        # Which path to backup
+        # Which paths to backup
         args.append('/home')
+        args.append('/var/backups')
 
         # Start he process
         status = subprocess.run(args, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -463,10 +466,10 @@ class BackupManager(object):
             stderr=subprocess.PIPE)
 
         # Save details for reporting
-        if status.stdout != None:
-            lastID = status.stdout.replace('\n', '').replace('\r', '')
-
-        return lastID
+        if status.stdout.rstrip() != "":
+            return status.stdout.rstrip()
+        else:
+            return False
 
 
     def restoreBackup(self, version, location="/"):
@@ -480,6 +483,10 @@ class BackupManager(object):
 
         # Standard extractions
         args = [ 'borg', 'extract', '--info' ]
+
+        # Add list of restored files
+        if args.logLevel == logging.DEBUG:
+            args.append('--list')
 
         # Finally add the repository path
         args.append(self.repositoryPath + "::" + version)
@@ -660,9 +667,10 @@ def main(args):
         # Check if this is a restore attempt
         elif args.action == "restore":
             lastBackupID = manager.getLastBackupID()
-            if lastBackupID == False:
-                raise RuntimeError("Backup is empty")
-            manager.restoreBackup(lastBackupID, args.location)
+            if lastBackupID != False:
+                manager.restoreBackup(lastBackupID, args.location)
+            else:
+                logging.warning("Nothing to restore, backup is empty")
 
         # unmount the repository as we do not need it anymore
         if not manager.umountRepository():

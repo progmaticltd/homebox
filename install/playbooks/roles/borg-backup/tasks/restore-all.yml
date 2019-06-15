@@ -1,0 +1,40 @@
+---
+
+- name: Restore /home and /var/backups folders from a previous installation
+  tags: restore
+  shell: >-
+    /usr/local/sbin/backup --action restore --config {{ location.name }}
+  with_items:
+    - '{{ backup.locations | selectattr("restore", "defined") | selectattr("restore", "equalto", true) | list }}'
+  loop_control:
+    loop_var: location
+
+- name: Check if SOGo backup exists
+  register: sogo_backup_dir
+  tags: restore
+  when: sogo.install
+  file:
+    path: /var/backups/sogo
+    state: directory
+
+- name: Get the name of the last SOGo backup
+  tags: restore
+  when: sogo.install and not sogo_backup_dir.changed
+  register: sogo_last_backup_dir
+  shell: >-
+    ls -1t /var/backups/sogo/ | head -n 1
+
+- name: Restore address books and calendars
+  tags: restore
+  when: sogo.install and not sogo_backup_dir.changed and sogo_last_backup_dir.stdout != ""
+  notify: Restart memcached
+  shell: >-
+    test -f /var/backups/sogo/{{ sogo_last_backup_dir.stdout }}/{{ user.uid }} &&
+    /usr/sbin/sogo-tool restore -F ALL
+    /var/backups/sogo/{{ sogo_last_backup_dir.stdout }}
+    {{ user.uid }}
+    || /bin/true
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user

@@ -16,4 +16,4 @@
 #   - writes backups to /var/backups/sogo/
 #   - will keep 31 days worth of backups by default
 #   - runs once a day by default, but can run more frequently
-30 0 * * *     sogo   /usr/sbin/sogo-backup
+30 0 * * *     sogo    /usr/sbin/sogo-backup

@@ -8,3 +8,8 @@
   service:
     name: local-fs.target
     state: restarted
+
+- name: Restart memcached
+  service:
+    name: memcached
+    state: restarted
