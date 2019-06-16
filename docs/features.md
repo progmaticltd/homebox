@@ -13,17 +13,6 @@ image.
 Because this feature can be useful to other projects, a dedicated project has been created on
 [github](https://github.com/progmaticltd/debian-iso-builder).
 
-## Deployment replay
-
-When you are deploying the system for the first time, all the information generated is saved on the deployment
-workstation.
-
-This gives you a way to re-install your system from scratch, without loosing any information and without having to
-change your DNS records.
-
-If you have specified an external backup location, for instance on a remote server through SSH or on Amazon S3, all your
-emails can be automatically restored from backup location of your choice.
-
 ## Multiple encrypted backups
 
 You can setup multiple backups for your user's home folders, remote or local, with multiple frequencies as well. For
@@ -50,9 +39,11 @@ passphrase specified in a configuration file.
 This make your server fully secure against physical intrusion, even if your hardware is lost or stolen.
 
 You do not have to plug a screen and a keyboard to unlock your server. Once it is booted, the server starts a small SSH
-server to connect, and let you enter the passphrase. The SSH server is the excellent
-[dropbear](https://matt.ucc.asn.au/dropbear/dropbear.html), and shares the public key with OpenSSH: _You will not have
-the usual SSH warnings staying the signature has changed_.
+server to connect, and let you enter the passphrase.
+
+!!! Note
+    The SSH server started on boot share the same public key with OpenSSH. Therefore, you will not have the usual SSH
+    warnings staying the signature has changed.
 
 !!! Tip
     It is also possible to use a [Yubikey](https://yubico.com/), with or without a passphrase, to decrypt your drive. In
@@ -77,10 +68,10 @@ communication with the server.
 
 ## Password policies
 
-Password complexity is enforced at system level, using [pwquality
-module](https://packages.debian.org/stretch/libpam-pwquality).  You can specify minimum length, mandatory characters
-like symbols and a mix of lowercase / uppercase letters. You can also remember the last passwords for each users,
-avoiding them to re-use the same passwords or use a password too similar than the previous ones.
+Password complexity is enforced using the [pwquality module](https://packages.debian.org/stretch/libpam-pwquality). You
+can specify minimum length, mandatory characters like symbols and a mix of lowercase / uppercase letters. You can also
+remember the last passwords for each users, avoiding them to re-use the same passwords or use a password too similar
+than the previous ones.
 
 ## Automatic security update
 
@@ -109,10 +100,8 @@ and dovecot, a 2048 Diffie-Helman parameter file is generated upon installation.
 ## Unusual behaviour detection
 
 This advanced feature is unique amongst both commercial and self-hosted solutions. It is actually restricted to IMAP,
-but will be extended to other services. It is not activated by default yet, as more tests and specific requirements are
-needed.
-
-It is working by using a "points" system, where more points generate warnings or even deny the connection.
+but will be extended to other services. It is working by using a "points" system, where more points generate warnings or
+even deny the connection.
 
 The following behaviour are detected, from the :
 
@@ -128,9 +117,8 @@ specific usage. For instance, it is possible to:
 - Whitelist / Blacklist IP addresses, globally or per user.
 - Set office hours, globally only at this time.
 
-Warning and errors are sent in real time, using XMPP and email to the user and an external email address.
-
-Two factors authentication on unusual behaviour will be implemented later, perhaps using google authenticator.
+Warning and errors are sent in real time, using XMPP and email to the user and an external email address. Two factors
+authentication on unusual behaviour will be implemented later, perhaps using google authenticator.
 
 # Email features
 
@@ -139,16 +127,14 @@ Two factors authentication on unusual behaviour will be implemented later, perha
 A DKIM certificate of 4096 bits is generated during the installation, and the associated public key is published on the
 DNS server. The DKIM key purpose is to mark emails coming from your domain as authentic.
 
-The SPF and DMARC records are generated and published automatically as well.
-
-This will guarantee your emails being recognised by other email servers without any problem.
+The SPF and DMARC records are generated and published automatically as well. This will guarantee your emails being
+recognised by other email servers without any problem.
 
 ## Internationalised email aliases
 
 You can add as many email aliases as you want for your user accounts. Moreover, you will be able to add email addresses
-with internationalised characters, using a standardised LDAP schema.
-
-You can then have email addresses like andré@homebox.space, or even аджай@экзампл.рус.
+with internationalised characters, using a standardised LDAP schema. You can then have email addresses like
+andré@homebox.space.
 
 ## Address extension
 
@@ -166,7 +152,7 @@ interface to configure your filters is powerful but easy to use.
 You can also access your sieve filters with the _ManageSieve_ protocol, and the [Thunderbird
 extension](https://addons.mozilla.org/en-US/thunderbird/addon/sieve/).
 
-For instance, you can automaticaly:
+For instance, you can automatically:
 
 - move/copy messages to specified folder
 - redirect/copy messages to another account
@@ -302,8 +288,8 @@ page](https://sogo.nu/support.html#/v3).
 
 # XMPP / Jabber server
 
-The installation script can install an XMPP / Jabber server, by using [ejabberd](https://www.ejabberd.im/), a _Rock
-Solid, Massively Scalable, Infinitely Extensible XMPP Server_.
+The installation script can install an XMPP / Jabber server, by using [ejabberd](https://www.ejabberd.im/),
+a “_Rock Solid, Massively Scalable, Infinitely Extensible XMPP Server_”.
 
 ## Client to Server
 
@@ -332,27 +318,29 @@ Some clients: [XMPP client software](https://xmpp.org/software/clients.html).
 
 ## Gogs git server
 
-You can optionally install a small, fast and light git server called [gogs](https://gogs.io/). The server is configured
+You can optionally install a small, fast and lightweight git server called [gogs](https://gogs.io/). The server is configured
 with the following features:
 
 - HTTPS certificate
 - LDAP authentication
 - Automatic update
 - Two factors authentication
-- Repository mirror
+- Repository mirroring
 
 ## Bittorrent download station
 
 You can install the transmission bittorrent daemon, accessible over https on a dedicated domain.
 
 - The web interface and the RPC servers are protected with the LDAP credentials, unless you are at home.
-- Downloaded files can be accessed within your web browser, still using the LDAP credentials if you are not at home.
+- Downloaded files can be accessed directly from your web browser, still using the LDAP credentials if you are not at home.
 - The daemon runs in a proper AppArmor profile.
 - Easy to use form to search downloaded files in your web browser.
+- Automatic firewall configuration to allow bittorrent both input and output.
+- Blacklist support and automatic update.
 
 ## Privoxy server
 
-The platform configures Privoxy configured with the easylist rules by default, updated every day. The following rules
+The platform configures Privoxy with an automatic import of adblock rules from easylist, updated every day. The following rules
 are activated by default:
 
 - EasyList
@@ -362,24 +350,22 @@ are activated by default:
 
 ## Tor server
 
-The platform configures Tor as well, and allows you to ooverride any option.  You can also chain privoxy and tor
+The platform configures Tor as well, and allows you to ooverride any option. You can also chain privoxy and tor
 together.
 
 ## Multiple IP scheme
 
-Homebox can be configured with two static IP addresses, with a mix of IPv4 amd IPv6.
-
-This is useful if you are using a VPN that provides you a static IP address or if you are using 3G / 4G as a backup
-connection.
+Homebox can be configured with two static IP addresses, with a mix of IPv4 amd IPv6. This is useful if you are using a
+VPN that provides you a static IP address or if you are using 3G / 4G as a backup connection.
 
 IPv6 is actually tested on [vultr.com](https://vultr.com/), a provider that supports full IPv6, on virtual
 servers. Digital Ocean does not allows SMTP or Submission on IPv6.
 
 ## DNSSEC Support
 
-If you need a higher level of security and a protection agains DNS cache poisoning, you can install a custom DNS server
-on your box, with support for DNSSEC extensions. Once the playbook has been run, an email is sent to postmaster, with
-the ZSK (Zone Signing Key) and KSK (Key Signing Key) attached.
+If you need a higher level of security and a protection agains DNS cache poisoning, you can activate the DNSSEC
+extensions. Once the playbook has been run, an email is sent to postmaster, with the ZSK (Zone Signing Key) and KSK (Key
+Signing Key) attached.
 
 The server installed is bind9. When activated, the server also publishes
 [SSHFP](https://en.wikipedia.org/wiki/SSHFP_record) records for extra security.
