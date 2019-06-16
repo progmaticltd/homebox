@@ -21,10 +21,25 @@ backups will be provided in a future version. In the mean time, the process has 
 9. Finally, disconnect from SSH.
 10. Open your email client.
 
+# Data restoration
+
+Something bad happened, for instance you just deleted a lot of email, contacts or calendar events. In this case, before
+the next backup occurs and backup your mistake, you can quickly restore your emails, calendar events and contacts, with
+just one line.
+
+So, just run the main borgbackup installation script:
+
+```sh
+cd install
+ansible-playbook -v -i ../config/hosts.yml -t restore playbooks/borgbackup.yml
+```
+
 # Complete restoration
 
-OK, something bad happened, and you lost your box. Don't panic, if you have installed the system properly, you can
-easily restore it from scratch, with the all emails as well. This is done by adding one line in your sysetm.yml file!
+This is the disaster recovery option.
+
+Something really bad happened, and you lost your box. Don't panic, if you have installed the system properly, you can
+easily restore it from scratch, with the all your users' data. This is done by adding one line in your sysetm.yml file!
 
 The important thing is to have kept the [deployment backup folder](deployment-backup.md) in a safe place, for instance
 on an encrypted USB drive.
@@ -62,7 +77,13 @@ cd install
 ansible-playbook -v -i ../config/hosts.yml playbooks/main.yml
 ```
 
-The whole installation is taking enough time for you to have a well deserved break. Prepare yourself a nice cup of tea
-or coffee. Once installed, you should have all your emails from the last backup restored.
+Depending on the amount of data, the network speed and computer power, the whole installation is taking enough time for
+you to have a well deserved break. Prepare yourself a nice cup of tea or coffee. Once installed, you should have all
+your emails from the last backup restored.
 
-In this example, an email and a Jabber message are sent after the system has been restored.
+!!! Tip
+    You can perfectly restore from multiple location, by adding the line `restore: true` to each backup location. In
+    this case, the data will be merged, so you won't have duplicate emails, calendar events or contacts.
+
+!!! Note
+    In this example, an email and a Jabber message are sent after the system has been restored.

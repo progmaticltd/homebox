@@ -117,7 +117,7 @@ class BackupManager(object):
 
         ## When using SSH, we do not need to mount remote SSH location.
         # for this scheme, it is assumed that the remote server has borg installed
-        # otherwise, use SSHFS
+        # otherwise, use sshfs://
         if self.location.scheme == 'ssh':
             self.repositoryPath = self.url[6:]
             self.repositoryMounted = True
@@ -128,29 +128,28 @@ class BackupManager(object):
         os.makedirs(self.mountPath, exist_ok=True)
 
         # The backup location can be a remote directory mounted locally
-        # or even a local partition. This need to be tested thoroughly
-        # and might be removed later.
+        # or even a local partition. Removing dir://
         if self.location.scheme == 'dir':
-            self.repositoryPath = self.url[5:]
+            self.repositoryPath = self.location.path
             self.repositoryMounted = True
             return True
 
         # The location is a USB device mounted automatically using systemd
         if self.location.scheme == 'usb':
-            self.repositoryPath = '/mnt' + self.location.path
+            self.repositoryPath = self.location.path
             self.mountPath = '/mnt/backup/' + self.configName
             self.repositoryMounted = os.path.ismount(self.mountPath)
             return self.repositoryMounted
 
         # The location is an S3 bucket mounted automatically using systemd
         if self.location.scheme == 's3fs':
-            self.repositoryPath = '/mnt' + self.location.path
+            self.repositoryPath = self.location.path
             self.mountPath = '/mnt/backup/' + self.configName
             self.repositoryMounted = os.path.ismount(self.mountPath)
             return self.repositoryMounted
 
         ## When using SSHFS, the remote location is mounted using fuse
-        # the mount path and the repository path are the same
+        # In this case, the mount path and the repository path are the same.
         if self.location.scheme == 'sshfs':
             self.repositoryPath = '/mnt/backup/' + self.configName
             self.mountPath = '/mnt/backup/' + self.configName
@@ -165,6 +164,7 @@ class BackupManager(object):
             self.repositoryMounted = True
             return True
 
+        # Throw an error in case the protocol is not implemented
         logging.error("Unknown or not implemented scheme " + self.location)
         raise NotImplementedError(self.location)
 
@@ -282,7 +282,9 @@ class BackupManager(object):
             os.environ["BORG_PASSPHRASE"] = self.key
             args = [ 'borg', 'list', self.repositoryPath ]
             status = subprocess.run(args, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            logging.info("Initialised the repository." + status.stdout)
         except:
+            logging.error("Error when initialising the repository: " + status.stderr)
             return False
 
         # If not, raise an exception to avoid writing files in a directory with user content
@@ -296,7 +298,7 @@ class BackupManager(object):
         args = [ 'borg', 'create' ]
 
         # Build repository path specification
-        pathSpec = self.repositoryPath + '::home-{now}'
+        pathSpec = self.repositoryPath + '::homebox-{now}'
 
         args.append('--filter')
         args.append('AME')
@@ -319,8 +321,9 @@ class BackupManager(object):
 
         args.append(pathSpec)
 
-        # Which path to backup
+        # Which paths to backup
         args.append('/home')
+        args.append('/var/backups')
 
         # Start he process
         status = subprocess.run(args, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -463,10 +466,10 @@ class BackupManager(object):
             stderr=subprocess.PIPE)
 
         # Save details for reporting
-        if status.stdout != None:
-            lastID = status.stdout.replace('\n', '').replace('\r', '')
-
-        return lastID
+        if status.stdout.rstrip() != "":
+            return status.stdout.rstrip()
+        else:
+            return False
 
 
     def restoreBackup(self, version, location="/"):
@@ -490,12 +493,12 @@ class BackupManager(object):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
 
-        if status.returncode == 0:
-            self.lastBackupInfo['restore'] = "Restoration status:\n"
-        else:
-            self.lastBackupInfo['restore'] = "Restoration errors:\n"
-
         # Save details for reporting
+        if status.returncode == 0:
+            self.lastBackupInfo['restore'] = "Restoration status: Success"
+        else:
+            self.lastBackupInfo['restore'] = "Restoration errors: Error"
+
         if status.stdout != None:
             self.lastBackupInfo['restore'] += status.stdout
         if status.stderr != None:
@@ -660,9 +663,10 @@ def main(args):
         # Check if this is a restore attempt
         elif args.action == "restore":
             lastBackupID = manager.getLastBackupID()
-            if lastBackupID == False:
-                raise RuntimeError("Backup is empty")
-            manager.restoreBackup(lastBackupID, args.location)
+            if lastBackupID != False:
+                manager.restoreBackup(lastBackupID, args.location)
+            else:
+                logging.warning("Nothing to restore, backup is empty")
 
         # unmount the repository as we do not need it anymore
         if not manager.umountRepository():

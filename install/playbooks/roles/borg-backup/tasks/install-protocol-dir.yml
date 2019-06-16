@@ -33,4 +33,14 @@
   loop_control:
     loop_var: option
 
-# There is nothing to do for "dir" locations, as they are local
+# Exclude the destination from backup, i.e. don't backup the backup
+- name: Exclude backup directory from backup
+  tags: config
+  lineinfile:
+    path: /etc/homebox/backup-exclude
+    line: '{{ line }}'
+  with_items:
+    - "# Exclude '{{ location.name }}' backup directory"
+    - 'pp:{{ location.url | replace("dir:/", "") }}/'
+  loop_control:
+    loop_var: line
