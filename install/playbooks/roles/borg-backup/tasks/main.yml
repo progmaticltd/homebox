@@ -68,6 +68,7 @@
 
 - name: Create a random passphrase for encrypted backup
   tags: encryption
+  no_log: true
   set_fact:
     backup_key: '{{ lookup("password", "{{ encryption.backupKeyParams }}") }}'
 
@@ -138,7 +139,7 @@
   shell: >-
     test -f /tmp/backup-keys-import/{{ location.name }}.key &&
     borg key import --info
-    {{ location.url | regex_replace("^[a-z0-9]+:/", "") }}
+    {{ location.url | regex_replace("^[^:]+://", "") }}
     /tmp/backup-keys-import/{{ location.name }}.key
     || /bin/true
   with_items:
@@ -151,7 +152,7 @@
   tags: sync
   shell: >-
     borg key export
-    {{ location.url | regex_replace("^[a-z0-9]+:/", "") }}
+    {{ location.url | regex_replace("^[^:]+://", "") }}
     /tmp/backup-keys-export/{{ location.name }}.key
   args:
     creates: '/tmp/backup-keys-export/{{ location.name }}.key'

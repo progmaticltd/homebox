@@ -117,7 +117,7 @@ class BackupManager(object):
 
         ## When using SSH, we do not need to mount remote SSH location.
         # for this scheme, it is assumed that the remote server has borg installed
-        # otherwise, use SSHFS
+        # otherwise, use sshfs://
         if self.location.scheme == 'ssh':
             self.repositoryPath = self.url[6:]
             self.repositoryMounted = True
@@ -128,29 +128,28 @@ class BackupManager(object):
         os.makedirs(self.mountPath, exist_ok=True)
 
         # The backup location can be a remote directory mounted locally
-        # or even a local partition. This need to be tested thoroughly
-        # and might be removed later.
+        # or even a local partition. Removing dir://
         if self.location.scheme == 'dir':
-            self.repositoryPath = self.url[5:]
+            self.repositoryPath = self.location.path
             self.repositoryMounted = True
             return True
 
         # The location is a USB device mounted automatically using systemd
         if self.location.scheme == 'usb':
-            self.repositoryPath = '/mnt' + self.location.path
+            self.repositoryPath = self.location.path
             self.mountPath = '/mnt/backup/' + self.configName
             self.repositoryMounted = os.path.ismount(self.mountPath)
             return self.repositoryMounted
 
         # The location is an S3 bucket mounted automatically using systemd
         if self.location.scheme == 's3fs':
-            self.repositoryPath = '/mnt' + self.location.path
+            self.repositoryPath = self.location.path
             self.mountPath = '/mnt/backup/' + self.configName
             self.repositoryMounted = os.path.ismount(self.mountPath)
             return self.repositoryMounted
 
         ## When using SSHFS, the remote location is mounted using fuse
-        # the mount path and the repository path are the same
+        # In this case, the mount path and the repository path are the same.
         if self.location.scheme == 'sshfs':
             self.repositoryPath = '/mnt/backup/' + self.configName
             self.mountPath = '/mnt/backup/' + self.configName
@@ -165,6 +164,7 @@ class BackupManager(object):
             self.repositoryMounted = True
             return True
 
+        # Throw an error in case the protocol is not implemented
         logging.error("Unknown or not implemented scheme " + self.location)
         raise NotImplementedError(self.location)
 
@@ -484,10 +484,6 @@ class BackupManager(object):
         # Standard extractions
         args = [ 'borg', 'extract', '--info' ]
 
-        # Add list of restored files
-        if args.logLevel == logging.DEBUG:
-            args.append('--list')
-
         # Finally add the repository path
         args.append(self.repositoryPath + "::" + version)
 
@@ -497,12 +493,12 @@ class BackupManager(object):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
 
-        if status.returncode == 0:
-            self.lastBackupInfo['restore'] = "Restoration status:\n"
-        else:
-            self.lastBackupInfo['restore'] = "Restoration errors:\n"
-
         # Save details for reporting
+        if status.returncode == 0:
+            self.lastBackupInfo['restore'] = "Restoration status: Success"
+        else:
+            self.lastBackupInfo['restore'] = "Restoration errors: Error"
+
         if status.stdout != None:
             self.lastBackupInfo['restore'] += status.stdout
         if status.stderr != None:
