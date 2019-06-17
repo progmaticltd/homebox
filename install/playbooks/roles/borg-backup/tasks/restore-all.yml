@@ -57,6 +57,7 @@
     doveadm index -u {{ user.uid }} *
   with_items:
     - '{{ users }}'
+    - uid: postmaster
   loop_control:
     loop_var: user
 

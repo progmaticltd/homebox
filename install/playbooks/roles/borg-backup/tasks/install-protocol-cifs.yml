@@ -32,15 +32,34 @@
       value: '{{ location.keep_monthly | default(1) }}'
     - name: compression
       value: '{{ location.compression | default("lz4") }}'
+    - name: rate_limit
+      value: '{{ location.rate_limit | default(0) }}'
   loop_control:
     loop_var: option
-
 
 # For Samba drives, uses cifs-utils
 - name: Install the required file systems
   apt:
     name: 'cifs-utils'
     state: latest
+
+- name: Configure the firewall to allow CIFS out connections
+  tags: ufw
+  ufw:
+    direction: out
+    proto: '{{ rule.proto }}'
+    port: '{{ rule.ports }}'
+    comment: '{{ rule.comment }}'
+    rule: allow
+  with_items:
+    - proto: udp
+      ports: 137,138
+      comment: 'Allow samba output connections for backup {{ location.name }}'
+    - proto: tcp
+      ports: 139,445
+      comment: 'Allow samba output connections for backup {{ location.name }}'
+  loop_control:
+    loop_var: rule
 
 - name: Create the credentials file
   template:

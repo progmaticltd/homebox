@@ -6,6 +6,7 @@ It is not meant to be a general purpose script, as borgbackup is already doing t
 
 Actually, the script is used to do:
 
+- New backups initialisation, local or remote.
 - Regular backups creation called by cron.
 - Regular backups verification, called by cron.
 - Backup extraction, called after a system re-installation.
@@ -21,23 +22,22 @@ The main parameter is --action <ACTION>, It can be:
 - restore:           Restore the backup to a specific location
 
 usage: backup [-h] --config CONFIG [--key-file KEY_FILE] [--action ACTION]
-              [--location LOCATION] [--log-level LOGLEVEL]
-              [--log-file LOGFILE]
+              [--import-key-path IMPORTKEYPATH]
+              [--export-key-path EXPORTKEYPATH] [--location LOCATION]
+              [--log-level LOGLEVEL] [--log-file LOGFILE]
 
 Backup manager for homebox
 
 optional arguments:
-  -h, --help            show this help message and exit
-  --config CONFIG       name of the backup configuration to load
-  --key-file KEY_FILE   path to the encryption key file
-  --action ACTION       What to do: backup; backup-and-check; check-data;
-                        init; restore (default=backup-and-check)
-  --location LOCATION   Where to restore the backup (only when action=restore;
-                        default=/)
-  --log-level LOGLEVEL  Log level to use, like DEBUG, INFO, NOTICE, etc. (INFO
-                        by default)
-  --log-file LOGFILE    Path to the log file (default /var/log/backup.log)
-
+  -h, --help                Show this help message and exit.
+  --config CONFIG           Name of the backup configuration to load.
+  --key-file KEY_FILE       Path to the encryption key file.
+  --action ACTION           one of init, backup; backup-and-check (default); check-data; restore.
+  --import-key-path <path>  Import this key after initialising a new repository.
+  --export-key-path <path>  Export key to this file after initialising a new repository.
+  --location LOCATION       Where to restore the backup (only when action=restore; default=/).
+  --log-level LOGLEVEL      Log level to use, like DEBUG, INFO, NOTICE, etc. (INFO by default).
+  --log-file LOGFILE        Path to the log file (default /var/log/backup-<config>.log).
 '''
 
 # To parse the initial configuration file
@@ -91,11 +91,39 @@ class BackupManager(object):
         self.keepWeekly = self.config.get(configName, 'keep_weekly')
         self.keepMonthly = self.config.get(configName, 'keep_monthly')
 
+        # Read rate limiting option
+        try:
+            self.rateLimit = self.config.get(configName, 'rate_limit')
+        except:
+            self.rateLimit = None
+
         # Check if the backup is active
         self.active = self.config.get(configName, 'active')
 
         # Save the process information here
         self.runFilePath = '/run/backup-' + self.configName
+
+
+    def runCommand(self, args, name):
+        """Run an external command and pipe stdout / stderr to log"""
+        status = subprocess.run(args,
+                                universal_newlines=True,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+
+        if status.returncode != 0:
+            logging.error("Error when running '%s'", name)
+            logging.error("Original command: %s", str.join(" ", args))
+        else:
+            logging.info("Running '%s' successfully.", name)
+
+        if status.stdout != None and status.stdout.strip() != "":
+            logging.info("Output: " + status.stdout.strip())
+
+        if status.stderr != None and status.stderr.strip() != "":
+            logging.info("Error: " + status.stderr.strip())
+
+        return status
 
 
     # read backup key
@@ -185,49 +213,67 @@ class BackupManager(object):
         args = [ 'umount', self.mountPath ]
 
         # Umount the user partition, keep stdout / stderr
-        status = subprocess.run(args,
-            universal_newlines=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+        status = self.runCommand(args, "Unmounting repository")
 
-        if status.returncode != 0:
-            logging.error("Error when unmounting the remote repository: " + status.stderr)
-            return False
-
-        logging.info('Successfully unmounted directory ' + self.repositoryPath)
-
-        return True
+        return status.returncode == 0
 
 
     # Initialise a new repository
-    def initRepository(self):
+    def initRepository(self, importKeyPath=None, exportKeyPath=None):
         """Initialise the remote repository using borg init"""
 
         # This can happen if the repository is already initialised
         # and the script is called with the action set as "init"
-        if self.repositoryInitialised():
+        if not self.repositoryInitialised():
+
+            os.environ["BORG_PASSPHRASE"] = self.key
+            args = [ 'borg', 'init' ]
+
+            # Add encryption type: repository key for now
+            args.append('--encryption')
+            args.append('keyfile')
+
+            # Add repository path
+            args.append(self.repositoryPath)
+
+            status = self.runCommand(args, "Initialising repository")
+
+            if status.returncode != 0:
+                raise RuntimeError(status.stderr)
+
+        # When initialising a new repository, make sure the key exists
+        # Otherwise, import one
+        if not self.repositoryHasKeys() and importKeyPath != None:
+            args = [ 'borg', 'key', 'import' ]
+
+            # Add repository path and export path
+            args.append(self.repositoryPath)
+            args.append(importKeyPath)
+
+            status = self.runCommand(args, "Importing key {0}".format(importKeyPath))
+
+            if status.returncode != 0:
+                raise RuntimeError(status.stderr)
+
+            # No need to export the key if we imported one, returns.
+            return status.returncode == 0
+
+        # Unless we want to export the key after the initialisation,
+        # we can stop here
+        if exportKeyPath == None:
             return True
 
-        os.environ["BORG_PASSPHRASE"] = self.key
+        # If the key path has been specified, export it as well
+        args = [ 'borg', 'key', 'export' ]
 
-        logging.info("Initialising repository in " + self.repositoryPath)
-
-        args = [ 'borg', 'init' ]
-
-        # Add encryption type: repository key for now
-        args.append('--encryption')
-        args.append('keyfile')
-
-        # Add repository path
+        # Add repository path and export path
         args.append(self.repositoryPath)
+        args.append(exportKeyPath)
 
-        status = subprocess.run(args, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        status = self.runCommand(args, "Exporting key in '{0}'".format(exportKeyPath))
 
         if status.returncode != 0:
-            logging.error("Error when initialising the repository: " + status.stderr)
-            raise RuntimeError(status)
-
-        logging.info("Repository initialised")
+            raise RuntimeError(status.stderr)
 
         return status.returncode == 0
 
@@ -276,20 +322,33 @@ class BackupManager(object):
     def repositoryInitialised(self):
         """Check if the repository has been initialised"""
 
+        # Simple directory check first, except for ssh remote repositories
+        if self.location.scheme != 'ssh' and not os.path.isdir(self.repositoryPath):
+            return False
+
         # Check if the repository exists
         try:
             # If yes, check if it is a borg repository
             os.environ["BORG_PASSPHRASE"] = self.key
-            args = [ 'borg', 'list', self.repositoryPath ]
-            status = subprocess.run(args, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            logging.info("Initialised the repository." + status.stdout)
+            args = [ 'borg', 'check', '--repository-only', self.repositoryPath ]
+            status = self.runCommand(args, "Checking if repository exists")
         except:
-            logging.error("Error when initialising the repository: " + status.stderr)
             return False
 
-        # If not, raise an exception to avoid writing files in a directory with user content
         return status.returncode == 0
 
+    # Check if the repository has encryption keys already saved in /root/.config/borg
+    def repositoryHasKeys(self):
+        """Check if the repository contains keys"""
+        try:
+            # If yes, check if it is a borg repository
+            os.environ["BORG_PASSPHRASE"] = self.key
+            args = [ 'borg', 'list', self.repositoryPath ]
+            status = self.runCommand(args, "Checking if repository has keys")
+        except:
+            return False
+
+        return status.returncode == 0
 
     # Create the backup
     def createBackup(self):
@@ -315,6 +374,11 @@ class BackupManager(object):
         args.append('--exclude-from')
         args.append('/etc/homebox/backup-exclude')
 
+        # Add rate limiting if specified
+        if self.rateLimit != None:
+            args.append('--remote-ratelimit')
+            args.append(self.rateLimit)
+
         # Reporting
         args.append('--stats')
         args.append('--show-rc')
@@ -326,7 +390,7 @@ class BackupManager(object):
         args.append('/var/backups')
 
         # Start he process
-        status = subprocess.run(args, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        status = self.runCommand(args, "Creating repository")
 
         if status.returncode == 0:
             self.lastBackupInfo['create'] = "Creation status:\n"
@@ -343,7 +407,7 @@ class BackupManager(object):
         # that is not a repository
         if status.returncode != 0:
             logging.error("Error when creating backup: " + status.stderr)
-            raise RuntimeError(status)
+            raise RuntimeError(status.stderr)
 
         return status.returncode == 0
 
@@ -379,10 +443,7 @@ class BackupManager(object):
         args.append(pathSpec)
 
         # Run the process, and keep stdout / stderr
-        status = subprocess.run(args,
-            universal_newlines=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+        status = self.runCommand(args, "Pruning repository")
 
         if status.returncode == 0:
             self.lastBackupInfo['prune'] = "Prune status:\n"
@@ -399,7 +460,7 @@ class BackupManager(object):
         # that is not a repository
         if status.returncode != 0:
             logging.error("Error when pruning backup: " + status.stderr)
-            raise RuntimeError(status)
+            raise RuntimeError(status.stderr)
 
         return status.returncode == 0
 
@@ -422,10 +483,7 @@ class BackupManager(object):
             args.append('--verify-data')
 
         # Star the process and keep stdout / stderr
-        status = subprocess.run(args,
-            universal_newlines=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+        status = self.runCommand(args, "Checking repository")
 
         if status.returncode == 0:
             self.lastBackupInfo['check'] = "Check status:\n"
@@ -442,7 +500,7 @@ class BackupManager(object):
         # that is not a repository
         if status.returncode != 0:
             logging.error("Error when checking backup: " + status.stderr)
-            raise RuntimeError(status)
+            raise RuntimeError(status.stderr)
 
         return status.returncode == 0
 
@@ -460,10 +518,7 @@ class BackupManager(object):
         args.append(self.repositoryPath)
 
         # Star the process and keep stdout / stderr
-        status = subprocess.run(args,
-            universal_newlines=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+        status = self.runCommand(args, "Getting last backupID")
 
         # Save details for reporting
         if status.stdout.rstrip() != "":
@@ -488,10 +543,7 @@ class BackupManager(object):
         args.append(self.repositoryPath + "::" + version)
 
         # Star the process and keep stdout / stderr
-        status = subprocess.run(args,
-            universal_newlines=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+        status = self.runCommand(args, "Restoring backup")
 
         # Save details for reporting
         if status.returncode == 0:
@@ -508,7 +560,7 @@ class BackupManager(object):
         # that is not a repository
         if status.returncode != 0:
             logging.error("Error when checking backup: " + status.stderr)
-            raise RuntimeError(status)
+            raise RuntimeError(status.stderr)
 
         return status.returncode == 0
 
@@ -579,15 +631,12 @@ class BackupManager(object):
         args.append(message)
 
         # Send the message
-        status = subprocess.run(args,
-            universal_newlines=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+        status = self.runCommand(args, "Sending XMPP message")
 
         # If not, raise an exception to avoid writing files in a directory
         if status.returncode != 0:
             logging.error("Error when sending xmpp message: ", status.stderr)
-            raise RuntimeError(status)
+            raise RuntimeError(status.stderr)
 
         return status == 0
 
@@ -601,6 +650,10 @@ def main(args):
 
         success = False
         messages = []
+
+        # Use one log file per configuratin by default
+        if args.logFile == None:
+            args.logFile = "/var/log/backup-{0}.log".format(args.config)
 
         logging.basicConfig(
             format='%(asctime)s %(levelname)-8s %(message)s',
@@ -647,7 +700,7 @@ def main(args):
 
         # Called to just initialise an empty repository
         if args.action == "init" or not manager.repositoryInitialised():
-            manager.initRepository()
+            manager.initRepository(args.importKeyPath, args.exportKeyPath)
 
         # Create the backup, and prune it
         elif args.action == "backup" or args.action == "backup-and-check":
@@ -685,7 +738,7 @@ def main(args):
 
     except Exception as error:
 
-        logging.error("Exception on running backup: ", error)
+        logging.error("Exception on running backup: ", str(error))
 
         # Unmount the repository if mounted
         if manager.repositoryMounted:
@@ -752,6 +805,27 @@ parser.add_argument(
     default = 'backup-and-check',
     required=False)
 
+# This is used when initialising a repository that already exists
+parser.add_argument(
+    '--import-key-path',
+    dest = 'importKeyPath',
+    type = str,
+    help = 'When specified, import this key after initialising a new repository',
+    default = None,
+    required=False)
+
+# When initialising the repository, specify where to save the key for export
+# Note: The key is exported only after a new repository is initialised, and only
+# if the import key path does not already exists. If the importKeyPath exists,
+# the key is imported, but no key is exported
+parser.add_argument(
+    '--export-key-path',
+    dest = 'exportKeyPath',
+    type = str,
+    help = 'When specified, export key to this file after initialising a new repository',
+    default = None,
+    required=False)
+
 # The action to run
 parser.add_argument(
     '--location',
@@ -773,8 +847,8 @@ parser.add_argument(
     '--log-file',
     dest = 'logFile',
     type = str,
-    default = '/var/log/backup.log',
-    help = 'Path to the log file (default /var/log/backup.log)')
+    default = None,
+    help = 'Path to the log file (default /var/log/backup-<config>.log)')
 
 args = parser.parse_args()
 

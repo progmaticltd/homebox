@@ -53,12 +53,15 @@ backup:
     keep_weekly: 4                   # Keep the last four weeks (1 by default)
     keep_monthly: 6                  # Keep the last six months (1 by default)
     compression: zlib,9              # Use the good but slow compression for weekly backups
+    rate_limit: 500                  # Network upload rate limit in kiByte/s
 ```
 
-When needed, the locations are automatically mounted when the backup starts, and dismounted once
-the backup finished.
+The locations are automatically mounted on demand when the backup starts, and dismounted once the backup finished. You
+can have different backup frequencies, for instance daily, weekly or monthly.
 
-You can have different backup frequencies, for instance daily, weekly or monthly.
+!!! Tip
+    Set up a rate limit when creating a remote backup. This will prevent the backup process to consume all your
+    bandwidth and affect the email delivery.
 
 # Backup locations details
 
@@ -217,6 +220,7 @@ backup:
     secret_access_key: gBiRu5hPSyswK17TNpp2IIf5sWDNJx6Vb9Gx3rjF
     bucket_name: homebox-backup.example.com
     region: eu-west-2
+    rate_limit: 500
 ```
 
 And here an appropriate example of bucket policy:
@@ -247,8 +251,8 @@ decrypt your files without the encryption key.
 !!! Note
     - This location storage is actually under scrutiny, and might be removed if proven unstable.
     - Under the hood, [S3FS](https://github.com/s3fs-fuse/s3fs-fuse) is used, with the cache option activated, and located
-      in /home/.backup-cache/. Because this folder content is about the size if the whole backup, the /home partition should
-      have enough available disk space.
+      in /home/.backup-cache/. Because this folder content is about the size if the whole backup, the /home partition
+      should have enough available disk space.
 
 # Backup contents
 
@@ -269,7 +273,7 @@ By default, backup jobs are run overnight, and an email is sent to the postmaste
 
 ## Example of backup success email
 
-``` html
+```text
 
 Backup report for nas1: Success
 Creation status:
