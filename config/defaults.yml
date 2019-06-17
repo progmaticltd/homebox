@@ -460,6 +460,8 @@ bind_default:
   dnssec:
     active: false
     algo: RSASHA256
+  # Aditional records to be generated
+  extra_records: []
 
 ###############################################################################
 # Gogs installation with LDAP authentication

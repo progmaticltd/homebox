@@ -253,3 +253,8 @@
     src: yubikey-enroll.sh
     dest: /usr/local/sbin/yubikey-enroll.sh
     mode: 0700
+
+- name: Activate some aliases in bashrc
+  template:
+    src: bashrc
+    dest: /root/.bashrc

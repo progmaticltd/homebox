@@ -12,19 +12,27 @@
 # As the key is going to be loaded non interactively and restricted to run borg
 # it does not make sense to add a passphrase.
 
+# Start by forcing load defaults, if the acript is used manually by itself
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+  roles:
+    - load-defaults
+
 - hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/../../config/defaults.yml'
   vars:
     key:
-      path: '{{ backup.key.path }}'
-      user: '{{ backup.key.user }}'
-      comment: '{{ backup.key.comment }}'
+      path: '{{ backup.key.path | default("/root/.ssh/") }}'
+      user: '{{ backup.key.user | default("root" )}}'
+      comment: '{{ backup.key.comment | default("Backup SSH key") }}'
       passphrase: ~
-      name: '{{ backup.key.name }}'
-      type: '{{ backup.key.type }}'
-      size: '{{ backup.key.size }}'
+      name: '{{ backup.key.name | default("backup.rsa") }}'
+      type: '{{ backup.key.type | default("rsa") }}'
+      size: '{{ backup.key.size | default("2048") }}'
   roles:
     - ssh-keygen
     - borg-backup

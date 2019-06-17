@@ -34,6 +34,11 @@ cd install
 ansible-playbook -v -i ../config/hosts.yml -t restore playbooks/borgbackup.yml
 ```
 
+!!! Note
+    This step restores all the emails from the last backup. It does not restore your emails from a "previous"
+    state. Therefore, it does not delete any emails that have been created _after_ the backup. The same is happening for
+    calendar events and contacts.
+
 # Complete restoration
 
 This is the disaster recovery option.

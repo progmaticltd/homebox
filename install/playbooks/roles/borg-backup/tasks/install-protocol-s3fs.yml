@@ -59,6 +59,8 @@
       value: '{{ location.keep_monthly | default(1) }}'
     - name: compression
       value: '{{ location.compression | default("lz4") }}'
+    - name: rate_limit
+      value: '{{ location.rate_limit | default(0) }}'
   loop_control:
     loop_var: option
 
