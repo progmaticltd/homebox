@@ -191,3 +191,11 @@
   template:
     src: 50-sogo.bind
     dest: /etc/homebox/dns-entries.d/50-sogo.bind
+
+- name: Add SOGo backups directory
+  tags: backup
+  file:
+    path: /var/backups/sogo
+    state: directory
+    owner: sogo
+    group: sogo

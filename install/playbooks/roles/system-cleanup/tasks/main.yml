@@ -1,31 +1,12 @@
 ---
+# Various cleanup tasks before the system goes live
 
-# Remove packages that are not needed for a live system:
-# bash-completion:
-# See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=825153
-# this seems to remove most errors like :
-# <passwd="*"> request denied by validnames option.
+- name: Include common cleanup tasks
+  include_tasks: cleanup-common.yml
 
-- name: Remove useless packages
-  tags: apt
-  apt:
-    name: '{{ cleanup_packages }}'
-    state: absent
-
-- name: Check if some users are configured with remote access
-  set_fact:
-    user_remote: '{{ users | selectattr("ssh_key", "defined") | list != [] }}'
-
-- name: Completely disable root SSH login
-  when: user_remote and security.ssh_disable_root_access
-  tags: security
-  notify: Restart SSH
-  replace:
-    path: /etc/ssh/sshd_config
-    regexp: '^PermitRootLogin without-password'
-    replace: 'PermitRootLogin no'
-    mode: 0600
-
+- name: Include bind related cleanup tasks
+  when: bind.install
+  include_tasks: network-bind.yml
 
 # At this point, it might be necessary to reboot
 # To reload all bash instances

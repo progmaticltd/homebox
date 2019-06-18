@@ -1,223 +1,231 @@
+# Installation steps
 
-# Introduction
+## Step 1: Locate is your system
 
-This guide is a high level overview of the steps you need to run and
-in which order, to have a production ready mail server.
-
-It is not a "Self hosting for newbies", but if you follow the
-instructions carefully, you do not need strong technical knowledge to
-achieve the above.
-
-You still need some basic understanding though, like what is an IP
-address or a port, how to run Ansible in a console, how to edit Yaml
-files, etc.
-
-If something goes wrong, here a few resources:
-
-- The [Postfix mailing lists](http://www.postfix.org/lists.html).
-- The [Dovecot mailing lists](https://www.dovecot.org/mailinglists.html).
-- The [Debian mailing lists](https://lists.debian.org/).
-- Our [github page](https://github.com/progmaticltd/homebox)
-- Finally, [Duckduckgo](https://duckduckgo.com/) or
-  [Google](https://google.com/).
-
-## Folders
-
-The repository contains a few folders you should be familiar with:
-
-- config: Yaml configuration files for your homebox device.
-- preseed: Docker environment to create an automatic ISO image
-  installer for Debian.
-- install: Ansible scripts to install or test the whole server
-  environment.
-- backup: A very useful folder that contains some important files like
-  the passwords and certificates generated when deploying the
-  system. This allows you to "replay" the deployment on a new server
-  after a disaster, without loosing any information.
-  This folder is generated automatically on the first deployment,
-  and ignored by git
-- tests: Ansible playbooks to test the platform.
-- sandbox: Put anything you don't want to commit here.
-- docs: This project documentation.
-
-## Conditions required to host emails
-
-### Host emails at home
-
-If you want seriously host your emails at home, you will need the
-following:
-
-- A static IP address from your ISP (Internet Service Provider).
-- Make sure your port 25 is not blocked.
-- A low power consumption hardware. See below for example.
-
-### Host emails online
-
-Any serious hosting platform can provide a server, virtual or
-physical, with an externally accessible IP address. Some providers,
-however, are blocking the port 25 (e.g. Google cloud).
-
-Be careful, using a VPS (Virtual Private Server) is no more secure
-than hosting at your home:
-
-- You may not have control on the kernel installed.  This is less
-  secure than Homebox, which is by default configured to run on
-  AppArmor.
-- You will not be able to use Full Disk Encryption. Although there are
-  some security measures in places, it is still perfectly possible to
-  extract data from your disk, and spy their content.
-- You will not have the choice on when and which security updates are
-  applied.  Most hosting providers have specific time windows to
-  update the kernel images they use, which may not be as soon as you
-  need, or even appropriate to you.
-
-## Choose your domain name
-
-The first thing you need is a domain name and a DNS provider, there are
-many options available.  For now, using Gandi has some advantages,
-especially if you are not very technical.
-
-However, here a [list of other DNS
-providers](https://github.com/AnalogJ/lexicon#providers) you can use.
-
-You can use something traditional, based on your name, or something
-more fancy...
-
-If you opted for Gandi, you can create an "API key", and use the
-scripts provided to updates your domain automatically.
-
-Once you are connected to the [Gandi administration
-interface](https://v4.gandi.net/domain), click on Account Management,
-then API Management.  Use the "Activation of the production API" to
-create your API key.
-
-You should now have something like:
-
-- an identified, like `AR142-GANDI`
-- an API key, like `E0cbH46KEzQxKEYT4fePC8L8`
-
-## The hardware
-
-An old laptop should be enough to start, with the main advantage of
-being somewhat resistant to power failures.  I also suggest you to
-have a look on this Debian page: [Cheap Serverbox
-Hardware](https://wiki.debian.org/FreedomBox/Hardware) of the project
-freedombox, another excellent project.
-
-The preseed configuration (see next step) provides an option to use
-software RAID, so you can use this as well if you prefer. However,
-remembe that RAID is not backup!
-
-## Your workstation
-
-Any workstation with a decent text editor like _Emacs_, _Vim_ or even
-_[VS code](https://code.visualstudio.com/)_ should be enough.  You
-will need to run the Ansible scripts, and perhaps to install rsync.
-
-I recommend using Linux, any flavour, but for a very expensive price,
-MacOS should be about fine.
-
-On Debian / Ubuntu:
-
-`apt install ansible rsync`
-
-## Build the CD image
-
-If you already have a Debian server (Stretch) installed, and you
-prefer to use it, it's fine, you can skip this chapter. Otherwise,
-keep reading.
-
-This CD image will be used to create an automatic Debian installer
-more quickly than manually answering questions when installing Debian.
-
-The disc created does not install the mail server, only the Debian
-distribution.  However, there is two features automatically installed
-and easily configured: AppArmor and Full Disc Encryption with
-LUKS. Both will protect you against remote and physical intrusion.
-
-It is also copying your public SSH key onto the installation disc, so
-you can directly connect to your server remotely.
-
-The detailed documentation is available in the [preseed section](preseed.md).
-
-### Notes
-
-I have tested the installer both on a virtual and a physical
-machine. In the second case, the hardware differences sometimes stops
-and the installer asks questions. Just answer appropriately, and the
-installation procedure will continue further.
-
-Do not hesitate to send me feedback about the questions asked.
-
-If the installation crashes in the middle, try to disable ACPI, add/or
-the following boot parameters in the installer:
-
-```txt
-intel_idle.max_cstate=1
-```
-
-## Installation
-
-While the automatic installer is running, you can start to prepare the
-software installation.
-
-Use your favourite editor to modify the two configuration files
-provided as an example in the configuration directory:
-hosts-example.yml and system-example.yml.
-
-### 1. Create your hosts file
-
-This file simply contains the IP address of your box. It can be on
-your local network or on internet.
+Whatever you chose to host your system at home, or to use a VPS, you need to be specify its location to Ansible.
 
 ```sh
-cd config
+cd install/config
 cp hosts-example.yml hosts.yml
+nano hosts.yml
 ```
 
-Here an example:
+Here an example on your LAN:
 
-```yaml
+``` yaml hl_lines="4"
 all:
   hosts:
     homebox:
-      ansible_host: 192.168.42.1
+      ansible_host: 192.168.1.254
       ansible_user: root
       ansible_port: 22
 ```
 
-I have actually tested with the Ansible remote user as root.  It
-should be possible to run as an admin user and use "sudo" with little
-modifications, I will test this if requested.
+Using root during the installation process is a requirement. However, the system can be configured to use sudo once
+installed. See the security section, [Defining administrators](/security-configuration/#defining-administrators).
 
-### 2. Describe your configuration
+## Step 2: Describe your system
 
-This step is detailed in the next section, [configuration](configuration.md).
-The second step is to start the installation procedure
+The main configuration file to create is in the config folder. There is an example named system-example.yml ready to
+copy to customise. There is also a configuration file defaults.yml. This file contains all the possible options.
 
-## Your router
+```sh
+cd config
+cp system-example.yml system.yml
+nano system.yml
+```
 
-Ideally, you will need to configure your router to redirect all the
-external traffic to your homebox using the DMZ functionality if there
-is one. The other option is to redirect the ports needed.
+The system configuration file is a complete YAML configuration file containing all your settings:
 
-Initially, the following TCP ports are required:
+- Network information, specifically your domain name.
+- User and group details, like email addresses and aliases.
+- Email parameters, like maximum attachment size, antivirus options, etc.
+- Some password policies, like minimum length and complexity.
+- Webmail settings (roundcube or SOGo).
+- Low level system settings, mainly used during the development phase.
+- Firewall policies, especially SSH access.
+- Security settings.
+- Backup strategies.
 
-- To obtain your certificates from LetsEncrypt, you need your system
-  to be accessible externally on the port 80.
-- To test sending and receiving emails, your system should be
-  accessible on the port 25 as well.
-- To retrieve emails, your system should be accessible on ports 143,
-  993, 110, 995.
-- To send emails, your system should be accessible on ports 587 and/or
-  465.
-- For Thunderbird automatic configuration, your system should be
-  accessible on port 80.
-- Once installed, the webmail is accessible in http (port 80), but
-  redirects you directly to https (port 443).
+The most important settings are the first two sections, the others can be left to their default values.
 
-## The next step
+Once you have modified the file, you are ready to start the installation.
 
-The next step is to link your domain name (e.g homebox.me) register
-your server, using the static IP address that has been assigned to
-you. This is the topif of the next section.
+!!! Tip
+    The system.yml file is merged with the default configuration on deployment. Therefore, you can override any default
+    value without having to copy entire branches.
+
+!!! Warning
+    Be careful with the indentation in your Yaml file, the number of spaces is significant.
+
+## Step 3: Start the installation
+
+```sh
+cd install
+ansible-playbook -i ../config/hosts.yml playbooks/main.yml
+```
+
+# Most important sections
+
+## Network configuration
+
+Every network subdomain entries, email addresses, etc... will include the domain name:
+
+```yaml
+network:
+  domain: homebox.space
+  hostname: mail.homebox.space
+  external_ip: auto
+  backup_ip: ~
+```
+
+The hostname is important, use the real one. If you used the preseed configuration, it should be just mail and your
+network domain.
+
+The external IP address is normally automatically detected. If this is not the case, you can specify it manually:
+
+!!! Tip
+    If you do not have a backup IP address, use "~" like the example.
+
+```yaml
+network:
+  domain: homebox.space
+  hostname: mail.homebox.space
+  external_ip: 12.34.56.78
+  backup_ip: 2001:15f0:5502:bf1:5400:01ff:feca:dea6
+```
+
+If your server has a second IP address, you can specify it here as well. By default, none is defined. You can mix IPv4
+and IPv6 addresses. DNS entries will be added accordingly.
+
+## Users list
+
+The other piece of information you need to fill first is the user list. In its simplest form, you will have something
+like this:
+
+``` yaml
+users:
+- uid: john
+  cn: John Doe
+  first_name: John
+  last_name: Doe
+  mail: john.doe@example.com
+  password: 'xIlm*uu7'
+  aliases:
+    - john@homebox.space
+    - johny@homebox.space
+    - johny-be-good@homebox.space
+- uid: jane
+  cn: Jane Doe
+  first_name: Jane
+  last_name: Doe
+  mail: jane.doe@example.com
+  password: 'Tlwril!8'
+  aliases:
+    - jane@homebox.space
+```
+
+The file format should be self explanatory. For complex passwords, use quotes, like " or '
+
+The email aliases are the other email addresses that belongs to the same user.
+
+You can also add more advanced features, like:
+
+- [Import emails from other accounts](external-accounts.md).
+- [Define some users as administrators](security-configuration.md#defining-administrators)
+- [Grant remote access to certain users](security-configuration.md#grant-some-users-remote-access)
+
+## Email options
+
+This is the second most important settings. Here an example of the email options you can override:
+
+``` yaml
+mail:
+  max_attachment_size: 25   # In megabytes
+  autoconfig: true          # Support Thunderbird automatic configuration
+  autodiscover: false       # Support MS Outlook automatic configuration (uses https)
+  quota:
+    default: 1G             # Maximum allowed mailbox size for your users.
+```
+
+All options are detailed on the [email configuration](email-configuration.md) page.
+
+## Firewall configuration
+
+The firewall is configured by default to deny everything except what is permitted, both in input and output. The backend
+used is "ufw". If you have specific requirements, you can define the initial rules yourself.
+See the [firewall configuration](/firewall-configuration/) page for details.
+
+By default, a firewall rule is automatically added to allow SSH connections from the IP address used for the
+installation. This should prevent being locked out of your system. You can remove this rule at the end of the playbook,
+especially if you are [using fwknop](/firewall-configuration/#single-packet-authorization) to access your system.
+
+## Security options
+
+Security options are detailed on the [security page](security-configuration.md).
+The default settings are
+
+- Automatically install security updates using unattended upgrades.
+- Send alerts to the postmaster.
+- Force root SSH login to use public key cryptography, and not a password.
+- Disable the root password.
+
+Other options are possible, see the security page for details.
+
+## Webmail
+
+By default, the installation script installs Roundcube, but you can disable it if you want. For instance, SOGo is
+available as well, with calendars and address books.
+
+```yaml
+webmail:
+  install: true
+  type: roundcube
+```
+
+More details on the [webmail roundcube](webmail-roundcube.md) page.
+
+## Backup configuration
+
+It is possible to regularly backup your emails, for instance locally on a NAS drive, or on internet, using various
+methods.
+
+By default, the whole home partition is back up, but you can add or exclude more folders. The detailed instructions are
+on the [backup documentation](/backup-home/) page.
+
+## DNS server configuration
+
+The recommended way is to use the internal DNS server, with a minimal configuration like this:
+
+```yaml
+bind:
+  install: true
+  forward:
+    - 8.8.8.8
+    - 8.8.4.4
+```
+
+You can also use [OpenDNS servers](https://en.wikipedia.org/wiki/OpenDNS#Name_server_IP_addresses) for forward.
+
+Once your DNS set up is complete, you can monitor the [world wide propagation](/dns-propagation/).
+
+## Extra certificates
+
+It is possible to generate more SSL certificates, for instance if you want to deploy other services and want
+the certificates to be generated and renewed automatically.
+
+You only have to add one variable `extra-certs` in your configuration file, for instance:
+
+```yaml
+extra_certs:
+  - type: gitlab
+    redirect: true
+  - type: packages
+    redirect: true
+```
+
+By adding these lines, certificates will be automatically generated for the sub domains "gitlab" and "packages", using
+letsencrypt.
+
+!!! Tip
+    The flag "redirect" means the users will be automatically redirect from http to https when entering the address.

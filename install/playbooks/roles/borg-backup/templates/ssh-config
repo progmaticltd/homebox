@@ -1,8 +1,7 @@
 
-# SSH configuration for {{ location.name }}
+# SSH configuration for backup location {{ location.name }}
+# The only authorised command on the remote server is borg,
+# served by "borg serve ..."
 Host {{ location_host }}
   User {{ location_user }}
-  UserKnownHostsFile /dev/null
-  CheckHostIP no
-  StrictHostKeyChecking no
-  IdentityFile ~/.ssh/backup.rsa
+  IdentityFile ~/.ssh/{{ location.keyName }}

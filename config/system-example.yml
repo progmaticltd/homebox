@@ -247,7 +247,6 @@ users:
 ###############################################################################
 #  Bind server defaults
 # bind:
-#   # Bind is actually in testing phase, feedback welcome
 #   install: true
 #   # Default servers to forward queries
 #   forward:
@@ -277,6 +276,11 @@ users:
 #   dnssec:
 #     active: true
 #     algo: RSASHA256
+#   # Aditional extrernal records to be generated
+#   extra_records:
+#     - name: store
+#       ip: 12.56.14.144
+#       type: A
 
 # Optional packages
 # tor:

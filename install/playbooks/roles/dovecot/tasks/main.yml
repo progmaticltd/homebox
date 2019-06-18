@@ -208,7 +208,7 @@
   when: mail.import.active
   tags: impersonate
   set_fact:
-    import_password_params: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/import.pwd {{ policies.system.password }}"
+    import_password_params: "{{ backup_directory }}/ldap/import.pwd {{ policies.system.password }}"
 
 - name: Create the import user account password
   when: mail.import.active

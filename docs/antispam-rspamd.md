@@ -1,5 +1,3 @@
-# Antispam with Rspamd
-
 ![Rspamd throughput](img/rspamd/throughput.png "Rspamd throughput")
 
 ## Default configuration

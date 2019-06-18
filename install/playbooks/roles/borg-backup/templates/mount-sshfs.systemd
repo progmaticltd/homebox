@@ -1,0 +1,13 @@
+# Systemd mounting for {{ location.name }}
+
+[Unit]
+Description=mount script for {{ location.name }}
+
+[Mount]
+What={{ location.url | regex_replace("sshfs://") }}
+Where=/mnt/backup/{{ location.name }}
+Options={{ mount_options | join(",") }}
+Type=fuse.sshfs
+
+[Install]
+WantedBy=multi-user.target

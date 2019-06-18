@@ -195,6 +195,19 @@
     line: '  #include <local/nginx-transmission-web>'
     insertbefore: '# End of local includes for homebox'
 
+# Backup handling
+- name: Add some patterns to exclude in the backups
+  tags: backup
+  lineinfile:
+    path: /etc/homebox/backup-exclude
+    line: '{{ line }}'
+  with_items:
+    - "\n# Transmission: Exclude downloaded files from backup"
+    - '{{ transmission.download_dir }}'
+    - '{{ transmission.incomplete_dir }}'
+  loop_control:
+    loop_var: line
+
 - name: Activate AppArmor profiles
   when: aa_config.changed
   tags: security, apparmor

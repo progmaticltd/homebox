@@ -272,3 +272,10 @@
   with_items:
     - '*.key'
     - '*.private'
+
+# Add extra records ===========================================================
+- name: Add extra records
+  when: bind.extra_records != []
+  template:
+    src: extra-records.conf
+    dest: /etc/homebox/dns-entries.d/90-extra-records.bind

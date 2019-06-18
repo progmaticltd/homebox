@@ -1,0 +1,11 @@
+# Automatic mounting for {{ location.name }}
+
+[Unit]
+Description=automatic mount for {{ location.name }}
+
+[Automount]
+Where=/mnt/backup/{{ location.name }}
+TimeoutIdleSec={{ location.idle_sec | default(60) }}
+
+[Install]
+WantedBy=multi-user.target

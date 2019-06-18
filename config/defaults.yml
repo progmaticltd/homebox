@@ -273,11 +273,6 @@ website_default:
   install: false
 
 ###############################################################################
-# Act as a backup server using borgbackup (https://www.borgbackup.org/)
-backup_default:
-  install: false
-
-###############################################################################
 # Install a static web site on www.yourdomain.com using Hugo (https://gohugo.io/)
 # Still requests two certificates:
 # One for for https://yourdomain.com/ and one for https://www.yourdomain.com
@@ -423,8 +418,7 @@ dns_default:
 ###############################################################################
 # Bind server defaults
 bind_default:
-  # Bind is actually in testing phase, feedback welcome
-  install: false
+  install: true
   # Default servers to forward queries
   forward:
     - 8.8.8.8
@@ -466,6 +460,8 @@ bind_default:
   dnssec:
     active: false
     algo: RSASHA256
+  # Aditional records to be generated
+  extra_records: []
 
 ###############################################################################
 # Gogs installation with LDAP authentication
@@ -611,3 +607,22 @@ access_check_default:
   ip:
     rbl_malus: 60             # The number of points added to the score when an IP address is blacklisted
     fail2ban_malus: 10        # Malus to apply each time an IP address has blacklisted by fail2ban
+
+#############################################################################
+# Backup settings. See the documentation to see the possible options
+# You will need an external USB drive or network drive
+backup_default:
+  install: false              # Do not install by default
+  type: borgbackup            # Only borg-backup supported at this time
+  key:                        # Default key parameters (use the root account ATM)
+    path: /root/.ssh/
+    user: root
+    comment: SSH key for backup
+    name: backup
+    type: rsa                 # Use dsa, ecdsa, ed25519 or rsa. rsa1 is discouraged
+    size: 2048
+  alerts:                     # Send alerts to the first user by default
+    from: 'postmaster@{{ network.domain }}'
+    recipient: '{{ users[0].mail }}'
+    jabber: true              # The Jabber server need to be installed for this to work
+  locations: []               # List of backup locations

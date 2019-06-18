@@ -1,0 +1,13 @@
+# Systemd CIFS mounting for {{ location.name }}
+
+[Unit]
+Description=mount script for {{ location.name }}
+
+[Mount]
+What=//{{ location_host }}{{ location_path }}
+Where=/mnt/backup/{{ location.name }}
+Options={{ mount_options | join(",") }}
+Type=cifs
+
+[Install]
+WantedBy=multi-user.target

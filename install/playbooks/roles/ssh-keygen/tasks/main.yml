@@ -5,7 +5,7 @@
   register: backup_ssh_dir
   delegate_to: localhost
   file:
-    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/ssh-keys/{{ key.user }}/'
+    path: '{{ backup_directory }}/ssh-keys/{{ key.user }}/'
     state: directory
 
 
@@ -15,7 +15,7 @@
   register: key_upload
   when: not backup_ssh_dir.changed
   synchronize:
-    src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/ssh-keys/{{ key.user }}/'
+    src: '{{ backup_directory }}/ssh-keys/{{ key.user }}/'
     dest: '{{ key.path }}'
     owner: no
     group: no
@@ -27,7 +27,7 @@
       - '--ignore-existing'
       - '--update'
 
-- name: Generate an SSH key for backup
+- name: Generate an SSH key
   when: not key_upload.changed
   register: ssh_keygen
   tags: ssh-keygen
@@ -35,12 +35,12 @@
     ssh-keygen
     -q
     -b {{ key.size | default(2048) }}
-    -t {{ key.size | default("rsa") }}
+    -t {{ key.type | default("rsa") }}
     -f {{ key.path }}/{{ key.name }}.rsa
     -C 'SSH key for homebox backup'
-    -N ""
+    -N "{{ key.passphrase | default("") }}"
   args:
-    creates: '{{ key.path }}{{ key.name }}.rsa'
+    creates: '{{ key.path }}/{{ key.name }}.rsa'
 
 - name: Pull the SSH keys from the server
   when: not key_upload.changed
@@ -48,7 +48,7 @@
   synchronize:
     mode: pull
     src: '{{ key.path }}'
-    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/ssh-keys/{{ key.user }}/'
+    dest: '{{ backup_directory }}/ssh-keys/{{ key.user }}/'
     perms: yes
     rsync_opts:
       - '--include={{ key.name }}.rsa*'
@@ -60,11 +60,11 @@
   when: ssh_keygen.changed
   mail:
     from: 'root@{{ network.domain }}'
-    subject: 'Public SSH key for {{ key.user }}'
+    subject: 'Public SSH key for {{ key.user }} ({{ key.comment }})'
     to: 'postmaster@{{ network.domain }}'
     body: >-
       Find attached the public SSH key for the {{ key.user }} user.
-      This will be used for backup purposes. The user name will be
-      "{{ key.name }}"
+      The comment associated to the key is {{ key.comment }}.
+      The user name will be "{{ key.name }}"
     attach:
-      - '{{ key.path }}{{ key.name }}.rsa.pub'
+      - '{{ key.path }}/{{ key.name }}.rsa.pub'

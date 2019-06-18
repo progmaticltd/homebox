@@ -1,0 +1,104 @@
+---
+
+- name: Install the required file systems
+  apt:
+    name: 's3fs'
+    state: latest
+
+- name: Create the S3 credentials file
+  template:
+    src: passwd-s3fs
+    dest: '/etc/homebox/s3fs-{{ location.name }}'
+    mode: 0600
+
+- name: Create the backup cache folder
+  file:
+    path: /home/.backup-cache/
+    state: directory
+    mode: 0700
+
+- name: Extract backup location details
+  tags: backup, facts
+  set_fact:
+    protocol: '{{ location.url | urlsplit("scheme") }}'
+    location_host: '{{ location.url | urlsplit("hostname") }}'
+    location_user: '{{ location.url | urlsplit("username") | default("backup") }}'
+    location_path: '{{ location.url | urlsplit("path") }}'
+    location_details: '{{ location.url | urlsplit }}'
+
+# Backup handling
+- name: Add some patterns to exclude in the backups
+  tags: backup
+  lineinfile:
+    path: /etc/homebox/backup-exclude
+    line: '{{ line }}'
+  with_items:
+    - "# Exclude cache from backup"
+    - 'pp:/home/.backup-cache/'
+  loop_control:
+    loop_var: line
+
+- name: Create the backup config into /etc/homebox
+  tags: config
+  ini_file:
+    path: '/etc/homebox/backup.ini'
+    section: '{{ location.name }}'
+    option: '{{ option.name }}'
+    value: '{{ option.value }}'
+    mode: '0600'
+  with_items:
+    - name: url
+      value: '{{ location.url }}'
+    - name: active
+      value: '{{ location.active }}'
+    - name: keep_daily
+      value: '{{ location.keep_daily | default(1) }}'
+    - name: keep_weekly
+      value: '{{ location.keep_weekly | default(1) }}'
+    - name: keep_monthly
+      value: '{{ location.keep_monthly | default(1) }}'
+    - name: compression
+      value: '{{ location.compression | default("lz4") }}'
+    - name: rate_limit
+      value: '{{ location.rate_limit | default(0) }}'
+  loop_control:
+    loop_var: option
+
+- name: Set mount options for s3fs
+  set_fact:
+    mount_options:
+      - 'endpoint={{ location.region }}'
+      - 'default_acl=private'
+      - 'passwd_file=/etc/homebox/s3fs-{{ location.name }}'
+      - 'use_cache=/home/.backup-cache/'
+      - 'del_cache'
+
+- name: Add mount point definition for this device
+  register: mount_systemd
+  notify: Reload Systemd
+  tags: systemd
+  template:
+    src: 'mount-s3fs.systemd'
+    dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.mount'
+
+- name: Add automount definition for this device
+  notify: Reload Systemd
+  tags: systemd
+  template:
+    src: mount-auto.systemd
+    dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.automount'
+
+- name: Enable the automount service
+  notify: Reload Systemd
+  tags: systemd
+  systemd:
+    name: 'mnt-backup-{{ location.name }}.automount'
+    enabled: true
+    state: started
+
+- name: Enable the mount service
+  notify: Reload Systemd
+  tags: systemd
+  systemd:
+    name: 'mnt-backup-{{ location.name }}.mount'
+    enabled: true

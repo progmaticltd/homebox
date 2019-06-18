@@ -1,0 +1,46 @@
+---
+
+- name: Extract backup location details
+  tags: backup, facts
+  set_fact:
+    protocol: '{{ location.url | urlsplit("scheme") }}'
+    location_host: '{{ location.url | urlsplit("hostname") }}'
+    location_user: '{{ location.url | urlsplit("username") | default("backup") }}'
+    location_path: '{{ location.url | urlsplit("path") }}'
+    location_details: '{{ location.url | urlsplit }}'
+
+- name: Create the backup config into /etc/homebox
+  tags: config
+  ini_file:
+    path: '/etc/homebox/backup.ini'
+    section: '{{ location.name }}'
+    option: '{{ option.name }}'
+    value: '{{ option.value }}'
+    mode: '0600'
+  with_items:
+    - name: url
+      value: '{{ location.url }}'
+    - name: active
+      value: '{{ location.active }}'
+    - name: keep_daily
+      value: '{{ location.keep_daily | default(1) }}'
+    - name: keep_weekly
+      value: '{{ location.keep_weekly | default(1) }}'
+    - name: keep_monthly
+      value: '{{ location.keep_monthly | default(1) }}'
+    - name: compression
+      value: '{{ location.compression | default("lz4") }}'
+  loop_control:
+    loop_var: option
+
+# Exclude the destination from backup, i.e. don't backup the backup
+- name: Exclude backup directory from backup
+  tags: config
+  lineinfile:
+    path: /etc/homebox/backup-exclude
+    line: '{{ line }}'
+  with_items:
+    - "# Exclude '{{ location.name }}' backup directory"
+    - 'pp:{{ location.url | replace("dir:/", "") }}/'
+  loop_control:
+    loop_var: line

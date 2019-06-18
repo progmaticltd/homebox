@@ -1,5 +1,20 @@
 ---
 
+- name: Create the security folder
+  tags: accounts
+  file:
+    path: '/home/users/{{ user.uid }}/security'
+    owner: '{{ user.uid }}'
+    group: users
+    state: directory
+    mode: 0700
+    recurse: true
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
 - name: Install sqlite database tools
   tags: apt
   apt:

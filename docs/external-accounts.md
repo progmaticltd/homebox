@@ -1,15 +1,15 @@
-# Downloading emails from external accounts
+# Retrieving emails
 
 It is possible to add external accounts (GMail, Outlook, Yahoo, IMAP, etc...) to the platform.
 In this case, your emails will be downloaded in background, every time you logon on your account.
 
-_This is a one way synchronisation only, the remote accounts are not modified._
+This is a one way synchronisation only, the remote accounts are not modified.
 
 ## Security
 
-The credentials and the settings are stored on your box only, encrypted with AES 256 bits scheme.
-The description key is stored by the root account. The credentials are decrypted by the user account
-and kept in memory during the synchronisation process.
+The credentials and the settings are stored on your box only, encrypted with AES 256 bits scheme.  The description key
+is stored by the root account. The credentials are decrypted by the user account and kept in memory during the
+synchronisation process.
 
 Behind the scene, the platform is using [isync](http://isync.sourceforge.net/mbsync.html).
 
@@ -18,17 +18,16 @@ downloaded transparently.
 
 The folders hierarchy is reproduced on your server, with some adaptations for GMail, though.
 
-## Notes
-
-- The emails will be imported once only. The system is keeping a record of the emails indexes already imported.
-- If you set up multiple external accounts, they will be all downloaded in parallel.
-- The next version may add cron synchronisation, for instance at office hours, if required.
+!!! Note
+    - The emails will be imported once only. The system is keeping a record of the emails indexes already imported.
+    - Emails from external accounts are downloaded in the background, when you are checking your emails, from any client.
+    - The imported emails are re-filtered using the Sieve filters you have specified,
 
 ## Example
 
 Below is an example for one user named "andre", with multiple external accounts:
 
-```yaml
+``` yaml hl_lines="12"
 users:
 - uid: andre
   cn: André Rodier
@@ -77,6 +76,7 @@ users:
       get_trash: true
       max_messages: 10
 ```
+
 ## Details of the options
 
 There are a few options to download emails detailled below.
@@ -112,22 +112,22 @@ If you do not want to import delete emails too, set this option to false. It is 
 This option is useful if you want to test the import / synchronisation, and see how the folders will be synchronised.
 In the example above, the system downloads the last 10 emails, but will reproduce the entire folders hierarchy.
 
-# Special cases
-
-## GMail
+# GMail Special cases
 
 Google Mail (aka GMail) has some specific features, that make the import trickier.
 However, the system makes some choice.
 For instance, the folders hierarchy is reproduced, but without the ugly '[Google Mail]' label.
 
-- [Google Mail]/Sent Mail : /Sent
-- [Google Mail]/Drafts : /Draft
-- [Google Mail]/Archives : /Archives
-- [Google Mail]/Bin : /Trash
-- [Google Mail]/Spam : /Junk
-- [Google Mail]/Chat : Not synchronised.
-- [Google Mail]/Starred : Not synchronised.
-- [Google Mail]/Important : Optionally synchronised.
+| Folder                  | Destination              |
+|-------------------------|--------------------------|
+| [Google Mail]/Sent Mail | /Sent                    |
+| [Google Mail]/Drafts    | /Draft                   |
+| [Google Mail]/Archives  | /Archives                |
+| [Google Mail]/Bin       | /Trash                   |
+| [Google Mail]/Spam      | /Junk                    |
+| [Google Mail]/Chat      | Not synchronised.        |
+| [Google Mail]/Starred   | Not synchronised.        |
+| [Google Mail]/Important | Optionally synchronised. |
 
 The "Starred" folder is a virtual folder that represents a view of your starred emails.
 The same behaviour will be added to this platform.
@@ -137,14 +137,15 @@ into multiple folders, if they have multiple labels.
 There is nothing to do - yet - about this, but it is better to import an email multiple times rather than
 loosing emails.
 
-### Get important emails in a specific folder
+## Important emails
 
 As a corollary, there is an option, specific to GMail, to download the emails marked as "Important" in
 a dedicated folder, the option is called "`get_important`", and set to true by default.
 
-### Get archives: "get_archives"
+## Get archives
 
 This option is set to true by default. Set it to false if you do not want to download your entire email
 archives.
 
-_Be careful, some email providers will not let you download emails once archived, for instance Zoho._
+!!! Warning
+    Be careful, some email providers will not let you download emails once archived, for instance Zoho.

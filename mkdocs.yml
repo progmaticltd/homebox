@@ -1,28 +1,38 @@
-site_name: homebox
+site_name: homebox installation
+repo_url: https://github.com/progmaticltd/homebox/
+site_description: How to install HomeBox self hosting solution
+site_author: André Rodier
+copyright: Creative Commons Attribution-ShareAlike 4.0 International License
+markdown_extensions:
+  - smarty
+  - admonition
+  - codehilite
+extra_css: [ css/extra.css ]
+theme: readthedocs
 pages:
   - Home: index.md
   - Features: features.md
-  - Installation: installation.md
-  - Wait for DNS propagation: dns-propagation.md
-  - Debian preseed: preseed.md
-  - Main configuration file: configuration.md
+  - Before the installation: prerequisites.md
+  - Debian OS installation: preseed.md
+  - Homebox Installation: installation.md
   - Email configuration: email-configuration.md
   - Roundcube Webmail: webmail-roundcube.md
-  - Firewall configuration: firewall-configuration.md
-  - Email access monitoring: email-access-monitoring.md
   - Sogo Groupware: groupware-sogo.md
+  - Email access monitoring: email-access-monitoring.md
   - Antispam configuration: antispam-rspamd.md
   - Jabber configuration: jabber-configuration.md
   - Gogs configuration: gogs-configuration.md
   - Tor / privoxy configuration: tor-privoxy-configuration.md
+  - Firewall configuration: firewall-configuration.md
   - Security configuration: security-configuration.md
   - Transmission configuration: transmission-configuration.md
   - DNS Server configuration: bind-configuration.md
   - External accounts: external-accounts.md
-  - Backup your emails: backup.md
+  - Backup your home folders: backup-home.md
+  - Backup restoration: backup-restore.md
   - Backup your deployment: deployment-backup.md
+  - Backup server: backup-server.md
   - Monitoring with Zabbix: zabbix.md
   - Maintenance: maintenance.md
   - Testing and development: development.md
   - Code of conduct: codeofconduct.md
-theme: readthedocs

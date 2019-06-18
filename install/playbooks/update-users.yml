@@ -1,41 +1,35 @@
 ---
 ## Playbook to update users list
 
-# Load default settings once, this is needed to defined
-# some conditional flags used below
-- import_playbook: load-defaults.yml
-
 # Start to create users and home directories
 - import_playbook: ldap.yml
-- import_playbook: homes.yml
+- import_playbook: user-setup.yml
 
-# Configure SSH for remote access using borgbackup,
-# But only for users with an ssh key provided.
-# See system-example.yml configuration file
+# Configure SSH for remote access using borgbackup, But only for users
+# with an ssh key provided. See system-example.yml configuration file
 - import_playbook: backup-server.yml
 
-# Email server: MTA
+# Email server: MTA (Postfix)
 - import_playbook: postfix.yml
 
 # Mail delivery agent (dovecot)
 - import_playbook: dovecot.yml
 
-# Install the selected webmail
+# Update the selected webmail
 - import_playbook: roundcube.yml
   when: webmail.install and webmail.type == 'roundcube'
 
-# Install SOGo if chosen
+# Update SOGo if chosen
 - import_playbook: sogo.yml
   when: sogo.install
 
-# Install ejabberd, with LDAP authentication
+# Update ejabberd, with LDAP authentication
 - import_playbook: ejabberd.yml
   when: ejabberd.install
 
-# Add the old emails import scripts for each users
-# Except when in development mode.
-# It can alter the tests and is CPU intensive if you have
-# defined a lot of accounts.
+# Add the old emails import scripts for each users Except when in
+# development mode. It can alter the tests and is CPU intensive if
+# you have defined a lot of accounts.
 - import_playbook: import-accounts.yml
   when: mail.import.active and not system.devel
 

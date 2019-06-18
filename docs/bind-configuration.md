@@ -2,18 +2,16 @@
 
 The default configuration for the DNS server comes with the following options:
 
-- Not installed by default
+- Installed by default
+- Forward to google and cloudflare DNS
 - DNSSEC Not activated by default
 
 Default options for the server:
 
 ```yaml
-
-###############################################################################
-# Bind server defaults
 bind_default:
   # Bind is actually in testing phase, feedback welcome
-  install: false
+  install: true
   # Default servers to forward queries
   forward:
     - 8.8.8.8
@@ -55,30 +53,25 @@ bind_default:
 
 ```
 
-## Options
-
-### Servers to use for fowarding
+# Forwarding queries
 
 By default, the Google public DNS servers are used, as well as the one from cloudflare.
 
 More choice here: [Public DNS](https://en.wikipedia.org/wiki/Google_Public_DNS#See_also).
 
-### Backup MX records
+# Backup MX records
 
-If your server is not online, for instance due to an internet outage,
-you can use this option to redirect emails reception to another
-server. In this case, the other MTA should be configured to accept
-emails for your domain.
+If your server is not online, for instance due to an internet outage, you can use this option to redirect emails
+reception to another server. In this case, the other MTA should be configured to accept emails for your domain.
 
-If you use this option, you will probably consider importing the emails
-delivered to these "backup servers", to your own server, using the
-[external account](external-accounts.md) functionality.
+If you use this option, you will probably consider importing the emails delivered to these "backup servers", to your own
+server, using the [external account](external-accounts.md) functionality.
 
-### Trusted servers
+# Trusted servers
 
 Enter the list of trusted servers for recursion and cache query.
 
-### DNSSEC
+# DNSSEC extensions
 
 DNSSEC is not activated by default. Be sure your domain name supports it before activating it.
 
