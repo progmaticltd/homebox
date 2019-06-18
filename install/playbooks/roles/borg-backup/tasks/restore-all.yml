@@ -11,7 +11,7 @@
 - name: Restore /home and /var/backups folders from a previous installation
   tags: restore
   shell: >-
-    /usr/local/sbin/backup --action restore --config {{ location.name }}
+    /usr/local/sbin/homebox-backup --action restore --config {{ location.name }}
   with_items:
     - '{{ backup.locations | selectattr("restore", "defined") | selectattr("restore", "equalto", true) | list }}'
   loop_control:
