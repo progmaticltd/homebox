@@ -7,19 +7,6 @@
     path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/rspamd/'
     state: directory
 
-- name: Add rspamd GPG key
-  tags: rspamd
-  apt_key:
-    url: https://rspamd.com/apt-stable/gpg.key
-    state: present
-
-- name: Add rspamd repository
-  tags: rspamd
-  apt_repository:
-    repo: deb http://rspamd.com/apt-stable/ stretch main
-    state: present
-    filename: 'rspamd'
-
 - name: Install rspamd packages
   tags: rspamd
   vars:
