@@ -12,16 +12,16 @@ A set of Ansible scripts to setup a secure email and personal files server. This
 
 ## Current project status
 
-| Task                          | Development                                                               | Stable                                                                    |
-| -----------                   | ------------------------------------------------------------------------- | ----------------------------------------------------------------------    |
-| Documentation Build           | ![status](https://readthedocs.org/projects/homebox/badge/?version=dev)    | ![status](https://readthedocs.org/projects/homebox/badge/?version=master) |
-| Ansible files syntax checking | ![status](https://travis-ci.org/progmaticltd/homebox.svg?branch=dev)      | ![status](https://travis-ci.org/progmaticltd/homebox.svg?branch=master)   |
+| Task                          | Development                                                                                | Stable                                                                                        |
+| -----------                   | -------------------------------------------------------------------------                  | ----------------------------------------------------------------------                        |
+| Documentation Build           | ![status](https://readthedocs.org/projects/homebox/badge/?version=dev)                     | ![status](https://readthedocs.org/projects/homebox/badge/?version=master)                     |
+| Ansible files syntax checking | ![status](https://travis-ci.org/progmaticltd/homebox.svg?branch=dev)                       | ![status](https://travis-ci.org/progmaticltd/homebox.svg?branch=master)                       |
+| Iso image creation            | ![Build Status](https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-isobuilder) | ![Build Status](https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-isobuilder) |
 
 ## Current status and supported features
 
-For a complete list of features, see the
-[features page](http://homebox.readthedocs.io/en/latest/features/)
-in the official documentation.
+For a complete list of features, see the [features page](http://homebox.readthedocs.io/en/latest/features/) in the
+official documentation.
 
 ### System installation and features
 
@@ -98,6 +98,7 @@ in the official documentation.
 ### Development
 
 - YAML files validation on each commit, using [travis-ci](https://travis-ci.org/progmaticltd/homebox).
+- Continuous Integration using [Jenkins](https://jenkins.homebox.space).
 - End to end integration tests for the majority of components.
 - Playbooks to facilitate the installation or removal of development packages.
 - Global debug flag to activate the debug mode of all components.
