@@ -356,7 +356,7 @@
       uid: '{{ user.1.uid }}'
       givenName: '{{ user.1.first_name }}'
       sn: '{{ user.1.last_name }}'
-      userPassword: "{{ user.1.password }}"
+      userPassword: "{{ user.1.password | default(lookup('password', backup_directory + '/ldap/' + user.1.uid + '.pwd' )) }}"
       pwdPolicySubentry: 'cn=default,ou=pwpolicies,{{ ldap.organization.base }}'
       homeDirectory: '/home/users/{{ user.1.uid }}'
       loginShell: '{{ users_defaults.shell }}'
