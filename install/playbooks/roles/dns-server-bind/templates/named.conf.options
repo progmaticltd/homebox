@@ -142,7 +142,7 @@ options {
     // the all-0's placeholder.
     forwarders {
 {% for fwd in bind.forward %}
-    {{ fwd }};
+        {{ fwd }};
 {% endfor %}
     };
 

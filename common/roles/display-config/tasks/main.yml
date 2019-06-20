@@ -1,0 +1,36 @@
+---
+# This is used for debugging and test purposes.
+
+################################################################################
+# Display user options
+- name: Display all merged settings
+  debug:
+    var: '{{ setting }}'
+  with_items:
+    - network
+    - mail
+    - passwords
+    - system
+    - firewall
+    - security
+    - dictionaries
+    - dns
+    - webmail
+    - website
+    - devel
+    - dkim
+    - dmarc
+    - ejabberd
+    - bind
+    - gogs
+    - transmission
+    - posix_groups
+    - privoxy
+    - tor
+    - zabbix
+    - sogo
+    - hugo
+    - access_check
+    - backup
+  loop_control:
+    loop_var: setting
