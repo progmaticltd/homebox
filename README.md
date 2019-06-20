@@ -16,7 +16,7 @@ A set of Ansible scripts to setup a secure email and personal files server. This
 | -----------                   | -------------------------------------------------------------------------                  | ----------------------------------------------------------------------                        |
 | Documentation Build           | ![status](https://readthedocs.org/projects/homebox/badge/?version=dev)                     | ![status](https://readthedocs.org/projects/homebox/badge/?version=master)                     |
 | Ansible files syntax checking | ![status](https://travis-ci.org/progmaticltd/homebox.svg?branch=dev)                       | ![status](https://travis-ci.org/progmaticltd/homebox.svg?branch=master)                       |
-| Iso image creation            | ![Build Status](https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-isobuilder) | ![Build Status](https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-isobuilder) |
+| ISO image creation            | ![Build Status](https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-isobuilder) | ![Build Status](https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-isobuilder) |
 
 ## Current status and supported features
 
@@ -26,12 +26,11 @@ official documentation.
 ### System installation and features
 
 - Custom Debian installer generation with full disk encryption and fully automatic installation.
-- Unlock the system remotely, by entering the passphrase through SSH when the server boots, no need to keyboard / monitor.
+- Unlock the system upon boot by entering the passphrase through SSH or with a Yubikey.
 - Install packages only from Debian stable (Stretch) or officially maintained repositories (rspamd).
 - Automatic SSL Certificates generation with [letsencrypt](https://letsencrypt.org).
 - Automatic security updates (optional).
-- Centralised authentication with an LDAP users database, SSL certificate, password policies, PAM
-  integration.
+- Centralised authentication with an LDAP users database, SSL certificate, password policies, PAM integration.
 - AppArmor activated by default, profiles for all daemons.
 - Automatic backup of the deployment data to replay the installation with the same data.
 - Can be used at home, on a dedicated or virtual server hosted online.
