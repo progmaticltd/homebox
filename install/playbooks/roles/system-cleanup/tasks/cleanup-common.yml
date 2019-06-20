@@ -34,3 +34,15 @@
     regexp: '^PermitRootLogin without-password'
     replace: 'PermitRootLogin no'
     mode: 0600
+
+# The external IP address detection tasks is creating these two files
+# Remove them, so we can run the script again if the IP address(es) changes
+- name: Remove cached external IP addresses
+  file:
+    path: '{{ path }}'
+    state: absent
+  with_items:
+    - /tmp/external_ip.txt
+    - /tmp/backup_ip.txt
+  loop_control:
+    loop_var: path
