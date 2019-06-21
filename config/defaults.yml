@@ -403,9 +403,10 @@ ejabberd_default:
 # Bind server defaults
 bind_default:
   install: true
-  # Wait for the Glue records to be updated before starting the deployment.
-  # This flag is a work in progress to test if waiting is necessary or not.
-  wait_for_propagation: false
+  # Custom delays and retries to check DNS propagation
+  propagation:
+    retries: 10
+    delay: 60
   # Default servers to forward queries
   forward:
     - 8.8.8.8

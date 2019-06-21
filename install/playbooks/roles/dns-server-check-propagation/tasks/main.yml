@@ -4,13 +4,13 @@
 - name: Check DNS propagation
   shell: >-
     host main.{{ network.domain }}
-  retries: 10
-  delay: 60
+  retries: '{{ bind.retries | default(10) }}'
+  delay: '{{ bind.delay | default(60) }}'
 
 # This is checking that the DNS server has been fully propagated
 - name: Check DNS propagation for backup IP address
   when: network.backup_ip is defined
   shell: >-
     host backup.{{ network.domain }}
-  retries: 10
-  delay: 60
+  retries: '{{ bind.retries | default(10) }}'
+  delay: '{{ bind.delay | default(60) }}'
