@@ -69,7 +69,10 @@ ansible-playbook -i ../config/hosts.yml playbooks/main.yml
 
 ## Network configuration
 
-Every network subdomain entries, email addresses, etc... will include the domain name:
+### Domain name and host name
+
+Every network subdomain entries, email addresses, etc... will include the domain name, so this is important you put the
+real value here:
 
 ```yaml
 network:
@@ -82,10 +85,11 @@ network:
 The hostname is important, use the real one. If you used the preseed configuration, it should be just mail and your
 network domain.
 
-The external IP address is normally automatically detected. If this is not the case, you can specify it manually:
+### External IP address detection
 
-!!! Tip
-    If you do not have a backup IP address, use "~" like the example.
+The external IP address is normally automatically detected. If this is not the case, you can specify it manually. If
+your server has a second IP address, you can specify it here as well. By default, none is defined. You can mix IPv4
+and IPv6 addresses. DNS entries will be added accordingly.
 
 ```yaml
 network:
@@ -95,8 +99,22 @@ network:
   backup_ip: 2001:15f0:5502:bf1:5400:01ff:feca:dea6
 ```
 
-If your server has a second IP address, you can specify it here as well. By default, none is defined. You can mix IPv4
-and IPv6 addresses. DNS entries will be added accordingly.
+If you have a server with both an IPv4 and an IPv6, it can be detected automatically using this syntax:
+
+```yaml
+network:
+  domain: homebox.space
+  hostname: mail.homebox.space
+  external_ip: auto
+  backup_ip: auto_ipv6
+```
+
+!!! Warning
+    If you have two IP addresses of the same type (e.g. 2 x IPv4), you canot ask the installation script to detect them
+    automatically. You will have to specify them manually.
+
+!!! Tip
+    If you do not have a backup IP address, use "~" like the example.
 
 ## Users list
 
