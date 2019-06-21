@@ -31,7 +31,7 @@
 
 # Check if the DNS entries are now propagated on internet
 - import_playbook: dns-server-check-propagation.yml
-  when: bind.install and bind.wait_for_propagation
+  when: bind.install
 
 # At this point, if you have installed bind,
 # perhaps you should wait a few hours until
