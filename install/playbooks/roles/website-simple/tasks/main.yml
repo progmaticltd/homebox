@@ -42,12 +42,12 @@
   loop_control:
     loop_var: path
 
-- name: Get remote environment locale
+- name: Get the locale information to build a default web site page.
   when: not index_page.stat.exists
   tags: website
   set_fact:
-    website_language: '{{ ansible_env.LANG | regex_replace("_.*", "") }}'
-    website_charset: '{{ ansible_env.LC_CTYPE | regex_replace(".*\.", "") }}'
+    website_language: '{{ website.locale | regex_replace("_.*", "") }}'
+    website_charset: '{{ website.locale | regex_replace(".*\.", "") }}'
 
 # Create the real one, and name it index.html. it will not be overwritten if you redeploy
 # same for main.css and main.js

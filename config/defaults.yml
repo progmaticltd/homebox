@@ -271,6 +271,7 @@ dictionaries_default:
 # One for for https://yourdomain.com/ and one for https://www.yourdomain.com
 website_default:
   install: false
+  locale: en_GB.UTF-8
 
 ###############################################################################
 # Install a static web site on www.yourdomain.com using Hugo (https://gohugo.io/)
