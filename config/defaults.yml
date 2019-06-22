@@ -153,7 +153,6 @@ mail_default:
   # useful to debug sieve without setting the debug flag system wide
   sieve:
     debug: true
-
   #############################################################################
   # Fail2ban parameters
   fail2ban:
@@ -258,6 +257,12 @@ security_default:
   # various options when luks is installed
   luks:
     yubikey: false
+  #############################################################################
+  # The size of the dhparams to generate. The bigger the safer, but the longer
+  # to generate. When developing, you can use a small value to decrease the
+  # deployment time.
+  dhparam_size: 2048
+
 
 ###############################################################################
 # Dictionaries to install in the system

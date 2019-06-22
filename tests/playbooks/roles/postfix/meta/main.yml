@@ -2,3 +2,4 @@
 
 dependencies:
   - { role: load-defaults, when: defaults_loaded is not defined }
+  - { role: load-test-data }

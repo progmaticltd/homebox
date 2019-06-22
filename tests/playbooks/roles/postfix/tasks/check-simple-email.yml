@@ -22,8 +22,8 @@
     --to "{{ users[1].mail }}"
     --h-Subject '{{ test_subject }}'
     --auth
-    --auth-user="{{ users[0].uid }}"
-    --auth-password="{{ users[0].password }}"
+    --auth-user="{{ user0_uid }}"
+    --auth-password="{{ user0_password }}"
     --server smtp.{{ network.domain }}
     --body /tmp/testmsg-01.txt
   become: yes
@@ -51,4 +51,3 @@
   shell: >-
     grep -l "Subject: {{ test_subject }}"
     /home/users/{{ users[0].uid }}/mails/maildir/.Sent/cur/*
-

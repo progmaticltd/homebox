@@ -39,14 +39,10 @@
     -starttls telnet 2>&1
     | grep 'Verification: OK'
 
-- name: Test authentication on each user
+- name: Test authentication on the first user
   tags: dovecot
   shell: >-
-    doveadm auth login '{{ user.uid }}' '{{ user.password }}'
-  with_items:
-    - '{{ users }}'
-  loop_control:
-    loop_var: user
+    doveadm auth login -- '{{ user0_uid }}' '{{ user0_password }}'
 
 - name: Check the LDAP mapping from email address to uid
   tags: dovecot
