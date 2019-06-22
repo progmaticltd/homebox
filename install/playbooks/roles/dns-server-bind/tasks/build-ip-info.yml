@@ -4,6 +4,7 @@
 - name: Build reverse IP address using shell
   shell: >-
     dig -x {{ external_ip }}
+    @{{ bind.forward[0] }}
     | awk 'f{print;f=0} /^;; QUESTION SECTION:/{f=1}'
     | sed -E 's/(^;|.IN.*)//g'
   register: reverse_main_ip
@@ -29,6 +30,7 @@
   when: network.backup_ip is defined
   shell: >-
     dig -x {{ network.backup_ip }}
+    @{{ bind.forward[0] }}
     | awk 'f{print;f=0} /^;; QUESTION SECTION:/{f=1}'
     | sed -E 's/(^;|.IN.*)//g'
   register: reverse_backup_ip
