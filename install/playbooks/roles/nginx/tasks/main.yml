@@ -56,7 +56,7 @@
   tags: security
   openssl_dhparam:
     path: /etc/nginx/dhparams.pem
-    size: 2048
+    size: '{{ security.dhparam_size }}'
     mode: 0600
     owner: root
     group: root
