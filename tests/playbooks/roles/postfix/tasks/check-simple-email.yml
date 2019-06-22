@@ -44,7 +44,7 @@
   tags: postfix
   shell: >-
     cat '{{ email_found.stdout }}'
-    | grep "^DKIM-Signature:.*d={{ network.domain }};"
+    | grep "^DKIM-Signature:.*"
 
 - name: Check if the email is in the sent folder
   tags: postfix
