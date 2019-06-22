@@ -1,0 +1,9 @@
+---
+
+- name: Get the first user credentials
+  run_once: true
+  set_fact:
+    user0_uid: '{{ users[0].uid }}'
+    user0_password: >-
+      {{ users[0].password
+      | default(lookup('password', backup_directory + '/ldap/' + users[0].uid + '.pwd')) }}
