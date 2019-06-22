@@ -148,35 +148,33 @@ The file is self explanatory, and inside, you will find the following block:
 system:
   release: stretch
   login: true
-  ssl: letsencrypt
   devel: true
   debug: true
 
 ```
 
-### "debug" flag
+### The "debug" flag
 
-Setting the debug flag to true will activate a lot of debug options in Dovecot, OpenLDAP,
-Postfix, etc...  You can then filter in the console, using for instance `journalctl -u
-postfix -u dovecot*` to view postfix and dovecot logs respectively.
+Setting the debug flag to true will activate a lot of debug options in Dovecot, OpenLDAP, Postfix, etc...  You can then
+filter in the console, using for instance `journalctl -u postfix -u dovecot*` to view postfix and dovecot logs
+respectively.
 
-### "devel" flag
+### The "devel" flag
 
 When you set this flag to true, various settings are changed in the development.
 
-- The certificates deployed are staging certificates only, which allows you
-  to request more to LetsEncrypt.
-- The certificates are backed up on your local machine, allowing you to redeploy
-  without asking again the same certificates, which is also faster.
+- The certificates deployed are staging certificates only, which allows you to request more to LetsEncrypt.
+- The certificates are backed up on your local machine, allowing you to redeploy without asking again the same
+  certificates, which is also faster.
 
-To test your system from a local computer, you will need to add the LetsEncrypt root
-certificate authority, the staging version, which can be download on the
-[LetsEncrypt staging environment page](https://letsencrypt.org/docs/staging-environment/).
+If you set this flag to true, and you want to test your system from a local computer, you will need to add the staging
+version of the root certificate authority. They cab be downloaded on the on the [LetsEncrypt staging environment
+page](https://letsencrypt.org/docs/staging-environment/).
 
 ## Development playbook
 
-The first playbook to run is probably "dev-support.yml". It installs some diagnostic and
-convenience packages on the server, to make your life easier during the development phase.
+The first playbook to run is probably "dev-support.yml". It installs some diagnostic and convenience packages on the
+server, to make your life easier during the development phase.
 
 For instance, these packages are installed:
 
@@ -203,32 +201,29 @@ For instance, these packages are installed:
 
 ## Installation playbooks
 
-The main playbook 'main.yml' and includes all other playbooks, with some of them
-conditional, as some components are optional.
+The main playbook 'main.yml' and includes all other playbooks, with some of them conditional, as some components are
+optional.
 
 ## Automatic backup
 
-Once the script has been run, the backup folder contains important files, like
-certificates, passwords, etc. See (see the [deployment backup](./deployment-backup.md)
-page for details).
+Once the script has been run, the backup folder contains important files, like certificates, passwords, etc. See (see
+the [deployment backup](./deployment-backup.md) page for details).
 
 ## Development cleanup
 
-This playbook do the opposite of dev-support, by uninstalling the packages used for
-development, and restoring the bashrc to its default state. You probably want to run this
-script before putting your server in production.
+This playbook do the opposite of dev-support, by uninstalling the packages used for development, and restoring the
+bashrc to its default state. You probably want to run this script before putting your server in production.
 
 It is also removing the LetsEncrypt staging root certificate authority from the system.
 
 ## Tests / Diagnostic playbooks.
 
-There is also a tests folder that contains test playbooks.
-These playbooks are running a list of system and integration tests on your development server.
-This is useful for diagnostic purposes and also during the development phase, to be sure nothing
-is broken before committing anything.
+There is also a tests folder that contains test playbooks.  These playbooks are running a list of system and integration
+tests on your development server.  This is useful for diagnostic purposes and also during the development phase, to be
+sure nothing is broken before committing anything.
 
-It does not replace a full test suite in a pre-production environment, but has been enough
-so far to catch common mistakes made in the scripts.
+It does not replace a full test suite in a pre-production environment, but has been enough so far to catch common
+mistakes made in the scripts.
 
 The following roles are run:
 
@@ -252,12 +247,146 @@ The following roles are run:
 - Full text search inside attachments
 - DNS records when the DNS server is installed.
 
+## Profiling the playbook
+
+You can profile the time taken by the whole playbook, using the Ansible profile_roles plugin:
+
+```ini hl_lines="5"
+[defaults]
+retry_files_enabled = False
+display_skipped_hosts = False
+stdout_callback = yaml
+callback_whitelist = profile_roles
+roles_path = .:{{ playbook_dir }}/../../common/roles/
+connection_plugins = {{ playbook_dir }}/../../common/connection-plugins/
+remote_tmp = /tmp/
+```
+
+Then, once you have finished to run the playbook, you will see the total time. For instance:
+
+For a full deployment:
+
+```
+PLAY RECAP *********************************************************************
+homebox                    : ok=644  changed=394  unreachable=0    failed=0
+localhost                  : ok=0    changed=0    unreachable=0    failed=0
+
+Saturday 22 June 2019  15:18:09 +0100 (0:00:00.424)       0:18:59.596 *********
+===============================================================================
+dovecot --------------------------------------------------------------- 176.27s
+system-prepare -------------------------------------------------------- 118.33s
+postfix --------------------------------------------------------------- 112.06s
+certificates ---------------------------------------------------------- 100.98s
+load-defaults ---------------------------------------------------------- 81.55s
+roundcube -------------------------------------------------------------- 67.77s
+ldap ------------------------------------------------------------------- 66.80s
+clamav ----------------------------------------------------------------- 59.39s
+external-ip ------------------------------------------------------------ 39.54s
+sogo ------------------------------------------------------------------- 38.57s
+opendkim --------------------------------------------------------------- 27.84s
+dns-server-bind -------------------------------------------------------- 27.40s
+setup ------------------------------------------------------------------ 25.43s
+rspamd ----------------------------------------------------------------- 24.34s
+opendmarc -------------------------------------------------------------- 23.52s
+packages --------------------------------------------------------------- 21.38s
+website-simple --------------------------------------------------------- 17.81s
+system-cleanup --------------------------------------------------------- 16.34s
+user-setup ------------------------------------------------------------- 15.64s
+autoconfig ------------------------------------------------------------- 14.98s
+autodiscover ----------------------------------------------------------- 14.98s
+remote-access ---------------------------------------------------------- 14.89s
+nginx ------------------------------------------------------------------ 13.14s
+imapproxy --------------------------------------------------------------- 8.58s
+dns-server-bind-refresh ------------------------------------------------- 2.69s
+well-known-services ----------------------------------------------------- 2.10s
+dns-server-check-propagation -------------------------------------------- 1.22s
+ejabberd ---------------------------------------------------------------- 0.75s
+gogs -------------------------------------------------------------------- 0.66s
+transmission ------------------------------------------------------------ 0.63s
+borg-backup ------------------------------------------------------------- 0.58s
+zabbix-server ----------------------------------------------------------- 0.54s
+luks-remote ------------------------------------------------------------- 0.50s
+fwknop-server ----------------------------------------------------------- 0.40s
+privoxy ----------------------------------------------------------------- 0.31s
+access-check ------------------------------------------------------------ 0.26s
+backup-server ----------------------------------------------------------- 0.19s
+tor --------------------------------------------------------------------- 0.18s
+import-accounts --------------------------------------------------------- 0.18s
+rspamd-web -------------------------------------------------------------- 0.18s
+fwknop-client ----------------------------------------------------------- 0.17s
+ssh-keygen -------------------------------------------------------------- 0.13s
+access-report ----------------------------------------------------------- 0.12s
+php-fpm ----------------------------------------------------------------- 0.08s
+extra-certs ------------------------------------------------------------- 0.06s
+sendxmpp ---------------------------------------------------------------- 0.05s
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+total ---------------------------------------------------------------- 1139.50s
+```
+
+And for an update:
+
+```text
+PLAY RECAP *********************************************************************
+homebox                    : ok=557  changed=66   unreachable=0    failed=0
+localhost                  : ok=0    changed=0    unreachable=0    failed=0
+
+Saturday 22 June 2019  14:50:39 +0100 (0:00:00.442)       0:09:57.571 *********
+===============================================================================
+load-defaults ---------------------------------------------------------- 85.87s
+certificates ----------------------------------------------------------- 78.07s
+dovecot ---------------------------------------------------------------- 54.67s
+postfix ---------------------------------------------------------------- 42.22s
+external-ip ------------------------------------------------------------ 36.11s
+ldap ------------------------------------------------------------------- 34.02s
+system-prepare --------------------------------------------------------- 27.48s
+setup ------------------------------------------------------------------ 23.86s
+dns-server-bind -------------------------------------------------------- 22.62s
+opendkim --------------------------------------------------------------- 22.37s
+rspamd ----------------------------------------------------------------- 22.30s
+opendmarc -------------------------------------------------------------- 18.06s
+roundcube -------------------------------------------------------------- 17.91s
+user-setup ------------------------------------------------------------- 15.80s
+nginx ------------------------------------------------------------------ 15.27s
+sogo ------------------------------------------------------------------- 14.75s
+remote-access ---------------------------------------------------------- 13.83s
+website-simple ---------------------------------------------------------- 8.27s
+system-cleanup ---------------------------------------------------------- 7.65s
+clamav ------------------------------------------------------------------ 6.65s
+autoconfig -------------------------------------------------------------- 5.68s
+autodiscover ------------------------------------------------------------ 5.37s
+imapproxy --------------------------------------------------------------- 4.82s
+packages ---------------------------------------------------------------- 3.09s
+dns-server-bind-refresh ------------------------------------------------- 1.93s
+well-known-services ----------------------------------------------------- 1.35s
+dns-server-check-propagation -------------------------------------------- 0.98s
+ejabberd ---------------------------------------------------------------- 0.77s
+transmission ------------------------------------------------------------ 0.75s
+gogs -------------------------------------------------------------------- 0.68s
+borg-backup ------------------------------------------------------------- 0.62s
+zabbix-server ----------------------------------------------------------- 0.58s
+luks-remote ------------------------------------------------------------- 0.53s
+fwknop-server ----------------------------------------------------------- 0.43s
+privoxy ----------------------------------------------------------------- 0.32s
+access-check ------------------------------------------------------------ 0.28s
+rspamd-web -------------------------------------------------------------- 0.24s
+backup-server ----------------------------------------------------------- 0.21s
+tor --------------------------------------------------------------------- 0.20s
+fwknop-client ----------------------------------------------------------- 0.18s
+import-accounts --------------------------------------------------------- 0.18s
+access-report ----------------------------------------------------------- 0.16s
+ssh-keygen -------------------------------------------------------------- 0.14s
+php-fpm ----------------------------------------------------------------- 0.09s
+extra-certs ------------------------------------------------------------- 0.06s
+sendxmpp ---------------------------------------------------------------- 0.06s
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+total ----------------------------------------------------------------- 597.48s
+```
+
 ## Some development tools to consider
 
 - The fantastic tmux, mandatory IMHO: [tmux github page](https://github.com/tmux).
-- Emacs or vim, but if you are not ready, [VisualStudio
-  code](https://code.visualstudio.com/) is not too bad as well, and is very well
-  integrated in Debian / Ubuntu.
+- Emacs or vim, but if you are not ready, [VisualStudio code](https://code.visualstudio.com/) is not too bad as well,
+  and is very well integrated in Debian / Ubuntu.
 - Test your SMTP server compliance: [mxtoolbox.com](http://mxtoolbox.com/).
 - DNSSEC records debugger : https://dnssec-analyzer.verisignlabs.com/
 - DNS propagation checker: https://www.whatsmydns.net/
