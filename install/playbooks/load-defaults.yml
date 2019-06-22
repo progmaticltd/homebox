@@ -7,4 +7,3 @@
     - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
     - load-defaults
-    - display-config
