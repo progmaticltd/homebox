@@ -12,11 +12,114 @@ A set of Ansible scripts to setup a secure email and personal files server. This
 
 ## Current project status
 
-| Task                          | Development                                                                                | Stable                                                                                        |
-| -----------                   | -------------------------------------------------------------------------                  | ----------------------------------------------------------------------                        |
-| Documentation Build           | ![status](https://readthedocs.org/projects/homebox/badge/?version=dev)                     | ![status](https://readthedocs.org/projects/homebox/badge/?version=master)                     |
-| Ansible files syntax checking | ![status](https://travis-ci.org/progmaticltd/homebox.svg?branch=dev)                       | ![status](https://travis-ci.org/progmaticltd/homebox.svg?branch=master)                       |
-| ISO image creation            | ![Build Status](https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-isobuilder) | ![Build Status](https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-isobuilder) |
+<table>
+    <tr>
+        <th colspan="2"></th>
+        <th><a href="https://github.com/progmaticltd/homebox/tree/master">Development branch</a></th>
+        <th><a href="https://github.com/progmaticltd/homebox/tree/master">Master branch</a></th>
+    </tr>
+    <tr>
+        <td colspan="2">Syntax checking</td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-dev-basic/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-basic'>
+            </a>
+        </td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-master-basic/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-basic'>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">Documentation</td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-dev-docs/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-docs'>
+            </a>
+        </td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-master-docs/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-docs'>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">ISO image</td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-dev-isobuilder/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-isobuilder'>
+            </a>
+        </td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-master-isobuilder/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-isobuilder'>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td rowspan="2">
+            <a href='https://github.com/progmaticltd/homebox-test/blob/master/configs/generic/micro-mixedip-01.yml'>
+                Micro
+            </a>
+        </td>
+        <td>Deployment</td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-dev-micro-deploy/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-micro-deploy'>
+            </a>
+        </td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-master-micro-deploy/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-micro-deploy'>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>Testing</td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-dev-micro-test/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-micro-test'>
+            </a>
+        </td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-master-micro-test/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-micro-test'>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td rowspan="2">
+            <a href='https://github.com/progmaticltd/homebox-test/blob/master/configs/generic/mini-mixedip-01.yml'>
+                Mini
+            </a>
+        </td>
+        <td>Deployment</td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-dev-mini-deploy/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-mini-deploy'>
+            </a>
+        </td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-master-mini-deploy/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-mini-deploy'>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>Testing</td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-dev-mini-test/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-mini-test'>
+            </a>
+        </td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-master-mini-test/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-mini-test'>
+            </a>
+        </td>
+    </tr>
+</table>
 
 ## Current status and supported features
 
