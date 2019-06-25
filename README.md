@@ -45,7 +45,9 @@ A set of Ansible scripts to setup a secure email and personal files server. This
         </td>
     </tr>
     <tr>
-        <td colspan="2">ISO image</td>
+        <td colspan="2">
+            <a href="https://jenkins.homebox.space/downloads/">ISO image</a>
+        </td>
         <td>
             <a href='https://jenkins.homebox.space/job/homebox-dev-isobuilder/'>
                 <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-isobuilder'>
@@ -177,8 +179,8 @@ official documentation.
 
 ### Other optional features
 
-- Incremental backups, encrypted, on multiple destination (SFTP, Samba share or USB drive), with email and Jabber
-  reporting.  See [backup documentation](docs/backup.md) for details.
+- Incremental backups, encrypted, on multiple destination (SFTP, S3, Samba share or USB drive), with email and Jabber
+  reporting.
 - Jabber server, using [ejabberd](https://www.ejabberd.im/), with LDAP authentication, direct or offline file transfer
   and optional server to server communication.
 - [Tor](https://www.torproject.org/) installation out of the box with possible customisation.

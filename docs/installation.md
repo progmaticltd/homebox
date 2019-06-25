@@ -37,7 +37,7 @@ nano system.yml
 
 The system configuration file is a complete YAML configuration file containing all your settings:
 
-- Network information, specifically your domain name.
+- Network information, specifically your IP address(es) and domain name.
 - User and group details, like email addresses and aliases.
 - Email parameters, like maximum attachment size, antivirus options, etc.
 - Some password policies, like minimum length and complexity.
@@ -99,22 +99,12 @@ network:
   backup_ip: 2001:15f0:5502:bf1:5400:01ff:feca:dea6
 ```
 
-If you have a server with both an IPv4 and an IPv6, it can be detected automatically using this syntax:
-
-```yaml
-network:
-  domain: homebox.space
-  hostname: mail.homebox.space
-  external_ip: auto
-  backup_ip: auto_ipv6
-```
-
-!!! Warning
-    If you have two IP addresses of the same type (e.g. 2 x IPv4), you canot ask the installation script to detect them
-    automatically. You will have to specify them manually.
-
 !!! Tip
     If you do not have a backup IP address, use "~" like the example.
+
+!!! Warning
+    If you have two IP addresses, you will have to specify them manually until the automatic detection works in all the
+    cases.
 
 ## Users list
 
