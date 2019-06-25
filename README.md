@@ -12,26 +12,128 @@ A set of Ansible scripts to setup a secure email and personal files server. This
 
 ## Current project status
 
-| Task                          | Development                                                               | Stable                                                                    |
-| -----------                   | ------------------------------------------------------------------------- | ----------------------------------------------------------------------    |
-| Documentation Build           | ![status](https://readthedocs.org/projects/homebox/badge/?version=dev)    | ![status](https://readthedocs.org/projects/homebox/badge/?version=master) |
-| Ansible files syntax checking | ![status](https://travis-ci.org/progmaticltd/homebox.svg?branch=dev)      | ![status](https://travis-ci.org/progmaticltd/homebox.svg?branch=master)   |
+<table>
+    <tr>
+        <th colspan="2"></th>
+        <th><a href="https://github.com/progmaticltd/homebox/tree/master">Development branch</a></th>
+        <th><a href="https://github.com/progmaticltd/homebox/tree/master">Master branch</a></th>
+    </tr>
+    <tr>
+        <td colspan="2">Syntax checking</td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-dev-basic/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-basic'>
+            </a>
+        </td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-master-basic/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-basic'>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">Documentation</td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-dev-docs/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-docs'>
+            </a>
+        </td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-master-docs/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-docs'>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">ISO image</td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-dev-isobuilder/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-isobuilder'>
+            </a>
+        </td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-master-isobuilder/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-isobuilder'>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td rowspan="2">
+            <a href='https://github.com/progmaticltd/homebox-test/blob/master/configs/generic/micro-mixedip-01.yml'>
+                Micro
+            </a>
+        </td>
+        <td>Deployment</td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-dev-micro-deploy/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-micro-deploy'>
+            </a>
+        </td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-master-micro-deploy/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-micro-deploy'>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>Testing</td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-dev-micro-test/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-micro-test'>
+            </a>
+        </td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-master-micro-test/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-micro-test'>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td rowspan="2">
+            <a href='https://github.com/progmaticltd/homebox-test/blob/master/configs/generic/mini-mixedip-01.yml'>
+                Mini
+            </a>
+        </td>
+        <td>Deployment</td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-dev-mini-deploy/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-mini-deploy'>
+            </a>
+        </td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-master-mini-deploy/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-mini-deploy'>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>Testing</td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-dev-mini-test/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-dev-mini-test'>
+            </a>
+        </td>
+        <td>
+            <a href='https://jenkins.homebox.space/job/homebox-master-mini-test/'>
+                <img src='https://jenkins.homebox.space/buildStatus/icon?job=homebox-master-mini-test'>
+            </a>
+        </td>
+    </tr>
+</table>
 
 ## Current status and supported features
 
-For a complete list of features, see the
-[features page](http://homebox.readthedocs.io/en/latest/features/)
-in the official documentation.
+For a complete list of features, see the [features page](http://homebox.readthedocs.io/en/latest/features/) in the
+official documentation.
 
 ### System installation and features
 
 - Custom Debian installer generation with full disk encryption and fully automatic installation.
-- Unlock the system remotely, by entering the passphrase through SSH when the server boots, no need to keyboard / monitor.
+- Unlock the system upon boot by entering the passphrase through SSH or with a Yubikey.
 - Install packages only from Debian stable (Stretch) or officially maintained repositories (rspamd).
 - Automatic SSL Certificates generation with [letsencrypt](https://letsencrypt.org).
 - Automatic security updates (optional).
-- Centralised authentication with an LDAP users database, SSL certificate, password policies, PAM
-  integration.
+- Centralised authentication with an LDAP users database, SSL certificate, password policies, PAM integration.
 - AppArmor activated by default, profiles for all daemons.
 - Automatic backup of the deployment data to replay the installation with the same data.
 - Can be used at home, on a dedicated or virtual server hosted online.
@@ -98,6 +200,7 @@ in the official documentation.
 ### Development
 
 - YAML files validation on each commit, using [travis-ci](https://travis-ci.org/progmaticltd/homebox).
+- Continuous Integration using [Jenkins](https://jenkins.homebox.space).
 - End to end integration tests for the majority of components.
 - Playbooks to facilitate the installation or removal of development packages.
 - Global debug flag to activate the debug mode of all components.

@@ -22,8 +22,8 @@
     --to "{{ users[1].mail }}"
     --h-Subject '{{ test_subject }}'
     --auth
-    --auth-user="{{ users[0].uid }}"
-    --auth-password="{{ users[0].password }}"
+    --auth-user="{{ user0_uid }}"
+    --auth-password="{{ user0_password }}"
     --server smtp.{{ network.domain }}
     --body /tmp/testmsg-01.txt
   become: yes
@@ -44,11 +44,10 @@
   tags: postfix
   shell: >-
     cat '{{ email_found.stdout }}'
-    | grep "^DKIM-Signature:.*d={{ network.domain }};"
+    | grep "^DKIM-Signature:.*"
 
 - name: Check if the email is in the sent folder
   tags: postfix
   shell: >-
     grep -l "Subject: {{ test_subject }}"
     /home/users/{{ users[0].uid }}/mails/maildir/.Sent/cur/*
-

@@ -153,7 +153,6 @@ mail_default:
   # useful to debug sieve without setting the debug flag system wide
   sieve:
     debug: true
-
   #############################################################################
   # Fail2ban parameters
   fail2ban:
@@ -258,6 +257,12 @@ security_default:
   # various options when luks is installed
   luks:
     yubikey: false
+  #############################################################################
+  # The size of the dhparams to generate. The bigger the safer, but the longer
+  # to generate. When developing, you can use a small value to decrease the
+  # deployment time.
+  dhparam_size: 2048
+
 
 ###############################################################################
 # Dictionaries to install in the system
@@ -271,6 +276,7 @@ dictionaries_default:
 # One for for https://yourdomain.com/ and one for https://www.yourdomain.com
 website_default:
   install: false
+  locale: en_GB.UTF-8
 
 ###############################################################################
 # Install a static web site on www.yourdomain.com using Hugo (https://gohugo.io/)
@@ -400,25 +406,13 @@ ejabberd_default:
     proxyrate: 10240 # file transfer proxy
 
 ###############################################################################
-# Gandi automatic DNS update
-# This is now obsolete, as Homebox come with its own DNS server
-# However, we could keep this for Glue records management
-# Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
-# update: Automatic update of your DNS server
-# test: test mode: does not activate the DNS zone straight
-# add_wildcard:  Create a wildcard entry to redirect all traffic to your box
-dns_default:
-  update: false
-  test: true
-  add_wildcard: true
-  gandi:
-    handle: JD123-GANDI
-    key: zaNGbUVIvi1KbYb6PPMdiQLh
-
-###############################################################################
 # Bind server defaults
 bind_default:
   install: true
+  # Custom delays and retries to check DNS propagation
+  propagation:
+    retries: 10
+    delay: 60
   # Default servers to forward queries
   forward:
     - 8.8.8.8

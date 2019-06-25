@@ -55,7 +55,7 @@
   tags: ssl
   openssl_dhparam:
     path: '{{ dhfile }}'
-    size: 2048
+    size: '{{ security.dhparam_size }}'
     mode: 0600
     owner: root
     group: ejabberd

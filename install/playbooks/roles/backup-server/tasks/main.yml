@@ -27,7 +27,7 @@
     loop_var: user
 
 - name: Use the first backup drive for the users
-  when: backup.locations.count > 0
+  when: backup.locations != []
   set_fact:
     backup_root: 'mnt/backup/{{ backup.locations[0].name }}'
     backup_folder: ''

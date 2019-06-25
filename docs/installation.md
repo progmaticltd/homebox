@@ -69,7 +69,10 @@ ansible-playbook -i ../config/hosts.yml playbooks/main.yml
 
 ## Network configuration
 
-Every network subdomain entries, email addresses, etc... will include the domain name:
+### Domain name and host name
+
+Every network subdomain entries, email addresses, etc... will include the domain name, so this is important you put the
+real value here:
 
 ```yaml
 network:
@@ -82,10 +85,11 @@ network:
 The hostname is important, use the real one. If you used the preseed configuration, it should be just mail and your
 network domain.
 
-The external IP address is normally automatically detected. If this is not the case, you can specify it manually:
+### External IP address detection
 
-!!! Tip
-    If you do not have a backup IP address, use "~" like the example.
+The external IP address is normally automatically detected. If this is not the case, you can specify it manually. If
+your server has a second IP address, you can specify it here as well. By default, none is defined. You can mix IPv4
+and IPv6 addresses. DNS entries will be added accordingly.
 
 ```yaml
 network:
@@ -95,13 +99,27 @@ network:
   backup_ip: 2001:15f0:5502:bf1:5400:01ff:feca:dea6
 ```
 
-If your server has a second IP address, you can specify it here as well. By default, none is defined. You can mix IPv4
-and IPv6 addresses. DNS entries will be added accordingly.
+If you have a server with both an IPv4 and an IPv6, it can be detected automatically using this syntax:
+
+```yaml
+network:
+  domain: homebox.space
+  hostname: mail.homebox.space
+  external_ip: auto
+  backup_ip: auto_ipv6
+```
+
+!!! Warning
+    If you have two IP addresses of the same type (e.g. 2 x IPv4), you canot ask the installation script to detect them
+    automatically. You will have to specify them manually.
+
+!!! Tip
+    If you do not have a backup IP address, use "~" like the example.
 
 ## Users list
 
-The other piece of information you need to fill first is the user list. In its simplest form, you will have something
-like this:
+The file format should be self explanatory. The other piece of information you need to fill first is the user list. In
+its simplest form, you will have something like this:
 
 ``` yaml
 users:
@@ -120,12 +138,9 @@ users:
   first_name: Jane
   last_name: Doe
   mail: jane.doe@example.com
-  password: 'Tlwril!8'
   aliases:
     - jane@homebox.space
 ```
-
-The file format should be self explanatory. For complex passwords, use quotes, like " or '
 
 The email aliases are the other email addresses that belongs to the same user.
 
@@ -134,6 +149,11 @@ You can also add more advanced features, like:
 - [Import emails from other accounts](external-accounts.md).
 - [Define some users as administrators](security-configuration.md#defining-administrators)
 - [Grant remote access to certain users](security-configuration.md#grant-some-users-remote-access)
+
+!!! Note
+    You do not have to set the passwords for each user if you don't want to. In this case, a random password will be
+    generated, and saved in the deployment backup directory, in the ldap folder. In this case, there will be one file
+    called 'jane.pwd'. Otherwise, you can specify the password in clear text. For complex passwords, use quotes
 
 ## Email options
 
@@ -203,6 +223,8 @@ bind:
   forward:
     - 8.8.8.8
     - 8.8.4.4
+    - 2001:4860:4860::8888
+    - 2001:4860:4860::8844
 ```
 
 You can also use [OpenDNS servers](https://en.wikipedia.org/wiki/OpenDNS#Name_server_IP_addresses) for forward.

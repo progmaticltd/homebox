@@ -1,0 +1,7 @@
+---
+
+keys_convert:
+- src: ssh_host_ecdsa_key
+  dest: dropbear_ecdsa_host_key
+- src: ssh_host_rsa_key
+  dest: dropbear_rsa_host_key
