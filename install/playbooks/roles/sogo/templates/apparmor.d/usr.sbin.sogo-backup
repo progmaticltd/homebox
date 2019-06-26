@@ -81,6 +81,8 @@
   # proc and run filesystems
   /proc/@{pid}/cmdline r,
   /proc/filesystems r,
+  /run/sogo/ rw,
+  /run/sogo/** rw,
 
   # Gnustep shared files
   /usr/share/GNUstep/ r,
