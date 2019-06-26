@@ -10,6 +10,14 @@ A set of Ansible scripts to setup a secure email and personal files server. This
 - [Stable branch](http://homebox.readthedocs.io/en/latest/)
 - [Development branch](http://homebox.readthedocs.io/en/dev/)
 
+## Mailing lists
+
+Thanks to [Framasoft](https://framasoft.org/), two mailing lists have been created, one for general questions, suggestions and
+support, and another one dedicated for development.
+
+- General questions: https://framalistes.org/sympa/info/homebox-general
+- Development: https://framalistes.org/sympa/info/homebox-dev
+
 ## Current project status
 
 <table>
