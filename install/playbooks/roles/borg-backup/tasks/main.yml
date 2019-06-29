@@ -148,15 +148,6 @@
   loop_control:
     loop_var: location
 
-- name: Import the backup encryption keys if they already exists
-  when: keys_restore.changed and backup.locations is defined and backup.locations != []
-  tags: sync
-  shell: >-
-  with_items:
-    - '{{ backup.locations }}'
-  loop_control:
-    loop_var: location
-
 # In this direction, we should overwrite the keys
 # in case new ones have been created
 - name: Retrieve the backup encryption keys on your local machine

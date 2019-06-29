@@ -44,6 +44,7 @@
 
 - name: Create the sogo database account password
   tags: facts
+  no_log: true
   set_fact:
     sogo_db_password: '{{ lookup("password", sogo_password_params) }}'
 

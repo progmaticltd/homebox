@@ -2,8 +2,7 @@
 
 - name: Get the passwords generated in the accounts tasks
   set_fact:
-    roPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
-
+    roPasswdParams: "{{ backup_directory }}/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
 
 - name: Make sure we can install packages through https
   tags: apt
@@ -44,11 +43,12 @@
 - name: Set facts for postgresql password generation
   tags: postgresql
   set_fact:
-    password_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/postgresql/admin.pwd"
+    password_path: "{{ backup_directory }}/postgresql/admin.pwd"
     password_params: "length=16 chars=ascii_letters,digits"
 
 - name: Generate a random password for postgresql gogs user
   tags: postgresql
+  no_log: true
   set_fact:
     gogs_pg_password: '{{ lookup("password", "{{ password_path }} {{ password_params }}") }}'
 
@@ -78,10 +78,11 @@
 # Gogs configuration ==========================================================
 - name: Set facts for session key
   set_fact:
-    session_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/gogs/session.pwd"
+    session_path: "{{ backup_directory }}/gogs/session.pwd"
     session_params: "length=32 chars=ascii_letters,digits"
 
 - name: Generate a random session key
+  no_log: true
   set_fact:
     gogs_session_key: '{{ lookup("password", "{{ session_path }} {{ session_params }}") }}'
 

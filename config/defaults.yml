@@ -11,7 +11,8 @@ network_default:
   external_ip: auto
   backup_ip: ~
 
-# Shortcut notation to the backup directory
+# Shortcut notation to the backup directory. All the build artifacts will be
+# saved in this directory
 backup_directory: "{{ playbook_dir }}/../../backup/{{ network.domain }}"
 
 # Standard policies

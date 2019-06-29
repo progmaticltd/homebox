@@ -65,7 +65,7 @@
   synchronize:
     mode: pull
     src: /etc/letsencrypt
-    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/certificates/'
+    dest: '{{ backup_directory }}/certificates/'
     perms: yes
     delete: true
     rsync_opts:

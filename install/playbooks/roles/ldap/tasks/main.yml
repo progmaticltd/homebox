@@ -8,7 +8,7 @@
 - name: Create a directory for ldap passwords backup if it does not exists
   delegate_to: localhost
   file:
-    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/'
+    path: '{{ backup_directory }}/ldap/'
     state: directory
 
 - name: Display LDAP tree settings
@@ -30,6 +30,7 @@
 # Pre-configure the LDAP sever before instaling
 - name: Configure the LDAP administration account
   when: slapd_stats.stat.exists == False
+  no_log: true
   debconf:
     name: slapd
     question: '{{ conf.question }}'

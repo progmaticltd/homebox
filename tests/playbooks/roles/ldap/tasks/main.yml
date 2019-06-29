@@ -70,7 +70,6 @@
     -w{{ lookup("password", ldap.roPasswdParams) }}
     'uid'
 
-# TODO: check if we can use a variables or system specific settings for shell and homeBase
 - name: Check that every user is in the system, with the correct attributes
   tags: ldap
   vars:
@@ -101,4 +100,3 @@
     - intlMailAddr
   loop_control:
     loop_var: field
-

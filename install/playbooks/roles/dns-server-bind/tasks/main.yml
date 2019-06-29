@@ -4,7 +4,7 @@
   tags: cert
   delegate_to: localhost
   file:
-    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/dnssec-keys/'
+    path: '{{ backup_directory }}/dnssec-keys/'
     state: directory
 
 # When IPv6 is used, bind9 should be taken from backports
@@ -110,7 +110,7 @@
   when: bind.dnssec.active
   tags: backup-push
   synchronize:
-    src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/dnssec-keys/'
+    src: '{{ backup_directory }}/dnssec-keys/'
     dest: '/etc/bind/keys/'
     mode: push
     owner: no
@@ -263,7 +263,7 @@
   synchronize:
     mode: pull
     src: '/etc/bind/keys/{{ item }}'
-    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/dnssec-keys/'
+    dest: '{{ backup_directory }}/dnssec-keys/'
     perms: yes
     rsync_opts:
       - '--no-motd'

@@ -213,6 +213,7 @@
 - name: Create the import user account password
   when: mail.import.active
   tags: impersonate
+  no_log: true
   set_fact:
     import_password: '{{ lookup("password", import_password_params) }}'
 
