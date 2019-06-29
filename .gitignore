@@ -20,3 +20,7 @@ sandbox/*
 # Backup folder for deployment files
 backup/*
 !backup/readme.md
+
+# Allow to include modules excluded from the repository
+modules/*
+!modules/readme.md
