@@ -181,8 +181,9 @@
   lineinfile:
     path: /etc/homebox/backup-exclude
     line: '{{ line }}'
+    state: '{{ gogs.backup | ternary("absent", "present") }}'
   with_items:
-    - "\n# Gogs: Exclude repositories from backup"
+    - "# Gogs: Exclude repositories from backup"
     - '/home/gogs'
   loop_control:
     loop_var: line
