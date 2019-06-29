@@ -1,6 +1,7 @@
 ---
 
 - name: Get the passwords generated in the accounts tasks
+  tags: facts
   set_fact:
     roPasswdParams: "{{ backup_directory }}/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
 
@@ -41,13 +42,13 @@
     state: present
 
 - name: Set facts for postgresql password generation
-  tags: postgresql
+  tags: postgresql, facts
   set_fact:
     password_path: "{{ backup_directory }}/postgresql/admin.pwd"
     password_params: "length=16 chars=ascii_letters,digits"
 
 - name: Generate a random password for postgresql gogs user
-  tags: postgresql
+  tags: postgresql, facts
   no_log: true
   set_fact:
     gogs_pg_password: '{{ lookup("password", "{{ password_path }} {{ password_params }}") }}'
@@ -77,11 +78,13 @@
 
 # Gogs configuration ==========================================================
 - name: Set facts for session key
+  tags: facts
   set_fact:
     session_path: "{{ backup_directory }}/gogs/session.pwd"
     session_params: "length=32 chars=ascii_letters,digits"
 
 - name: Generate a random session key
+  tags: facts
   no_log: true
   set_fact:
     gogs_session_key: '{{ lookup("password", "{{ session_path }} {{ session_params }}") }}'
@@ -110,7 +113,7 @@
     dest: '{{ file.dest }}'
     owner: gogs
     group: gogs
-    mode: 0644
+    mode: '0600'
   with_items:
     - src: app.ini
       dest: /etc/gogs/conf/app.ini
