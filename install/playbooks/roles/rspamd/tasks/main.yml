@@ -9,12 +9,8 @@
 
 - name: Install rspamd packages
   tags: rspamd
-  vars:
-    pkgs:
-      - redis-server
-      - rspamd
   apt:
-    name: "{{ pkgs }}"
+    name: "{{ rspamd_pkgs }}"
     state: present
 
 - name: Set facts for rspamd password generation
