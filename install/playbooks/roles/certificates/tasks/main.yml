@@ -33,6 +33,7 @@
     certificate_fqdn: "{{ network.domain }}"
     site_root: "/var/www/default"
     redirect_to_https: "{{ redirect | default(false) }}"
+    domain_alias: "{{ certificate.domain_alias | default(None) }}"
 
 - name: Create the certificate fqdn with the subdomain
   when: certificate.type != '@'
@@ -41,6 +42,7 @@
     certificate_fqdn: "{{ certificate.type }}.{{ network.domain }}"
     site_root: "/var/www/{{ certificate.type }}"
     redirect_to_https: "{{ redirect | default(false) }}"
+    domain_alias: "{{ certificate.domain_alias | default(None) }}"
 
 - name: Create a directory for the site if it does not exists
   tags: cert
@@ -49,11 +51,13 @@
     state: directory
 
 - name: Create a simple nginx template site (if not exists)
+  tags: nginx
   template:
     src: nginx-cert.conf
     dest: "/etc/nginx/sites-available/{{ certificate_fqdn }}-cert.conf"
 
 - name: Make sure the site is enabled
+  tags: nginx
   file:
     src: "/etc/nginx/sites-available/{{ certificate_fqdn }}-cert.conf"
     dest: "/etc/nginx/sites-enabled/{{ certificate_fqdn }}-cert.conf"
@@ -92,7 +96,7 @@
 
 - name: Restart the nginx server to load the new configuration
   when: aa_config.changed
-  tags: cert
+  tags: cert, nginx
   service:
     name: nginx
     state: restarted
@@ -116,11 +120,11 @@
   changed_when: false
   shell: >-
     certbot certificates -d {{ certificate_fqdn }} 2>&1
-    | grep -c VALID
+    | grep -c '(VALID:'
   failed_when: false
 
 - name: Generate the certificate
-  when: is_valid.stdout == "0"
+  # when: is_valid.stdout == "0"
   include_tasks: gencert.yml
 
 # In this direction, we should overwrite the symbolic links,
