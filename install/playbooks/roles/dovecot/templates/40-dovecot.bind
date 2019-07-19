@@ -4,9 +4,11 @@ imap    IN       {{ "%-4s" | format(external_ip_type) }}      {{ external_ip }}
 imap    IN       {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
 {% endif %}
 
+{% if mail.pop3 %}
 pop3    IN       {{ "%-4s" | format(external_ip_type) }}      {{ external_ip }}
 {% if backup_ip is defined %}
 pop3    IN       {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
+{% endif %}
 {% endif %}
 
 

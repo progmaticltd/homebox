@@ -3,12 +3,11 @@
 # configuration file for customisation.
 
 # Default network settings
-# If you are behind a NAT, perhaps you will want to
-# replace "auto" by your real external IP address
-# The backup IP address is interesting if
-# you are hosting your own DNS server.
+# If you are behind a NAT, perhaps you will have to specify your real external IP address
+# The backup IP address is used when you have a second IP address
 network_default:
-  external_ip: auto
+  auto_detect_ip: true
+  external_ip: ~
   backup_ip: ~
 
 # Shortcut notation to the backup directory. All the build artifacts will be
@@ -71,6 +70,7 @@ encryption:
 mail_default:
   max_attachment_size: 25   # In megabytes
   autoconfig: true          # Support Thunderbird automatic configuration
+  pop3: false               # Activate the POP3 protocol or not
   autodiscover: false       # Support MS Outlook automatic configuration (uses https)
   quota:
     port: 30000             # port used by dovecot for the quota daemon

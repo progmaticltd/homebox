@@ -8,5 +8,6 @@
   vars:
     certificate:
       type: smtp
+      extra_domains: smtp2
   roles:
     - certificates

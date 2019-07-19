@@ -15,6 +15,17 @@ The option “autodiscover” allows your _Microsoft Outlook_users to automatica
 instance, for the domain homebox.space, this will create a subdomain entry "autodiscover.homebox.space", accessible in
 https, with a dedicated SSL certificate.
 
+# Activate POP protocol
+
+```yaml
+mail_default:
+  ...
+  pop3: false               # Activate the POP3 protocol or not
+```
+
+By default, IMAP protocol is activated and POP3 is disabled. If you need pop3 protocol, just set the flag pop3 to true,
+and run the Ansbible dovecot playbook.
+
 # Antivirus configuration
 
 ```yaml
