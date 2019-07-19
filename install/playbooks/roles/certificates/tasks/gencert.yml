@@ -31,8 +31,8 @@
     {{ domain_alias_cmd is defined | ternary("--expand", "") }}
     {{ system.devel | ternary("--test-cert", "") }}
     --agree-tos
-  # args:
-  #   creates: "/etc/letsencrypt/live/{{ certificate_fqdn }}/cert.pem"
+  args:
+    creates: "/etc/letsencrypt/live/{{ certificate_fqdn }}/cert.pem"
 
 - name: Remove the firewall rule if it has been added
   tags: security
