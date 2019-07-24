@@ -4,14 +4,14 @@
   tags: backup
   delegate_to: localhost
   file:
-    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/website-simple/'
+    path: '{{ backup_directory }}/website-simple/'
     state: directory
 
 # Push the site if already backup up
 - name: If the web site has been generated before, copy the files on the remote server
   tags: sync
   synchronize:
-    src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/website-simple/'
+    src: '{{ backup_directory }}/website-simple/'
     dest: /var/www/default
     owner: no
     group: no
@@ -138,7 +138,7 @@
   synchronize:
     mode: pull
     src: /var/www/default/*
-    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/website-simple/'
+    dest: '{{ backup_directory }}/website-simple/'
     perms: yes
     archive: false
     recursive: true

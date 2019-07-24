@@ -4,16 +4,8 @@
 - name: Install postfix packages
   tags: postfix
   notify: Restart postfix
-  vars:
-    pkgs:
-      - postfix
-      - postfix-cdb
-      - postfix-pcre
-      - postfix-ldap
-      - sasl2-bin
-      - postfix-policyd-spf-python
   apt:
-    name: "{{ pkgs }}"
+    name: "{{ postfix_pkgs }}"
     state: present
 
 ################################################################################

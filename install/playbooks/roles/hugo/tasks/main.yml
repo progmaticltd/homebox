@@ -9,7 +9,7 @@
   tags: backup
   delegate_to: localhost
   file:
-    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/website-hugo/'
+    path: '{{ backup_directory }}/website-hugo/'
     state: directory
 
 # Push the site if already backup up
@@ -19,7 +19,7 @@
     - Check nginx config
     - Restart nginx
   synchronize:
-    src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/website-hugo/'
+    src: '{{ backup_directory }}/website-hugo/'
     dest: /var/www/hugo
     owner: no
     group: no
@@ -139,7 +139,7 @@
   synchronize:
     mode: pull
     src: /var/www/hugo/*
-    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/website-hugo/'
+    dest: '{{ backup_directory }}/website-hugo/'
     perms: yes
     archive: false
     recursive: true

@@ -78,7 +78,8 @@ real value here:
 network:
   domain: homebox.space
   hostname: mail.homebox.space
-  external_ip: auto
+  auto_detect_ip: true
+  external_ip: ~
   backup_ip: ~
 ```
 
@@ -87,14 +88,17 @@ network domain.
 
 ### External IP address detection
 
-The external IP address is normally automatically detected. If this is not the case, you can specify it manually. If
-your server has a second IP address, you can specify it here as well. By default, none is defined. You can mix IPv4
-and IPv6 addresses. DNS entries will be added accordingly.
+By default, the system uses api.ipify.org to check your IP addresses. It detects IPv4 and IPv6 addresses, and treats the
+first one as the main IP, and the second as a backup IP if exists.
+
+If you have a different configuration, for instance two IPv4 addresses, you can specify them manually. You can mix IPv4
+and IPv6 addresses. DNS entries will be added accordingly. For instance:
 
 ```yaml
 network:
   domain: homebox.space
   hostname: mail.homebox.space
+  auto_detect_ip: false
   external_ip: 12.34.56.78
   backup_ip: 2001:15f0:5502:bf1:5400:01ff:feca:dea6
 ```
@@ -103,8 +107,7 @@ network:
     If you do not have a backup IP address, use "~" like the example.
 
 !!! Warning
-    If you have two IP addresses, you will have to specify them manually until the automatic detection works in all the
-    cases.
+    If you have two IP addresses of the same family (IPv4 or IPv6), you will have to specify them manually.
 
 ## Users list
 

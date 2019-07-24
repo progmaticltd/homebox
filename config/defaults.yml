@@ -3,15 +3,15 @@
 # configuration file for customisation.
 
 # Default network settings
-# If you are behind a NAT, perhaps you will want to
-# replace "auto" by your real external IP address
-# The backup IP address is interesting if
-# you are hosting your own DNS server.
+# If you are behind a NAT, perhaps you will have to specify your real external IP address
+# The backup IP address is used when you have a second IP address
 network_default:
-  external_ip: auto
+  auto_detect_ip: true
+  external_ip: ~
   backup_ip: ~
 
-# Shortcut notation to the backup directory
+# Shortcut notation to the backup directory. All the build artifacts will be
+# saved in this directory
 backup_directory: "{{ playbook_dir }}/../../backup/{{ network.domain }}"
 
 # Standard policies
@@ -70,6 +70,7 @@ encryption:
 mail_default:
   max_attachment_size: 25   # In megabytes
   autoconfig: true          # Support Thunderbird automatic configuration
+  pop3: false               # Activate the POP3 protocol or not
   autodiscover: false       # Support MS Outlook automatic configuration (uses https)
   quota:
     port: 30000             # port used by dovecot for the quota daemon
@@ -458,13 +459,14 @@ bind_default:
   extra_records: []
 
 ###############################################################################
-# Gogs installation with LDAP authentication
-# Beta feature, work in progress
+# Gogs installation with LDAP authentication.
 # The super administrator is "postmaster" for now.
 gogs_default:
-  install: false
-  public: false         # not open to public by default
-  allow:                # a list of IP address that can access the web interface
+  install: false        # Not installed by default
+  public: false         # Not open to public by default
+  backup: false         # When a backup is configured, exclude the repositories
+                        # from back up. Set the flag to true to include them.
+  allow:                # A list of IP address that can access the web interface
     - 192.168.0.0/16    # RFC1918 local networks
     - 172.16.0.0/12
     - 10.0.0.0/8

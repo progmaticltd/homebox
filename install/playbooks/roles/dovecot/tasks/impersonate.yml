@@ -3,10 +3,11 @@
 - name: Initialise the master user password parameters
   tags: impersonate
   set_fact:
-    master_password_params: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/master.pwd {{ policies.system.password }}"
+    master_password_params: "{{ backup_directory }}/ldap/master.pwd {{ policies.system.password }}"
 
 - name: Create the master user account password
   tags: impersonate
+  no_log: true
   set_fact:
     master_password: '{{ lookup("password", master_password_params) }}'
 
@@ -20,4 +21,3 @@
     group: dovecot
     mode: '0400'
     crypt_scheme: ldap_sha1
-

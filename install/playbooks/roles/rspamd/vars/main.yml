@@ -1,0 +1,5 @@
+---
+
+rspamd_pkgs:
+  - redis-server
+  - rspamd

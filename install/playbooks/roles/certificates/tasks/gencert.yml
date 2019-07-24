@@ -10,24 +10,15 @@
     port: 80
     comment: Allow LetsEncrypt temporarily
 
-# The certbot package need to be installed
-- name: Create the certificate (staging version)
-  when: system.devel
+# Add alerternative names if defined
+- name: Add the domain alias
+  when: domain_alias is defined and domain_alias != ""
   tags: cert
-  command: >-
-    /usr/bin/certbot certonly
-    --non-interactive
-    --webroot
-    --webroot-path "{{ site_root }}"
-    --domain "{{ certificate_fqdn }}"
-    --email "admin@{{ network.domain }}"
-    --test-cert
-    --agree-tos
-  args:
-    creates: "/etc/letsencrypt/live/{{ certificate_fqdn }}/cert.pem"
+  set_fact:
+    domain_alias_cmd: '{{ "-d " + domain_alias + "." + network.domain }}'
 
-- name: Create the certificate (live version)
-  when: not system.devel
+# The certbot package need to be installed
+- name: Create the certificate
   tags: cert
   command: >-
     /usr/bin/certbot certonly
@@ -35,10 +26,11 @@
     --webroot
     --webroot-path "{{ site_root }}"
     --domain "{{ certificate_fqdn }}"
+    {{ domain_alias_cmd | default("") }}
     --email "admin@{{ network.domain }}"
+    {{ domain_alias_cmd is defined | ternary("--expand", "") }}
+    {{ system.devel | ternary("--test-cert", "") }}
     --agree-tos
-  args:
-    creates: "/etc/letsencrypt/live/{{ certificate_fqdn }}/cert.pem"
 
 - name: Remove the firewall rule if it has been added
   tags: security

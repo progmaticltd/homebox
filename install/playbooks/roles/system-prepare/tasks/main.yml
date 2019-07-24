@@ -195,6 +195,7 @@
 
 - name: Create a random password for file encryption on the server
   tags: encryption
+  no_log: true
   set_fact:
     system_key: '{{ lookup("password", "{{ encryption.systemKeyParams }}") }}'
 

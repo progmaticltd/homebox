@@ -47,6 +47,7 @@
 
 - name: Create the master user account password
   when: ejabberd.install
+  no_log: true
   set_fact:
     postmaster_password: '{{ lookup("password", postmaster_password_params) }}'
 
