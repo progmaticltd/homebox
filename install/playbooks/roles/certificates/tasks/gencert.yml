@@ -12,7 +12,7 @@
 
 # Add alerternative names if defined
 - name: Add the domain alias
-  when: domain_alias is defined
+  when: domain_alias is defined and domain_alias != ""
   tags: cert
   set_fact:
     domain_alias_cmd: '{{ "-d " + domain_alias + "." + network.domain }}'
@@ -31,8 +31,6 @@
     {{ domain_alias_cmd is defined | ternary("--expand", "") }}
     {{ system.devel | ternary("--test-cert", "") }}
     --agree-tos
-  args:
-    creates: "/etc/letsencrypt/live/{{ certificate_fqdn }}/cert.pem"
 
 - name: Remove the firewall rule if it has been added
   tags: security
