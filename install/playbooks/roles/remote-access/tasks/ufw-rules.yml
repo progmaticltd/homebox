@@ -1,5 +1,11 @@
 ---
 
+- name: Install curl if not already installed
+  delegate_to: localhost
+  apt:
+    name: curl
+    state: present
+
 - name: Get the external IP address
   delegate_to: localhost
   register: ext_ip
