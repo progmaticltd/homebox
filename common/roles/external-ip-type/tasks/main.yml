@@ -8,7 +8,7 @@
 # Get the external IP address automatically first
 
 - name: Get the external IP address automatically
-  when: network.auto_detect_ip = "auto"
+  when: network.auto_detect_ip == "auto"
   include_tasks: auto-ip.yml
 
 - name: Get the external IP address automatically
