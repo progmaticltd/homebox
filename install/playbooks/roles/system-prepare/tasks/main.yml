@@ -16,8 +16,12 @@
 
 - name: Upgrade the distribution
   tags: apt
+  register: result
+  retries: 3
+  delay: 15
   apt:
     upgrade: true
+  until: result.rc == 0
 
 - name: Install required packages
   tags: apt
