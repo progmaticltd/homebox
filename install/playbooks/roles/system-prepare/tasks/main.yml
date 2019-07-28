@@ -21,7 +21,7 @@
   delay: 15
   apt:
     upgrade: true
-  until: result.rc == 0
+  until: result.stderr == ''
 
 - name: Install required packages
   tags: apt
