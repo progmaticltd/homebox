@@ -8,14 +8,11 @@
     state: directory
 
 # When IPv6 is used, bind9 should be taken from backports
-# TODO: Configure this automatically
 - name: Install the required packages
   apt:
-    name:
-      - bind9
-      - dnsutils
+    name: '{{ bind_packages }}'
     state: present
-    default_release: stretch-backports
+    default_release: '{{ ipv6_used | ternary("stretch-backports", "stretch") }}'
 
 - name: Stop the DNS server before creating the configuration
   service:
