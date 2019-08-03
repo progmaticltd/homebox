@@ -21,7 +21,9 @@
   delay: 15
   apt:
     upgrade: true
-  until: result.stderr == ''
+  until: >-
+    result.stderr is not defined or
+    result.stderr == ''
 
 - name: Install required packages
   tags: apt
