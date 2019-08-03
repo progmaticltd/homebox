@@ -14,6 +14,10 @@
   /etc/sogo/sogo.conf r,
   /etc/timezone r,
 
+  # Capabilities.
+  # TODO: restrict to minimal requirement
+  capability dac_override,
+
   # sogo-tool regularly requests read access to the root filesystem.
   # reported here: https://sogo.nu/bugs/view.php?id=4704
   allow / r,
@@ -37,4 +41,7 @@
   # Global backup folders
   /var/backups/sogo/ rw,
   /var/backups/sogo/** rw,
+
+  # Allow to remove old backups
+  /bin/rm rix,
 }
