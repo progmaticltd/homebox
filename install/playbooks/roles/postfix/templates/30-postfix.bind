@@ -19,7 +19,7 @@ _submission._tcp 3600 IN SRV 0 0 {{ mail.postfix.submission.port }} smtp2.{{ net
 ;; SPF record: include all MX records
 @       IN       TXT    "v=spf1 mx -all"
 
-{% if bind.mx_backup.count > 0 %}
+{% if bind.mx_backup != [] %}
 ;; Backup records if the server is unreachable
 ;; Allows you to redirect to your emails to another
 ;; server if your one is offline.

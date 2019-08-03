@@ -8,7 +8,7 @@
 # Get the external IP address automatically first
 
 - name: Get the external IP address automatically
-  when: network.auto_detect_ip = "auto"
+  when: network.auto_detect_ip == "auto"
   include_tasks: auto-ip.yml
 
 - name: Get the external IP address automatically
@@ -44,3 +44,10 @@
   when: network.backup_ip != None
   set_fact:
     backup_ip_type: '{{ backup_ip_type.stdout }}'
+
+
+- name: Check and remember if IPv6 is used
+  set_fact:
+    ipv6_used: >-
+      backup_ip_type == "AAAA" or
+      external_ip_type == "AAAA"

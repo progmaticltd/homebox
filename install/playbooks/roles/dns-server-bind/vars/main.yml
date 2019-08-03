@@ -1,0 +1,5 @@
+---
+
+bind_packages:
+  - bind9
+  - dnsutils
