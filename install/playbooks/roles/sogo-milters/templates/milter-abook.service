@@ -1,0 +1,14 @@
+[Unit]
+Description=Address book search milter
+
+[Service]
+Type=simple
+User=postfix
+Group=postfix
+ExecStart=/usr/bin/python2 /usr/local/bin/milter-abook.py
+WorkingDirectory=/var/tmp
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target

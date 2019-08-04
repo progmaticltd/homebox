@@ -1,0 +1,55 @@
+---
+
+- name: Add Python milter library
+  tags: apt
+  apt:
+    name: '{{ packages }}'
+    state: installed
+
+- name: Create a directory for the SOGo milter
+  file:
+    path: '{{ path }}'
+    state: directory
+    owner: postfix
+    group: postfix
+  with_items:
+    - /var/lib/milter-abook
+    - /run/milter-abook
+  loop_control:
+    loop_var: path
+
+- name: Create the lookup database
+  tags: sqlite
+  shell: >-
+    sqlite3 -batch /var/lib/milter-abook/addresses.db
+    'create table if not exists addresses (
+    uid        VARCHAR,
+    source     VARCHAR,
+    abook      VARCHAR,
+    email      VARCHAR
+    )';
+    sqlite3 -batch /var/lib/milter-abook/addresses.db
+    'CREATE INDEX email_idx ON addresses (email)';
+    sqlite3 -batch /var/lib/milter-abook/addresses.db
+    'CREATE INDEX uid_idx ON addresses (uid)';
+  args:
+    creates: /var/lib/milter-abook/addresses.db
+
+- name: Add the milter service
+  notify:
+    - Reload systemd
+    - Reload postfix
+    - Restart milter service
+  copy:
+    src: milter-abook.py
+    dest: /usr/local/bin/milter-abook.py
+    mode: 0755
+
+- name: Copy the address book search milter
+  notify:
+    - Reload systemd
+    - Reload postfix
+  template:
+    src: milter-abook.service
+    dest: /etc/systemd/system/milter-abook.service
+    mode: 0644

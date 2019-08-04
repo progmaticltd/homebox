@@ -1,0 +1,6 @@
+---
+
+packages:
+  - python-milter
+  - sqlite3
+  - python-pysqlite2

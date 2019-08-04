@@ -21,6 +21,9 @@
   /usr/lib/GNUstep/** mr,
   /lib/x86_64-linux-gnu/ld-*.so mr,
 
+  # Some executables used by sogod
+  /usr/bin/zip rix,
+
   # proc and run filesystem
   /proc/@{pid}/cmdline r,
   /proc/@{pid}/stat r,

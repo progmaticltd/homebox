@@ -96,6 +96,9 @@ smtpd_milters =
 {% if mail.antispam.active %}
     inet:localhost:{{ mail.antispam.port }}
 {% endif %}
+{% if mail.abook_milter.active %}
+    unix:/run/milter-abook/milter-abook.socket
+{% endif %}
 
 # A list of Milter applications for new mail that does not arrive via the Postfix smtpd(8) server.
 # This includes local submission via the sendmail(1) command line, new mail that arrives via the Postfix
