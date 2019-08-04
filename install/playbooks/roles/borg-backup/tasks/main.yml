@@ -7,10 +7,22 @@
     state: latest
 
 - name: Install borgbackup package
+  when:
+    - ansible_facts['distribution'] == "Debian"
+    - ansible_facts['distribution_major_version'] == "9"
   tags: apt
   apt:
     name: borgbackup
     default_release: stretch-backports
+    state: latest
+
+- name: Install borgbackup package
+  when:
+    - ansible_facts['distribution'] == "Debian"
+    - ansible_facts['distribution_major_version']|int >= 10
+  tags: apt
+  apt:
+    name: borgbackup
     state: latest
 
 - name: Create the backups mount point root

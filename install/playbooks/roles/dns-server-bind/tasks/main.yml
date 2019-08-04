@@ -9,10 +9,23 @@
 
 # When IPv6 is used, bind9 should be taken from backports
 - name: Install the required packages
+  when:
+    - ansible_facts['distribution'] == "Debian"
+    - ansible_facts['distribution_major_version'] == "9"
   apt:
     name: '{{ bind_packages }}'
     state: present
     default_release: '{{ ipv6_used | ternary("stretch-backports", "stretch") }}'
+
+- name: Install the required packages
+  when:
+    - ansible_facts['distribution'] == "Debian"
+    - ansible_facts['distribution_major_version']|int >= 10
+  apt:
+    name:
+      - bind9
+      - dnsutils
+    state: present
 
 - name: Stop the DNS server before creating the configuration
   service:
