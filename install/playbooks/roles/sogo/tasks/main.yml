@@ -131,6 +131,11 @@
     src: sogo.cron
     dest: '/etc/cron.d/sogo'
 
+# Address book milter =========================================================
+- name: Import SOGo addressbook milter
+  tags: milter
+  include_tasks: milter-abook.yml
+
 # AppArmor configuration ======================================================
 
 - name: Install nginx AppArmor profile
