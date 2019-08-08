@@ -9,6 +9,7 @@
 # and set up remote access
 - import_playbook: system-prepare.yml
 - import_playbook: external-ip.yml
+  when: network.auto_detect_ip == "auto"
 - import_playbook: remote-access.yml
 
 # Install fwknop (Single Packet Authorization)
