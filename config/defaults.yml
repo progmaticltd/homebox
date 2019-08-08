@@ -158,10 +158,6 @@ mail_default:
   # Fail2ban parameters
   fail2ban:
     time: 3600
-  #############################################################################
-  # Address book milter
-  abook_milter:
-    active: false
 
 ###############################################################################
 # Default password policies for users
