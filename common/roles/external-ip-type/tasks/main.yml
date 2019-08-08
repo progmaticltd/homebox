@@ -8,11 +8,11 @@
 # Get the external IP address automatically first
 
 - name: Get the external IP address automatically
-  when: network.auto_detect_ip == "auto"
+  when: network.auto_detect_ip
   include_tasks: auto-ip.yml
 
 - name: Get the external IP address automatically
-  when: network.auto_detect_ip != "auto"
+  when: not network.auto_detect_ip
   include_tasks: manual-ip.yml
 
 # Detect the main IP address type (IPv4 or IPv6)
