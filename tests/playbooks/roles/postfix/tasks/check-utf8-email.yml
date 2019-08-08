@@ -19,7 +19,7 @@
   shell: >-
     swaks
     --from="{{ users[0].mail }}"
-    --to "{{ users[1].aliases[0] }}"
+    --to "{{ 'hostmaster@' ~ network.domain if users|count < 2 else users[1].aliases[0] }}"
     --h-Subject '{{ test_subject }}'
     --auth
     --auth-user="{{ user0_uid }}"
@@ -35,7 +35,7 @@
   register: email_found
   shell: >-
     grep -l "Subject: {{ test_subject }}"
-    /home/users/{{ users[1].uid }}/mails/maildir/new/*
+    /home/users/{{ 'postmaster' if users|count < 2 else users[1].uid }}/mails/maildir/new/*
   until: email_found.rc == 0
   retries: 10
   delay: 2
