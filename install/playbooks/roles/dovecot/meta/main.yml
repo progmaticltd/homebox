@@ -2,4 +2,5 @@
 
 dependencies:
   - { role: load-defaults, when: defaults_loaded is not defined }
-  - { role: external-ip }
+  - { role: external-ip-type }
+  - { role: external-ip, when: access_check.active }
