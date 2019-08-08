@@ -53,7 +53,7 @@
     loop_var: file
 
 - name: Copy the configuration template
-  when: backup_ip is defined
+  when: backup_ip is defined and backup_ip != ""
   tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
@@ -224,7 +224,7 @@
     loop_var: file
 
 - name: Copy DNS entries in bind cache directory (backup IP)
-  when: backup_ip is defined
+  when: backup_ip is defined and backup_ip != ""
   copy:
     src: '/etc/bind/{{ file }}'
     dest: '/var/cache/bind/{{ file }}'
@@ -248,7 +248,7 @@
     line: '127.0.0.1    main.{{ network.domain }}'
 
 - name: Ensure the backup record resolves to me
-  when: backup_ip is defined
+  when: backup_ip is defined and backup_ip != ""
   tags: hosts
   lineinfile:
     path: /etc/hosts

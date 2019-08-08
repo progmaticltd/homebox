@@ -16,7 +16,7 @@
 
 # Backup IP address
 - name: Build reverse IP address using shell
-  when: network.backup_ip is defined
+  when: backup_ip is defined and backup_ip != ""
   shell: >-
     dig -x {{ network.backup_ip }}
     @{{ bind.forward[0] }}
@@ -25,7 +25,7 @@
   register: reverse_backup_ip
 
 - name: Build the reverse IP address (works for IPv4 or IPv6)
-  when: network.backup_ip is defined
+  when: backup_ip is defined and backup_ip != ""
   tags: facts
   set_fact:
     reverse_backup_ip: "{{ reverse_backup_ip.stdout }}"
