@@ -31,7 +31,7 @@
 
 # Detect the backup IP address type (IPv4 or IPv6)
 - name: Set backup IP address type (A or AAAA)
-  when: network.backup_ip != None
+  when: backup_ip is defined and backup_ip != ""
   tags: facts
   register: backup_ip_type
   shell:
@@ -41,7 +41,7 @@
 
 - name: Set backup IP address type (A or AAAA)
   tags: facts
-  when: network.backup_ip != None
+  when: backup_ip is defined and backup_ip != ""
   set_fact:
     backup_ip_type: '{{ backup_ip_type.stdout }}'
 
