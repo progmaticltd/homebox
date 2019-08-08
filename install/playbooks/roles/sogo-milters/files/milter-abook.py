@@ -1,50 +1,197 @@
 #!/usr/bin/env python2
 
-## To roll your own milter, create a class that extends Milter.
-#  See the pymilter project at http://bmsi.com/python/milter.html
-#  based on Sendmail's milter API
-#  This code is open-source on the same terms as Python.
+# Search inside a shared database to check if the message is coming
+# from a known email address stored in a user's address book.
+# I use http://bmsi.com/python/milter.html
+# This is actually compatible with Python2 / Debian Stretch.
+# Since the package python3-milter is included in Debian Buster,
+# a new version will be written for Python 3.
 
-## Milter calls methods of your class at milter events.
-## Return REJECT,TEMPFAIL,ACCEPT to short circuit processing for a message.
-## You can also add/del recipients, replacebody, add/del headers, etc.
+# Andre Rodier <andre@rodier.me>
+# Licence: GPL v2
+
+# Pylint options
+# too long lines: pylint: disable=C0301
+# catching too general exception: pylint: disable=W0703
+# too many instance attributes: pylint: disable=R0902
+# parameters differ from overriden: pylint: disable=W0221
+
+# To test with sqlite, use:
+# sqlite3 -batch /var/lib/milter-abook/addresses.db
+# 'create table if not exists addresses (
+# uid        VARCHAR,
+# source     VARCHAR,
+# abook      VARCHAR,
+# email_hash VARCHAR
+# )';
+# sqlite3 -batch /var/lib/milter-abook/addresses.db
+# 'CREATE INDEX email_idx ON addresses (uid, email_hash)';
+
+# Make sure pylint knows about the print function
+from __future__ import print_function
 
 import Milter
-import StringIO
-import time
-import email
-import sys
-import sqlite3
-
-from socket import AF_INET, AF_INET6
 from Milter.utils import parse_addr
 
-if True:
-    from multiprocessing import Process as Thread, Queue
-else:
-    from threading import Thread
-    from Queue import Queue
+import StringIO
+import sys
+import os
+import psycopg2
+import ConfigParser
+from socket import AF_INET6
 
-logq = Queue(maxsize=4)
+# For logging queue
+from multiprocessing import Process as Thread, Queue
+
+# Constants related to the systemd service
+SOCKET_PATH = "/run/milter-abook/milter-abook.socket"
+PID_FILE_PATH = "/run/milter-abook/main.pid"
+
+GlobalLogQueue = Queue(maxsize=100) # type: Queue[str]
+
+configParser = ConfigParser.RawConfigParser()
+configFilePath = '/etc/sogo/milters.conf'
+configParser.read(configFilePath)
+
+# This implementation use a simple sqlite database, mainly for testing.
+# The records in the database are anonymised using sha256, for security purposes
+def searchInSQLite(fromAddress, recipients, debug):
+    """Search for an address in a local sqlite database. Only email hashes are stored (sha256)"""
+    sources = []
+
+    try:
+
+        import sqlite3
+        import hashlib
+
+        query = 'select source,abook from addresses where uid="{0}" and email_hash="{1}"'
+        sqliteDatabase = configParser.get('sqlite', 'path')
+        db = sqlite3.connect(sqliteDatabase)
+
+        # Check if the email address is in the user's address book
+        cursor = db.cursor()
+
+        # get the from email address signature
+        emailHash = hashlib.sha256(fromAddress).hexdigest()
+
+        for rec in recipients:
+            parts = parse_addr(rec[0])
+            uid = parts[0]
+            cursor.execute(query.format(uid, emailHash))
+
+            # Store the address book sources when found
+            for row in cursor:
+                sources.append('{0}:{1}'.format(row[0], row[1]))
+
+        if debug:
+            GlobalLogQueue.put("Searched address hash {} for user {}: {} result(s)".format(
+                emailHash, uid, len(sources)))
+
+    # Make sure to not prevent the message to pass if something happen,
+    # but log the error
+    except Exception as error:
+        GlobalLogQueue.put("Error when searching in address database: {}".format(error.message))
+
+    # Cleanup: close the db connection if needed
+    finally:
+        if db:
+            db.close()
+
+    return sources
+
+
+def searchInSOGo(fromAddress, recipients, debug, dbConnection):
+    """Search for an address in the SOGo database."""
+
+    try:
+        # Nothing found
+        if not dbConnection:
+            GlobalLogQueue.put("Could not connect to the database")
+            return []
+
+        sources = []
+
+        for rec in recipients:
+            parts = parse_addr(rec[0])
+            uid = parts[0]
+
+            # First, get all the address books from this user
+            tablesCursor = dbConnection.cursor()
+            abQuery = ("select c_foldername, regexp_replace(c_location, '.*/sogo', 'sogo')"
+                       " from sogo_folder_info where"
+                       " c_folder_type='Contact' and c_location like '%sogo{}%';".format(uid))
+
+            tablesCursor.execute(abQuery)
+
+            tables = tablesCursor.fetchall()
+
+            # End to search in this address book
+            tablesCursor.close()
+
+            # For each table, run a query to check if the address is inside
+            for tableInfo in tables:
+                abName = tableInfo[0]
+                tableName = tableInfo[1]
+                cursor = dbConnection.cursor()
+                countQuery = "select count(*) from {} where c_content LIKE '%EMAIL%:{}%';".format(tableName, fromAddress)
+                if debug:
+                    GlobalLogQueue.put("Searching in table {} ({})".format(tableName, abName))
+                cursor.execute(countQuery)
+                result = cursor.fetchone()
+                cursor.close()
+
+                # Store the address book sources when found
+                if int(result[0]) > 0:
+                    sources.append('SOGo:{}'.format(abName))
+
+        if debug:
+            GlobalLogQueue.put("Searched address {} for user {}: {} result(s)".format(
+                fromAddress, uid, len(sources)))
+
+    # Make sure to not prevent the message to pass if something happen,
+    # but log the error
+    except Exception as error:
+        GlobalLogQueue.put("Error when searching in address database: {}".format(error.message))
+
+    return sources
 
 class markAddressBookMilter(Milter.Base):
 
     # A new instance with each new connection.
     def __init__(self):
+
         # Integer incremented with each call.
         self.id = Milter.uniqueID()
 
-    # Proper exit
-    # def __exit__(self, exc_type, exc_value, traceback):
+        user = configParser.get('postgres', 'user')
+        password = configParser.get('postgres', 'password')
+        dbName = configParser.get('postgres', 'dbName')
+        connectUrl = "postgresql://{}:{}@127.0.0.1:5432/{}"
+        self.dbConnection = psycopg2.connect(connectUrl.format(user, password, dbName))
 
-    # each connection runs in its own thread and has its own markAddressBookMilter
-    # instance. Python code must be thread safe.    This is trivial if only stuff
+        self.debug = configParser.getboolean('main', 'debug')
+
+        if self.debug:
+            self.queueLogMessage("Running milter address book in debug mode")
+
+        if not self.dbConnection:
+            raise "Cannot open SOGo database"
+
+    # Should be executed at the end of a message parsing
+    def __exit__(self, exc_type, exc_val, exc_tb):
+
+        if self.debug:
+            self.queueLogMessage("Exit from milter address book")
+
+        if self.dbConnection:
+            self.dbConnection.close()
+
+    # Each connection runs in its own thread and has its own
+    # markAddressBookMilter instance.
+    # Python code must be thread safe. This is trivial if only stuff
     # in markAddressBookMilter instances is referenced.
     @Milter.noreply
-    def connect(self, IPname, family, hostaddr):
-        # (self, 'ip068.subnet71.example.com', AF_INET, ('215.183.71.68', 4720) )
-        # (self, 'ip6.mxout.example.com', AF_INET6,
-        #     ('3ffe:80e8:d8::1', 4720, 1, 0) )
+    def connect(self, hostname, family, hostaddr):
         self.IP = hostaddr[0]
         self.port = hostaddr[1]
         if family == AF_INET6:
@@ -53,92 +200,57 @@ class markAddressBookMilter(Milter.Base):
         else:
             self.flow = None
             self.scope = None
-            self.IPname = IPname    # Name from a reverse IP lookup
+            self.IPname = hostname    # Name from a reverse IP lookup
             self.H = None
             self.fp = None
             self.receiver = self.getsymval('j')
-            self.log("connect from %s at %s" % (IPname, hostaddr))
+
+            if self.debug:
+                self.queueLogMessage("connect from {} at {}".format(hostname, hostaddr))
 
         return Milter.CONTINUE
 
-
-    ## def hello(self,hostname):
-    def hello(self, heloname):
-        self.H = heloname
-        self.log("HELO %s" % heloname)
-        if heloname.find('.') < 0: # illegal helo name
-            # NOTE: example only - too many real braindead clients to reject on this
-            self.setreply('550','5.7.1','Sheesh people! Use a proper helo name!')
-            return Milter.REJECT
-
-        return Milter.CONTINUE
-
-    ## def envfrom(self,f,*str):
-    def envfrom(self, mailfrom, *str):
-        self.mailFrom = '@'.join(parse_addr(mailfrom))
-        self.recipients = [] # list of recipients
-        self.fromparms = Milter.dictfromlist(str) # ESMTP parms
+    def envfrom(self, fromAddress, *extra):
+        self.mailFrom = '@'.join(parse_addr(fromAddress))
+        self.recipients = []
+        self.fromparms = Milter.dictfromlist(extra) # ESMTP parms
         self.user = self.getsymval('{auth_authen}') # authenticated user
-        self.log("mail from:", mailfrom, *str)
-        self.log("user:", self.user, *str)
-        # NOTE: self.fp is only an *internal* copy of message data.    You
-        # must use addheader, chgheader, replacebody to change the message
-        # on the MTA.
         self.fp = StringIO.StringIO()
-        # self.canon_from = '@'.join(parse_addr(mailfrom))
-        # self.fp.write('From %s %s\n' % (self.canon_from,time.ctime()))
         return Milter.CONTINUE
 
-    ## def envrcpt(self, to, *str):
     @Milter.noreply
-    def envrcpt(self, to, *str):
-        rcptinfo = to,Milter.dictfromlist(str)
+    def envrcpt(self, to, *extra):
+        rcptinfo = to, Milter.dictfromlist(extra)
         self.recipients.append(rcptinfo)
         return Milter.CONTINUE
 
     @Milter.noreply
-    def header(self, name, hval):
-        self.fp.write("%s: %s\n" % (name,hval)) # add header to buffer
+    def header(self, field, value):
+        self.fp.write("{}: {}\n".format(field, value))
         return Milter.CONTINUE
 
     @Milter.noreply
     def eoh(self):
-        self.fp.write("\n") # terminate headers
+        self.fp.write("\n")
         return Milter.CONTINUE
 
     @Milter.noreply
-    def body(self, chunk):
-        self.fp.write(chunk)
+    def body(self, blk):
+        self.fp.write(blk)
         return Milter.CONTINUE
 
-    # many milter functions can only be called from eom()
+    # Add the headers at the eom (End of Message) function.
+    # This should work when the recipient is in any of To, CC or BCC headers
     def eom(self):
+
+        # Need to be at the beginning to add headers
         self.fp.seek(0)
-        msg = email.message_from_file(self.fp)
 
-        # This implementation use a simple sqlite database
-        db = sqlite3.connect("/var/lib/milter-abook/addresses.db")
+        # Include all the sources in the same header, joined by coma
+        sources = searchInSOGo(self.mailFrom, self.recipients, self.debug, self.dbConnection)
 
-        # Check if the email address is in the user's address book
-        cursor = db.cursor()
-        sources = []
-        for rec in self.recipients:
-            parts = parse_addr(rec[0])
-            email_recipient = "@".join(parts)
-            uid = parts[0]
-            query = 'select source,abook from addresses where uid="{0}" and email="{1}"'
-            print query.format(uid, self.mailFrom)
-            cursor.execute(query.format(uid, self.mailFrom))
-            for row in cursor:
-                sources.append('{0}:{1}'.format(row[0], row[1]))
-
-        if len(sources) > 0:
+        if sources:
             self.addheader("X-AddressBook", ','.join(sources))
-        else:
-            self.addheader("X-AddressBook", 'unknown')
-
-        # Cleanup
-        db.close()
 
         return Milter.ACCEPT
 
@@ -151,38 +263,66 @@ class markAddressBookMilter(Milter.Base):
         # client disconnected prematurely
         return Milter.CONTINUE
 
-    def log(self,*msg):
-        logq.put((msg,self.id,time.time()))
+    def queueLogMessage(self, msg):
+        GlobalLogQueue.put(msg)
 
-def background():
+
+# Background logging thread function
+def loggingThread():
     while True:
-        t = logq.get()
-        if not t: break
-        msg,id,ts = t
-        print "%s [%d]" % (time.strftime('%Y%b%d %H:%M:%S', time.localtime(ts)),id),
-        # 2005Oct13 02:34:11 [1] msg1 msg2 msg3 ...
-        for i in msg: print i,
-        print
-
-## ===
+        entry = GlobalLogQueue.get()
+        if entry:
+            print(entry)
+            sys.stdout.flush()
 
 def main():
-    bt = Thread(target=background)
-    bt.start()
-    socketname = "/run/milter-abook/milter-abook.socket"
-    timeout = 600
-    # Register to have the Milter factory create instances of your class:
-    Milter.factory = markAddressBookMilter
-    flags = Milter.CHGBODY + Milter.CHGHDRS + Milter.ADDHDRS
-    flags += Milter.ADDRCPT
-    flags += Milter.DELRCPT
-    Milter.set_flags(flags) # tell Sendmail which features we use
-    print "%s milter startup" % time.strftime('%Y%b%d %H:%M:%S')
-    sys.stdout.flush()
-    Milter.runmilter("pythonfilter",socketname,timeout)
-    logq.put(None)
-    bt.join()
-    print "%s bms milter shutdown" % time.strftime('%Y%b%d %H:%M:%S')
+
+    try:
+        debug = configParser.getboolean('main', 'debug')
+
+        # Exit if the main thread have been already created
+        if os.path.exists(PID_FILE_PATH):
+            print("pid file {} already exists, exiting".format(PID_FILE_PATH))
+            os.exit(-1)
+
+        lgThread = Thread(target=loggingThread)
+        lgThread.start()
+        timeout = 600
+
+        # Register to have the Milter factory create new instances
+        Milter.factory = markAddressBookMilter
+
+        # For this milter, we only add headers
+        flags = Milter.ADDHDRS
+        Milter.set_flags(flags)
+
+        # Get the parent process ID and remember it
+        pid = os.getpid()
+        with open(PID_FILE_PATH, "w") as pidFile:
+            pidFile.write(str(pid))
+            pidFile.close()
+
+        print("Started address book search and tag milter (pid={}, debug={})".format(pid, debug))
+        sys.stdout.flush()
+
+        # Start the background thread
+        Milter.runmilter("milter-abook", SOCKET_PATH, timeout)
+        GlobalLogQueue.put(None)
+
+        #  Wait until the logging thread terminates
+        lgThread.join()
+
+        # Log the end of process
+        print("Stopped address book search and tag milter (pid={})".format(pid))
+
+    except Exception as error:
+        print("Exception when running the milter: {}".format(error.message))
+
+    # Make sure to remove the pid file even if an error occurs
+    # And close the database connection if opened
+    finally:
+        if os.path.exists(PID_FILE_PATH):
+            os.remove(PID_FILE_PATH)
 
 if __name__ == "__main__":
     main()

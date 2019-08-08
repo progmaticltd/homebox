@@ -18,22 +18,44 @@
   loop_control:
     loop_var: path
 
-- name: Create the lookup database
-  tags: sqlite
-  shell: >-
-    sqlite3 -batch /var/lib/milter-abook/addresses.db
-    'create table if not exists addresses (
-    uid        VARCHAR,
-    source     VARCHAR,
-    abook      VARCHAR,
-    email      VARCHAR
-    )';
-    sqlite3 -batch /var/lib/milter-abook/addresses.db
-    'CREATE INDEX email_idx ON addresses (email)';
-    sqlite3 -batch /var/lib/milter-abook/addresses.db
-    'CREATE INDEX uid_idx ON addresses (uid)';
-  args:
-    creates: /var/lib/milter-abook/addresses.db
+- name: Initialise the sogo database read-only password parameters
+  tags: facts
+  set_fact:
+    sogo_password_params: "{{ backup_directory }}/postgresql/sogo_ro.pwd {{ policies.system.password }}"
+
+- name: Create the sogo read-only database account password
+  tags: facts
+  no_log: true
+  set_fact:
+    sogo_db_ro_password: '{{ lookup("password", sogo_password_params) }}'
+
+- name: Create the read-only database user
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_user:
+    name: sogo_ro
+    db: sogo
+    password: '{{ sogo_db_ro_password }}'
+    role_attr_flags: LOGIN
+
+- name: Grant read only to all tables
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_privs:
+    db: sogo
+    role: sogo_ro
+    objs: ALL_IN_SCHEMA
+    priv: SELECT
+
+- name: Create the configuration file
+  template:
+    src: milters.conf
+    dest: /etc/sogo/milters.conf
+    owner: sogo
+    group: postfix
+    mode: 0640
 
 - name: Add the milter service
   notify:
