@@ -88,6 +88,10 @@
 - import_playbook: sogo.yml
   when: sogo.install
 
+# Add SOGo milters
+- import_playbook: sogo-milters.yml
+  when: sogo.install and sogo.milters
+
 # Install ejabberd, with LDAP authentication
 - import_playbook: ejabberd.yml
   when: ejabberd.install

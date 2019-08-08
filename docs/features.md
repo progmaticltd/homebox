@@ -283,8 +283,12 @@ accessible using respectively CalDAV and CardDAV standards.
 - Use the same web interface to access other emails
 - Change your password from the web interface
 
-More details on the [SOGo home page](https://sogo.nu/) and on the official [documentation
-page](https://sogo.nu/support.html#/v3).
+More details on the [SOGo home page](https://sogo.nu/) and on the official
+[documentation page](https://sogo.nu/support.html#/v3).
+
+!!! Tip
+    If you have activated Sieve filters, you can create filters specific to your address book contacts.
+    See the [SOGo](/groupware-sogo) page for details.
 
 # XMPP / Jabber server
 

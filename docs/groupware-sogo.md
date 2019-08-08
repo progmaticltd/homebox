@@ -28,6 +28,7 @@ sogo:
   enable_public_access: false
   password_change: true
   auxiliary_accounts: true
+  milters: false
 ```
 
 | Flag                          | Role                                                                                               |
@@ -45,10 +46,33 @@ sogo:
 | enable_public_access          | Allow public access to your calendars and address books, using a specific URL.                     |
 | password_change               | Allow you to change your passwors from the web interface.                                          |
 
-** Notes **
+!!! Tip
+    Possible values are defined in the
+    [SOGo installation guide](https://sogo.nu/files/docs/SOGoInstallationGuide.html#_general_preferences)
 
-1. Possible values are defined in the
-[SOGo installation guide](https://sogo.nu/files/docs/SOGoInstallationGuide.html#_general_preferences)
+# Milters
+
+Some advanced features can be deployed along SOGo.
+
+For now, there is one mail filter compatible with SOGo, that searches the addresses in the email received in your address
+books, and "tags" the messages accordingly. Coupled with Sieve filters, this allows you to set specific rules for
+contacts in your address books. For instance, one auto-reposonder for personal contacts, and one for professional ones.
+
+![Filter message by address book](img/sogo/abook-based-filter.png)
+
+When the email address from a received email is found in one or more of your address books, a new header is added to the email:
+
+``` txt hl_lines="8"
+Authentication-Results: main.hmbx.pw;
+    dkim=pass header.d=rodier.me;
+    dmarc=pass (policy=quarantine) header.from=rodier.me;
+    spf=pass smtp.mailfrom=postmaster@rodier.me
+X-Spam-Status: No, score=0.01
+X-AV-Checked: ClamSMTP
+X-AddressBook: SOGo:Personal Address Book,SOGo:Professional
+```
+
+This feature is in testing phase and not activated by default; Any feedback is welcome.
 
 # Clients
 
