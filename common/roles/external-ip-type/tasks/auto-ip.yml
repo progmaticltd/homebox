@@ -4,34 +4,26 @@
 
 - name: Get the external IP address automatically
   tags: facts
-  get_url:
-    url: https://api.ipify.org?format=text
-    dest: /tmp/external_ip.txt
-
-- name: Read the IP address detected
   register: external_ip_facts
-  tags: facts
-  shell: "cat /tmp/external_ip.txt"
+  uri:
+    url: https://api.ipify.org?format=text
+    return_content: yes
 
 - name: Store the IP address detected
   tags: facts
   set_fact:
-    external_ip: '{{ external_ip_facts.stdout }}'
+    external_ip: '{{ external_ip_facts.content }}'
 
 # Backup IP address (backup_ip / IPv6)
 - name: Get the backup IP address automatically
   tags: facts
-  get_url:
-    url: https://api6.ipify.org?format=text
-    dest: /tmp/backup_ip.txt
-
-- name: Read the backup IP address detected
   register: backup_ip_facts
-  tags: facts
-  shell: "cat /tmp/backup_ip.txt"
+  uri:
+    url: https://api6.ipify.org?format=text
+    return_content: yes
 
 - name: Store the backup IP address detected (if different from the first one)
-  when: backup_ip_facts.stdout != external_ip
+  when: backup_ip_facts.content != external_ip
   tags: facts
   set_fact:
-    backup_ip: '{{ backup_ip_facts.stdout }}'
+    backup_ip: '{{ backup_ip_facts.content }}'
