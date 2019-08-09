@@ -151,6 +151,9 @@ options {
     allow-recursion { trusted; };
     allow-query-cache { trusted; };
 
+    # Disallow transfers by default
+    allow-transfer { "none"; }
+
     //========================================================================
     // If BIND logs error messages about the root key being expired,
     // you will need to update your keys.  See https://www.isc.org/bind-keys
