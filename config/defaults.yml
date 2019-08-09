@@ -445,6 +445,9 @@ bind_default:
   #     priority: 10
   #   - fqdn: fb.mail.gandi.net
   #     priority: 50
+  # SPF: allow for a custom SPF record.
+  # By default, recommend strict checks on the MX DNS records of the domain.
+  spf: "v=spf1 mx -all"
   # List of trusted servers to accept cache / recursive queries
   trusted:
     - src: 192.168.0.0/16

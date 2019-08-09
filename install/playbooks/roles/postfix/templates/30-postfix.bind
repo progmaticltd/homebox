@@ -16,8 +16,8 @@ _submission._tcp 3600 IN SRV 0 0 {{ mail.postfix.submission.port }} smtp.{{ netw
 _submission._tcp 3600 IN SRV 0 0 {{ mail.postfix.submission.port }} smtp2.{{ network.domain }}.
 {% endif %}
 
-;; SPF record: include all MX records
-@       IN       TXT    "v=spf1 mx -all"
+;; Strict SPF record
+@       IN       TXT    "{{ bind.spf }}"
 
 {% if bind.mx_backup != [] %}
 ;; Backup records if the server is unreachable
