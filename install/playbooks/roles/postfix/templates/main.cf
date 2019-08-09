@@ -96,7 +96,7 @@ smtpd_milters =
 {% if mail.antispam.active %}
     inet:localhost:{{ mail.antispam.port }}
 {% endif %}
-{% if mail.abook_milter.active %}
+{% if sogo.milters.active %}
     unix:/run/milter-abook/milter-abook.socket
 {% endif %}
 

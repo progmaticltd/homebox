@@ -5,9 +5,7 @@ Description=Address book search and tag milter service
 Type=simple
 User=postfix
 Group=postfix
-Environment="DEBUG=1"
 ExecStart=/usr/local/bin/milter-abook.py
-WorkingDirectory=/var/tmp
 StandardOutput=syslog
 StandardError=syslog
 Restart=on-failure

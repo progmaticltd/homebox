@@ -28,7 +28,9 @@ sogo:
   enable_public_access: false
   password_change: true
   auxiliary_accounts: true
-  milters: false
+  milters:
+    active: false
+    debug: true
 ```
 
 | Flag                          | Role                                                                                               |
@@ -72,11 +74,13 @@ X-AV-Checked: ClamSMTP
 X-AddressBook: SOGo:Personal Address Book,SOGo:Professional
 ```
 
-This feature is in testing phase and not activated by default; Any feedback is welcome.
+!!! Warning
+    This feature is in testing phase and not activated by default; Any feedback is welcome.
 
-# Clients
+# Compatible clients
 
-You can use any client compatible with these standards:
+SOGo provides calendar and address books synchronisation with multiple devices. You can use any client compatible with
+these standards, on many platforms:
 
 ## On Linux
 

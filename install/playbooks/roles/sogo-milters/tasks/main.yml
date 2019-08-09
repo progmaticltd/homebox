@@ -4,7 +4,7 @@
   tags: apt
   apt:
     name: '{{ packages }}'
-    state: installed
+    state: present
 
 - name: Create a directory for the SOGo milter
   file:
@@ -50,6 +50,9 @@
     priv: SELECT
 
 - name: Create the configuration file
+  notify:
+    - Reload systemd
+    - Restart milter service
   template:
     src: milters.conf
     dest: /etc/sogo/milters.conf

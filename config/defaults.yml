@@ -571,7 +571,9 @@ sogo_default:
   language: English
   enable_public_access: false
   password_change: true
-  milters: false
+  milters:
+    active: false
+    debug: true
 
 #############################################################################
 # Security policies per country / IP address / behaviour / etc
