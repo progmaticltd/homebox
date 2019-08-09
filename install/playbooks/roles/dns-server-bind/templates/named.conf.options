@@ -152,7 +152,13 @@ options {
     allow-query-cache { trusted; };
 
     # Disallow transfers by default
-    allow-transfer { "none"; }
+    allow-transfer {
+{% for secondary in bind.ns_backup %}
+        {{ secondary.ip }};
+{% else %}
+        "none";
+{% endfor %}
+    };
 
     //========================================================================
     // If BIND logs error messages about the root key being expired,
