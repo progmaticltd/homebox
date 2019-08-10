@@ -127,14 +127,15 @@
     dest: /etc/letsencrypt/renewal-hooks/deploy/10-ldap.sh
     mode: 0755
 
+# When running in debug mode, use systemd debug facility
 - name: Update LDAP configuration for debugging
   tags: debug
   when: system.debug
   notify: Restart the ldap service
   replace:
     path: /etc/default/slapd
-    regexp: SLAPD_OPTIONS=""
-    replace: SLAPD_OPTIONS="-d 8 -d 64 -d 2048"
+    regexp: '^SLAPD_OPTIONS=""'
+    replace: SLAPD_OPTIONS="-s 7"
 
 - name: Copy the ldap ssl config on the server before running it
   notify: Restart the ldap service
