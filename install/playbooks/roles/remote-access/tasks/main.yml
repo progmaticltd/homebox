@@ -19,3 +19,13 @@
     name: root
     password_lock: '{{ security.lock_root_password }}'
 
+- name: Remove users password access from SSH
+  when: security.ssh_disable_users_access_with_password
+  tags: security
+  notify: Restart SSH
+  replace:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PasswordAuthentication yes.*'
+    replace: 'PasswordAuthentication no'
+    mode: 0600
+

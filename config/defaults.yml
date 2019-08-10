@@ -255,10 +255,11 @@ firewall_default:
 # Extra security values
 security_default:
   auto_update: true                             # Install security updates automatically, using unattended-upgrades
-  ssh_disable_root_access_with_password: true   # Force SSH authentication to use public / private key
+  ssh_disable_root_access_with_password: true   # Force SSH authentication to use public / private key for root
   ssh_disable_root_access: false                # At the end of the installation, completely disable remote
                                                 # root access via SSH and force the use of sudo for the administrators
   lock_root_password: true                      # Disable console root access by locking root password.
+  ssh_disable_users_access_with_password: false # Force SSH authentication to use public / private key for all users
   alerts_email:
     - 'admin@{{ network.domain }}'
   # various options when luks is installed
