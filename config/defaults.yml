@@ -158,6 +158,12 @@ mail_default:
   # Fail2ban parameters
   fail2ban:
     time: 3600
+  #############################################################################
+  # mta-sts (RFC 8461)
+  mta_sts:
+    max_age: 86400
+    mode: enforce      # You can also use testing. When system.dev, the mode is
+                       # set to testing automatically
 
 ###############################################################################
 # Default password policies for users
