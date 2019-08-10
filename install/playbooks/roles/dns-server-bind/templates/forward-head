@@ -17,6 +17,10 @@ main    IN      {{ "%-4s" | format(external_ip_type) }}    {{ external_ip }}
 backup  IN      {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
 {% endif %}
 
+{% for secondary in bind.ns_backup %}
+@       IN      NS      {{ secondary.fqdn }}.
+{% endfor %}
+
 ;; Main record(s) for where everything goes by default
 @       IN      {{ "%-4s" | format(external_ip_type) }}    {{ external_ip }}
 {% if backup_ip is defined and backup_ip != "" %}
