@@ -3,15 +3,15 @@
 # configuration file for customisation.
 
 # Default network settings
-# If you are behind a NAT, perhaps you will want to
-# replace "auto" by your real external IP address
-# The backup IP address is interesting if
-# you are hosting your own DNS server.
+# If you are behind a NAT, perhaps you will have to specify your real external IP address
+# The backup IP address is used when you have a second IP address
 network_default:
-  external_ip: auto
+  auto_detect_ip: true
+  external_ip: ~
   backup_ip: ~
 
-# Shortcut notation to the backup directory
+# Shortcut notation to the backup directory. All the build artifacts will be
+# saved in this directory
 backup_directory: "{{ playbook_dir }}/../../backup/{{ network.domain }}"
 
 # Standard policies
@@ -70,6 +70,7 @@ encryption:
 mail_default:
   max_attachment_size: 25   # In megabytes
   autoconfig: true          # Support Thunderbird automatic configuration
+  pop3: false               # Activate the POP3 protocol or not
   autodiscover: false       # Support MS Outlook automatic configuration (uses https)
   quota:
     port: 30000             # port used by dovecot for the quota daemon
@@ -153,7 +154,6 @@ mail_default:
   # useful to debug sieve without setting the debug flag system wide
   sieve:
     debug: true
-
   #############################################################################
   # Fail2ban parameters
   fail2ban:
@@ -258,6 +258,12 @@ security_default:
   # various options when luks is installed
   luks:
     yubikey: false
+  #############################################################################
+  # The size of the dhparams to generate. The bigger the safer, but the longer
+  # to generate. When developing, you can use a small value to decrease the
+  # deployment time.
+  dhparam_size: 2048
+
 
 ###############################################################################
 # Dictionaries to install in the system
@@ -271,6 +277,7 @@ dictionaries_default:
 # One for for https://yourdomain.com/ and one for https://www.yourdomain.com
 website_default:
   install: false
+  locale: en_GB.UTF-8
 
 ###############################################################################
 # Install a static web site on www.yourdomain.com using Hugo (https://gohugo.io/)
@@ -291,6 +298,9 @@ hugo_default:
 webmail_default:
   install: true
   type: roundcube
+  milters:
+    active: false
+    debug: true
 
 ###############################################################################
 # Default list of development packages to install
@@ -400,25 +410,13 @@ ejabberd_default:
     proxyrate: 10240 # file transfer proxy
 
 ###############################################################################
-# Gandi automatic DNS update
-# This is now obsolete, as Homebox come with its own DNS server
-# However, we could keep this for Glue records management
-# Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
-# update: Automatic update of your DNS server
-# test: test mode: does not activate the DNS zone straight
-# add_wildcard:  Create a wildcard entry to redirect all traffic to your box
-dns_default:
-  update: false
-  test: true
-  add_wildcard: true
-  gandi:
-    handle: JD123-GANDI
-    key: zaNGbUVIvi1KbYb6PPMdiQLh
-
-###############################################################################
 # Bind server defaults
 bind_default:
   install: true
+  # Custom delays and retries to check DNS propagation
+  propagation:
+    retries: 10
+    delay: 60
   # Default servers to forward queries
   forward:
     - 8.8.8.8
@@ -464,13 +462,14 @@ bind_default:
   extra_records: []
 
 ###############################################################################
-# Gogs installation with LDAP authentication
-# Beta feature, work in progress
+# Gogs installation with LDAP authentication.
 # The super administrator is "postmaster" for now.
 gogs_default:
-  install: false
-  public: false         # not open to public by default
-  allow:                # a list of IP address that can access the web interface
+  install: false        # Not installed by default
+  public: false         # Not open to public by default
+  backup: false         # When a backup is configured, exclude the repositories
+                        # from back up. Set the flag to true to include them.
+  allow:                # A list of IP address that can access the web interface
     - 192.168.0.0/16    # RFC1918 local networks
     - 172.16.0.0/12
     - 10.0.0.0/8
@@ -575,6 +574,9 @@ sogo_default:
   language: English
   enable_public_access: false
   password_change: true
+  milters:
+    active: false
+    debug: true
 
 #############################################################################
 # Security policies per country / IP address / behaviour / etc

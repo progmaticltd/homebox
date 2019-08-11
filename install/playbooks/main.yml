@@ -72,8 +72,11 @@
 - import_playbook: cert-smtp.yml
 - import_playbook: postfix.yml
 
-# Mail delivery agent (dovecot)
+# Mail delivery agent (dovecot, pop3 protocol)
 - import_playbook: cert-pop3.yml
+  when: mail.pop3
+
+# Mail delivery agent (dovecot, imap protocol and daemon)
 - import_playbook: cert-imap.yml
 - import_playbook: dovecot.yml
 
@@ -81,9 +84,17 @@
 - import_playbook: roundcube.yml
   when: webmail.install and webmail.type == 'roundcube'
 
+# Add RoundCube milters if specified
+- import_playbook: roundcube-milters.yml
+  when: webmail.install and webmail.milters.active
+
 # Install SOGo if chosen
 - import_playbook: sogo.yml
   when: sogo.install
+
+# Add SOGo milters if specified
+- import_playbook: sogo-milters.yml
+  when: sogo.install and sogo.milters.active
 
 # Install ejabberd, with LDAP authentication
 - import_playbook: ejabberd.yml
