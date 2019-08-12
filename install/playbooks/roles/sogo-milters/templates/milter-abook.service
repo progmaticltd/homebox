@@ -1,17 +1,16 @@
 [Unit]
-Description=Address book search and tag milter service
+Description=SOGo address book search and tag milter service
 
 [Service]
 Type=simple
 User=postfix
 Group=postfix
-ExecStart=/usr/local/bin/milter-abook.py
+ExecStart=/usr/local/bin/milter-sogo-abook.py
 StandardOutput=syslog
 StandardError=syslog
 Restart=on-failure
-PIDFile=/run/milter-abook/main.pid
-WorkingDirectory=/run/milter-abook
-Restart=always
+PIDFile=/run/milter-sogo-abook/main.pid
+WorkingDirectory=/run/milter-sogo-abook
 
 [Install]
 WantedBy=default.target
