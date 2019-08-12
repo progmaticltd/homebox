@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# Lines are too long: pylint: disable=C0301
+# Spaces around assignments: pylint: disable=C0326
+
 '''
 This script is a wrapper around borg backup software, heavily specialised for Homebox.
 It is not meant to be a general purpose script, as borgbackup is already doing this job very well.
@@ -118,10 +121,10 @@ class BackupManager(object):
             logging.info("Running '%s' successfully.", name)
 
         if status.stdout != None and status.stdout.strip() != "":
-            logging.info("Output: " + status.stdout.strip())
+            logging.info("Output: %s", status.stdout.strip())
 
         if status.stderr != None and status.stderr.strip() != "":
-            logging.info("Error: " + status.stderr.strip())
+            logging.info("Error: %s", status.stderr.strip())
 
         return status
 
@@ -193,7 +196,7 @@ class BackupManager(object):
             return True
 
         # Throw an error in case the protocol is not implemented
-        logging.error("Unknown or not implemented scheme " + self.location)
+        logging.error("Unknown or not implemented scheme %s", self.location)
         raise NotImplementedError(self.location)
 
 
@@ -260,7 +263,7 @@ class BackupManager(object):
 
         # Unless we want to export the key after the initialisation,
         # we can stop here
-        if exportKeyPath == None:
+        if exportKeyPath is None:
             return True
 
         # If the key path has been specified, export it as well
