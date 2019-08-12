@@ -10,19 +10,12 @@
 # Andre Rodier <andre@rodier.me>
 # Licence: GPL v2
 
-# Pylint options
-# too long lines: pylint: disable=C0301
-# catching too general exception: pylint: disable=W0703
-# too many instance attributes: pylint: disable=R0902
-# parameters differ from overriden: pylint: disable=W0221
-
 # Make sure pylint knows about the print function
 from __future__ import print_function
 
 import StringIO
 import sys
 import os
-
 import ConfigParser
 from socket import AF_INET6
 from multiprocessing import Process as Thread, Queue
@@ -32,64 +25,17 @@ import Milter
 from Milter.utils import parse_addr
 
 # Constants related to the systemd service
-SOCKET_PATH = "/var/spool/postfix/private/milter-sogo-abook.socket"
-PID_FILE_PATH = "/run/milter-sogo-abook/main.pid"
+SOCKET_PATH = "/var/spool/postfix/private/milter-rc-abook.socket"
+PID_FILE_PATH = "/run/milter-rc-abook/main.pid"
 
 GlobalLogQueue = Queue(maxsize=100) # type: Queue[str]
 
 configParser = ConfigParser.RawConfigParser()
-configFilePath = '/etc/sogo/milters.conf'
+configFilePath = '/etc/roundcube/milters.conf'
 configParser.read(configFilePath)
 
-# This implementation use a simple sqlite database, mainly for testing.
-# The records in the database are anonymised using sha256, for security purposes
-def searchInSQLite(fromAddress, recipients, debug):
-    """Search for an address in a local sqlite database. Only email hashes are stored (sha256)"""
-    sources = []
-
-    try:
-
-        import sqlite3
-        import hashlib
-
-        query = 'select source,abook from addresses where uid="{0}" and email_hash="{1}"'
-        sqliteDatabase = configParser.get('sqlite', 'path')
-        db = sqlite3.connect(sqliteDatabase)
-
-        # Check if the email address is in the user's address book
-        cursor = db.cursor()
-
-        # get the from email address signature
-        emailHash = hashlib.sha256(fromAddress).hexdigest()
-
-        for rec in recipients:
-            parts = parse_addr(rec[0])
-            uid = parts[0]
-            cursor.execute(query.format(uid, emailHash))
-
-            # Store the address book sources when found
-            for row in cursor:
-                sources.append('{0}:{1}'.format(row[0], row[1]))
-
-        if debug:
-            GlobalLogQueue.put("Searched address hash {} for user {}: {} result(s)".format(
-                emailHash, uid, len(sources)))
-
-    # Make sure to not prevent the message to pass if something happen,
-    # but log the error
-    except Exception as error:
-        GlobalLogQueue.put("Error when searching in address database: {}".format(error.message))
-
-    # Cleanup: close the db connection if needed
-    finally:
-        if db:
-            db.close()
-
-    return sources
-
-
-def searchInSOGo(fromAddress, recipients, debug, dbConnection):
-    """Search for an address in the SOGo database."""
+def searchInRoundCube(fromAddress, recipients, debug, dbConnection):
+    """Search for an address in the RoundCube database."""
 
     try:
         # Nothing found
@@ -105,32 +51,38 @@ def searchInSOGo(fromAddress, recipients, debug, dbConnection):
 
             # First, get all the address books from this user
             tablesCursor = dbConnection.cursor()
-            abQuery = ("select c_foldername, regexp_replace(c_location, '.*/sogo', 'sogo')"
-                       " from sogo_folder_info where"
-                       " c_folder_type='Contact' and c_location like '%sogo{}%';".format(uid))
+            abQuery = ("select cg.name from contacts as c"
+                       " left join contactgroupmembers as cgm"
+                       " on cgm.contact_id = c.contact_id"
+                       " left join contactgroups as cg"
+                       " on cg.contactgroup_id=cgm.contactgroup_id"
+                       " left join users as u"
+                       " on u.user_id = c.user_id"
+                       " where u.username='{}' and "
+                       " c.words like '%{}%' and"
+                       " c.del = 0"
+                       .format(uid, fromAddress))
 
             tablesCursor.execute(abQuery)
 
-            tables = tablesCursor.fetchall()
+            abooks = tablesCursor.fetchall()
 
-            # End to search in this address book
+            # End to search in this recipient
             tablesCursor.close()
 
-            # For each table, run a query to check if the address is inside
-            for tableInfo in tables:
-                abName = tableInfo[0]
-                tableName = tableInfo[1]
-                cursor = dbConnection.cursor()
-                countQuery = "select count(*) from {} where c_content LIKE '%EMAIL%:{}%';".format(tableName, fromAddress)
-                if debug:
-                    GlobalLogQueue.put("Searching in table {} ({})".format(tableName, abName))
-                cursor.execute(countQuery)
-                result = cursor.fetchone()
-                cursor.close()
+            # Store the address book name, or "default" when no name
+            for abResult in abooks:
+                # Get the first cell as a result
+                abName = abResult[0]
 
-                # Store the address book sources when found
-                if int(result[0]) > 0:
-                    sources.append('SOGo:{}'.format(abName))
+                if abName:
+                    source = "Roundcube:{}".format(abName)
+                else:
+                    source = "Roundcube:default"
+
+                # Insert if not already inside.
+                if not source in sources:
+                    sources.append(source)
 
         if debug:
             GlobalLogQueue.put("Searched address {} for user {}: {} result(s)".format(
@@ -143,7 +95,8 @@ def searchInSOGo(fromAddress, recipients, debug, dbConnection):
 
     return sources
 
-class markAddressBookMilter(Milter.Base):
+class MarkAddressBookMilter(Milter.Base):
+    """Milter to search the sender address in RoundCube recipient's address books."""
 
     # A new instance with each new connection.
     def __init__(self):
@@ -160,10 +113,10 @@ class markAddressBookMilter(Milter.Base):
         self.debug = configParser.getboolean('main', 'debug')
 
         if self.debug:
-            self.queueLogMessage("Running milter address book in debug mode")
+            self.queueLogMessage("Running in debug mode")
 
         if not self.dbConnection:
-            raise "Cannot open SOGo database"
+            raise "Cannot open RoundCube database"
 
     # Should be executed at the end of a message parsing
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -175,9 +128,9 @@ class markAddressBookMilter(Milter.Base):
             self.dbConnection.close()
 
     # Each connection runs in its own thread and has its own
-    # markAddressBookMilter instance.
+    # MarkAddressBookMilter instance.
     # Python code must be thread safe. This is trivial if only stuff
-    # in markAddressBookMilter instances is referenced.
+    # in MarkAddressBookMilter instances is referenced.
     @Milter.noreply
     def connect(self, hostname, family, hostaddr):
         self.IP = hostaddr[0]
@@ -235,7 +188,7 @@ class markAddressBookMilter(Milter.Base):
         self.fp.seek(0)
 
         # Include all the sources in the same header, joined by coma
-        sources = searchInSOGo(self.mailFrom, self.recipients, self.debug, self.dbConnection)
+        sources = searchInRoundCube(self.mailFrom, self.recipients, self.debug, self.dbConnection)
 
         if sources:
             self.addheader("X-AddressBook", ','.join(sources))
@@ -252,11 +205,13 @@ class markAddressBookMilter(Milter.Base):
         return Milter.CONTINUE
 
     def queueLogMessage(self, msg):
+        """Add a message to the log queue"""
         GlobalLogQueue.put(msg)
 
 
 # Background logging thread function
 def loggingThread():
+    """Display the messages in the log queue for systemd"""
     while True:
         entry = GlobalLogQueue.get()
         if entry:
@@ -264,6 +219,7 @@ def loggingThread():
             sys.stdout.flush()
 
 def main():
+    """Main entry point, run the milter and start the background logging daemon"""
 
     try:
         debug = configParser.getboolean('main', 'debug')
@@ -278,7 +234,7 @@ def main():
         timeout = 600
 
         # Register to have the Milter factory create new instances
-        Milter.factory = markAddressBookMilter
+        Milter.factory = MarkAddressBookMilter
 
         # For this milter, we only add headers
         flags = Milter.ADDHDRS
@@ -290,18 +246,18 @@ def main():
             pidFile.write(str(pid))
             pidFile.close()
 
-        print("Started SOGo address book search and tag milter (pid={}, debug={})".format(pid, debug))
+        print("Started RoundCube address book search and tag milter (pid={}, debug={})".format(pid, debug))
         sys.stdout.flush()
 
         # Start the background thread
-        Milter.runmilter("milter-abook", SOCKET_PATH, timeout)
+        Milter.runmilter("milter-rc-abook", SOCKET_PATH, timeout)
         GlobalLogQueue.put(None)
 
         #  Wait until the logging thread terminates
         lgThread.join()
 
         # Log the end of process
-        print("Stopped SOGo address book search and tag milter (pid={})".format(pid))
+        print("Stopped RoundCube address book search and tag milter (pid={})".format(pid))
 
     except Exception as error:
         print("Exception when running the milter: {}".format(error.message))

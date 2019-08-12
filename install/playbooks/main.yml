@@ -87,6 +87,10 @@
 - import_playbook: roundcube.yml
   when: webmail.install and webmail.type == 'roundcube'
 
+# Add RoundCube milters if specified
+- import_playbook: roundcube-milters.yml
+  when: webmail.install and webmail.milters.active
+
 # Install SOGo if chosen
 - import_playbook: sogo.yml
   when: sogo.install
