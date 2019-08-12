@@ -1,11 +1,10 @@
 ---
 
-# Generate the records on the DNS server
+# Display the configuration used for the deployment
 - hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/../../config/defaults.yml'
-  vars:
-    verbose: True
   roles:
     - load-defaults
+    - display-config

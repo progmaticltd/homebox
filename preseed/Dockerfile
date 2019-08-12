@@ -1,5 +1,5 @@
 # Start from Debian stable (Stretch)
-FROM debian:stable
+FROM debian:stretch
 
 # Add backports repository
 RUN echo 'deb http://deb.debian.org/debian/ stretch-backports main contrib non-free' >>/etc/apt/sources.list

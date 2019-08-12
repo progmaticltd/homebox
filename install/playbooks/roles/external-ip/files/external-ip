@@ -40,10 +40,10 @@ while true; do
             usage
             exit 0
             ;;
-	-m|--min-confidence)
-	    minConfidence=$2
-	    shift 2
-	    ;;
+        -m|--min-confidence)
+            minConfidence=$2
+            shift 2
+            ;;
         *)
             break
             ;;
@@ -77,7 +77,7 @@ for url in $SERVICES; do
     COUNT=$(($COUNT + 1))
 
     if [ "$verbose" = "1" ]; then
-	echo "$url\t$IP"
+        echo "$url\t$IP"
     fi
 
     # Concatenate to the list of detected IP addresses

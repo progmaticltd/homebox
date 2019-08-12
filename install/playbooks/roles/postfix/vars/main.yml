@@ -1,0 +1,9 @@
+---
+
+postfix_pkgs:
+  - postfix
+  - postfix-cdb
+  - postfix-pcre
+  - postfix-ldap
+  - sasl2-bin
+  - postfix-policyd-spf-python

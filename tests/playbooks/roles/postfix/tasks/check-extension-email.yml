@@ -22,8 +22,8 @@
     --to "{{ users[1].mail | regex_replace('@', '+lists@') }}"
     --h-Subject '{{ test_subject }}'
     --auth
-    --auth-user="{{ users[0].uid }}"
-    --auth-password="{{ users[0].password }}"
+    --auth-user="{{ user0_uid }}"
+    --auth-password="{{ user0_password }}"
     --server smtp.{{ network.domain }}
     --body /tmp/testmsg-01.txt
   become: yes
@@ -39,4 +39,3 @@
   until: email_found.rc == 0
   retries: 10
   delay: 2
-

@@ -22,13 +22,6 @@
   set_fact:
     network: '{{ network_default }}'
 
-- name: Display merged network settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: network
-
 ################################################################################
 # Merge user options with default options
 - name: Combine default and user defined mail settings
@@ -45,17 +38,11 @@
   set_fact:
     mail: '{{ mail_default }}'
 
-- name: Display merged mail settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: mail
-
 ################################################################################
 # Merge user options with default options
 - name: Combine default and user defined password settings
   run_once: true
+  no_log: true
   when: passwords is defined
   tags: defaults
   set_fact:
@@ -63,17 +50,11 @@
 
 - name: Use default passwords settings
   run_once: true
+  no_log: true
   when: passwords is not defined
   tags: defaults
   set_fact:
     passwords: '{{ passwords_default }}'
-
-- name: Display merged password settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: passwords
 
 ################################################################################
 # Merge system defaults
@@ -91,13 +72,6 @@
   set_fact:
     system: '{{ system_default }}'
 
-- name: Display merged system settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: system
-
 ################################################################################
 # Merge firewall defaults
 - name: Combine default and user defined firewall settings
@@ -113,13 +87,6 @@
   tags: defaults
   set_fact:
     firewall: '{{ firewall_default }}'
-
-- name: Display merged firewall settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: firewall
 
 ################################################################################
 # Merge security defaults
@@ -137,13 +104,6 @@
   set_fact:
     security: '{{ security_default }}'
 
-- name: Display merged security settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: security
-
 ################################################################################
 # Merge dictionaries defaults
 - name: Combine default and user defined dictionaries settings
@@ -160,37 +120,6 @@
   set_fact:
     dictionaries: '{{ dictionaries_default }}'
 
-- name: Display merged dictionaries settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: dictionaries
-
-################################################################################
-# Merge DNS defaults
-- name: Combine default and user defined dns settings
-  run_once: true
-  when: dns is defined
-  tags: defaults
-  set_fact:
-    dns: '{{ dns_default | combine(dns, recursive=True) }}'
-
-- name: Use default DNS settings
-  run_once: true
-  when: dns is not defined
-  tags: defaults
-  set_fact:
-    dns: '{{ dns_default }}'
-
-- name: Display merged dns settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: dns
-
-################################################################################
 # Merge webmail defaults
 - name: Combine default and user defined webmail settings
   run_once: true
@@ -205,13 +134,6 @@
   tags: defaults
   set_fact:
     webmail: '{{ webmail_default }}'
-
-- name: Display merged webmail settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: webmail
 
 
 ################################################################################
@@ -230,13 +152,6 @@
   set_fact:
     website: '{{ website_default }}'
 
-- name: Display merged website settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: website
-
 ################################################################################
 # Merge backup defaults
 - name: Combine default and user defined backup settings
@@ -252,13 +167,6 @@
   tags: defaults
   set_fact:
     backup: '{{ backup_default }}'
-
-- name: Display merged backup settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: backup
 
 ################################################################################
 # Merge defaults development settings
@@ -276,13 +184,6 @@
   set_fact:
     devel: '{{ devel_default }}'
 
-- name: Display merged devel settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: devel
-
 ################################################################################
 # Merge defaults DKIM keys settings
 - name: Combine default and user defined dkim settings
@@ -298,13 +199,6 @@
   tags: defaults
   set_fact:
     dkim: '{{ dkim_default }}'
-
-- name: Display merged dkim settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: dkim
 
 
 ################################################################################
@@ -323,13 +217,6 @@
   set_fact:
     dmarc: '{{ dmarc_default }}'
 
-- name: Display merged dmarc settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: dmarc
-
 ################################################################################
 # Merge defaults ejabberd settings
 - name: Combine default and user defined ejabberd settings
@@ -346,13 +233,6 @@
   set_fact:
     ejabberd: '{{ ejabberd_default }}'
 
-- name: Display merged ejabberd settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: ejabberd
-
 ################################################################################
 # Merge defaults bind settings
 - name: Combine default and user defined bind settings
@@ -368,13 +248,6 @@
   tags: defaults
   set_fact:
     bind: '{{ bind_default }}'
-
-- name: Display merged bind settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: bind
 
 
 ################################################################################
@@ -393,13 +266,6 @@
   set_fact:
     gogs: '{{ gogs_default }}'
 
-- name: Display merged gogs settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: gogs
-
 
 ################################################################################
 # Merge defaults transmission settings
@@ -417,13 +283,6 @@
   set_fact:
     transmission: '{{ transmission_default }}'
 
-- name: Display merged transmission settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: transmission
-
 ################################################################################
 # Merge defaults posix_groups settings
 - name: Combine default and user defined posix_groups settings
@@ -439,13 +298,6 @@
   tags: defaults
   set_fact:
     posix_groups: '{{ posix_groups_default }}'
-
-- name: Display merged posix_groups settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: posix_groups
 
 ################################################################################
 # Merge defaults privoxy settings
@@ -463,13 +315,6 @@
   set_fact:
     privoxy: '{{ privoxy_default }}'
 
-- name: Display merged privoxy settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: privoxy
-
 ################################################################################
 # Merge defaults tor settings
 - name: Combine default and user defined tor settings
@@ -485,13 +330,6 @@
   tags: defaults
   set_fact:
     tor: '{{ tor_default }}'
-
-- name: Display merged tor settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: tor
 
 ################################################################################
 # Merge defaults zabbix settings
@@ -509,13 +347,6 @@
   set_fact:
     zabbix: '{{ zabbix_default }}'
 
-- name: Display merged zabbix settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: zabbix
-
 ################################################################################
 # Merge defaults sogo settings
 - name: Combine default and user defined sogo settings
@@ -531,13 +362,6 @@
   tags: defaults
   set_fact:
     sogo: '{{ sogo_default }}'
-
-- name: Display merged sogo settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: sogo
 
 ################################################################################
 # Merge defaults hugo settings
@@ -555,13 +379,6 @@
   set_fact:
     hugo: '{{ hugo_default }}'
 
-- name: Display merged hugo settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: hugo
-
 ################################################################################
 # Merge defaults access_check settings
 - name: Combine default and user defined access_check settings
@@ -578,13 +395,6 @@
   set_fact:
     access_check: '{{ access_check_default }}'
 
-- name: Display merged access_check settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: access_check
-
 ################################################################################
 # Merge defaults backup settings
 - name: Combine default and user defined backup settings
@@ -600,13 +410,6 @@
   tags: defaults
   set_fact:
     backup: '{{ backup_default }}'
-
-- name: Display merged backup settings
-  run_once: true
-  when: verbose is defined and verbose == True
-  tags: defaults
-  debug:
-    var: backup
 
 ################################################################################
 # Marking the default settings as loaded should increase the speed of the deployment

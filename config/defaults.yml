@@ -158,6 +158,12 @@ mail_default:
   # Fail2ban parameters
   fail2ban:
     time: 3600
+  #############################################################################
+  # mta-sts (RFC 8461)
+  mta_sts:
+    max_age: 86400
+    mode: enforce      # You can also use testing. When system.dev, the mode is
+                       # set to testing automatically
 
 ###############################################################################
 # Default password policies for users
@@ -249,10 +255,11 @@ firewall_default:
 # Extra security values
 security_default:
   auto_update: true                             # Install security updates automatically, using unattended-upgrades
-  ssh_disable_root_access_with_password: true   # Force SSH authentication to use public / private key
+  ssh_disable_root_access_with_password: true   # Force SSH authentication to use public / private key for root
   ssh_disable_root_access: false                # At the end of the installation, completely disable remote
                                                 # root access via SSH and force the use of sudo for the administrators
   lock_root_password: true                      # Disable console root access by locking root password.
+  ssh_disable_users_access_with_password: false # Force SSH authentication to use public / private key for all users
   alerts_email:
     - 'admin@{{ network.domain }}'
   # various options when luks is installed
@@ -428,6 +435,16 @@ bind_default:
   expire: 3600000         # 10000 hours
   neg_cache_ttl: 172800   # 2 days
   ttl: 3600               # 1 hour
+  # List of secondary nameservers.
+  # These servers will be announced as additionnal nameservers and allowed by
+  # IP address to request transfers from the server (AXFR requests).
+  # The default is the empty list, which disallow zone transfers by default.
+  ns_backup: []
+  # Example of record for gandi.net's secondary nameserver
+  # ns_backup:
+  #   - fqdn: ns6.gandi.net
+  #     ip: 217.70.177.40
+  # https://docs.gandi.net/en/domain_names/advanced_users/secondary_nameserver.html
   # General MX configuration
   mx_priority: 10
   # List of backup MX records. If the server is unreachable,

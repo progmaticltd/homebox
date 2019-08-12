@@ -5,5 +5,4 @@ misc/*
 
 # Ignores your system configuration and your public key
 config/*
-!config/system-example.yml
-!config/hosts-example.yml
+!config/*-example.yml

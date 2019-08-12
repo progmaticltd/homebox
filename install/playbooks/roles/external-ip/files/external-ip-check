@@ -21,7 +21,7 @@ test -x /usr/bin/geoiplookup || exit 1
 
 # Get our current IP address from an external web site
 if [ "$current_ip" = "auto" ]; then
-    
+
     current_ip=$(/usr/local/bin/external-ip -u /etc/external-ip.conf)
 
     if [ -f "$ip_file" ]; then
@@ -76,3 +76,4 @@ echo "EXTERNAL_IP=$current_ip"   >>"$ip_file"
 echo "COUNTRY_CODE=$countryCode" >>"$ip_file"
 echo "COUNTRY_NAME=$countryName" >>"$ip_file"
 
+# TODO: Refresh DNS entries

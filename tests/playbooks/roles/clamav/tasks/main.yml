@@ -48,8 +48,8 @@
     --attach-name '{{ test_filename }}.exe'
     --attach-type application/exe
     --auth
-    --auth-user="{{ users[0].uid }}"
-    --auth-password="{{ users[0].password }}"
+    --auth-user="{{ user0_uid }}"
+    --auth-password="{{ user0_password }}"
     --server smtp.{{ network.domain }}
   become: yes
   become_method: sudo

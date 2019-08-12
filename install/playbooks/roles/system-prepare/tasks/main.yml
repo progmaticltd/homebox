@@ -1,5 +1,18 @@
 ---
 
+# This seems to happen with some cloud providers, the first time the server boots
+# Wait until no one locks the dpkg / apt loc file
+- name: Wait for apt to be unlocked
+  tags: apt
+  register: result
+  retries: 9
+  delay: 5
+  shell: >-
+    test -f /var/lib/dpkg/lock &&
+    fuser /var/lib/dpkg/lock 2>&1 ;
+    echo
+  until: result.stdout == ''
+
 # Install the most required packages
 - name: Update packages cache if older than 1h
   tags: apt
@@ -195,6 +208,7 @@
 
 - name: Create a random password for file encryption on the server
   tags: encryption
+  no_log: true
   set_fact:
     system_key: '{{ lookup("password", "{{ encryption.systemKeyParams }}") }}'
 

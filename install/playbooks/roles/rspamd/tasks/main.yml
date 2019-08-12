@@ -4,36 +4,34 @@
   tags: rspamd
   delegate_to: localhost
   file:
-    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/rspamd/'
+    path: '{{ backup_directory }}/rspamd/'
     state: directory
 
 - name: Install rspamd packages
   tags: rspamd
-  vars:
-    pkgs:
-      - redis-server
-      - rspamd
   apt:
-    name: "{{ pkgs }}"
+    name: "{{ rspamd_pkgs }}"
     state: present
 
 - name: Set facts for rspamd password generation
   tags: rspamd
   set_fact:
-    password_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/rspamd/admin.pwd"
+    password_path: "{{ backup_directory }}/rspamd/admin.pwd"
     password_params: "length=16 chars=ascii_letters,digits"
 
 - name: Generate a random password for rspamd
   tags: rspamd
+  no_log: true
   set_fact:
     rspamd_password: '{{ lookup("password", "{{ password_path }} {{ password_params }}") }}'
 
 - name: Set password for the rspamd account
   tags: rspamd
+  no_log: true
   register: rspamd_password_fact
   command: 'rspamadm pw -p "{{ rspamd_password }}"'
 
-- name: display password
+- name: display the encrypted password
   tags: rspamd
   set_fact:
     rspamd_password: rspamd_password_fact.stdout

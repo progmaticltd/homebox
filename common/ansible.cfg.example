@@ -1,41 +1,13 @@
+# Example to use with HomeBox
+
 [defaults]
 retry_files_enabled = False
+display_skipped_hosts = False
 stdout_callback = yaml
-# Other values
-# actionable
-# context_demo
-# debug
-# default
-# dense
-# foreman
-# full_skip
-# hipchat
-# jabber
-# json
-# junit
-# logentries
-# log_plays
-# logstash
-# mail
-# minimal
-# oneline
-# osx_say
-# profile_roles
-# profile_tasks
-# selective
-# ski.py
-# slack
-# stderr
-# syslog_json
-# timer
-# tree
+roles_path = .:{{ playbook_dir }}/../../common/roles/
+connection_plugins = {{ playbook_dir }}/../../common/connection-plugins/
+remote_tmp = /tmp/
 
-verbose = bright blue
-warn = bright purple
-error = bright yellow
-debug = light gray
-deprecate = purple
-skip = cyan
-unreachable = bright red
-ok = bright green
-changed = bright yellow
+# For playbook profiling
+# callback_whitelist = profile_roles
+# callback_whitelist = profile_tasks

@@ -37,7 +37,7 @@ nano system.yml
 
 The system configuration file is a complete YAML configuration file containing all your settings:
 
-- Network information, specifically your domain name.
+- Network information, specifically your IP address(es) and domain name.
 - User and group details, like email addresses and aliases.
 - Email parameters, like maximum attachment size, antivirus options, etc.
 - Some password policies, like minimum length and complexity.
@@ -69,39 +69,50 @@ ansible-playbook -i ../config/hosts.yml playbooks/main.yml
 
 ## Network configuration
 
-Every network subdomain entries, email addresses, etc... will include the domain name:
+### Domain name and host name
+
+Every network subdomain entries, email addresses, etc... will include the domain name, so this is important you put the
+real value here:
 
 ```yaml
 network:
   domain: homebox.space
   hostname: mail.homebox.space
-  external_ip: auto
+  auto_detect_ip: true
+  external_ip: ~
   backup_ip: ~
 ```
 
 The hostname is important, use the real one. If you used the preseed configuration, it should be just mail and your
 network domain.
 
-The external IP address is normally automatically detected. If this is not the case, you can specify it manually:
+### External IP address detection
 
-!!! Tip
-    If you do not have a backup IP address, use "~" like the example.
+By default, the system uses api.ipify.org to check your IP addresses. It detects IPv4 and IPv6 addresses, and treats the
+first one as the main IP, and the second as a backup IP if exists.
+
+If you have a different configuration, for instance two IPv4 addresses, you can specify them manually. You can mix IPv4
+and IPv6 addresses. DNS entries will be added accordingly. For instance:
 
 ```yaml
 network:
   domain: homebox.space
   hostname: mail.homebox.space
+  auto_detect_ip: false
   external_ip: 12.34.56.78
   backup_ip: 2001:15f0:5502:bf1:5400:01ff:feca:dea6
 ```
 
-If your server has a second IP address, you can specify it here as well. By default, none is defined. You can mix IPv4
-and IPv6 addresses. DNS entries will be added accordingly.
+!!! Tip
+    If you do not have a backup IP address, use "~" like the example.
+
+!!! Warning
+    If you have two IP addresses of the same family (IPv4 or IPv6), you will have to specify them manually.
 
 ## Users list
 
-The other piece of information you need to fill first is the user list. In its simplest form, you will have something
-like this:
+The file format should be self explanatory. The other piece of information you need to fill first is the user list. In
+its simplest form, you will have something like this:
 
 ``` yaml
 users:
@@ -120,12 +131,9 @@ users:
   first_name: Jane
   last_name: Doe
   mail: jane.doe@example.com
-  password: 'Tlwril!8'
   aliases:
     - jane@homebox.space
 ```
-
-The file format should be self explanatory. For complex passwords, use quotes, like " or '
 
 The email aliases are the other email addresses that belongs to the same user.
 
@@ -134,6 +142,11 @@ You can also add more advanced features, like:
 - [Import emails from other accounts](external-accounts.md).
 - [Define some users as administrators](security-configuration.md#defining-administrators)
 - [Grant remote access to certain users](security-configuration.md#grant-some-users-remote-access)
+
+!!! Note
+    You do not have to set the passwords for each user if you don't want to. In this case, a random password will be
+    generated, and saved in the deployment backup directory, in the ldap folder. In this case, there will be one file
+    called 'jane.pwd'. Otherwise, you can specify the password in clear text. For complex passwords, use quotes
 
 ## Email options
 
@@ -203,6 +216,8 @@ bind:
   forward:
     - 8.8.8.8
     - 8.8.4.4
+    - 2001:4860:4860::8888
+    - 2001:4860:4860::8844
 ```
 
 You can also use [OpenDNS servers](https://en.wikipedia.org/wiki/OpenDNS#Name_server_IP_addresses) for forward.

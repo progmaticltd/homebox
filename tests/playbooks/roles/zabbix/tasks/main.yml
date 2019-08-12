@@ -32,7 +32,7 @@
 
 - name: Set facts for zabbix password generation
   set_fact:
-    admin_password_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/zabbix/admin.pwd"
+    admin_password_path: "{{ backup_directory }}/zabbix/admin.pwd"
 
 - name: Get the zabbix administration password
   set_fact:

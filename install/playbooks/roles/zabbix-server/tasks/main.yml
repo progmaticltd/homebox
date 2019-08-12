@@ -4,19 +4,20 @@
   tags: backup
   delegate_to: localhost
   file:
-    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/zabbix/'
+    path: '{{ backup_directory }}/zabbix/'
     state: directory
 
 - name: Set facts for zabbix password generation
   tags: password
   set_fact:
-    db_password_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/zabbix/postgres.pwd"
+    db_password_path: "{{ backup_directory }}/zabbix/postgres.pwd"
     db_password_params: "length=16 chars=ascii_letters,digits"
-    admin_password_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/zabbix/admin.pwd"
+    admin_password_path: "{{ backup_directory }}/zabbix/admin.pwd"
     admin_password_params: "length={{ 16 + 16 | random }} chars=ascii_letters,digits,punctuation"
 
 - name: Generate a random password for zabbix
   tags: password
+  no_log: true
   set_fact:
     zabbixdb_password: '{{ lookup("password", "{{ db_password_path }} {{ db_password_params }}") }}'
     zabbix_admin_password: '{{ lookup("password", "{{ admin_password_path }} {{ admin_password_params }}") }}'

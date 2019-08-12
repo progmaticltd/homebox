@@ -3,7 +3,7 @@
 - name: Get the passwords generated in the accounts tasks
   tags: password
   set_fact:
-    roPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/readonly.pwd"
+    roPasswdParams: "{{ backup_directory }}/ldap/readonly.pwd"
 
 - name: Install roundcube webmail
   tags: apt
