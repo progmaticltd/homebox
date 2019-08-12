@@ -164,6 +164,13 @@ mail_default:
     max_age: 86400
     mode: enforce      # You can also use testing. When system.dev, the mode is
                        # set to testing automatically
+  #############################################################################
+  # List of IP addresses and authorised domains to send emails; empty by default
+  extra_senders: []
+  # extra_senders:
+  #   - 'ip4:212.27.32.5'
+  #   - 'ip6:fe80::2e0:70ff:fe63:f069/64'
+  #   - 'include:_spf.google.com'
 
 ###############################################################################
 # Default password policies for users

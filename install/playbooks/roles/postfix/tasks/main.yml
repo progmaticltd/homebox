@@ -210,6 +210,21 @@
     loop_var: section
 
 # Create entries for the DNS server ===========================================
+
+# Use "soft fail" in development mode
+- name: Set the SPF qualifier as "soft fail"
+  tags: spf
+  when: system.devel or system.debug
+  set_fact:
+    spf_qualifier: '~'
+
+# Use "fail" (strict) otherwise
+- name: Set the SPF qualifier as strict
+  tags: spf
+  when: not system.devel and not system.debug
+  set_fact:
+    spf_qualifier: '-'
+
 - name: Generate DNS records for bind
   tags: bind
   when: bind.install
