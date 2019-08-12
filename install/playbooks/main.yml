@@ -72,6 +72,9 @@
 - import_playbook: cert-smtp.yml
 - import_playbook: postfix.yml
 
+# Add mta-sts security
+- import_playbook: mta-sts.yml
+
 # Mail delivery agent (dovecot, pop3 protocol)
 - import_playbook: cert-pop3.yml
   when: mail.pop3
