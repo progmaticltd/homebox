@@ -1,4 +1,4 @@
----
+----
 
 ################################################################################
 # Get the external IP address, from configuration file,
@@ -27,15 +27,6 @@
   loop_control:
     loop_var: script
 
-- name: Configure the daily IP address checking
-  cron:
-    hour: '0'
-    minute: '0'
-    name: External IP check
-    job: /usr/local/bin/external-ip-check '{{ network.external_ip }}'
-    cron_file: external-ip-check
-    user: root
-
 - name: Run the IP check once to get the current IP Address
   shell: >-
     /usr/local/bin/external-ip-check
@@ -44,19 +35,19 @@
 
 - name: Run the script to get the external IP address automatically
   tags: facts
-  when: network.external_ip == "auto"
+  when: network.auto_detect_ip
   register: external_ip_facts
   shell: /usr/local/bin/external-ip -u /etc/external-ip.conf
 
 - name: Get the external IP address automatically
   tags: facts
-  when: network.external_ip == "auto"
+  when: network.auto_detect_ip
   set_fact:
     external_ip: '{{ external_ip_facts.stdout }}'
 
 - name: Get the external IP address automatically
   tags: facts
-  when: network.external_ip != "auto"
+  when: not network.auto_detect_ip
   set_fact:
     external_ip: '{{ network.external_ip }}'
 

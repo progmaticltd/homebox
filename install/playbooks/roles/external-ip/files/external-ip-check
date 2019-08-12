@@ -1,5 +1,9 @@
 #!/bin/dash
 
+# This script is run as root on the first time upon installation,
+# to save the IP address information, like the country.
+# The country is used for instance by access control checks.
+
 # Check if the current IP address has changed since the last time, and act accordingly
 current_ip=$1
 
@@ -75,5 +79,3 @@ echo "# External IP address (updated $now)" >"$ip_file"
 echo "EXTERNAL_IP=$current_ip"   >>"$ip_file"
 echo "COUNTRY_CODE=$countryCode" >>"$ip_file"
 echo "COUNTRY_NAME=$countryName" >>"$ip_file"
-
-# TODO: Refresh DNS entries
