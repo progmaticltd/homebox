@@ -32,7 +32,7 @@ submission inet n       -       y       -       -       smtpd
 smtps     inet  n       -       y       -       -       smtpd
   -o syslog_name=postfix/smtps
   -o smtpd_discard_ehlo_keywords=silent-discard,etrn
-#  -o smtpd_tls_wrappermode=yes
+  -o smtpd_tls_wrappermode=yes
 #  -o smtpd_sasl_auth_enable=yes
 #  -o smtpd_reject_unlisted_recipient=no
 #  -o smtpd_client_restrictions=$mua_client_restrictions
