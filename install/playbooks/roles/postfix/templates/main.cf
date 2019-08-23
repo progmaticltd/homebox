@@ -46,6 +46,7 @@ smtpd_sasl_type = dovecot
 smtpd_sasl_path = private/auth
 broken_sasl_auth_clients = yes
 smtpd_sasl_security_options = noanonymous
+smtpd_tls_auth_only = yes
 
 # The internet hostname of this mail system.
 # The default is to use the fully-qualified domain name (FQDN) from gethostname(),
