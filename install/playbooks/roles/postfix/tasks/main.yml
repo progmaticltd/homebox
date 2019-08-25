@@ -62,6 +62,12 @@
   set_fact:
     message_size_limit: '{{ 1024 + mail.max_attachment_size * 1394606 | int }}'
 
+- name: Copy the template for /etc/mailname for completeness (not used by configuration)
+  tags: config
+  template:
+    src: mailname
+    dest: /etc/mailname
+
 - name: Copy configuration template
   tags: config
   notify: Restart postfix
