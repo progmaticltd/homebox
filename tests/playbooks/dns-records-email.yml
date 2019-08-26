@@ -63,3 +63,14 @@
         - '{{ network.domain }}'
   roles:
     - dns-records
+
+# Check the MTA-STS and TLS-RPT records
+- hosts: homebox
+  vars:
+    records:
+      type: TXT
+      list:
+        - '_mta-sts.{{ network.domain }}'
+        - '_smtp._tls.{{ network.domain }}'
+  roles:
+    - dns-records

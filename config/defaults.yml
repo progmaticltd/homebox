@@ -312,6 +312,9 @@ hugo_default:
 webmail_default:
   install: true
   type: roundcube
+  milters:
+    active: false
+    debug: true
 
 ###############################################################################
 # Default list of development packages to install

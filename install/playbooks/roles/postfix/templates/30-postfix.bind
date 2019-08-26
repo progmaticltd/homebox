@@ -34,4 +34,4 @@ _submission._tcp 3600 IN SRV 0 0 {{ mail.postfix.submission.port }} smtp2.{{ net
 {% endif %}
 
 ;; TLS-RPT (rfc8460)
-_smtp._tls 300    IN    TXT "v=TLSRPTv1;rua=mailto:security@{{ network.domain }}"
+_smtp._tls.{{ network.domain }}. 86400 IN   TXT   "v=TLSRPTv1; rua=mailto:security@{{ network.domain }};"

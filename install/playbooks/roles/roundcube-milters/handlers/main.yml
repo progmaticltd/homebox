@@ -6,7 +6,7 @@
 
 - name: Restart milter service
   service:
-    name: milter-sogo-abook
+    name: milter-rc-abook
     state: restarted
     enabled: true
 
