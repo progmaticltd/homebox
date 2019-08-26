@@ -49,7 +49,7 @@ smtpd_sasl_security_options = noanonymous
 
 # The internet hostname of this mail system.
 # The default is to use the fully-qualified domain name (FQDN) from gethostname(),
-myhostname = {{ network.hostname }}
+myhostname = smtp.{{ network.domain }}
 
 # Use virtual aliases, mailboxes, domains and transport
 virtual_alias_maps = ldap:/etc/postfix/ldap-aliases.cf
