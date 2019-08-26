@@ -47,6 +47,7 @@
     --attach /tmp/clam.exe
     --attach-name '{{ test_filename }}.exe'
     --attach-type application/exe
+    -tls --tls-verify
     --auth
     --auth-user="{{ user0_uid }}"
     --auth-password="{{ user0_password }}"
