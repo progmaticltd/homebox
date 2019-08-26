@@ -10,13 +10,6 @@
     port: 80
     comment: Allow LetsEncrypt temporarily
 
-# Add alerternative names if defined
-- name: Add the domain alias
-  when: domain_alias is defined and domain_alias != ""
-  tags: cert
-  set_fact:
-    domain_alias_cmd: '{{ "-d " + domain_alias + "." + network.domain }}'
-
 # The certbot package need to be installed
 - name: Create the certificate
   tags: cert
@@ -26,7 +19,7 @@
     --webroot
     --webroot-path "{{ site_root }}"
     --domain "{{ certificate_fqdn }}"
-    {{ domain_alias_cmd | default("") }}
+    {{ "-d " + domain_alias + "." + network.domain if domain_alias is defined and domain_alias != "" else "" }}
     --email "admin@{{ network.domain }}"
     {{ domain_alias_cmd is defined | ternary("--expand", "") }}
     {{ system.devel | ternary("--test-cert", "") }}
