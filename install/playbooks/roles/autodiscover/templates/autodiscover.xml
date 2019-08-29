@@ -13,6 +13,7 @@
     <SSL>on</SSL>
     <AuthRequired>on</AuthRequired>
   </Protocol>
+{% if mail.pop3 %}
   <Protocol>
     <Type>POP3</Type>
     <Server>pop3.{{ network.domain }}</Server>
@@ -22,6 +23,7 @@
     <SSL>on</SSL>
     <AuthRequired>on</AuthRequired>
   </Protocol>
+{% endif %}
   <Protocol>
     <Type>SMTP</Type>
     <Server>smtp.{{ network.domain }}</Server>
