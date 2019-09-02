@@ -9,7 +9,7 @@
   delay: 5
   shell: >-
     test -f /var/lib/dpkg/lock &&
-    fuser /var/lib/dpkg/lock 2>&1 ;
+    ls -l /proc/*/fd/* 2>/dev/null | grep '/var/lib/dpkg/lock' ;
     echo
   until: result.stdout == ''
 
