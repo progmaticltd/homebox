@@ -176,12 +176,25 @@
       port: 143
     - comment: Allow IMAPS access
       port: 993
+    - comment: Allow Managesieve access
+      port: 4190
+  loop_control:
+    loop_var: rule
+
+- name: Configure the firewall for POP3 access
+  when: mail.pop3
+  tags: security
+  ufw:
+    rule: allow
+    proto: tcp
+    src: any
+    port: '{{ rule.port }}'
+    comment: '{{ rule.comment }}'
+  with_items:
     - comment: Allow POP3 access
       port: 110
     - comment: Allow POP3S access
       port: 995
-    - comment: Allow Managesieve access
-      port: 4190
   loop_control:
     loop_var: rule
 

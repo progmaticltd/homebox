@@ -18,7 +18,8 @@
     certificate:
       type: pop3
   roles:
-    - certificate
+    - role: certificate
+      when: mail.pop3
 
 - hosts: homebox
   vars_files:

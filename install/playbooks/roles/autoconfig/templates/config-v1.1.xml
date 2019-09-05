@@ -22,6 +22,7 @@
       <authentication>password-cleartext</authentication>
     </incomingServer>
 
+{% if mail.pop3 %}
     <!-- POP3 -->
     <incomingServer type="pop3">
       <hostname>pop3.{{ network.domain }}</hostname>
@@ -38,6 +39,7 @@
       <authentication>password-cleartext</authentication>
     </incomingServer>
 
+{% endif %}
     <!-- SMTP: Submission only -->
     <outgoingServer type="smtp">
       <hostname>smtp.{{ network.domain }}</hostname>
