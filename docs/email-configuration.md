@@ -149,3 +149,19 @@ mail:
       always_bcc = spyme@fbi.gov.us
       disable_vrfy_command = no
 ```
+
+## Sending emails from other locations
+
+If you are planning to use another gateway to send emails, these IP addresses should be included in the SPF DNS
+record. Luckily, there is a simple way to do it.
+
+The example below allows you to send email via an extra IPv4, an extra IPv6 and using the ‘Google Mail’ gateways.
+
+``` yaml hl_lines="3 4 5 6"
+mail:
+  ...
+  extra_senders:
+  #   - 'ip4:212.27.32.5'
+  #   - 'ip6:fe80::2e0:70ff:fe63:f069/64'
+  #   - 'include:_spf.google.com'
+```
