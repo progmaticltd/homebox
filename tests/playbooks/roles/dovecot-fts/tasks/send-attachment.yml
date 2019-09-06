@@ -26,6 +26,7 @@
     --attach-type '{{ attachment.mime }}'
     --attach-name 'file.{{ attachment.extension }}'
     --attach '/tmp/file.{{ attachment.extension }}'
+    -tls --tls-verify
     --auth
     --auth-user="{{ users0_uid }}"
     --auth-password="{{ user0_password }}"

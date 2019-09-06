@@ -21,6 +21,7 @@
     --from="{{ users[0].mail }}"
     --to "{{ users[1].aliases[0] }}"
     --h-Subject '{{ test_subject }}'
+    -tls --tls-verify
     --auth
     --auth-user="{{ user0_uid }}"
     --auth-password="{{ user0_password }}"
