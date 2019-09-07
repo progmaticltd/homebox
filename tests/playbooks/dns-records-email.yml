@@ -25,7 +25,6 @@
       list:
         - 'imap.{{ network.domain }}'
         - 'smtp.{{ network.domain }}'
-        - 'pop3.{{ network.domain }}'
   roles:
     - dns-records
 
@@ -37,8 +36,6 @@
       list:
         - '_imap._tcp.{{ network.domain }}'
         - '_imaps._tcp.{{ network.domain }}'
-        - '_pop3._tcp.{{ network.domain }}'
-        - '_pop3s._tcp.{{ network.domain }}'
         - '_submission._tcp.{{ network.domain }}'
   roles:
     - dns-records

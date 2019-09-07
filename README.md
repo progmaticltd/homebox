@@ -159,7 +159,7 @@ official documentation.
 - Automatic copy of sent emails into the sent folder.
 - Automatic creation of the postmaster account and special email addresses using
   [RFC 2142](https://tools.ietf.org/html/rfc2142) specifications.
-- Dovecot configuration, IMAPS, POP3S, Quotas, ManageSieve, simple spam and ham learning
+- Dovecot configuration, IMAPS, optional POP3S, Quotas, ManageSieve, simple spam and ham learning
   by moving emails in and out the Junk folder, sieve and vacation scripts.
 - Virtual folders for server search: unread messages, conversations view, all messages, flagged
   and messages labelled as "important".

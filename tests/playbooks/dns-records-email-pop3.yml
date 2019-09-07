@@ -1,0 +1,22 @@
+---
+
+# Test the DNS server for mail records (pop3 only)
+- hosts: homebox
+  vars:
+    records:
+      type: '{{ external_ip_type }}'
+      list:
+        - 'pop3.{{ network.domain }}'
+  roles:
+    - dns-records
+
+# Test the DNS server for service records (pop3 only)
+- hosts: homebox
+  vars:
+    records:
+      type: SRV
+      list:
+        - '_pop3._tcp.{{ network.domain }}'
+        - '_pop3s._tcp.{{ network.domain }}'
+  roles:
+    - dns-records
