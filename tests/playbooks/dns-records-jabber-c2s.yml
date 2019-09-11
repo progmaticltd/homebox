@@ -9,7 +9,8 @@
     records:
       type: A
       list:
-        - 'xmpp.{{ network.domain }}'
+        - name: 'xmpp.{{ network.domain }}'
+          value: '{{ network.external_ip }}'
   roles:
     - dns-records
 
@@ -18,6 +19,7 @@
     records:
       type: SRV
       list:
-        - '_xmpp-client._tcp.{{ network.domain }}'
+        - name: '_xmpp-client._tcp.{{ network.domain }}'
+          value: 'xmpp\.{{ network.domain }}\.$'
   roles:
     - dns-records

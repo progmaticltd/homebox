@@ -9,6 +9,7 @@
     records:
       type: CNAME
       list:
-        - 'autodiscover.{{ network.domain }}'
+        - name: 'autodiscover.{{ network.domain }}'
+          value: 'main.{{ network.domain }}'
   roles:
     - dns-records

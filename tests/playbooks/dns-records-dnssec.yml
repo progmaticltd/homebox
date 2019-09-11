@@ -16,6 +16,9 @@
     records:
       type: DNSKEY
       count: 2
+      list:
+        - name: '.'
+          value: '.*'
   roles:
     - dns-records
 
@@ -28,5 +31,8 @@
     records:
       type: RRSIG
       count: '[1-9][0-9]*'
+      list:
+        - name: '.'
+          value: '.*'
   roles:
     - dns-records
