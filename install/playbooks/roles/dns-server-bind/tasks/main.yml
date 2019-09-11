@@ -39,11 +39,10 @@
   tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
-    record_name: main
+    record_name: "{{ 'smtp' if postfix.install else 'main' }}"
     reverse_ip_address: '{{ reverse_ip }}'
     external_ip_address: '{{ external_ip }}'
     ip_type: '{{ external_ip_type }}'
-    ptr_id: 10
   template:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
@@ -70,11 +69,10 @@
   tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
-    record_name: backup
+    record_name: "{{ 'smtp2' if postfix.install else 'backup' }}"
     reverse_ip_address: '{{ reverse_backup_ip }}'
     external_ip_address: '{{ backup_ip }}'
     ip_type: '{{ backup_ip_type }}'
-    ptr_id: 20
   template:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
