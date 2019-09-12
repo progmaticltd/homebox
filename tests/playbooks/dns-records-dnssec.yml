@@ -17,7 +17,7 @@
       type: DNSKEY
       count: 2
       list:
-        - name: '.'
+        - name: '{{ network.domain }}'
           value: '.*'
   roles:
     - dns-records
@@ -32,7 +32,9 @@
       type: RRSIG
       count: '[1-9][0-9]*'
       list:
-        - name: '.'
-          value: '.*'
+        - name: '{{ network.domain }}'
+          value: 'RRSIG\s+A'
+        - name: '{{ network.domain }}'
+          value: 'RRSIG\s+MX'
   roles:
     - dns-records
