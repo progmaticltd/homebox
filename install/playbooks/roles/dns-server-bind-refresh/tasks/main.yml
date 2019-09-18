@@ -25,7 +25,7 @@
 
 - name: Copy DNS entries in bind cache directory (backup IP)
   notify: Restart bind
-  when: backup_ip is defined
+  when: backup_ip is defined and backup_ip != ""
   copy:
     src: '/etc/bind/{{ file }}'
     dest: '/var/cache/bind/{{ file }}'

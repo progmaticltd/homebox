@@ -1,7 +1,7 @@
 version: STSv1
 mode:  {{ system.devel | ternary("testing", mail.mta_sts.mode) }}
 mx: smtp.{{ network.domain }}
-{% if network.backup_ip is defined and network.backup_ip != "" %}
+{% if backup_ip is defined and backup_ip != "" %}
 mx: smtp2.{{ network.domain }}
 {% endif %}
 {% for mxb in bind.mx_backup %}
