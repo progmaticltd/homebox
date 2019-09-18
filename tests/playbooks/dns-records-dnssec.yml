@@ -7,7 +7,7 @@
   roles:
     - external-ip-type
 
-# Test the DNS server for DNSKEY records
+# Test the DNS server for DNSKEY records (resp. ZSK and KSK)
 - hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../../config/defaults.yml'
@@ -18,7 +18,9 @@
       count: 2
       list:
         - name: '{{ network.domain }}'
-          value: '.*'
+          value: '256'
+        - name: '{{ network.domain }}'
+          value: '257'
   roles:
     - dns-records
 
