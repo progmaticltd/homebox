@@ -83,7 +83,7 @@
     homeBase: /home/users
   shell: >-
     getent passwd |
-    grep -E "^{{ u.uid }}:x:10[01][0-9]:10[01][0-9]:{{ u.cn }}:{{ homeBase }}/{{ u.uid }}:{{ shell }}"
+    grep -E "^{{ u.uid }}:x:10[01][0-9]:10[01][0-9]:{{ u.cn }}:{{ homeBase }}/{{ u.uid }}:{{ u.shell | default(shell) }}"
   with_items: '{{ users }}'
   loop_control:
     loop_var: u
