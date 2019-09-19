@@ -77,7 +77,7 @@ This can be a temporary solution unless your main homebox drive is mounted in RA
 backup:
   ...
   - name: local
-    url: dir://var/backups/homebox
+    url: dir:///var/backups/homebox
     active: yes
     frequency: daily
     keep_daily: 7
