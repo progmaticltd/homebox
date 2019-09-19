@@ -441,7 +441,7 @@
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
-    dn: 'cn=manager account,{{ ldap.users.dn }}'
+    dn: 'cn=postmaster account,{{ ldap.users.dn }}'
     state: absent
 
 - name: Create the default postmaster aliases
