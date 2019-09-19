@@ -80,7 +80,7 @@ class BackupManager(object):
         # Read default / global configuration
         self.alerts_from = self.config.get('alerts', 'from')
         self.alerts_recipient = self.config.get('alerts', 'recipient')
-        self.alerts_jabber = self.config.get('alerts', 'jabber')
+        self.alerts_jabber = self.config.getboolean('alerts', 'jabber')
 
         # Read active configuration
         self.url = self.config.get(configName, 'url')
@@ -101,7 +101,7 @@ class BackupManager(object):
             self.rateLimit = None
 
         # Check if the backup is active
-        self.active = self.config.get(configName, 'active')
+        self.active = self.config.getboolean(configName, 'active')
 
         # Save the process information here
         self.runFilePath = '/run/backup-' + self.configName
@@ -653,6 +653,7 @@ def main(args):
 
         success = False
         messages = []
+        actionName = None
 
         # Use one log file per configuratin by default
         if args.logFile == None:
@@ -757,6 +758,10 @@ def main(args):
 
     finally:
 
+        # Do nothing if no action has been done
+        if actionName is None:
+            return
+
         # Send the email to the postmaster or to an external account
         manager.sendEmail(actionName, success, messages)
 
@@ -789,7 +794,7 @@ parser = argparse.ArgumentParser(description='Backup manager for homebox')
 parser.add_argument(
     '--config',
     type = str,
-    help = 'name of the backup configuration to load',
+    help = 'name of the backup configuration to load (e.g. --config qnap1)',
     required=True)
 
 # Key file for encrypted backup
