@@ -4,4 +4,4 @@
 users_defaults:
   uid_start: 1001
   gid_start: 1001
-  shell: /bin/bash
+  shell: /bin/dash
