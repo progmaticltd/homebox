@@ -9,6 +9,9 @@
     records:
       type: SSHFP
       list:
-        - '{{ network.domain }}'
+        - name: '{{ network.domain }}'
+          value: '\s[A-F0-9]{40}$'
+        - name: '{{ network.domain }}'
+          value: '\s[A-F0-9]{56} [A-F0-9]{8}$'
   roles:
     - dns-records
