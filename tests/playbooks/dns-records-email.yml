@@ -79,6 +79,6 @@
         - name: '_mta-sts.{{ network.domain }}'
           value: 'v=STSv1; id=[a-zA-Z]+'
         - name: '_smtp._tls.{{ network.domain }}'
-          value: 'main.{{ network.domain }}'
+          value: 'v=TLSRPTv1; rua=mailto:security@{{ network.domain }};'
   roles:
     - dns-records
