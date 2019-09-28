@@ -1,5 +1,0 @@
----
-
-ip_check_packages:
-  - geoip-bin
-  - geoip-database
