@@ -56,6 +56,9 @@ import time
 # To parse backup locations
 from urllib.parse import urlparse
 
+# Constant to avoid running multiple backups at the same time.
+# Retries every minute, wait 60 minutes maximum.
+MaxWaitTime = 60
 
 class BackupManager(object):
 
@@ -100,12 +103,14 @@ class BackupManager(object):
         except:
             self.rateLimit = None
 
+        # The running file used for all backups
+        self.globalRunFilePath = '/run/backup-homebox'
+
         # Check if the backup is active
         self.active = self.config.getboolean(configName, 'active')
 
         # Save the process information here
         self.runFilePath = '/run/backup-' + self.configName
-
 
     def runCommand(self, args, name):
         """Run an external command and pipe stdout / stderr to log"""
@@ -294,12 +299,18 @@ class BackupManager(object):
 
     # Check if this backup is actually running,
     # in this case, exit to avoid two concurrent backups
-    def isRunning(self):
+    def isRunning(self, globalCheck=False):
         """Check if the content of the PID file in /run/...is my PID"""
         import psutil
         # Check if the running file is here
         try:
-            with open(self.runFilePath) as runFile:
+            # Check the cnfiguration specific file first
+            if globalCheck:
+                fileToCheck = self.globalRunFilePath
+            else:
+                fileToCheck = self.runFilePath
+
+            with open(fileToCheck) as runFile:
                 pid = runFile.read()
                 logging.info("Backup is marked as running with pid " + pid)
                 if psutil.pid_exists(int(pid)):
@@ -310,15 +321,19 @@ class BackupManager(object):
         except FileNotFoundError as error:
             return False
 
-
     def setRunning(self, running):
-        """Write my PID in /run/..."""
+        """Write my PID in two files in /run/ or remove the file if not running"""
         if running == True:
             import psutil
             with open(self.runFilePath, 'w') as runFile:
                 runFile.write(str(os.getpid()))
-        elif os.path.isfile(self.runFilePath):
-            os.remove(self.runFilePath)
+            with open(self.globalRunFilePath, 'w') as runFile:
+                runFile.write(str(os.getpid()))
+        else:
+            if os.path.isfile(self.runFilePath):
+                os.remove(self.runFilePath)
+            if os.path.isfile(self.globalRunFilePath):
+                os.remove(self.globalRunFilePath)
 
 
     # Check if the repository exists
@@ -674,10 +689,25 @@ def main(args):
             logging.info("Skipping backup '{0}': Not active".format(args.config))
             return
 
-        # Return if the backup is already running
+        # Return if this exact backup is already running
         if manager.isRunning():
             logging.info("Skipping backup '{0}': already running".format(args.config))
             return
+
+        # Check if another backup is running, and wait one minute before starting
+        # Or give up after MaxWaitTime (1h)
+        waitTime = 0
+        while waitTime < MaxWaitTime and manager.isRunning(globalCheck=True):
+            time.sleep(60)
+            waitTime += 1
+            info = "Waited {0}m until another backup process finishes".format(waitTime)
+            logging.info(info)
+
+        # Log the backup failuere
+        if waitTime >= MaxWaitTime:
+            error = "Exceeded maximum waiting time {0} for another backup".format(MaxWaitTime)
+            logging.error(error)
+            raise Exception(error)
 
         # Make sure there is only one backup of this configuration at a time
         manager.setRunning(True)
