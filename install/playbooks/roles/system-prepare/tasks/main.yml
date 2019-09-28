@@ -237,29 +237,6 @@
     path: /etc/homebox/dns-entries.d/
     state: directory
 
-# Check if IPv6 is needed or not. Otherwise, disable it entirely
-- name: Check if main IP address is IPv6 type
-  tags: facts
-  set_fact:
-    external_ip_ipv6: '{{ network.external_ip | ipv6 != False }}'
-
-- name: Check if backup IP address is IPv6 type
-  tags: facts
-  set_fact:
-    backup_ip_ipv6: '{{ network.backup_ip | ipv6 != False }}'
-
-- name: Disable IPv6 if not needed
-  when: external_ip_ipv6 == False and backup_ip_ipv6 == False
-  sysctl:
-    name: '{{ entry_name }}'
-    value: 1
-  with_items:
-    - net.ipv6.conf.all.disable_ipv6
-    - net.ipv6.conf.default.disable_ipv6
-  loop_control:
-    loop_var: entry_name
-
-
 # SSHFP (fingerprints) are only active with DNSSEC
 - name: Create the SSHFP records for bind
   when: bind.install and bind.dnssec.active
