@@ -11,6 +11,7 @@ StandardError=syslog
 Restart=on-failure
 PIDFile=/run/milter-sogo-abook/main.pid
 WorkingDirectory=/run/milter-sogo-abook
+RuntimeDirectory=milter-sogo-abook
 
 [Install]
 WantedBy=default.target
