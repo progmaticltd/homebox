@@ -28,8 +28,6 @@
           value: '{{ network.external_ip }}'
         - name: 'smtp.{{ network.domain }}'
           value: '{{ network.external_ip }}'
-        - name: 'pop3.{{ network.domain }}'
-          value: '{{ network.external_ip }}'
   roles:
     - dns-records
 
@@ -43,10 +41,6 @@
           value: 'imap\.{{ network.domain }}'
         - name: '_imaps._tcp.{{ network.domain }}'
           value: 'imap\.{{ network.domain }}'
-        - name: '_pop3._tcp.{{ network.domain }}'
-          value: 'pop3\.{{ network.domain }}'
-        - name: '_pop3s._tcp.{{ network.domain }}'
-          value: 'pop3\.{{ network.domain }}'
         - name: '_submission._tcp.{{ network.domain }}'
           value: 'smtp\.{{ network.domain }}'
   roles:
@@ -85,6 +79,6 @@
         - name: '_mta-sts.{{ network.domain }}'
           value: 'v=STSv1; id=[a-zA-Z]+'
         - name: '_smtp._tls.{{ network.domain }}'
-          value: 'main.{{ network.domain }}'
+          value: 'v=TLSRPTv1; rua=mailto:security@{{ network.domain }};'
   roles:
     - dns-records

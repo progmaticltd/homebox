@@ -5,5 +5,3 @@ users_defaults:
   uid_start: 1001
   gid_start: 1001
   shell: /bin/dash
-  group: users
-  groups: mail

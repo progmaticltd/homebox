@@ -35,15 +35,13 @@
 - name: Build main and reverse IP address information
   include_tasks: build-ip-info.yml
 
-- name: Copy the configuration template
+- name: Copy the forward configuration template
   tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
-    record_name: main
     reverse_ip_address: '{{ reverse_ip }}'
     external_ip_address: '{{ external_ip }}'
     ip_type: '{{ external_ip_type }}'
-    ptr_id: 10
   template:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
@@ -57,32 +55,38 @@
     - src: named.conf.local
       dest: '/etc/bind/named.conf.local'
       mode: '0640'
-    - src: reverse-domain
-      dest: '/etc/bind/reverse-main.{{ network.domain }}'
-      mode: '0640'
     - src: forward-tail
       dest: '/etc/homebox/dns-entries.d/99-tail.bind'
   loop_control:
     loop_var: file
 
-- name: Copy the configuration template
-  when: backup_ip is defined
+- name: Copy the main reverse configuration template
+  when: bind.generate_reverse
   tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
-    record_name: backup
+    record_name: "{{ 'smtp' if postfix.install else 'main' }}"
+    reverse_ip_address: '{{ reverse_ip }}'
+    external_ip_address: '{{ external_ip }}'
+    ip_type: '{{ external_ip_type }}'
+  template:
+    src: reverse-domain
+    dest: '/etc/bind/reverse-main.{{ network.domain }}'
+    mode: '0640'
+
+- name: Copy the backup reverse configuration template
+  when: bind.generate_reverse and backup_ip is defined and backup_ip != ""
+  tags: config
+  vars:
+    serial: "{{ lookup('pipe', 'date +%s') }}"
+    record_name: "{{ 'smtp2' if postfix.install else 'backup' }}"
     reverse_ip_address: '{{ reverse_backup_ip }}'
     external_ip_address: '{{ backup_ip }}'
     ip_type: '{{ backup_ip_type }}'
-    ptr_id: 20
   template:
-    src: '{{ file.src }}'
-    dest: '{{ file.dest }}'
-  with_items:
-    - src: reverse-domain
-      dest: '/etc/bind/reverse-backup.{{ network.domain }}'
-  loop_control:
-    loop_var: file
+    src: reverse-domain
+    dest: '/etc/bind/reverse-backup.{{ network.domain }}'
+    mode: '0640'
 
 - name: Build the final bind configuration
   tags: config
@@ -225,29 +229,29 @@
 
 - name: Copy DNS entries in bind cache directory (main IP)
   copy:
-    src: '/etc/bind/{{ file }}'
-    dest: '/var/cache/bind/{{ file }}'
+    src: '/etc/bind/forward.{{ network.domain }}'
+    dest: '/var/cache/bind/forward.{{ network.domain }}'
     owner: bind
     group: bind
     remote_src: true
-  with_items:
-    - 'forward.{{ network.domain }}'
-    - 'reverse-main.{{ network.domain }}'
-  loop_control:
-    loop_var: file
 
-- name: Copy DNS entries in bind cache directory (backup IP)
-  when: backup_ip is defined
+- name: Copy DNS entries in bind cache directory (reverse for main IP)
+  when: bind.generate_reverse
   copy:
-    src: '/etc/bind/{{ file }}'
-    dest: '/var/cache/bind/{{ file }}'
+    src: '/etc/bind/reverse-main.{{ network.domain }}'
+    dest: '/var/cache/bind/reverse-main.{{ network.domain }}'
     owner: bind
     group: bind
     remote_src: true
-  with_items:
-    - 'reverse-backup.{{ network.domain }}'
-  loop_control:
-    loop_var: file
+
+- name: Copy DNS entries in bind cache directory (reverse for backup IP)
+  when: bind.generate_reverse and backup_ip is defined and backup_ip != ""
+  copy:
+    src: '/etc/bind/reverse-backup.{{ network.domain }}'
+    dest: '/var/cache/bind/reverse-backup.{{ network.domain }}'
+    owner: bind
+    group: bind
+    remote_src: true
 
 - name: Restart bind
   service:
@@ -261,7 +265,7 @@
     line: '127.0.0.1    main.{{ network.domain }}'
 
 - name: Ensure the backup record resolves to me
-  when: backup_ip is defined
+  when: backup_ip is defined and backup_ip != ""
   tags: hosts
   lineinfile:
     path: /etc/hosts

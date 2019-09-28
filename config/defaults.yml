@@ -484,6 +484,12 @@ bind_default:
     algo: RSASHA256
   # Aditional records to be generated
   extra_records: []
+  # Generate reverse zones for the server's IP addresses.
+  # This is needed only if the reverse zones corresponding to these IP
+  # addresses were delegated to you by your ISP or hosting provider.
+  # You are most likely not in that situation and might need to configure the
+  # reverse DNS records at the level of your ISP or hosting provider.
+  generate_reverse: false
 
 ###############################################################################
 # Gogs installation with LDAP authentication.

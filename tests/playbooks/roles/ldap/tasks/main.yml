@@ -14,6 +14,7 @@
 
 - name: Check that I can bind as readonly and get all uids
   tags: ldap
+  no_log: true
   shell: >-
     ldapsearch
     -H ldapi:///
@@ -23,6 +24,7 @@
 
 - name: Check that I can bind as manager and get my details
   tags: ldap
+  no_log: true
   shell: >-
     ldapsearch
     -H ldapi:///
@@ -32,6 +34,7 @@
 
 - name: Check that I can bind as admin and get all uids
   tags: ldap
+  no_log: true
   shell: >-
     ldapsearch
     -H ldapi:///
@@ -41,6 +44,7 @@
 
 - name: Check that every user is in the database
   tags: ldap
+  no_log: true
   shell: >-
     ldapsearch
     -H ldapi:///
@@ -54,6 +58,7 @@
 
 - name: Check that I can bind using TLS
   tags: ldap
+  no_log: true
   shell: >-
     ldapsearch -ZZ
     -H ldap://ldap.{{ network.domain }}/
@@ -63,6 +68,7 @@
 
 - name: Check that I can bind using SSL
   tags: ldap
+  no_log: true
   shell: >-
     ldapsearch
     -H ldaps://ldap.{{ network.domain }}/

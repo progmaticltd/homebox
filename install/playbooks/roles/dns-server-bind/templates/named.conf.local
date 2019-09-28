@@ -9,6 +9,7 @@ zone    "{{ network.domain }}" IN {
 {% endif %}
         };
 
+{% if bind.generate_reverse %}
 # Main IP reverse DNS entries
 zone    "{{ reverse_ip }}" {
         type master;
@@ -21,4 +22,5 @@ zone    "{{ reverse_backup_ip }}" {
         type master;
         file "reverse-backup.{{ network.domain }}";
         };
+{% endif %}
 {% endif %}

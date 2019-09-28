@@ -181,7 +181,7 @@ users:
 
 # Exemple 1: backup on the local disk. Useful for small backup only
 #   - name: local
-#     url: dir://var/backups/homebox
+#     url: dir:///var/backups/homebox
 #     active: yes                      # The backup is currently active
 #     frequency: daily                 # Run the backup every day
 #     keep_daily: 3                    # Keep the last three days locally
