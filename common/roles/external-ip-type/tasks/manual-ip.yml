@@ -7,8 +7,20 @@
   set_fact:
     external_ip: '{{ network.external_ip }}'
 
+- name: Set external IP address type (A or AAAA)
+  tags: facts
+  set_fact:
+    external_ip_type: '{{ external_ip | ipv6() | ternary("AAAA", "A") }}'
+
 # Backup IP address
-- name: Get the backup IP address specified manually
+- name: Get the backup IP address
+  when: network.backup_ip != None
   tags: facts
   set_fact:
     backup_ip: '{{ network.backup_ip }}'
+
+- name: Set external IP address type (A or AAAA)
+  tags: facts
+  when: network.backup_ip != None
+  set_fact:
+    backup_ip_type: '{{ backup_ip | ipv6() | ternary("AAAA", "A") }}'
