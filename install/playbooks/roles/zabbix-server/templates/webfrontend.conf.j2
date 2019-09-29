@@ -42,10 +42,10 @@ server {
         fastcgi_pass unix:/run/php/php7.0-fpm.sock;
         include fastcgi_params;
         expires epoch;
-	fastcgi_intercept_errors on;
+        fastcgi_intercept_errors on;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_param SCRIPT_NAME $fastcgi_script_name;
-	fastcgi_param PHP_VALUE "max_execution_time=300\nmax_input_time=300\npost_max_size=16M";
+        fastcgi_param PHP_VALUE "max_execution_time=300\nmax_input_time=300\npost_max_size=16M";
     }
 
     location ~*  \.(jpg|jpeg|png|gif|css|js|ico)$ {

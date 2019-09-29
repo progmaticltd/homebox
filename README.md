@@ -195,7 +195,6 @@ official documentation.
 - [Privoxy](https://www.privoxy.org/) easy installation, with adblock rules daily synchronisation, and optional tor
   chaining.
 - Embedded DNS server with DNSSEC and SSHFP (SSH fingerprint) records support
-- Automatic publication of DNS entries to Gandi DNS.
 - External IP address detection.
 - Static web site skeleton configuration, with https certificates.
 - Hugo web site server: [Hugo](https://gohugo.io/) and its [numerous themes](https://themes.gohugo.io/)
