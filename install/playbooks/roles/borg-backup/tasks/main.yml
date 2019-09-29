@@ -162,8 +162,16 @@
 
 # In this direction, we should overwrite the keys
 # in case new ones have been created
+- name: Check if new keys have been copied in the export directory
+  tags: sync
+  register: keys_exported
+  find:
+    paths: /tmp/backup-keys-export/
+    patterns: '*.key'
+
 - name: Retrieve the backup encryption keys on your local machine
   tags: sync
+  when: keys_exported.matched > 0
   synchronize:
     mode: pull
     src: /tmp/backup-keys-export/*.key
