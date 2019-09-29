@@ -11,6 +11,7 @@
 #   - IP
 #   - country code
 #   - Country
+#   - ISP (Internet Service provider)
 #   - source (SOGo / Roundcube / imap)
 #   - status (OK / WARNING / DENIED)
 #   - score (a high score means the connection is warned or denied)
@@ -107,9 +108,26 @@ fi
 # Remove the new lines from the details before storing them in the database
 smallDetails=$(echo "$DETAILS" | tr '\n' ';' | sed -r 's/(^;|;$)//g')
 
+# Get the Internet Service Provider from http://ip-api.com/
+# The limit is 150 requests per minute from an IP address.
+# This is particularly useful if you are using only ISP,
+# regardless of the IP address
+isp='unknown'
+
+if [ "$isPrivate" = "1"]; then
+    isp='private'
+elif [ "$ALLOW_EXTERNAL_QUERIES" = "YES" ]; then
+    data="[{\"query\": \"$IP\"}]"
+    isp=$(curl -s 'http://ip-api.com/batch?fields=isp' --data "$data" | jq '.[0].isp')
+fi
+
+if [ "isp" = "null" ]; then
+    isp='unknown'
+fi
+
 # Prepare the query, and insert the connection record
-columns='ip, countryCode, countryName, source, status, score, details'
-values="'$IP','$countryCode','$countryName','$SOURCE','$STATUS', '$SCORE','$smallDetails'"
+columns='ip, countryCode, countryName, provider, source, status, score, details'
+values="'$IP','$countryCode','$countryName','$isp', '$SOURCE','$STATUS', '$SCORE','$smallDetails'"
 command="insert into connections ($columns) VALUES ($values);"
 
 sqlite3 -batch "$connLogFile" "$command"

@@ -616,11 +616,12 @@ sogo_default:
 # and works with Roundcube / Sogo as well
 access_check_default:
   active: false
+  allow_ext_queries: true     # Allow the access check script to run external queries to ip-api.com.
   whitelist_bonus: 255        # Bonus to apply when an IP or country is whitelisted. Max value is 255
   blacklist_malus: 255        # Malus to apply when an IP or country is blacklisted. Max value is 255
   warning_score: 40           # Score threshold to generate a warning
   denied_score: 120           # Score threshold to deny a connection
-  display_score: false        # # Should we display the scores in the alerts ?
+  display_score: false        # Should we display the scores in the alerts ?
                               # It is more informative for development
                               # but it might be confusing for new users
   time:                       # Standard time range you are normally checking your emails.
