@@ -2,44 +2,34 @@
 
 ################################################################################
 # Get the external IP address, from configuration file,
-# or automatically through a script
-
+# Check if a backup IP address is used
+# Detect both types of IP addresses
+# Detect if IPv6 is used
 ################################################################################
-# Get the external IP address automatically first
 
-- name: Get the external IP address automatically
-  include_tasks: manual-ip.yml
-
-# Detect the main IP address type (IPv4 or IPv6)
-- name: Detect the external IP address type (IPv4 or IPv6 / A or AAAA)
-  tags: facts
-  register: main_ip_type
-  shell:
-    echo {{ external_ip }}
-    | grep -c ':' 2>&1 >/dev/null
-    && echo AAAA || echo A
-
-- name: Store the external IP address type detected
+# First IP address, mandatory
+- name: Store the extenal IP address specified manually
   tags: facts
   set_fact:
-    external_ip_type: '{{ main_ip_type.stdout }}'
+    external_ip: '{{ network.external_ip }}'
 
-# Detect the backup IP address type (IPv4 or IPv6)
-- name: Set backup IP address type (A or AAAA)
-  when: backup_ip is defined and backup_ip != ""
+- name: Set external IP address type (A or AAAA)
   tags: facts
-  register: backup_ip_type
-  shell:
-    echo {{ backup_ip }}
-    | grep -c ':' 2>&1 >/dev/null
-    && echo AAAA || echo A
+  set_fact:
+    external_ip_type: '{{ external_ip | ipv6() | bool | ternary("AAAA", "A") }}'
+
+# Backup IP address if defined
+- name: Get the backup IP address
+  when: network.backup_ip != None
+  tags: facts
+  set_fact:
+    backup_ip: '{{ network.backup_ip }}'
 
 - name: Set backup IP address type (A or AAAA)
   tags: facts
-  when: backup_ip is defined and backup_ip != ""
+  when: network.backup_ip != ""
   set_fact:
-    backup_ip_type: '{{ backup_ip_type.stdout }}'
-
+    backup_ip_type: '{{ backup_ip | ipv6() | bool | ternary("AAAA", "A") }}'
 
 - name: Check and remember if IPv6 is used
   set_fact:

@@ -1,0 +1,5 @@
+---
+
+packages:
+  - geoip-bin
+  - geoip-database
