@@ -172,8 +172,6 @@
     port: '{{ rule.port }}'
     comment: '{{ rule.comment }}'
   with_items:
-    - comment: Allow IMAP access
-      port: 143
     - comment: Allow IMAPS access
       port: 993
     - comment: Allow Managesieve access
@@ -188,15 +186,8 @@
     rule: allow
     proto: tcp
     src: any
-    port: '{{ rule.port }}'
-    comment: '{{ rule.comment }}'
-  with_items:
-    - comment: Allow POP3 access
-      port: 110
-    - comment: Allow POP3S access
-      port: 995
-  loop_control:
-    loop_var: rule
+    port: 995
+    comment: Allow POP3S access
 
 - name: Create the post-login script directory
   file:

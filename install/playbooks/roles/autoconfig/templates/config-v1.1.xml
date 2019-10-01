@@ -14,13 +14,6 @@
       <username>%EMAILLOCALPART%</username>
       <authentication>password-cleartext</authentication>
     </incomingServer>
-    <incomingServer type="imap">
-      <hostname>imap.{{ network.domain }}</hostname>
-      <port>143</port>
-      <socketType>STARTTLS</socketType>
-      <username>%EMAILLOCALPART%</username>
-      <authentication>password-cleartext</authentication>
-    </incomingServer>
 
 {% if mail.pop3 %}
     <!-- POP3 -->
@@ -28,13 +21,6 @@
       <hostname>pop3.{{ network.domain }}</hostname>
       <port>995</port>
       <socketType>SSL</socketType>
-      <username>%EMAILLOCALPART%</username>
-      <authentication>password-cleartext</authentication>
-    </incomingServer>
-    <incomingServer type="pop3">
-      <hostname>pop3.{{ network.domain }}</hostname>
-      <port>110</port>
-      <socketType>STARTTLS</socketType>
       <username>%EMAILLOCALPART%</username>
       <authentication>password-cleartext</authentication>
     </incomingServer>
