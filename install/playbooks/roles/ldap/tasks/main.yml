@@ -361,7 +361,7 @@
       userPassword: "{{ user.1.password | default(lookup('password', backup_directory + '/ldap/' + user.1.uid + '.pwd' )) }}"
       pwdPolicySubentry: 'cn=default,ou=pwpolicies,{{ ldap.organization.base }}'
       homeDirectory: '/home/users/{{ user.1.uid }}'
-      loginShell: '{{ users_defaults.shell }}'
+      loginShell: '{{ user.1.shell | default(users_defaults.shell) }}'
       uidNumber: '{{ users_defaults.uid_start + user.0 }}'
       gidNumber: '{{ users_defaults.gid_start }}'
       mail: '{{ user.1.mail }}'
