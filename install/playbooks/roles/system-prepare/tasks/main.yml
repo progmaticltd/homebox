@@ -244,6 +244,7 @@
     external_ip_ipv6: '{{ network.external_ip | ipv6 != False }}'
 
 - name: Check if backup IP address is IPv6 type
+  when: network.backup_ip
   tags: facts
   set_fact:
     backup_ip_ipv6: '{{ network.backup_ip | ipv6 != False }}'

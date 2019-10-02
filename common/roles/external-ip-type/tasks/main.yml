@@ -16,7 +16,7 @@
 - name: Set external IP address type (A or AAAA)
   tags: facts
   set_fact:
-    external_ip_type: '{{ external_ip | ipv6() | bool | ternary("AAAA", "A") }}'
+    external_ip_type: '{{ external_ip | ipv6 | ternary("AAAA", "A") }}'
 
 # Backup IP address if defined
 - name: Get the backup IP address
@@ -29,7 +29,7 @@
   tags: facts
   when: network.backup_ip != ""
   set_fact:
-    backup_ip_type: '{{ backup_ip | ipv6() | bool | ternary("AAAA", "A") }}'
+    backup_ip_type: '{{ backup_ip | ipv6 | ternary("AAAA", "A") }}'
 
 - name: Check and remember if IPv6 is used
   set_fact:
