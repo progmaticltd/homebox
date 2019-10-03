@@ -14,7 +14,6 @@ system_required:
   - nginx
   - acl
   - certbot
-  - python-netaddr
 
 # Packages to exclude
 system_excluded:

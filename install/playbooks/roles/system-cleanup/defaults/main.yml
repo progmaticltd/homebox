@@ -9,4 +9,3 @@
 cleanup_packages:
   - bash-completion
   - resolvconf
-  - python-netaddr
