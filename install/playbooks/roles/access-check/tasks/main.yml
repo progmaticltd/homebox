@@ -7,6 +7,12 @@
     name: sendxmpp
     state: present
 
+- name: Install required packages for access checks
+  tags: apt
+  apt:
+    name: '{{ packages }}'
+    state: present
+
 - name: Deploy the global configuration file for access check settings
   tags: config
   template:

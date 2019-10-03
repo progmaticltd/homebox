@@ -78,7 +78,6 @@ real value here:
 network:
   domain: homebox.space
   hostname: mail.homebox.space
-  auto_detect_ip: true
   external_ip: ~
   backup_ip: ~
 ```
@@ -86,28 +85,23 @@ network:
 The hostname is important, use the real one. If you used the preseed configuration, it should be just mail and your
 network domain.
 
-### External IP address detection
+### External IP addresses
 
-By default, the system uses api.ipify.org to check your IP addresses. It detects IPv4 and IPv6 addresses, and treats the
-first one as the main IP, and the second as a backup IP if exists.
+It is important here to specify the external IP address(es) your system can be reached.
 
-If you have a different configuration, for instance two IPv4 addresses, you can specify them manually. You can mix IPv4
-and IPv6 addresses. DNS entries will be added accordingly. For instance:
+Multiple configurations are supported, for instance, on IPv4 and one IPv6:
+
 
 ```yaml
 network:
   domain: homebox.space
   hostname: mail.homebox.space
-  auto_detect_ip: false
   external_ip: 12.34.56.78
   backup_ip: 2001:15f0:5502:bf1:5400:01ff:feca:dea6
 ```
 
 !!! Tip
-    If you do not have a backup IP address, use "~" like the example.
-
-!!! Warning
-    If you have two IP addresses of the same family (IPv4 or IPv6), you will have to specify them manually.
+    If you do not have a backup IP address, use "~", which means "None" or Null in yaml.
 
 ## Users list
 

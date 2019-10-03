@@ -6,7 +6,6 @@
 # If you are behind a NAT, perhaps you will have to specify your real external IP address
 # The backup IP address is used when you have a second IP address
 network_default:
-  auto_detect_ip: true
   external_ip: ~
   backup_ip: ~
 
