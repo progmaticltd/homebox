@@ -114,14 +114,19 @@ smallDetails=$(echo "$DETAILS" | tr '\n' ';' | sed -r 's/(^;|;$)//g')
 # regardless of the IP address
 isp='unknown'
 
-if [ "$isPrivate" = "1"]; then
+if [ "$isPrivate" = "1" ]; then
     isp='private'
 elif [ "$ALLOW_EXTERNAL_QUERIES" = "YES" ]; then
-    data="[{\"query\": \"$IP\"}]"
-    isp=$(curl -s 'http://ip-api.com/batch?fields=isp' --data "$data" | jq '.[0].isp')
+    # set curl options
+    # -s: silent
+    # -f: fail silently, return an empty string on failure
+    # -m 10: wait maximum 10 seconds for the whole process
+    options='-s -f -m 10'
+    url="http://ip-api.com/line/$IP?fields=isp"
+    isp=$(curl $options "$url" | sed "s/'/\\'/g")
 fi
 
-if [ "isp" = "null" ]; then
+if [ "$isp" = "" ]; then
     isp='unknown'
 fi
 
