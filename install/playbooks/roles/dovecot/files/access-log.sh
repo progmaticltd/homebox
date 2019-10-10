@@ -123,7 +123,7 @@ elif [ "$ALLOW_EXTERNAL_QUERIES" = "YES" ]; then
     # -m 10: wait maximum 10 seconds for the whole process
     options='-s -f -m 10'
     url="http://ip-api.com/line/$IP?fields=isp"
-    isp=$(curl $options "$url" | sed "s/'/\\'/g")
+    isp=$(curl $options "$url" | sed "s/'/''/g")
 fi
 
 if [ "$isp" = "" ]; then
