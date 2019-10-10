@@ -188,18 +188,28 @@ class ReportBuilder(object):
             timeColumns, condition, group, order)
         cursor = self.conn.execute(query)
 
-        hourReport = []
-
+        # First pass, get the max value
+        hourReport = None
         maxCon = 0
         for row in cursor:
             maxCon = max(maxCon, row[1])
 
-        cursor = self.conn.execute(query)
-        for row in cursor:
-            line = {}
-            line['hour'] = int(row[0])
-            line['count'] = int(20 * int(row[1]) / maxCon)
-            hourReport.append(line)
+        # Build the hour report only if required
+        if maxCon != 0:
+
+            # Initialise the hour report to an array with all possible hours
+            hourReport = []
+            for h in range(0, 24):
+                empty = { 'hour': h, 'count': 0 }
+                hourReport.append(empty)
+
+            cursor = self.conn.execute(query)
+            for row in cursor:
+                line = {}
+                line['hour'] = int(row[0])
+                line['count'] = int(20 * int(row[1]) / maxCon)
+                hourReport.append(line)
+
         return hourReport
 
 
