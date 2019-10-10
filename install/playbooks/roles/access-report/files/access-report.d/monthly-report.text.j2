@@ -1,4 +1,5 @@
 
+{% if ispReport | length > 0 %}
 Report By ISP
 ================================================================================
 | ISP                     | Country          | From       | Until      | Count |
@@ -19,8 +20,10 @@ Report By ISP
 {{- "|_%5s_|" | format(record['nbConnections']) }}
 {% endfor -%}
 ================================================================================
+{% endif %}
 
 
+{% if countryReport | length > 0 %}
 Report by Country
 ================================================================================
 | Country                                    | From       | Until      | Count |
@@ -32,8 +35,10 @@ Report by Country
 {{- "|_%5s_|" | format(record['nbConnections']) }}
 {% endfor -%}
 ================================================================================
+{% endif %}
 
 
+{% if sourceReport | length > 0 %}
 Report by Source
 ================================================================================
 | Source                                     | From       | Until      | Count |
@@ -45,9 +50,10 @@ Report by Source
 {{- "|_%5s_|" | format(record['nbConnections']) }}
 {% endfor -%}
 ================================================================================
+{% endif %}
 
 
-{% if statusReport %}
+{% if statusReport and statusReport | length > 0 %}
 Report by Status
 ================================================================================
 | Status      |      IP address              | From       | Until      | Count |

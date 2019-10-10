@@ -15,6 +15,7 @@
         </style>
     </head>
     <body>
+        {% if ispReport | length > 0 %}
         <div id="report-isp">
             <h2>Report By ISP</h2>
             <table>
@@ -36,6 +37,8 @@
                 {% endfor %}
             </table>
         </div>
+        {% endif %}
+        {% if countryReport and countryReport | length > 0 %}
         <div id="report-country">
             <h2>Report By Country</h2>
             <table>
@@ -55,7 +58,8 @@
                 {% endfor %}
             </table>
         </div>
-        {% if sourceReport %}
+        {% endif %}
+        {% if sourceReport and sourceReport | length > 0 %}
         <div id="report-source">
             <h2>Report By Source</h2>
             <table>
@@ -76,7 +80,7 @@
             </table>
         </div>
         {% endif %}
-        {% if statusReport %}
+        {% if statusReport and statusReport | length > 0 %}
         <div id="report-status">
             <h2>Report By Status</h2>
             <table>

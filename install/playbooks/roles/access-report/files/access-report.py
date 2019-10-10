@@ -206,9 +206,10 @@ class ReportBuilder(object):
             cursor = self.conn.execute(query)
             for row in cursor:
                 line = {}
-                line['hour'] = int(row[0])
+                hour = int(row[0])
+                line['hour'] = hour
                 line['count'] = int(20 * int(row[1]) / maxCon)
-                hourReport.append(line)
+                hourReport[hour] = line
 
         return hourReport
 
