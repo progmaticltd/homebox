@@ -3,62 +3,26 @@
 <html lang="{{ website_language }}">
 <head>
     <meta charset="{{ website_charset }}">
-
     <title>Welcome to www.{{ network.domain }}</title>
-
     <meta name="description" content="A very simple default page">
     <meta name="author" content="webmaster@{{ network.domain }}">
-    <link rel="stylesheet" href="css/demo.css?v=1.0">
+    <link rel="stylesheet" href="css/demo.css">
 </head>
 <body>
-    <script src="js/demo.js"></script>
+    <script src="js/demo.js" defer></script>
 
-    <h1>Lorem Ipsum</h1>
-    <p>
-	Delectus asperiores maxime corrupti.
-	Quo vel veniam voluptatem eligendi officiis pariatur repellat.
-	Quibusdam non sed incidunt rerum laborum qui distinctio.
+    <h1>Static site default page</h1>
+    <p>This is a small site to display the standard settings for HomeBox.</p>
+
+    <h2>JavaScript status</h2>
+    <p>Current status of JavaScript on this page:
+        <span id="js-status">Not working</span>!
     </p>
 
-    <h2>Lorem Ipsum</h2>
-
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-    enim ad minim veniam, quis nostrud exercitation ullamco laboris
-    nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-    reprehenderit in voluptate velit esse cillum dolore eu fugiat
-    nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-    sunt in culpa qui officia deserunt mollit anim id est laborum</p>
-
-    <h2>Lorem Ipsum</h2>
-    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-    accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
-    quae ab illo inventore veritatis et quasi architecto beatae vitae
-    dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
-    aspernatur aut odit aut fugit, sed quia consequuntur magni dolores
-    eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam
-    est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci
-    velit, sed quia non numquam eius modi tempora incidunt ut labore
-    et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima
-    veniam, quis nostrum exercitationem ullam corporis suscipit
-    laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem
-    vel eum iure reprehenderit qui in ea voluptate velit esse quam
-    nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo
-    voluptas nulla pariatur?"</p>
-
-    <h2>Lorem Ipsum</h2>
-    <p>Nullam eu ante vel est convallis dignissim.  Fusce suscipit,
-    wisi nec facilisis facilisis, est dui fermentum leo, quis tempor
-    ligula erat quis odio.  Nunc porta vulputate tellus.  Nunc rutrum
-    turpis sed pede.  Sed bibendum.  Aliquam posuere.  Nunc aliquet,
-    augue nec adipiscing interdum, lacus tellus malesuada massa, quis
-    varius mi purus non odio.  Pellentesque condimentum, magna ut
-    suscipit hendrerit, ipsum augue ornare nulla, non luctus diam
-    neque sit amet urna.  Curabitur vulputate vestibulum lorem.  Fusce
-    sagittis, libero non molestie mollis, magna orci ultrices dolor,
-    at vulputate neque nulla lacinia eros.  Sed id ligula quis est
-    convallis tempor.  Curabitur lacinia pulvinar nibh.  Nam a
-    sapien.paragraphs</p>
+    <h2>CSS status</h2>
+    <p>Current status of CSS on this page:
+        <span id="css-status-not-working">Not</span> working!
+    </p>
 
 </body>
 </html>
