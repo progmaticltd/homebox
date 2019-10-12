@@ -23,7 +23,7 @@
       type: SRV
       list:
         - name: '_pop3._tcp.{{ network.domain }}'
-          value: 'pop3\.{{ network.domain }}'
+          value: '0 0 0 \.'
         - name: '_pop3s._tcp.{{ network.domain }}'
           value: 'pop3\.{{ network.domain }}'
   roles:

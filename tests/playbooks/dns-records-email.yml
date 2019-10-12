@@ -38,7 +38,7 @@
       type: SRV
       list:
         - name: '_imap._tcp.{{ network.domain }}'
-          value: 'imap\.{{ network.domain }}'
+          value: '0 0 0 \.'
         - name: '_imaps._tcp.{{ network.domain }}'
           value: 'imap\.{{ network.domain }}'
         - name: '_submission._tcp.{{ network.domain }}'
