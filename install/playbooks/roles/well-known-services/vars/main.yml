@@ -1,0 +1,49 @@
+---
+
+# Default nginx security headers for the simple web site.
+# You can override this
+nginx_sec_headers:
+  - id: Strict-Transport-Security
+    value: max-age=31536000
+  - id: X-Content-Type-Options
+    value: nosniff
+  - id: Referrer-Policy
+    value: same-origin
+  - id: X-Frame-Options
+    value: sameorigin
+
+####
+csp_default:
+  default: "'none'"
+  list:
+    - id: default-src
+    - id: script-src
+    - id: img-src
+    - id: style-src
+    - id: media-src
+    - id: font-src
+    - id: base-uri
+    - id: frame-src
+    - id: object-src
+    - id: connect-src
+
+
+### Features policy
+# See https://github.com/w3c/webappsec-feature-policy
+# Set to 'none' by default
+fp_default:
+  default: "'none'"
+  list:
+    - id: geolocation
+    - id: midi
+    - id: notifications
+    - id: push
+    - id: sync-xhr
+    - id: microphone
+    - id: camera
+    - id: magnetometer
+    - id: gyroscope
+    - id: speaker
+    - id: vibrate
+    - id: fullscreen
+    - id: payment
