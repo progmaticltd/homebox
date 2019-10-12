@@ -1,0 +1,12 @@
+---
+
+# Default nginx security headers
+nginx_sec_headers:
+  - 'Strict-Transport-Security "max-age=31536000"'
+  - 'X-Frame-Options "SAMEORIGIN" always'
+  - 'X-Content-Type-Options "nosniff" always'
+  - 'Referrer-Policy: same-origin'
+  - "Content-Security-Policy: 'default-src self https;'"
+
+# Not implemented, non standard, etc.
+#  - "Feature-Policy: vibrate 'self';"
