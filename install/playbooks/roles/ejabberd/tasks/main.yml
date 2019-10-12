@@ -14,7 +14,7 @@
       - graphicsmagick
       - graphicsmagick-imagemagick-compat
 
-- name: Upload ejabberd configuration
+- name: Copy ejabberd configuration
   notify: Restart ejabberd
   template:
     src: ejabberd.yml
@@ -97,7 +97,7 @@
   tags: jabber
   notify: Restart nginx
   template:
-    src: frontend.tpl
+    src: nginx.conf
     dest: '/etc/nginx/sites-available/xmpp.{{ network.domain }}.conf'
     owner: root
     group: root
