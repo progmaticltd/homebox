@@ -22,6 +22,7 @@ pages:
   - Antispam configuration: antispam-rspamd.md
   - Jabber configuration: jabber-configuration.md
   - Gogs configuration: gogs-configuration.md
+  - Static web site: website-static.md
   - Tor / privoxy configuration: tor-privoxy-configuration.md
   - Firewall configuration: firewall-configuration.md
   - Security configuration: security-configuration.md
