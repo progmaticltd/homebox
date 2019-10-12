@@ -299,13 +299,39 @@ website_default:
 # One for for https://yourdomain.com/ and one for https://www.yourdomain.com
 # Place your site in the backup folder: backup/<network.domain>/website-hugo/
 # It will be served by the internal Hugo server.
-# Example of a configuration here
+# The CSP (Content Security Policies) here is locked down to avoid external
+# resources access. You need to adapt it according to your needs, by using
+# Firefox / Chrome console logs
+#
+# The example given here is a basic template without extenal resources access
+# https://themes.gohugo.io/hugo-starter/
 
 hugo_default:
   install: false
   site_title: "Site title"
   theme:
-    name: hugo-tranquilpeak-theme
+    name: hugo-started
+  # Content security policy
+  # See also https://www.cspisawesome.com/content_security_policies
+  csp:
+    - id: default-src
+      value: "'self' 'unsafe-inline'"
+    - id: script-src
+      value: "'self' 'unsafe-inline'"
+    - id: img-src
+      value: "'self' 'unsafe-inline'"
+    - id: style-src
+      value: "'self' 'unsafe-inline'"
+    - id: media-src
+      value: "'self' 'unsafe-inline'"
+    - id: font-src
+      value: "'self' 'unsafe-inline'"
+    - id: frame-src
+      value: "'none'"
+    - id: object-src
+      value: "'none'"
+    - id: connect-src
+      value: "'none'"
 
 ###############################################################################
 # Install a webmail, or not...

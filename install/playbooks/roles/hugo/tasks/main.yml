@@ -92,6 +92,8 @@
       - '--port=1313'
       - '--theme={{ hugo.theme.name }}'
       - '--appendPort=false'
+      - '--disableLiveReload'
+      - '--watch=false'
   template:
     src: hugo-server.service
     dest: /etc/systemd/system/hugo-server.service
