@@ -19,8 +19,12 @@
 
 - name: Copy roundcube configuration
   tags: nginx
+  notify: Restart nginx
+  vars:
+    csp: '{{ roundcube.csp | default(csp_default) }}'
+    fp: '{{ roundcube.fp | default(fp_default) }}'
   template:
-    src: webmail-site.cf
+    src: nginx.conf
     dest: '/etc/nginx/sites-available/webmail.{{ network.domain }}.conf'
     owner: root
     group: root
