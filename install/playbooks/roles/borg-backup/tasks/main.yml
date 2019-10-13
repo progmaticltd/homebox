@@ -149,6 +149,7 @@
 - name: Initialise the repository, to test access and retrieve the key
   when: backup.locations is defined and backup.locations != []
   tags: backup
+  no_log: true
   shell: >-
     /usr/local/sbin/homebox-backup
     --action init
@@ -192,7 +193,14 @@
   loop_control:
     loop_var: path
 
+- name: Check if one ore more backup are marked for restoration
+  tags: facts,restore
+  set_fact:
+    restore_list: >-
+      {{ backup.locations | selectattr("restore", "defined")
+      | selectattr("restore", "equalto", true) | list | length }}
+
 - name: Restore backups from a previous installation
+  when: restore_list | int > 0
   tags: restore
-  when: backup.locations is defined and backup.locations != []
   include_tasks: 'restore-all.yml'
