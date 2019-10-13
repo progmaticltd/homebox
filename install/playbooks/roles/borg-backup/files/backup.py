@@ -371,6 +371,10 @@ class BackupManager(object):
     def createBackup(self):
         """Create the backup itself"""
 
+        # Use the passphrase saved
+        os.environ["BORG_PASSPHRASE"] = self.key
+
+        # Run the borg command
         args = [ 'borg', 'create' ]
 
         # Build repository path specification
@@ -436,6 +440,10 @@ class BackupManager(object):
         # Buil repository path specification
         pathSpec = self.repositoryPath
 
+        # Use the passphrase saved
+        os.environ["BORG_PASSPHRASE"] = self.key
+
+        # Run the borg command
         args = [ 'borg', 'prune' ]
 
         # Buil repository path specification
