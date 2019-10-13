@@ -8,8 +8,9 @@ roundcube:
   plugins: '{{ roundcube_plugins }}'
 
 
-# Default nginx security headers for the simple web site.
-# You can override this
+# nginx security headers for the webmail
+# this cannot be overriden
+# The header X-Frame-Options is already set by the roundcube code
 nginx_sec_headers:
   - id: Strict-Transport-Security
     value: max-age=31536000
@@ -17,8 +18,6 @@ nginx_sec_headers:
     value: nosniff
   - id: Referrer-Policy
     value: same-origin
-  - id: X-Frame-Options
-    value: sameorigin
 
 ####
 csp_default:
