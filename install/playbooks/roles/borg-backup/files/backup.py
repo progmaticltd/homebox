@@ -126,10 +126,10 @@ class BackupManager(object):
             logging.info("Running '%s' successfully.", name)
 
         if status.stdout != None and status.stdout.strip() != "":
-            logging.info("Output: %s", status.stdout.strip())
+            logging.info(status.stdout)
 
         if status.stderr != None and status.stderr.strip() != "":
-            logging.info("Error: %s", status.stderr.strip())
+            logging.info(status.stderr)
 
         return status
 
