@@ -83,3 +83,6 @@
 # Zabbix server
 - import_playbook: zabbix.yml
   when: zabbix.install
+
+# Test https server quality
+- import_playbook: https-grades.yml
