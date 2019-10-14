@@ -148,7 +148,8 @@ ldap_rootdn: "{{ ldap.readonly.dn }}"
 ldap_password: "{{ lookup('password', ldap.roPasswdParams) }}"
 ldap_base: "{{ ldap.organization.base }}"
 ldap_filter: "(objectClass=shadowAccount)"
-ldap_uids: '[{"mail","%u@{{ network.domain }}"}]'
+ldap_uids:
+  - "mail": "%u@{{ network.domain }}"
 
 ###.  ===============
 ###'  TRAFFIC SHAPERS
