@@ -1,5 +1,5 @@
 ---
-# sudo is required to impersonate both SOGo and dovoect when
+# sudo is required to impersonate both SOGo and dovecot when
 # restoring data. Once restored, we don't needt it anymore,
 # so we will remove it if we are installing it.
 - name: Make sure sudo is installed
