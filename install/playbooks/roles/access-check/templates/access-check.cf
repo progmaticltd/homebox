@@ -40,6 +40,9 @@ IP_RBL_MALUS={{ access_check.ip.rbl_malus }}
 # The script check for the last log entries
 IPS_FAIL2BAN_MALUS={{ access_check.ip.fail2ban_malus }}
 
+# Allow scripts to run external queries to get information from an IP address,
+# like the ISP (Internet Service Provider)
+ALLOW_EXTERNAL_QUERIES='{{ access_check.allow_ext_queries | bool | ternary("YES", "NO") }}'
 
 ### Country checks ###
 

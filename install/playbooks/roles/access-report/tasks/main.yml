@@ -1,32 +1,71 @@
 ---
 
+- name: Install the required packages
+  apt:
+    name: '{{ packages }}'
+    state: installed
+
+- name: Copy the report templates
+  copy:
+    src: access-report.d
+    dest: /etc/homebox
+
 - name: Copy the reporting script
   tags: scripts
   copy:
-    src: 'access-report.sh'
-    dest: '/usr/local/bin/access-report.sh'
-    mode: '0700'
+    src: 'access-report.py'
+    dest: '/usr/local/bin/access-report.py'
+    mode: '0755'
 
-- name: Copy the cron job to send the access reports
+- name: Set the monthly cron jobs for each configured user
   tags: cron
   cron:
-    cron_file: access-report
-    name: access-report
+    name: monthly-access-report
     day: 1
     hour: 1
     minute: 0
-    job: '/usr/local/bin/access-report.sh'
-    user: root
+    job: >-
+      /usr/local/bin/access-report.py
+      --format {{ user.access_report.format | default("text,html") }}
+      --period last-month
+    user: '{{ user.uid }}'
+  with_items:
+    - '{{ users | selectattr("access_report", "defined") | list }}'
+    - uid: postmaster
+      access_report:
+        format: 'text'
+  loop_control:
+    loop_var: user
+
+- name: Set the yearly cron jobs for each configured user
+  tags: cron
+  cron:
+    name: yearly-access-report
+    day: 1
+    hour: 1
+    month: 1
+    minute: 0
+    job: >-
+      /usr/local/bin/access-report.py
+      --format {{ user.access_report.format | default("text,html") }}
+      --period last-year
+    user: '{{ user.uid }}'
+  with_items:
+    - '{{ users | selectattr("access_report", "defined") | list }}'
+    - uid: postmaster
+      access_report:
+        format: 'text'
+  loop_control:
+    loop_var: user
 
 - name: Install AppArmor profile for the script
   tags: security, apparmor
   register: aa_templates
   copy:
     src: apparmor.cf
-    dest: '/etc/apparmor.d/usr.local.bin.access-report.sh'
+    dest: '/etc/apparmor.d/usr.local.bin.access-report.py'
 
 - name: Activate AppArmor profiles
-  tags: dovecot, security, apparmor
+  tags: security, apparmor
   notify: Restart AppArmor service
-  command: 'aa-enforce usr.local.bin.access-report.sh'
-
+  command: 'aa-enforce usr.local.bin.access-report.py'
