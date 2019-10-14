@@ -18,8 +18,11 @@
 - name: Create the autoconfig site
   tags: autoconfig
   notify: Restart nginx server
+  vars:
+    csp: '{{ csp_default }}'
+    fp: '{{ fp_default }}'
   template:
-    src: autoconfig.conf
+    src: nginx.conf
     dest: '/etc/nginx/sites-available/autoconfig.{{ network.domain }}.conf'
     owner: root
     group: root

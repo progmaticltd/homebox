@@ -196,8 +196,7 @@ official documentation.
   chaining.
 - Embedded DNS server with DNSSEC and SSHFP (SSH fingerprint) records support
 - External IP address detection.
-- Static web site skeleton configuration, with https certificates.
-- Hugo web site server: [Hugo](https://gohugo.io/) and its [numerous themes](https://themes.gohugo.io/)
+- Static web site skeleton configuration, with https certificates and A+ security grade by default.
 - Personal backup server for each user, using borgbackup.
 - [Gogs git server](https://gogs.io/), a fast and lightweight git server written in Golang.
 - [Transmission daemon](https://transmissionbt.com/), accessible over https, public or private over your LAN. Files can

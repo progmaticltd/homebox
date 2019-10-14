@@ -95,7 +95,7 @@
   command: 'aa-enforce usr.sbin.nginx'
 
 - name: Restart the nginx server to load the new configuration
-  when: aa_config.changed
+  when: aa_config is defined and aa_config.changed
   tags: cert, nginx
   service:
     name: nginx

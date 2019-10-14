@@ -19,6 +19,9 @@
 - name: Copy nginx configuration
   tags: nginx
   notify: Restart nginx
+  vars:
+    csp: '{{ sogo.csp | default(csp_default) }}'
+    fp: '{{ sogo.fp | default(fp_default) }}'
   template:
     src: nginx.conf
     dest: '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'

@@ -42,8 +42,11 @@
   notify:
     - Restart nginx
     - Restart php-fpm
+  vars:
+    csp: '{{ zabbix.csp | default(csp_default) }}'
+    fp: '{{ zabbix.fp | default(fp_default) }}'
   template:
-    src: webfrontend.conf.j2
+    src: nginx.conf
     dest: '/etc/nginx/sites-available/zabbix.{{ network.domain }}.conf'
 
 - name: Activate web frontend

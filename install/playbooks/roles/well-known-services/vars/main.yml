@@ -1,10 +1,5 @@
 ---
 
-# Packages to install, will add more later.
-
-transmission_packages:
-  - transmission-daemon
-
 # Default nginx security headers for the simple web site.
 # You can override this
 nginx_sec_headers:
@@ -22,23 +17,15 @@ csp_default:
   default: "'none'"
   list:
     - id: default-src
-      value: "https: 'self'"
     - id: script-src
-      value: "https: 'self' 'unsafe-inline'"
     - id: img-src
-      value: "https: 'self'"
     - id: style-src
-      value: "https: 'self' 'unsafe-inline'"
     - id: media-src
-      value: "https: 'self'"
     - id: font-src
-      value: "https: data: 'self'"
     - id: base-uri
-      value: "https: 'self'"
-    - id: connect-src
-      value: "https: 'self'"
     - id: frame-src
     - id: object-src
+    - id: connect-src
 
 
 ### Features policy
