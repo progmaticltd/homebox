@@ -2,8 +2,12 @@
 
 - name: Install isync package
   apt:
-    name: isync
+    name: '{{ pkgs }}'
     state: latest
+  vars:
+    pkgs:
+      - isync
+      - libsasl2-modules
 
 # Get the import master account password
 - name: Initialise the import user password parameters
