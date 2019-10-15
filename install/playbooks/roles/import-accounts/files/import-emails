@@ -37,9 +37,6 @@ if [ "$DECRYPT_KEY" = "" ]; then
     exit 2;
 fi
 
-# Get the list of imports to run
-imports=$(ls ./safe/*conf 2>/dev/null)
-
 # Go back on the import root directory
 cd "$HOME/mails/import" || exit 0
 
@@ -52,6 +49,9 @@ test -d status || mkdir status
 
 # Encryption parameters
 CIPHER=aes-256-cbc
+
+# Get the list of imports to run
+imports=$(cd safe && ls *.conf 2>/dev/null)
 
 for import in $imports; do
 
