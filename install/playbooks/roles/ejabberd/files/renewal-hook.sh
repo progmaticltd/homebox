@@ -1,11 +1,8 @@
 #!/bin/dash
 
-set -x
-
 # Exit if jabber server is not running
 systemctl status ejabberd >/dev/null 2>&1 || exit 0
 
-# shellcheck disable=SC1091
 . /etc/homebox/main.cf
 
 do_restart=0
