@@ -21,6 +21,7 @@
     permissions: rx
     state: present
     recursive: yes
+    default: yes
   with_items:
     - /etc/letsencrypt/archive
     - /etc/letsencrypt/live

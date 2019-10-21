@@ -128,6 +128,7 @@
     etype: user
     permissions: rwx
     state: present
+    default: yes
 
 - name: Create the http upload jabber site
   tags: jabber
