@@ -24,3 +24,6 @@ backup/*
 # Allow to include modules excluded from the repository
 modules/*
 !modules/readme.md
+
+# Ignore python3 cache directories
+__pycache__/
