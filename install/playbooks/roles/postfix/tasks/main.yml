@@ -218,6 +218,24 @@
 
 # Create entries for the DNS server ===========================================
 
+# Use IP addresses as SPF mechanisms for the server itself
+- name: Add the external IP address as SPF sender
+  tags: spf
+  set_fact:
+    spf_senders: '{{ "ip6:" + external_ip if external_ip | ipv6 else "ip4:" + external_ip }}'
+
+- name: Add the backup IP address as SPF sender
+  when: backup_ip is defined and backup_ip != ""
+  tags: spf
+  set_fact:
+    spf_senders: '{{ spf_senders }} {{ "ip6:" + backup_ip if backup_ip | ipv6 else "ip4:" + backup_ip }}'
+
+- name: Add the user configured extra senders to the SPF record
+  when: mail.extra_senders
+  tags: spf
+  set_fact:
+    spf_senders: '{{ spf_senders }} {{ mail.extra_senders | join(" ") }}'
+
 # Use "soft fail" in development mode
 - name: Set the SPF qualifier as "soft fail"
   tags: spf
