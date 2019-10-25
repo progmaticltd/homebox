@@ -50,9 +50,6 @@
   tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
-    reverse_ip_address: '{{ reverse_ip }}'
-    external_ip_address: '{{ external_ip }}'
-    ip_type: '{{ external_ip_type }}'
   template:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
@@ -78,8 +75,6 @@
     serial: "{{ lookup('pipe', 'date +%s') }}"
     record_name: "{{ 'smtp' if postfix.install else 'main' }}"
     reverse_ip_address: '{{ reverse_ip }}'
-    external_ip_address: '{{ external_ip }}'
-    ip_type: '{{ external_ip_type }}'
   template:
     src: reverse-domain
     dest: '/etc/bind/reverse-main.{{ network.domain }}'
@@ -92,8 +87,6 @@
     serial: "{{ lookup('pipe', 'date +%s') }}"
     record_name: "{{ 'smtp2' if postfix.install else 'backup' }}"
     reverse_ip_address: '{{ reverse_backup_ip }}'
-    external_ip_address: '{{ backup_ip }}'
-    ip_type: '{{ backup_ip_type }}'
   template:
     src: reverse-domain
     dest: '/etc/bind/reverse-backup.{{ network.domain }}'
