@@ -32,8 +32,19 @@
     name: bind9
     state: stopped
 
-- name: Build main and reverse IP address information
-  include_tasks: build-ip-info.yml
+# Build main and reverse IP address information
+# Main IP address
+- name: Build the reverse IP address (works for IPv4 or IPv6)
+  tags: facts
+  set_fact:
+    reverse_ip: "{{ external_ip | ipaddr('revdns') }}"
+
+# Backup IP address
+- name: Build the reverse IP address (works for IPv4 or IPv6)
+  when: backup_ip is defined and backup_ip != ""
+  tags: facts
+  set_fact:
+    reverse_backup_ip: "{{ backup_ip | ipaddr('revdns') }}"
 
 - name: Copy the forward configuration template
   tags: config
