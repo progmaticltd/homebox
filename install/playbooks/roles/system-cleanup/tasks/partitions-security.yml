@@ -1,0 +1,22 @@
+---
+
+- name: Check if /tmp is a mount point
+  register: tmp_mountpoint_cmd
+  shell: mountpoint -q /tmp/
+  args:
+    warn: false
+
+- name: Mount /tmp as no exec by default
+  when: tmp_mountpoint_cmd.rc == 0
+  register: fstab_file
+  replace:
+    path: /etc/fstab
+    regexp: '(^/dev/[/a-z-]+\s+/tmp\s+ext4\s+)defaults(\s+[0-9]\s+[0-9])'
+    replace: '\1defaults,noexec\2'
+
+- name: Remount /tmp
+  when: fstab_file.changed
+  shell: >-
+    mount -o remount /tmp
+  args:
+    warn: false
