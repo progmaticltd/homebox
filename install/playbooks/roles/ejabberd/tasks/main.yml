@@ -196,6 +196,28 @@
   loop_control:
     loop_var: rule
 
+- name: Open the firewall for s2s communication when necessary
+  tags: ufw
+  ufw:
+    direction: in
+    rule: allow
+    proto: '{{ rule.proto }}'
+    port: '{{ rule.ports }}'
+    comment: '{{ rule.comment }}'
+    delete: '{{ ejabberd.sip.active == false }}'
+  with_items:
+    - ports: 5060
+      proto: udp
+      comment: Accept SIP connections on UDP
+    - ports: 5060
+      proto: tcp
+      comment: Accept SIP connections on TCP
+    - ports: 5061
+      proto: tcp
+      comment: Accept SIP / TLS connections on TCP
+  loop_control:
+    loop_var: rule
+
 # AppArmor configuration ======================================================
 - name: Install ejabberdctl AppArmor profile
   tags: security, apparmor

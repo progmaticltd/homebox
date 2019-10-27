@@ -407,6 +407,9 @@ ejabberd_default:
     normal: 1000
     fast: 50000
     proxyrate: 10240 # file transfer proxy
+  # VoIP / SIP
+  sip:
+    active: false
 
 ###############################################################################
 # Bind server defaults

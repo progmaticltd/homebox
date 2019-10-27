@@ -11,3 +11,24 @@ _xmpp-client._tcp 3600 IN SRV 5 0 5222 xmpp.{{ network.domain }}.
 ;; Server to server communication
 _xmpp-server._tcp 3600 IN SRV 5 0 5269 xmpp.{{ network.domain }}.
 {% endif %}
+
+{% if ejabberd.sip.active %}
+{{ network.domain }} IN NAPTR 10  0 "s" "SIPS+D2T" "" _sips._tcp.{{ network.domain }}.
+{{ network.domain }} IN NAPTR 20  0 "s" "SIP+D2T" "" _sip._tcp.{{ network.domain }}.
+{{ network.domain }} IN NAPTR 30  0 "s" "SIP+D2U" "" _sip._udp.{{ network.domain }}.
+
+_sip._udp   IN SRV  0 0 5060 sip.{{ network.domain }}.
+_sip._tcp   IN SRV  0 0 5060 sip.{{ network.domain }}.
+_sips._tcp  IN SRV  0 0 5061 sip.{{ network.domain }}.
+
+;; A / AAAA records
+sip-tls     IN       {{ "%-4s" | format(external_ip_type) }}    {{ external_ip }}
+sip-tcp     IN       {{ "%-4s" | format(external_ip_type) }}    {{ external_ip }}
+sip-udp     IN       {{ "%-4s" | format(external_ip_type) }}    {{ external_ip }}
+{% if backup_ip is defined and backup_ip != "" %}
+sip-tls     IN       {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
+sip-tcp     IN       {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
+sip-udp     IN       {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
+{% endif %}
+
+{% endif %}

@@ -93,6 +93,17 @@ listen:
     tls: false
     request_handlers:
       "upload": mod_http_upload
+{% if ejabberd.sip.active %}
+  - port: 5060
+    transport: udp
+    module: ejabberd_sip
+  - port: 5060
+    module: ejabberd_sip
+  - port: 5061
+    module: ejabberd_sip
+    tls: true
+    certfile: "/etc/ejabberd/default.pem"
+{% endif %}
 
 ## Disabling digest-md5 SASL authentication. digest-md5 requires plain-text
 ## password storage (see auth_password_format option).
@@ -300,6 +311,27 @@ modules:
   mod_fail2ban:
     c2s_auth_ban_lifetime: {{ ejabberd.fail2ban.lifetime }}
     c2s_max_auth_failures: {{ ejabberd.fail2ban.failures }}
+{% endif %}
+{% if ejabberd.sip.active %}
+  ### SIP configuration
+  mod_sip:
+    always_record_route: false
+    record_route: "sip:{{ network.domain }};lr"
+    routes:
+      - "sip:{{ network.domain }};lr"
+      - "sip:sip.{{ network.domain }};lr"
+    flow_timeout_udp: 30
+    flow_timeout_tcp: 130
+    via:
+      - type: tls
+        host: sip-tls.{{ network.domain }}
+        port: 5061
+      - type: tcp
+        host: sip-tcp.{{ network.domain }}
+        port: 5060
+      - type: udp
+        host: sip-udp.{{ network.domain }}
+        port: 5060
 {% endif %}
   ### Offline file sharing on a specific directory
   mod_http_upload:
