@@ -170,6 +170,7 @@ for script in $login_scripts; do
     bonusScript=$(grep -c '^# Score: Bonus' "${scriptPath}")
 
     if [ "$isPrivate" = "1" -a "$manageLan" = "0" ]; then
+        logger "Skipping script '$script' for user '$USER' from IP address <$IP>"
         continue
     fi
 
@@ -187,7 +188,6 @@ for script in $login_scripts; do
     elif [ "$STATUS" = "OK" -a "$needDecriptKey" = "1" ]; then
         # Pass the sytem key to the login scripts,
         # So they can decrypt sensitive content.
-        # A future version would probably GPG keys for each user.
         DECRYPT_KEY=$(cat /etc/homebox/system-key)
         PASS_ENV="${PASS_ENV} DECRYPT_KEY=$DECRYPT_KEY"
     fi

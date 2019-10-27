@@ -65,6 +65,7 @@
     path: '/home/users/{{ user.uid }}/security/imap-connections.db'
     owner: '{{ user.uid }}'
     group: users
+    mode: '0600'
   with_items:
     - '{{ users }}'
     - uid: postmaster
@@ -77,7 +78,7 @@
     dest: '/home/users/{{ user.uid }}/.config/homebox/ip-whitelist.txt'
     owner: '{{ user.uid }}'
     group: users
-    mode: 0600
+    mode: '0600'
     force: no
   with_items:
     - '{{ users }}'
@@ -91,7 +92,7 @@
     dest: '/home/users/{{ user.uid }}/.config/homebox/ip-blacklist.txt'
     owner: '{{ user.uid }}'
     group: users
-    mode: 0600
+    mode: '0600'
     force: no
   with_items:
     - '{{ users }}'

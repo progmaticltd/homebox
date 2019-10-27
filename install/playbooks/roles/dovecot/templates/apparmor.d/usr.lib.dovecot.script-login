@@ -145,12 +145,12 @@
 
   # Access to user databases and customisation files
   # the script run with the user permissions
-  /home/users/*/security/ r,
-  /home/users/*/security/* rwk,
+  owner /home/users/*/security/ r,
+  owner /home/users/*/security/* rwk,
 
   # import folders
-  /home/users/*/mails/import/ r,
-  /home/users/*/mails/import/** rwkl,
+  owner /home/users/*/mails/import/ r,
+  owner /home/users/*/mails/import/** rwkl,
 
   # Send warnings through XMPP
   /usr/bin/sendxmpp mr,

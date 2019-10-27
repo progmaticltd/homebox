@@ -4,6 +4,7 @@
 # RunAs: User
 # NeedDecryptKey: Yes
 # Blocking: No
+# ManageLAN: Yes
 
 # This script is run as the current logged in user.
 # It receives a decryption key as an environment variable,
@@ -37,11 +38,11 @@ if [ "$DECRYPT_KEY" = "" ]; then
     exit 2;
 fi
 
-# Get the list of imports to run
-imports=$(ls ./safe/*conf 2>/dev/null)
-
 # Go back on the import root directory
 cd "$HOME/mails/import" || exit 0
+
+# Get the list of imports to run
+imports=$(find ./safe/*conf 2>/dev/null)
 
 # Remove dead lock files
 find . -maxdepth 1 -mmin +60 -name '*lock' -delete
@@ -53,7 +54,9 @@ test -d status || mkdir status
 # Encryption parameters
 CIPHER=aes-256-cbc
 
-for import in $imports; do
+for import_path in $imports; do
+
+    import=$(echo $import_path | sed 's:./safe/::' | sed 's:\.conf::')
 
     # Check if there is an import already running
     lock="$import.lock"
@@ -71,15 +74,15 @@ for import in $imports; do
     echo "$date: Starting to import for account '$import'" >> "$logfile"
 
     # decrypt the configuration file using the encryption key passed in the environment
-    openssl $CIPHER -d -in "safe/$import" -out "conf/$import" -pass env:DECRYPT_KEY
+    openssl $CIPHER -d -in "safe/${import}.conf" -out "conf/${import}.conf" -pass env:DECRYPT_KEY
 
     # Start the import command and remove the lock once finished
     # Run in background, if there is multiple accounts
-    (mbsync -q -c "conf/$import" -a >> "$logfile" 2>&1 ; rm -f "$lock") &
+    (mbsync -q -c "conf/${import}.conf" -a >> "$logfile" 2>&1 ; rm -f "$lock") &
 
     # Remove the decrypted file as soon as mbsync has loaded it
     sleep 1
-    rm -f "conf/$import"
+    rm -f "conf/${import}.conf"
 
     # time the process
     date=$(date --rfc-3339=seconds)
