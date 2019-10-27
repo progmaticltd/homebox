@@ -1,6 +1,6 @@
 ---
 
-# tmp partition
+# tmp partition ################################################################
 - name: Check if /tmp is a mount point
   register: tmp_mountpoint_cmd
   shell: mountpoint -q /tmp/
@@ -28,7 +28,35 @@
     src: tmp-mnt.cf
     dest: /etc/apt/apt.conf.d/00tmp-permissions
 
-# home partition
+# boot partition ###############################################################
+- name: Check if /boot is a mount point
+  register: boot_mountpoint_cmd
+  shell: mountpoint -q /boot/
+  args:
+    warn: false
+
+- name: Mount /boot as read only by default
+  when: boot_mountpoint_cmd.rc == 0
+  register: fstab_file
+  replace:
+    path: /etc/fstab
+    regexp: '(^UUID=[0-9a-f-]+\s+/boot\s+ext[2-4]\s+)defaults(\s+[0-9]\s+[0-9])'
+    replace: '\1defaults,ro\2'
+
+- name: Remount /boot
+  when: fstab_file.changed
+  shell: >-
+    mount -o remount /boot
+  args:
+    warn: false
+
+- name: Install apt hook to remount /boot
+  when: fstab_file.changed
+  copy:
+    src: boot-mnt.cf
+    dest: /etc/apt/apt.conf.d/00boot-permissions
+
+# home partition ###############################################################
 - name: Check if /home is a mount point
   register: home_mountpoint_cmd
   shell: mountpoint -q /home/
