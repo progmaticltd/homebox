@@ -1,5 +1,6 @@
 ---
 
+# tmp partition
 - name: Check if /tmp is a mount point
   register: tmp_mountpoint_cmd
   shell: mountpoint -q /tmp/
@@ -12,7 +13,7 @@
   replace:
     path: /etc/fstab
     regexp: '(^/dev/[/a-z-]+\s+/tmp\s+ext4\s+)defaults(\s+[0-9]\s+[0-9])'
-    replace: '\1defaults,noexec\2'
+    replace: '\1defaults,noexec,nosuid,nodev\2'
 
 - name: Remount /tmp
   when: fstab_file.changed
@@ -26,3 +27,25 @@
   copy:
     src: tmp-mnt.cf
     dest: /etc/apt/apt.conf.d/00tmp-permissions
+
+# home partition
+- name: Check if /home is a mount point
+  register: home_mountpoint_cmd
+  shell: mountpoint -q /home/
+  args:
+    warn: false
+
+- name: Mount /home as no exec by default
+  when: home_mountpoint_cmd.rc == 0
+  register: fstab_file
+  replace:
+    path: /etc/fstab
+    regexp: '(^/dev/[/a-z-]+\s+/home\s+ext4\s+)defaults(\s+[0-9]\s+[0-9])'
+    replace: '\1defaults,noexec,nosuid,nodev\2'
+
+- name: Remount /home
+  when: fstab_file.changed
+  shell: >-
+    mount -o remount /home
+  args:
+    warn: false
