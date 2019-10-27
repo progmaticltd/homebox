@@ -20,3 +20,9 @@
     mount -o remount /tmp
   args:
     warn: false
+
+- name: Install apt hook to remount /tmp
+  when: fstab_file.changed
+  copy:
+    src: tmp-mnt.cf
+    dest: /etc/apt/apt.conf.d/00tmp-permissions

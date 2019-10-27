@@ -1,0 +1,9 @@
+---
+
+- name: Set limits per user
+  notify:
+    - Restart Postfix
+    - Restart Dovecot
+  template:
+    src: limits.conf
+    dest: /etc/security/limits.conf

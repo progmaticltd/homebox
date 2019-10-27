@@ -152,5 +152,5 @@
 # Add well-known services handling
 - import_playbook: well-known-services.yml
 
-# Clean up the system before going live
-- import_playbook: system-cleanup.yml
+# Run post installation tasks: Clean up and security
+- import_playbook: system-post-install.yml
