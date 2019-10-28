@@ -209,13 +209,13 @@ for script in $login_scripts; do
     # This is actually used by the external emails import script.
     if [ "$blocking" = "0" ]; then
         log_debug "Launching background script $scriptPath ($scriptDescription) as '$RunAs'"
-        su "$RunAs" -c "$PASS_ENV $scriptPath" 1>&2 &
+        su "$RunAs" -s /bin/sh -c "$PASS_ENV $scriptPath" 1>&2 &
         continue
     fi
 
     # Running foreground scripts
     log_debug "Running blocking script ${scriptPath} ($scriptDescription) as '$RunAs'"
-    details=$(su "$RunAs" -c "${PASS_ENV} ${scriptPath}")
+    details=$(su "$RunAs" -s /bin/sh -c "${PASS_ENV} ${scriptPath}")
     scoreCost=$?
 
     # Skip trusted policies
