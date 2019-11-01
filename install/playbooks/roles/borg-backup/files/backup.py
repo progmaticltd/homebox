@@ -126,10 +126,10 @@ class BackupManager(object):
             logging.info("Running '%s' successfully.", name)
 
         if status.stdout != None and status.stdout.strip() != "":
-            logging.info("Output: %s", status.stdout.strip())
+            logging.info(status.stdout)
 
         if status.stderr != None and status.stderr.strip() != "":
-            logging.info("Error: %s", status.stderr.strip())
+            logging.info(status.stderr)
 
         return status
 
@@ -139,7 +139,7 @@ class BackupManager(object):
         """Loading repository encryption key"""
         try:
             with open(path) as keyFile:
-                self.key = keyFile.read()
+                self.key = keyFile.readline().replace('\n','').replace('\r','')
             logging.info('Successfully loaded encryption key')
             return True
         except:
@@ -344,11 +344,10 @@ class BackupManager(object):
         if self.location.scheme != 'ssh' and not os.path.isdir(self.repositoryPath):
             return False
 
-        # Check if the repository exists
+        # Check if it is a borg repository
         try:
-            # If yes, check if it is a borg repository
             os.environ["BORG_PASSPHRASE"] = self.key
-            args = [ 'borg', 'check', '--repository-only', self.repositoryPath ]
+            args = [ 'borg', 'list', self.repositoryPath ]
             status = self.runCommand(args, "Checking if repository exists")
         except:
             return False
@@ -372,6 +371,10 @@ class BackupManager(object):
     def createBackup(self):
         """Create the backup itself"""
 
+        # Use the passphrase saved
+        os.environ["BORG_PASSPHRASE"] = self.key
+
+        # Run the borg command
         args = [ 'borg', 'create' ]
 
         # Build repository path specification
@@ -437,6 +440,10 @@ class BackupManager(object):
         # Buil repository path specification
         pathSpec = self.repositoryPath
 
+        # Use the passphrase saved
+        os.environ["BORG_PASSPHRASE"] = self.key
+
+        # Run the borg command
         args = [ 'borg', 'prune' ]
 
         # Buil repository path specification
@@ -733,7 +740,7 @@ def main(args):
         manager.mountRepository()
 
         # Called to just initialise an empty repository
-        if args.action == "init" or not manager.repositoryInitialised():
+        if args.action == "init" and not manager.repositoryInitialised():
             manager.initRepository(args.importKeyPath, args.exportKeyPath)
 
         # Create the backup, and prune it

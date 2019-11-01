@@ -5,8 +5,11 @@
   notify:
     - Check nginx config
     - Restart nginx
+  vars:
+    csp: '{{ mail.antispam.webui.csp | default(csp_default) }}'
+    fp: '{{ mail.antispam.webui.fp | default(fp_default) }}'
   template:
-    src: webui-site.tpl
+    src: nginx.conf
     dest: '/etc/nginx/sites-available/rspamd.{{ network.domain }}.conf'
     owner: root
     group: root

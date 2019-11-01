@@ -293,20 +293,6 @@ website_default:
   locale: en_GB.UTF-8
 
 ###############################################################################
-# Install a static web site on www.yourdomain.com using Hugo (https://gohugo.io/)
-# Still requests two certificates:
-# One for for https://yourdomain.com/ and one for https://www.yourdomain.com
-# Place your site in the backup folder: backup/<network.domain>/website-hugo/
-# It will be served by the internal Hugo server.
-# Example of a configuration here
-
-hugo_default:
-  install: false
-  site_title: "Site title"
-  theme:
-    name: hugo-tranquilpeak-theme
-
-###############################################################################
 # Install a webmail, or not...
 webmail_default:
   install: true
@@ -615,11 +601,12 @@ sogo_default:
 # and works with Roundcube / Sogo as well
 access_check_default:
   active: false
+  allow_ext_queries: true     # Allow the access check script to run external queries to ip-api.com.
   whitelist_bonus: 255        # Bonus to apply when an IP or country is whitelisted. Max value is 255
   blacklist_malus: 255        # Malus to apply when an IP or country is blacklisted. Max value is 255
   warning_score: 40           # Score threshold to generate a warning
   denied_score: 120           # Score threshold to deny a connection
-  display_score: false        # # Should we display the scores in the alerts ?
+  display_score: false        # Should we display the scores in the alerts ?
                               # It is more informative for development
                               # but it might be confusing for new users
   time:                       # Standard time range you are normally checking your emails.

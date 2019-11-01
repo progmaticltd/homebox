@@ -3,6 +3,7 @@
 # Create the default certificate for the jabber server
 - hosts: homebox
   vars:
+    redirect: true
     certificate:
       type: '@'
   vars_files:

@@ -83,11 +83,14 @@
   loop_control:
     loop_var: path
 
-- name: Create the website site configuration file
+- name: Create the website configuration file
   tags: nginx
   notify: Restart nginx
+  vars:
+    csp: '{{ website.csp | default(csp_default) }}'
+    fp: '{{ website.fp | default(fp_default) }}'
   template:
-    src: website-simple.tpl
+    src: nginx.conf
     dest: /etc/nginx/sites-available/www.{{ network.domain }}.conf
     owner: root
     group: root

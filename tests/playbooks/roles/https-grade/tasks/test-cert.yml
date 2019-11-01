@@ -1,0 +1,25 @@
+---
+
+- name: Remove the test file first
+  file:
+    path: '/tmp/https-grade-test-{{ test.name }}.txt'
+    state: absent
+
+- name: 'Check https security grade for {{ test.name }}'
+  register: page_downloaded
+  shell: >-
+    lynx -dump 'https://securityheaders.com/?q={{ test.url }}&hide=on&followRedirects=on'
+    > /tmp/https-grade-test-{{ test.name }}.txt
+  args:
+    creates: '/tmp/https-grade-test-{{ test.name }}.txt'
+    warn: false
+
+- name: Get the value of the grade
+  register: grade_value
+  failed_when: '{{ grade_value.stdout != test.expect }}'
+  shell: >-
+    grep Summary -A 1 /tmp/https-grade-test-{{ test.name }}.txt
+    | tail -n 1
+    | sed 's/\s*//'
+  args:
+    warn: false

@@ -142,7 +142,7 @@ else
     TIMES_BANNED=0
 fi
 
-PASS_ENV="TIMES_BANNED=$TIMES_BANNED DISPLAY_SCORE=$DISPLAY_SCORE"
+PASS_ENV="TIMES_BANNED=$TIMES_BANNED DISPLAY_SCORE=$DISPLAY_SCORE ALLOW_EXTERNAL_QUERIES=$ALLOW_EXTERNAL_QUERIES"
 
 # Call all the scripts in the folder /etc/dovecot/login-scripts,
 # These scrips are non blocking, and run as the user

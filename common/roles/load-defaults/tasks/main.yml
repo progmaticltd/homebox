@@ -364,22 +364,6 @@
     sogo: '{{ sogo_default }}'
 
 ################################################################################
-# Merge defaults hugo settings
-- name: Combine default and user defined hugo settings
-  run_once: true
-  when: hugo is defined
-  tags: defaults
-  set_fact:
-    hugo: '{{ hugo_default | combine(hugo, recursive=True) }}'
-
-- name: Use default hugo settings
-  run_once: true
-  when: hugo is not defined
-  tags: defaults
-  set_fact:
-    hugo: '{{ hugo_default }}'
-
-################################################################################
 # Merge defaults access_check settings
 - name: Combine default and user defined access_check settings
   run_once: true

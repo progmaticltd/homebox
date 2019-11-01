@@ -1,0 +1,5 @@
+---
+
+# packages to install
+packages:
+  - python3-jinja2
