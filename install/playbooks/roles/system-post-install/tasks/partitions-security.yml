@@ -12,7 +12,7 @@
   register: fstab_file
   replace:
     path: /etc/fstab
-    regexp: '(^/dev/[/a-z-]+\s+/tmp\s+ext4\s+)defaults(\s+[0-9]\s+[0-9])'
+    regexp: '(^[^#]\S+\s+/tmp\s+\S+\s+)defaults(\s+[0-9]\s+[0-9])'
     replace: '\1defaults,noexec,nosuid,nodev\2'
 
 - name: Remount /tmp
@@ -40,7 +40,7 @@
   register: fstab_file
   replace:
     path: /etc/fstab
-    regexp: '(^UUID=[0-9a-f-]+\s+/boot\s+ext[2-4]\s+)defaults(\s+[0-9]\s+[0-9])'
+    regexp: '(^[^#]\S+\s+/boot\s+\S+\s+)defaults(\s+[0-9]\s+[0-9])'
     replace: '\1defaults,ro\2'
 
 - name: Remount /boot
@@ -68,7 +68,7 @@
   register: fstab_file
   replace:
     path: /etc/fstab
-    regexp: '(^/dev/[/a-z-]+\s+/home\s+ext4\s+)defaults(\s+[0-9]\s+[0-9])'
+    regexp: '(^[^#]\S+\s+/home\s+\S+\s+)defaults(\s+[0-9]\s+[0-9])'
     replace: '\1defaults,noexec,nosuid,nodev\2'
 
 - name: Remount /home
