@@ -1,9 +1,13 @@
 ---
 
+- name: Check if backup server is used
+  set_fact:
+    users_with_backup: '{{ users | selectattr("backup_ssh_key", "defined") | list }}'
+
 - name: Set limits per user
   notify:
     - Restart Postfix
     - Restart Dovecot
   template:
     src: limits.conf
-    dest: /etc/security/limits.conf
+    dest: /etc/security/limits.d/homebox.conf
