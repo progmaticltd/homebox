@@ -13,7 +13,18 @@
   loop_control:
     loop_var: user
 
+- name: List the backup locations that can be mounted
+  when: backup.locations is defined
+  set_fact:
+    mountable_backup_locations: '{{ backup.locations
+                                    | selectattr("url", "defined")
+                                    | rejectattr("url", "contains", "dir://")
+                                    | rejectattr("url", "contains", "ssh://")
+                                    | list }}'
+
 - name: Add the backup folder for the users
+  when: backup.locations is not defined or
+        mountable_backup_locations == []
   tags: backup
   file:
     path: '/home/users/{{ user.uid }}/backup'
@@ -27,13 +38,15 @@
     loop_var: user
 
 - name: Use the first backup drive for the users
-  when: backup.locations != []
+  when: backup.locations is defined and
+        mountable_backup_locations != []
   set_fact:
-    backup_root: 'mnt/backup/{{ backup.locations[0].name }}'
+    backup_root: 'mnt/backup/{{ mountable_backup_locations[0].name }}'
     backup_folder: ''
 
 - name: Use the home root folder for the backup server
-  when: backup.locations is not defined
+  when: backup.locations is not defined or
+        mountable_backup_locations == []
   set_fact:
     backup_root: 'home/users'
     backup_folder: 'backup/'
