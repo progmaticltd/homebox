@@ -6,7 +6,7 @@
     name:
       - resolvconf
       - rdnssd
-    state: removed
+    state: absent
     purge: yes
 
 - name: deploy the template to update resolv.conf
