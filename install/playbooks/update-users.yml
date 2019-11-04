@@ -34,4 +34,4 @@
   when: mail.import.active and not system.devel
 
 # Clean up the system before going live
-- import_playbook: system-cleanup.yml
+- import_playbook: system-post-install.yml
