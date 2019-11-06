@@ -156,14 +156,14 @@ class BackupManager(object):
         # installed otherwise, use sshfs://
         if self.location.scheme == 'ssh':
             self.repositoryPath = self.url[6:]
-            self.repositoryMounted = True
+            self.repositoryMounted = False
             return True
 
         # The dir:// backup location can be a remote directory mounted locally
         # or even a local partition.
         if self.location.scheme == 'dir':
             self.repositoryPath = self.location.path
-            self.repositoryMounted = True
+            self.repositoryMounted = False
             os.makedirs(self.location.path, exist_ok=True)
             return True
 
@@ -185,12 +185,6 @@ class BackupManager(object):
     def umountRepository(self):
         """Umount the remote location if necessary"""
         if not self.repositoryMounted:
-            return True
-
-        # Local directories are never mounted
-        if self.location.scheme == 'dir' or self.location.scheme == 'ssh':
-            self.repositoryPath = None
-            self.repositoryMounted = False
             return True
 
         # umount the current location
