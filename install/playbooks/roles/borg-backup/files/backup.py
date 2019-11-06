@@ -155,14 +155,14 @@ class BackupManager(object):
         # for this scheme, it is assumed that the remote server has borg
         # installed otherwise, use sshfs://
         if self.location.scheme == 'ssh':
-            self.repositoryPath = self.url[6:]
+            self.repositoryPath = self.url[6:] + '/@server'
             self.repositoryMounted = False
             return True
 
         # The dir:// backup location can be a remote directory mounted locally
         # or even a local partition.
         if self.location.scheme == 'dir':
-            self.repositoryPath = self.location.path
+            self.repositoryPath = self.location.path + '/@server'
             self.repositoryMounted = False
             os.makedirs(self.location.path, exist_ok=True)
             return True
@@ -171,7 +171,7 @@ class BackupManager(object):
         if self.location.scheme in {'usb', 's3fs', 'sshfs'}:
             # Make sure the directory to mount the backup exists
             self.mountPath = '/mnt/backup/' + self.configName
-            self.repositoryPath = self.mountPath
+            self.repositoryPath = self.mountPath + '/@server'
             self.repositoryMounted = True
             os.makedirs(self.mountPath, exist_ok=True)
             return True
