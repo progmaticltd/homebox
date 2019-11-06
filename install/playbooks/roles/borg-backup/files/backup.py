@@ -151,53 +151,29 @@ class BackupManager(object):
     def mountRepository(self):
         """Mount the remote location if necessary"""
 
-        ## When using SSH, we do not need to mount remote SSH location.
-        # for this scheme, it is assumed that the remote server has borg installed
-        # otherwise, use sshfs://
+        # When using SSH, we do not need to mount remote SSH location.
+        # for this scheme, it is assumed that the remote server has borg
+        # installed otherwise, use sshfs://
         if self.location.scheme == 'ssh':
             self.repositoryPath = self.url[6:]
             self.repositoryMounted = True
             return True
 
-        # Make sure the directory to mount the backup exists
-        self.mountPath = '/mnt/backup/' + self.configName
-        os.makedirs(self.mountPath, exist_ok=True)
-
-        # The backup location can be a remote directory mounted locally
-        # or even a local partition. Removing dir://
+        # The dir:// backup location can be a remote directory mounted locally
+        # or even a local partition.
         if self.location.scheme == 'dir':
             self.repositoryPath = self.location.path
             self.repositoryMounted = True
+            os.makedirs(self.location.path, exist_ok=True)
             return True
 
-        # The location is a USB device mounted automatically using systemd
-        if self.location.scheme == 'usb':
-            self.repositoryPath = self.location.path
+        # These locations are mounted automatically using systemd
+        if self.location.scheme in {'usb', 's3fs', 'sshfs'}:
+            # Make sure the directory to mount the backup exists
             self.mountPath = '/mnt/backup/' + self.configName
-            self.repositoryMounted = os.path.ismount(self.mountPath)
-            return self.repositoryMounted
-
-        # The location is an S3 bucket mounted automatically using systemd
-        if self.location.scheme == 's3fs':
-            self.repositoryPath = self.location.path
-            self.mountPath = '/mnt/backup/' + self.configName
-            self.repositoryMounted = os.path.ismount(self.mountPath)
-            return self.repositoryMounted
-
-        ## When using SSHFS, the remote location is mounted using fuse
-        # In this case, the mount path and the repository path are the same.
-        if self.location.scheme == 'sshfs':
-            self.repositoryPath = '/mnt/backup/' + self.configName
-            self.mountPath = '/mnt/backup/' + self.configName
-            self.repositoryMounted = True
-            return True
-
-        # Check if the directory is already mounted
-        # In this case, we return true, and we will expect the
-        # next functions to check if this is a valid repository
-        if os.path.ismount(self.mountPath):
             self.repositoryPath = self.mountPath
             self.repositoryMounted = True
+            os.makedirs(self.mountPath, exist_ok=True)
             return True
 
         # Throw an error in case the protocol is not implemented
