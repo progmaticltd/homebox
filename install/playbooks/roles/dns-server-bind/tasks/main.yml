@@ -98,6 +98,12 @@
     src: extra-records.conf
     dest: /etc/homebox/dns-entries.d/90-extra-records.bind
 
+- name: Make sure extra records are absent if not needed
+  when: bind.extra_records == []
+  file:
+    path: /etc/homebox/dns-entries.d/90-extra-records.bind
+    state: absent
+
 - name: Build the final bind configuration
   tags: config
   assemble:
