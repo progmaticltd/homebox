@@ -31,22 +31,22 @@
 ################################################################################
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
-- name: Allow slapd and nslcd daemons to access the certificate directories
-  tags: dovecot,ssl
-  notify: Restart dovecot
-  acl:
-    path: '{{ path }}'
-    entity: dovecot
-    etype: user
-    permissions: rx
-    state: present
-    recursive: yes
-    default: yes
-  with_items:
-    - /etc/letsencrypt/archive
-    - /etc/letsencrypt/live
-  loop_control:
-    loop_var: path
+- name: Set the variables for the certificate
+  set_fact:
+    cert_dir: 'imap.{{ network.domain }}'
+    entity_group: dovecot
+
+- name: Set the default permissions for the imap certificate folders
+  include_tasks: '{{ playbook_dir }}/../../common/roles/cert-perms/tasks/main.yml'
+
+- name: Set the variables for the certificate
+  set_fact:
+    cert_dir: 'pop3.{{ network.domain }}'
+    entity_group: dovecot
+
+- name: Set the default permissions for the pop3 certificate folders
+  when: mail.pop3
+  include_tasks: '{{ playbook_dir }}/../../common/roles/cert-perms/tasks/main.yml'
 
 - name: Generate a strong Diffie Hellman file
   notify: Restart dovecot

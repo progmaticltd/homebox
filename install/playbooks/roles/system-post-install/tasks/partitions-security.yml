@@ -4,6 +4,8 @@
 - name: Check if /tmp is a mount point
   register: tmp_mountpoint_cmd
   shell: mountpoint -q /tmp/
+  failed_when: false
+  changed_when: false
   args:
     warn: false
 
@@ -32,6 +34,8 @@
 - name: Check if /boot is a mount point
   register: boot_mountpoint_cmd
   shell: mountpoint -q /boot/
+  failed_when: false
+  changed_when: false
   args:
     warn: false
 
@@ -60,6 +64,8 @@
 - name: Check if /home is a mount point
   register: home_mountpoint_cmd
   shell: mountpoint -q /home/
+  failed_when: false
+  changed_when: false
   args:
     warn: false
 

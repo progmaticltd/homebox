@@ -1,0 +1,40 @@
+---
+
+# The loops set all files in the directories as read/write for the user (root)
+# read only for the group passed in parameter
+- name: Set the unix permissions for the certificate files
+  tags: cert
+  file:
+    path: '{{ path }}'
+    mode: '640'
+    owner: root
+    group: '{{ entity_group }}'
+    recurse: true
+  with_items:
+      - '/etc/letsencrypt/archive/{{ cert_dir }}'
+      - '/etc/letsencrypt/live/{{ cert_dir }}'
+  loop_control:
+    loop_var: path
+
+# This one sets the g+s flag, meaning that any new certificate created
+# will belongs to the group of its parent
+- name: Set the unix permissions for the certificate directory
+  tags: cert
+  file:
+    path: '{{ path }}'
+    mode: '2750'
+    owner: root
+    group: '{{ entity_group }}'
+    recurse: false
+  with_items:
+      - '/etc/letsencrypt/archive/{{ cert_dir }}'
+      - '/etc/letsencrypt/live/{{ cert_dir }}'
+  loop_control:
+    loop_var: path
+
+- name: Allow the full chain to be read
+  tags: cert
+  shell: >-
+    chmod a+r /etc/letsencrypt/archive/{{ cert_dir }}/fullchain*.pem
+  args:
+    warn: false
