@@ -31,10 +31,3 @@
       - '/etc/letsencrypt/live/{{ cert_dir }}'
   loop_control:
     loop_var: path
-
-- name: Allow the full chain to be read
-  tags: cert
-  shell: >-
-    chmod a+r /etc/letsencrypt/archive/{{ cert_dir }}/fullchain*.pem
-  args:
-    warn: false

@@ -41,8 +41,10 @@ dnpass = {{ lookup("password", ldap.roPasswdParams) }}
 # dn is still the logged in user. Normally you want to keep this empty.
 #sasl_authz_id =
 
-# Use TLS to connect to the LDAP server.
-tls = yes
+# Use TLS to connect to the LDAP server is not necessary,
+# as it is on the same server. Putting yes here also seems to require
+# additional permissions for certificates sharing by dovecot.
+tls = no
 
 # TLS options, currently supported only with OpenLDAP:
 #tls_ca_cert_file =
