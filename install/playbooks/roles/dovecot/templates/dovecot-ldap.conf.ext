@@ -44,7 +44,7 @@ dnpass = {{ lookup("password", ldap.roPasswdParams) }}
 # Use TLS to connect to the LDAP server is not necessary,
 # as it is on the same server. Putting yes here also seems to require
 # additional permissions for certificates sharing by dovecot.
-tls = no
+tls = yes
 
 # TLS options, currently supported only with OpenLDAP:
 #tls_ca_cert_file =

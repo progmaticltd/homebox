@@ -40,6 +40,14 @@
   include_tasks: '{{ playbook_dir }}/../../common/roles/cert-perms/tasks/main.yml'
 
 - name: Set the variables for the certificate
+  set_fact:
+    cert_dir: 'ldap.{{ network.domain }}'
+    entity_group: dovecot
+
+- name: Set the default permissions for the ldap certificate folders
+  include_tasks: '{{ playbook_dir }}/../../common/roles/cert-perms/tasks/main.yml'
+
+- name: Set the variables for the certificate
   when: mail.pop3
   set_fact:
     cert_dir: 'pop3.{{ network.domain }}'
