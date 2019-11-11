@@ -2,7 +2,7 @@
 
 # Posix permissions
 
-- name: Set the unix mode for thecertificate files readable by root only
+- name: Set the unix mode for the certificate files readable by root only
   tags: cert
   file:
     path: '{{ path }}'
@@ -16,7 +16,7 @@
   loop_control:
     loop_var: path
 
-- name: Set the unix mode for the directory readable by root only
+- name: Set the unix mode for the directory accessible by root only
   tags: cert
   file:
     path: '{{ path }}'
@@ -48,7 +48,7 @@
   loop_control:
     loop_var: path
 
-- name: Set the acl permissions for the directory
+- name: Set the acl permissions for the directory itself
   tags: cert
   acl:
     path: '{{ path }}'
@@ -63,7 +63,6 @@
   loop_control:
     loop_var: path
 
-# Then, set the current permissions for the directory.
 # Then, set the default permissions for the directory.
 # The new certificates created should have the right permissions
 - name: Set the default acl for the certificate directory iself
@@ -96,7 +95,7 @@
   loop_control:
     loop_var: path
 
-- name: Set the default acl mask for the directory iself
+- name: Set the default acl mask for the files in the directory
   tags: cert
   acl:
     path: '{{ path }}'
