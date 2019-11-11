@@ -24,4 +24,3 @@
   user:
     name: root
     shell: '{{ devel.root.shell }}'
-

@@ -19,5 +19,3 @@ packages:
     - nscd
   remove:
     - libpam-cracklib
-    - cracklib-runtime
-    - libcrack2
