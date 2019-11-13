@@ -155,7 +155,7 @@ class BackupManager(object):
         # for this scheme, it is assumed that the remote server has borg
         # installed otherwise, use sshfs://
         if self.location.scheme == 'ssh':
-            self.repositoryPath = self.url[6:] + '/@server'
+            self.repositoryPath = self.url + '/@server'
             self.repositoryMounted = False
             return True
 
