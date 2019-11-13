@@ -127,6 +127,38 @@
   when: is_valid.stdout == "0"
   include_tasks: gencert.yml
 
+- name: Restrict permissions for the root of LetsEncrypt certificate directory
+  file:
+    path: '{{ path.location }}'
+    state: directory
+    mode: '{{ path.mode | default("0755") }}'
+  with_items:
+    - location: '/etc/letsencrypt'
+    - location: '/etc/letsencrypt/archive'
+    - location: '/etc/letsencrypt/live'
+    - location: '/etc/letsencrypt/archive/{{ certificate_fqdn }}'
+      mode: '0700'
+    - location: '/etc/letsencrypt/live/{{ certificate_fqdn }}'
+      mode: '0700'
+  loop_control:
+    loop_var: path
+
+- name: Allow nginx to access live and archive directories
+  tags: ssl
+  acl:
+    path: '{{ path }}'
+    entity: www-data
+    etype: user
+    permissions: rx
+    state: present
+    recursive: no
+    default: no
+  with_items:
+    - '/etc/letsencrypt/archive/{{ certificate_fqdn }}'
+    - '/etc/letsencrypt/live/{{ certificate_fqdn }}'
+  loop_control:
+    loop_var: path
+
 # In this direction, we should overwrite the symbolic links,
 # in case the certificates have been renewed
 - name: Backup the certificates on your local machine

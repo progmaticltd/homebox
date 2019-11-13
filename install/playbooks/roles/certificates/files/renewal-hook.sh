@@ -22,4 +22,3 @@ for fqdn in $RENEWED_DOMAINS; do
         break
     fi
 done
-

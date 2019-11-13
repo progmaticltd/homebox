@@ -1,0 +1,111 @@
+---
+
+# Posix permissions
+
+- name: Set the unix mode for the certificate files readable by root only
+  tags: cert
+  file:
+    path: '{{ path }}'
+    owner: root
+    group: root
+    mode: '0600'
+    recurse: true
+  with_items:
+      - '/etc/letsencrypt/archive/{{ cert_dir }}'
+      - '/etc/letsencrypt/live/{{ cert_dir }}'
+  loop_control:
+    loop_var: path
+
+- name: Set the unix mode for the directory accessible by root only
+  tags: cert
+  file:
+    path: '{{ path }}'
+    owner: root
+    group: root
+    mode: '0700'
+    recurse: false
+  with_items:
+      - '/etc/letsencrypt/archive/{{ cert_dir }}'
+      - '/etc/letsencrypt/live/{{ cert_dir }}'
+  loop_control:
+    loop_var: path
+
+
+# First, set the acl for the files in the directory. This should cover the case
+# when the files have been synchronised
+- name: Set the acl permissions for all the certificate files in the directory
+  tags: cert
+  acl:
+    path: '{{ path }}'
+    entity: '{{ entity_group }}'
+    etype: user
+    permissions: 'r--'
+    recursive: true
+    state: present
+  with_items:
+      - '/etc/letsencrypt/archive/{{ cert_dir }}'
+      - '/etc/letsencrypt/live/{{ cert_dir }}'
+  loop_control:
+    loop_var: path
+
+- name: Set the acl permissions for the directory itself
+  tags: cert
+  acl:
+    path: '{{ path }}'
+    entity: '{{ entity_group }}'
+    etype: user
+    permissions: 'r-x'
+    recursive: false
+    state: present
+  with_items:
+      - '/etc/letsencrypt/archive/{{ cert_dir }}'
+      - '/etc/letsencrypt/live/{{ cert_dir }}'
+  loop_control:
+    loop_var: path
+
+# Then, set the default permissions for the directory.
+# The new certificates created should have the right permissions
+- name: Set the default acl for the certificate directory iself
+  tags: cert
+  acl:
+    path: '{{ path }}'
+    entity: '{{ entity_group }}'
+    etype: user
+    recursive: false
+    default: yes
+    state: present
+    permissions: 'r--'
+  with_items:
+      - '/etc/letsencrypt/archive/{{ cert_dir }}'
+      - '/etc/letsencrypt/live/{{ cert_dir }}'
+  loop_control:
+    loop_var: path
+
+- name: Set the acl mask for the directory iself
+  tags: cert
+  acl:
+    path: '{{ path }}'
+    etype: mask
+    recursive: false
+    state: present
+    permissions: 'r-x'
+  with_items:
+      - '/etc/letsencrypt/archive/{{ cert_dir }}'
+      - '/etc/letsencrypt/live/{{ cert_dir }}'
+  loop_control:
+    loop_var: path
+
+- name: Set the default acl mask for the files in the directory
+  tags: cert
+  acl:
+    path: '{{ path }}'
+    etype: mask
+    recursive: false
+    state: present
+    permissions: 'r-x'
+    default: true
+  with_items:
+      - '/etc/letsencrypt/archive/{{ cert_dir }}'
+      - '/etc/letsencrypt/live/{{ cert_dir }}'
+  loop_control:
+    loop_var: path

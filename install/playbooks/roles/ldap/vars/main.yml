@@ -5,3 +5,17 @@ users_defaults:
   uid_start: 1001
   gid_start: 1001
   shell: /bin/dash
+
+
+packages:
+  install:
+    - acl
+    - slapd
+    - python-ldap
+    - python-passlib
+    - ldapscripts
+    - libpam-pwquality
+    - ldapvi
+    - nscd
+  remove:
+    - libpam-cracklib
