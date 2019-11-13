@@ -166,5 +166,6 @@ options {
     //========================================================================
     dnssec-validation auto;
     auth-nxdomain no;    # conform to RFC1035
+    minimal-any yes;
     listen-on-v6 { any; };
 };
