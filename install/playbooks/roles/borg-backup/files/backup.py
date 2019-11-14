@@ -172,9 +172,9 @@ class BackupManager(object):
             # Make sure the directory to mount the backup exists
             self.mountPath = '/mnt/backup/' + self.configName
             self.repositoryPath = self.mountPath + '/@server'
-            self.repositoryMounted = True
+            self.repositoryMounted = os.path.ismount(self.mountPath)
             os.makedirs(self.mountPath, exist_ok=True)
-            return True
+            return self.repositoryMounted
 
         # Throw an error in case the protocol is not implemented
         logging.error("Unknown or not implemented scheme %s", self.location)
