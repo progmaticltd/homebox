@@ -83,10 +83,12 @@
   become: true
   become_user: postgres
   shell: >-
+    set -o pipefail ;
     cat /tmp/sogo-db-init.sql
     | psql -a -d sogo -o /tmp/sogo-db-install.log
   args:
     creates: /tmp/sogo-db-install.log
+    executable: /bin/bash
 
 - name: Keep the DB logs
   when: db_init.changed

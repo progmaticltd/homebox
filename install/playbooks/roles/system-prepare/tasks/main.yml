@@ -8,9 +8,12 @@
   retries: 9
   delay: 5
   shell: >-
+    set -o pipefail ;
     test -f /var/lib/dpkg/lock &&
     ls -l /proc/*/fd/* 2>/dev/null | grep '/var/lib/dpkg/lock' ;
     echo
+  args:
+    executable: /bin/bash
   until: result.stdout == ''
 
 # Install the most required packages
@@ -255,7 +258,10 @@
   register: ssh_keygen
   changed_when: false
   shell: >-
+    set -o pipefail ;
     ssh-keygen -r {{ network.domain }} | sed 's/ /. /'
+  args:
+    executable: /bin/bash
 
 - name: Add the SSHFP records
   when: bind.install and bind.dnssec.active

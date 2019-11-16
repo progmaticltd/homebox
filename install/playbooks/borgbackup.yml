@@ -27,7 +27,7 @@
   vars:
     key:
       path: '{{ backup.key.path | default("/root/.ssh/") }}'
-      user: '{{ backup.key.user | default("root" )}}'
+      user: '{{ backup.key.user | default("root") }}'
       comment: '{{ backup.key.comment | default("Backup SSH key") }}'
       passphrase: ~
       name: '{{ backup.key.name | default("backup.rsa") }}'

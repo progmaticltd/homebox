@@ -119,8 +119,11 @@
   register: is_valid
   changed_when: false
   shell: >-
+    set -o pipefail ;
     certbot certificates -d {{ certificate_fqdn }} 2>&1
     | grep -c '(VALID:'
+  args:
+    executable: /bin/bash
   failed_when: false
 
 - name: Generate the certificate

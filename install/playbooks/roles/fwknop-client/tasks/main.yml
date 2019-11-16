@@ -6,7 +6,7 @@
     path: /usr/bin/fwknop
 
 - name: Install fwknop client
-  when: fwknop.stat.exists == false
+  when: not fwknop.stat.exists
   become: true
   become_method: sudo
   tags: apt
@@ -33,6 +33,7 @@
     --key-gen --use-hmac --save-rc-stanza
     --rc-file ~/.fwknop-{{ network.domain }}.rc
   args:
+    warn: false
     creates: '~/.fwknop-{{ network.domain }}.rc'
 
 - name: Backup the key for next deployment
@@ -40,6 +41,7 @@
     cp  ~/.fwknop-{{ network.domain }}.rc
     '{{ backup_directory }}/fwknop/fwknoprc'
   args:
+    warn: false
     creates: '{{ backup_directory }}/fwknop/fwknoprc'
 
 - name: Protect the file

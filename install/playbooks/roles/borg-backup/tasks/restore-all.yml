@@ -30,7 +30,10 @@
   when: sogo.install and not sogo_backup_dir.changed
   register: sogo_last_backup_dir
   shell: >-
+    set -o pipefail ;
     ls -1t /var/backups/sogo/ | head -n 1
+  args:
+    executable: /bin/bash
 
 - name: Restore address books and calendars
   tags: restore

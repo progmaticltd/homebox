@@ -160,7 +160,7 @@
     proto: tcp
     port: '{{ rule.ports }}'
     comment: '{{ rule.comment }}'
-    delete: '{{ ejabberd.s2s.active == false }}'
+    delete: '{{ not ejabberd.s2s.active }}'
   with_items:
     - ports: 5269
       comment: Accept XMPP connections from other servers
@@ -189,7 +189,7 @@
     proto: tcp
     port: '{{ rule.ports }}'
     comment: '{{ rule.comment }}'
-    delete: '{{ ejabberd.s2s.active == false }}'
+    delete: '{{ not ejabberd.s2s.active }}'
   with_items:
     - ports: 5269
       comment: Accept XMPP connections from other servers

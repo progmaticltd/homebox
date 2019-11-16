@@ -12,8 +12,11 @@
   delegate_to: localhost
   register: key_base64
   shell: >-
+    set -o pipefail ;
     cat ~/.fwknop-{{ network.domain }}.rc
     | grep ^KEY_BASE64 | sed 's/^KEY_BASE64\s\+//'
+  args:
+    executable: /bin/bash
 
 - name: Set the initial key
   notify:
@@ -28,9 +31,12 @@
   delegate_to: localhost
   register: hmac_key_base64
   shell: >-
+    set -o pipefail ;
     cat ~/.fwknop-{{ network.domain }}.rc
     | grep ^HMAC_KEY_BASE64
     | sed 's/^HMAC_KEY_BASE64\s\+//'
+  args:
+    executable: /bin/bash
 
 - name: Set the HMAC key
   notify:
