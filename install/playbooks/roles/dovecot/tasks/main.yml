@@ -388,7 +388,7 @@
 - name: Include virtual mailboxes tasks
   tags: virtual
   when: mail.virtual_folders.active
-  include_tasks: roles/dovecot/tasks/virtual.yml
+  include_tasks: virtual.yml
 
 # AppArmor configuration ======================================================
 - name: Install dovecot indexer AppArmor profile

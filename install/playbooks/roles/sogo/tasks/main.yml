@@ -184,7 +184,7 @@
     insertbefore: '# End of local includes for homebox'
 
 - name: Remove the python / psycopg2 package
-  when: system.devel == False
+  when: not system.devel
   tags: apt
   apt:
     name: python-psycopg2

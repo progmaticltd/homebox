@@ -29,7 +29,7 @@
 
 # Pre-configure the LDAP sever before instaling
 - name: Configure the LDAP administration account
-  when: slapd_stats.stat.exists == False
+  when: not slapd_stats.stat.exists
   no_log: true
   debconf:
     name: slapd

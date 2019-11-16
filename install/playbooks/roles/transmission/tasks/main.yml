@@ -73,9 +73,13 @@
 
 # Daemon configuration ========================================================
 
-- name: Check if transmission is already running
+- name: Check if transmission is already running  # noqa 303
   register: transmission_status
-  shell: systemctl --quiet is-active transmission-daemon && echo Running || echo None
+  shell: >-
+    systemctl --quiet is-active transmission-daemon
+    && echo Running || echo None
+  args:
+    warn: false
 
 - name: Stop transmission daemon
   when: transmission_status == "Running"

@@ -41,7 +41,7 @@
 
 # Backup IP address
 - name: Build the reverse IP address (works for IPv4 or IPv6)
-  when: backup_ip is defined and backup_ip != ""
+  when: backup_ip is defined and (backup_ip | bool)
   tags: facts
   set_fact:
     reverse_backup_ip: "{{ backup_ip | ipaddr('revdns') }}"
@@ -81,7 +81,7 @@
     mode: '0640'
 
 - name: Copy the backup reverse configuration template
-  when: bind.generate_reverse and backup_ip is defined and backup_ip != ""
+  when: bind.generate_reverse and backup_ip is defined and (backup_ip | bool)
   tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
@@ -273,7 +273,7 @@
     remote_src: true
 
 - name: Copy DNS entries in bind cache directory (reverse for backup IP)
-  when: bind.generate_reverse and backup_ip is defined and backup_ip != ""
+  when: bind.generate_reverse and backup_ip is defined and (backup_ip | bool)
   copy:
     src: '/etc/bind/reverse-backup.{{ network.domain }}'
     dest: '/var/cache/bind/reverse-backup.{{ network.domain }}'
@@ -293,7 +293,7 @@
     line: '127.0.0.1    main.{{ network.domain }}'
 
 - name: Ensure the backup record resolves to me
-  when: backup_ip is defined and backup_ip != ""
+  when: backup_ip is defined and (backup_ip | bool)
   tags: hosts
   lineinfile:
     path: /etc/hosts

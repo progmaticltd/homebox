@@ -40,7 +40,7 @@
   become: true
   become_user: sogo
   become_method: sudo
-  when: sogo.install and not sogo_backup_dir.changed and sogo_last_backup_dir.stdout != ""
+  when: sogo.install and not sogo_backup_dir.changed and (sogo_last_backup_dir.stdout | bool)
   notify: Restart memcached
   shell: >-
     test -f /var/backups/sogo/{{ sogo_last_backup_dir.stdout }}/{{ user.uid }} &&
@@ -55,6 +55,7 @@
 
 - name: Rebuild mail indexes
   tags: restore
+  become: true
   become_user: dovecot
   shell: >-
     doveadm index -u {{ user.uid }} *

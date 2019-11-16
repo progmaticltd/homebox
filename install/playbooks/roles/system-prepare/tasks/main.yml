@@ -203,8 +203,8 @@
 - name: Wait for the server to come back online
   when: aa_enabled.rc == 1
   tags: security
-  local_action:
-    module: wait_for_connection
+  delegate_to: localhost
+  wait_for_connection:
     delay: 30
     sleep: 10
     timeout: '{{ system.reboot_timeout }}'

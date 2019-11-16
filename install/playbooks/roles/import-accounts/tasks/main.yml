@@ -20,7 +20,7 @@
     import_password: '{{ lookup("password", import_password_params) }}'
 
 - name: Build a template for each account and each user, and encrypt it using the system key
-  include_tasks: roles/import-accounts/tasks/isync-template.yml
+  include_tasks: isync-template.yml
   with_items:
     - '{{ users }}'
   loop_control:
