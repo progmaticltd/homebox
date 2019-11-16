@@ -3,7 +3,7 @@
 - name: Install imapproxy
   apt:
     name: imapproxy
-    state: latest
+    state: present
 
 - name: Configure the IMAP proxy
   notify: Restart IMAP proxy

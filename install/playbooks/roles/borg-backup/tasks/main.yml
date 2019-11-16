@@ -4,7 +4,7 @@
   tags: apt
   apt:
     name: python3-psutil
-    state: latest
+    state: present
 
 - name: Install borgbackup package
   when:
@@ -14,7 +14,7 @@
   apt:
     name: borgbackup
     default_release: stretch-backports
-    state: latest
+    state: present
 
 - name: Install borgbackup package
   when:
@@ -23,7 +23,7 @@
   tags: apt
   apt:
     name: borgbackup
-    state: latest
+    state: present
 
 - name: Create the backups mount point root
   file:

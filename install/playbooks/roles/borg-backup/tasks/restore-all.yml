@@ -6,7 +6,7 @@
   register: sudo_pkg
   apt:
     name: sudo
-    state: latest
+    state: present
 
 - name: Restore /home and /var/backups folders from a previous installation
   tags: restore

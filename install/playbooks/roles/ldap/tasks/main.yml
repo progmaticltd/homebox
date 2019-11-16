@@ -81,7 +81,7 @@
   tags: dpkg
   apt:
     name: '{{ packages.install }}'
-    state: latest
+    state: present
 
 # Changes in the database will be stored there
 - name: Create the ldap config changes folder
@@ -524,7 +524,7 @@
   tags: apt
   apt:
     name: sudo
-    state: latest
+    state: present
 
 - name: Update the indexes
   when: index_defs.changed
@@ -580,7 +580,7 @@
   tags: apt
   apt:
     name: nslcd
-    state: latest
+    state: present
 
 # Password quality enforcement ================================================
 

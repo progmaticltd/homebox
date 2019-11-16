@@ -25,7 +25,7 @@
   when: ansible_memtotal_mb < 2048
   apt:
     name: dphys-swapfile
-    state: latest
+    state: present
 
 - name: Upgrade the distribution
   tags: apt
@@ -156,7 +156,7 @@
       - apparmor-utils
   apt:
     name: '{{ pkgs }}'
-    state: latest
+    state: present
 
 - name: Configure grub to add apparmor by default on boot
   register: grub_config

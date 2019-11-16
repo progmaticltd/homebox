@@ -8,7 +8,7 @@
   when: administrators != []
   apt:
     name: sudo
-    state: latest
+    state: present
 
 - name: Create the group home folders if necessary
   tags: accounts

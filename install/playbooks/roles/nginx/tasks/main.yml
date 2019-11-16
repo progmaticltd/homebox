@@ -3,7 +3,7 @@
 - name: Install nginx
   apt:
     name: nginx
-    state: latest
+    state: present
 
 ################################################################################
 # At this point, the certificates should have been created already #############

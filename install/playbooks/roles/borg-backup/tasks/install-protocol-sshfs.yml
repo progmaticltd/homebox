@@ -86,7 +86,7 @@
 - name: Install the required file systems
   apt:
     name: 'sshfs'
-    state: latest
+    state: present
 
 ###############################################################################
 

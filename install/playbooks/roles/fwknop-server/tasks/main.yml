@@ -6,7 +6,7 @@
     name:
       - fwknop-apparmor-profile
       - fwknop-server
-    state: latest
+    state: present
 
 - name: Get the initial key from the client file
   delegate_to: localhost

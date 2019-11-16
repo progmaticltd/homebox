@@ -28,7 +28,7 @@
   tags: apt
   apt:
     name: apticron
-    state: latest
+    state: present
 
 # Starting from Debian buster (10), /etc/apticron/apticron.conf is not
 # installed by default

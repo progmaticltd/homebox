@@ -3,7 +3,7 @@
 - name: Install isync package
   apt:
     name: '{{ pkgs }}'
-    state: latest
+    state: present
   vars:
     pkgs:
       - isync

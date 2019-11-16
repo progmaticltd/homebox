@@ -7,14 +7,14 @@
   tags: dovecot
   apt:
     name: '{{ dovecot.packages }}'
-    state: latest
+    state: present
 
 - name: Install dovecot packages for full text search
   when: mail.fts.active
   tags: dovecot
   apt:
     name: dovecot-solr
-    state: latest
+    state: present
 
 - name: Allow mail damon to access the users directory
   file:
@@ -337,7 +337,7 @@
     update_cache: yes
     cache_valid_time: 86400
     name: '{{ dovecot.fts_packages }}'
-    state: latest
+    state: present
 
 - name: Copy decode2text script
   when: mail.fts.active

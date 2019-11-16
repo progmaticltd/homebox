@@ -41,7 +41,7 @@
 - name: Install the required file systems
   apt:
     name: 'cifs-utils'
-    state: latest
+    state: present
 
 - name: Configure the firewall to allow CIFS out connections
   tags: ufw

@@ -3,7 +3,7 @@
 - name: Install the required file systems
   apt:
     name: 's3fs'
-    state: latest
+    state: present
 
 - name: Create the S3 credentials file
   template:
