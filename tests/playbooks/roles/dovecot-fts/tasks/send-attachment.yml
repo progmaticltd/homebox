@@ -57,8 +57,11 @@
 - name: Search inside the emails for the uuid ({{ attachment.description }})
   register: email_found
   shell: >-
+    set -o pipefail ;
     doveadm search -u "{{ users[1].uid }}" text "{{ attachment.search | default(attachment.uid) }}"
     | grep -E '[a-f0-9-]+\s[0-9]'
+  args:
+    executable: /bin/bash
   until: email_found.rc == 0
   retries: 10
   delay: 1

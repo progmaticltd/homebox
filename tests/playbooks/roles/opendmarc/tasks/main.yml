@@ -4,7 +4,7 @@
   tags: apt,opendmarc
   shell: dpkg -s opendmarc
 
-- name: Check if the opendmarc service is up and running
+- name: Check if the opendmarc service is up and running # noqa 303
   tags: systemctl,opendmarc
   shell: systemctl status opendmarc
 
@@ -14,4 +14,3 @@
   become: yes
   become_method: sudo
   become_user: opendmarc
-

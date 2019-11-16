@@ -9,12 +9,14 @@
       - 'http://myexternalip.com/raw'
       - 'http://www.trackip.net/ip'
   shell: >-
+    set -o pipefail ;
     curl -s "{{ urls[3|random] }}"
     | head -n 1
   args:
     warn: false
+    executable: /bin/bash
   changed_when: false
-  
+
 - name: Get our IP address with proxy
   register: proxied_ip
   vars:
@@ -25,6 +27,7 @@
   retries: 5
   delay: 1
   shell: >-
+    set -o pipefail ;
     curl -s --socks5 127.0.0.1:9050
     --connect-timeout 5
     --max-time 10
@@ -33,16 +36,17 @@
     | grep -E "^[a-f0-9\.:]+$"
   args:
     warn: false
-  failed_when: direct_ip.stdout == proxied_ip.stdout or proxied_ip.stdout == ""
+    executable: /bin/bash
+  failed_when: direct_ip.stdout == proxied_ip.stdout or not (proxied_ip.stdout | bool)
   changed_when: false
 
 - name: Check Tor with the official site
   shell: >-
+    set -o pipefail
     curl -s --socks5 127.0.0.1:9050
     https://check.torproject.org/
     | grep "Congratulations. This browser is configured to use Tor."
   args:
     warn: false
+    executable: /bin/bash
   changed_when: false
-
-    

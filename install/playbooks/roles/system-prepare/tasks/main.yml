@@ -14,7 +14,7 @@
     echo
   args:
     executable: /bin/bash
-  until: result.stdout == ''
+  until: (result.stdout | length) == 0
 
 # Install the most required packages
 - name: Update packages cache if older than 1h

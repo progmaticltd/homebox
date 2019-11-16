@@ -44,8 +44,11 @@
 - name: Check if this specific email has been signed
   tags: postfix
   shell: >-
+    set -o pipefail ;
     cat '{{ email_found.stdout }}'
     | grep "^DKIM-Signature:.*"
+  args:
+    executable: /bin/bash
 
 - name: Check if the email is in the sent folder
   tags: postfix

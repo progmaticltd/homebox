@@ -18,8 +18,10 @@
   register: grade_value
   failed_when: '{{ grade_value.stdout != test.expect }}'
   shell: >-
+    set -o pipefail ;
     grep Summary -A 1 /tmp/https-grade-test-{{ test.name }}.txt
     | tail -n 1
     | sed 's/\s*//'
   args:
     warn: false
+    executable: /bin/bash

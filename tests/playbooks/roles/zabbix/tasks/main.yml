@@ -13,7 +13,7 @@
   loop_control:
     loop_var: pkg
 
-- name: Check if the services are up and running
+- name: Check if the services are up and running # noqa 303
   tags: systemctl
   shell: systemctl status '{{ service }}'
   with_items:
@@ -25,10 +25,13 @@
 - name: Check the certificate using HTTPS
   tags: cert
   shell: >-
+    set -o pipefail ;
     echo "GET /" |
     openssl s_client
     -servername zabbix.{{ network.domain }} -connect zabbix.{{ network.domain }}:443
     | grep 'Verification: OK'
+  args:
+    executable: /bin/bash
 
 - name: Set facts for zabbix password generation
   set_fact:
