@@ -24,7 +24,7 @@
   template:
     src: testmsg-01.txt
     dest: /tmp/testmsg-01.txt
-    mode: 0600
+    mode: '0600'
     owner: clamav
     group: clamav
 
@@ -33,7 +33,7 @@
   copy:
     src: clam.exe
     dest: /tmp/clam.exe
-    mode: 0600
+    mode: '0600'
     owner: '{{ users[0].uid }}'
     group: users
 

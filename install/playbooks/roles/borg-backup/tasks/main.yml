@@ -34,7 +34,7 @@
   file:
     path: '{{ path }}'
     state: directory
-    mode: 0700
+    mode: '0700'
   with_items:
       - /tmp/backup-keys-import
       - /tmp/backup-keys-export

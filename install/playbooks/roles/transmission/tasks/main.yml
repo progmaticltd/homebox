@@ -29,7 +29,7 @@
     dest: '/etc/nginx/sites-available/transmission.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Copy nginx configuration
   tags: nginx

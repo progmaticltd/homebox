@@ -24,7 +24,7 @@
   copy:
     src: renew-cert.sh
     dest: /etc/letsencrypt/renewal-hooks/deploy/20-postfix.sh
-    mode: 0755
+    mode: '0755'
 
 #                                                                              #
 # End of TLS / SSL Configuration ###############################################

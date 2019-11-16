@@ -25,7 +25,7 @@
     owner: root
     group: root
     state: directory
-    mode: 0700
+    mode: '0700'
     recurse: true
   with_items:
     - /etc/skel/mails/maildir

@@ -13,7 +13,7 @@
     dest: /var/www/autoconfig/mail/config-v1.1.xml
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Create the autoconfig site
   tags: autoconfig
@@ -26,7 +26,7 @@
     dest: '/etc/nginx/sites-available/autoconfig.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Ensure autoconfig resolves to localhost
   lineinfile:

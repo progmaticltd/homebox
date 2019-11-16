@@ -8,7 +8,7 @@
   template:
     src: testmsg-01.txt
     dest: /tmp/testmsg-01.txt
-    mode: 0600
+    mode: '0600'
     owner: postfix
     group: postfix
 

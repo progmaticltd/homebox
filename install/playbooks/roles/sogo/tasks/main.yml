@@ -27,7 +27,7 @@
     dest: '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Activate sogo web site
   tags: nginx
@@ -126,7 +126,7 @@
     dest: '/etc/sogo/sogo.conf'
     owner: root
     group: sogo
-    mode: 0640
+    mode: '0640'
 
 - name: Copy sogo cron table
   tags: config

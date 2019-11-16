@@ -113,7 +113,7 @@
   copy:
     src: renewal-hook.sh
     dest: /etc/letsencrypt/renewal-hooks/deploy/00-base.sh
-    mode: 0755
+    mode: '0755'
 
 - name: Check if the certificate already exists and is valid
   register: is_valid

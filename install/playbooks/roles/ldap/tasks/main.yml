@@ -112,7 +112,7 @@
   copy:
     src: renew-cert.sh
     dest: /etc/letsencrypt/renewal-hooks/deploy/10-ldap.sh
-    mode: 0755
+    mode: '0755'
 
 # When running in debug mode, use systemd debug facility
 - name: Update LDAP configuration for debugging
@@ -495,7 +495,7 @@
   template:
     src: nslcd.conf
     dest: /etc/nslcd.conf
-    mode: 0600
+    mode: '0600'
 
 - name: Copy the access policies on the server
   register: access_policies
@@ -621,4 +621,4 @@
   template:
     src: ldap-user-edit
     dest: /usr/local/sbin/ldap-user-edit
-    mode: 0700
+    mode: '0700'

@@ -58,7 +58,7 @@
   openssl_dhparam:
     path: /etc/nginx/dhparams.pem
     size: '{{ security.dhparam_size }}'
-    mode: 0600
+    mode: '0600'
     owner: root
     group: root
 

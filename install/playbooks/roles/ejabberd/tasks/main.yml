@@ -19,7 +19,7 @@
   template:
     src: ejabberd.yml
     dest: /etc/ejabberd/ejabberd.yml
-    mode: 0600
+    mode: '0600'
     owner: ejabberd
     group: ejabberd
 
@@ -56,7 +56,7 @@
   openssl_dhparam:
     path: '{{ dhfile }}'
     size: '{{ security.dhparam_size }}'
-    mode: 0600
+    mode: '0600'
     owner: root
     group: ejabberd
   with_items:
@@ -86,7 +86,7 @@
   copy:
     src: renewal-hook.sh
     dest: /etc/letsencrypt/renewal-hooks/deploy/40-ejabberd.sh
-    mode: 0755
+    mode: '0755'
 
 #
 # End of TLS / SSL Configuration ###############################################
@@ -101,7 +101,7 @@
     dest: '/etc/nginx/sites-available/xmpp.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Enable nginx site
   tags: jabber

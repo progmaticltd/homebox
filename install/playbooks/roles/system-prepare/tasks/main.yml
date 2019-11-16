@@ -48,7 +48,7 @@
   file:
     path: '{{ path }}'
     state: directory
-    mode: 0750
+    mode: '0750'
   with_items:
     - /etc/letsencrypt/archive
     - /etc/letsencrypt/live
@@ -59,7 +59,7 @@
   file:
     path: /etc/homebox
     state: directory
-    mode: 0755
+    mode: '0755'
 
 - name: Create the configuration file that defines paths to exclude for backup
   tags: backup
@@ -277,7 +277,7 @@
   copy:
     src: yubikey-enroll.sh
     dest: /usr/local/sbin/yubikey-enroll.sh
-    mode: 0700
+    mode: '0700'
 
 - name: Activate some aliases in bashrc
   template:

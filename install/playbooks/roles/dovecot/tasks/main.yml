@@ -19,7 +19,7 @@
 - name: Allow mail damon to access the users directory
   file:
     path: /home/users
-    mode: 0755
+    mode: '0755'
 
 - name: Make sure loopback interface is "trusted"
   notify: Restart dovecot
@@ -63,7 +63,7 @@
   openssl_dhparam:
     path: /etc/dovecot/private/dh.pem
     size: '{{ security.dhparam_size }}'
-    mode: 0640
+    mode: '0640'
     owner: root
     group: dovecot
 
@@ -72,7 +72,7 @@
   copy:
     src: renew-cert.sh
     dest: /etc/letsencrypt/renewal-hooks/deploy/30-dovecot.sh
-    mode: 0755
+    mode: '0755'
 
 #                                                                              #
 # End of TLS / SSL Configuration ###############################################
@@ -101,7 +101,7 @@
   template:
     src: '{{ file }}'
     dest: '/etc/dovecot/{{ file }}'
-    mode: 0600
+    mode: '0600'
   with_items:
     - dovecot-ldap.conf.ext
   loop_control:
@@ -345,14 +345,14 @@
   copy:
     src: fts/decode2text
     dest: /usr/local/bin/decode2text
-    mode: 0755
+    mode: '0755'
 
 - name: Copy decode2text script
   when: mail.fts.active
   tags: logs
   file:
     path: /var/log/decode2text.log
-    mode: 0644
+    mode: '0644'
     owner: dovecot
     group: dovecot
     state: touch
