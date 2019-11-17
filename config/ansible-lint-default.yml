@@ -1,0 +1,40 @@
+---
+
+# This is a temporary ansible-lint file, to be able to start from a clean base.
+# We may uncomment some of the warnings once we find a proper way to fix them
+
+# It is currently used by the CI environment (Jenkins) and the pre-commit hook
+
+# Some files cannot be found by ansible lint, when using include_tasks.
+# See https://github.com/ansible/ansible-lint/issues/507
+# These files are excluded for now
+
+# The current disabled warnings are:
+
+# 701: No 'galaxy_info' found.
+# Not sure yet how to fix this, cannot find doc online yet.
+
+# 503: Tasks that run when changed should likely be handlers.
+# This one should be fixed.
+
+# 305: Use shell only when shell functionality is required
+# For this project, too many commands relies on shell scripts
+
+# 301: Commands should not change things if nothing needs doing
+# Maybe some of the commands can be made as handlers
+
+exclude_paths:
+  - install/playbooks/roles/ldap/tasks/main.yml
+  - install/playbooks/roles/postfix/tasks/main.yml
+  - install/playbooks/roles/dovecot/tasks/main.yml
+parseable: true
+quiet: false
+rulesdir: []
+skip_list:
+  - '701'     # No 'galaxy_info' found
+  - '503'     # Tasks that run when changed should likely be handlers
+  - '305'     # Use shell only when shell functionality is required
+  - '301'     # Commands should not change things if nothing needs doing
+tags: []
+use_default_rules: true
+verbosity: 1
