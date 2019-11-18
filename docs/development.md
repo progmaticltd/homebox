@@ -171,6 +171,20 @@ If you set this flag to true, and you want to test your system from a local comp
 version of the root certificate authority. They cab be downloaded on the on the [LetsEncrypt staging environment
 page](https://letsencrypt.org/docs/staging-environment/).
 
+### Setting up ansible-lint before commit
+
+The program ansible-lint is executed by the continuous integration platform, and should be used for each commit. A hook
+is provided in the git-hooks folder.
+
+The asible-lint software need to be installed on your machine. We are using the version in Debian Buster. The
+ansible-lint configuration file is in `config/ansible-lint-default.yml`.
+
+To ensure the hook is executed before each commit, run this on your local machine:
+
+```sh
+git config --local core.hooksPath git-hooks
+```
+
 ## Development playbook
 
 The first playbook to run is probably "dev-support.yml". It installs some diagnostic and convenience packages on the

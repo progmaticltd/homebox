@@ -11,7 +11,7 @@
     dest: /var/www/autodiscover/autodiscover/autodiscover.xml
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Create the autodiscover site
   notify: Restart nginx
@@ -23,7 +23,7 @@
     dest: '/etc/nginx/sites-available/autodiscover.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Ensure autodiscover resolves to localhost for the reverse proxy
   lineinfile:

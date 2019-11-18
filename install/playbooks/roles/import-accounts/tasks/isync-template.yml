@@ -6,7 +6,7 @@
     owner: '{{ user.uid }}'
     group: users
     state: directory
-    mode: 0700
+    mode: '0700'
   with_items:
     - '/home/users/{{ user.uid }}/mails/import/safe'
     - '/home/users/{{ user.uid }}/mails/import/conf'
@@ -20,7 +20,7 @@
     dest: '/home/users/{{ user.uid }}/mails/import/conf/{{ account.name }}-{{ account.type }}.conf'
     owner: '{{ user.uid }}'
     group: users
-    mode: 0600
+    mode: '0600'
   with_items:
     - '{{ user.external_accounts | default([]) }}'
   loop_control:
@@ -44,7 +44,7 @@
     path: '/home/users/{{ user.uid }}/mails/import/safe/{{ account.name }}-{{ account.type }}.conf'
     owner: '{{ user.uid }}'
     group: users
-    mode: 0600
+    mode: '0600'
   with_items:
     - '{{ user.external_accounts | default([]) }}'
   loop_control:

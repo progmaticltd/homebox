@@ -27,7 +27,7 @@
     dest: '/etc/nginx/sites-available/mta-sts.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Activate mta-sts web site
   tags: nginx

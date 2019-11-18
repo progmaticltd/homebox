@@ -10,7 +10,7 @@
   template:
     src: testmsg-01.txt
     dest: /tmp/testmsg-01.txt
-    mode: 0600
+    mode: '0600'
     owner: postfix
     group: postfix
 
@@ -44,8 +44,11 @@
 - name: Check if this specific email has been signed
   tags: postfix
   shell: >-
+    set -o pipefail ;
     cat '{{ email_found.stdout }}'
     | grep "^DKIM-Signature:.*"
+  args:
+    executable: /bin/bash
 
 - name: Check if the email is in the sent folder
   tags: postfix

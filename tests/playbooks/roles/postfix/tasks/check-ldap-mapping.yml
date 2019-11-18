@@ -4,8 +4,11 @@
 - name: Check the LDAP mapping
   tags: postfix
   shell: >-
+    set -o pipefail ;
     postmap -q '{{ user.mail }}' ldap:/etc/postfix/ldap-aliases.cf
     | grep '{{ user.uid }}'
+  args:
+    executable: /bin/bash
   become: yes
   become_method: sudo
   become_user: postfix
@@ -17,9 +20,12 @@
 - name: Check the LDAP mapping for email aliases
   tags: postfix
   shell: >-
+    set -o pipefail ;
     postmap -q '{{ user.otherMailBox[0] }}'
     ldap:/etc/postfix/ldap-aliases.cf
     | grep '{{ user.uid }}'
+  args:
+    executable: /bin/bash
   become: yes
   become_method: sudo
   become_user: postfix
@@ -31,9 +37,12 @@
 - name: Check the LDAP mapping for email aliases
   tags: postfix
   shell: >-
+    set -o pipefail ;
     postmap -q '{{ user.aliases[0] }}'
     ldap:/etc/postfix/ldap-aliases.cf
     | grep '{{ user.uid }}'
+  args:
+    executable: /bin/bash
   become: yes
   become_method: sudo
   become_user: postfix

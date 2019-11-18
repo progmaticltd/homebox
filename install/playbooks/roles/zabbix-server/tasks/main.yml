@@ -124,8 +124,11 @@
   become: true
   become_user: postgres
   shell: >-
+    set -o pipefail ;
     zcat /usr/share/zabbix-server-pgsql/{{ sql_file }}.sql.gz
     | psql -d zabbix -o /tmp/zabbix-{{ sql_file }}-install.log
+  args:
+    executable: /bin/bash
   with_items:
     - schema
     - images
@@ -157,7 +160,7 @@
     dest: /etc/zabbix/zabbix.conf.php
 
 - name: Delete the guest account
-  when: zabbix.guest_account == False
+  when: not zabbix.guest_account
   tags: postgres
   shell: psql -d zabbix -c "delete from users where alias='guest'"
   become: true
@@ -179,7 +182,7 @@
     line: '127.0.0.1    zabbix.{{ network.domain }}'
 
 - name: Remove the python / psycopg2 package
-  when: system.devel == False
+  when: not system.devel
   tags: apt
   apt:
     name: python-psycopg2

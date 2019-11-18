@@ -4,7 +4,7 @@
   tags: development
   apt:
     name: '{{ devel.packages }}'
-    state: latest
+    state: present
     install_recommends: no
 
 - name: Install a correct bashrc for root

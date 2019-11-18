@@ -4,7 +4,7 @@
   tags: apt,rspamd
   shell: dpkg -s rspamd
 
-- name: Check if the rspamd service is up and running
+- name: Check if the rspamd service is up and running # noqa 303
   tags: systemctl,rspamd
   shell: systemctl status rspamd
 

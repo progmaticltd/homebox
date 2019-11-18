@@ -113,14 +113,17 @@
   copy:
     src: renewal-hook.sh
     dest: /etc/letsencrypt/renewal-hooks/deploy/00-base.sh
-    mode: 0755
+    mode: '0755'
 
 - name: Check if the certificate already exists and is valid
   register: is_valid
   changed_when: false
   shell: >-
+    set -o pipefail ;
     certbot certificates -d {{ certificate_fqdn }} 2>&1
     | grep -c '(VALID:'
+  args:
+    executable: /bin/bash
   failed_when: false
 
 - name: Generate the certificate

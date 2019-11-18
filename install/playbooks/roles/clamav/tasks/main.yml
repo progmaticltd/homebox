@@ -53,7 +53,9 @@
     state: started
     enabled: yes
 
-- name: Wait for the clamav service to be started
+# Ansible lint generate a warning here.
+# FIXME: There should be a simpler way to check the status of a service
+- name: Wait for the clamav service to be started # noqa 303
   register: clamav_daemon
   command: systemctl status clamav-daemon
   retries: 10

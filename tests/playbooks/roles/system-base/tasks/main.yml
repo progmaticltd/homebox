@@ -20,8 +20,11 @@
 - name: Check if the firewall is enabled
   tags: security
   shell: >-
+    set -o pipefail ;
     ufw status | head -n 1 |
     grep "^Status: active$"
+  args:
+    executable: /bin/bash
 
 - name: Check if certbot is installed
   tags: apt

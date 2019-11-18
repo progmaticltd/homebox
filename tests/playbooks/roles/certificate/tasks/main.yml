@@ -17,9 +17,16 @@
 - name: Check if there is a certificate file
   tags: systemctl,cert
   shell: >-
+    set -o pipefail ;
     test -f "/etc/letsencrypt/live/{{ certificate.type }}.{{ network.domain }}/cert.pem"
+  args:
+    executable: /bin/bash
 
 - name: Check if the certificate is valid
   tags: systemctl,cert
   shell: >-
-    certbot -d "{{ certificate.type }}.{{ network.domain }}" certificates | grep VALID
+    set -o pipefail ;
+    certbot -d "{{ certificate.type }}.{{ network.domain }}" certificates
+    | grep -E '(\(VALID:| TEST_CERT)'
+  args:
+    executable: /bin/bash

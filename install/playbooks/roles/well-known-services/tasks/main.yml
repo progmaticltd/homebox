@@ -11,7 +11,7 @@
     dest: /etc/nginx/sites-available/well-known.conf
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Enable nginx site
   tags: nginx
@@ -29,7 +29,7 @@
     dest: /etc/nginx/sites-available/catchall.conf
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Enable catchall site
   tags: nginx

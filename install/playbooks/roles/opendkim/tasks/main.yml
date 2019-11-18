@@ -19,7 +19,7 @@
     state: directory
     owner: opendkim
     group: opendkim
-    mode: 0700
+    mode: '0700'
 
 - name: Create a directory for DKIM keys backup if it does not exists
   tags: dkim

@@ -3,19 +3,19 @@
 - name: Install the required file systems
   apt:
     name: 's3fs'
-    state: latest
+    state: present
 
 - name: Create the S3 credentials file
   template:
     src: passwd-s3fs
     dest: '/etc/homebox/s3fs-{{ location.name }}'
-    mode: 0600
+    mode: '0600'
 
 - name: Create the backup cache folder
   file:
     path: /home/.backup-cache/
     state: directory
-    mode: 0700
+    mode: '0700'
 
 - name: Extract backup location details
   tags: backup, facts

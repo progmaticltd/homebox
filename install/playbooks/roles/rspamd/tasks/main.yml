@@ -72,4 +72,4 @@
 
 - name: Include DMARC reporting if activated
   when: dmarc.send_reports.active
-  include_tasks: roles/rspamd/tasks/dmarc-reporting.yml
+  include_tasks: dmarc-reporting.yml

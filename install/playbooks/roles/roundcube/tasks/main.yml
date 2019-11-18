@@ -28,7 +28,7 @@
     dest: '/etc/nginx/sites-available/webmail.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Activate roundcube web site
   tags: nginx
@@ -51,7 +51,7 @@
     path: /etc/roundcube/plugins/dovecot_impersonate
     owner: root
     group: root
-    mode: 0755
+    mode: '0755'
     state: directory
 
 - name: Create the dovecot impersonate configuration
@@ -62,7 +62,7 @@
     dest: /etc/roundcube/plugins/dovecot_impersonate/config.inc.php
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Make sure the plugin reads the correct configuration file
   tags: plugins, impersonate
@@ -101,7 +101,7 @@
     dest: /etc/roundcube/config.inc.php
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Make sure there is a directory for each of these plugins
   tags: plugins
@@ -109,7 +109,7 @@
     path: '/etc/roundcube/plugins/{{ file }}'
     owner: root
     group: root
-    mode: 0755
+    mode: '0755'
     state: directory
   with_items:
     - password
@@ -127,7 +127,7 @@
     dest: '/etc/roundcube/plugins/{{ file }}/config.inc.php'
     owner: root
     group: www-data
-    mode: 0640
+    mode: '0640'
   with_items:
     - password
     - new_user_identity

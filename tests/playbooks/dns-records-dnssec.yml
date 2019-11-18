@@ -35,8 +35,8 @@
       count: '[1-9][0-9]*'
       list:
         - name: '{{ network.domain }}'
-          value: 'RRSIG\s+A'
+          value: 'RRSIG\s+(A|NSEC)'
         - name: '{{ network.domain }}'
-          value: 'RRSIG\s+MX'
+          value: 'RRSIG\s+(MX|NSEC)'
   roles:
     - dns-records

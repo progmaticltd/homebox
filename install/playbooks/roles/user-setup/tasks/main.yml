@@ -8,7 +8,7 @@
   when: administrators != []
   apt:
     name: sudo
-    state: latest
+    state: present
 
 - name: Create the group home folders if necessary
   tags: accounts
@@ -25,7 +25,7 @@
     owner: root
     group: root
     state: directory
-    mode: 0700
+    mode: '0700'
     recurse: true
   with_items:
     - /etc/skel/mails/maildir

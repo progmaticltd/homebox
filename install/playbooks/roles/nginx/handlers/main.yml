@@ -1,10 +1,14 @@
 ---
-- name: Restart nginx
-  service:
-    name: nginx
-    state: restarted
+- name: Activate AppArmor profiles
+  tags: security, apparmor
+  command: 'aa-enforce usr.sbin.nginx'
 
 - name: Restart AppArmor service
   service:
     name: apparmor
+    state: restarted
+
+- name: Restart nginx
+  service:
+    name: nginx
     state: restarted

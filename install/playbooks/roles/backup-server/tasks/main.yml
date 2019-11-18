@@ -7,7 +7,7 @@
     owner: '{{ user.uid }}'
     group: users
     state: directory
-    mode: 0700
+    mode: '0700'
   with_items:
     - '{{ users | selectattr("backup_ssh_key", "defined") | list }}'
   loop_control:
@@ -31,7 +31,7 @@
     owner: '{{ user.uid }}'
     group: users
     state: directory
-    mode: 0700
+    mode: '0700'
   with_items:
     - '{{ users | selectattr("backup_ssh_key", "defined") | list }}'
   loop_control:
@@ -57,7 +57,7 @@
     group: users
     path: '/{{ backup_root }}/{{ user.uid }}/{{ backup_folder }}'
     state: directory
-    mode: 0700
+    mode: '0700'
   with_items:
     - '{{ users | selectattr("backup_ssh_key", "defined") | list }}'
   loop_control:

@@ -41,7 +41,7 @@
 
 # Backup IP address
 - name: Build the reverse IP address (works for IPv4 or IPv6)
-  when: backup_ip is defined and backup_ip != ""
+  when: backup_ip is defined and (backup_ip | bool)
   tags: facts
   set_fact:
     reverse_backup_ip: "{{ backup_ip | ipaddr('revdns') }}"
@@ -81,7 +81,7 @@
     mode: '0640'
 
 - name: Copy the backup reverse configuration template
-  when: bind.generate_reverse and backup_ip is defined and backup_ip != ""
+  when: bind.generate_reverse and backup_ip is defined and (backup_ip | bool)
   tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
@@ -155,6 +155,7 @@
 - name: Make sure the ZSK file is linked in the live directory
   when: bind.dnssec.active
   shell: >-
+    set -o pipefail ;
     ls /etc/bind/keys/*key
     && ( grep -l "zone-signing key" /etc/bind/keys/*key
     | xargs -I {} ln -nsf {} live/zsk.key )
@@ -162,20 +163,24 @@
   args:
     chdir: /etc/bind/keys
     creates: /etc/bind/keys/live/zsk.key
+    executable: /bin/bash
 
 - name: Generate the zone signing key (ZSK)
   when: bind.dnssec.active
   shell: >-
+    set -o pipefail ;
     ( test -f /etc/bind/keys/*key && grep "zone-signing key" /etc/bind/keys/*key )
     || dnssec-keygen -q -a {{ bind.dnssec.algo }} -b 1024 {{ network.domain }}
     | xargs -I {} ln -s /etc/bind/keys/{}.key live/zsk.key
   args:
+    executable: /bin/bash
     chdir: /etc/bind/keys
     creates: /etc/bind/keys/live/zsk.key
 
 - name: Make sure the KSK file is linked in the live directory
   when: bind.dnssec.active
   shell: >-
+    set -o pipefail ;
     ls /etc/bind/keys/*key
     && ( grep -l "key-signing key" /etc/bind/keys/*key
     | xargs -I {} ln -nsf {} live/ksk.key )
@@ -183,29 +188,35 @@
   args:
     chdir: /etc/bind/keys
     creates: /etc/bind/keys/live/ksk.key
+    executable: /bin/bash
 
 - name: Generate the key signing key (KSK)
   when: bind.dnssec.active
   tags: encryption
   shell: >-
+    set -o pipefail ;
     ( test -f /etc/bind/keys/*key && grep "key-signing key" /etc/bind/keys/*key )
     || dnssec-keygen -q -a {{ bind.dnssec.algo }} -f KSK -b 2048 {{ network.domain }}
     | xargs -I {} ln -s /etc/bind/keys/{}.key live/ksk.key
   args:
+    executable: /bin/bash
     chdir: /etc/bind/keys
     creates: /etc/bind/keys/live/ksk.key
 
 - name: Set the permissions on the key and private key files
   when: bind.dnssec.active
   shell: >-
+    set -o pipefail ;
     chgrp bind /etc/bind/keys/*
     && chmod g+r /etc/bind/keys/*
   args:
+    executable: /bin/bash
     warn: false
 
 - name: Create a key authority for local testing
   when: bind.dnssec.active
   shell: >-
+    set -o pipefail ;
     cat /etc/bind/keys/live/ksk.key
     | sed '/^;/d'
     | sed 's/IN DNSKEY 257 3 8 /257 3 8 "/'
@@ -214,6 +225,7 @@
     > /etc/bind/keys/live/authority.key
   args:
     creates: /etc/bind/keys/live/authority.key
+    executable: /bin/bash
 
 - name: Allow queries to the DNS server
   ufw:
@@ -261,7 +273,7 @@
     remote_src: true
 
 - name: Copy DNS entries in bind cache directory (reverse for backup IP)
-  when: bind.generate_reverse and backup_ip is defined and backup_ip != ""
+  when: bind.generate_reverse and backup_ip is defined and (backup_ip | bool)
   copy:
     src: '/etc/bind/reverse-backup.{{ network.domain }}'
     dest: '/var/cache/bind/reverse-backup.{{ network.domain }}'
@@ -281,7 +293,7 @@
     line: '127.0.0.1    main.{{ network.domain }}'
 
 - name: Ensure the backup record resolves to me
-  when: backup_ip is defined and backup_ip != ""
+  when: backup_ip is defined and (backup_ip | bool)
   tags: hosts
   lineinfile:
     path: /etc/hosts

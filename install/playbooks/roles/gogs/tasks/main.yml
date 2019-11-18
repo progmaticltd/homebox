@@ -96,7 +96,7 @@
     state: directory
     owner: gogs
     group: gogs
-    mode: 0755
+    mode: '0755'
   with_items:
     - /opt/gogs/data
     - /etc/gogs/conf/auth.d
@@ -137,7 +137,7 @@
     dest: '/etc/nginx/sites-available/gogs.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Copy nginx configuration
   tags: nginx

@@ -28,7 +28,7 @@
   tags: apt
   apt:
     name: apticron
-    state: latest
+    state: present
 
 # Starting from Debian buster (10), /etc/apticron/apticron.conf is not
 # installed by default
@@ -40,7 +40,7 @@
 # The default apticron.conf file is available in /usr/lib/apticron
 - name: Install distribution default configuration of apticron if not already present
   tags: apt
-  when: apticron_conf_stat.stat.exists == False
+  when: not apticron_conf_stat.stat.exists
   copy:
     remote_src: yes
     src: /usr/lib/apticron/apticron.conf

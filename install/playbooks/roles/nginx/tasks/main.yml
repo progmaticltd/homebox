@@ -3,7 +3,7 @@
 - name: Install nginx
   apt:
     name: nginx
-    state: latest
+    state: present
 
 ################################################################################
 # At this point, the certificates should have been created already #############
@@ -58,7 +58,7 @@
   openssl_dhparam:
     path: /etc/nginx/dhparams.pem
     size: '{{ security.dhparam_size }}'
-    mode: 0600
+    mode: '0600'
     owner: root
     group: root
 
@@ -71,14 +71,12 @@
 # AppArmor configuration ======================================================
 
 - name: Install nginx AppArmor profile
-  notify: Restart nginx
+  notify:
+    - Activate AppArmor profiles
+    - Restart AppArmor service
+    - Restart nginx
   tags: security, apparmor
   template:
     src: 'apparmor.d/usr.sbin.nginx'
     dest: '/etc/apparmor.d/usr.sbin.nginx'
     force: no
-
-- name: Activate AppArmor profiles
-  tags: security, apparmor
-  command: 'aa-enforce usr.sbin.nginx'
-  notify: Restart AppArmor service

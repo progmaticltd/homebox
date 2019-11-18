@@ -60,7 +60,7 @@
     dest: /etc/sogo/milters.conf
     owner: sogo
     group: postfix
-    mode: 0640
+    mode: '0640'
 
 - name: Add the milter service
   notify:
@@ -70,7 +70,7 @@
   copy:
     src: milter-abook.py
     dest: /usr/local/bin/milter-sogo-abook.py
-    mode: 0755
+    mode: '0755'
 
 - name: Copy the address book search milter
   notify:
@@ -79,4 +79,4 @@
   template:
     src: milter-abook.service
     dest: /etc/systemd/system/milter-sogo-abook.service
-    mode: 0644
+    mode: '0644'

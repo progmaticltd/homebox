@@ -8,10 +8,13 @@
   retries: 9
   delay: 5
   shell: >-
+    set -o pipefail ;
     test -f /var/lib/dpkg/lock &&
     ls -l /proc/*/fd/* 2>/dev/null | grep '/var/lib/dpkg/lock' ;
     echo
-  until: result.stdout == ''
+  args:
+    executable: /bin/bash
+  until: (result.stdout | length) == 0
 
 # Install the most required packages
 - name: Update packages cache if older than 1h
@@ -25,7 +28,7 @@
   when: ansible_memtotal_mb < 2048
   apt:
     name: dphys-swapfile
-    state: latest
+    state: present
 
 - name: Upgrade the distribution
   tags: apt
@@ -48,7 +51,7 @@
   file:
     path: '{{ path }}'
     state: directory
-    mode: 0750
+    mode: '0750'
   with_items:
     - /etc/letsencrypt/archive
     - /etc/letsencrypt/live
@@ -59,7 +62,7 @@
   file:
     path: /etc/homebox
     state: directory
-    mode: 0755
+    mode: '0755'
 
 - name: Create the configuration file that defines paths to exclude for backup
   tags: backup
@@ -156,7 +159,7 @@
       - apparmor-utils
   apt:
     name: '{{ pkgs }}'
-    state: latest
+    state: present
 
 - name: Configure grub to add apparmor by default on boot
   register: grub_config
@@ -200,8 +203,8 @@
 - name: Wait for the server to come back online
   when: aa_enabled.rc == 1
   tags: security
-  local_action:
-    module: wait_for_connection
+  delegate_to: localhost
+  wait_for_connection:
     delay: 30
     sleep: 10
     timeout: '{{ system.reboot_timeout }}'
@@ -255,7 +258,10 @@
   register: ssh_keygen
   changed_when: false
   shell: >-
+    set -o pipefail ;
     ssh-keygen -r {{ network.domain }} | sed 's/ /. /'
+  args:
+    executable: /bin/bash
 
 - name: Add the SSHFP records
   when: bind.install and bind.dnssec.active
@@ -277,7 +283,7 @@
   copy:
     src: yubikey-enroll.sh
     dest: /usr/local/sbin/yubikey-enroll.sh
-    mode: 0700
+    mode: '0700'
 
 - name: Activate some aliases in bashrc
   template:

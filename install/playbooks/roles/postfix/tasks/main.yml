@@ -24,7 +24,7 @@
   copy:
     src: renew-cert.sh
     dest: /etc/letsencrypt/renewal-hooks/deploy/20-postfix.sh
-    mode: 0755
+    mode: '0755'
 
 #                                                                              #
 # End of TLS / SSL Configuration ###############################################
@@ -216,7 +216,7 @@
     spf_senders: '{{ "ip6:" + external_ip if external_ip | ipv6 else "ip4:" + external_ip }}'
 
 - name: Add the backup IP address as SPF sender
-  when: backup_ip is defined and backup_ip != ""
+  when: backup_ip is defined and (backup_ip | bool)
   tags: spf
   set_fact:
     spf_senders: '{{ spf_senders }} {{ "ip6:" + backup_ip if backup_ip | ipv6 else "ip4:" + backup_ip }}'

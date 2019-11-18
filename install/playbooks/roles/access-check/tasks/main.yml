@@ -18,7 +18,7 @@
   template:
     src: access-check.cf
     dest: /etc/homebox/access-check.conf
-    mode: 644
+    mode: '0644'
 
 - name: Create the security directory for each user
   file:
@@ -26,7 +26,7 @@
     owner: '{{ user.uid }}'
     group: users
     state: directory
-    mode: 0700
+    mode: '0700'
   with_items:
     - '{{ users }}'
     - uid: postmaster
