@@ -33,7 +33,7 @@ backup:
   - name: nas1
     automount: true
     uuid: 6e2cd39d-1109-43de-aee5-a6491fdec689
-    url: usb:///mnt/backup/nas1/homebox
+    url: usb:///homebox
     active: yes                      # The backup is currently active
     frequency: daily                 # Run the backup every day
     keep_daily: 3                    # Keep the last three days locally
@@ -162,17 +162,19 @@ backup
   - name: nas1
     automount: true
     uuid: 6d83f6d4-2769-46d0-b07b-675ab0863393
-    url: usb:///mnt/backup/nas1/homebox-backup
+    url: usb:///homebox-backup
     active: yes                      # The backup is currently active
     frequency: daily                 # Run the backup every day
     keep_daily: 3                    # Keep the last three days locally
     compression: lz4                 # Use the fast compression for daily backups
 ```
 
-The exact syntax for the url takes one drive name and an optional directory name. You can have
-multiple backups on the same device, by using a different sub-directory:
+The URL represents the path on the USB drive. You can have multiple backups on
+the same device, by using different directories:
 
-`url: usb:///mnt/backup/<drive-name>[/sub-directory]`
+`url: usb:///[directory]`
+
+`url: usb:///[some/][other/][backup/][directory]`
 
 The filesystem UUID should be specified, and the initial folder should already exist on the
 external device. To obtain the UUID of your external drive, use blkid command. You do not need to
@@ -211,7 +213,7 @@ backup:
   ...
   - name: s3main
     automount: true
-    url: s3fs:///mnt/backup/s3main/homebox
+    url: s3fs:///homebox
     active: yes
     frequency: weekly
     keep_weekly: 4

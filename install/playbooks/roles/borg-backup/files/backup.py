@@ -168,12 +168,24 @@ class BackupManager(object):
             return True
 
         # These locations are mounted automatically using systemd
-        if self.location.scheme in {'usb', 's3fs', 'sshfs'}:
+        if self.location.scheme in {'cifs', 'sshfs'}:
             # Make sure the directory to mount the backup exists
             self.mountPath = '/mnt/backup/' + self.configName
+            # The target directories are directly mounted at the mountPath.
             self.repositoryPath = self.mountPath + '/@server'
+            os.makedirs(self.repositoryPath, exist_ok=True)
             self.repositoryMounted = os.path.ismount(self.mountPath)
-            os.makedirs(self.mountPath, exist_ok=True)
+            return self.repositoryMounted
+
+        # These locations are mounted automatically using systemd
+        if self.location.scheme in {'s3fs', 'usb'}:
+            # Make sure the directory to mount the backup exists
+            self.mountPath = '/mnt/backup/' + self.configName
+            # The root of the remote filesystem is mounted at the mountPath,
+            # add the location path part to reflect the given URL.
+            self.repositoryPath = self.mountPath + self.location.path + '/@server'
+            os.makedirs(self.repositoryPath, exist_ok=True)
+            self.repositoryMounted = os.path.ismount(self.mountPath)
             return self.repositoryMounted
 
         # Throw an error in case the protocol is not implemented
