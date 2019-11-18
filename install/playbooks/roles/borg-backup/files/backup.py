@@ -164,27 +164,24 @@ class BackupManager(object):
         if self.location.scheme == 'dir':
             self.repositoryPath = self.location.path + '/@server'
             self.repositoryMounted = False
-            os.makedirs(self.location.path, exist_ok=True)
             return True
+
+        # Make sure the directory to mount the backup exists
+        self.mountPath = '/mnt/backup/' + self.configName
+        os.makedirs(self.mountPath, exist_ok=True)
 
         # These locations are mounted automatically using systemd
         if self.location.scheme in {'cifs', 'sshfs'}:
-            # Make sure the directory to mount the backup exists
-            self.mountPath = '/mnt/backup/' + self.configName
             # The target directories are directly mounted at the mountPath.
             self.repositoryPath = self.mountPath + '/@server'
-            os.makedirs(self.repositoryPath, exist_ok=True)
             self.repositoryMounted = os.path.ismount(self.mountPath)
             return self.repositoryMounted
 
         # These locations are mounted automatically using systemd
         if self.location.scheme in {'s3fs', 'usb'}:
-            # Make sure the directory to mount the backup exists
-            self.mountPath = '/mnt/backup/' + self.configName
             # The root of the remote filesystem is mounted at the mountPath,
             # add the location path part to reflect the given URL.
             self.repositoryPath = self.mountPath + self.location.path + '/@server'
-            os.makedirs(self.repositoryPath, exist_ok=True)
             self.repositoryMounted = os.path.ismount(self.mountPath)
             return self.repositoryMounted
 
