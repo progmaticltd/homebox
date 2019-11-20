@@ -14,6 +14,9 @@ test -d logs || mkdir logs
 lint_version=$(ansible-lint --version 2>&1)
 echo "Check if ansible-lint is installed and accessible: $lint_version"
 
+# Run ansible lint on the common roles
+ansible-lint common/roles/* | tee logs/ansible-lint-common.log
+
 # Run ansible lint on the installation playbooks
 ansible-lint install/playbooks/main.yml | tee logs/ansible-lint-install.log
 
