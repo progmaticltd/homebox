@@ -20,14 +20,14 @@
 
 # Backup IP address if defined
 - name: Get the backup IP address
-  when: network.backup_ip != None and network.backup_ip != ""
+  when: network.backup_ip != None and (network.backup_ip | bool)
   tags: facts
   set_fact:
     backup_ip: '{{ network.backup_ip }}'
 
 - name: Set backup IP address type (A or AAAA)
   tags: facts
-  when: backup_ip is defined and backup_ip != ""
+  when: backup_ip is defined and (backup_ip | bool)
   set_fact:
     backup_ip_type: '{{ backup_ip | ipv6 | ternary("AAAA", "A") }}'
 
