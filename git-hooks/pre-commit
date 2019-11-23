@@ -9,5 +9,74 @@ else
 	against=$(git hash-object -t tree /dev/null)
 fi
 
-# If there are whitespace errors, print the offending file names and fail.
-exec git diff-index --check --cached "$against" --
+# If there are whitespace errors or leftover merge conflicts markers,
+# print the offending file names and fail.
+git diff-index --check --cached "$against" -- || exit $?
+
+# Create a temporary file to list ansible files to check
+tmp_checklist=$(mktemp)
+
+# Write the list of modified ansible YAML files to be committed
+git diff-index --cached --name-only --diff-filter=ACMR -z "$against" -- \
+	"**/ansible/*.yml" \
+	"config/*.yml" \
+	"**/config/*.yml" \
+	"**/defaults/*.yml" \
+	"**/handlers/*.yml" \
+	"**/meta/*.yml" \
+	"**/playbooks/*.yml" \
+	"**/tasks/*.yml" \
+	"**/vars/*.yml" \
+	":(exclude)**/files/*.yml" \
+	":(exclude)**/templates/*.yml" \
+	> "$tmp_checklist"
+
+# If the checklist file is not empty, run ansible-lint
+if [ -s "$tmp_checklist" ]
+then
+	echo "Let's check files with ansible-lint"
+
+	# Create a temporary directory
+	tmp_dir="$(mktemp -d)/"
+
+	# Checkout all the files in the index to the temporary directory
+	echo "Checking out all files in the index to $tmp_dir"
+	git checkout-index --prefix="$tmp_dir" -a
+
+	# Run ansible-lint in the temporary directory on the ansible YAML files
+	# to be committed and remember the return value of the xargs call
+	( cd "$tmp_dir" \
+		&& xargs -0 ansible-lint < "$tmp_checklist" ) ; lint_result=$?
+
+	# Remove the temporary directory
+	rm -rf "$tmp_dir"
+
+	case "$lint_result" in
+		"0")
+			echo "Please beware of any warning"
+			echo "Looks good for ansible-lint"
+			;;
+		"123")
+			echo "Please fix the ansible-lint errors"
+			;;
+		"126"|"127") # ansible-lint cannot be run or is not found
+			cat << EOF
+
+Please make sure ansible-lint is installed and usable.
+
+The git pre-commit hook uses ansible-lint to validate YAML ansible playbooks
+files on commits.
+
+EOF
+			;;
+		*)
+			echo "Sorry, something wrong happened"
+			;;
+	esac
+fi
+
+# Remove the temporary checklist file
+rm -f "$tmp_checklist"
+
+# Fail in case of error
+exit ${lint_result:-0}
