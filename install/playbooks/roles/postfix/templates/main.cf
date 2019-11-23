@@ -34,11 +34,22 @@ smtpd_tls_CAfile=/etc/letsencrypt/live/smtp.{{ network.domain }}/fullchain.pem
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 
+tls_medium_cipherlist = ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+tls_preempt_cipherlist = no
+
+smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtpd_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtpd_tls_mandatory_ciphers = medium
+
+# not actually 1024 bits, this applies to all DHE >= 1024 bits
+smtpd_tls_dh1024_param_file = /etc/postfix/dhparams.pem
+
 # Encrypt communication with other SMTP servers
 smtpd_tls_security_level = may
+smtpd_tls_loglevel = 1
+
 smtp_tls_security_level = may
 smtp_tls_loglevel = 1
-smtpd_tls_loglevel = 1
 
 # Authentication via SASL
 smtpd_sasl_auth_enable = yes

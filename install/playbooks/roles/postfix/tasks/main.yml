@@ -25,6 +25,15 @@
     dest: /etc/letsencrypt/renewal-hooks/deploy/20-postfix.sh
     mode: '0755'
 
+- name: Generate a strong Diffie Hellman file
+  notify: Restart postfix
+  openssl_dhparam:
+    path: /etc/postfix/dhparams.pem
+    size: '{{ security.dhparam_size }}'
+    mode: '0600'
+    owner: root
+    group: root
+
 #                                                                              #
 # End of TLS / SSL Configuration ###############################################
 
