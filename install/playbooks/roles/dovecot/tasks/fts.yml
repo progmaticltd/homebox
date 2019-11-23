@@ -1,0 +1,47 @@
+---
+
+- name: Install packages needed for dovecot fts
+  apt:
+    update_cache: yes
+    cache_valid_time: 86400
+    name: '{{ dovecot.fts_packages }}'
+    state: present
+
+- name: Copy decode2text script
+  tags: scripts
+  copy:
+    src: fts/decode2text
+    dest: /usr/local/bin/decode2text
+    mode: '0755'
+
+- name: Copy decode2text script
+  tags: logs
+  file:
+    path: /var/log/decode2text.log
+    mode: '0644'
+    owner: dovecot
+    group: dovecot
+    state: touch
+
+- name: Copy fts mime configuration files
+  tags: config
+  template:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+  with_items:
+    - src: fts/mime-supported.conf
+      dest: /etc/dovecot/fts-mime-types.conf
+  loop_control:
+    loop_var: file
+
+- name: Copy solr configuration files
+  tags: config
+  notify: Restart tomcat
+  template:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+  with_items:
+    - src: 'fts/solr-schema-{{ ansible_distribution_release }}.xml'
+      dest: /etc/solr/conf/schema.xml
+  loop_control:
+    loop_var: file

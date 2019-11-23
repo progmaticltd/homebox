@@ -1,5 +1,9 @@
 ---
 
+tomcat_version:
+  stretch: 8
+  buster: 9
+
 sieve:
   global_scripts:
     - duplicate-checks.sieve
@@ -21,7 +25,6 @@ dovecot:
     - dovecot-sieve
     - dovecot-ldap
   fts_packages:
-    - tomcat8
     - solr-tomcat
     - dovecot-solr
     - poppler-utils
