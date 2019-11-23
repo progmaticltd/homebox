@@ -48,8 +48,12 @@ roundcube_packages:
   - php-fpm
   - php-ldap
   - php-net-sieve
-  - php-net-ldap2
-  - php-net-ldap3       # For LDAP address book
-  - php7.0-pspell       # For spell checking
   - aspell
-  - php7.0-zip          # For multiple attachments download
+  - php-zip          # For multiple attachments download
+  - php-pspell       # For spell checking
+
+# These packages are not available on buster
+# - php7.0-zip          # For multiple attachments download
+# - php7.0-pspell       # For spell checking
+# - php-net-ldap2
+# - php-net-ldap3       # For LDAP address book

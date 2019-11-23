@@ -11,6 +11,21 @@
     name: "{{ roundcube_packages }}"
     state: present
 
+- name: Get the current PHP version
+  tags: facts
+  register: php_version_cmd
+  shell: >-
+    set -o pipefail ;
+    dpkg -s php-fpm | sed -En 's/Version.*:(7\.[0-9]+).*/\1/p'
+  args:
+    executable: /bin/bash
+    warn: false
+
+- name: Set PHP version from the previous command
+  tags: facts
+  set_fact:
+    php_version: '{{ php_version_cmd.stdout }}'
+
 - name: Compute max upload size from max attachment size
   tags: config
   set_fact:
@@ -63,14 +78,6 @@
     owner: root
     group: root
     mode: '0644'
-
-- name: Make sure the plugin reads the correct configuration file
-  tags: plugins, impersonate
-  file:
-    src: /etc/roundcube/plugins/dovecot_impersonate/config.inc.php
-    dest: /usr/share/roundcube/plugins/dovecot-impersonate/config.inc.php
-    state: link
-    force: yes
 
 - name: Create the Dovecot ident plugin directory
   tags: plugins
@@ -140,7 +147,7 @@
   tags: config
   notify: Restart php-fpm
   replace:
-    path: /etc/php/7.0/fpm/php.ini
+    path: '/etc/php/{{ php_version }}/fpm/php.ini'
     regexp: '{{ line.regexp }}'
     replace: '{{ line.replace }}'
   with_items:
@@ -150,25 +157,6 @@
       replace: 'post_max_size = {{ post_max_size }}M'
   loop_control:
     loop_var: line
-
-# There is bugs in the name of the symbolic links on Debian
-# https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=roundcube-plugins-extra;dist=stable
-- name: Make sure the plugins are correctly named
-  command: >-
-    mv '/var/lib/roundcube/plugins/{{ folder.old }}'
-    '/var/lib/roundcube/plugins/{{ folder.new }}'
-  args:
-    creates: '/var/lib/roundcube/plugins/{{ folder.new }}'
-  with_items:
-    - old: keyboard-shortcuts
-      new: keyboard_shortcuts
-    - old: thunderbird-labels
-      new: thunderbird_labels
-    - old: dovecot-impersonate
-      new: dovecot_impersonate
-  loop_control:
-    loop_var: folder
-
 
 # AppArmor configuration ======================================================
 
