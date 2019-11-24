@@ -6,8 +6,7 @@
     name: lynx
 
 - name: Check all https security grades
-  include_tasks:
-    file: test-cert.yml
+  include_tasks: test-cert.yml
   with_items:
     - '{{ tests | selectattr("condition", "equalto", true) | list }}'
   loop_control:
