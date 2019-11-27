@@ -62,13 +62,15 @@
 # Remove firewall rules =======================================================
 - name: Clean up firewall rules
   shell: >-
+    set -o pipefail ;
     ufw status numbered
     | grep transmission
     | sed -r 's/^\[(..)\] .*/echo y | ufw delete \1/'
     | sort -r | sh
   args:
+    executable: /bin/bash
     warn: no
-    
+
 # AppArmor configuration ======================================================
 
 - name: Remove nginx and transmission AppArmor profiles
