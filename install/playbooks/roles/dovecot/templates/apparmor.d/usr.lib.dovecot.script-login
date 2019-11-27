@@ -120,6 +120,8 @@
   /etc/mail.rc r,
   /etc/gai.conf r,
   /etc/resolv.conf r,
+  /etc/host.conf r,
+  /etc/hosts r,
 
   # temporary files
   /tmp/mail.* rwk,
