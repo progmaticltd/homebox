@@ -112,6 +112,7 @@
   # Access configuration files
   /etc/passwd r,
   /etc/security/limits.d/ r,
+  /etc/security/limits.d/* r,
   /etc/nsswitch.conf r,
   /etc/environment r,
   /etc/default/locale r,
