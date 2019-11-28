@@ -22,3 +22,6 @@ ansible-lint install/playbooks/main.yml | tee logs/ansible-lint-install.log
 
 # Run ansible lint on the test playbooks
 ansible-lint tests/playbooks/main.yml | tee logs/ansible-lint-tests.log
+
+# Run ansible lint on the uninstall playbooks
+ansible-lint uninstall/playbooks/*.yml | tee logs/ansible-lint-uninstall.log
