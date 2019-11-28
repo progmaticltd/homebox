@@ -104,6 +104,22 @@
     dest: /etc/nginx/sites-enabled/www.{{ network.domain }}.conf
     state: link
 
+# TLS certificate access ======================================================
+
+- name: Set permissions for www-data to the www certificate folder
+  import_role:
+    name: cert-perms
+  vars:
+    cert_dir: 'www.{{ network.domain }}'
+    entity_group: 'www-data'
+
+- name: Set permissions for www-data to the domain certificate folder
+  import_role:
+    name: cert-perms
+  vars:
+    cert_dir: '{{ network.domain }}'
+    entity_group: 'www-data'
+
 # AppArmor configuration ======================================================
 
 - name: Install web site AppArmor profile

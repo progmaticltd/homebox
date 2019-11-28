@@ -13,8 +13,5 @@
   roles:
     - role: certificates
       tags: certificates
-
-- hosts: homebox
-  roles:
     - role: mta-sts
       tags: mta-sts
