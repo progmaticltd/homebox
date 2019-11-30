@@ -16,6 +16,7 @@ packages:
     - ldapscripts
     - libpam-pwquality
     - ldapvi
-    - nscd
+    - unscd
   remove:
     - libpam-cracklib
+    - nscd
