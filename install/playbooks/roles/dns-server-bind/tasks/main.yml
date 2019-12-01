@@ -27,6 +27,15 @@
       - dnsutils
     state: present
 
+- name: Get bind minor version
+  register: bind_minor_version
+  shell: >-
+    set -o pipefail ;
+    bind9-config --version
+    | sed -En 's/.*=9\.([0-9]+).*/\1/p'
+  args:
+    executable: /bin/bash
+
 - name: Stop the DNS server before creating the configuration
   service:
     name: bind9
