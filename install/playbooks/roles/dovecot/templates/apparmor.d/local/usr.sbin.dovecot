@@ -9,5 +9,5 @@
   /usr/lib/dovecot/* Px,
   /usr/lib/dovecot/modules/*.so mr,
 
-  /home/users/*/mails/maildir/maildirsize ra,
-  /home/users/*/mails/maildir/maildirsize rw,
+  owner /home/users/*/mails/maildir/maildirsize ra,
+  owner /home/users/*/mails/maildir/maildirsize rw,

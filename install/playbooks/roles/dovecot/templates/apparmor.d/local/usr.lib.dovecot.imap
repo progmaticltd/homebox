@@ -1,17 +1,17 @@
 
   # Basic maildir hierarchy
-  /home/users/*/mails/maildir/ r,
-  /home/users/*/mails/maildir/** rwkl,
+  owner /home/users/*/mails/maildir/ r,
+  owner /home/users/*/mails/maildir/** rwkl,
 
 {% if mail.virtual_folders.active %}
   # Virtual mailboxes hierarchy
-  /home/users/*/mails/virtual/ r,
-  /home/users/*/mails/virtual/** rwkl,
+  owner /home/users/*/mails/virtual/ r,
+  owner /home/users/*/mails/virtual/** rwkl,
 {% endif %}
 
   # Mail dir size access
-  /home/users/*/mails/maildir/maildirsize rw,
-  /home/users/*/mails/maildir/maildirsize ra,
+  owner /home/users/*/mails/maildir/maildirsize rw,
+  owner /home/users/*/mails/maildir/maildirsize ra,
 
   # Allow the imap process to run the global sieve scripts
   /etc/dovecot/sieve/* r,
@@ -20,17 +20,17 @@
   /usr/bin/rspamc mix,
 
   # Duplicate lock and logs
-  /home/users/*/.dovecot.lda-dupes rwkl,
-  /home/users/*/.dovecot.lda-dupes.lock rwkl,
-  /home/users/*/mails/sieve/logs/* rwk,
+  owner /home/users/*/.dovecot.lda-dupes rwkl,
+  owner /home/users/*/.dovecot.lda-dupes.lock rwkl,
+  owner /home/users/*/mails/sieve/logs/* rwk,
 
   # When storing indexes outside maildir
-  /home/users/*/mails/indexes/**/dovecot.index.log rak,
-  /home/users/*/mails/indexes/**/dovecot.index.log rwk,
-  /home/users/*/mails/indexes/ rak,
-  /home/users/*/mails/indexes/ rwkl,
-  /home/users/*/mails/indexes/** rak,
-  /home/users/*/mails/indexes/** rwkl,
+  owner /home/users/*/mails/indexes/**/dovecot.index.log rak,
+  owner /home/users/*/mails/indexes/**/dovecot.index.log rwk,
+  owner /home/users/*/mails/indexes/ rak,
+  owner /home/users/*/mails/indexes/ rwkl,
+  owner /home/users/*/mails/indexes/** rak,
+  owner /home/users/*/mails/indexes/** rwkl,
 
   # The imap daemon wants to read this folder
-  /home/users/*/ r,
+  owner /home/users/*/ r,
