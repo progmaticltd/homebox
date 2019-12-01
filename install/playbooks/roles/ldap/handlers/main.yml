@@ -5,7 +5,7 @@
     name: '{{ service.name }}'
     state: '{{ service.state }}'
   with_items:
-    - name: nscd
+    - name: unscd
       state: stopped
     - name: nslcd
       state: stopped
@@ -13,7 +13,7 @@
       state: restarted
     - name: nslcd
       state: started
-    - name: nscd
+    - name: unscd
       state: started
   loop_control:
     loop_var: service
