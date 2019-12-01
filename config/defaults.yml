@@ -83,11 +83,14 @@ mail_default:
   postfix:
     mynetworks: ~           # Authorized IP addresses to send emails without authentication
                             # e.g. 192.168.0.0/16, 172.16.0.0/12, 10.10.0.0/8
-
-                            # Put anything you want here, even on multiple lines, this will
-                            # be added on main.cf. See the example here:
     submission:
       port: 587
+    # Obfuscate user agent, or complete remove
+    # - version: remove the version.
+    # - remove: remove the whole user agent information
+    obfs_user_agent: version
+    # Put anything you want here, even on multiple lines, this will
+    # be added on main.cf. See the example here:
     # extra_settings: |
     #   disable_vrfy_command = no
     #   frozen_delivered_to = no
