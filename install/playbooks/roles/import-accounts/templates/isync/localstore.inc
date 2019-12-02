@@ -4,7 +4,7 @@ Host imap.{{ network.domain }}
 User "{{ user.uid }}{{ mail.impersonate.separator }}import"
 Pass "{{ import_password }}"
 SSLType IMAPS
-SSLVersions TLSv1.2
+SSLVersions {{ security.tls.versions | join(" ") }}
 
 # The local mail store
 IMAPStore local

@@ -69,11 +69,13 @@ listen:
     starttls: true
     starttls_required: true
     protocol_options:
-      - "no_sslv2"
-      - "no_sslv3"
-      - "no_tlsv1"
-      - "no_tlsv1_1"
-    ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
+{{ security.tls.unused_versions
+ | map("regex_replace", "^(.+)$", '      - "no_\\1"')
+ | map("replace", ".", "_")
+ | list
+ | join("\n")
+ | lower }}
+    ciphers: "{{ security.tls.openssl_ciphers }}"
     max_stanza_size: 65536
     shaper: c2s_shaper
     access: c2s
@@ -109,12 +111,13 @@ s2s_certfile: "/etc/ejabberd/default.pem"
 
 ## Custom OpenSSL options
 s2s_protocol_options:
-  - "no_sslv3"
-  - "no_sslv2"
-  - "no_sslv3"
-  - "no_tlsv1"
-  - "no_tlsv1_1"
-s2s_ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
+{{ security.tls.unused_versions
+ | map("regex_replace", "^(.+)$", '  - "no_\\1"')
+ | map("replace", ".", "_")
+ | list
+ | join("\n")
+ | lower }}
+s2s_ciphers: "{{ security.tls.openssl_ciphers }}"
 
 ##
 ## S2S whitelist or blacklist
