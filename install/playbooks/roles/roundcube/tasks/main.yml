@@ -38,6 +38,17 @@
     dest: '/etc/nginx/sites-enabled/webmail.{{ network.domain }}.conf'
     state: link
 
+# TLS certificate access ======================================================
+
+- name: Set permissions for www-data to the certificate folder
+  import_role:
+    name: cert-perms
+  vars:
+    cert_dir: '{{ certificate.type }}.{{ network.domain }}'
+    entity_group: 'www-data'
+
+# =============================================================================
+
 - name: Create a session key for roundcube
   tags: password
   notify: Restart nginx
