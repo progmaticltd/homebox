@@ -65,7 +65,7 @@ listen:
     ip: "::"
     module: ejabberd_c2s
     certfile: "/etc/ejabberd/default.pem"
-    dhfile: "/etc/ejabberd/c2s-dh.pem"
+    dhfile: "/etc/ssl/ffdhe{{ security.dhparam_size }}.pem"
     starttls: true
     starttls_required: true
     protocol_options:
@@ -106,7 +106,7 @@ disable_sasl_mechanisms: "digest-md5"
 
 {% if ejabberd.s2s.active %}
 s2s_use_starttls: '{{ ejabberd.s2s.use_starttls }}'
-s2s_dhfile: "/etc/ejabberd/s2s-dh.pem"
+s2s_dhfile: "/etc/ssl/ffdhe{{ security.dhparam_size }}.pem"
 s2s_certfile: "/etc/ejabberd/default.pem"
 
 ## Custom OpenSSL options

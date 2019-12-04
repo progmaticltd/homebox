@@ -274,10 +274,9 @@ security_default:
   # various options when luks is installed
   luks:
     yubikey: false
-  #############################################################################
-  # The size of the dhparams to generate. The bigger the safer, but the longer
-  # to generate. When developing, you can use a small value to decrease the
-  # deployment time.
+  # The size of the Diffie-Hellman parameters to use for DHE ciphers.
+  # Predifined values from the RFC7919 will be used wherever possible.
+  # Possible values are: 2048, 4096.
   dhparam_size: 2048
   # TLS configuration parameters according to the "Intermediate" configuration
   # recommended by Mozilla.

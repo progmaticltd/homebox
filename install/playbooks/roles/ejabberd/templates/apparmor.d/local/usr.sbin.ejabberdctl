@@ -1,6 +1,5 @@
-
-  # Default certificate
-  /etc/ejabberd/key+fullchain.pem r,
+  # TLS DH parameters
+  /etc/ssl/ffdhe{{ security.dhparam_size }}.pem r,
 
   # When http file upload is activated
   /var/www/ejabberd/files/ rwkl,

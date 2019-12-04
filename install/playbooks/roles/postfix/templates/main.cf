@@ -47,7 +47,7 @@ smtpd_tls_protocols = {{ security.tls.unused_versions
 smtpd_tls_mandatory_ciphers = medium
 
 # not actually 1024 bits, this applies to all DHE >= 1024 bits
-smtpd_tls_dh1024_param_file = /etc/postfix/dhparams.pem
+smtpd_tls_dh1024_param_file = /etc/ssl/ffdhe{{ security.dhparam_size }}.pem
 
 # Encrypt communication with other SMTP servers
 smtpd_tls_security_level = may

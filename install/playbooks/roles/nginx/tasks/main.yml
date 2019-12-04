@@ -29,16 +29,6 @@
 
 # Security improvements =======================================================
 
-- name: Generate a strong Diffie Hellman file
-  notify: Restart nginx
-  tags: security
-  openssl_dhparam:
-    path: /etc/nginx/dhparams.pem
-    size: '{{ security.dhparam_size }}'
-    mode: '0600'
-    owner: root
-    group: root
-
 - name: Install nginx secure configuration
   notify: Restart nginx
   template:
