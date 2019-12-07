@@ -37,7 +37,7 @@
   args:
     warn: false
     executable: /bin/bash
-  failed_when: direct_ip.stdout == proxied_ip.stdout or not (proxied_ip.stdout | bool)
+  failed_when: direct_ip.stdout == proxied_ip.stdout or not (proxied_ip.stdout | length > 0)
   changed_when: false
 
 - name: Check Tor with the official site

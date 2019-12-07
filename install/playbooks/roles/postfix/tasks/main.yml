@@ -216,7 +216,7 @@
     spf_senders: '{{ "ip6:" + external_ip if external_ip | ipv6 else "ip4:" + external_ip }}'
 
 - name: Add the backup IP address as SPF sender
-  when: backup_ip is defined and (backup_ip | bool)
+  when: backup_ip is defined and (backup_ip | length > 0)
   tags: spf
   set_fact:
     spf_senders: '{{ spf_senders }} {{ "ip6:" + backup_ip if backup_ip | ipv6 else "ip4:" + backup_ip }}'

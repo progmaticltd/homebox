@@ -12,7 +12,7 @@
 # This is checking that the DNS server has been fully propagated
 - name: Check DNS propagation for backup IP address
   register: backup_ip_check
-  when: backup_ip is defined and (backup_ip | bool)
+  when: backup_ip is defined and (backup_ip | length > 0)
   shell: >-
     host backup.{{ network.domain }}
   retries: '{{ bind.propagation.retries | default(10) }}'
