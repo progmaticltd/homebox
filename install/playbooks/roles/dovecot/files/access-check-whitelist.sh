@@ -5,6 +5,7 @@
 # Post login script for Dovecot, this is parsed by the parrent script.
 # Blocking: Yes
 # RunAs: User
+# ManageLAN: Yes
 # NeedDecryptKey: No
 # Score: Bonus
 # Description: IP whitelist management

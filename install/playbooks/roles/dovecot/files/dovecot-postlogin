@@ -142,7 +142,14 @@ else
     TIMES_BANNED=0
 fi
 
-PASS_ENV="TIMES_BANNED=$TIMES_BANNED DISPLAY_SCORE=$DISPLAY_SCORE ALLOW_EXTERNAL_QUERIES=$ALLOW_EXTERNAL_QUERIES"
+# The environment variables to pass to the script
+PASS_ENV="TIMES_BANNED=$TIMES_BANNED"
+PASS_ENV="$PASS_ENV DISPLAY_SCORE=$DISPLAY_SCORE"
+PASS_ENV="$PASS_ENV ALLOW_EXTERNAL_QUERIES=$ALLOW_EXTERNAL_QUERIES"
+
+# When calling a script as postmaster, the original environment variable USER
+# is set as "POSTMASTER". Pass it in a new var called "ORIG_USER"
+PASS_ENV="$PASS_ENV ORIG_USER=$USER"
 
 # Call all the scripts in the folder /etc/dovecot/login-scripts,
 # These scrips are non blocking, and run as the user
@@ -174,6 +181,12 @@ for script in $login_scripts; do
         continue
     fi
 
+    # Skip this script, do not do anything sensitive if the connection is denied
+    if [ "$STATUS" = "DENIED" -a "$needDecriptKey" = "1" ]; then
+        logger "Warning: Skipping the script $script (connection denied)"
+        continue
+    fi
+
     # Add the source (Roundcube/SOGo/IMAP) to the environment
     PASS_ENV="$PASS_ENV SOURCE=$SOURCE"
 
@@ -189,7 +202,7 @@ for script in $login_scripts; do
         # Pass the sytem key to the login scripts,
         # So they can decrypt sensitive content.
         DECRYPT_KEY=$(cat /etc/homebox/system-key)
-        PASS_ENV="${PASS_ENV} DECRYPT_KEY=$DECRYPT_KEY"
+        PASS_ENV="$PASS_ENV DECRYPT_KEY=$DECRYPT_KEY"
     fi
 
     # Email import scripts run as the current user

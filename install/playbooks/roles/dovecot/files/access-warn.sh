@@ -27,11 +27,14 @@ lastDay=$((unixtime - 86400))
 lastHour=$((unixtime - 3600))
 connSig=$(echo "$IP:$SOURCE:$STATUS" | md5sum | cut -f 1 -d ' ')
 
+DOMAIN=$(sed -En 's/DOMAIN=(.*)/\1/p' /etc/homebox/main.cf)
+EMAIL_ADDRESS="$ORIG_USER@$DOMAIN"
+
 # Check if already logged in from this IP
 # and the source used (imap/sogo/roundcube)
 # Get the last connection from this IP / source
 if [ -f "$connLogFile" ]; then
-    lastLogEntryFromThisIP=$(grep "$USER $connSig" "$connLogFile" | tail -n1 | cut -f 1 -d ' ')
+    lastLogEntryFromThisIP=$(grep "$ORIG_USER $connSig" "$connLogFile" | tail -n1 | cut -f 1 -d ' ')
 
     # Keep the last 1000 lines only
     # shellcheck disable=SC2016
@@ -54,9 +57,8 @@ if [ "0$lastLogEntryFromThisIP" -gt "0$lastHour" -a "$STATUS" = "DENIED" ]; then
 fi
 
 # Add a line to remember this connection has been logged
-echo "$unixtime $USER $connSig" >>"$connLogFile"
+echo "$unixtime $ORIG_USER $connSig" >>"$connLogFile"
 
-domain=$(echo "$MAIL" | cut -f 2 -d '@')
 STATUS=$(echo "$STATUS" | tr '[:upper:]' '[:lower:]')
 
 # Check if we can use XMPP to send the alerts
@@ -73,7 +75,7 @@ fi
 
 # Build the message with all the details
 MSG="IMAP connection ${STATUS}\n"
-MSG="${MSG}- User: ${USER} ($MAIL)\n"
+MSG="${MSG}- User: ${ORIG_USER} ($EMAIL_ADDRESS)\n"
 MSG="${MSG}- IP Address: ${IP}\n"
 MSG="${MSG}- Source: ${SOURCE}\n"
 
@@ -91,44 +93,43 @@ MSG="${MSG}\n\nIP Details: https://duckduckgo.com/?q=whois+${IP}"
 
 # Send the alert using XMPP
 if [ "$USE_XMPP" = "1" ]; then
-    xmppOutput=$(echo "$MSG" | sendxmpp -t -f "$xmppConfig" "$MAIL" 2>&1)
+    xmppOutput=$(echo "$MSG" | sendxmpp -t -f "$xmppConfig" "$ORIG_USER" 2>&1)
 
     # This will be in the external recipient email
     if [ "$xmppOutput" != "" ]; then
-        logger -p user.warning "sendxmpp error when sending warning from postmaster to $MAIL: $xmppOutput"
+        logger -p user.warning "sendxmpp error when sending warning from postmaster to $EMAIL_ADDRESS: $xmppOutput"
     fi
 fi
 
-# Send the alert by email first. If the user is logged in,
-# he will be informed
-subject="Alert from postmaster ($domain)"
-from="postmaster@${domain}"
+# Send the alert by email to the user first. This is mainly useful if the connection is denied.
+subject="Alert from postmaster ($DOMAIN)"
+from="postmaster@$DOMAIN"
 
 # Make sure it is properly displayed in standard mail systems
 contentHeader='Content-Type: text/plain; charset="ISO-8859-1"'
 alertHeader="X-Postmaster-Alert: IMAP access $STATUS"
 
-echo "$MSG" | mail -a "$contentHeader" -a "$alertHeader" -r "$from" -s "$subject" "$MAIL"
+echo "$MSG" | mail -a "$contentHeader" -a "$alertHeader" -r "$from" -s "$subject" "$EMAIL_ADDRESS"
 
-# Send the alerts to an external / global account
-if [ "$ALERT_ADDRESS" != "" ]; then
-
-    # Send the alert using XMPP
-    if [ "$USE_XMPP" = "1" ]; then
-        # Try to send to the extra recipient if configured
-        xmppOutput=$(echo "$MSG" | sendxmpp -t -f "$xmppConfig" "$ALERT_ADDRESS")
-    fi
+# Now, send the alert using XMPP, to the user account.
+if [ "$USE_XMPP" = "1" ]; then
+    # Try to send to the extra recipient if configured
+    xmppOutput=$(echo "$MSG" | sendxmpp -t -f "$xmppConfig" "$EMAIL_ADDRESS")
 
     if [ "$xmppOutput" != "" ]; then
         logger -p user.warning "sendxmpp error when sending warning from postmaster to $ALERT_ADDRESS: $xmppOutput"
     fi
+fi
+
+# Send the alerts to an external / global account
+if [ "$ALERT_ADDRESS" != "" -a "$ALERT_ADDRESS" != "$EMAIL_ADDRESS" ]; then
 
     # Send an email alert as well
-    subject="Alert from postmaster ($domain)"
-    from="postmaster@${domain}"
+    subject="Alert from postmaster ($DOMAIN)"
+    from="postmaster@$DOMAIN"
 
-    echo "$MSG" | mail -a "$contentHeader" -a "$alertHeader" -r "$from" -s "$subject" "$ALERT_ADDRESS"
-
+    echo "$MSG" | mail -a "$contentHeader" -a "$alertHeader" \
+        -r "$from" -s "$subject" "$ALERT_ADDRESS"
 fi
 
 exit $CONTINUE

@@ -46,6 +46,19 @@ if [ ! -r "$blacklistFile" ]; then
     exit $NEUTRAL
 fi
 
+# Do not blacklist lan IP for now
+isPrivate=$(ipcalc "$IP" | grep -c "Private Internet")
+if [ "$isPrivate" = "1" ]; then
+    exit $NEUTRAL
+fi
+
+# Exit directly if the IP address has been blacklisted
+allBlacklisted=$(grep -c '^0.0.0.0/0' $blacklistFile)
+if [ "0$allBlacklisted" -gt "0" ]; then
+    echo "All IP address blacklisted"
+    exit "$BLACKLIST_MALUS"
+fi
+
 # Check if the IP address is blacklisted
 blacklisted="0"
 if [ -r "$blacklistFile" ]; then
