@@ -65,6 +65,7 @@
     path: '/home/users/{{ user.uid }}/security/imap-connections.db'
     owner: '{{ user.uid }}'
     group: users
+    mode: '0600'
   with_items:
     - '{{ users }}'
     - uid: postmaster
