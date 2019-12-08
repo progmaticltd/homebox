@@ -146,22 +146,6 @@
   loop_control:
     loop_var: path
 
-- name: Allow nginx to access live and archive directories
-  tags: ssl
-  acl:
-    path: '{{ path }}'
-    entity: www-data
-    etype: user
-    permissions: rx
-    state: present
-    recursive: no
-    default: no
-  with_items:
-    - '/etc/letsencrypt/archive/{{ certificate_fqdn }}'
-    - '/etc/letsencrypt/live/{{ certificate_fqdn }}'
-  loop_control:
-    loop_var: path
-
 # In this direction, we should overwrite the symbolic links,
 # in case the certificates have been renewed
 - name: Backup the certificates on your local machine

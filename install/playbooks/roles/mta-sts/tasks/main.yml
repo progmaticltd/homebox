@@ -48,6 +48,15 @@
     src: 35-mta-sts.bind
     dest: /etc/homebox/dns-entries.d/35-mta-sts.bind
 
+# TLS certificate access ======================================================
+
+- name: Set permissions for www-data to the certificate folder
+  import_role:
+    name: cert-perms
+  vars:
+    cert_dir: '{{ certificate.type }}.{{ network.domain }}'
+    entity_group: 'www-data'
+
 # AppArmor configuration ======================================================
 
 - name: Install nginx AppArmor profile
