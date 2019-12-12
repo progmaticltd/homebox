@@ -14,8 +14,8 @@
     recurse: yes
     patterns: 'privkey*'
 
-# Posix permissions
-
+# Posix permissions: files should be readable, by default, only by root.
+# The ACL will extend this to other daemons
 - name: Set the unix mode for the certificate files readable by root only
   tags: cert
   file:
@@ -29,44 +29,34 @@
   loop_control:
     loop_var: file
 
-- name: Set the unix mode for the directory accessible by root only
+# Anyone should be able to enter the directory, the files are protected
+# by the step above.
+# For the default ACL in the next step, we will not use 'x' to avoid
+# new certificates being marked as executables, albeit this is harmless.
+- name: Set the unix mode for the directory to be world readable
   tags: cert
   file:
     path: '{{ dir }}'
     owner: root
     group: root
-    mode: '0700'
+    mode: '0755'
   with_items:
       - '/etc/letsencrypt/archive/{{ cert_dir }}'
       - '/etc/letsencrypt/live/{{ cert_dir }}'
   loop_control:
     loop_var: dir
 
-# This might be needed when restoring from a previous installation
-- name: Set the acl mask for the directory
-  tags: cert
-  acl:
-    path: '{{ path }}'
-    etype: mask
-    permissions: 'rx'
-    recursive: false
-    state: present
-  with_items:
-      - '/etc/letsencrypt/archive/{{ cert_dir }}'
-      - '/etc/letsencrypt/live/{{ cert_dir }}'
-  loop_control:
-    loop_var: path
-
-- name: Set the acl permissions for the directory
+# Now, we set the default acl for this directory: new certificates
+# will be automatically marked as readable by the entity
+- name: Set the acl and default acl permissions for the directory
   tags: cert
   acl:
     path: '{{ path }}'
     entity: '{{ entity_group }}'
     etype: user
-    permissions: 'rx'
+    permissions: 'r'
     recursive: false
     state: present
-    recalculate_mask: mask
     default: true
   with_items:
       - '/etc/letsencrypt/archive/{{ cert_dir }}'
@@ -74,6 +64,8 @@
   loop_control:
     loop_var: path
 
+# Finally, we set the existing certificates ACLs to be readable by
+# the entity. This is crucial, especially when restoring certificates
 - name: Set the acl for the files
   tags: cert
   acl:
@@ -82,7 +74,6 @@
     entity: '{{ entity_group }}'
     state: present
     permissions: 'r'
-    recalculate_mask: mask
   with_items:
     - '{{ certs.files }}'
     - '{{ keys.files }}'
