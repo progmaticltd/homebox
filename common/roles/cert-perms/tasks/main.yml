@@ -24,27 +24,10 @@
     group: root
     mode: '0600'
   with_items:
-    - '{{ certs.files }}'
-    - '{{ keys.files }}'
+    - '{{ certs.files | selectattr("mode", "ne", "0600") | list }}'
+    - '{{ keys.files | selectattr("mode", "ne", "0600") | list }}'
   loop_control:
     loop_var: file
-
-# Anyone should be able to enter the directory, the files are protected
-# by the step above.
-# For the default ACL in the next step, we will not use 'x' to avoid
-# new certificates being marked as executables, albeit this is harmless.
-- name: Set the unix mode for the directory to be world readable
-  tags: cert
-  file:
-    path: '{{ dir }}'
-    owner: root
-    group: root
-    mode: '0755'
-  with_items:
-      - '/etc/letsencrypt/archive/{{ cert_dir }}'
-      - '/etc/letsencrypt/live/{{ cert_dir }}'
-  loop_control:
-    loop_var: dir
 
 # Now, we set the default acl for this directory: new certificates
 # will be automatically marked as readable by the entity
@@ -60,12 +43,29 @@
     default: true
   with_items:
       - '/etc/letsencrypt/archive/{{ cert_dir }}'
-      - '/etc/letsencrypt/live/{{ cert_dir }}'
   loop_control:
     loop_var: path
 
+# Explicitly set the mask for this files as read. Because the parent
+# directory permissions are '0777', any ACL modification would create
+# a mask as executable! This flaw is in the acl command, not ansible.
+- name: Set the acl mask for the files
+  tags: cert
+  acl:
+    path: '{{ file.path }}'
+    etype: mask
+    state: present
+    permissions: 'r'
+  with_items:
+    - '{{ certs.files }}'
+    - '{{ keys.files }}'
+  loop_control:
+    loop_var: file
+
 # Finally, we set the existing certificates ACLs to be readable by
 # the entity. This is crucial, especially when restoring certificates
+# Do not recalculate the mask, or the files will be marked as executable!
+# This flaw is done by the acl command, not ansible.
 - name: Set the acl for the files
   tags: cert
   acl:
@@ -74,6 +74,7 @@
     entity: '{{ entity_group }}'
     state: present
     permissions: 'r'
+    recalculate_mask: no_mask
   with_items:
     - '{{ certs.files }}'
     - '{{ keys.files }}'
