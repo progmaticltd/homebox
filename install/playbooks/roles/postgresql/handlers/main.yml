@@ -1,0 +1,11 @@
+---
+
+- name: Restart postgresql
+  service:
+    name: '{{ service }}'
+    state: restarted
+  with_items:
+    - 'postgresql.service'
+    - 'postgresql@{{ postgres.version }}-main'
+  loop_control:
+    loop_var: service

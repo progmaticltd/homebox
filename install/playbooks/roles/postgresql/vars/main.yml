@@ -1,7 +1,9 @@
 ---
 
-packages:
-  - postgresql-common
-  - postgresql-client
-  - postgresql
-  - autopostgresqlbackup
+postgres:
+  version: 9.6
+  packages:
+    - postgresql-common
+    - postgresql-client
+    - postgresql
+    - autopostgresqlbackup

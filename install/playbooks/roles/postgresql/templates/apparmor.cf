@@ -1,0 +1,28 @@
+# Deployed by HomeBox by {{ role_name }}
+#include <tunables/global>
+
+/usr/lib/postgresql/{{ postgres.version }}/bin/postgres {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/openssl>
+  #include <abstractions/ssl_keys>
+
+  # Binaries
+  /usr/lib/postgresql/9.6/bin/postgres mr,
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+
+  # Configuration files
+  /etc/postgresql/** r,
+
+  # Databases content access
+  /var/lib/postgresql/** rwk,
+
+  # Shared files
+  /usr/share/postgresql/** r,
+
+  # Virtual filesystems
+  /dev/shm/PostgreSQL.* rw,
+  /proc/@{pid}/** w,
+  /proc/*/oom_score_adj w,
+  /run/postgresql/** rw,
+}

@@ -2,8 +2,20 @@
 
 - name: Install PostgreSQL database server
   apt:
-    name: "{{ packages }}"
+    name: "{{ postgres.packages }}"
     state: present
+
+- name: Add AppArmor profile
+  notify: Restart postgresql
+  register: apparmor_postgres
+  template:
+    src: apparmor.cf
+    dest: '/etc/apparmor.d/usr.lib.postgresql.{{ postgres.version }}.bin.postgres'
+
+- name: Enforce AppArmor on postgres
+  when: apparmor_postgres.changed
+  shell: >-
+    aa-enforce /etc/apparmor.d/usr.lib.postgresql.{{ postgres.version }}.bin.postgres
 
 - name: Configure PostgreSQL backups location
   replace:
