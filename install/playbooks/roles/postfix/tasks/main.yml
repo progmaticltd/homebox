@@ -176,7 +176,6 @@
     - postfix
     - postfix-sasl
     - postfix-rbl
-    - postfix-nr
   loop_control:
     loop_var: section
 
