@@ -140,13 +140,6 @@
     path: /var/log/mail.warn
     state: touch
 
-- name: Add custom postfix fail2ban rule to reduce noise
-  tags: security, fail2ban
-  notify: Restart fail2ban
-  template:
-    src: fail2ban-noise-reduction.conf
-    dest: /etc/fail2ban/filter.d/postfix-nr.conf
-
 - name: Add sections in the jail config
   tags: security, fail2ban
   notify: Restart fail2ban
