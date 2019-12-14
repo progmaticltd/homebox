@@ -174,6 +174,40 @@
     path: /var/log/mail.warn
     state: touch
 
+# Some misconfigured servers are generating a lot of errors
+# While this is happening before authentication, this generates
+# a lot of noise and can be problematic to extract
+# useful information from log files
+- name: Add custom postfix fail2ban rule to reduce noise
+  tags: security, fail2ban
+  notify: Restart fail2ban
+  template:
+    src: fail2ban-noise-reduction.conf
+    dest: /etc/fail2ban/filter.d/postfix-nr.conf
+
+- name: Add sections in the jail config
+  tags: security, fail2ban
+  notify: Restart fail2ban
+  ini_file:
+    path: /etc/fail2ban/jail.conf
+    section: 'postfix-nr'
+    option: '{{ option.name }}'
+    value: '{{ option.value }}'
+    create: yes
+  with_items:
+    - name: port
+      value: smtp,465,submission
+    - name: logpath
+      value: '%(postfix_log)s'
+    - name: backend
+      value: '%(postfix_backend)s'
+    - name: enabled
+      value: True
+    - name: bantime
+      value: '{{ mail.fail2ban.time }}'
+  loop_control:
+    loop_var: option
+
 - name: Activate fail2ban on postfix
   tags: security, fail2ban
   notify: Restart fail2ban
