@@ -10,6 +10,7 @@
   file:
     path: '{{ backup_directory }}/ldap/'
     state: directory
+    mode: '0700'
 
 - name: Display LDAP tree settings
   tags: debug

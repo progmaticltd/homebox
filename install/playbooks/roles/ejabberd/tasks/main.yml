@@ -86,7 +86,7 @@
   copy:
     src: renewal-hook.sh
     dest: /etc/letsencrypt/renewal-hooks/deploy/40-ejabberd.sh
-    mode: '0755'
+    mode: '0700'
 
 #
 # End of TLS / SSL Configuration ###############################################

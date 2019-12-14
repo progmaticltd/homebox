@@ -1,6 +1,8 @@
-  # LDAP and certificates access
+  # LDAP and certificates access, but not private key
   /etc/ldap/ldap.conf r,
-  /etc/letsencrypt/archive/ldap.{{ network.domain }}/* r,
+  /etc/letsencrypt/archive/ldap.{{ network.domain }}/cert*.pem r,
+  /etc/letsencrypt/archive/ldap.{{ network.domain }}/chain*.pem r,
+  /etc/letsencrypt/archive/ldap.{{ network.domain }}/fullchain*.pem r,
 
   /run/dovecot/old-stats-user w,
 

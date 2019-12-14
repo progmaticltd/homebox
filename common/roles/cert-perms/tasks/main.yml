@@ -14,6 +14,13 @@
     recurse: yes
     patterns: 'privkey*'
 
+# By default, consider the access to the private key is requested.
+# This might change to be explicitely requested by the caller task.
+- name: Set the default value of the "access_private_key" flag
+  when: access_private_key is not defined
+  set_fact:
+    access_private_key: true
+
 # Posix permissions: files should be readable, by default, only by root.
 # The ACL will extend this to other daemons
 - name: Set the unix mode for the certificate files readable by root only
@@ -30,8 +37,11 @@
     loop_var: file
 
 # Now, we set the default acl for this directory: new certificates
-# will be automatically marked as readable by the entity
+# will be automatically marked as readable by the entity.
+# This doesn't need to be done for nginx, as the certificates
+# are read by root anyway.
 - name: Set the acl and default acl permissions for the directory
+  when: access_private_key
   tags: cert
   acl:
     path: '{{ path }}'
@@ -46,6 +56,20 @@
   loop_control:
     loop_var: path
 
+# Create the list of files to modify. When the entity is nginx,
+# do not include the private key
+- name: Create the list of files to modify
+  when: not access_private_key
+  set_fact:
+    files_list: '{{ certs.files }}'
+
+# In this case, this is a specific entity (e.g. openldap)
+# we include the private key too.
+- name: Create the list of files to modify
+  when: access_private_key
+  set_fact:
+    files_list: '{{ certs.files + keys.files }}'
+
 # Explicitly set the mask for this files as read. Because the parent
 # directory permissions are '0777', any ACL modification would create
 # a mask as executable! This flaw is in the acl command, not ansible.
@@ -57,8 +81,7 @@
     state: present
     permissions: 'r'
   with_items:
-    - '{{ certs.files }}'
-    - '{{ keys.files }}'
+    - '{{ files_list }}'
   loop_control:
     loop_var: file
 
@@ -76,7 +99,6 @@
     permissions: 'r'
     recalculate_mask: no_mask
   with_items:
-    - '{{ certs.files }}'
-    - '{{ keys.files }}'
+    - '{{ files_list }}'
   loop_control:
     loop_var: file

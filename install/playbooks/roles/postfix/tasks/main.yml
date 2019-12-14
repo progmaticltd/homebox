@@ -11,7 +11,7 @@
 ################################################################################
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
-- name: Set the default permissions for the imap certificate folders
+- name: Set the default permissions for the smtp certificate folders
   import_role:
     name: cert-perms
   vars:
@@ -102,40 +102,6 @@
     loop_var: rule
 
 # AppArmor configuration ======================================================
-- name: Set postfix AppAromor profiles list
-  tags: security, apparmor
-  set_fact:
-    postfix_apparmor_profiles:
-    - usr.lib.postfix.anvil
-    - usr.lib.postfix.bounce
-    - usr.lib.postfix.cleanup
-    - usr.lib.postfix.discard
-    - usr.lib.postfix.error
-    - usr.lib.postfix.flush
-    - usr.lib.postfix.lmtp
-    - usr.lib.postfix.local
-    - usr.lib.postfix.master
-    - usr.lib.postfix.nqmgr
-    - usr.lib.postfix.oqmgr
-    - usr.lib.postfix.pickup
-    - usr.lib.postfix.pipe
-    - usr.lib.postfix.proxymap
-    - usr.lib.postfix.qmgr
-    - usr.lib.postfix.qmqpd
-    - usr.lib.postfix.scache
-    - usr.lib.postfix.showq
-    - usr.lib.postfix.smtp
-    - usr.lib.postfix.smtpd
-    - usr.lib.postfix.spawn
-    - usr.lib.postfix.tlsmgr
-    - usr.lib.postfix.trivial-rewrite
-    - usr.lib.postfix.verify
-    - usr.lib.postfix.virtual
-    - usr.sbin.sendmail
-    - usr.sbin.postdrop
-    - usr.sbin.postqueue
-    - usr.sbin.postalias
-
 - name: Install some postfix AppArmor profile
   tags: security, apparmor
   notify: Restart postfix
@@ -174,19 +140,50 @@
     path: /var/log/mail.warn
     state: touch
 
+- name: Add custom postfix fail2ban rule to reduce noise
+  tags: security, fail2ban
+  notify: Restart fail2ban
+  template:
+    src: fail2ban-noise-reduction.conf
+    dest: /etc/fail2ban/filter.d/postfix-nr.conf
+
+- name: Add sections in the jail config
+  tags: security, fail2ban
+  notify: Restart fail2ban
+  ini_file:
+    path: /etc/fail2ban/jail.conf
+    section: 'postfix-nr'
+    option: '{{ option.name }}'
+    value: '{{ option.value }}'
+    create: yes
+  with_items:
+    - name: port
+      value: smtp,465,submission
+    - name: logpath
+      value: '%(postfix_log)s'
+    - name: backend
+      value: '%(postfix_backend)s'
+    - name: enabled
+      value: True
+    - name: bantime
+      value: '{{ mail.fail2ban.time }}'
+  loop_control:
+    loop_var: option
+
 - name: Activate fail2ban on postfix
   tags: security, fail2ban
   notify: Restart fail2ban
   ini_file:
     path: /etc/fail2ban/jail.conf
-    option: enabled
     section: '{{ section }}'
+    option: enabled
     value: true
     create: no
   with_items:
     - postfix
     - postfix-sasl
     - postfix-rbl
+    - postfix-nr
   loop_control:
     loop_var: section
 

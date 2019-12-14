@@ -15,6 +15,7 @@
     group: postfix
 
 - name: Send an email to the main email address of the other user
+  no_log: true
   tags: postfix
   shell: >-
     swaks
