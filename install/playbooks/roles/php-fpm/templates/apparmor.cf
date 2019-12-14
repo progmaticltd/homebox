@@ -1,0 +1,44 @@
+# Deployed by HomeBox by {{ role_name }}
+#include <tunables/global>
+
+/usr/sbin/php-fpm{{ php.version }} {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/php>
+
+  # Capabilities
+  capability dac_override,
+  capability setgid,
+  capability setuid,
+  capability chown,
+  capability net_admin,
+  capability kill,
+
+  # Configuration files
+  /etc/php/{{ php.version }}/** r,
+  /etc/ldap/ldap.conf r,
+  /etc/ssl/openssl.cnf r,
+
+{% if webmail.install %}
+  # RoundCube related
+  /var/lib/roundcube/plugins/ r,
+  /var/lib/roundcube/plugins/** r,
+  /usr/share/roundcube/ r,
+  /usr/share/roundcube/** r,
+  /etc/roundcube/ r,
+  /etc/roundcube/** r,
+{% endif %}
+
+  # Virtual filesystems
+  /run/php/php*-fpm.pid w,
+  /run/php/php*-fpm.sock w,
+
+  # Binary files
+  /usr/sbin/php-fpm* mr,
+  /usr/lib/php/*/*.so mr,
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+
+  # Log files
+  /var/log/ r,
+  /var/log/php*-fpm.log rwk,
+}

@@ -10,10 +10,22 @@
     name: php-fpm
     state: present
 
+- name: Add AppArmor profile
+  notify: Restart php-fpm
+  register: apparmor_php
+  template:
+    src: apparmor.cf
+    dest: '/etc/apparmor.d/usr.sbin.php-fpm{{ php.version }}'
+
+- name: Enforce AppArmor on php
+  when: apparmor_php.changed
+  shell: >-
+    aa-enforce /etc/apparmor.d/usr.sbin.php-fpm{{ php.version }}
+
 - name: Update PHP configuration
   notify: Restart php-fpm
   replace:
-    path: /etc/php/7.0/fpm/php.ini
+    path: '/etc/php/{{ php.version }}/fpm/php.ini'
     regexp: '{{ option.regexp }}'
     replace: '{{ option.replace }}'
   with_items:
