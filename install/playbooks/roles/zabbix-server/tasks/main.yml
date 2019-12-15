@@ -59,15 +59,6 @@
     dest: '/etc/nginx/sites-enabled/zabbix.{{ network.domain }}.conf'
     state: link
 
-# TLS certificate access ======================================================
-
-- name: Set permissions for www-data to the certificate folder
-  import_role:
-    name: cert-perms
-  vars:
-    cert_dir: '{{ certificate.type }}.{{ network.domain }}'
-    entity_group: 'www-data'
-
 # AppArmor configuration ======================================================
 
 - name: Install nginx AppArmor profile

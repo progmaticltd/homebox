@@ -6,6 +6,7 @@
   file:
     path: '{{ backup_directory }}/certificates/'
     state: directory
+    mode: '0700'
 
 # The "--ignore-existing" option skip the files already existing,
 # especially the symbolic links in the live folder
@@ -25,6 +26,7 @@
       - '--exclude=renewal-hooks'
       - '--ignore-existing'
       - '--update'
+      - '--chmod=D0755,F0600'
 
 - name: Use the default domain name for FQDN
   when: certificate.type == '@'
@@ -130,24 +132,25 @@
   when: is_valid.stdout == "0"
   include_tasks: gencert.yml
 
-- name: Restrict permissions for the root of LetsEncrypt certificate directory
+# These permissions are needed to avoid problems with the
+
+- name: Set the permissions for certificate directories
   file:
-    path: '{{ path.location }}'
+    path: '{{ path }}'
     state: directory
-    mode: '{{ path.mode | default("0755") }}'
+    mode: '0755'
   with_items:
-    - location: '/etc/letsencrypt'
-    - location: '/etc/letsencrypt/archive'
-    - location: '/etc/letsencrypt/live'
-    - location: '/etc/letsencrypt/archive/{{ certificate_fqdn }}'
-      mode: '0700'
-    - location: '/etc/letsencrypt/live/{{ certificate_fqdn }}'
-      mode: '0700'
+    - '/etc/letsencrypt'
+    - '/etc/letsencrypt/archive'
+    - '/etc/letsencrypt/live'
+    - '/etc/letsencrypt/archive/{{ certificate_fqdn }}'
+    - '/etc/letsencrypt/live/{{ certificate_fqdn }}'
   loop_control:
     loop_var: path
 
 # In this direction, we should overwrite the symbolic links,
 # in case the certificates have been renewed
+# We force the permissions to 755 for dirs and 600 for files
 - name: Backup the certificates on your local machine
   when: system.devel or system.keep_certs
   tags: cert,sync
@@ -161,3 +164,4 @@
       - '--exclude=readme.md'
       - '--exclude=renewal-hooks'
       - '--update'
+      - '--chmod=D0755,F0600'

@@ -38,12 +38,3 @@
     src: /etc/nginx/sites-available/catchall.conf
     dest: /etc/nginx/sites-enabled/catchall.conf
     state: link
-
-# TLS certificate access ======================================================
-
-- name: Set permissions for www-data to the certificate folder
-  import_role:
-    name: cert-perms
-  vars:
-    cert_dir: '{{ network.domain }}'
-    entity_group: 'www-data'

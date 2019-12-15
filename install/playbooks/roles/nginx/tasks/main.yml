@@ -5,29 +5,6 @@
     name: nginx
     state: present
 
-################################################################################
-# At this point, the certificates should have been created already #############
-# in order to have SSL and TLS encryption activated.                           #
-- name: Allow the web server to access certificates
-  tags: ssl
-  notify: Restart nginx
-  acl:
-    path: '{{ path }}'
-    entity: www-data
-    etype: user
-    permissions: rx
-    state: present
-    recursive: yes
-    default: yes
-  with_items:
-    - /etc/letsencrypt/archive
-    - /etc/letsencrypt/live
-  loop_control:
-    loop_var: path
-
-#                                                                              #
-# End of TLS / SSL Configuration ###############################################
-
 - name: Disable nginx default site
   notify: Restart nginx
   file:

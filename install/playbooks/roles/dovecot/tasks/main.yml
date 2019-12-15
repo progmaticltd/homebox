@@ -44,6 +44,14 @@
   vars:
     cert_dir: 'ldap.{{ network.domain }}'
     entity_group: dovecot
+    access_private_key: false
+
+- name: Copy the certificate renewal hook
+  tags: scripts
+  copy:
+    src: renewal-hook.sh
+    dest: /etc/letsencrypt/renewal-hooks/deploy/20-dovecot.sh
+    mode: '0700'
 
 - name: Set the default permissions for the pop3 certificate folders
   when: mail.pop3
