@@ -19,7 +19,7 @@
     --webroot
     --webroot-path "{{ site_root }}"
     --domain "{{ certificate_fqdn }}"
-    {{ "-d " + domain_alias + "." + network.domain if domain_alias is defined and (domain_alias | bool) else "" }}
+    {{ "-d " + domain_alias + "." + network.domain if domain_alias is defined and (domain_alias | length > 0) else "" }}
     --email "admin@{{ network.domain }}"
     {{ domain_alias_cmd is defined | ternary("--expand", "") }}
     {{ system.devel | ternary("--test-cert", "") }}

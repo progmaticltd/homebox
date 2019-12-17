@@ -40,7 +40,7 @@
   become: true
   become_user: sogo
   become_method: sudo
-  when: sogo.install and not sogo_backup_dir.changed and (sogo_last_backup_dir.stdout | bool)
+  when: sogo.install and not sogo_backup_dir.changed and (sogo_last_backup_dir.stdout | length > 0)
   notify: Restart memcached
   shell: >-
     test -f /var/backups/sogo/{{ sogo_last_backup_dir.stdout }}/{{ user.uid }} &&
