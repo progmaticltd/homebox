@@ -12,6 +12,9 @@
 # Blacklisted IP address score:
 BLACKLIST_MALUS=$(grep BLACKLIST_MALUS /etc/homebox/access-check.conf | cut -f 2 -d =)
 
+# This both makes shellcheck happy and gives a default sensible value if the above fail
+BLACKLIST_MALUS=$((BLACKLIST_MALUS == 0 ? 255 : BLACKLIST_MALUS))
+
 # Do not change anything when the IP address is not found
 NEUTRAL=0
 
@@ -53,10 +56,10 @@ if [ "$isPrivate" = "1" ]; then
 fi
 
 # Exit directly if the IP address has been blacklisted
-allBlacklisted=$(grep -c '^0.0.0.0/0' $blacklistFile)
+allBlacklisted=$(grep -c '^0.0.0.0/0' "$blacklistFile")
 if [ "0$allBlacklisted" -gt "0" ]; then
     echo "All IP address blacklisted"
-    exit "$BLACKLIST_MALUS"
+    exit $BLACKLIST_MALUS
 fi
 
 # Check if the IP address is blacklisted
@@ -68,7 +71,7 @@ fi
 # Exit directly if the IP address has been blacklisted
 if [ "0$blacklisted" -gt "0" ]; then
     echo "IP address is blacklisted by $USER"
-    exit "$BLACKLIST_MALUS"
+    exit $BLACKLIST_MALUS
 fi
 
 # Continue the normal access by default

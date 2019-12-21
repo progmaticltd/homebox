@@ -71,7 +71,7 @@ isoLastMinute=$(date -d '1 min ago' --rfc-3339=seconds | sed 's/+.*//')
 condition="unixtime >= '$isoLastMinute' AND source='$SOURCE' AND ip='$IP'"
 query="select count(*) from connections where $condition"
 
-count=$(sqlite3 -batch $connLogFile "$query")
+count=$(sqlite3 -batch "$connLogFile" "$query")
 
 # Check if already connected from this IP in the last minute, then exit safely
 if [ "0$count" -gt "0" ]; then
@@ -121,9 +121,8 @@ elif [ "$ALLOW_EXTERNAL_QUERIES" = "YES" ]; then
     # -s: silent
     # -f: fail silently, return an empty string on failure
     # -m 10: wait maximum 10 seconds for the whole process
-    options='-s -f -m 10'
     url="http://ip-api.com/line/$IP?fields=isp"
-    isp=$(curl $options "$url" | sed "s/'/''/g")
+    isp=$(curl -s -f -m 10 "$url" | sed "s/'/''/g")
 fi
 
 if [ "$isp" = "" ]; then
@@ -140,4 +139,4 @@ sqlite3 -batch "$connLogFile" "$command"
 # While we are here, let's do some cleanup and keep one year only
 isoLastYear=$(date -d '1 year ago' --rfc-3339=seconds | sed 's/+.*//')
 query="delete from connections where unixtime <= '$isoLastYear'"
-sqlite3 -batch $connLogFile "$query"
+sqlite3 -batch "$connLogFile" "$query"

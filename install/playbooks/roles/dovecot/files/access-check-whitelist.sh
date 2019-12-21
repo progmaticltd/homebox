@@ -13,6 +13,9 @@
 # Whitelisted IP address score:
 WHITELIST_BONUS=$(grep WHITELIST_BONUS /etc/homebox/access-check.conf | cut -f 2 -d =)
 
+# This both makes shellcheck happy and gives a default sensible value if the above fail
+WHITELIST_BONUS=$((WHITELIST_BONUS == 0 ? 255 : WHITELIST_BONUS))
+
 # Do not change anything when the IP address is not found
 NEUTRAL=0
 
@@ -56,7 +59,7 @@ fi
 # Exit directly if the IP address has been whitelisted
 if [ "0$whitelisted" -gt "0" ]; then
     echo "IP address is whitelisted by $USER"
-    exit "$WHITELIST_BONUS"
+    exit $WHITELIST_BONUS
 fi
 
 # Continue the normal access by default

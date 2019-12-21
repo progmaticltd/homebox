@@ -39,7 +39,7 @@ if [ -f "$connLogFile" ]; then
     sed -i -e ':a' -e '$q;N;1001,$D;ba' "$connLogFile"
 fi
 
-# Some clients are opening mutlitple connections on startup
+# Some clients are opening multiple connections on startup
 # When status is warning, send the alert only one time per hour
 if [ "0$lastLogEntryFromThisIP" -gt "0$lastHour" ]; then
     exit
