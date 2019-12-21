@@ -44,7 +44,7 @@ fi
 # Some clients are opening mutlitple connections on startup
 # When status is warning, send the alert only one time per day, IP and source
 # shellcheck disable=SC2166
-if [ "0$lastLogEntryFromThisIP" -gt "0$lastDay" -a "$STATUS" = "WARNING" ]; then
+if [ "0$lastLogEntryFromThisIP" -gt "0$lastDay" ] && [ "$STATUS" = "WARNING" ]; then
     exit
 fi
 
@@ -52,7 +52,7 @@ fi
 # to avoid DoS. At this time, the user should be warned that his
 # account is compromised
 # shellcheck disable=SC2166
-if [ "0$lastLogEntryFromThisIP" -gt "0$lastHour" -a "$STATUS" = "DENIED" ]; then
+if [ "0$lastLogEntryFromThisIP" -gt "0$lastHour" ] && [ "$STATUS" = "DENIED" ]; then
     exit
 fi
 
@@ -63,7 +63,7 @@ USE_XMPP=0
 xmppConfig="/home/users/postmaster/.sendxmpprc"
 
 # shellcheck disable=SC2166
-if [ -x "/usr/bin/sendxmpp" -a -r "$xmppConfig" ]; then
+if [ -x "/usr/bin/sendxmpp" ] && [ -r "$xmppConfig" ]; then
     logger "Using mail and XMPP to send alerts"
     USE_XMPP=1
 else

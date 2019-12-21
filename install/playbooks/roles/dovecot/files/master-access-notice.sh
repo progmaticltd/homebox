@@ -54,7 +54,7 @@ domain=$(echo "$MAIL" | cut -f 2 -d '@')
 USE_XMPP=0
 xmppConfig="/home/users/postmaster/.sendxmpprc"
 # shellcheck disable=SC2166
-if [ -x "/usr/bin/sendxmpp" -a -r "$xmppConfig" ]; then
+if [ -x "/usr/bin/sendxmpp" ] && [ -r "$xmppConfig" ]; then
     logger "Using mail and XMPP to send alerts"
     USE_XMPP=1
 else
