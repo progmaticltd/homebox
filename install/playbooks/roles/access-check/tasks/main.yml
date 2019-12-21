@@ -65,3 +65,16 @@
     mode: '0400'
     owner: postmaster
     force: no
+
+- name: Use IP whitelist scheme for postmaster
+  template:
+    src: 'postmaster-ip-{{ list }}.cf'
+    dest: '/home/users/postmaster/.config/homebox/ip-{{ list }}.txt'
+    owner: postmaster
+    group: users
+    mode: '0400'
+  with_items:
+    - blacklist
+    - whitelist
+  loop_control:
+    loop_var: list

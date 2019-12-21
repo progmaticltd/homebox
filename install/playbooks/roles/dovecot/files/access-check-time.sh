@@ -20,12 +20,9 @@ log_error() {
     echo "$@" 1>&2;
 }
 
-# Read the gloabal check access policy
-globalConf='/etc/homebox/access-check.conf'
-
 # Read global configuration
-# shellcheck disable=SC1090
-. "$globalConf"
+# shellcheck disable=SC1091
+. /etc/homebox/access-check.conf
 
 # Security directory for the user, where the connection logs are saved
 # and the custom comfiguration overriding
@@ -39,6 +36,8 @@ if [ ! -x /usr/bin/geoiplookup ]; then
     logger -p user.warning "Script access-check-time: Cannot find or execute geoiplookup"
     exit $TRUST
 fi
+
+# (setq flycheck-shellcheck-follow-sources nil)
 
 # Create the security directory for the user
 test -d "$userconfDir" || mkdir "$userconfDir"
@@ -87,8 +86,7 @@ hour=$(TZ=$WORKING_TIMEZONE date +'%H')
 time=$(TZ=$WORKING_TIMEZONE date +'%H:%M')
 
 # If inside working hours, just exit
-# shellcheck disable=SC2166
-if [ "$hour" -ge "$WORKING_TIME_START" -a "$hour" -le "$WORKING_TIME_END" ]; then
+if [ "$hour" -ge "$WORKING_TIME_START" ] && [ "$hour" -le "$WORKING_TIME_END" ]; then
     logger "Inside working hours ($time)"
     exit $TRUST
 fi

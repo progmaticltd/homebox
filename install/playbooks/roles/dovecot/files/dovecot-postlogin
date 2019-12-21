@@ -142,7 +142,14 @@ else
     TIMES_BANNED=0
 fi
 
-PASS_ENV="TIMES_BANNED=$TIMES_BANNED DISPLAY_SCORE=$DISPLAY_SCORE ALLOW_EXTERNAL_QUERIES=$ALLOW_EXTERNAL_QUERIES"
+# The environment variables to pass to the script
+PASS_ENV="TIMES_BANNED=$TIMES_BANNED"
+PASS_ENV="$PASS_ENV DISPLAY_SCORE=$DISPLAY_SCORE"
+PASS_ENV="$PASS_ENV ALLOW_EXTERNAL_QUERIES=$ALLOW_EXTERNAL_QUERIES"
+
+# When calling a script as postmaster, the original environment variable USER
+# is set as "POSTMASTER". Pass it in a new var called "ORIG_USER"
+PASS_ENV="$PASS_ENV ORIG_USER=$USER"
 
 # Call all the scripts in the folder /etc/dovecot/login-scripts,
 # These scrips are non blocking, and run as the user
@@ -169,8 +176,14 @@ for script in $login_scripts; do
     # Bonus script, remove points; e.g trusted IP addresses
     bonusScript=$(grep -c '^# Score: Bonus' "${scriptPath}")
 
-    if [ "$isPrivate" = "1" -a "$manageLan" = "0" ]; then
+    if [ "$isPrivate" = "1" ] && [ "$manageLan" = "0" ]; then
         logger "Skipping script '$script' for user '$USER' from IP address <$IP>"
+        continue
+    fi
+
+    # Skip this script, do not do anything sensitive if the connection is denied
+    if [ "$STATUS" = "DENIED" ] && [ "$needDecriptKey" = "1" ]; then
+        logger "Warning: Skipping the script $script (connection denied)"
         continue
     fi
 
@@ -185,11 +198,11 @@ for script in $login_scripts; do
 
     # Email import scripts need the decryption key to access the password
     # Pass the decryption key only if the current access is valid
-    elif [ "$STATUS" = "OK" -a "$needDecriptKey" = "1" ]; then
+    elif [ "$STATUS" = "OK" ] && [ "$needDecriptKey" = "1" ]; then
         # Pass the sytem key to the login scripts,
         # So they can decrypt sensitive content.
         DECRYPT_KEY=$(cat /etc/homebox/system-key)
-        PASS_ENV="${PASS_ENV} DECRYPT_KEY=$DECRYPT_KEY"
+        PASS_ENV="$PASS_ENV DECRYPT_KEY=$DECRYPT_KEY"
     fi
 
     # Email import scripts run as the current user

@@ -12,10 +12,8 @@
 # Add this score every time the IP is blacklisted
 FAIL2BAN_MALUS=$(grep IPS_FAIL2BAN_MALUS /etc/homebox/access-check.conf | cut -f 2 -d =)
 
-# Use 10 when not empty / not found
-if [ "$FAIL2BAN_MALUS" = "" ]; then
-    FAIL2BAN_MALUS=10
-fi
+# Use 10 when the variable is empty or not found
+FAIL2BAN_MALUS=$((FAIL2BAN_MALUS == 0 ? 10 : FAIL2BAN_MALUS ))
 
 # Do not change anything when the IP address is not found
 NEUTRAL=0
@@ -28,7 +26,7 @@ secdir="$HOME/security"
 # Exit if a script already check this IP address
 ipSig=$(echo "$IP:$SOURCE" | md5sum | cut -f 1 -d ' ')
 lockFile="$secdir/$ipSig.lock"
-test -f "$lockFile" && exit "$TRUST"
+test -f "$lockFile" && exit $NEUTRAL
 
 # Start processing, but remove lockfile on exit
 touch "$lockFile"
