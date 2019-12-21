@@ -91,17 +91,19 @@ class ReportBuilder(object):
     def updateProviders(self):
         """Update providers from IP addresses, when enpty"""
         import requests
-        query = "select distinct(ip) from connections where provider is null;"
+        query = "select distinct(ip) from connections where provider='unknown' or provider is null;"
         cursor = self.conn.execute(query)
         updates = []
 
         for row in cursor:
             ip = row[0]
-            provider = requests.get('http://ip-api.com/line/{}?fields=isp'.format(ip)).text.replace("\n", "")
-            update = {}
-            update['query'] = "update connections set provider=? where ip=?"
-            update['columns'] = (provider, ip)
-            updates.append(update)
+            provider = requests.get('http://ip-api.com/line/{}?fields=isp'
+                                    .format(ip)).text.replace("\n", "")
+            if provider != "":
+                update = {}
+                update['query'] = "update connections set provider=? where ip=?"
+                update['columns'] = (provider, ip)
+                updates.append(update)
 
         try:
             writeCursor = self.conn.cursor()
@@ -255,17 +257,21 @@ def main(args):
     if args.period == Period.lastWeek:
         lastWeek = day - datetime.timedelta(days=7)
         periodName = lastWeek.strftime("%d/%m/%Y")
+        periodTitle = "Weekly"
     elif args.period == Period.lastMonth:
         day = day.replace(day=1)
         lastMonth = day - datetime.timedelta(days=1)
         periodName = lastMonth.strftime("%m/%Y")
+        periodTitle = "Monthly"
     elif args.period == Period.lastYear:
         day = day.replace(day=1)
         day = day.replace(month=1)
         lastYear = day - datetime.timedelta(days=1)
         periodName = lastYear.strftime("%Y")
+        periodTitle = "Annual"
     else:
         periodName = "Beginning of time"
+        periodTitle = "Full"
 
     user = None
     if args.user:
@@ -347,7 +353,7 @@ def main(args):
         logging.info("Generated html message")
 
     # Add basic headers
-    message["Subject"] = "Access report for {} ({})".format(user, periodName)
+    message["Subject"] = "{} access report for {} ({})".format(periodTitle, user, periodName)
     message["From"] = "postmaster"
     message["To"] = user
 
