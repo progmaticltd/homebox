@@ -2,10 +2,10 @@
 
 import sqlite3
 import sys
+import time
 import datetime
 import logging
 import argparse
-
 
 # Disable some pylint warnings
 # pylint: disable=superfluous-parens
@@ -15,6 +15,7 @@ import argparse
 from enum import Enum
 
 class Period(Enum):
+    lastWeek = 'last-week'
     lastMonth = 'last-month'
     lastYear = 'last-year'
     beginning = 'beginning'
@@ -55,37 +56,71 @@ class ReportBuilder(object):
 
         # Initialise the period, one month by default
         day = datetime.date.today()
-        if period == Period.lastMonth:
+        if period == Period.lastWeek:
+            lastWeek = day - datetime.timedelta(days=7)
+            self.periodFilter = lastWeek.strftime("%Y-%m-%d")
+            self.dateColumns = "strftime('%d (%H:%M)',min(unixtime)),strftime('%d (%H:%M)',max(unixtime))"
+        elif period == Period.lastMonth:
             day = day.replace(day=1)
             lastMonth = day - datetime.timedelta(days=1)
-            self.periodFilter = lastMonth.strftime("%Y-%m-")
+            self.periodFilter = lastMonth.strftime("%Y-%m-01")
             self.dateColumns = "strftime('%d (%H:%M)',min(unixtime)),strftime('%d (%H:%M)',max(unixtime))"
         elif period == Period.lastYear:
             day = day.replace(day=1)
             day = day.replace(month=1)
             lastYear = day - datetime.timedelta(days=1)
-            self.periodFilter = lastYear.strftime("%Y-")
+            self.periodFilter = lastYear.strftime("%Y-01-01")
             self.dateColumns = "strftime('%d/%m', min(unixtime)),strftime('%d/%m', max(unixtime))"
         else:
             self.periodFilter = ""
             self.dateColumns = "strftime('%d/%m/%Y',min(unixtime)),strftime('%d/%m/%Y',max(unixtime))"
 
-        logging.info("Looking for connections like {}".format(self.periodFilter))
+        logging.info("Looking for connections > {}".format(self.periodFilter))
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.conn.close()
 
     def nbConnections(self):
         """Return the number of connections for this period"""
-        condition = "unixtime like '{}%'".format(self.periodFilter)
+        condition = "unixtime > '{}%'".format(self.periodFilter)
         cursor = self.conn.execute("select count(*) from connections where {}"
                                    .format(condition))
         count = cursor.fetchone()[0]
         return count
 
+    def updateProviders(self):
+        """Update providers from IP addresses, when enpty"""
+        import requests
+        query = "select distinct(ip) from connections where provider is null;"
+        cursor = self.conn.execute(query)
+        updates = []
+
+        for row in cursor:
+            ip = row[0]
+            provider = requests.get('http://ip-api.com/line/{}?fields=isp'
+                                    .format(ip)).text.replace("\n", "")
+            update = {}
+            update['query'] = "update connections set provider=? where ip=?"
+            if provider != "":
+                update['columns'] = (provider, ip)
+            else:
+                update['columns'] = ('unknown', ip)
+            updates.append(update)
+            # Sleep one second to avoid being blacklisted by the server
+            time.sleep(1)
+
+        try:
+            writeCursor = self.conn.cursor()
+            for update in updates:
+                writeCursor.execute(update['query'], update['columns'])
+            self.conn.commit()
+        except Exception:
+            raise DatabaseAccessError("Could not open the database '{}' for writing"
+                                      .format(self.connLogFile))
+
     def reportByProvider(self):
         """Get the statistics by ISP (Internet Service Provider)"""
-        condition = "unixtime like '{}%' and provider != 'private'".format(self.periodFilter)
+        condition = "unixtime > '{}%' and provider != 'private'".format(self.periodFilter)
         timeColumns = "count(ip) as count," + self.dateColumns
         group = "group by provider"
         order = "order by count desc"
@@ -109,7 +144,7 @@ class ReportBuilder(object):
     # List by country
     def reportByCountry(self):
         """Return per country statistics"""
-        condition = "unixtime like '{}%' and countryName != '-'".format(self.periodFilter)
+        condition = "unixtime > '{}%' and countryName != '-'".format(self.periodFilter)
         timeColumns = "count(ip) as count," + self.dateColumns
         group = "group by countryName"
         order = "order by count desc"
@@ -132,7 +167,7 @@ class ReportBuilder(object):
     # List by client source
     def reportBySource(self):
         """Return access report by client source (imap, roundcube, ...)"""
-        condition = "unixtime like '{}%' and source != '-'".format(self.periodFilter)
+        condition = "unixtime > '{}%' and source != '-'".format(self.periodFilter)
         timeColumns = "count(ip) as count," + self.dateColumns
         group = "group by source"
         order = "order by count desc"
@@ -156,7 +191,7 @@ class ReportBuilder(object):
     # List by status
     def reportByStatus(self):
         """Return access by status OK, Warning, Error"""
-        condition = "unixtime like '{}%' and status != 'OK'".format(self.periodFilter)
+        condition = "unixtime > '{}%' and status != 'OK'".format(self.periodFilter)
         timeColumns = "count(ip) as count," + self.dateColumns
         group = "group by status,ip"
         order = "order by count desc"
@@ -180,7 +215,7 @@ class ReportBuilder(object):
     # List by hour
     def reportByHour(self):
         """Return statistics per hour of the day"""
-        condition = "unixtime like '{}%'".format(self.periodFilter)
+        condition = "unixtime > '{}%'".format(self.periodFilter)
         timeColumns = "strftime('%H', unixtime) as hour,count(*) as count"
         group = "group by hour"
         order = "order by hour"
@@ -223,17 +258,24 @@ def main(args):
 
     # Create the period name
     day = datetime.date.today()
-    if args.period == Period.lastMonth:
+    if args.period == Period.lastWeek:
+        lastWeek = day - datetime.timedelta(days=7)
+        periodName = lastWeek.strftime("%d/%m/%Y")
+        periodTitle = "Weekly"
+    elif args.period == Period.lastMonth:
         day = day.replace(day=1)
         lastMonth = day - datetime.timedelta(days=1)
         periodName = lastMonth.strftime("%m/%Y")
+        periodTitle = "Monthly"
     elif args.period == Period.lastYear:
         day = day.replace(day=1)
         day = day.replace(month=1)
         lastYear = day - datetime.timedelta(days=1)
         periodName = lastYear.strftime("%Y")
+        periodTitle = "Annual"
     else:
         periodName = "Beginning of time"
+        periodTitle = "Full"
 
     user = None
     if args.user:
@@ -241,6 +283,14 @@ def main(args):
     else:
         import getpass
         user = getpass.getuser()
+
+    # The final recipient of the email.
+    # When not specified, it will be the user
+    recipient = None
+    if args.recipient:
+        recipient = args.recipient
+    else:
+        recipient = user
 
     # Format to use to send the email
     includeText = True
@@ -253,6 +303,9 @@ def main(args):
     if reportBuilder.nbConnections() == 0:
         print("No connections for this period ({})".format(periodName))
         sys.exit()
+
+    # Update providers when they have not been updated
+    reportBuilder.updateProviders()
 
     # Load statistics
     ispReport = reportBuilder.reportByProvider()
@@ -312,9 +365,9 @@ def main(args):
         logging.info("Generated html message")
 
     # Add basic headers
-    message["Subject"] = "Access report for {} ({})".format(user, periodName)
+    message["Subject"] = "{} access report for {} ({})".format(periodTitle, user, periodName)
     message["From"] = "postmaster"
-    message["To"] = user
+    message["To"] = recipient
 
     # Create secure connection with server and send email
     server = smtplib.SMTP("localhost", 587)
@@ -326,11 +379,17 @@ def main(args):
 
 parser = argparse.ArgumentParser(description='IMAP connections reporting tool')
 
-# Config path argument (mandatory)
+# The user account to inspect
 parser.add_argument(
     '--user',
     type=str,
     help="The user to generate the report. Use the current user if not specified",
+    required=False)
+
+parser.add_argument(
+    '--recipient',
+    type=str,
+    help="The user to send the report. Use the current user if not specified",
     required=False)
 
 # Format to send the report: html or text. Send both if not specified

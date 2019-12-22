@@ -1,25 +1,27 @@
 # Email access reports
 
-When configured, the users can receive yearly and monthly reports about their email access. The reports can be send in
-plain text or HTML, or both, which is the default option if nothing specified.
+When configured, the users can receive weekly, monthly and yearly reports about their email access. The reports can be
+send in plain text, HTML, or both, which is the default option if nothing specified.
 
+- A weekly report is sent every Sunday at midnight, containing the analysis of the previous week.
 - A monthly report is sent the first day of every month, containing the analysis of the previous month.
 - A yearly report is sent the first day of every year, containing the analysis of the previous year.
 
 The report can contains the following sections:
 
 - Connections per country, if you are travelling.
-- Warned and denied connections, with the details of the warnings.
+- Connections per ISP (Internet Service Provider).
+- Warned and denied connections.
 - Client statistics (Roundcube / SOGo / IMAP)
 - Statistics per hour of the day
 
 !!! Note
-    To use access report, the _access check_ option should be activated. See the [access monitoring
-    page](email-access-monitoring.md) for more details.
+    This functionality requires the activation of _access check_ option.
+    See the [access monitoring page](email-access-monitoring.md) for more details.
 
 ## Users selection
 
-By default, only some specific users will receive email access reports. This is done when defining the users:
+By default, only the postmaster and the users specified will receive access reports. This is done in the users section:
 
 ```yaml hl_lines="8"
 users:
@@ -29,22 +31,12 @@ users:
   first_name: Leena
   last_name: Makhoul
   mail: leena@official.com
-  access_report: yes
-```
-
-It is also possible to specify which format to receive the reports. In this example, the reports will be sent in text only.
-
-```yaml hl_lines="8 9"
-users:
-  ...
-- uid: leena
-  cn: Leena Courtney Makhoul
-  first_name: Leena
-  last_name: Makhoul
-  mail: leena@official.com
   access_report:
-    format: text
+    periods: [ 'week', 'month', 'year' ]
+    format: 'text'
 ```
+
+The format option can be 'text', 'html' or 'text,html' or nothing for both.
 
 Then, run the appropriate playbook:
 
@@ -52,6 +44,9 @@ Then, run the appropriate playbook:
 cd install
 ansible-playbook -i ../config/hosts.yml playbooks/access-report.yml
 ```
+
+!!! Note
+    If you remove the option, and runs the playbook again, the cron jobs will be removed.
 
 ## Report example in text
 
@@ -88,8 +83,6 @@ Report by Source
 |                                  Roundcube | 03 (18:04) | 30 (05:12) |    75 |
 |                                       SOGo | 08 (10:06) | 13 (11:48) |     4 |
 ================================================================================
-
-
 
 
 Report by Hour

@@ -16,7 +16,15 @@
   /etc/homebox/access-report.d/*.j2 r,
 
   # Read the database
-  /home/users/*/security/imap-connections.db rwk,
+  owner /home/users/*/security/imap-connections.db rwk,
+
+  # update the db
+  owner /home/users/*/security/ r,
+  owner /home/users/*/security/imap-connections.db-journal rwkl,
+  allow /sbin/ldconfig ix,
+  allow /proc/@{pid}/status r,
+  allow /proc/@{pid}/fd/ r,
+  allow /proc/@{pid}/mounts r,
 
   # Temporary files
   /var/tmp/* rw,
