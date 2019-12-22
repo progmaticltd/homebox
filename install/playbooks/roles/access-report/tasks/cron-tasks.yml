@@ -13,6 +13,7 @@
     job: >-
       /usr/local/bin/access-report.py
       --format {{ user.access_report.format | default("text,html") }}
+      --recipient {{ user.access_report.recipient | default(user.uid) }}
       --period last-week
     user: '{{ user.uid }}'
     state: '{{ ("week" in user.access_report.periods) | ternary("present", "absent") }}'
@@ -27,6 +28,7 @@
     job: >-
       /usr/local/bin/access-report.py
       --format {{ user.access_report.format | default("text,html") }}
+      --recipient {{ user.access_report.recipient | default(user.uid) }}
       --period last-month
     user: '{{ user.uid }}'
     state: '{{ ("month" in user.access_report.periods) | ternary("present", "absent") }}'
@@ -42,6 +44,7 @@
     job: >-
       /usr/local/bin/access-report.py
       --format {{ user.access_report.format | default("text,html") }}
+      --recipient {{ user.access_report.recipient | default(user.uid) }}
       --period last-year
     user: '{{ user.uid }}'
     state: '{{ ("year" in user.access_report.periods) | ternary("present", "absent") }}'

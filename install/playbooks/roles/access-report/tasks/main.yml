@@ -3,7 +3,7 @@
 - name: Install the required packages
   apt:
     name: '{{ packages }}'
-    state: installed
+    state: present
 
 - name: Copy the report templates
   copy:

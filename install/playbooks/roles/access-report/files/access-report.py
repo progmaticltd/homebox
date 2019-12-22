@@ -2,10 +2,10 @@
 
 import sqlite3
 import sys
+import time
 import datetime
 import logging
 import argparse
-
 
 # Disable some pylint warnings
 # pylint: disable=superfluous-parens
@@ -91,7 +91,7 @@ class ReportBuilder(object):
     def updateProviders(self):
         """Update providers from IP addresses, when enpty"""
         import requests
-        query = "select distinct(ip) from connections where provider='unknown' or provider is null;"
+        query = "select distinct(ip) from connections where provider is null;"
         cursor = self.conn.execute(query)
         updates = []
 
@@ -99,11 +99,15 @@ class ReportBuilder(object):
             ip = row[0]
             provider = requests.get('http://ip-api.com/line/{}?fields=isp'
                                     .format(ip)).text.replace("\n", "")
+            update = {}
+            update['query'] = "update connections set provider=? where ip=?"
             if provider != "":
-                update = {}
-                update['query'] = "update connections set provider=? where ip=?"
                 update['columns'] = (provider, ip)
-                updates.append(update)
+            else:
+                update['columns'] = ('unknown', ip)
+            updates.append(update)
+            # Sleep one second to avoid being blacklisted by the server
+            time.sleep(1)
 
         try:
             writeCursor = self.conn.cursor()
@@ -280,6 +284,14 @@ def main(args):
         import getpass
         user = getpass.getuser()
 
+    # The final recipient of the email.
+    # When not specified, it will be the user
+    recipient = None
+    if args.recipient:
+        recipient = args.recipient
+    else:
+        recipient = user
+
     # Format to use to send the email
     includeText = True
     includeHtml = True
@@ -355,7 +367,7 @@ def main(args):
     # Add basic headers
     message["Subject"] = "{} access report for {} ({})".format(periodTitle, user, periodName)
     message["From"] = "postmaster"
-    message["To"] = user
+    message["To"] = recipient
 
     # Create secure connection with server and send email
     server = smtplib.SMTP("localhost", 587)
@@ -367,11 +379,17 @@ def main(args):
 
 parser = argparse.ArgumentParser(description='IMAP connections reporting tool')
 
-# Config path argument (mandatory)
+# The user account to inspect
 parser.add_argument(
     '--user',
     type=str,
     help="The user to generate the report. Use the current user if not specified",
+    required=False)
+
+parser.add_argument(
+    '--recipient',
+    type=str,
+    help="The user to send the report. Use the current user if not specified",
     required=False)
 
 # Format to send the report: html or text. Send both if not specified
