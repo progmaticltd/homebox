@@ -166,6 +166,7 @@ official documentation.
 - Email addresses with recipient delimiter included, e.g. john.doe+lists@dbcooper.com.
 - Optional master user creation, e.g. for families with children or moderated communities.
 - Server side full text search inside emails, attached documents and files and
+- Detailed weekly, monthly and yearly access report per country, ISP, IP addresses, etc.
   compressed archives, with better results than GMail.
 - Optional Roundcube webmail with sieve filters management, password change form, automatic identity
   creation, master account access, etc.
