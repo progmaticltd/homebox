@@ -88,7 +88,7 @@ mail_default:
     # Obfuscate user agent, or complete remove
     # - version: remove the version.
     # - remove: remove the whole user agent information
-    obfs_user_agent: version
+    obfs_user_agent: remove
     # Put anything you want here, even on multiple lines, this will
     # be added on main.cf. See the example here:
     # extra_settings: |
