@@ -1,4 +1,4 @@
-;; SMTP server IP address, MX should point to a proper A record
+;; IMAP server IP address, MX should point to a proper A record
 imap    IN       {{ "%-4s" | format(external_ip_type) }}      {{ external_ip }}
 {% if backup_ip is defined and backup_ip != "" %}
 imap    IN       {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}

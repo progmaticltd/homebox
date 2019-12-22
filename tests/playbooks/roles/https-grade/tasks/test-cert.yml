@@ -16,7 +16,7 @@
 
 - name: Get the value of the grade
   register: grade_value
-  failed_when: '{{ grade_value.stdout != test.expect }}'
+  failed_when: grade_value.stdout != test.expect
   shell: >-
     set -o pipefail ;
     grep Summary -A 1 /tmp/https-grade-test-{{ test.name }}.txt
