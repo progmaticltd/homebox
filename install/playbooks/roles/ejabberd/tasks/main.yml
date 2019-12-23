@@ -14,12 +14,12 @@
       - graphicsmagick
       - graphicsmagick-imagemagick-compat
 
-- name: Upload ejabberd configuration
+- name: Copy ejabberd configuration
   notify: Restart ejabberd
   template:
     src: ejabberd.yml
     dest: /etc/ejabberd/ejabberd.yml
-    mode: 0600
+    mode: '0600'
     owner: ejabberd
     group: ejabberd
 
@@ -56,7 +56,7 @@
   openssl_dhparam:
     path: '{{ dhfile }}'
     size: '{{ security.dhparam_size }}'
-    mode: 0600
+    mode: '0600'
     owner: root
     group: ejabberd
   with_items:
@@ -86,7 +86,7 @@
   copy:
     src: renewal-hook.sh
     dest: /etc/letsencrypt/renewal-hooks/deploy/40-ejabberd.sh
-    mode: 0755
+    mode: '0700'
 
 #
 # End of TLS / SSL Configuration ###############################################
@@ -97,11 +97,11 @@
   tags: jabber
   notify: Restart nginx
   template:
-    src: frontend.tpl
+    src: nginx.conf
     dest: '/etc/nginx/sites-available/xmpp.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Enable nginx site
   tags: jabber
@@ -128,6 +128,7 @@
     etype: user
     permissions: rwx
     state: present
+    default: yes
 
 - name: Create the http upload jabber site
   tags: jabber
@@ -159,7 +160,7 @@
     proto: tcp
     port: '{{ rule.ports }}'
     comment: '{{ rule.comment }}'
-    delete: '{{ ejabberd.s2s.active == false }}'
+    delete: '{{ not ejabberd.s2s.active }}'
   with_items:
     - ports: 5269
       comment: Accept XMPP connections from other servers
@@ -188,7 +189,7 @@
     proto: tcp
     port: '{{ rule.ports }}'
     comment: '{{ rule.comment }}'
-    delete: '{{ ejabberd.s2s.active == false }}'
+    delete: '{{ not ejabberd.s2s.active }}'
   with_items:
     - ports: 5269
       comment: Accept XMPP connections from other servers

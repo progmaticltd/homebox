@@ -5,12 +5,15 @@
   notify:
     - Check nginx config
     - Restart nginx
+  vars:
+    csp: '{{ mail.antispam.webui.csp | default(csp_default) }}'
+    fp: '{{ mail.antispam.webui.fp | default(fp_default) }}'
   template:
-    src: webui-site.tpl
+    src: nginx.conf
     dest: '/etc/nginx/sites-available/rspamd.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Copy rspamd configuration
   tags: nginx
@@ -21,7 +24,6 @@
     src: '/etc/nginx/sites-available/rspamd.{{ network.domain }}.conf'
     dest: '/etc/nginx/sites-enabled/rspamd.{{ network.domain }}.conf'
     state: link
-
 
 # AppArmor configuration ======================================================
 

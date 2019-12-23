@@ -26,6 +26,7 @@
   /bin/date rix,
   /bin/mkdir mr,
   /bin/mkdir rix,
+  /bin/rm rix,
   /usr/bin/basename mr,
   /usr/bin/basename rix,
   /usr/bin/find mr,

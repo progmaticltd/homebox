@@ -4,6 +4,11 @@
 # inside a docker container running simple-cdd on Debian stretch
 # The most important is the configuration file 'system.yml' in the preseed folder
 
+# If there is no authorised key file, create it from the current user public keys
+if [ ! -r "config/authorized_keys" ]; then
+    cat ~/.ssh/*.pub >config/authorized_keys
+fi
+
 # Build the docker image
 docker-compose build cdbuild
 
@@ -20,4 +25,8 @@ chgrp 1000 /tmp/homebox-images
 # 3 - Run simple-cdd to create custom iso image installer
 docker run \
        --mount type=bind,source=/tmp/homebox-images,target=/tmp/homebox-images \
-       cdbuild:latest bash -c 'cp /tmp/build-homebox/images/*.iso /tmp/homebox-images'
+       cdbuild:latest || exit 1
+
+# Copy the ISO image in the temporary folder
+cpcmd="cp -v /tmp/build-homebox/images/*iso /tmp/homebox-images/"
+echo "$cpcmd" | docker run -i -v /tmp/homebox-images:/tmp/homebox-images:shared cdbuild:latest

@@ -1,0 +1,17 @@
+---
+
+# Deploy the mta-sts certificate
+- hosts: homebox
+  vars:
+    redirect: true
+    certificate:
+      type: mta-sts
+      redirect: false
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+  roles:
+    - role: certificates
+      tags: certificates
+    - role: mta-sts
+      tags: mta-sts

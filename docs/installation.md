@@ -78,18 +78,19 @@ real value here:
 network:
   domain: homebox.space
   hostname: mail.homebox.space
-  external_ip: auto
+  external_ip: ~
   backup_ip: ~
 ```
 
 The hostname is important, use the real one. If you used the preseed configuration, it should be just mail and your
 network domain.
 
-### External IP address detection
+### External IP addresses
 
-The external IP address is normally automatically detected. If this is not the case, you can specify it manually. If
-your server has a second IP address, you can specify it here as well. By default, none is defined. You can mix IPv4
-and IPv6 addresses. DNS entries will be added accordingly.
+It is important here to specify the external IP address(es) your system can be reached.
+
+Multiple configurations are supported, for instance, on IPv4 and one IPv6:
+
 
 ```yaml
 network:
@@ -100,11 +101,7 @@ network:
 ```
 
 !!! Tip
-    If you do not have a backup IP address, use "~" like the example.
-
-!!! Warning
-    If you have two IP addresses, you will have to specify them manually until the automatic detection works in all the
-    cases.
+    If you do not have a backup IP address, use "~", which means "None" or Null in yaml.
 
 ## Users list
 

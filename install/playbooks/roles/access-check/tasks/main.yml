@@ -7,12 +7,18 @@
     name: sendxmpp
     state: present
 
+- name: Install required packages for access checks
+  tags: apt
+  apt:
+    name: '{{ packages }}'
+    state: present
+
 - name: Deploy the global configuration file for access check settings
   tags: config
   template:
     src: access-check.cf
     dest: /etc/homebox/access-check.conf
-    mode: 644
+    mode: '0644'
 
 - name: Create the security directory for each user
   file:
@@ -20,7 +26,7 @@
     owner: '{{ user.uid }}'
     group: users
     state: directory
-    mode: 0700
+    mode: '0700'
   with_items:
     - '{{ users }}'
     - uid: postmaster
@@ -47,6 +53,7 @@
 
 - name: Create the master user account password
   when: ejabberd.install
+  no_log: true
   set_fact:
     postmaster_password: '{{ lookup("password", postmaster_password_params) }}'
 
@@ -58,3 +65,16 @@
     mode: '0400'
     owner: postmaster
     force: no
+
+- name: Use IP whitelist scheme for postmaster
+  template:
+    src: 'postmaster-ip-{{ list }}.cf'
+    dest: '/home/users/postmaster/.config/homebox/ip-{{ list }}.txt'
+    owner: postmaster
+    group: users
+    mode: '0400'
+  with_items:
+    - blacklist
+    - whitelist
+  loop_control:
+    loop_var: list

@@ -17,7 +17,7 @@
   template:
     src: '{{ file }}'
     dest: '{{ build_dir }}/{{ file }}'
-    mode: 0744
+    mode: '0744'
   with_items:
     - build-mirror.sh
     - build-cd.sh

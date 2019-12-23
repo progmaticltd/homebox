@@ -11,6 +11,7 @@
 #   - IP
 #   - country code
 #   - Country
+#   - ISP (Internet Service provider)
 #   - source (SOGo / Roundcube / imap)
 #   - status (OK / WARNING / DENIED)
 #   - score (a high score means the connection is warned or denied)
@@ -70,7 +71,7 @@ isoLastMinute=$(date -d '1 min ago' --rfc-3339=seconds | sed 's/+.*//')
 condition="unixtime >= '$isoLastMinute' AND source='$SOURCE' AND ip='$IP'"
 query="select count(*) from connections where $condition"
 
-count=$(sqlite3 -batch $connLogFile "$query")
+count=$(sqlite3 -batch "$connLogFile" "$query")
 
 # Check if already connected from this IP in the last minute, then exit safely
 if [ "0$count" -gt "0" ]; then
@@ -107,9 +108,30 @@ fi
 # Remove the new lines from the details before storing them in the database
 smallDetails=$(echo "$DETAILS" | tr '\n' ';' | sed -r 's/(^;|;$)//g')
 
+# Get the Internet Service Provider from http://ip-api.com/
+# The limit is 150 requests per minute from an IP address.
+# This is particularly useful if you are using only ISP,
+# regardless of the IP address
+isp='unknown'
+
+if [ "$isPrivate" = "1" ]; then
+    isp='private'
+elif [ "$ALLOW_EXTERNAL_QUERIES" = "YES" ]; then
+    # set curl options
+    # -s: silent
+    # -f: fail silently, return an empty string on failure
+    # -m 10: wait maximum 10 seconds for the whole process
+    url="http://ip-api.com/line/$IP?fields=isp"
+    isp=$(curl -s -f -m 10 "$url" | sed "s/'/''/g")
+fi
+
+if [ "$isp" = "" ]; then
+    isp='unknown'
+fi
+
 # Prepare the query, and insert the connection record
-columns='ip, countryCode, countryName, source, status, score, details'
-values="'$IP','$countryCode','$countryName','$SOURCE','$STATUS', '$SCORE','$smallDetails'"
+columns='ip, countryCode, countryName, provider, source, status, score, details'
+values="'$IP','$countryCode','$countryName','$isp', '$SOURCE','$STATUS', '$SCORE','$smallDetails'"
 command="insert into connections ($columns) VALUES ($values);"
 
 sqlite3 -batch "$connLogFile" "$command"
@@ -117,4 +139,4 @@ sqlite3 -batch "$connLogFile" "$command"
 # While we are here, let's do some cleanup and keep one year only
 isoLastYear=$(date -d '1 year ago' --rfc-3339=seconds | sed 's/+.*//')
 query="delete from connections where unixtime <= '$isoLastYear'"
-sqlite3 -batch $connLogFile "$query"
+sqlite3 -batch "$connLogFile" "$query"

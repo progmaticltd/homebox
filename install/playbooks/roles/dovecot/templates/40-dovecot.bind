@@ -1,17 +1,25 @@
-;; SMTP server IP address, MX should point to a proper A record
+;; IMAP server IP address, MX should point to a proper A record
 imap    IN       {{ "%-4s" | format(external_ip_type) }}      {{ external_ip }}
-{% if backup_ip is defined %}
+{% if backup_ip is defined and backup_ip != "" %}
 imap    IN       {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
 {% endif %}
 
+{% if mail.pop3 %}
 pop3    IN       {{ "%-4s" | format(external_ip_type) }}      {{ external_ip }}
-{% if backup_ip is defined %}
+{% if backup_ip is defined and backup_ip != "" %}
 pop3    IN       {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
+{% endif %}
 {% endif %}
 
 
 ;; RFC 6186 entries, should point to an "A" record
-_imap._tcp 3600 IN SRV 10 0 143 imap.{{ network.domain }}.
+;; See section 3.4 for examples of priorities and unavailable ports:
+;; https://tools.ietf.org/html/rfc6186#section-3.4
+_imap._tcp 3600 IN SRV 0 0 0 .
 _imaps._tcp 3600 IN SRV 10 0 993 imap.{{ network.domain }}.
-_pop3._tcp 3600 IN SRV 20 0 110 pop3.{{ network.domain }}.
+_pop3._tcp 3600 IN SRV 0 0 0 .
+{% if mail.pop3 %}
 _pop3s._tcp 3600 IN SRV 20 0 995 pop3.{{ network.domain }}.
+{% else %}
+_pop3s._tcp 3600 IN SRV 0 0 0 .
+{% endif %}

@@ -9,6 +9,7 @@
     records:
       type: SRV
       list:
-        - '_xmpp-server._tcp.{{ network.domain }}'
+        - name: '_xmpp-server._tcp.{{ network.domain }}'
+          value: 'xmpp\.{{ network.domain }}\.$'
   roles:
     - dns-records

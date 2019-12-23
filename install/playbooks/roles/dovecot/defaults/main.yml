@@ -38,6 +38,7 @@ dovecot:
   access_check_packages:
     - grepcidr
     - sqlite3
+    - curl
   settings:
     mail_max_userip_connections: 64
     lda_mailbox_autocreate: no

@@ -1,19 +1,24 @@
 ---
 
-- name: Check if the ldap service is running
+- name: Check if the ldap service is running # noqa 303
   tags: systemctl,ldap
   shell: systemctl status slapd
 
-- name: Check if the nslcd service is running
+- name: Check if the nslcd service is running # noqa 303
   tags: systemctl,ldap
   shell: systemctl status nslcd
 
 - name: Check that 'ldap.{{ network.domain }}' resoves to localhost
   tags: ldap
-  shell: ping -c 1 ldap.{{ network.domain }} | grep 127.0.0.1
+  shell: >-
+    set -o pipefail ;
+    ping -c 1 ldap.{{ network.domain }} | grep 127.0.0.1
+  args:
+    executable: /bin/bash
 
 - name: Check that I can bind as readonly and get all uids
   tags: ldap
+  no_log: true
   shell: >-
     ldapsearch
     -H ldapi:///
@@ -23,6 +28,7 @@
 
 - name: Check that I can bind as manager and get my details
   tags: ldap
+  no_log: true
   shell: >-
     ldapsearch
     -H ldapi:///
@@ -32,6 +38,7 @@
 
 - name: Check that I can bind as admin and get all uids
   tags: ldap
+  no_log: true
   shell: >-
     ldapsearch
     -H ldapi:///
@@ -41,19 +48,24 @@
 
 - name: Check that every user is in the database
   tags: ldap
+  no_log: true
   shell: >-
+    set -o pipefail ;
     ldapsearch
     -H ldapi:///
     -D '{{ ldap.readonly.dn }}'
     -w{{ lookup("password", ldap.roPasswdParams) }}
-    '(uid={{user.uid}})'
+    '(uid={{ user.uid }})'
     | grep 'numEntries: 1'
+  args:
+    executable: /bin/bash
   with_items: '{{ users }}'
   loop_control:
     loop_var: user
 
 - name: Check that I can bind using TLS
   tags: ldap
+  no_log: true
   shell: >-
     ldapsearch -ZZ
     -H ldap://ldap.{{ network.domain }}/
@@ -63,6 +75,7 @@
 
 - name: Check that I can bind using SSL
   tags: ldap
+  no_log: true
   shell: >-
     ldapsearch
     -H ldaps://ldap.{{ network.domain }}/
@@ -70,15 +83,17 @@
     -w{{ lookup("password", ldap.roPasswdParams) }}
     'uid'
 
-# TODO: check if we can use a variables or system specific settings for shell and homeBase
 - name: Check that every user is in the system, with the correct attributes
   tags: ldap
   vars:
     shell: /bin/dash
     homeBase: /home/users
   shell: >-
+    set -o pipefail ;
     getent passwd |
-    grep -E "^{{ u.uid }}:x:10[01][0-9]:10[01][0-9]:{{ u.cn }}:{{ homeBase }}/{{ u.uid }}:{{ shell }}"
+    grep -E "^{{ u.uid }}:x:10[01][0-9]:10[01][0-9]:{{ u.cn }}:{{ homeBase }}/{{ u.uid }}:{{ u.shell | default(shell) }}"
+  args:
+    executable: /bin/bash
   with_items: '{{ users }}'
   loop_control:
     loop_var: u
@@ -101,4 +116,3 @@
     - intlMailAddr
   loop_control:
     loop_var: field
-

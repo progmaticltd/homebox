@@ -3,7 +3,7 @@
 - name: Get the passwords generated in the accounts tasks
   tags: password
   set_fact:
-    roPasswdParams: "{{ playbook_dir }}/../../backup/{{ network.domain }}/ldap/readonly.pwd"
+    roPasswdParams: "{{ backup_directory }}/ldap/readonly.pwd"
 
 - name: Install roundcube webmail
   tags: apt
@@ -19,12 +19,16 @@
 
 - name: Copy roundcube configuration
   tags: nginx
+  notify: Restart nginx
+  vars:
+    csp: '{{ roundcube.csp | default(csp_default) }}'
+    fp: '{{ roundcube.fp | default(fp_default) }}'
   template:
-    src: webmail-site.cf
+    src: nginx.conf
     dest: '/etc/nginx/sites-available/webmail.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Activate roundcube web site
   tags: nginx
@@ -33,6 +37,8 @@
     src: '/etc/nginx/sites-available/webmail.{{ network.domain }}.conf'
     dest: '/etc/nginx/sites-enabled/webmail.{{ network.domain }}.conf'
     state: link
+
+# =============================================================================
 
 - name: Create a session key for roundcube
   tags: password
@@ -47,7 +53,7 @@
     path: /etc/roundcube/plugins/dovecot_impersonate
     owner: root
     group: root
-    mode: 0755
+    mode: '0755'
     state: directory
 
 - name: Create the dovecot impersonate configuration
@@ -58,7 +64,7 @@
     dest: /etc/roundcube/plugins/dovecot_impersonate/config.inc.php
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Make sure the plugin reads the correct configuration file
   tags: plugins, impersonate
@@ -97,7 +103,7 @@
     dest: /etc/roundcube/config.inc.php
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Make sure there is a directory for each of these plugins
   tags: plugins
@@ -105,7 +111,7 @@
     path: '/etc/roundcube/plugins/{{ file }}'
     owner: root
     group: root
-    mode: 0755
+    mode: '0755'
     state: directory
   with_items:
     - password
@@ -123,7 +129,7 @@
     dest: '/etc/roundcube/plugins/{{ file }}/config.inc.php'
     owner: root
     group: www-data
-    mode: 0640
+    mode: '0640'
   with_items:
     - password
     - new_user_identity

@@ -1,0 +1,18 @@
+---
+# Various cleanup tasks before the system goes live
+
+- name: Include common cleanup tasks
+  include_tasks: cleanup-common.yml
+
+- name: Include bind related cleanup tasks
+  when: bind.install
+  include_tasks: network-bind.yml
+
+- name: Partitions security
+  include_tasks: partitions-security.yml
+
+- name: Set limits for users
+  include_tasks: set-limits.yml
+
+# At this point, it might be necessary to reboot
+# To reload all bash instances

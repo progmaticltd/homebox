@@ -3,12 +3,15 @@
 - name: Create the well-known services site configuration file
   tags: nginx
   notify: Restart nginx
+  vars:
+    csp: '{{ csp_default }}'
+    fp: '{{ fp_default }}'
   template:
     src: nginx.conf
     dest: /etc/nginx/sites-available/well-known.conf
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Enable nginx site
   tags: nginx
@@ -16,4 +19,22 @@
   file:
     src: /etc/nginx/sites-available/well-known.conf
     dest: /etc/nginx/sites-enabled/well-known.conf
+    state: link
+
+- name: Add a catchall server configuration file
+  tags: nginx
+  notify: Restart nginx
+  template:
+    src: catchall.conf
+    dest: /etc/nginx/sites-available/catchall.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Enable catchall site
+  tags: nginx
+  notify: Restart nginx
+  file:
+    src: /etc/nginx/sites-available/catchall.conf
+    dest: /etc/nginx/sites-enabled/catchall.conf
     state: link

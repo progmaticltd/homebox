@@ -13,17 +13,20 @@
     dest: /var/www/autoconfig/mail/config-v1.1.xml
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Create the autoconfig site
   tags: autoconfig
   notify: Restart nginx server
+  vars:
+    csp: '{{ csp_default }}'
+    fp: '{{ fp_default }}'
   template:
-    src: autoconfig.conf
+    src: nginx.conf
     dest: '/etc/nginx/sites-available/autoconfig.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Ensure autoconfig resolves to localhost
   lineinfile:

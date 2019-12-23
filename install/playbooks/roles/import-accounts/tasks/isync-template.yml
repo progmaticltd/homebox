@@ -6,7 +6,7 @@
     owner: '{{ user.uid }}'
     group: users
     state: directory
-    mode: 0700
+    mode: '0700'
   with_items:
     - '/home/users/{{ user.uid }}/mails/import/safe'
     - '/home/users/{{ user.uid }}/mails/import/conf'
@@ -14,18 +14,20 @@
     loop_var: path
 
 - name: Create a migration file for each account
+  no_log: true
   template:
     src: 'isync/{{ account.type }}.conf'
     dest: '/home/users/{{ user.uid }}/mails/import/conf/{{ account.name }}-{{ account.type }}.conf'
     owner: '{{ user.uid }}'
     group: users
-    mode: 0600
+    mode: '0600'
   with_items:
     - '{{ user.external_accounts | default([]) }}'
   loop_control:
     loop_var: account
 
 - name: Encrypt each configuration file using the server's passphrase and place them in the safe
+  no_log: true
   command: >-
     openssl aes-256-cbc
     -in /home/users/{{ user.uid }}/mails/import/conf/{{ account.name }}-{{ account.type }}.conf
@@ -37,17 +39,19 @@
     loop_var: account
 
 - name: Change the owner to the user
+  no_log: true
   file:
     path: '/home/users/{{ user.uid }}/mails/import/safe/{{ account.name }}-{{ account.type }}.conf'
     owner: '{{ user.uid }}'
     group: users
-    mode: 0600
+    mode: '0600'
   with_items:
     - '{{ user.external_accounts | default([]) }}'
   loop_control:
     loop_var: account
 
 - name: Remove the clear text version
+  no_log: true
   file:
     path: '/home/users/{{ user.uid }}/mails/import/conf/{{ account.name }}-{{ account.type }}.conf'
     state: absent

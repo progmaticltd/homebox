@@ -8,7 +8,7 @@
     owner: '{{ user.uid }}'
     group: users
     state: directory
-    mode: 0700
+    mode: '0700'
   with_items:
     - '{{ users }}'
     - uid: postmaster
@@ -38,7 +38,7 @@
     owner: '{{ user.uid }}'
     group: users
     state: directory
-    mode: 0700
+    mode: '0700'
   with_items:
     - '{{ users }}'
     - uid: postmaster
@@ -68,7 +68,7 @@
     owner: '{{ user.uid }}'
     group: users
     state: directory
-    mode: 0700
+    mode: '0700'
   with_items:
     - '{{ users }}'
     - uid: postmaster
@@ -98,7 +98,7 @@
     owner: '{{ user.uid }}'
     group: users
     state: directory
-    mode: 0700
+    mode: '0700'
   with_items:
     - '{{ users }}'
     - uid: postmaster
@@ -128,7 +128,7 @@
     owner: '{{ user.uid }}'
     group: users
     state: directory
-    mode: 0700
+    mode: '0700'
   with_items:
     - '{{ users }}'
     - uid: postmaster

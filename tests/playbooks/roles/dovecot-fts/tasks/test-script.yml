@@ -8,9 +8,12 @@
 # Check if the parser can return the string when converting to text
 - name: Check if the text conversion script returns the uuid ({{ attachment.description }})
   shell: >-
+    set -o pipefail ;
     cat /tmp/file.data
     | /usr/local/bin/decode2text {{ attachment.mime }}
     | grep "{{ attachment.search | default(attachment.uid) }}"
+  args:
+    executable: /bin/bash
 
 - name: Delete the temporary file
   file:

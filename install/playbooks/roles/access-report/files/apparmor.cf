@@ -1,53 +1,31 @@
-# Last Modified: Tue May  7 18:17:46 2019
+# Last Modified: Sun Oct  6 15:47:58 2019
 #include <tunables/global>
 
-/usr/local/bin/access-report.sh {
+/usr/local/bin/access-report.py {
   #include <abstractions/base>
-  #include <abstractions/bash>
   #include <abstractions/nameservice>
-  #include <abstractions/postfix-common>
+  #include <abstractions/python>
 
-  # Capabilities
-  capability dac_override,
-
-  # Executables
-  /usr/local/bin/access-report.sh r,
-  /bin/dash ix,
-  /bin/date mr,
-  /bin/date rix,
-  /bin/grep mr,
-  /bin/grep rix,
-  /bin/sed mr,
-  /bin/sed rix,
-
-  # other binaries
-  /usr/bin/cut rix,
-  /usr/bin/getent mr,
-  /usr/bin/getent rix,
-  /usr/bin/sqlite3 mr,
-  /usr/bin/sqlite3 rix,
-  /usr/bin/tr mr,
-  /usr/bin/tr rix,
-  /usr/bin/seq mr,
-  /usr/bin/seq rix,
-  /usr/bin/bsd-mailx mr,
-  /usr/bin/bsd-mailx rix,
-
-  # Postfix sendmail has its own profile
-  /usr/sbin/sendmail mr,
-  /usr/sbin/sendmail px,
-
-  # temporary files
-  /tmp/mail.* rwk,
-  /root/dead.letter w,
-
-  # Libraries
+  # Read the executable
+  /usr/local/bin/ r,
+  /usr/local/bin/access-report.py r,
   /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/bin/python3.5 ix,
 
-  # Access postfix configuration files
-  # to get the domain name.
-  /etc/postfix/main.cf r,
+  # Read the templates
+  /etc/homebox/access-report.d/*.j2 r,
 
-  # Read user's databases
-  /home/users/*/security/imap-connections.db rwk,
+  # Read the database
+  owner /home/users/*/security/imap-connections.db rwk,
+
+  # update the db
+  owner /home/users/*/security/ r,
+  owner /home/users/*/security/imap-connections.db-journal rwkl,
+  allow /sbin/ldconfig ix,
+  allow /proc/@{pid}/status r,
+  allow /proc/@{pid}/fd/ r,
+  allow /proc/@{pid}/mounts r,
+
+  # Temporary files
+  /var/tmp/* rw,
 }

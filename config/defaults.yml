@@ -3,15 +3,14 @@
 # configuration file for customisation.
 
 # Default network settings
-# If you are behind a NAT, perhaps you will want to
-# replace "auto" by your real external IP address
-# The backup IP address is interesting if
-# you are hosting your own DNS server.
+# If you are behind a NAT, perhaps you will have to specify your real external IP address
+# The backup IP address is used when you have a second IP address
 network_default:
-  external_ip: auto
+  external_ip: ~
   backup_ip: ~
 
-# Shortcut notation to the backup directory
+# Shortcut notation to the backup directory. All the build artifacts will be
+# saved in this directory
 backup_directory: "{{ playbook_dir }}/../../backup/{{ network.domain }}"
 
 # Standard policies
@@ -70,6 +69,7 @@ encryption:
 mail_default:
   max_attachment_size: 25   # In megabytes
   autoconfig: true          # Support Thunderbird automatic configuration
+  pop3: false               # Activate the POP3 protocol or not
   autodiscover: false       # Support MS Outlook automatic configuration (uses https)
   quota:
     port: 30000             # port used by dovecot for the quota daemon
@@ -83,11 +83,14 @@ mail_default:
   postfix:
     mynetworks: ~           # Authorized IP addresses to send emails without authentication
                             # e.g. 192.168.0.0/16, 172.16.0.0/12, 10.10.0.0/8
-
-                            # Put anything you want here, even on multiple lines, this will
-                            # be added on main.cf. See the example here:
     submission:
       port: 587
+    # Obfuscate user agent, or complete remove
+    # - version: remove the version.
+    # - remove: remove the whole user agent information
+    obfs_user_agent: remove
+    # Put anything you want here, even on multiple lines, this will
+    # be added on main.cf. See the example here:
     # extra_settings: |
     #   disable_vrfy_command = no
     #   frozen_delivered_to = no
@@ -157,6 +160,19 @@ mail_default:
   # Fail2ban parameters
   fail2ban:
     time: 3600
+  #############################################################################
+  # mta-sts (RFC 8461)
+  mta_sts:
+    max_age: 86400
+    mode: enforce      # You can also use testing. When system.dev, the mode is
+                       # set to testing automatically
+  #############################################################################
+  # List of IP addresses and authorised domains to send emails; empty by default
+  extra_senders: []
+  # extra_senders:
+  #   - 'ip4:212.27.32.5'
+  #   - 'ip6:fe80::2e0:70ff:fe63:f069/64'
+  #   - 'include:_spf.google.com'
 
 ###############################################################################
 # Default password policies for users
@@ -248,10 +264,11 @@ firewall_default:
 # Extra security values
 security_default:
   auto_update: true                             # Install security updates automatically, using unattended-upgrades
-  ssh_disable_root_access_with_password: true   # Force SSH authentication to use public / private key
+  ssh_disable_root_access_with_password: true   # Force SSH authentication to use public / private key for root
   ssh_disable_root_access: false                # At the end of the installation, completely disable remote
                                                 # root access via SSH and force the use of sudo for the administrators
   lock_root_password: true                      # Disable console root access by locking root password.
+  ssh_disable_users_access_with_password: false # Force SSH authentication to use public / private key for all users
   alerts_email:
     - 'admin@{{ network.domain }}'
   # various options when luks is installed
@@ -279,24 +296,13 @@ website_default:
   locale: en_GB.UTF-8
 
 ###############################################################################
-# Install a static web site on www.yourdomain.com using Hugo (https://gohugo.io/)
-# Still requests two certificates:
-# One for for https://yourdomain.com/ and one for https://www.yourdomain.com
-# Place your site in the backup folder: backup/<network.domain>/website-hugo/
-# It will be served by the internal Hugo server.
-# Example of a configuration here
-
-hugo_default:
-  install: false
-  site_title: "Site title"
-  theme:
-    name: hugo-tranquilpeak-theme
-
-###############################################################################
 # Install a webmail, or not...
 webmail_default:
   install: true
   type: roundcube
+  milters:
+    active: false
+    debug: true
 
 ###############################################################################
 # Default list of development packages to install
@@ -424,6 +430,16 @@ bind_default:
   expire: 3600000         # 10000 hours
   neg_cache_ttl: 172800   # 2 days
   ttl: 3600               # 1 hour
+  # List of secondary nameservers.
+  # These servers will be announced as additionnal nameservers and allowed by
+  # IP address to request transfers from the server (AXFR requests).
+  # The default is the empty list, which disallow zone transfers by default.
+  ns_backup: []
+  # Example of record for gandi.net's secondary nameserver
+  # ns_backup:
+  #   - fqdn: ns6.gandi.net
+  #     ip: 217.70.177.40
+  # https://docs.gandi.net/en/domain_names/advanced_users/secondary_nameserver.html
   # General MX configuration
   mx_priority: 10
   # List of backup MX records. If the server is unreachable,
@@ -456,15 +472,22 @@ bind_default:
     algo: RSASHA256
   # Aditional records to be generated
   extra_records: []
+  # Generate reverse zones for the server's IP addresses.
+  # This is needed only if the reverse zones corresponding to these IP
+  # addresses were delegated to you by your ISP or hosting provider.
+  # You are most likely not in that situation and might need to configure the
+  # reverse DNS records at the level of your ISP or hosting provider.
+  generate_reverse: false
 
 ###############################################################################
-# Gogs installation with LDAP authentication
-# Beta feature, work in progress
+# Gogs installation with LDAP authentication.
 # The super administrator is "postmaster" for now.
 gogs_default:
-  install: false
-  public: false         # not open to public by default
-  allow:                # a list of IP address that can access the web interface
+  install: false        # Not installed by default
+  public: false         # Not open to public by default
+  backup: false         # When a backup is configured, exclude the repositories
+                        # from back up. Set the flag to true to include them.
+  allow:                # A list of IP address that can access the web interface
     - 192.168.0.0/16    # RFC1918 local networks
     - 172.16.0.0/12
     - 10.0.0.0/8
@@ -569,6 +592,9 @@ sogo_default:
   language: English
   enable_public_access: false
   password_change: true
+  milters:
+    active: false
+    debug: true
 
 #############################################################################
 # Security policies per country / IP address / behaviour / etc
@@ -578,11 +604,12 @@ sogo_default:
 # and works with Roundcube / Sogo as well
 access_check_default:
   active: false
+  allow_ext_queries: true     # Allow the access check script to run external queries to ip-api.com.
   whitelist_bonus: 255        # Bonus to apply when an IP or country is whitelisted. Max value is 255
   blacklist_malus: 255        # Malus to apply when an IP or country is blacklisted. Max value is 255
   warning_score: 40           # Score threshold to generate a warning
   denied_score: 120           # Score threshold to deny a connection
-  display_score: false        # # Should we display the scores in the alerts ?
+  display_score: false        # Should we display the scores in the alerts ?
                               # It is more informative for development
                               # but it might be confusing for new users
   time:                       # Standard time range you are normally checking your emails.

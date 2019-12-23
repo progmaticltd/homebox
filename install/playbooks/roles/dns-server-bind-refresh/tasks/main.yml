@@ -12,27 +12,28 @@
 - name: Copy DNS entries in bind cache directory (main IP)
   notify: Restart bind
   copy:
-    src: '/etc/bind/{{ file }}'
-    dest: '/var/cache/bind/{{ file }}'
+    src: '/etc/bind/forward.{{ network.domain }}'
+    dest: '/var/cache/bind/forward.{{ network.domain }}'
     owner: bind
     group: bind
     remote_src: true
-  with_items:
-    - 'forward.{{ network.domain }}'
-    - 'reverse-main.{{ network.domain }}'
-  loop_control:
-    loop_var: file
 
-- name: Copy DNS entries in bind cache directory (backup IP)
+- name: Copy DNS entries in bind cache directory (reverse for main IP)
+  when: bind.generate_reverse
   notify: Restart bind
-  when: backup_ip is defined
   copy:
-    src: '/etc/bind/{{ file }}'
-    dest: '/var/cache/bind/{{ file }}'
+    src: '/etc/bind/reverse-main.{{ network.domain }}'
+    dest: '/var/cache/bind/reverse-main.{{ network.domain }}'
     owner: bind
     group: bind
     remote_src: true
-  with_items:
-    - 'reverse-backup.{{ network.domain }}'
-  loop_control:
-    loop_var: file
+
+- name: Copy DNS entries in bind cache directory (reverse for backup IP)
+  notify: Restart bind
+  when: bind.generate_reverse and backup_ip is defined and (backup_ip | length > 0)
+  copy:
+    src: '/etc/bind/reverse-backup.{{ network.domain }}'
+    dest: '/var/cache/bind/reverse-backup.{{ network.domain }}'
+    owner: bind
+    group: bind
+    remote_src: true

@@ -1,12 +1,12 @@
 ---
 
 - name: Install PostgreSQL database server
-  vars:
-    pkgs:
-      - postgresql-common
-      - postgresql-client
-      - postgresql
   apt:
-    name: "{{ pkgs }}"
+    name: "{{ packages }}"
     state: present
 
+- name: Configure PostgreSQL backups location
+  replace:
+    path: /etc/default/autopostgresqlbackup
+    regexp: '^BACKUPDIR="[^"]+"'
+    replace: 'BACKUPDIR="/var/backups/postgres"'

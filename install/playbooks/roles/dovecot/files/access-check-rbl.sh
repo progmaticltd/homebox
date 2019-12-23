@@ -12,6 +12,9 @@
 # Add this score every time the IP is blacklisted
 BLACKLISTED=$(grep IP_RBL_MALUS /etc/homebox/access-check.conf | cut -f 2 -d =)
 
+# This both makes shellcheck happy and gives a default sensible value if the above fail
+BLACKLISTED=$((BLACKLISTED == 0 ? 255 : BLACKLISTED))
+
 # Do not change anything when the IP address is not found
 NEUTRAL=0
 
@@ -23,7 +26,7 @@ secdir="$HOME/security"
 # Exit if a script already check this IP address
 ipSig=$(echo "$IP:$SOURCE" | md5sum | cut -f 1 -d ' ')
 lockFile="$secdir/$ipSig.lock"
-test -f "$lockFile" && exit "$NEUTRAL"
+test -f "$lockFile" && exit $NEUTRAL
 
 # Start processing, but remove lockfile on exit
 touch "$lockFile"

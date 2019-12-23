@@ -4,7 +4,7 @@
   tags: apt, opendkim
   shell: dpkg -s opendkim
 
-- name: Check if the opendkim service is up and running
+- name: Check if the opendkim service is up and running # noqa 303
   tags: systemctl, opendkim
   shell: systemctl status opendkim
 

@@ -19,12 +19,15 @@
 - name: Copy nginx configuration
   tags: nginx
   notify: Restart nginx
+  vars:
+    csp: '{{ sogo.csp | default(csp_default) }}'
+    fp: '{{ sogo.fp | default(fp_default) }}'
   template:
     src: nginx.conf
     dest: '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Activate sogo web site
   tags: nginx
@@ -44,6 +47,7 @@
 
 - name: Create the sogo database account password
   tags: facts
+  no_log: true
   set_fact:
     sogo_db_password: '{{ lookup("password", sogo_password_params) }}'
 
@@ -79,10 +83,12 @@
   become: true
   become_user: postgres
   shell: >-
+    set -o pipefail ;
     cat /tmp/sogo-db-init.sql
     | psql -a -d sogo -o /tmp/sogo-db-install.log
   args:
     creates: /tmp/sogo-db-install.log
+    executable: /bin/bash
 
 - name: Keep the DB logs
   when: db_init.changed
@@ -122,7 +128,7 @@
     dest: '/etc/sogo/sogo.conf'
     owner: root
     group: sogo
-    mode: 0640
+    mode: '0640'
 
 - name: Copy sogo cron table
   tags: config
@@ -178,7 +184,7 @@
     insertbefore: '# End of local includes for homebox'
 
 - name: Remove the python / psycopg2 package
-  when: system.devel == False
+  when: not system.devel
   tags: apt
   apt:
     name: python-psycopg2

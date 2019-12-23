@@ -10,7 +10,7 @@
   apt:
     update_cache: true
     name: '{{ pkgs }}'
-    state: latest
+    state: present
 
 - name: Copy the ssh public key for authentication
   copy:

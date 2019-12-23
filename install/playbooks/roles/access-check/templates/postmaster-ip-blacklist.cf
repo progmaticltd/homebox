@@ -1,0 +1,6 @@
+# Postmaster specific blacklist file.
+# Lines starting with '#' are ignored
+# You can use ipcalc or whois tools to create CIDR notations
+
+# Blacklist everything, email access through the LAN only
+0.0.0.0/0

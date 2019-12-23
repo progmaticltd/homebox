@@ -1,17 +1,16 @@
 $TTL    {{ bind.ttl }}
 
-{{ reverse_ip_address }} IN      SOA     {{ network.domain }}. hostmaster.{{ network.domain }}. (
+{{ reverse_ip_address }} IN      SOA     main.{{ network.domain }}. hostmaster.{{ network.domain }}. (
                         {{ (serial | int) + 1 }}
                         {{ bind.refresh }}
                         {{ bind.retry }}
                         {{ bind.expire }}
                         {{ bind.neg_cache_ttl }} )
-; Main IP address
-{{ reverse_ip_address }}       IN      NS      {{ record_name }}.{{ network.domain }}.
-
 ;Name Server Information
-@       IN      NS      {{ record_name }}.{{ network.domain }}.
-{{ "%-6s" | format(record_name) }}  IN      {{ "%-4s" | format(ip_type) }}    {{ external_ip_address }}
+{{ reverse_ip_address }}       IN      NS      main.{{ network.domain }}.
+{% if backup_ip is defined and backup_ip != "" %}
+{{ reverse_ip_address }}       IN      NS      backup.{{ network.domain }}.
+{% endif %}
 
 ;Reverse lookup ({{ record_name }} IP address)
-{{ ptr_id }}      IN      PTR     {{ record_name }}.{{ network.domain }}.
+{{ reverse_ip_address }}      IN      PTR     {{ record_name }}.{{ network.domain }}.

@@ -112,6 +112,7 @@
   # Access configuration files
   /etc/passwd r,
   /etc/security/limits.d/ r,
+  /etc/security/limits.d/* r,
   /etc/nsswitch.conf r,
   /etc/environment r,
   /etc/default/locale r,
@@ -141,21 +142,21 @@
   /etc/dovecot/login-scripts/* rix,
 
   # read user's personal config
-  /home/users/*/.config/homebox/* r,
+  owner /home/users/*/.config/homebox/* r,
 
   # Access to user databases and customisation files
   # the script run with the user permissions
-  /home/users/*/security/ r,
-  /home/users/*/security/* rwk,
+  owner /home/users/*/security/ r,
+  owner /home/users/*/security/* rwk,
 
   # import folders
-  /home/users/*/mails/import/ r,
-  /home/users/*/mails/import/** rwkl,
+  owner /home/users/*/mails/import/ r,
+  owner /home/users/*/mails/import/** rwkl,
 
   # Send warnings through XMPP
   /usr/bin/sendxmpp mr,
   /usr/bin/sendxmpp px,
-  /home/users/postmaster/.sendxmpprc r,
+  owner /home/users/postmaster/.sendxmpprc r,
 
   # proc filesystem
   /proc/*/fd/ r,

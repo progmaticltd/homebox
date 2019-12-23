@@ -39,7 +39,7 @@ if [ -f "$connLogFile" ]; then
     sed -i -e ':a' -e '$q;N;1001,$D;ba' "$connLogFile"
 fi
 
-# Some clients are opening mutlitple connections on startup
+# Some clients are opening multiple connections on startup
 # When status is warning, send the alert only one time per hour
 if [ "0$lastLogEntryFromThisIP" -gt "0$lastHour" ]; then
     exit
@@ -54,7 +54,7 @@ domain=$(echo "$MAIL" | cut -f 2 -d '@')
 USE_XMPP=0
 xmppConfig="/home/users/postmaster/.sendxmpprc"
 # shellcheck disable=SC2166
-if [ -x "/usr/bin/sendxmpp" -a -r "$xmppConfig" ]; then
+if [ -x "/usr/bin/sendxmpp" ] && [ -r "$xmppConfig" ]; then
     logger "Using mail and XMPP to send alerts"
     USE_XMPP=1
 else

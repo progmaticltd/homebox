@@ -151,11 +151,25 @@ options {
     allow-recursion { trusted; };
     allow-query-cache { trusted; };
 
+    # Disallow transfers by default
+    allow-transfer {
+{% for secondary in bind.ns_backup %}
+        {{ secondary.ip }};
+{% else %}
+        "none";
+{% endfor %}
+    };
+
     //========================================================================
     // If BIND logs error messages about the root key being expired,
     // you will need to update your keys.  See https://www.isc.org/bind-keys
     //========================================================================
     dnssec-validation auto;
     auth-nxdomain no;    # conform to RFC1035
+{% if ipv6_used %}
     listen-on-v6 { any; };
+{% endif %}
+{% if (bind_minor_version.stdout|int) >= 11 %}
+    minimal-any yes;
+{% endif %}
 };

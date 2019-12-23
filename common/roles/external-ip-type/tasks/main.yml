@@ -2,105 +2,36 @@
 
 ################################################################################
 # Get the external IP address, from configuration file,
-# or automatically through a script
+# Check if a backup IP address is used
+# Detect both types of IP addresses
+# Detect if IPv6 is used
+################################################################################
 
-# Automatic IP detection (IPv4 & IPv6)
-- name: Get the external IP address automatically
-  tags: facts
-  when: network.external_ip == "auto"
-  get_url:
-    url: https://api.ipify.org?format=text
-    dest: /tmp/external_ip.txt
-
-- name: Get the external IP address automatically (IPv6)
-  tags: facts
-  when: network.external_ip == "auto_ipv6"
-  get_url:
-    url: https://api6.ipify.org?format=text
-    dest: /tmp/external_ip.txt
-
-- name: Read the IP address detected
-  register: external_ip_facts
-  tags: facts
-  when: network.external_ip is search("auto")
-  shell: "cat /tmp/external_ip.txt"
-
-- name: Store the IP address detected
-  tags: facts
-  when: network.external_ip is search("auto")
-  set_fact:
-    external_ip: '{{ external_ip_facts.stdout }}'
-
-# Manual IP specification
+# First IP address, mandatory
 - name: Store the extenal IP address specified manually
   tags: facts
-  when: not network.external_ip is search("auto")
   set_fact:
     external_ip: '{{ network.external_ip }}'
 
-# Detect the main IP address type (IPv4 or IPv6)
-- name: Detect the external IP address type (IPv4 or IPv6 / A or AAAA)
-  tags: facts
-  register: main_ip_type
-  shell:
-    echo {{ external_ip }}
-    | grep -E '^[0-9\.]+$' 2>&1 >/dev/null
-    && echo A || echo AAAA
-
-- name: Store the external IP address type detected
+- name: Set external IP address type (A or AAAA)
   tags: facts
   set_fact:
-    external_ip_type: '{{ (main_ip_type.stdout) }}'
+    external_ip_type: '{{ external_ip | ipv6 | ternary("AAAA", "A") }}'
 
-
-
-################################################################################
-# Backup IP address
-- name: Get the backup IP address automatically
-  tags: facts
-  when: network.backup_ip == "auto"
-  get_url:
-    url: https://api.ipify.org?format=text
-    dest: /tmp/backup_ip.txt
-
-- name: Get the backup IP address automatically (IPv6)
-  tags: facts
-  when: network.backup_ip == "auto_ipv6"
-  get_url:
-    url: https://api6.ipify.org?format=text
-    dest: /tmp/backup_ip.txt
-
-- name: Read the backup IP address detected
-  register: backup_ip_facts
-  tags: facts
-  when: network.backup_ip is search("auto")
-  shell: "cat /tmp/backup_ip.txt"
-
-- name: Store the backup IP address detected
-  tags: facts
-  when: network.backup_ip is search("auto")
-  set_fact:
-    backup_ip: '{{ backup_ip_facts.stdout }}'
-
-# Manual IP specification
-- name: Get the backup IP address specified manually
-  when: network.backup_ip != None and not network.backup_ip is search("auto")
+# Backup IP address if defined
+- name: Get the backup IP address
+  when: network.backup_ip != None and (network.backup_ip | length > 0)
   tags: facts
   set_fact:
     backup_ip: '{{ network.backup_ip }}'
 
-# Detect the backup IP address type (IPv4 or IPv6)
-- name: Set backup IP address type (A or AAAA)
-  when: network.backup_ip != None
-  tags: facts
-  register: backup_ip_type
-  shell:
-    echo {{ backup_ip }}
-    | grep -E '^[0-9\.]+$' 2>&1 >/dev/null
-    && echo A || echo AAAA
-
 - name: Set backup IP address type (A or AAAA)
   tags: facts
-  when: network.backup_ip != None
+  when: backup_ip is defined and (backup_ip | length > 0)
   set_fact:
-    backup_ip_type: '{{ (backup_ip_type.stdout) }}'
+    backup_ip_type: '{{ backup_ip | ipv6 | ternary("AAAA", "A") }}'
+
+- name: Check and remember if IPv6 is used
+  set_fact:
+    ipv6_used: '{{ external_ip_type == "AAAA" or
+                   (backup_ip_type is defined and backup_ip_type == "AAAA") }}'

@@ -1,0 +1,19 @@
+---
+
+- name: Install lynx if necessary
+  register: lynx_pkg
+  apt:
+    name: lynx
+
+- name: Check all https security grades
+  include_tasks: test-cert.yml
+  with_items:
+    - '{{ tests | selectattr("condition", "equalto", true) | list }}'
+  loop_control:
+    loop_var: test
+
+- name: Uninstall lynx if necessary
+  when: lynx_pkg.changed and not system.devel
+  apt:
+    name: lynx
+    state: absent

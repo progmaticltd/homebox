@@ -49,6 +49,10 @@
 - import_playbook: dns-records-email.yml
   when: bind.install
 
+# Test pop3 specific DNS records
+- import_playbook: dns-records-email-pop3.yml
+  when: bind.install and mail.pop3
+
 # Test Jabber client to client functions
 - import_playbook: dns-records-jabber-c2s.yml
   when: bind.install and ejabberd.install
@@ -79,3 +83,6 @@
 # Zabbix server
 - import_playbook: zabbix.yml
   when: zabbix.install
+
+# Test https server quality
+- import_playbook: https-grades.yml

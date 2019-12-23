@@ -46,10 +46,11 @@ smtpd_sasl_type = dovecot
 smtpd_sasl_path = private/auth
 broken_sasl_auth_clients = yes
 smtpd_sasl_security_options = noanonymous
+smtpd_tls_auth_only = yes
 
 # The internet hostname of this mail system.
 # The default is to use the fully-qualified domain name (FQDN) from gethostname(),
-myhostname = {{ network.hostname }}
+myhostname = smtp.{{ network.domain }}
 
 # Use virtual aliases, mailboxes, domains and transport
 virtual_alias_maps = ldap:/etc/postfix/ldap-aliases.cf
@@ -95,6 +96,12 @@ smtpd_milters =
     inet:localhost:{{ dmarc.milter.port }}
 {% if mail.antispam.active %}
     inet:localhost:{{ mail.antispam.port }}
+{% endif %}
+{% if sogo.milters.active %}
+    unix:private/milter-sogo-abook.socket
+{% endif %}
+{% if webmail.milters.active %}
+    unix:private/milter-rc-abook.socket
 {% endif %}
 
 # A list of Milter applications for new mail that does not arrive via the Postfix smtpd(8) server.

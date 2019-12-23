@@ -8,14 +8,14 @@
 - name: Create the local configuration directory if it does not exists
   delegate_to: localhost
   file:
-    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/privoxy/'
+    path: '{{ backup_directory }}/privoxy/'
     state: directory
 
 - name: Deploy custom filter and action files if they exists
   tags: synchronize
   register: custom_filters_and_actions
   synchronize:
-    src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/privoxy/'
+    src: '{{ backup_directory }}/privoxy/'
     dest: /etc/privoxy
     owner: no
     group: no
@@ -73,7 +73,7 @@
   tags: synchronize
   synchronize:
     src: '/etc/privoxy/*.{action,filter}'
-    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/privoxy/'
+    dest: '{{ backup_directory }}/privoxy/'
     recursive: false
     mode: pull
     owner: no
@@ -84,4 +84,3 @@
       - '--exclude=default.*'
       - '--exclude=match-all.*'
       - '--exclude=regression-tests.*'
-

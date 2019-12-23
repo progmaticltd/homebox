@@ -8,29 +8,36 @@
   loop_control:
     loop_var: pkg
 
-- name: Check if the dovecot service is up and running
+- name: Check if the dovecot service is up and running # noqa 303
   tags: systemctl, dovecot
   shell: systemctl status dovecot
-
 
 - name: Check the certificate using IMAPS
   tags: systemctl, dovecot
   shell: >-
+    set -o pipefail ;
     echo QUIT | openssl s_client
     -servername imap.{{ network.domain }}
     -connect imap.{{ network.domain }}:993 2>&1
     | grep 'Verification: OK'
+  args:
+    executable: /bin/bash
 
 - name: Check the certificate using IMAP and STARTTLS
   tags: systemctl, dovecot
   shell: >-
+    set -o pipefail ;
     echo QUIT | openssl s_client
     -servername imap.{{ network.domain }}
     -connect imap.{{ network.domain }}:143
     -starttls imap 2>&1
     | grep 'Verification: OK'
+  args:
+    executable: /bin/bash
 
-- name: Check the certificate using ManageSieve
+# FIXME: For this command, the openssl returns 1, even if the
+# certificate is correct.
+- name: Check the certificate using ManageSieve  # noqa 306
   tags: systemctl, dovecot
   shell: >-
     echo LOGOUT | openssl s_client
@@ -38,16 +45,24 @@
     -connect imap.{{ network.domain }}:4190
     -starttls telnet 2>&1
     | grep 'Verification: OK'
+  args:
+    executable: /bin/bash
 
 - name: Test authentication on the first user
   tags: dovecot
   shell: >-
+    set -o pipefail ;
     doveadm auth login -- '{{ user0_uid }}' '{{ user0_password }}'
+  args:
+    executable: /bin/bash
 
 - name: Check the LDAP mapping from email address to uid
   tags: dovecot
   shell: >-
+    set -o pipefail ;
     doveadm -v user '{{ user.mail }}' | grep -E '^user\s+{{ user.uid }}$'
+  args:
+    executable: /bin/bash
   become: yes
   become_method: sudo
   become_user: dovecot
@@ -59,7 +74,10 @@
 - name: Check the LDAP mapping from uid to email address
   tags: dovecot
   shell: >-
+    set -o pipefail ;
     doveadm -v user '{{ user.uid }}' | grep -E '^mail\s+{{ user.mail }}$'
+  args:
+    executable: /bin/bash
   become: yes
   become_method: sudo
   become_user: dovecot

@@ -12,8 +12,8 @@
 # Malus scores
 TRUST=0
 
-# When an error occurs, refuse the connection
-ERROR=255
+# This pass shellcheck and enforce a numeric value
+COUNTRIES_FOREIGN_MALUS=$((COUNTRIES_FOREIGN_MALUS == 0 ? 255 : COUNTRIES_FOREIGN_MALUS))
 
 # Used to log errors in syslog or mail.log
 log_error() {
@@ -26,6 +26,12 @@ globalConf='/etc/homebox/access-check.conf'
 # Read global configuration
 # shellcheck disable=SC1090
 . "$globalConf"
+
+# Make sure unknown country and blacklist have a default value
+# if this is not specified in the configuration.
+# This also pass shellcheck test
+COUNTRIES_UNKNOWN_MALUS=$((COUNTRIES_UNKNOWN_MALUS == 0 ? 40 : COUNTRIES_UNKNOWN_MALUS))
+BLACKLIST_MALUS=$((BLACKLIST_MALUS == 0 ? 255 : BLACKLIST_MALUS))
 
 # Security directory for the user, where the connection logs are saved
 # and the custom comfiguration overriding
@@ -104,7 +110,7 @@ if [ "$blacklistedCountry" = "1" ]; then
 fi
 
 # If we trust the same country, just accept the connection
-if [ "$HOME_COUNTRY" = "$countryCode" -a "$COUNTRIES_TRUST_HOME" = "YES" ]; then
+if [ "$HOME_COUNTRY" = "$countryCode" ] && [ "$COUNTRIES_TRUST_HOME" = "YES" ]; then
     exit $TRUST
 fi
 

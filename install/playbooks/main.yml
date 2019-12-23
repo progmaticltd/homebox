@@ -8,7 +8,6 @@
 # Prepare the system, get its external IP address,
 # and set up remote access
 - import_playbook: system-prepare.yml
-- import_playbook: external-ip.yml
 - import_playbook: remote-access.yml
 
 # Install fwknop (Single Packet Authorization)
@@ -72,8 +71,14 @@
 - import_playbook: cert-smtp.yml
 - import_playbook: postfix.yml
 
-# Mail delivery agent (dovecot)
+# Add mta-sts security
+- import_playbook: mta-sts.yml
+
+# Mail delivery agent (dovecot, pop3 protocol)
 - import_playbook: cert-pop3.yml
+  when: mail.pop3
+
+# Mail delivery agent (dovecot, imap protocol and daemon)
 - import_playbook: cert-imap.yml
 - import_playbook: dovecot.yml
 
@@ -81,9 +86,17 @@
 - import_playbook: roundcube.yml
   when: webmail.install and webmail.type == 'roundcube'
 
+# Add RoundCube milters if specified
+- import_playbook: roundcube-milters.yml
+  when: webmail.install and webmail.milters.active
+
 # Install SOGo if chosen
 - import_playbook: sogo.yml
   when: sogo.install
+
+# Add SOGo milters if specified
+- import_playbook: sogo-milters.yml
+  when: sogo.install and sogo.milters.active
 
 # Install ejabberd, with LDAP authentication
 - import_playbook: ejabberd.yml
@@ -139,5 +152,5 @@
 # Add well-known services handling
 - import_playbook: well-known-services.yml
 
-# Clean up the system before going live
-- import_playbook: system-cleanup.yml
+# Run post installation tasks: Clean up and security
+- import_playbook: system-post-install.yml

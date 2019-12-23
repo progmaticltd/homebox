@@ -120,6 +120,9 @@ on Debian or Ubuntu:
 $ sudo apt install ansible rsync
 ```
 
+Another package to install is `python-netaddr`, which is part of Debian too. It is required to guess your public IP
+address during the installation phase. Once the playbook has been run, you can uninstall it.
+
 If you already have a Debian server (Stretch) installed, and you prefer to use it, it's fine, you can skip the next
 section and start the [installation](installation.md) directly. Otherwise, click on next to read the OS installation
 page.

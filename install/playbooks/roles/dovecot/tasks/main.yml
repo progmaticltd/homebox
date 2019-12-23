@@ -7,19 +7,19 @@
   tags: dovecot
   apt:
     name: '{{ dovecot.packages }}'
-    state: latest
+    state: present
 
 - name: Install dovecot packages for full text search
   when: mail.fts.active
   tags: dovecot
   apt:
     name: dovecot-solr
-    state: latest
+    state: present
 
 - name: Allow mail damon to access the users directory
   file:
     path: /home/users
-    mode: 0755
+    mode: '0755'
 
 - name: Make sure loopback interface is "trusted"
   notify: Restart dovecot
@@ -31,21 +31,35 @@
 ################################################################################
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
-- name: Allow slapd and nslcd daemons to access the certificate directories
-  tags: dovecot,ssl
-  notify: Restart dovecot
-  acl:
-    path: '{{ path }}'
-    entity: dovecot
-    etype: user
-    permissions: rx
-    state: present
-  with_items:
-    - /etc/letsencrypt
-    - /etc/letsencrypt/archive
-    - /etc/letsencrypt/live
-  loop_control:
-    loop_var: path
+- name: Set the default permissions for the imap certificate folders
+  import_role:
+    name: cert-perms
+  vars:
+    cert_dir: 'imap.{{ network.domain }}'
+    entity_group: dovecot
+
+- name: Set the default permissions for the ldap certificate folders
+  import_role:
+    name: cert-perms
+  vars:
+    cert_dir: 'ldap.{{ network.domain }}'
+    entity_group: dovecot
+    access_private_key: false
+
+- name: Copy the certificate renewal hook
+  tags: scripts
+  copy:
+    src: renewal-hook.sh
+    dest: /etc/letsencrypt/renewal-hooks/deploy/20-dovecot.sh
+    mode: '0700'
+
+- name: Set the default permissions for the pop3 certificate folders
+  when: mail.pop3
+  import_role:
+    name: cert-perms
+  vars:
+    cert_dir: 'pop3.{{ network.domain }}'
+    entity_group: dovecot
 
 - name: Generate a strong Diffie Hellman file
   notify: Restart dovecot
@@ -53,7 +67,7 @@
   openssl_dhparam:
     path: /etc/dovecot/private/dh.pem
     size: '{{ security.dhparam_size }}'
-    mode: 0640
+    mode: '0640'
     owner: root
     group: dovecot
 
@@ -62,7 +76,7 @@
   copy:
     src: renew-cert.sh
     dest: /etc/letsencrypt/renewal-hooks/deploy/30-dovecot.sh
-    mode: 0755
+    mode: '0755'
 
 #                                                                              #
 # End of TLS / SSL Configuration ###############################################
@@ -91,7 +105,7 @@
   template:
     src: '{{ file }}'
     dest: '/etc/dovecot/{{ file }}'
-    mode: 0600
+    mode: '0600'
   with_items:
     - dovecot-ldap.conf.ext
   loop_control:
@@ -172,18 +186,22 @@
     port: '{{ rule.port }}'
     comment: '{{ rule.comment }}'
   with_items:
-    - comment: Allow IMAP access
-      port: 143
     - comment: Allow IMAPS access
       port: 993
-    - comment: Allow POP3 access
-      port: 110
-    - comment: Allow POP3S access
-      port: 995
     - comment: Allow Managesieve access
       port: 4190
   loop_control:
     loop_var: rule
+
+- name: Configure the firewall for POP3 access
+  when: mail.pop3
+  tags: security
+  ufw:
+    rule: allow
+    proto: tcp
+    src: any
+    port: 995
+    comment: Allow POP3S access
 
 - name: Create the post-login script directory
   file:
@@ -213,6 +231,7 @@
 - name: Create the import user account password
   when: mail.import.active
   tags: impersonate
+  no_log: true
   set_fact:
     import_password: '{{ lookup("password", import_password_params) }}'
 
@@ -322,7 +341,7 @@
     update_cache: yes
     cache_valid_time: 86400
     name: '{{ dovecot.fts_packages }}'
-    state: latest
+    state: present
 
 - name: Copy decode2text script
   when: mail.fts.active
@@ -330,14 +349,14 @@
   copy:
     src: fts/decode2text
     dest: /usr/local/bin/decode2text
-    mode: 0755
+    mode: '0755'
 
 - name: Copy decode2text script
   when: mail.fts.active
   tags: logs
   file:
     path: /var/log/decode2text.log
-    mode: 0644
+    mode: '0644'
     owner: dovecot
     group: dovecot
     state: touch
@@ -373,7 +392,7 @@
 - name: Include virtual mailboxes tasks
   tags: virtual
   when: mail.virtual_folders.active
-  include_tasks: roles/dovecot/tasks/virtual.yml
+  include_tasks: virtual.yml
 
 # AppArmor configuration ======================================================
 - name: Install dovecot indexer AppArmor profile

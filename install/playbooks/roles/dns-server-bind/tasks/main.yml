@@ -4,36 +4,61 @@
   tags: cert
   delegate_to: localhost
   file:
-    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/dnssec-keys/'
+    path: '{{ backup_directory }}/dnssec-keys/'
     state: directory
 
 # When IPv6 is used, bind9 should be taken from backports
-# TODO: Configure this automatically
 - name: Install the required packages
+  when:
+    - ansible_facts['distribution'] == "Debian"
+    - ansible_facts['distribution_major_version'] == "9"
+  apt:
+    name: '{{ bind_packages }}'
+    state: present
+    default_release: '{{ ipv6_used | ternary("stretch-backports", "stretch") }}'
+
+- name: Install the required packages
+  when:
+    - ansible_facts['distribution'] == "Debian"
+    - ansible_facts['distribution_major_version']|int >= 10
   apt:
     name:
       - bind9
       - dnsutils
     state: present
-    default_release: stretch-backports
+
+- name: Get bind minor version
+  register: bind_minor_version
+  shell: >-
+    set -o pipefail ;
+    bind9-config --version
+    | sed -En 's/.*=9\.([0-9]+).*/\1/p'
+  args:
+    executable: /bin/bash
 
 - name: Stop the DNS server before creating the configuration
   service:
     name: bind9
     state: stopped
 
-- name: Build main and reverse IP address information
-  include_tasks: build-ip-info.yml
+# Build main and reverse IP address information
+# Main IP address
+- name: Build the reverse IP address (works for IPv4 or IPv6)
+  tags: facts
+  set_fact:
+    reverse_ip: "{{ external_ip | ipaddr('revdns') }}"
 
-- name: Copy the configuration template
+# Backup IP address
+- name: Build the reverse IP address (works for IPv4 or IPv6)
+  when: backup_ip is defined and (backup_ip | length > 0)
+  tags: facts
+  set_fact:
+    reverse_backup_ip: "{{ backup_ip | ipaddr('revdns') }}"
+
+- name: Copy the forward configuration template
   tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
-    record_name: main
-    reverse_ip_address: '{{ reverse_ip }}'
-    external_ip_address: '{{ external_ip }}'
-    ip_type: '{{ external_ip_type }}'
-    ptr_id: 10
   template:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
@@ -47,32 +72,46 @@
     - src: named.conf.local
       dest: '/etc/bind/named.conf.local'
       mode: '0640'
-    - src: reverse-domain
-      dest: '/etc/bind/reverse-main.{{ network.domain }}'
-      mode: '0640'
     - src: forward-tail
       dest: '/etc/homebox/dns-entries.d/99-tail.bind'
   loop_control:
     loop_var: file
 
-- name: Copy the configuration template
-  when: backup_ip is defined
+- name: Copy the main reverse configuration template
+  when: bind.generate_reverse
   tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
-    record_name: backup
-    reverse_ip_address: '{{ reverse_backup_ip }}'
-    external_ip_address: '{{ backup_ip }}'
-    ip_type: '{{ backup_ip_type }}'
-    ptr_id: 20
+    record_name: "{{ 'smtp' if postfix.install else 'main' }}"
+    reverse_ip_address: '{{ reverse_ip }}'
   template:
-    src: '{{ file.src }}'
-    dest: '{{ file.dest }}'
-  with_items:
-    - src: reverse-domain
-      dest: '/etc/bind/reverse-backup.{{ network.domain }}'
-  loop_control:
-    loop_var: file
+    src: reverse-domain
+    dest: '/etc/bind/reverse-main.{{ network.domain }}'
+    mode: '0640'
+
+- name: Copy the backup reverse configuration template
+  when: bind.generate_reverse and backup_ip is defined and (backup_ip | length > 0)
+  tags: config
+  vars:
+    serial: "{{ lookup('pipe', 'date +%s') }}"
+    record_name: "{{ 'smtp2' if postfix.install else 'backup' }}"
+    reverse_ip_address: '{{ reverse_backup_ip }}'
+  template:
+    src: reverse-domain
+    dest: '/etc/bind/reverse-backup.{{ network.domain }}'
+    mode: '0640'
+
+- name: Add extra records
+  when: bind.extra_records != []
+  template:
+    src: extra-records.conf
+    dest: /etc/homebox/dns-entries.d/90-extra-records.bind
+
+- name: Make sure extra records are absent if not needed
+  when: bind.extra_records == []
+  file:
+    path: /etc/homebox/dns-entries.d/90-extra-records.bind
+    state: absent
 
 - name: Build the final bind configuration
   tags: config
@@ -110,7 +149,7 @@
   when: bind.dnssec.active
   tags: backup-push
   synchronize:
-    src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/dnssec-keys/'
+    src: '{{ backup_directory }}/dnssec-keys/'
     dest: '/etc/bind/keys/'
     mode: push
     owner: no
@@ -125,6 +164,7 @@
 - name: Make sure the ZSK file is linked in the live directory
   when: bind.dnssec.active
   shell: >-
+    set -o pipefail ;
     ls /etc/bind/keys/*key
     && ( grep -l "zone-signing key" /etc/bind/keys/*key
     | xargs -I {} ln -nsf {} live/zsk.key )
@@ -132,20 +172,24 @@
   args:
     chdir: /etc/bind/keys
     creates: /etc/bind/keys/live/zsk.key
+    executable: /bin/bash
 
 - name: Generate the zone signing key (ZSK)
   when: bind.dnssec.active
   shell: >-
+    set -o pipefail ;
     ( test -f /etc/bind/keys/*key && grep "zone-signing key" /etc/bind/keys/*key )
     || dnssec-keygen -q -a {{ bind.dnssec.algo }} -b 1024 {{ network.domain }}
     | xargs -I {} ln -s /etc/bind/keys/{}.key live/zsk.key
   args:
+    executable: /bin/bash
     chdir: /etc/bind/keys
     creates: /etc/bind/keys/live/zsk.key
 
 - name: Make sure the KSK file is linked in the live directory
   when: bind.dnssec.active
   shell: >-
+    set -o pipefail ;
     ls /etc/bind/keys/*key
     && ( grep -l "key-signing key" /etc/bind/keys/*key
     | xargs -I {} ln -nsf {} live/ksk.key )
@@ -153,29 +197,35 @@
   args:
     chdir: /etc/bind/keys
     creates: /etc/bind/keys/live/ksk.key
+    executable: /bin/bash
 
 - name: Generate the key signing key (KSK)
   when: bind.dnssec.active
   tags: encryption
   shell: >-
+    set -o pipefail ;
     ( test -f /etc/bind/keys/*key && grep "key-signing key" /etc/bind/keys/*key )
     || dnssec-keygen -q -a {{ bind.dnssec.algo }} -f KSK -b 2048 {{ network.domain }}
     | xargs -I {} ln -s /etc/bind/keys/{}.key live/ksk.key
   args:
+    executable: /bin/bash
     chdir: /etc/bind/keys
     creates: /etc/bind/keys/live/ksk.key
 
 - name: Set the permissions on the key and private key files
   when: bind.dnssec.active
   shell: >-
+    set -o pipefail ;
     chgrp bind /etc/bind/keys/*
     && chmod g+r /etc/bind/keys/*
   args:
+    executable: /bin/bash
     warn: false
 
 - name: Create a key authority for local testing
   when: bind.dnssec.active
   shell: >-
+    set -o pipefail ;
     cat /etc/bind/keys/live/ksk.key
     | sed '/^;/d'
     | sed 's/IN DNSKEY 257 3 8 /257 3 8 "/'
@@ -184,6 +234,7 @@
     > /etc/bind/keys/live/authority.key
   args:
     creates: /etc/bind/keys/live/authority.key
+    executable: /bin/bash
 
 - name: Allow queries to the DNS server
   ufw:
@@ -215,29 +266,29 @@
 
 - name: Copy DNS entries in bind cache directory (main IP)
   copy:
-    src: '/etc/bind/{{ file }}'
-    dest: '/var/cache/bind/{{ file }}'
+    src: '/etc/bind/forward.{{ network.domain }}'
+    dest: '/var/cache/bind/forward.{{ network.domain }}'
     owner: bind
     group: bind
     remote_src: true
-  with_items:
-    - 'forward.{{ network.domain }}'
-    - 'reverse-main.{{ network.domain }}'
-  loop_control:
-    loop_var: file
 
-- name: Copy DNS entries in bind cache directory (backup IP)
-  when: backup_ip is defined
+- name: Copy DNS entries in bind cache directory (reverse for main IP)
+  when: bind.generate_reverse
   copy:
-    src: '/etc/bind/{{ file }}'
-    dest: '/var/cache/bind/{{ file }}'
+    src: '/etc/bind/reverse-main.{{ network.domain }}'
+    dest: '/var/cache/bind/reverse-main.{{ network.domain }}'
     owner: bind
     group: bind
     remote_src: true
-  with_items:
-    - 'reverse-backup.{{ network.domain }}'
-  loop_control:
-    loop_var: file
+
+- name: Copy DNS entries in bind cache directory (reverse for backup IP)
+  when: bind.generate_reverse and backup_ip is defined and (backup_ip | length > 0)
+  copy:
+    src: '/etc/bind/reverse-backup.{{ network.domain }}'
+    dest: '/var/cache/bind/reverse-backup.{{ network.domain }}'
+    owner: bind
+    group: bind
+    remote_src: true
 
 - name: Restart bind
   service:
@@ -251,7 +302,7 @@
     line: '127.0.0.1    main.{{ network.domain }}'
 
 - name: Ensure the backup record resolves to me
-  when: backup_ip is defined
+  when: backup_ip is defined and (backup_ip | length > 0)
   tags: hosts
   lineinfile:
     path: /etc/hosts
@@ -263,7 +314,7 @@
   synchronize:
     mode: pull
     src: '/etc/bind/keys/{{ item }}'
-    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/dnssec-keys/'
+    dest: '{{ backup_directory }}/dnssec-keys/'
     perms: yes
     rsync_opts:
       - '--no-motd'
@@ -272,10 +323,3 @@
   with_items:
     - '*.key'
     - '*.private'
-
-# Add extra records ===========================================================
-- name: Add extra records
-  when: bind.extra_records != []
-  template:
-    src: extra-records.conf
-    dest: /etc/homebox/dns-entries.d/90-extra-records.bind

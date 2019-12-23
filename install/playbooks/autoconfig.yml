@@ -2,8 +2,13 @@
 
 # Install automatic configuration for Mozilla Thunderbird
 - hosts: homebox
+  vars:
+    redirect: true
+    certificate:
+      type: autoconfig
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
+    - certificates
     - autoconfig

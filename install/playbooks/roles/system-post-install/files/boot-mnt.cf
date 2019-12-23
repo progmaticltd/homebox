@@ -1,0 +1,5 @@
+DPkg
+{
+    Pre-Invoke  { "mount /boot -o remount,rw" };
+    Post-Invoke { "mount /boot -o remount,ro" };
+};

@@ -4,14 +4,14 @@
   tags: backup
   delegate_to: localhost
   file:
-    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/website-simple/'
+    path: '{{ backup_directory }}/website-simple/'
     state: directory
 
 # Push the site if already backup up
 - name: If the web site has been generated before, copy the files on the remote server
   tags: sync
   synchronize:
-    src: '{{ playbook_dir }}/../../backup/{{ network.domain }}/website-simple/'
+    src: '{{ backup_directory }}/website-simple/'
     dest: /var/www/default
     owner: no
     group: no
@@ -83,15 +83,18 @@
   loop_control:
     loop_var: path
 
-- name: Create the website site configuration file
+- name: Create the website configuration file
   tags: nginx
   notify: Restart nginx
+  vars:
+    csp: '{{ website.csp | default(csp_default) }}'
+    fp: '{{ website.fp | default(fp_default) }}'
   template:
-    src: website-simple.tpl
+    src: nginx.conf
     dest: /etc/nginx/sites-available/www.{{ network.domain }}.conf
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Enable nginx site
   tags: nginx
@@ -138,7 +141,7 @@
   synchronize:
     mode: pull
     src: /var/www/default/*
-    dest: '{{ playbook_dir }}/../../backup/{{ network.domain }}/website-simple/'
+    dest: '{{ backup_directory }}/website-simple/'
     perms: yes
     archive: false
     recursive: true

@@ -13,7 +13,8 @@
     records:
       type: '{{ external_ip_type }}'
       list:
-        - 'main.{{ network.domain }}'
+        - name: 'main.{{ network.domain }}'
+          value: '{{ network.external_ip }}'
   roles:
     - dns-records
 
@@ -23,9 +24,10 @@
     records:
       type: '{{ external_ip_type }}'
       list:
-        - 'imap.{{ network.domain }}'
-        - 'smtp.{{ network.domain }}'
-        - 'pop3.{{ network.domain }}'
+        - name: 'imap.{{ network.domain }}'
+          value: '{{ network.external_ip }}'
+        - name: 'smtp.{{ network.domain }}'
+          value: '{{ network.external_ip }}'
   roles:
     - dns-records
 
@@ -35,11 +37,12 @@
     records:
       type: SRV
       list:
-        - '_imap._tcp.{{ network.domain }}'
-        - '_imaps._tcp.{{ network.domain }}'
-        - '_pop3._tcp.{{ network.domain }}'
-        - '_pop3s._tcp.{{ network.domain }}'
-        - '_submission._tcp.{{ network.domain }}'
+        - name: '_imap._tcp.{{ network.domain }}'
+          value: '0 0 0 \.'
+        - name: '_imaps._tcp.{{ network.domain }}'
+          value: 'imap\.{{ network.domain }}'
+        - name: '_submission._tcp.{{ network.domain }}'
+          value: 'smtp\.{{ network.domain }}'
   roles:
     - dns-records
 
@@ -49,8 +52,10 @@
     records:
       type: TXT
       list:
-        - '_dmarc.{{ network.domain }}'
-        - '{{ dkim.selector }}._domainkey.{{ network.domain }}'
+        - name: '_dmarc.{{ network.domain }}'
+          value: 'ru[af]=mailto:postmaster@{{ network.domain }}'
+        - name: '{{ dkim.selector }}._domainkey.{{ network.domain }}'
+          value: '{{ dkim.selector }}.{{ network.domain }}'
   roles:
     - dns-records
 
@@ -60,6 +65,20 @@
     records:
       type: MX
       list:
-        - '{{ network.domain }}'
+        - name: '{{ network.domain }}'
+          value: 'smtp.{{ network.domain }}'
+  roles:
+    - dns-records
+
+# Check the MTA-STS and TLS-RPT records
+- hosts: homebox
+  vars:
+    records:
+      type: TXT
+      list:
+        - name: '_mta-sts.{{ network.domain }}'
+          value: 'v=STSv1; id=[a-zA-Z0-9]+'
+        - name: '_smtp._tls.{{ network.domain }}'
+          value: 'v=TLSRPTv1; rua=mailto:security@{{ network.domain }};'
   roles:
     - dns-records

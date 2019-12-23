@@ -1,0 +1,10 @@
+  # Certificates
+  /etc/letsencrypt/archive/mta-sts.{{ network.domain }}/* r,
+  /etc/letsencrypt/live/mta-sts.{{ network.domain }}/* r,
+
+  # Certificate renewal and text file content
+  /var/www/mta-sts/.well-known/** r,
+
+  # Log files
+  /var/log/nginx/mta-sts-access.log w,
+  /var/log/nginx/mta-sts-error.log w,

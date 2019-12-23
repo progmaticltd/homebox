@@ -10,7 +10,7 @@
   template:
     src: testmsg-01.txt
     dest: /tmp/testmsg-01.txt
-    mode: 0600
+    mode: '0600'
     owner: postfix
     group: postfix
 
@@ -21,6 +21,7 @@
     --from="{{ users[0].mail }}"
     --to "{{ users[1].mail | regex_replace('@', '+lists@') }}"
     --h-Subject '{{ test_subject }}'
+    -tls --tls-verify
     --auth
     --auth-user="{{ user0_uid }}"
     --auth-password="{{ user0_password }}"

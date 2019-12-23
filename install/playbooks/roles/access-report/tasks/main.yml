@@ -1,32 +1,42 @@
 ---
 
+- name: Install the required packages
+  apt:
+    name: '{{ packages }}'
+    state: present
+
+- name: Copy the report templates
+  copy:
+    src: access-report.d
+    dest: /etc/homebox
+
 - name: Copy the reporting script
   tags: scripts
   copy:
-    src: 'access-report.sh'
-    dest: '/usr/local/bin/access-report.sh'
-    mode: '0700'
+    src: 'access-report.py'
+    dest: '/usr/local/bin/access-report.py'
+    mode: '0755'
 
-- name: Copy the cron job to send the access reports
-  tags: cron
-  cron:
-    cron_file: access-report
-    name: access-report
-    day: 1
-    hour: 1
-    minute: 0
-    job: '/usr/local/bin/access-report.sh'
-    user: root
+- name: Add cron tasks for each users
+  include_tasks:
+    file: cron-tasks.yml
+  with_items:
+    - '{{ users | selectattr("access_report", "defined") | list }}'
+    - uid: postmaster
+      access_report:
+        periods: [ 'week', 'month', 'year' ]
+        format: 'text'
+  loop_control:
+    loop_var: user
 
 - name: Install AppArmor profile for the script
   tags: security, apparmor
   register: aa_templates
   copy:
     src: apparmor.cf
-    dest: '/etc/apparmor.d/usr.local.bin.access-report.sh'
+    dest: '/etc/apparmor.d/usr.local.bin.access-report.py'
 
 - name: Activate AppArmor profiles
-  tags: dovecot, security, apparmor
+  tags: security, apparmor
   notify: Restart AppArmor service
-  command: 'aa-enforce usr.local.bin.access-report.sh'
-
+  command: 'aa-enforce usr.local.bin.access-report.py'

@@ -1,0 +1,85 @@
+---
+
+# tmp partition ################################################################
+- name: Check if /tmp is a mount point
+  register: tmp_mountpoint_cmd
+  shell: mountpoint -q /tmp/
+  failed_when: false
+  changed_when: false
+  args:
+    warn: false
+
+- name: Mount /tmp as no exec by default
+  when: tmp_mountpoint_cmd.rc == 0
+  register: fstab_file
+  replace:
+    path: /etc/fstab
+    regexp: '(^[^#]\S+\s+/tmp\s+\S+\s+)defaults(\s+[0-9]\s+[0-9])'
+    replace: '\1defaults,noexec,nosuid,nodev\2'
+
+- name: Remount /tmp
+  when: fstab_file.changed
+  shell: >-
+    mount -o remount /tmp
+  args:
+    warn: false
+
+- name: Install apt hook to remount /tmp
+  when: fstab_file.changed
+  copy:
+    src: tmp-mnt.cf
+    dest: /etc/apt/apt.conf.d/00tmp-permissions
+
+# boot partition ###############################################################
+- name: Check if /boot is a mount point
+  register: boot_mountpoint_cmd
+  shell: mountpoint -q /boot/
+  failed_when: false
+  changed_when: false
+  args:
+    warn: false
+
+- name: Mount /boot as read only by default
+  when: boot_mountpoint_cmd.rc == 0
+  register: fstab_file
+  replace:
+    path: /etc/fstab
+    regexp: '(^[^#]\S+\s+/boot\s+\S+\s+)defaults(\s+[0-9]\s+[0-9])'
+    replace: '\1defaults,ro\2'
+
+- name: Remount /boot
+  when: fstab_file.changed
+  shell: >-
+    mount -o remount /boot
+  args:
+    warn: false
+
+- name: Install apt hook to remount /boot
+  when: fstab_file.changed
+  copy:
+    src: boot-mnt.cf
+    dest: /etc/apt/apt.conf.d/00boot-permissions
+
+# home partition ###############################################################
+- name: Check if /home is a mount point
+  register: home_mountpoint_cmd
+  shell: mountpoint -q /home/
+  failed_when: false
+  changed_when: false
+  args:
+    warn: false
+
+- name: Mount /home as no exec by default
+  when: home_mountpoint_cmd.rc == 0
+  register: fstab_file
+  replace:
+    path: /etc/fstab
+    regexp: '(^[^#]\S+\s+/home\s+\S+\s+)defaults(\s+[0-9]\s+[0-9])'
+    replace: '\1defaults,noexec,nosuid,nodev\2'
+
+- name: Remount /home
+  when: fstab_file.changed
+  shell: >-
+    mount -o remount /home
+  args:
+    warn: false

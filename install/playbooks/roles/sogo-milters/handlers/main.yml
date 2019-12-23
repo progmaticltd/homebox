@@ -1,0 +1,16 @@
+---
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: true
+
+- name: Restart milter service
+  service:
+    name: milter-sogo-abook
+    state: restarted
+    enabled: true
+
+- name: Reload postfix
+  service:
+    name: postfix
+    state: restarted

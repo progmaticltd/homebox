@@ -4,19 +4,20 @@
   tags: backup
   delegate_to: localhost
   file:
-    path: '{{ playbook_dir }}/../../backup/{{ network.domain }}/zabbix/'
+    path: '{{ backup_directory }}/zabbix/'
     state: directory
 
 - name: Set facts for zabbix password generation
   tags: password
   set_fact:
-    db_password_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/zabbix/postgres.pwd"
+    db_password_path: "{{ backup_directory }}/zabbix/postgres.pwd"
     db_password_params: "length=16 chars=ascii_letters,digits"
-    admin_password_path: "{{ playbook_dir }}/../../backup/{{ network.domain }}/zabbix/admin.pwd"
+    admin_password_path: "{{ backup_directory }}/zabbix/admin.pwd"
     admin_password_params: "length={{ 16 + 16 | random }} chars=ascii_letters,digits,punctuation"
 
 - name: Generate a random password for zabbix
   tags: password
+  no_log: true
   set_fact:
     zabbixdb_password: '{{ lookup("password", "{{ db_password_path }} {{ db_password_params }}") }}'
     zabbix_admin_password: '{{ lookup("password", "{{ admin_password_path }} {{ admin_password_params }}") }}'
@@ -41,8 +42,11 @@
   notify:
     - Restart nginx
     - Restart php-fpm
+  vars:
+    csp: '{{ zabbix.csp | default(csp_default) }}'
+    fp: '{{ zabbix.fp | default(fp_default) }}'
   template:
-    src: webfrontend.conf.j2
+    src: nginx.conf
     dest: '/etc/nginx/sites-available/zabbix.{{ network.domain }}.conf'
 
 - name: Activate web frontend
@@ -120,8 +124,11 @@
   become: true
   become_user: postgres
   shell: >-
+    set -o pipefail ;
     zcat /usr/share/zabbix-server-pgsql/{{ sql_file }}.sql.gz
     | psql -d zabbix -o /tmp/zabbix-{{ sql_file }}-install.log
+  args:
+    executable: /bin/bash
   with_items:
     - schema
     - images
@@ -153,7 +160,7 @@
     dest: /etc/zabbix/zabbix.conf.php
 
 - name: Delete the guest account
-  when: zabbix.guest_account == False
+  when: not zabbix.guest_account
   tags: postgres
   shell: psql -d zabbix -c "delete from users where alias='guest'"
   become: true
@@ -175,7 +182,7 @@
     line: '127.0.0.1    zabbix.{{ network.domain }}'
 
 - name: Remove the python / psycopg2 package
-  when: system.devel == False
+  when: not system.devel
   tags: apt
   apt:
     name: python-psycopg2

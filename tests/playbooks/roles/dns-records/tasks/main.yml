@@ -1,10 +1,16 @@
 ---
 
 - name: Check if a DNS record exist
+  changed_when: false
   shell: >-
+    set -o pipefail ;
     dig +noall +answer -t {{ records.type }}
-    @127.0.0.1 {{ name }} | grep '^{{ name }}'
+    @127.0.0.1 {{ record.name }}
+    | grep '^{{ record.name }}'
+    | grep -E '{{ record.value }}'
+  args:
+    executable: /bin/bash
   with_items:
-    - '{{ records.list | default(["."]) }}'
+    - '{{ records.list }}'
   loop_control:
-    loop_var: name
+    loop_var: record

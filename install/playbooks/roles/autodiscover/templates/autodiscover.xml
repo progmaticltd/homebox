@@ -13,6 +13,7 @@
     <SSL>on</SSL>
     <AuthRequired>on</AuthRequired>
   </Protocol>
+{% if mail.pop3 %}
   <Protocol>
     <Type>POP3</Type>
     <Server>pop3.{{ network.domain }}</Server>
@@ -22,6 +23,7 @@
     <SSL>on</SSL>
     <AuthRequired>on</AuthRequired>
   </Protocol>
+{% endif %}
   <Protocol>
     <Type>SMTP</Type>
     <Server>smtp.{{ network.domain }}</Server>
@@ -33,12 +35,22 @@
     <UsePOPAuth>off</UsePOPAuth>
     <SMTPLast>on</SMTPLast>
   </Protocol>
+{% if webmail.install %}
   <Protocol>
     <Type>WEB</Type>
     <Server>webmail.{{ network.domain }}</Server>
     <Port>443</Port>
     <SSL>on</SSL>
   </Protocol>
+{% endif %}
+{% if sogo.install %}
+  <Protocol>
+    <Type>WEB</Type>
+    <Server>sogo.{{ network.domain }}</Server>
+    <Port>443</Port>
+    <SSL>on</SSL>
+  </Protocol>
+{% endif %}
 </Account>
 </Response>
 </Autodiscover>

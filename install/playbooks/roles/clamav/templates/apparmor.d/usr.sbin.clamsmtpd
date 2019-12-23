@@ -15,6 +15,7 @@
 
   # pid and log files
   /run/clamsmtp/clamsmtpd.pid w,
+  /proc/@{pid}/status r,
 
   # The log folder, and the quarantine
   /var/spool/clamsmtp/* rwlk,

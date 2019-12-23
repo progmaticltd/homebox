@@ -166,6 +166,7 @@ official documentation.
 - Email addresses with recipient delimiter included, e.g. john.doe+lists@dbcooper.com.
 - Optional master user creation, e.g. for families with children or moderated communities.
 - Server side full text search inside emails, attached documents and files and
+- Detailed weekly, monthly and yearly access report per country, ISP, IP addresses, etc.
   compressed archives, with better results than GMail.
 - Optional Roundcube webmail with sieve filters management, password change form, automatic identity
   creation, master account access, etc.
@@ -195,10 +196,8 @@ official documentation.
 - [Privoxy](https://www.privoxy.org/) easy installation, with adblock rules daily synchronisation, and optional tor
   chaining.
 - Embedded DNS server with DNSSEC and SSHFP (SSH fingerprint) records support
-- Automatic publication of DNS entries to Gandi DNS.
 - External IP address detection.
-- Static web site skeleton configuration, with https certificates.
-- Hugo web site server: [Hugo](https://gohugo.io/) and its [numerous themes](https://themes.gohugo.io/)
+- Static web site skeleton configuration, with https certificates and A+ security grade by default.
 - Personal backup server for each user, using borgbackup.
 - [Gogs git server](https://gogs.io/), a fast and lightweight git server written in Golang.
 - [Transmission daemon](https://transmissionbt.com/), accessible over https, public or private over your LAN. Files can

@@ -42,6 +42,7 @@
 # Merge user options with default options
 - name: Combine default and user defined password settings
   run_once: true
+  no_log: true
   when: passwords is defined
   tags: defaults
   set_fact:
@@ -49,6 +50,7 @@
 
 - name: Use default passwords settings
   run_once: true
+  no_log: true
   when: passwords is not defined
   tags: defaults
   set_fact:
@@ -118,7 +120,6 @@
   set_fact:
     dictionaries: '{{ dictionaries_default }}'
 
-################################################################################
 # Merge webmail defaults
 - name: Combine default and user defined webmail settings
   run_once: true
@@ -361,22 +362,6 @@
   tags: defaults
   set_fact:
     sogo: '{{ sogo_default }}'
-
-################################################################################
-# Merge defaults hugo settings
-- name: Combine default and user defined hugo settings
-  run_once: true
-  when: hugo is defined
-  tags: defaults
-  set_fact:
-    hugo: '{{ hugo_default | combine(hugo, recursive=True) }}'
-
-- name: Use default hugo settings
-  run_once: true
-  when: hugo is not defined
-  tags: defaults
-  set_fact:
-    hugo: '{{ hugo_default }}'
 
 ################################################################################
 # Merge defaults access_check settings

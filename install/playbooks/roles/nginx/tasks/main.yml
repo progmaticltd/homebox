@@ -3,29 +3,7 @@
 - name: Install nginx
   apt:
     name: nginx
-    state: latest
-
-################################################################################
-# At this point, the certificates should have been created already #############
-# in order to have SSL and TLS encryption activated.                           #
-- name: Allow the web server to access certificates
-  tags: ssl
-  notify: Restart nginx
-  acl:
-    path: '{{ path }}'
-    entity: www-data
-    etype: user
-    permissions: rx
     state: present
-  with_items:
-    - /etc/letsencrypt
-    - /etc/letsencrypt/archive
-    - /etc/letsencrypt/live
-  loop_control:
-    loop_var: path
-
-#                                                                              #
-# End of TLS / SSL Configuration ###############################################
 
 - name: Disable nginx default site
   notify: Restart nginx
@@ -57,7 +35,7 @@
   openssl_dhparam:
     path: /etc/nginx/dhparams.pem
     size: '{{ security.dhparam_size }}'
-    mode: 0600
+    mode: '0600'
     owner: root
     group: root
 
@@ -70,14 +48,12 @@
 # AppArmor configuration ======================================================
 
 - name: Install nginx AppArmor profile
-  notify: Restart nginx
+  notify:
+    - Activate AppArmor profiles
+    - Restart AppArmor service
+    - Restart nginx
   tags: security, apparmor
   template:
     src: 'apparmor.d/usr.sbin.nginx'
     dest: '/etc/apparmor.d/usr.sbin.nginx'
     force: no
-
-- name: Activate AppArmor profiles
-  tags: security, apparmor
-  command: 'aa-enforce usr.sbin.nginx'
-  notify: Restart AppArmor service

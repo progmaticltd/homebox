@@ -9,7 +9,6 @@ tune the system according to their needs.
 - It can send you warning, in real time, when something unusual is happening, which is explained below.
 - It can block the connection, for instance from blacklisted IP addresses, and send you a warning in real time.
 - It logs all your connection information in a small database. Each user can then do some querying and reporting easily.
-- A monthly report is sent the first day of every month, containing the analysis of the previous month.
 - When the "impersonate" feature is used to access one user's emails, an alert is sent in real time to this user.
 
 !!! Note
@@ -287,17 +286,9 @@ COUNTRIES_TRUST='FR,DE,ES'
 COUNTRIES_TRUST_HOME='NO'
 ```
 
-# Monthly reports
 
-The report can contains the following sections:
+# Monthly and annual reports
 
-- Connections per country, if you are travelling.
-- Unknown countries, with the IP addresses identified.
-- Warned and denied connections, with the details of the warnings.
-- Local access
-- Client statustics (Roundcube / SOGo / IMAP)
-- Statistics per hour of the day
+Another option let your users receive regular yearly and monthly access reports.
 
-## Example of report
-
-![monthly report example](img/access-log/monthly-report-full.png)
+This is detailed in the [access-reports](access-reports.md) documentation.

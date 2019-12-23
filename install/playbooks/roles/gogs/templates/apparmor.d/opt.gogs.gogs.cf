@@ -7,6 +7,7 @@
 
   # Executables
   /opt/gogs/gogs mr,
+  /opt/gogs/gogs ix,
   /usr/bin/git mr,
   /usr/bin/git rix,
   /lib/x86_64-linux-gnu/ld-*.so mr,
@@ -18,6 +19,9 @@
   /usr/share/git-core/** r,
   /usr/lib/git-core/git* rix,
   /usr/bin/git-* rix,
+
+  # Allow execution of git hooks
+  /bin/bash rix,
 
   # public files
   /opt/gogs/** r,
