@@ -3,16 +3,8 @@
 - name: Start by installing the required packages
   tags: apt
   apt:
-    name: '{{ pkgs }}'
+    name: '{{ sogo_pkgs }}'
     state: present
-  vars:
-    pkgs:
-      - postgresql
-      - sogo-common
-      - sogo
-      - memcached
-      - python-psycopg2
-      - zip
 
 # Web server configuration ====================================================
 

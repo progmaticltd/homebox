@@ -1,4 +1,13 @@
 ---
+# SOGo packages to install
+sogo_pkgs:
+  - postgresql
+  - sogo-common
+  - sogo
+  - memcached
+  - python-psycopg2
+  - zip
+
 
 # Default nginx security headers for the simple web site.
 # You can override this
