@@ -128,6 +128,22 @@
     src: sogo.cron
     dest: '/etc/cron.d/sogo'
 
+- name: Create SOGo's sieve filters file
+  tags: config
+  when: sogo.sieve_scripts
+  file:
+    path: '/home/users/{{ user.uid }}/mails/sieve/sogo.sieve'
+    owner: '{{ user.uid }}'
+    group: 'users'
+    mode: '0600'
+    state: touch
+    modification_time: preserve
+    access_time: preserve
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
 # AppArmor configuration ======================================================
 
 - name: Install nginx AppArmor profile
