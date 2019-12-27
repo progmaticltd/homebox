@@ -18,8 +18,7 @@
     mode: '0755'
 
 - name: Add cron tasks for each users
-  include_tasks:
-    file: cron-tasks.yml
+  include_tasks: cron-tasks.yml
   with_items:
     - '{{ users | selectattr("access_report", "defined") | list }}'
     - uid: postmaster
