@@ -352,6 +352,7 @@ devel_default:
     - zsh
   root:
     shell: /bin/zsh
+  acme_server: staging  # "staging" or "pebble"
 
 
 ###############################################################################
