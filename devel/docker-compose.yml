@@ -27,6 +27,15 @@ services:
     networks:
       acmenet:
         ipv4_address: 10.30.50.3
+  apt-cacher:
+    build: apt-cacher
+    ports:
+      - 3142:3142
+    volumes:
+      - apt-cache:/var/cache/apt-cacher-ng
+    networks:
+      acmenet:
+        ipv4_address: 10.30.50.4
 
 networks:
   acmenet:
@@ -35,3 +44,6 @@ networks:
       driver: default
       config:
         - subnet: 10.30.50.0/24
+
+volumes:
+  apt-cache:
