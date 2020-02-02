@@ -1,15 +1,12 @@
 ---
 
+# FIXME: The key conversion does not work anymore on Buster
+
 - name: Install the required packages
   tags: apt
-  vars:
-    pkgs:
-      - busybox
-      - dropbear
-      - dropbear-initramfs
   apt:
     update_cache: true
-    name: '{{ pkgs }}'
+    name: '{{ packages }}'
     state: present
 
 - name: Copy the ssh public key for authentication
@@ -20,12 +17,9 @@
 
 - name: Remove dropbear default keys
   file:
-    path: /etc/dropbear-initramfs/{{ key }}
+    path: '/etc/dropbear-initramfs/{{ key.dest }}'
     state: absent
-  with_items:
-      - dropbear_ecdsa_host_key
-      - dropbear_rsa_host_key
-      - dropbear_dss_host_key
+  with_items: '{{ keys_convert }}'
   loop_control:
     loop_var: key
 
