@@ -3,12 +3,14 @@
 
 /usr/sbin/opendkim {
   include <abstractions/base>
+  include <abstractions/openssl>
   include <abstractions/nameservice>
 
   # capabilities
   capability setuid,
   capability setgid,
   capability dac_override,
+  capability dac_read_search,
 
   # binaries
   /usr/sbin/opendkim mr,
