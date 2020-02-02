@@ -4,6 +4,7 @@
 /usr/bin/rspamd {
   #include <abstractions/base>
   #include <abstractions/nameservice>
+  #include <abstractions/openssl>
 
   /dev/shm/rhm.* rw,
 
@@ -22,6 +23,7 @@
 
   # prof file system
   /proc/sys/kernel/random/uuid r,
+  /sys/kernel/mm/transparent_hugepage/enabled r,
 
   # Run programs
   /lib/x86_64-linux-gnu/ld-*.so mr,
@@ -40,7 +42,7 @@
 
   # Read usr config - for the web administration interface as well
   /usr/share/rspamd/** r,
-  
+
   # Read certificates
   /usr/share/ca-certificates/** r,
 }
