@@ -19,6 +19,12 @@ system_required:
 system_excluded:
   - resolvconf
 
+apparmor_pkgs:
+  - apparmor
+  - apparmor-profiles
+  - apparmor-utils
+
+
 ###############################################################################
 # Dictionaries to install in the system
 dictionaries:
