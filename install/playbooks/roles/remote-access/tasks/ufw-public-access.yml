@@ -1,0 +1,36 @@
+---
+
+- name: Get the external IP address
+  delegate_to: localhost
+  register: ext_ip_api_response
+  uri:
+    url: https://api.ipify.org/
+    return_content: true
+
+- name: Make sure the external IP address is working as well
+  tags: security
+  ufw:
+    proto: tcp
+    port: 22
+    src: '{{ ext_ip_api_response.content }}'
+    rule: allow
+    comment: Access SSH from the ansible host (IPv4)
+
+# This is safe. Is the ansible host has no IPv6
+# address, the API returns the IPv4
+- name: Get the external IP address (IPv6)
+  delegate_to: localhost
+  register: ext_ip6_api_response
+  uri:
+    url: https://api6.ipify.org/
+    return_content: true
+
+- name: Make sure the external IP address is working as well
+  when: ext_ip6_api_response.content | ipv6
+  tags: security
+  ufw:
+    proto: tcp
+    port: 22
+    src: '{{ ext_ip6_api_response.content }}'
+    rule: allow
+    comment: Access SSH from the ansible host (IPv6)

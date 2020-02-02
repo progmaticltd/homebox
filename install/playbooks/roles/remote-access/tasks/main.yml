@@ -1,7 +1,23 @@
 ---
 
-- name: Set the firewall rules
-  include_tasks: ufw-rules.yml
+- name: Store the remote IP address
+  set_fact:
+    remote_ip: '{{ hostvars[inventory_hostname]["ansible_default_ipv4"]["address"] }}'
+
+- name: Check the type of IP address for the remote host
+  set_fact:
+    remote_ip_private: '{{ (remote_ip | ipaddr("private")) != None }}'
+
+- name: Set the remote access firewall rules for public networks
+  when: not remote_ip_private
+  include_tasks: ufw-public-access.yml
+
+- name: Set the remote access firewall rules for private networks
+  when: system.devel and remote_ip_private
+  include_tasks: ufw-private-access.yml
+
+- name: Set the generic firewall rules
+  include_tasks: ufw-generic-rules.yml
 
 - name: Remove root password access from SSH
   when: security.ssh_disable_root_access_with_password
@@ -28,4 +44,3 @@
     regexp: '^#?PasswordAuthentication yes.*'
     replace: 'PasswordAuthentication no'
     mode: '0600'
-
