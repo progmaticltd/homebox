@@ -10,7 +10,7 @@
 
 - name: Restart php-fpm
   service:
-    name: php7.0-fpm
+    name: 'php{{ php_version }}-fpm'
     state: restarted
 
 - name: Restart nginx

@@ -14,7 +14,6 @@
   loop_control:
     loop_var: file
 
-
 - name: Restart AppArmor service
   service:
     name: apparmor
@@ -27,5 +26,5 @@
 
 - name: Restart tomcat
   service:
-    name: tomcat8
+    service: 'tomcat{{ tomcat_version[ansible_distribution_release] }}'
     state: restarted

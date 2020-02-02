@@ -285,33 +285,19 @@
   loop_control:
     loop_var: aa_config
 
+- name: Get the list of dovecot AppArmor profiles
+  register: dovecot_apparmor_profiles
+  find:
+    paths: /etc/apparmor.d/
+    patterns: '*dovecot*'
+
 - name: Activate AppArmor profiles
   when: aa_templates.changed
   tags: dovecot, security, apparmor
   notify: Restart AppArmor service
-  command: 'aa-enforce {{ aa_config }}'
+  command: 'aa-enforce {{ aa_config | basename }}'
   with_items:
-    - usr.sbin.dovecot
-    - usr.lib.dovecot.imap
-    - usr.lib.dovecot.pop3
-    - usr.lib.dovecot.lmtp
-    - usr.lib.dovecot.config
-    - usr.lib.dovecot.auth
-    - usr.lib.dovecot.managesieve
-    - usr.lib.dovecot.quota-status
-    - usr.lib.dovecot.anvil
-    - usr.lib.dovecot.deliver
-    - usr.lib.dovecot.dict
-    - usr.lib.dovecot.dovecot-auth
-    - usr.lib.dovecot.dovecot-lda
-    - usr.lib.dovecot.imap-login
-    - usr.lib.dovecot.log
-    - usr.lib.dovecot.managesieve-login
-    - usr.lib.dovecot.pop3-login
-    - usr.lib.dovecot.ssl-params
-    - usr.lib.dovecot.script-login
-    - usr.lib.dovecot.script
-    - usr.lib.dovecot.stats
+    - '{{ dovecot_apparmor_profiles.files }}'
   loop_control:
     loop_var: aa_config
 
@@ -325,57 +311,12 @@
     replace: 'ALLOW_COREDUMPS={{ system.debug | ternary(1,0) }}'
 
 ################################################################################
-- name: Install packages needed for dovecot fts
-  when: mail.fts.active
-  apt:
-    update_cache: yes
-    cache_valid_time: 86400
-    name: '{{ dovecot.fts_packages }}'
-    state: present
 
-- name: Copy decode2text script
-  when: mail.fts.active
-  tags: scripts
-  copy:
-    src: fts/decode2text
-    dest: /usr/local/bin/decode2text
-    mode: '0755'
+# Full text search support ====================================================
 
-- name: Copy decode2text script
+- name: Include full text search tasks
   when: mail.fts.active
-  tags: logs
-  file:
-    path: /var/log/decode2text.log
-    mode: '0644'
-    owner: dovecot
-    group: dovecot
-    state: touch
-
-
-- name: Copy fts mime configuration files
-  when: mail.fts.active
-  tags: config
-  template:
-    src: '{{ file.src }}'
-    dest: '{{ file.dest }}'
-  with_items:
-    - src: fts/mime-supported.conf
-      dest: /etc/dovecot/fts-mime-types.conf
-  loop_control:
-    loop_var: file
-
-- name: Copy solr configuration files
-  when: mail.fts.active
-  tags: config
-  notify: Restart tomcat
-  template:
-    src: '{{ file.src }}'
-    dest: '{{ file.dest }}'
-  with_items:
-    - src: fts/solr-schema.xml
-      dest: /etc/solr/conf/schema.xml
-  loop_control:
-    loop_var: file
+  include_tasks: fts.yml
 
 # Virtual mailboxes creation ==================================================
 
