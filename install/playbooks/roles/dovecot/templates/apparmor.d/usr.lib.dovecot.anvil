@@ -1,0 +1,26 @@
+# Last Modified: Sun Feb  2 13:23:30 2020
+#include <tunables/global>
+
+# ------------------------------------------------------------------
+#
+#    Copyright (C) 2013 Christian Boltz
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#
+# ------------------------------------------------------------------
+# vim: ft=apparmor
+
+
+/usr/lib/dovecot/anvil {
+  #include <abstractions/base>
+  #include <abstractions/dovecot-common>
+  #include <local/usr.lib.dovecot.anvil>
+
+  capability setuid,
+  capability sys_chroot,
+
+  /run/dovecot/anvil rw,
+  /usr/lib/dovecot/anvil mr,
+}

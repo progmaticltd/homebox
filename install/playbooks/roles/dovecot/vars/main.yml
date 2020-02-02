@@ -1,0 +1,37 @@
+---
+
+apparmor:
+  profiles:
+    - tunables/dovecot
+    - local/usr.sbin.dovecot
+    - local/usr.lib.dovecot.imap
+    - local/usr.lib.dovecot.pop3
+    - local/usr.lib.dovecot.lmtp
+    - local/usr.lib.dovecot.config
+    - local/usr.lib.dovecot.auth
+    - local/usr.lib.dovecot.managesieve
+    - local/usr.lib.dovecot.quota-status
+    - usr.lib.dovecot.quota-status
+    - usr.lib.dovecot.script-login
+    - usr.lib.dovecot.script
+    - usr.lib.dovecot.stats
+    - usr.bin.logger
+    - usr.lib.dovecot.anvil
+    - usr.lib.dovecot.managesieve-login
+    - usr.lib.dovecot.dovecot-lda
+    - usr.lib.dovecot.imap-login
+    - usr.lib.dovecot.dict
+    - usr.lib.dovecot.log
+    - usr.lib.dovecot.pop3-login
+    - usr.local.sbin.dovecot-postlogin
+  empty_profiles:
+    - usr.lib.dovecot.anvil
+    - usr.lib.dovecot.managesieve-login
+    - usr.lib.dovecot.ssl-params
+    - usr.lib.dovecot.dovecot-lda
+    - usr.lib.dovecot.imap-login
+    - usr.lib.dovecot.dovecot-auth
+    - usr.lib.dovecot.dict
+    - usr.lib.dovecot.log
+    - usr.lib.dovecot.deliver
+    - usr.lib.dovecot.pop3-login

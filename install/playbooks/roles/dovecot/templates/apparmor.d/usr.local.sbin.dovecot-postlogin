@@ -1,0 +1,17 @@
+# Last Modified: Sun Feb  2 13:57:26 2020
+#include <tunables/global>
+
+# TODO: Check https://gitlab.com/apparmor/apparmor/-/wikis/Pam_apparmor_example
+
+/usr/local/sbin/dovecot-postlogin {
+  #include <abstractions/base>
+  #include <abstractions/bash>
+
+  # switch to an anprivileged user
+  /usr/bin/su ix,
+
+  /usr/local/sbin/dovecot-postlogin r,
+
+  # This is a script, run as the user
+  /usr/bin/dash ix,
+}

@@ -1,0 +1,2 @@
+# Deployed the {{ ansible_date_time.date }} at {{ ansible_date_time.time }}
+# by {{ role_name }}

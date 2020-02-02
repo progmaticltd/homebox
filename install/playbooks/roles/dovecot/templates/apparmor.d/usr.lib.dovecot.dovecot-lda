@@ -1,0 +1,87 @@
+# Last Modified: Sun Feb  2 13:27:57 2020
+#include <tunables/global>
+
+# ------------------------------------------------------------------
+#
+#    Copyright (C) 2013-2016 Christian Boltz
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#
+# ------------------------------------------------------------------
+# vim: ft=apparmor
+
+
+/usr/lib/dovecot/dovecot-lda {
+  #include <abstractions/base>
+  #include <abstractions/dovecot-common>
+  #include <abstractions/nameservice>
+  #include <local/usr.lib.dovecot.dovecot-lda>
+
+  capability setuid,
+
+  /etc/dovecot/** r,
+  /proc/*/mounts r,
+  /run/dovecot/auth-userdb rw,
+  /usr/bin/doveconf mrix,
+  /usr/lib/dovecot/dovecot-lda mrix,
+  /usr/share/dovecot/protocols.d/ r,
+  /usr/share/dovecot/protocols.d/** r,
+  /usr/{bin,sbin}/sendmail Cx -> sendmail,
+  /{var/,}run/dovecot/mounts r,
+  @{DOVECOT_MAILSTORE}/ rw,
+  @{DOVECOT_MAILSTORE}/** rwlk,
+  owner /tmp/dovecot.lda.* rw,
+
+
+  profile sendmail /usr/{bin,sbin}/sendmail flags=(complain,attach_disconnected) {
+    #include <abstractions/base>
+    #include <abstractions/consoles>
+    #include <abstractions/nameservice>
+    #include <abstractions/postfix-common>
+    #include <abstractions/user-tmp>
+
+    capability sys_ptrace,
+
+    /etc/aliases rw, # newaliases is a symlink to sendmail, so it's
+    /etc/aliases.db rw, # actually the same binary
+    /etc/fstab r,
+    /etc/hosts.allow r,
+    /etc/hosts.deny r,
+    /etc/mail/* r,
+    /etc/mail/statistics rw,
+    /etc/mtab r,
+    /etc/postfix/aliases r,
+    /etc/postfix/aliases.db rw, # newaliases again
+    /etc/sendmail.cf r,
+    /etc/sendmail.cw r,
+    /etc/shells r,
+    /proc/loadavg r,
+    /proc/net/if_inet6 r,
+    /root/.forward r,
+    /root/dead.letter w,
+    /usr/bin/procmail Px,
+    /usr/lib/postfix/master Px,
+    /usr/lib/postfix/showq Px,
+    /usr/lib/postfix/smtpd Px,
+    /usr/{bin,sbin}/postalias Px,
+    /usr/{bin,sbin}/postdrop Px,
+    /usr/{bin,sbin}/postfix Px,
+    /usr/{bin,sbin}/postqueue Px,
+    /usr/{bin,sbin}/sendmail mrix,
+    /usr/{bin,sbin}/sendmail.postfix mrix,
+    /usr/{bin,sbin}/sendmail.sendmail mrix,
+    /var/spool/clientmqueue/* rwl,
+    /var/spool/mail/* rwl,
+    /var/spool/mqueue/* rwl,
+    /var/spool/postfix/maildrop/* rwl,
+    /var/spool/postfix/public/pickup w,
+    /var/spool/postfix/public/qmgr w,
+    /var/spool/postfix/public/showq w,
+    /{var/,}run/sendmail.pid rwl,
+    /{var/,}run/sm-client.pid rwl,
+    /{var/,}run/utmp rw,
+
+  }
+}

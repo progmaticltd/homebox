@@ -1,0 +1,33 @@
+# Last Modified: Sun Feb  2 13:30:12 2020
+#include <tunables/global>
+
+# ------------------------------------------------------------------
+#
+#    Copyright (C) 2009-2011 Canonical Ltd.
+#    Copyright (C) 2013 Christian Boltz
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#
+# ------------------------------------------------------------------
+# vim: ft=apparmor
+
+
+/usr/lib/dovecot/pop3-login {
+  #include <abstractions/base>
+  #include <abstractions/dovecot-common>
+  #include <abstractions/nameservice>
+  #include <abstractions/ssl_certs>
+  #include <abstractions/ssl_keys>
+  #include <local/usr.lib.dovecot.pop3-login>
+
+  capability setuid,
+  capability sys_chroot,
+
+  /usr/lib/dovecot/pop3-login mr,
+  /{,var/}run/dovecot/anvil rw,
+  /{,var/}run/dovecot/login/ r,
+  /{,var/}run/dovecot/login/* rw,
+
+}

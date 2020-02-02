@@ -2,6 +2,7 @@
 
 /usr/lib/dovecot/stats {
   #include <abstractions/base>
+  #include <abstractions/dovecot-common>
 
   /lib/x86_64-linux-gnu/ld-*.so mr,
   /usr/lib/dovecot/stats mr,
