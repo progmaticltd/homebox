@@ -1,3 +1,6 @@
+__Please, note this branch will receive only bug fixes and security updates. all the developments are now focused on the
+[Debian Buster branch](https://github.com/progmaticltd/homebox/tree/buster-dev).__
+
 A set of Ansible scripts to setup a secure email and personal files server. This project is for you if:
 
 - You are interested to host your emails yourself, for privacy, security or any other reason.
