@@ -19,6 +19,7 @@
 # Test opendmarc and opendkim
 - import_playbook: opendmarc.yml
 - import_playbook: opendkim.yml
+  when: bind.propagation.check
 
 # Test mail related certificates
 - import_playbook: mail-certificates.yml
@@ -86,3 +87,4 @@
 
 # Test https server quality
 - import_playbook: https-grades.yml
+  when: bind.propagation.check
