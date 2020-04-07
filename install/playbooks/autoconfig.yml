@@ -10,5 +10,6 @@
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
-    - certificates
+    - role: certificates
+      tags: certificates
     - autoconfig

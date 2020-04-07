@@ -10,7 +10,8 @@
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
-    - certificates
+    - role: certificates
+      tags: certificates
 
 - hosts: homebox
   vars:
@@ -21,7 +22,8 @@
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
-    - certificates
+    - role: certificates
+      tags: certificates
 
 - hosts: homebox
   vars_files:

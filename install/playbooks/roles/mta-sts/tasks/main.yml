@@ -51,6 +51,7 @@
 # TLS certificate access ======================================================
 
 - name: Set permissions for www-data to the certificate folder
+  tags: certificates
   import_role:
     name: cert-perms
   vars:

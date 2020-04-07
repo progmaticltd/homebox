@@ -10,4 +10,5 @@
       type: smtp
       domain_alias: smtp2
   roles:
-    - certificates
+    - role: certificates
+      tags: certificates
