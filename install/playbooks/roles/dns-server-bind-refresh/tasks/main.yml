@@ -43,7 +43,9 @@
 
 - name: Copy DNS entries in bind cache directory (reverse for backup IP)
   notify: Restart bind
-  when: bind.generate_reverse and backup_ip is defined and (backup_ip | length > 0)
+  when:
+    - bind.generate_reverse and backup_ip is defined
+    - (backup_ip | length > 0)
   copy:
     src: '/etc/bind/reverse-backup.{{ network.domain }}'
     dest: '/var/cache/bind/reverse-backup.{{ network.domain }}'
