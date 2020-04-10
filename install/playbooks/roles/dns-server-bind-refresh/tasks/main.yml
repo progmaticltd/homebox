@@ -9,6 +9,19 @@
     delimiter: '\n'
     regexp: '^.*\.bind$'
 
+- name: Find all bind cache files
+  register: bind_cache
+  find:
+    path: /var/cache/bind
+
+- name: Remove all files
+  file:
+    path: '{{ file.path }}'
+    state: absent
+  loop: '{{ bind_cache.files }}'
+  loop_control:
+    loop_var: file
+
 - name: Copy DNS entries in bind cache directory (main IP)
   notify: Restart bind
   copy:
