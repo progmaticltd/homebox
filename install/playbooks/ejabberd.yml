@@ -10,7 +10,8 @@
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
-    - certificates
+    - role: certificates
+      tags: certificates
 
 # When using http download, also create a specific certificate
 # to serve files over https (e.g. xmpp.homebox.space)
@@ -22,8 +23,8 @@
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
-    - certificates
-
+    - role: certificates
+      tags: certificates
 
 # Chat rooms behind a certificate
 - hosts: homebox
@@ -34,8 +35,8 @@
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
-    - certificates
-
+    - role: certificates
+      tags: certificates
 
 # Install a ejabberd (https://docs.ejabberd.im)
 - hosts: homebox

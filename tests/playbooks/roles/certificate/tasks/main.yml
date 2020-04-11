@@ -1,13 +1,23 @@
 ---
 
 - name: Install the letsencrypt staging root CA when using staging
-  register: root_ca_staging
+  when: devel.acme_server == 'staging'
+  register: root_ca
   get_url:
     url: https://letsencrypt.org/certs/fakelerootx1.pem
     dest:  /usr/local/share/ca-certificates/fakelerootx1.crt
 
+- name: Install the acme server root CA when using pebble
+  when: devel.acme_server == 'pebble'
+  register: root_ca
+  get_url:
+    validate_certs: no
+    url: https://10.30.50.2:15000/roots/0
+    dest: /usr/local/share/ca-certificates/pebblerootca.crt
+    force: yes
+
 - name: Update certificates list
-  when: root_ca_staging.changed
+  when: root_ca.changed
   shell: /usr/sbin/update-ca-certificates
 
 - name: Check if certbot is installed
