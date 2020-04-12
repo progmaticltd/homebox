@@ -345,6 +345,7 @@ devel_default:
     - net-tools
     - file
     - swaks
+    - libnet-ssleay-perl
     - curl
     - locate
     - colorized-logs
