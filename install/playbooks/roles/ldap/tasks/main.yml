@@ -604,7 +604,7 @@
   tags: password
   replace:
     path: /etc/pam.d/common-password
-    regexp: '^(password.*pam_unix.so.*sha512.*)$'
+    regexp: '^(password.*pam_unix.so.*sha512)$'
     replace: '\1 remember={{ passwords.remember }}'
 
 - name: Add a script to edit users
