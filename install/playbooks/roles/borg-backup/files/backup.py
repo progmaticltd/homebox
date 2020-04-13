@@ -71,6 +71,7 @@ class BackupManager(object):
         self.repositoryPath = None
         self.repositoryMounted = False
         self.mountPath = None
+        self.archivePrefix = 'homebox-'
 
         # Save backup stdout/stderr for reporting
         # the keys will be create, prune, check or restore
@@ -378,7 +379,7 @@ class BackupManager(object):
         args = [ 'borg', 'create' ]
 
         # Build repository path specification
-        pathSpec = self.repositoryPath + '::homebox-{now}'
+        pathSpec = self.repositoryPath + '::' + self.archivePrefix + '{now}'
 
         args.append('--filter')
         args.append('AME')
@@ -448,7 +449,7 @@ class BackupManager(object):
 
         # Buil repository path specification
         args.append('--prefix')
-        args.append('{hostname}-')
+        args.append(self.archivePrefix)
 
         args.append('-v')
         args.append('--list')
