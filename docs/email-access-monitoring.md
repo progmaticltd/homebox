@@ -69,7 +69,7 @@ This file can look like this:
 # Budapest UPC Magyarorszag Kft:
 176.63.24.0/21
 
-# Swiss ressort
+# Swiss resort
 81.17.27.131
 ```
 
@@ -83,7 +83,7 @@ access_check:
     rbl_malus: 40
 ```
 
-### IP addresses blacklisted by fail2ban
+## IP addresses blacklisted by fail2ban
 
 If an IP address has been before blacklisted by fail2ban, a score of 10 will be added per blacklist. So, if an IP
 address has been banned 5 time in the last log file, the score will be 50 points.
@@ -157,7 +157,7 @@ control.
 
 You can blacklist entire countries, but system wide only for now.
 
-For instance, here how to deny all IMAP connections, on the whole system, to Russia and China:
+For instance, here is how to deny all IMAP connections, on the whole system, from Russia and China:
 
 ``` yaml
 access_check:
@@ -245,7 +245,7 @@ Details:
 IP Details: https://duckduckgo.com/?q=whois+81.17.27.131
 ```
 
-The second example, this is a message when a connection has been denied, this time without the point details:
+The second example, this is a message when a connection has been denied, this time without the points details:
 
 ```txt
 IMAP connection denied

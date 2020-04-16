@@ -1,11 +1,11 @@
 ## Connecting on your server
 
-To connect on your server, you can use SSH to administer it, like doing your packages update.
+To connect to your server, you can use SSH to administer it, like doing your packages updates.
 
 ## Adding or updating user accounts
 
-At this date, there is no web interface or graphical user interface included to update the add, remove or edit user
-accounts. Maybe a web interface will be added later.  In the mean time, here some procedures you can follow.
+So far, there is no web interface or graphical user interface included to add, remove or edit user accounts. Maybe a web
+interface will be added later. In the mean time, here are some procedures you can follow.
 
 ### Changing passwords
 
@@ -34,13 +34,13 @@ configuration file:
     - mikael@homebox.space
 ```
 
-Then, run the Ansible playbook called __ldap-refresh.yml__. This playbook refresh the email aliases only, and does not
+Then, run the Ansible playbook called __ldap-refresh.yml__. This playbook refreshes the email aliases only, and does not
 touch anything else. It will also remove any email alias previously added if it is not in the list.
 
 ### Adding a user account
 
-The best way is to modify the users section ofyour system.yml configuration file and to run an Ansible scripts
-again. The main advantage of this, is that the database will be up to date if you need to deploy your server again.
+The best way is to modify the users section of your system.yml configuration file and to run an Ansible script again.
+The main advantage of this, is that the database will be up to date if you need to deploy your server again.
 
 First, add a new user in the users list:
 
@@ -64,15 +64,15 @@ cd install
 ansible-playbook -v -i ../config/hosts.yml playbooks/update-users.yml
 ```
 
-The home playbook create the home directories for this user.
+The home playbook creates the home directories for this user.
 
 ### Modifying a user account
 
 If you want to directly modify a user account specified in your LDAP settings, there is a script installed in
-__/usr/local/sbin/ldap-user-edit__. With his script, you can directly modify an LDAP user account, from your system.
+__/usr/local/sbin/ldap-user-edit__. With this script, you can directly modify a LDAP user account, from your system.
 
 It is a wrapper around ldapvi, so you will be able to quicly edit any user, for instance to update an email address or
-an alias, or to fix a typo in the username. This is not meant to major modifications.
+an alias, or to fix a typo in the username. This is not meant for major modifications.
 
 !!! Warning
     Any modification made this way will not be part of a disaster recovery. You will need to reflect the change in your
@@ -106,7 +106,7 @@ Ansible scripts to install Postfix again.
 
 ### Removing rspamd
 
-Because postfix is configured to filter emails through ClamAV, you will have to re-run the
+Because postfix is configured to filter emails through Rspamd, you will have to re-run the
 Ansible scripts to install Postfix again.
 
 1. Remove the rspamd packages
@@ -147,7 +147,7 @@ If you chose to decrypt your drive with a Yubikey, just insert the Yubikey, and 
 ### Remotely over SSH
 
 When the system starts, a small SSH server is started, which allows you to decrypt the drive remotely.
-Here an example using a command line SSH client:
+Here is an example using a command line SSH client:
 
 ```sh
 andre@london:~ $ ssh root@rodier.me

@@ -8,14 +8,13 @@ backups will be provided in a future version. In the mean time, the process has 
 
 1. Connect on the server, using SSH, as root.
 2. Load the backup encryption key into your environment.
-3. List the backups snapshots, using [borg list command](https://borgbackup.readthedocs.io/en/stable/usage/list.html)
+3. List the backup snapshots, using [borg list command](https://borgbackup.readthedocs.io/en/stable/usage/list.html)
 4. Mount the backup snapshot you are interested in, they are listed by date.
    You can do this by using the [borg mount command](https://borgbackup.readthedocs.io/en/stable/usage/mount.html)
 5. Search in the mounted drive for the lost emails, using for instance the excellent midnight commander.
 6. Copy the emails at the place of your choice, perhaps in your /home/users/<user>/mails/maildir/ folder to make them
    accessible from an email client.
 7. Make sure the copied email files belongs to the right user, otherwise Dovecot won't be able to read these files.
-   belongs to the right user.
 8. The last thing to do, before disconnecting, is to ‘unmount’ the backup snapshot, using the
    [borg umount command](https://borgbackup.readthedocs.io/en/stable/usage/mount.html#borg-umount)
 9. Finally, disconnect from SSH.
@@ -23,8 +22,8 @@ backups will be provided in a future version. In the mean time, the process has 
 
 # Data restoration
 
-Something bad happened, for instance you just deleted a lot of email, contacts or calendar events. In this case, before
-the next backup occurs and backup your mistake, you can quickly restore your emails, calendar events and contacts, with
+Something bad happened, for instance you just deleted a lot of emails, contacts or calendar events. In this case, before
+the next backup occurs and backs up your mistake, you can quickly restore your emails, calendar events and contacts, with
 just one line.
 
 So, just run the main borgbackup installation script:
@@ -44,7 +43,7 @@ ansible-playbook -v -i ../config/hosts.yml -t restore playbooks/borgbackup.yml
 This is the disaster recovery option.
 
 Something really bad happened, and you lost your box. Don't panic, if you have installed the system properly, you can
-easily restore it from scratch, with the all your users' data. This is done by adding one line in your sysetm.yml file!
+easily restore it from scratch, with the all your users' data. This is done by adding one line in your system.yml file!
 
 The important thing is to have kept the [deployment backup folder](deployment-backup.md) in a safe place, for instance
 on an encrypted USB drive.
@@ -82,7 +81,7 @@ cd install
 ansible-playbook -v -i ../config/hosts.yml playbooks/main.yml
 ```
 
-Depending on the amount of data, the network speed and computer power, the whole installation is taking enough time for
+Depending on the amount of data, the network speed and the computer power, the whole installation is taking enough time for
 you to have a well deserved break. Prepare yourself a nice cup of tea or coffee. Once installed, you should have all
 your emails from the last backup restored.
 

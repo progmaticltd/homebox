@@ -79,7 +79,7 @@ users:
 
 ## Details of the options
 
-There are a few options to download emails detailled below.
+There are a few options to download emails detailed below.
 
 ### Server name: "name"
 
