@@ -4,7 +4,7 @@ The default configuration for the Jabber server comes with the following options
 
 - Installed by default
 - Server to server communication active and public by default
-- Socks proxy to transfer file
+- Socks proxy to transfer files
 - HTTP upload for offline file transfer
 
 Default options for the Jabber server:

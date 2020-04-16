@@ -23,8 +23,8 @@ mail_default:
   pop3: false               # Activate the POP3 protocol or not
 ```
 
-By default, IMAP protocol is activated and POP3 is disabled. If you need pop3 protocol, just set the flag pop3 to true,
-and run the Ansbible dovecot playbook.
+By default, the IMAP protocol is activated and POP3 is disabled. If you need the POP3 protocol, just set the flag pop3
+to true, and run the Ansbible dovecot playbook.
 
 # Antivirus configuration
 
@@ -49,7 +49,7 @@ The platform can scan the emails received and sent, using [ClamAV](https://clama
 # Master users
 
 As Dovecot is used, it is possible to activate the "impersonate" or _master users_ feature.  If you activate this
-option, a _master_ user will be created, allowing you to logon as any user.  The RoundCube impersonate plugin will be
+option, a _master_ user will be created, allowing you to logon as any user. The RoundCube impersonate plugin will be
 activated as well.
 
 Example with this configuration:
@@ -95,8 +95,7 @@ from the Debian backports repository.
 
 ## International email addresses
 
-Your main email address should be without ASCII characters only, but the aliases can contains accents,
-for instance:
+Your main email address should be with ASCII characters only, but the aliases can contains accents, for instance:
 
 ``` yaml hl_lines="9"
 users:
@@ -112,8 +111,8 @@ users:
 ```
 
 !!! Note
-    This is possible if all the software and the platforms involved support it. Not all major email providers are supporting
-    this, Yahoo mail, for instance, does not even let you send an email with an internationalised user name.
+    This is possible if all the software and the platforms involved support it. Not all major email providers are
+    supporting this, Yahoo mail, for instance, does not even let you send an email with an internationalised user name.
     This feature is not entirely tested yet, but is working so far between two homebox servers and SOGo or evolution.
 
 ## Email addresses extensions

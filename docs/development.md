@@ -1,6 +1,6 @@
 ## External mailing lists
 
-If something goes wrong, here a few resources:
+If something goes wrong, here are a few resources:
 
 - The [Postfix mailing lists](http://www.postfix.org/lists.html).
 - The [Dovecot mailing lists](https://www.dovecot.org/mailinglists.html).
@@ -16,10 +16,10 @@ The repository contains a few folders you should be familiar with:
 - preseed: Docker environment to create an automatic ISO image installer for Debian.
 - install: Ansible scripts to install or test the whole server environment.
 - backup: A very useful folder that contains some important files like the passwords and certificates generated when
-  deploying the system. This allows you to "replay" the deployment on a new server after a disaster, without loosing any
-  information. This folder is generated automatically on the first deployment, and ignored by git
+  deploying the system. This allows you to "replay" the deployment on a new server after a disaster, without losing any
+  information. This folder is generated automatically on the first deployment, and ignored by git.
 - tests: Ansible playbooks to test the platform.
-- sandbox: Put anything you don't want to commit here.
+- sandbox: Put here anything you don't want to commit.
 - docs: This project documentation.
 - uninstall: Ansible scripts to uninstall some of the components. This allows you to test them.
 - devel: A set of containers to help setup a local development environment.
@@ -64,28 +64,28 @@ However, the more you want to test, the more your router need to be configured:
 - TCP/80 (HTTP): Used to query letsencrypt for the certificates. Open it at least to
   obtain the SSL using LetsEncrypt. You can then close the port once you have the
   certificates.
-- TCP/25: SMTP, to receive and transfer emails from and to other SMTP servers on
+- TCP/25: SMTP, to receive and transfer emails from and to other SMTP servers on the
   internet. You need this one only to test the reception and transmission of external
   emails.
 
 Now, all the rest can be done internally, without exposing your test machine. These ports
 don't need to be forwarded by your router during the development time:
 
-- TCP/143 and TCP/993 : IMAP and IMAPS
-- TCP/110 and TCP/995 : POP3 and POP3S
-- TCP/587 : [Submission](https://en.wikipedia.org/wiki/Opportunistic_TLS).
-- TCP/465 : [SMTPS](https://en.wikipedia.org/wiki/SMTPS) (this on is kept for
+- TCP/143 and TCP/993: IMAP and IMAPS
+- TCP/110 and TCP/995: POP3 and POP3S
+- TCP/587: [Submission](https://en.wikipedia.org/wiki/Opportunistic_TLS).
+- TCP/465: [SMTPS](https://en.wikipedia.org/wiki/SMTPS) (this one is kept for
   compatibility with some old devices, but perhaps will be removed soon)
-- TCP/4190 : ManageSieve. Used to remotely access your mail filters, for instance with
+- TCP/4190: ManageSieve. Used to remotely access your mail filters, for instance with
   [thunderbird sieve plugin](https://addons.mozilla.org/en-US/thunderbird/addon/sieve/).
-- TCP/443 : HTTPS access for the webmail and also Outlook autodiscover feature.
-- TCP/5222 and TCP/5269 : Jabber, clients to server and server to server implementation.
-- UDP/53 and TCP/53 : DNS Server.
+- TCP/443: HTTPS access for the webmail and also Outlook autodiscover feature.
+- TCP/5222 and TCP/5269: Jabber, clients to server and server to server implementation.
+- UDP/53 and TCP/53: DNS Server.
 
 ### Bridging your workstation
 
 If you are using a virtual machine, it is better to use a bridge on your workstation, to
-transparently forward the traffic from internet.
+transparently forward the traffic from the internet.
 
 - On Debian: https://wiki.debian.org/BridgeNetworkConnections
 - On Linux arch: [Network bridge](https://wiki.archlinux.org/index.php/Network_bridge)
@@ -114,7 +114,7 @@ Otherwise, you can use the DNS server implemented with Bind.
 
 The host file is in YAML format, and contains only one host, which is your homebox server.
 
-Here an example:
+Here is an example:
 
 ```yaml
 
@@ -170,7 +170,7 @@ By default:
 - The certificates are backed up on your local machine, allowing you to redeploy without asking again the same
   certificates, which is also faster.
 - If you want to test your system from a local computer, you will need to add the staging version of the root
-  certificate authority. They cab be downloaded on the on the [LetsEncrypt staging environment
+  certificate authority. It can be downloaded on the on the [LetsEncrypt staging environment
   page](https://letsencrypt.org/docs/staging-environment/).
 
 
@@ -283,13 +283,13 @@ firewall:
         comment: 'Allow the retrieval of emails from other servers (POP/IMAP)'
       - dest: 10.30.50.2
         port: 14000,15000
-        commit: 'Allow access to the Pebble ACME server'
+        comment: 'Allow access to the Pebble ACME server'
       - dest: 10.30.50.3
         port: 8055
-        commit: 'Allow access to the Pebble challenge Test server'
+        comment: 'Allow access to the Pebble challenge Test server'
       - dest: 10.30.50.4
         port: 3142
-        commit: 'Allow APT cacher access'
+        comment: 'Allow APT cacher access'
 ```
 
 ### Setting up ansible-lint before commit
@@ -297,7 +297,7 @@ firewall:
 The program ansible-lint is executed by the continuous integration platform, and should be used for each commit. A hook
 is provided in the git-hooks folder.
 
-The asible-lint software need to be installed on your machine. We are using the version in Debian Buster. The
+The ansible-lint software needs to be installed on your machine. We are using the version in Debian Buster. The
 ansible-lint configuration file is in `config/ansible-lint-default.yml`.
 
 To ensure the hook is executed before each commit, run this on your local machine:
@@ -523,5 +523,5 @@ total ----------------------------------------------------------------- 597.48s
 - Emacs or vim, but if you are not ready, [VisualStudio code](https://code.visualstudio.com/) is not too bad as well,
   and is very well integrated in Debian / Ubuntu.
 - Test your SMTP server compliance: [mxtoolbox.com](http://mxtoolbox.com/).
-- DNSSEC records debugger : https://dnssec-analyzer.verisignlabs.com/
+- DNSSEC records debugger: https://dnssec-analyzer.verisignlabs.com/
 - DNS propagation checker: https://www.whatsmydns.net/
