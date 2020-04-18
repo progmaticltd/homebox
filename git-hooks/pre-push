@@ -1,27 +1,94 @@
 #!/bin/bash
 
-# Exit on error
-set -e
-
+# From .git/hooks/pre-push.sample
 # Not used for now
 # remote="$1"
 # url="$2"
+z40=0000000000000000000000000000000000000000
 
 # Create the logs directory if not exists. It is ignored by git anyway
 test -d logs || mkdir logs
 
-# Check if ansible lint is installed
-lint_version=$(ansible-lint --version 2>&1)
-echo "Check if ansible-lint is installed and accessible: $lint_version"
+# Manage errors in pipelines
+set -o pipefail
 
-# Run ansible lint on the common roles
-ansible-lint common/roles/* | tee logs/ansible-lint-common.log
+while read -r local_ref local_sha _ _ # remote_ref and remote_sha are not used
+do
+	if [ "$local_sha" = $z40 ]
+	then
+		# Handle delete
+		# Do not run ansible-lint on the branch to be deleted
+		:
+		# Continue processing the next branch if any
+	else
+		# Create a temporary directory
+		tmp_dir="$(mktemp -d)/"
 
-# Run ansible lint on the installation playbooks
-ansible-lint install/playbooks/main.yml | tee logs/ansible-lint-install.log
+		# Remember the main working tree toplevel
+		main_working_tree_dir="$(git rev-parse --show-toplevel)"
 
-# Run ansible lint on the test playbooks
-ansible-lint tests/playbooks/main.yml | tee logs/ansible-lint-tests.log
+		# Export the branch to the temporary directory
+		echo "Exporting $local_ref to $tmp_dir"
+		git archive "$local_sha" | tar -x -C "$tmp_dir" || exit $?
 
-# Run ansible lint on the uninstall playbooks
-ansible-lint uninstall/playbooks/*.yml | tee logs/ansible-lint-uninstall.log
+		# Run ansible-lint in the temporary directory on the main
+		# ansible files and directories and exit from the subshell on
+		# error
+		(
+			cd "$tmp_dir" || exit 2 # Not an ansible-lint error
+
+			# Run ansible lint on the common roles
+			ansible-lint common/roles/* 2>&1 \
+				| tee "$main_working_tree_dir"/logs/ansible-lint-common.log \
+				|| exit $?
+
+			# Run ansible lint on the installation playbooks
+			ansible-lint install/playbooks/main.yml 2>&1 \
+				| tee "$main_working_tree_dir"/logs/ansible-lint-install.log \
+				|| exit $?
+
+			# Run ansible lint on the test playbooks
+			ansible-lint tests/playbooks/main.yml 2>&1 \
+				| tee "$main_working_tree_dir"/logs/ansible-lint-tests.log \
+				|| exit $?
+
+			# Run ansible lint on the uninstall playbooks
+			ansible-lint uninstall/playbooks/*.yml 2>&1 \
+				| tee "$main_working_tree_dir"/logs/ansible-lint-uninstall.log \
+				|| exit $?
+
+		) ; lint_result=$?
+
+		# Remove the temporary directory
+		rm -rf "$tmp_dir"
+
+		case "$lint_result" in
+			"0")
+				echo "Please beware of any warning"
+				echo "Looks good for ansible-lint"
+				# Continue processing the next branch if any
+				;;
+			"1")
+				echo "Please fix the ansible-lint errors"
+				exit $lint_result
+				;;
+			"126"|"127") # ansible-lint cannot be run or is not found
+				cat <<- EOF
+
+				Please make sure ansible-lint is installed and usable.
+
+				The git pre-push hook uses ansible-lint to validate YAML ansible playbooks
+				files on commits.
+
+				EOF
+				exit $lint_result
+				;;
+			*)
+				echo "Sorry, something wrong happened"
+				exit $lint_result
+				;;
+		esac
+	fi
+done
+
+exit 0
