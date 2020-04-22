@@ -58,6 +58,17 @@
   loop_control:
     loop_var: path
 
+- name: Install RFC7919 Diffie-Hellman parameters files for DHE ciphers
+  copy:
+    src: '{{ file }}'
+    dest: '/etc/ssl/{{ file }}'
+    mode: '0644'
+  with_items:
+    - ffdhe2048.pem
+    - ffdhe4096.pem
+  loop_control:
+    loop_var: file
+
 - name: Create a homebox directory to store any specific configuration
   file:
     path: /etc/homebox

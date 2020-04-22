@@ -65,14 +65,17 @@ listen:
     ip: "::"
     module: ejabberd_c2s
     certfile: "/etc/ejabberd/default.pem"
-    dhfile: "/etc/ejabberd/c2s-dh.pem"
+    dhfile: "/etc/ssl/ffdhe{{ security.dhparam_size }}.pem"
     starttls: true
     starttls_required: true
     protocol_options:
-      - "no_sslv2"
-      - "no_sslv3"
-      - "no_tlsv1"
-      - "no_tlsv1_1"
+{{ security.tls.unused_versions
+ | map("regex_replace", "^(.+)$", '      - "no_\\1"')
+ | map("replace", ".", "_")
+ | list
+ | join("\n")
+ | lower }}
+    ciphers: "{{ security.tls.openssl_ciphers }}"
     max_stanza_size: 65536
     shaper: c2s_shaper
     access: c2s
@@ -103,16 +106,18 @@ disable_sasl_mechanisms: "digest-md5"
 
 {% if ejabberd.s2s.active %}
 s2s_use_starttls: '{{ ejabberd.s2s.use_starttls }}'
-s2s_dhfile: "/etc/ejabberd/s2s-dh.pem"
+s2s_dhfile: "/etc/ssl/ffdhe{{ security.dhparam_size }}.pem"
 s2s_certfile: "/etc/ejabberd/default.pem"
 
 ## Custom OpenSSL options
 s2s_protocol_options:
-  - "no_sslv3"
-  - "no_sslv2"
-  - "no_sslv3"
-  - "no_tlsv1"
-  - "no_tlsv1_1"
+{{ security.tls.unused_versions
+ | map("regex_replace", "^(.+)$", '  - "no_\\1"')
+ | map("replace", ".", "_")
+ | list
+ | join("\n")
+ | lower }}
+s2s_ciphers: "{{ security.tls.openssl_ciphers }}"
 
 ##
 ## S2S whitelist or blacklist

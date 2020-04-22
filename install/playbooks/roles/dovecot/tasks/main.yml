@@ -61,16 +61,6 @@
     cert_dir: 'pop3.{{ network.domain }}'
     entity_group: dovecot
 
-- name: Generate a strong Diffie Hellman file
-  notify: Restart dovecot
-  tags: ssl
-  openssl_dhparam:
-    path: /etc/dovecot/private/dh.pem
-    size: '{{ security.dhparam_size }}'
-    mode: '0640'
-    owner: root
-    group: dovecot
-
 - name: Copy the certificate renewal hook
   tags: cert
   copy:
