@@ -30,7 +30,27 @@
     name: dphys-swapfile
     state: present
 
-- name: Upgrade the distribution
+- name: Create a homebox directory to store any specific configuration
+  register: homebox_dir
+  file:
+    path: /etc/homebox
+    state: directory
+    mode: '0755'
+
+- name: Create the configuration file that defines paths to exclude for backup
+  tags: backup
+  template:
+    src: backup-exclude
+    dest: /etc/homebox/backup-exclude
+
+- name: Create the main configuration file for other services
+  tags: config
+  template:
+    src: main.cf
+    dest: /etc/homebox/main.cf
+
+- name: Upgrade the distribution the first time this script is run
+  when: homebox_dir.changed
   tags: apt
   apt:
     upgrade: true
@@ -68,24 +88,6 @@
     - ffdhe4096.pem
   loop_control:
     loop_var: file
-
-- name: Create a homebox directory to store any specific configuration
-  file:
-    path: /etc/homebox
-    state: directory
-    mode: '0755'
-
-- name: Create the configuration file that defines paths to exclude for backup
-  tags: backup
-  template:
-    src: backup-exclude
-    dest: /etc/homebox/backup-exclude
-
-- name: Create the main configuration file for other services
-  tags: config
-  template:
-    src: main.cf
-    dest: /etc/homebox/main.cf
 
 # Update packages cache, and install any security update
 - name: Update packages cache and install security updates
@@ -149,7 +151,7 @@
   tags: locale
   replace:
     path: /etc/locale.gen
-    regexp: '^# {{ locale | regex_replace("\.", "\\.") }}'
+    regexp: '^# {{ locale | regex_escape }}'
     replace: '{{ locale }}'
 
 - name: Configure locales
@@ -256,6 +258,13 @@
     - net.ipv6.conf.default.disable_ipv6
   loop_control:
     loop_var: entry_name
+
+- name: Update UFW IPv6 configuration
+  notify: Restart ufw
+  replace:
+    path: /etc/default/ufw
+    regexp: '^IPV6=(yes|no)'
+    replace: 'IPV6={{ "yes" if ipv6_used else "no" }}'
 
 # SSHFP (fingerprints) are only active with DNSSEC
 - name: Create the SSHFP records for bind
