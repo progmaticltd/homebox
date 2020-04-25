@@ -20,3 +20,16 @@ packages:
   remove:
     - libpam-cracklib
     - nscd
+
+indexed_fields:
+  - uid
+  - cn
+  - sn
+  - givenName
+  - mail
+  - memberUid
+  - uidNumber
+  - gidNumber
+  - intlMailAddr
+  - displayName
+  - telephoneNumber

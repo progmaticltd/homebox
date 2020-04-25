@@ -533,16 +533,7 @@
   become_user: openldap
   become_method: sudo
   command: 'slapindex -n 1 -v {{ field }}'
-  with_items:
-    - uid
-    - cn
-    - sn
-    - givenName
-    - mail
-    - memberUid
-    - uidNumber
-    - gidNumber
-    - intlMailAddr
+  with_items: '{{ indexed_fields }}'
   loop_control:
     loop_var: field
 
