@@ -72,7 +72,8 @@
     state: directory
 
 # AppArmor configuration ======================================================
-- name: Install some dovecot AppArmor profile
+- name: Install some clamav AppArmor profiles
+  notify: Restart clamav services
   tags: security, apparmor
   register: aa_templates
   template:
