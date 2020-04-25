@@ -1,0 +1,11 @@
+---
+
+# Packages to install for clamav
+packages:
+  - clamav
+  - clamav-base
+  - clamav-daemon
+  - clamav-freshclam
+  - clamdscan
+  - clamsmtp
+  - ipcalc
