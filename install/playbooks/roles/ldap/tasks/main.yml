@@ -584,7 +584,7 @@
 
 # Password quality enforcement ================================================
 
-- name: Check if AppArmor nginx configuration already contains the line
+- name: Check if the password quality module is in place
   register: line_found
   shell: >-
     grep -c pam_pwquality
