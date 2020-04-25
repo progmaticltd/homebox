@@ -48,21 +48,15 @@
     timeout: 300
 
 - name: Start clamav service
+  register: clamav_daemon
   service:
     name: clamav-daemon
     state: started
     enabled: yes
+  retries: 12
+  until: clamav_daemon is not failed
+  delay: 10
 
-# Ansible lint generate a warning here.
-# FIXME: There should be a simpler way to check the status of a service
-- name: Wait for the clamav service to be started # noqa 303
-  register: clamav_daemon
-  command: systemctl status clamav-daemon
-  retries: 10
-  until: clamav_daemon.rc == 0
-  delay: 1
-
-#
 ###############################################################################
 
 - name: Get the remote locale
