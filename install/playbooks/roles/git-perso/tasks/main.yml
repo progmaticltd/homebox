@@ -1,6 +1,0 @@
----
-
-- name: Install git package
-  apt:
-    name: git
-    state: installed
