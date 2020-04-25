@@ -251,23 +251,6 @@
 
 
 ################################################################################
-# Merge defaults gogs settings
-- name: Combine default and user defined gogs settings
-  run_once: true
-  when: gogs is defined
-  tags: defaults
-  set_fact:
-    gogs: '{{ gogs_default | combine(gogs, recursive=True) }}'
-
-- name: Use default gogs settings
-  run_once: true
-  when: gogs is not defined
-  tags: defaults
-  set_fact:
-    gogs: '{{ gogs_default }}'
-
-
-################################################################################
 # Merge defaults transmission settings
 - name: Combine default and user defined transmission settings
   run_once: true

@@ -37,7 +37,6 @@ This project is for you if:
 - Groupware: Sogo
 - Jabber: ejabberd
 - DNS: bind9
-- Git server: gogs
 - Bittorrent station: transmission
 - Proxy: Privoxy / Tor
 - Backup: Borgbackup
