@@ -1,0 +1,15 @@
+#include <tunables/global>
+/usr/lib/dovecot/dict {
+  #include <abstractions/base>
+  #include <abstractions/dovecot-common>
+  #include <abstractions/mysql>
+  #include <abstractions/nameservice>
+  #include <abstractions/openssl>
+
+  capability setuid,
+  network inet stream,
+
+  /etc/dovecot/dovecot-database.conf.ext r,
+  /etc/dovecot/dovecot-dict-sql.conf.ext r,
+  /usr/lib/dovecot/dict mr,
+}

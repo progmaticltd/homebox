@@ -1,6 +1,3 @@
-# Last Modified: Sun Feb  2 13:23:30 2020
-#include <tunables/global>
-
 # ------------------------------------------------------------------
 #
 #    Copyright (C) 2013 Christian Boltz
@@ -10,17 +7,11 @@
 #    License published by the Free Software Foundation.
 #
 # ------------------------------------------------------------------
-# vim: ft=apparmor
+# vim:ft=apparmor
 
+# @{DOVECOT_MAILSTORE} is a space-separated list of all directories
+# where dovecot is allowed to store and read mails
+#
 
-/usr/lib/dovecot/anvil {
-  #include <abstractions/base>
-  #include <abstractions/dovecot-common>
-  #include <local/usr.lib.dovecot.anvil>
-
-  capability setuid,
-  capability sys_chroot,
-
-  /run/dovecot/anvil rw,
-  /usr/lib/dovecot/anvil mr,
-}
+# HomeBox specific
+@{DOVECOT_MAILSTORE}=@{HOME}/mails/ @{HOME}/mails/maildir

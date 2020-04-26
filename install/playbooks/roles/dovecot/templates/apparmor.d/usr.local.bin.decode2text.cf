@@ -1,4 +1,3 @@
-# Last Modified: Sun May  6 09:53:18 2018
 #include <tunables/global>
 
 /usr/local/bin/decode2text {

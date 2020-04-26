@@ -1,0 +1,7 @@
+#include <tunables/global>
+/usr/lib/dovecot/log {
+  #include <abstractions/base>
+  #include <abstractions/dovecot-common>
+
+  /usr/lib/dovecot/log mr,
+}

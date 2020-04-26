@@ -1,0 +1,18 @@
+#include <tunables/global>
+#include <tunables/dovecot>
+
+/usr/lib/dovecot/pop3 {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/dovecot-common>
+
+  capability setuid,
+
+  @{DOVECOT_MAILSTORE}/ rw,
+  @{DOVECOT_MAILSTORE}/** rwkl,
+
+  @{HOME} r, # ???
+  /usr/lib/dovecot/pop3 mr,
+
+  #include <local/usr.lib.dovecot.pop3>
+}
