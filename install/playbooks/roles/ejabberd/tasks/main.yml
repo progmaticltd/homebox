@@ -4,6 +4,7 @@
   apt:
     name: ejabberd
     state: present
+    # default_release: buster-backports
 
 - name: Install graphics library for thumbnails generation
   apt:

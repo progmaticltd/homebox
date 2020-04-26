@@ -80,7 +80,6 @@ listen:
     shaper: c2s_shaper
     access: c2s
     zlib: true
-    resend_on_timeout: if_offline
 {% if ejabberd.s2s.active %}
   - port: 5269
     ip: "::"
@@ -298,7 +297,6 @@ modules:
   mod_configure: {} # requires mod_adhoc
   mod_disco: {}
   mod_echo: {}
-  mod_irc: {}
   mod_http_bind: {}
 {% if ejabberd.fail2ban.active %}
   ### ejabberd fail2ban module
@@ -411,6 +409,9 @@ modules:
   ### Show eJabberd version, but not the OS
   mod_version:
     show_os: false
+  #
+  mod_stream_mgmt:
+    resend_on_timeout: if_offline
 
 ## Enable modules management via ejabberdctl for installation and
 ## uninstallation of public/private contributed modules
