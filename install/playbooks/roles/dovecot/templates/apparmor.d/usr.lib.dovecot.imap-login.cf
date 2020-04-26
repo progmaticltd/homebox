@@ -1,0 +1,22 @@
+#include <tunables/global>
+
+/usr/lib/dovecot/imap-login {
+  #include <abstractions/base>
+  #include <abstractions/dovecot-common>
+  #include <abstractions/ssl_certs>
+  #include <abstractions/ssl_keys>
+
+  capability setuid,
+  capability sys_chroot,
+
+  network inet stream,
+  network inet6 stream,
+  network unix stream,
+
+  /usr/lib/dovecot/imap-login mr,
+
+  /run/dovecot/anvil rw,
+  /run/dovecot/login-master-notify* rw,
+  /run/dovecot/login/ r,
+  /run/dovecot/login/* rw,
+}

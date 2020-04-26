@@ -1,0 +1,19 @@
+#include <tunables/global>
+
+/usr/lib/dovecot/managesieve-login {
+  #include <abstractions/base>
+  #include <abstractions/dovecot-common>
+  #include <abstractions/ssl_certs>
+  #include <abstractions/ssl_keys>
+
+  capability setuid,
+  capability sys_chroot,
+
+  network inet stream,
+  network inet6 stream,
+
+  /usr/lib/dovecot/managesieve-login mr,
+  /run/dovecot/login-master-notify* rw,
+  /run/dovecot/login/ r,
+  /run/dovecot/login/* rw,
+}

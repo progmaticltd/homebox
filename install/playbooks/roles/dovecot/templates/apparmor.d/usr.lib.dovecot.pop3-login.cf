@@ -1,0 +1,17 @@
+#include <tunables/global>
+
+/usr/lib/dovecot/pop3-login {
+  #include <abstractions/base>
+  #include <abstractions/dovecot-common>
+  #include <abstractions/nameservice>
+  #include <abstractions/ssl_certs>
+  #include <abstractions/ssl_keys>
+
+  capability setuid,
+  capability sys_chroot,
+
+  /usr/lib/dovecot/pop3-login mr,
+  /run/dovecot/anvil rw,
+  /run/dovecot/login/ r,
+  /run/dovecot/login/* rw,
+}

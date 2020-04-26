@@ -1,0 +1,35 @@
+#include <tunables/global>
+#include <tunables/dovecot>
+
+/usr/lib/dovecot/imap {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/dovecot-common>
+
+  capability setuid,
+  deny capability block_suspend,
+
+  network unix stream,
+
+  @{DOVECOT_MAILSTORE}/ rw,
+  @{DOVECOT_MAILSTORE}/** rwkl,
+
+  @{HOME} r,
+
+  /etc/dovecot/dovecot.conf r,
+  /etc/dovecot/conf.d/ r,
+  /etc/dovecot/conf.d/** r,
+
+  owner /tmp/dovecot.imap.* rw,
+
+  /usr/bin/doveconf rix,
+  /usr/lib/dovecot/imap mrix,
+  /usr/share/dovecot/** r,
+
+  /run/dovecot/login/imap rw,
+  /run/dovecot/auth-master rw,
+  /run/dovecot/mounts r,
+
+  # Site-specific additions and overrides. See local/README for details.
+  #include <local/usr.lib.dovecot.imap>
+}

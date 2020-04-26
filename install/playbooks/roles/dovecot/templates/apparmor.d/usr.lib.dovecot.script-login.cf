@@ -1,4 +1,3 @@
-# Last Modified: Sat Mar 31 16:05:14 2018
 #include <tunables/global>
 
 /usr/lib/dovecot/script-login {

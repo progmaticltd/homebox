@@ -1,0 +1,41 @@
+#include <tunables/global>
+
+/usr/lib/dovecot/auth {
+  #include <abstractions/authentication>
+  #include <abstractions/base>
+  #include <abstractions/mysql>
+  #include <abstractions/nameservice>
+  #include <abstractions/openssl>
+  #include <abstractions/wutmp>
+  #include <abstractions/dovecot-common>
+
+  capability audit_write,
+  capability dac_override,
+  capability dac_read_search,
+  capability setuid,
+
+  /etc/my.cnf r,
+  /etc/my.cnf.d/ r,
+  /etc/my.cnf.d/*.cnf r,
+
+  /etc/dovecot/* r,
+  /usr/lib/dovecot/auth mr,
+
+  # kerberos replay cache
+  /var/tmp/imap_* rw,
+  /var/tmp/pop_* rw,
+  /var/tmp/sieve_* rw,
+  /var/tmp/smtp_* rw,
+
+  /run/dovecot/auth-master rw,
+  /run/dovecot/auth-worker rw,
+  /run/dovecot/login/login rw,
+  /run/dovecot/auth-token-secret.dat{,.tmp} rw,
+  /run/dovecot/old-stats-user w,
+  /run/dovecot/stats-user rw,
+  /run/dovecot/anvil-auth-penalty rw,
+
+  /var/spool/postfix/private/auth w,
+
+  #include <local/usr.lib.dovecot.auth>
+}
