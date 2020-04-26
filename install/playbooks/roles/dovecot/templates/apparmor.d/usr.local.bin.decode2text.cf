@@ -32,17 +32,17 @@
   /tmp/** w,
 
   # Shell commands
-  /bin/mv rix,
-  /bin/tar rix,
-  /bin/cat rix,
-  /bin/dash rix,
-  /bin/date rix,
-  /bin/grep rix,
-  /bin/mktemp rix,
-  /bin/rm rix,
-  /bin/sed rix,
-  /bin/gunzip rix,
-  /bin/gzip rix,
+  /usr/bin/mv mrix,
+  /usr/bin/tar mrix,
+  /usr/bin/cat mrix,
+  /usr/bin/dash mrix,
+  /usr/bin/date mrix,
+  /usr/bin/grep mrix,
+  /usr/bin/mktemp mrix,
+  /usr/bin/rm mrix,
+  /usr/bin/sed mrix,
+  /usr/bin/gunzip mrix,
+  /usr/bin/gzip mrix,
 
   /lib/x86_64-linux-gnu/ld-*.so mr,
 
