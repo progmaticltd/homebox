@@ -2,17 +2,8 @@
 
 - name: Install clamav antivirus suite
   register: clamav_packages
-  vars:
-    pkgs:
-      - clamav
-      - clamav-base
-      - clamav-daemon
-      - clamav-freshclam
-      - clamdscan
-      - clamsmtp
-      - ipcalc
   apt:
-    name: '{{ pkgs }}'
+    name: '{{ packages }}'
     state: present
 
 - name: Set up the configuration file
@@ -48,21 +39,15 @@
     timeout: 300
 
 - name: Start clamav service
+  register: clamav_daemon
   service:
     name: clamav-daemon
     state: started
     enabled: yes
+  retries: 12
+  until: clamav_daemon is not failed
+  delay: 10
 
-# Ansible lint generate a warning here.
-# FIXME: There should be a simpler way to check the status of a service
-- name: Wait for the clamav service to be started # noqa 303
-  register: clamav_daemon
-  command: systemctl status clamav-daemon
-  retries: 10
-  until: clamav_daemon.rc == 0
-  delay: 1
-
-#
 ###############################################################################
 
 - name: Get the remote locale
@@ -87,7 +72,8 @@
     state: directory
 
 # AppArmor configuration ======================================================
-- name: Install some dovecot AppArmor profile
+- name: Install some clamav AppArmor profiles
+  notify: Restart clamav services
   tags: security, apparmor
   register: aa_templates
   template:
