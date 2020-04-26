@@ -11,6 +11,9 @@
   capability dac_override,
   capability chown,
 
+  # Executable
+  /usr/bin/dash r,
+
   # for tar commands.
   capability fowner,
   capability fsetid,
