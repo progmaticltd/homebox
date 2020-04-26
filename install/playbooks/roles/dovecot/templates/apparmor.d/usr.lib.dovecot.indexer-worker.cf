@@ -9,6 +9,7 @@
   capability dac_override,
   capability setuid,
   capability setgid,
+  capability dac_read_search,
 
   owner /home/users/*/mails/maildir/* rw,
   owner /home/users/*/mails/maildir/dovecot-uidlist rw,
