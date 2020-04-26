@@ -22,7 +22,6 @@
     - dmarc
     - ejabberd
     - bind
-    - gogs
     - transmission
     - posix_groups
     - privoxy
