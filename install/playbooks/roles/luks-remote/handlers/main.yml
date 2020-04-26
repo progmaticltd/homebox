@@ -1,4 +1,7 @@
 ---
 
 - name: Update initramfs
-  shell: update-initramfs -u
+  shell: >-
+    mountpoint -q /boot &&
+    mount -o remount,rw /boot ;
+    update-initramfs -u
