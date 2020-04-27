@@ -1,8 +1,8 @@
 # Installation steps
 
-## Step 1: Locate is your system
+## Step 1: Locate your system
 
-Whatever you chose to host your system at home, or to use a VPS, you need to be specify its location to Ansible.
+Whatever you chose to host your system at home, or with a VPS, you need to specify its location to Ansible.
 
 ```sh
 cd install/config
@@ -10,7 +10,7 @@ cp hosts-example.yml hosts.yml
 nano hosts.yml
 ```
 
-Here an example on your LAN:
+Here is an example on your LAN:
 
 ``` yaml hl_lines="4"
 all:
@@ -27,7 +27,7 @@ installed. See the security section, [Defining administrators](/security-configu
 ## Step 2: Describe your system
 
 The main configuration file to create is in the config folder. There is an example named system-example.yml ready to
-copy to customise. There is also a configuration file defaults.yml. This file contains all the possible options.
+copy and customise. There is also a configuration file defaults.yml. This file contains all the possible options.
 
 ```sh
 cd config
@@ -87,9 +87,9 @@ network domain.
 
 ### External IP addresses
 
-It is important here to specify the external IP address(es) your system can be reached.
+It is important here to specify the external IP address(es) your system can be reached at.
 
-Multiple configurations are supported, for instance, on IPv4 and one IPv6:
+Multiple configurations are supported, for instance, with one IPv4 and one IPv6:
 
 
 ```yaml
@@ -129,7 +129,7 @@ users:
     - jane@homebox.space
 ```
 
-The email aliases are the other email addresses that belongs to the same user.
+The email aliases are the other email addresses that belong to the same user.
 
 You can also add more advanced features, like:
 
@@ -144,7 +144,7 @@ You can also add more advanced features, like:
 
 ## Email options
 
-This is the second most important settings. Here an example of the email options you can override:
+This is the second most important settings. Here is an example of the email options you can override:
 
 ``` yaml
 mail:
@@ -170,7 +170,7 @@ especially if you are [using fwknop](/firewall-configuration/#single-packet-auth
 ## Security options
 
 Security options are detailed on the [security page](security-configuration.md).
-The default settings are
+The default settings are:
 
 - Automatically install security updates using unattended upgrades.
 - Send alerts to the postmaster.
@@ -194,11 +194,11 @@ More details on the [webmail roundcube](webmail-roundcube.md) page.
 
 ## Backup configuration
 
-It is possible to regularly backup your emails, for instance locally on a NAS drive, or on internet, using various
+It is possible to regularly backup your emails, for instance locally on a NAS drive, or on the internet, using various
 methods.
 
-By default, the whole home partition is back up, but you can add or exclude more folders. The detailed instructions are
-on the [backup documentation](/backup-home/) page.
+By default, the whole home partition is backed up, but you can add or exclude more folders. The detailed instructions
+are on the [backup documentation](/backup-home/) page.
 
 ## DNS server configuration
 

@@ -7,7 +7,7 @@ not install the homebox server software stack.
 
 The disc created does not install the mail server, only the Debian distribution. However, there are two features
 automatically installed and easily configured: AppArmor and Full Disc Encryption with LUKS. This will protect you
-both against remote and physical intrusion.
+against both remote and physical intrusion.
 
 It is also copying your public SSH key onto the installation disc, so you can directly connect to your server
 securely with your SSH key.

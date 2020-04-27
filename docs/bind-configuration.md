@@ -57,7 +57,7 @@ bind_default:
 
 By default, the Google public DNS servers are used, as well as the one from cloudflare.
 
-More choice here: [Public DNS](https://en.wikipedia.org/wiki/Google_Public_DNS#See_also).
+More choices here: [Public DNS](https://en.wikipedia.org/wiki/Google_Public_DNS#See_also).
 
 # Backup MX records
 

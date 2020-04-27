@@ -23,7 +23,7 @@ For each location, the following procedure is followed:
 
 # One strategy example
 
-Here a non exhaustive example with multiple locations:
+Here is a non exhaustive example with multiple locations:
 
 ```yaml
 backup:
@@ -65,7 +65,7 @@ can have different backup frequencies, for instance daily, weekly or monthly.
 
 # Backup locations details
 
-For any backup type, the destination directory need to exist. All the backups are encrypted using the same encryption
+For any backup type, the destination directory needs to exist. All the backups are encrypted using the same encryption
 key. The encryption key backup is in your [backup directory](/deployment-backup/), in encryption/backup-key.pwd
 
 ## Local directory
@@ -88,7 +88,7 @@ backup:
 
 ## Remote server over SSH
 
-This location scheme is using borg on a remote server, with an SSH connection. Therefore, the borg software need to be
+This location scheme is using borg on a remote server, with a SSH connection. Therefore, the borg software needs to be
 installed on the remote machine, with the appropriate permissions.
 
 For instance, you want to backup your system on a sever accessible via backup.homebox.space, with
@@ -107,10 +107,10 @@ backup:
     compression: lz4                 # Use the fast compression for daily backups
 ```
 
-For SSH backup, the authentication scheme used is public key authentication, i.e. no password.
+For the SSH backup, the authentication scheme used is public key authentication, i.e. no password.
 
-The Ansible installation script automatically create a private and a public key for the root user,
-and send the public key to the postmaster, by email. You need to copy the key to the desired
+The Ansible installation script automatically creates a private and a public key for the root user,
+and sends the public key to the postmaster, by email. You need to copy the key to the desired
 location on the remote instance, and configure your `authorized_keys` roughly like this:
 
 ``` sh
@@ -122,8 +122,8 @@ The private and public keys are also saved in the deployment backup folder, into
 
 ## Remote server, using SSHFS
 
-This location scheme allows you to backup on a remote system over SSH, but does not need borg to be installed. Here an
-example on an internal router:
+This location scheme allows you to backup on a remote system over SSH, but does not need borg to be installed. Here is
+an example on an internal router:
 
 ```yaml
 backup:
@@ -153,7 +153,7 @@ Host bkp.router.lan
 
 ## On a USB drive
 
-This is the recommended way to backup your system when you are restrained to local backup. Here
+This is the recommended way to backup your system when you are restrained to local backup. Here is
 an example:
 
 ```yaml
@@ -175,7 +175,7 @@ multiple backups on the same device, by using a different sub-directory:
 `url: usb:///mnt/backup/<drive-name>[/sub-directory]`
 
 The filesystem UUID should be specified, and the initial folder should already exist on the
-external device. To obtain the UUID of your external drive, use blkid command. You do not need to
+external device. To obtain the UUID of your external drive, use the blkid command. You do not need to
 be root. For instance:
 
 ```sh
@@ -188,8 +188,8 @@ inactivity. This allows you to remove the usb drive safely.
 
 ## Backup on a network drive
 
-You can also backup on a network drive, perhaps on your local network, using SMB protocol (Windows
-network share). Here an example:
+You can also backup on a network drive, perhaps on your local network, using the SMB protocol (Windows
+network share). Here is an example:
 
 ```yaml
 backup:
@@ -204,7 +204,7 @@ backup:
 
 ## Backup on Amazon S3
 
-You can also backup on a S3 bucket on AWS cloud platform. Here an example:
+You can also backup on a S3 bucket on the AWS cloud platform. Here is an example:
 
 ```yaml
 backup:
@@ -223,7 +223,7 @@ backup:
     rate_limit: 500
 ```
 
-And here an appropriate example of bucket policy:
+And here is an appropriate example of bucket policy:
 
 ```json
 {
@@ -250,16 +250,16 @@ decrypt your files without the encryption key.
 
 !!! Note
     - This location storage is actually under scrutiny, and might be removed if proven unstable.
-    - Under the hood, [S3FS](https://github.com/s3fs-fuse/s3fs-fuse) is used, with the cache option activated, and located
-      in /home/.backup-cache/. Because this folder content is about the size if the whole backup, the /home partition
-      should have enough available disk space.
+    - Under the hood, [S3FS](https://github.com/s3fs-fuse/s3fs-fuse) is used, with the cache option activated, and
+      located in /home/.backup-cache/. Because this folder content is about the size if the whole backup, the /home
+      partition should have enough available disk space.
 
 # Backup contents
 
-At this time, only the content of the /home folders is back up, perhaps the emails. This should also allow you to
+At this time, only the content of the /home folders is backed up, perhaps the emails. This should also allow you to
 restore your emails after a fresh installation or in case of accidental deletion.
 
-Any file stored by the users in their home folders is back up too.
+Any file stored by the users in their home folders is backed up too.
 
 Some folders are excluded from the backup, like the email indexes and temporary files.
 
@@ -269,7 +269,7 @@ Some folders are excluded from the backup, like the email indexes and temporary 
 
 # Emails reporting
 
-By default, backup jobs are run overnight, and an email is sent to the postmaster, with a summary of the backup job:
+By default, the backup jobs are run overnight, and an email is sent to the postmaster, with a summary of the backup job:
 
 ## Example of backup success email
 
@@ -359,8 +359,8 @@ terminating with error status, rc 2
 
 # Send reports using Jabber.
 
-Homebox comes with the option to send backup status using short messages in real time, using the Jabber server embedded
-in the platform. To do so, use the following settings:
+Homebox comes with the option to send the backup status using short messages in real time, using the Jabber server
+embedded in the platform. To do so, use the following settings:
 
 ``` yaml hl_lines="5"
 backup:
@@ -374,7 +374,7 @@ backup:
   ...
 ```
 
-A first message will be sent just before the backup process starts, and onother one once the process is finished, with
+A first message will be sent just before the backup process starts, and another one once the process is finished, with
 the status. The last message contains only the status. For a full report, you'll still have to check the email.
 
 ## Example of success message

@@ -46,7 +46,7 @@ ansible-playbook -i ../config/hosts.yml playbooks/access-report.yml
 ```
 
 !!! Note
-    If you remove the option, and runs the playbook again, the cron jobs will be removed.
+    If you remove the option, and run the playbook again, the cron jobs will be removed.
 
 ## Report example in text
 

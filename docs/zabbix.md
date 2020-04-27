@@ -39,14 +39,14 @@ zabbix_default:
 ### Setting up Jabber alerts
 
 To receive alerts via the XMPP protocol, it is necessary to activate
-the Jabber _media type_ inthe Zabbix administration console.
+the Jabber _media type_ in the Zabbix administration console.
 
 Use any account to send alerts, for instance the postmaster account.
 
 ![Setting up the media alert](img/zabbix/jabber-media.png "Setting up
 the media alert")
 
-Once this setup, the alerts are visible in any XMPP compatible client.
+Once this is set up, the alerts are visible in any XMPP compatible client.
 
 ![Example of XMPP alert](img/zabbix/jabber-alerts.png "Example of XMPP
 alert")
