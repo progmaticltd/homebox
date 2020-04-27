@@ -38,13 +38,6 @@ log_rotate_date: ""
 ## 100 is ejabberd's default.
 log_rate_limit: 100
 
-## watchdog_admins: Only useful for developers: if an ejabberd process
-## consumes a lot of memory, send live notifications to these XMPP accounts.
-{% if system.devel %}
-watchdog_admins:
-  - "postmaster@{{ network.domain }}"
-{% endif %}
-
 ###.  ================
 ###'  SERVED HOSTNAME
 hosts:
@@ -297,7 +290,7 @@ modules:
   mod_configure: {} # requires mod_adhoc
   mod_disco: {}
   mod_echo: {}
-  mod_http_bind: {}
+  mod_bosh: {}
 {% if ejabberd.fail2ban.active %}
   ### ejabberd fail2ban module
   mod_fail2ban:
@@ -381,8 +374,9 @@ modules:
   ### Support for Entity Time (XEP-0202), discover the time at another entity’s location.
   mod_time: {}
   ### Map LDAP attributes to vCard fields
-  mod_vcard_ldap:
+  mod_vcard:
     search: true
+    db_type: ldap
     ldap_base: "{{ ldap.users.dn }}"
     # VCARD pattern
     ldap_vcard_map:

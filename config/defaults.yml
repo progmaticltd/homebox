@@ -418,7 +418,7 @@ ejabberd_default:
   # Server-to-server communication
   s2s:
     active: true
-    use_starttls: required_trusted
+    use_starttls: required
     public: true
     trust:
       - jabber.org
