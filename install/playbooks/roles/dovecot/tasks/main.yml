@@ -32,6 +32,7 @@
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
 - name: Set the default permissions for the imap certificate folders
+  tags: certificates
   import_role:
     name: cert-perms
   vars:
@@ -39,6 +40,7 @@
     entity_group: dovecot
 
 - name: Set the default permissions for the ldap certificate folders
+  tags: certificates
   import_role:
     name: cert-perms
   vars:
@@ -54,6 +56,7 @@
     mode: '0700'
 
 - name: Set the default permissions for the pop3 certificate folders
+  tags: certificates
   when: mail.pop3
   import_role:
     name: cert-perms
