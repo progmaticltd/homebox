@@ -15,7 +15,7 @@ Because this feature can be useful to other projects, a dedicated project has be
 
 ## Multiple encrypted backups
 
-You can setup multiple backups for your user's home folders, remote or local, with multiple frequencies as well. For
+You can setup multiple backups for your users' home folders, remote or local, with multiple frequencies as well. For
 instance, one daily backup on your NAS using a Samba share, and a weekly backup on a remote server using SSH. All the
 backups are encrypted and managed by the excellent _borgbackup_ package. A [summary email](/backup/#emails-reporting) is
 sent at the end of the backup process. If you have opted for the Jabber installation, a short message is sent as well,
@@ -36,14 +36,14 @@ emails, address books and calendars will be automatically restored from the back
 When you are using the ISO image builder to install Debian, the server disk will be fully encrypted using LUKS, with the
 passphrase specified in a configuration file.
 
-This make your server fully secure against physical intrusion, even if your hardware is lost or stolen.
+This makes your server fully secure against physical intrusion, even if your hardware is lost or stolen.
 
 You do not have to plug a screen and a keyboard to unlock your server. Once it is booted, the server starts a small SSH
 server to connect, and let you enter the passphrase.
 
 !!! Note
-    The SSH server started on boot share the same public key with OpenSSH. Therefore, you will not have the usual SSH
-    warnings staying the signature has changed.
+    The SSH server started on boot shares the same public key with OpenSSH. Therefore, you will not have the usual SSH
+    warnings saying the signature has changed.
 
 !!! Tip
     It is also possible to use a [Yubikey](https://yubico.com/), with or without a passphrase, to decrypt your drive. In
@@ -75,7 +75,7 @@ than the previous ones.
 
 ## Automatic security update
 
-Once your system is installed, any security update will be installed in background, without you having to do
+Once your system is installed, any security update will be installed in the background, without you having to do
 anything. This is set using the [Debian unattended upgrades](https://wiki.debian.org/UnattendedUpgrades) package.  If
 you prefer to install security updates yourself, you can disable this behaviour in your system.yml file.
 
@@ -103,11 +103,11 @@ This advanced feature is unique amongst both commercial and self-hosted solution
 but will be extended to other services. It is working by using a "points" system, where more points generate warnings or
 even deny the connection.
 
-The following behaviour are detected, from the :
+The following behaviours are detected:
 
 - Access from a blacklisted IP address
 - Access from an IP address recently blacklisted by fail2ban
-- Access from a different country than the one the box is hosted
+- Access from a different country than the one the box is hosted in
 - Access outside office hours
 
 Although the initial values should be accurate for standard usage, any of the previous checks can be tuned for a
@@ -117,7 +117,7 @@ specific usage. For instance, it is possible to:
 - Whitelist / Blacklist IP addresses, globally or per user.
 - Set office hours, globally only at this time.
 
-Warning and errors are sent in real time, using XMPP and email to the user and an external email address. Two factors
+Warnings and errors are sent in real time, using XMPP and email to the user and an external email address. Two-factor
 authentication on unusual behaviour will be implemented later, perhaps using google authenticator.
 
 # Email features
@@ -142,7 +142,7 @@ When registering on a service, you can use address extensions, to directly recei
 instance, emails to __john+lists@example.com__ will be directly saved into the __‘lists’__ folder of your IMAP server.
 
 Email folders can be automatically created and subscribed as well, and you can use any character to separate your email
-address. for instance ‘:’, ‘~’, ‘/’ etc.
+address, for instance ‘:’, ‘~’, ‘/’ etc.
 
 ## Sieve filtering
 
@@ -159,7 +159,7 @@ For instance, you can automatically:
 - discard messages with a specific error message
 - reply automatically, using vacation at specific dates
 - delete messages
-- sett flags (e.g. flag, mark as read, etc.)
+- set flags (e.g. flag, mark as read, etc.)
 
 ## Full text search
 
@@ -197,7 +197,7 @@ email is sent as well.
 ## Automatic client configuration
 
 The server supports _Mozilla Thunderbird_, _Microsoft Outlook_ and other email clients automatic configuration. This
-makes the life of your users easier. It creates and publish autoconfig.xml, autodiscover.xml and DNS records ([RFC
+makes the life of your users easier. It creates and publishes autoconfig.xml, autodiscover.xml and DNS records ([RFC
 6186](https://tools.ietf.org/html/rfc6186)).
 
 ## Antivirus
@@ -214,7 +214,7 @@ email queue, making the process non blocking and efficient on small resourced ha
 The antispam integrated with the system is very easy to use. The automatic learning is done just by moving emails out or
 in the Junk email folder.
 
-It is powered by rspamd, a pioneered application in term of junk email detection.
+It is powered by rspamd, a pioneer application in terms of junk email detection.
 
 ## External accounts import
 
@@ -312,7 +312,7 @@ a “_Rock Solid, Massively Scalable, Infinitely Extensible XMPP Server_”.
 
 ## Server to Server
 
-The installation scripts can also activates server to server communication (aka s2s).  This is optional but activated by
+The installation scripts can also activate server to server communication (aka s2s).  This is optional but activated by
 default. It is also possible to restrict access to trusted servers, by specifying a list of domain names you want to
 trust.
 
@@ -354,7 +354,7 @@ are activated by default:
 
 ## Tor server
 
-The platform configures Tor as well, and allows you to ooverride any option. You can also chain privoxy and tor
+The platform configures Tor as well, and allows you to override any option. You can also chain privoxy and tor
 together.
 
 ## Multiple IP scheme
@@ -367,7 +367,7 @@ servers. Digital Ocean does not allows SMTP or Submission on IPv6.
 
 ## DNSSEC Support
 
-If you need a higher level of security and a protection agains DNS cache poisoning, you can activate the DNSSEC
+If you need a higher level of security and a protection against DNS cache poisoning, you can activate the DNSSEC
 extensions. Once the playbook has been run, an email is sent to postmaster, with the ZSK (Zone Signing Key) and KSK (Key
 Signing Key) attached.
 
@@ -422,7 +422,7 @@ a sever ready for production.
 
 Until we have a full testing environment, perhaps based on virtualisation, you are already able to test the most
 important features of your server, automatically, with one command, with an Ansible playbook. This test playbook is
-running self diagnostic tasks on your server, and test the following:
+running self diagnostic tasks on your server, and tests the following:
 
 - Basic OS tests
 - LDAP server
@@ -441,6 +441,6 @@ running self diagnostic tasks on your server, and test the following:
 
 ## Development support
 
-A playbook add support for development packages, necessary to debug and diagnostic the system while you are developing
-it, like SMTP or DNS tools. Once the development is finished, another playbook remove these packages and cleanup the
+A playbook adds support for development packages, necessary to debug and diagnose the system while you are developing
+it, like SMTP or DNS tools. Once the development is finished, another playbook removes these packages and cleans up the
 system.

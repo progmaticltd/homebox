@@ -46,7 +46,7 @@ sogo:
 | auxiliary_accounts            | Allow you to retrieve emails from external accounts, directly from the web interface.              |
 | language                      | The defaut language of the web interface¹                                                          |
 | enable_public_access          | Allow public access to your calendars and address books, using a specific URL.                     |
-| password_change               | Allow you to change your passwors from the web interface.                                          |
+| password_change               | Allow you to change your passwords from the web interface.                                         |
 
 !!! Tip
     Possible values are defined in the

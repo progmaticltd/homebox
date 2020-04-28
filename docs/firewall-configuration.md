@@ -47,7 +47,7 @@ firewall:
 This method of authorization is based around a default-drop packet filter and libpcap. SPA is essentially next
 generation port knocking.
 
-The fwknop client runs on Linux, Mac OS X, *BSD, and Windows.  In addition, there is a port of the client to both the
+The fwknop client runs on Linux, Mac OS X, \*BSD, and Windows.  In addition, there is a port of the client to both the
 iPhone and Android phones.
 
 - Supports HMAC authenticated encryption for both Rijndael and GnuPG. The order of operation is
@@ -61,8 +61,8 @@ iPhone and Android phones.
   iptables chains so that fwknop does not interfere with any existing iptables policy.
 
 !!! Warning
-    If you don’t know what are you doing, be very careful, because one mistake will cause your SSH gone for good and
-    there will no chance how to manage your server.
+    If you don’t know what you are doing, be very careful, because one mistake will cause your SSH gone for good and
+    there will be no way to manage your server.
 
 
 More features detailed on the [fwknop features page](https://www.cipherdyne.org/fwknop/docs/features.html).
@@ -121,7 +121,7 @@ your home folder, in a file named after your domain, like ~/.fwknop-main.<domain
 (e.g. ~/.fwknop-main.homebox.space.rc.)
 A backup is copied in your installation backup folder, `fwknop/fwknoprc`.
 
-Here an example:
+Here is an example:
 
 ```ini
 
@@ -194,7 +194,7 @@ all:
       ansible_user: root
       ansible_port: 22
       # special parameters when using fwknop port knocking
-      fwknop_src: 192.168.14.55   # or 'auto' when connecting to a remote host over internet.
+      fwknop_src: 192.168.14.55   # or 'auto' when connecting to a remote host over the internet.
       fwknop_config_name: main.example.home
       fwknop_dest: main.example.home
       fwknop_rc_file: /home/andre/.fwknop-example.home.rc

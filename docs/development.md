@@ -1,6 +1,6 @@
 ## External mailing lists
 
-If something goes wrong, here a few resources:
+If something goes wrong, here are a few resources:
 
 - The [Postfix mailing lists](http://www.postfix.org/lists.html).
 - The [Dovecot mailing lists](https://www.dovecot.org/mailinglists.html).
@@ -16,12 +16,13 @@ The repository contains a few folders you should be familiar with:
 - preseed: Docker environment to create an automatic ISO image installer for Debian.
 - install: Ansible scripts to install or test the whole server environment.
 - backup: A very useful folder that contains some important files like the passwords and certificates generated when
-  deploying the system. This allows you to "replay" the deployment on a new server after a disaster, without loosing any
-  information. This folder is generated automatically on the first deployment, and ignored by git
+  deploying the system. This allows you to "replay" the deployment on a new server after a disaster, without losing any
+  information. This folder is generated automatically on the first deployment, and ignored by git.
 - tests: Ansible playbooks to test the platform.
-- sandbox: Put anything you don't want to commit here.
+- sandbox: Put here anything you don't want to commit.
 - docs: This project documentation.
 - uninstall: Ansible scripts to uninstall some of the components. This allows you to test them.
+- devel: A set of containers to help setup a local development environment.
 
 ## Branches
 
@@ -63,28 +64,28 @@ However, the more you want to test, the more your router need to be configured:
 - TCP/80 (HTTP): Used to query letsencrypt for the certificates. Open it at least to
   obtain the SSL using LetsEncrypt. You can then close the port once you have the
   certificates.
-- TCP/25: SMTP, to receive and transfer emails from and to other SMTP servers on
+- TCP/25: SMTP, to receive and transfer emails from and to other SMTP servers on the
   internet. You need this one only to test the reception and transmission of external
   emails.
 
 Now, all the rest can be done internally, without exposing your test machine. These ports
 don't need to be forwarded by your router during the development time:
 
-- TCP/143 and TCP/993 : IMAP and IMAPS
-- TCP/110 and TCP/995 : POP3 and POP3S
-- TCP/587 : [Submission](https://en.wikipedia.org/wiki/Opportunistic_TLS).
-- TCP/465 : [SMTPS](https://en.wikipedia.org/wiki/SMTPS) (this on is kept for
+- TCP/143 and TCP/993: IMAP and IMAPS
+- TCP/110 and TCP/995: POP3 and POP3S
+- TCP/587: [Submission](https://en.wikipedia.org/wiki/Opportunistic_TLS).
+- TCP/465: [SMTPS](https://en.wikipedia.org/wiki/SMTPS) (this one is kept for
   compatibility with some old devices, but perhaps will be removed soon)
-- TCP/4190 : ManageSieve. Used to remotely access your mail filters, for instance with
+- TCP/4190: ManageSieve. Used to remotely access your mail filters, for instance with
   [thunderbird sieve plugin](https://addons.mozilla.org/en-US/thunderbird/addon/sieve/).
-- TCP/443 : HTTPS access for the webmail and also Outlook autodiscover feature.
-- TCP/5222 and TCP/5269 : Jabber, clients to server and server to server implementation.
-- UDP/53 and TCP/53 : DNS Server.
+- TCP/443: HTTPS access for the webmail and also Outlook autodiscover feature.
+- TCP/5222 and TCP/5269: Jabber, clients to server and server to server implementation.
+- UDP/53 and TCP/53: DNS Server.
 
 ### Bridging your workstation
 
 If you are using a virtual machine, it is better to use a bridge on your workstation, to
-transparently forward the traffic from internet.
+transparently forward the traffic from the internet.
 
 - On Debian: https://wiki.debian.org/BridgeNetworkConnections
 - On Linux arch: [Network bridge](https://wiki.archlinux.org/index.php/Network_bridge)
@@ -113,7 +114,7 @@ Otherwise, you can use the DNS server implemented with Bind.
 
 The host file is in YAML format, and contains only one host, which is your homebox server.
 
-Here an example:
+Here is an example:
 
 ```yaml
 
@@ -163,20 +164,140 @@ respectively.
 
 When you set this flag to true, various settings are changed in the development.
 
+By default:
+
 - The certificates deployed are staging certificates only, which allows you to request more to LetsEncrypt.
 - The certificates are backed up on your local machine, allowing you to redeploy without asking again the same
   certificates, which is also faster.
+- If you want to test your system from a local computer, you will need to add the staging version of the root
+  certificate authority. It can be downloaded on the on the [LetsEncrypt staging environment
+  page](https://letsencrypt.org/docs/staging-environment/).
 
-If you set this flag to true, and you want to test your system from a local computer, you will need to add the staging
-version of the root certificate authority. They cab be downloaded on the on the [LetsEncrypt staging environment
-page](https://letsencrypt.org/docs/staging-environment/).
+
+As an option, without Letsencrypt:
+
+- The certificates can be deployed from a local ACME server using [Pebble](https://github.com/letsencrypt/pebble).
+- The expected server is provided as a container by a `docker-compose` file in the `devel` directory.
+- The server is for testing only and has some usage constraints which are further described in the next section.
+
+### The devel environment
+
+To be able to develop and test locally, the `devel` directory provides a
+`docker-compose` file with definitions for the following containers:
+
+- A `pebble` server to act as a testing ACME server to replace Letsencrypt.
+- A `challtestsrv` to act as a manageable DNS server for the ACME server.
+- An `apt-cacher` server.
+
+```sh
+$ cd devel/
+$ docker-compose up
+Starting devel_pebble_1         ... done
+Recreating devel_challtestsrv_1 ... done
+Starting devel_apt-cacher_1     ... done
+Attaching to devel_apt-cacher_1, devel_pebble_1, devel_challtestsrv_1
+[…]
+```
+
+These containers are connected to a bridge and addressed in the subnet
+10.30.50.0/24. The playbooks assume the predefined static IP addresses for the
+pebble and the apt-cacher servers. The server's `external_ip` will be used to
+resolve any DNS request made by the pebble server.
+
+The use of the pebble server in the playbooks is configured with:
+
+```yaml
+system:
+[…]
+  devel: true
+[…]
+
+devel:
+  acme_server: pebble
+```
+
+The Pebble ACME server is designed to create temporary CAs and certificates
+that can only be used for testing. A new temporary CA is created every time the
+server is started, and it is destroyed when it stops. The `certificates` role
+in the playbooks will install the current CA whenever they are run.
+
+Everytime the Pebble server is started, to have a coherent system, the
+certificates might need to be generated again. It can be done by running the
+playbooks or with the help of the `certificates` tag:
+
+```sh
+$ cd install/
+$ ansible-playbook -i ../config/hosts.yml playbooks/main.yml -t certificates
+```
+
+When developing or testing locally, most probably with a local domain name like
+`example.local`, there is no need for the DNS propagation checks during
+installation and testing:
+
+```yaml
+bind:
+[…]
+  propagation:
+    check: false
+[…]
+```
+
+It also disables one of the opendmarc test which requires an external validating resolver.
+
+The `apt-cacher` server can be used to speed up package updates on reinstalls by configuring:
+
+```yaml
+system:
+[…]
+  apt_cacher: 10.30.50.4
+```
+
+Finally, to allow the use of these service the firewall should be configured with:
+
+```yaml
+firewall:
+  output:
+    policy: deny
+    rules:
+      - dest: any
+        port: 80,443
+        comment: 'Allow web access'
+      - dest: any
+        proto: udp
+        port: 53
+        comment: 'Allow DNS requests'
+      - dest: any
+        proto: udp
+        port: 123
+        comment: 'Allow NTP requests'
+      - dest: any
+        proto: udp
+        from_port: 68
+        port: 67
+        comment: 'Allow DHCP requests'
+      - dest: any
+        port: 25
+        comment: 'Allow SMTP connections to other servers'
+      - dest: any
+        port: 110,995,143,993
+        comment: 'Allow the retrieval of emails from other servers (POP/IMAP)'
+      - dest: 10.30.50.2
+        port: 14000,15000
+        comment: 'Allow access to the Pebble ACME server'
+      - dest: 10.30.50.3
+        port: 8055
+        comment: 'Allow access to the Pebble challenge Test server'
+      - dest: 10.30.50.4
+        port: 3142
+        comment: 'Allow APT cacher access'
+```
 
 ### Setting up ansible-lint before commit
 
 The program ansible-lint is executed by the continuous integration platform, and should be used for each commit. A hook
 is provided in the git-hooks folder.
 
-The asible-lint software need to be installed on your machine. We are using the version in Debian Buster. The
+The ansible-lint software needs to be installed on your machine. We are using the version in Debian Buster. The
 ansible-lint configuration file is in `config/ansible-lint-default.yml`.
 
 To ensure the hook is executed before each commit, run this on your local machine:
@@ -402,5 +523,5 @@ total ----------------------------------------------------------------- 597.48s
 - Emacs or vim, but if you are not ready, [VisualStudio code](https://code.visualstudio.com/) is not too bad as well,
   and is very well integrated in Debian / Ubuntu.
 - Test your SMTP server compliance: [mxtoolbox.com](http://mxtoolbox.com/).
-- DNSSEC records debugger : https://dnssec-analyzer.verisignlabs.com/
+- DNSSEC records debugger: https://dnssec-analyzer.verisignlabs.com/
 - DNS propagation checker: https://www.whatsmydns.net/

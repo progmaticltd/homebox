@@ -1,4 +1,4 @@
-The homebox platform can be configured to act as a backup server for your home network, using
+The homebox platform can be configured to act as a backup server for your home network, using the
 [borg-backup](https://www.borgbackup.org/) software.
 
 # Ideal configuration
@@ -7,15 +7,15 @@ The homebox platform can be configured to act as a backup server for your home n
 This configuration allows you to use encryption and incremental backups, with a plain basic local or remote storage,
 like a USB RAID enclosure or a remote samba share.
 
-It will automatically use the first backup location you have defined. For instance, if you have configured hombox to
-backup on local USB drive and on a remote SAMBA share, the local drive will be used for storage:
+It will automatically use the first backup location you have defined. For instance, if you have configured homebox to
+back up on a local USB drive and on a remote SAMBA share, the local drive will be used for storage.
 
 # Local backup only
 
 ![](img/backup-server/schema-minimal.svg)
 
-If you do not have an external device to store the backup, you can still use homebox as a backup server. In this case,
-the files will be stored in the home folder, for each user, using the same principle.
+If you do not have an external device to store the backup on, you can still use homebox as a backup server. In this
+case, the files will be stored in the home folder, for each user, using the same principle.
 
 This is obviously less safe than using a remote or external device to backup. You can mitigate the risk by using
 [software RAID](preseed.md#software-raid) in the preseed file.
@@ -48,7 +48,7 @@ backup:
 In this example, each user will have a dedicated directory accessible over SSH, on the USB drive ‘nas1’. Under the hood,
 this is done in the SSH authorized_keys configuration file on the server.
 
-This is an example on how to back-up a folder in your home directory. You need to have borg-backup installed on your
+This is an example on how to back up a folder in your home directory. You need to have borgbackup installed on your
 workstations, and to have created an SSH key, dedicated for backup.
 
 ## Step 1: Configure the connection

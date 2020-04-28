@@ -12,7 +12,7 @@ how to edit Yaml files, etc.
 
 ## Hosting emails at home
 
-If you want seriously host your emails at home, you will need the following:
+If you want to seriously host your emails at home, you will need the following:
 
 - A static IP address from your ISP (Internet Service Provider).
 - Make sure your port 25 is not blocked.
@@ -54,7 +54,7 @@ Cons:
 
 ## Set up your domain name
 
-The first thing you need is a domain name and a DNS provider, there are many available. For instance, here a
+The first thing you need is a domain name and a DNS provider, there are many available. For instance, here is a
 [list of other DNS providers](https://github.com/AnalogJ/lexicon#providers) you can use.
 
 The screenshots and examples in this tutorial are specific to [Gandi](https://www.gandi.net/), but the principles are
@@ -72,7 +72,7 @@ Create at least one record that points to your static IP address.
 
 ### DNS servers
 
-Add the DNS server accordingly
+Add the DNS servers accordingly
 
 ![DNS servers](img/dns-setup/dns-servers.png)
 

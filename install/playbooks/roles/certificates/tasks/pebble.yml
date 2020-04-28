@@ -1,0 +1,67 @@
+---
+
+- name: Install the acme server root CA certificate when using pebble
+  tags: cert
+  register: root_ca_pebble
+  get_url:
+    validate_certs: no
+    url: https://10.30.50.2:15000/roots/0
+    dest: /usr/local/share/ca-certificates/pebblerootca.crt
+    force: yes
+
+- name: Make sure the DNS used by pebble resolves the external IP address by default
+  tags: cert
+  uri:
+    url: 'http://10.30.50.3:8055/set-default-ipv{{ external_ip | ipv6 | ternary("6", "4") }}'
+    method: POST
+    body: '{ "ip": "{{ external_ip }}" }'
+    body_format: json
+
+- name: Update certificates list if needed when using pebble
+  tags: cert
+  when: root_ca_pebble.changed
+  shell: /usr/sbin/update-ca-certificates -f
+
+- name: Remove former ACME accounts when the pebble CA changed
+  tags: cert
+  when: root_ca_pebble.changed
+  file:
+    path: /etc/letsencrypt/accounts/10.30.50.2:14000/
+    state: absent
+
+- name: Check the CA root certificate's start date
+  tags: cert
+  register: ca_full_startdate
+  shell: >-
+    openssl x509 -noout -startdate -in /usr/local/share/ca-certificates/pebblerootca.crt
+  changed_when: false
+
+- name: Remember the CA root certificate's start date
+  tags: cert
+  set_fact:
+    ca_startdate: "{{ ca_full_startdate.stdout[10:] | to_datetime('%b %d %H:%M:%S %Y %Z') }}"
+
+- name: Check if a certificate exists
+  tags: cert
+  stat:
+    path: /etc/letsencrypt/live/{{ certificate_fqdn }}/cert.pem
+  register: certificate_file
+
+- name: Check the certificate's start date
+  tags: cert
+  when: certificate_file.stat.exists
+  register: cert_full_startdate
+  shell: >-
+    openssl x509 -noout -startdate -in /etc/letsencrypt/live/{{ certificate_fqdn }}/cert.pem
+  changed_when: false
+
+- name: Remember the certificate's start date
+  tags: cert
+  when: certificate_file.stat.exists
+  set_fact:
+    cert_startdate: "{{ cert_full_startdate.stdout[10:] | to_datetime('%b %d %H:%M:%S %Y %Z') }}"
+
+- name: Determine if certificate must be generated
+  tags: cert
+  set_fact:
+    generate_cert_from_pebble: '{{ not certificate_file.stat.exists or cert_startdate|to_datetime < ca_startdate|to_datetime }}'
