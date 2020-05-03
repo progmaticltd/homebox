@@ -11,7 +11,7 @@
   vars:
     email: '{{ users[0].mail }}'
   get_url:
-    url: 'http://autoconfig.{{ network.domain }}/mail/config-v1.1.xml?emailaddress={{ mail }}'
+    url: 'http://autoconfig.{{ network.domain }}/mail/config-v1.1.xml?emailaddress={{ email }}'
     dest: /tmp/autoconfig.xml
     force: yes
 
