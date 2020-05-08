@@ -26,6 +26,14 @@
     </incomingServer>
 
 {% endif %}
+    <!-- SMTP: Submission over TLS only -->
+    <outgoingServer type="smtp">
+      <hostname>smtp.{{ network.domain }}</hostname>
+      <port>{{ mail.postfix.submissions.port }}</port>
+      <socketType>SSL</socketType>
+      <username>%EMAILLOCALPART%</username>
+      <authentication>password-cleartext</authentication>
+    </outgoingServer>
     <!-- SMTP: Submission only -->
     <outgoingServer type="smtp">
       <hostname>smtp.{{ network.domain }}</hostname>
