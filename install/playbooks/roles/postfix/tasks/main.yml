@@ -95,9 +95,9 @@
   with_items:
     - comment: Allow basic SMTP
       port: 25
-    - comment: Allow encrypted SMTP
-      port: 465
-    - comment: Allow submission
+    - comment: Allow submission over TLS
+      port: '{{ mail.postfix.submissions.port }}'
+    - comment: Allow submission with STARTTLS available
       port: '{{ mail.postfix.submission.port }}'
   loop_control:
     loop_var: rule
@@ -163,7 +163,7 @@
     create: yes
   with_items:
     - name: port
-      value: smtp,465,submission
+      value: smtp,submissions,submission
     - name: logpath
       value: '%(postfix_log)s'
     - name: backend

@@ -4,13 +4,13 @@
   tags: systemctl,postfix
   shell: postfix status
 
-- name: Check the certificate using SMTPS
+- name: Check the certificate using SMTP over TLS on submissions port
   tags: systemctl, postfix
   shell: >-
     set -o pipefail ;
     echo QUIT | openssl s_client
     -servername smtp.{{ network.domain }}
-    -connect smtp.{{ network.domain }}:465 2>&1
+    -connect smtp.{{ network.domain }}:{{ mail.postfix.submissions.port }} 2>&1
     | grep 'Verification: OK'
   args:
     executable: /bin/bash
@@ -27,13 +27,13 @@
   args:
     executable: /bin/bash
 
-- name: Check the certificate using SMTP and STARTTLS On submission port
+- name: Check the certificate using SMTP and STARTTLS on submission port
   tags: systemctl, postfix
   shell: >-
     set -o pipefail ;
     echo QUIT | openssl s_client
     -servername smtp.{{ network.domain }}
-    -connect smtp.{{ network.domain }}:587
+    -connect smtp.{{ network.domain }}:{{ mail.postfix.submission.port }}
     -starttls smtp 2>&1
     | grep 'Verification: OK'
   args:

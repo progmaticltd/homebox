@@ -16,16 +16,16 @@ smtp      inet  n       -       y       -       -       smtpd
 #tlsproxy  unix  -       -       y       -       0       tlsproxy
 subcleanup unix  n       -       -       -       0       cleanup
     -o header_checks=pcre:/etc/postfix/headers-check.cf
+submissions inet n       -       y       -       -       smtpd
+  -o syslog_name=postfix/submissions
+  -o cleanup_service_name=subcleanup
+  -o smtpd_discard_ehlo_keywords=silent-discard,etrn
+  -o smtpd_tls_wrappermode=yes
+  -o smtpd_relay_restrictions=permit_mynetworks,permit_sasl_authenticated,reject
 submission inet n       -       y       -       -       smtpd
   -o syslog_name=postfix/submission
   -o cleanup_service_name=subcleanup
   -o smtpd_discard_ehlo_keywords=silent-discard,etrn
-  -o smtpd_relay_restrictions=permit_mynetworks,permit_sasl_authenticated,reject
-smtps     inet  n       -       y       -       -       smtpd
-  -o syslog_name=postfix/smtps
-  -o cleanup_service_name=subcleanup
-  -o smtpd_discard_ehlo_keywords=silent-discard,etrn
-  -o smtpd_tls_wrappermode=yes
   -o smtpd_relay_restrictions=permit_mynetworks,permit_sasl_authenticated,reject
 #628       inet  n       -       y       -       -       qmqpd
 pickup    unix  n       -       y       60      1       pickup

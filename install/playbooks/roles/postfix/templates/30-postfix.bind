@@ -11,9 +11,13 @@ smtp2   IN       {{ "%-4s" | format(backup_ip_type) }}    {{ backup_ip }}
 {% endif %}
 
 ;; RFC 6186 entries, should point to a proper A/AAAA record
-_submission._tcp 3600 IN SRV 0 0 {{ mail.postfix.submission.port }} smtp.{{ network.domain }}.
+_submissions._tcp 3600 IN SRV 0 0 {{ mail.postfix.submissions.port }} smtp.{{ network.domain }}.
 {% if backup_ip is defined and backup_ip != "" %}
-_submission._tcp 3600 IN SRV 0 0 {{ mail.postfix.submission.port }} smtp2.{{ network.domain }}.
+_submissions._tcp 3600 IN SRV 10 0 {{ mail.postfix.submissions.port }} smtp2.{{ network.domain }}.
+{% endif %}
+_submission._tcp 3600 IN SRV 20 0 {{ mail.postfix.submission.port }} smtp.{{ network.domain }}.
+{% if backup_ip is defined and backup_ip != "" %}
+_submission._tcp 3600 IN SRV 30 0 {{ mail.postfix.submission.port }} smtp2.{{ network.domain }}.
 {% endif %}
 
 ;; SPF record
