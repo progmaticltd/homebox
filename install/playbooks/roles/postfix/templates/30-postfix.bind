@@ -15,9 +15,11 @@ _submissions._tcp 3600 IN SRV 0 0 {{ mail.postfix.submissions.port }} smtp.{{ ne
 {% if backup_ip is defined and backup_ip != "" %}
 _submissions._tcp 3600 IN SRV 10 0 {{ mail.postfix.submissions.port }} smtp2.{{ network.domain }}.
 {% endif %}
+{% if mail.postfix.submission.active %}
 _submission._tcp 3600 IN SRV 20 0 {{ mail.postfix.submission.port }} smtp.{{ network.domain }}.
 {% if backup_ip is defined and backup_ip != "" %}
 _submission._tcp 3600 IN SRV 30 0 {{ mail.postfix.submission.port }} smtp2.{{ network.domain }}.
+{% endif %}
 {% endif %}
 
 ;; SPF record

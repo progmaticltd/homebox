@@ -87,7 +87,7 @@
 - name: Configure the firewall for default access
   tags: postfix,security
   ufw:
-    rule: allow
+    rule: '{{ rule.decision }}'
     proto: tcp
     src: any
     port: '{{ rule.port }}'
@@ -95,10 +95,13 @@
   with_items:
     - comment: Allow basic SMTP
       port: 25
+      decision: allow
     - comment: Allow submission over TLS
       port: '{{ mail.postfix.submissions.port }}'
-    - comment: Allow submission with STARTTLS available
+      decision: allow
+    - comment: '{{ mail.postfix.submission.active | ternary("Allow", "Deny") }} submission with STARTTLS available'
       port: '{{ mail.postfix.submission.port }}'
+      decision: '{{ mail.postfix.submission.active | ternary("allow", "deny") }}'
   loop_control:
     loop_var: rule
 

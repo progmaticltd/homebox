@@ -22,11 +22,13 @@ submissions inet n       -       y       -       -       smtpd
   -o smtpd_discard_ehlo_keywords=silent-discard,etrn
   -o smtpd_tls_wrappermode=yes
   -o smtpd_relay_restrictions=permit_mynetworks,permit_sasl_authenticated,reject
+{% if mail.postfix.submission.active %}
 submission inet n       -       y       -       -       smtpd
   -o syslog_name=postfix/submission
   -o cleanup_service_name=subcleanup
   -o smtpd_discard_ehlo_keywords=silent-discard,etrn
   -o smtpd_relay_restrictions=permit_mynetworks,permit_sasl_authenticated,reject
+{% endif %}
 #628       inet  n       -       y       -       -       qmqpd
 pickup    unix  n       -       y       60      1       pickup
 cleanup   unix  n       -       y       -       0       cleanup

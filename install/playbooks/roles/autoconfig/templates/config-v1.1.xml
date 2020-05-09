@@ -34,6 +34,7 @@
       <username>%EMAILLOCALPART%</username>
       <authentication>password-cleartext</authentication>
     </outgoingServer>
+{% if mail.postfix.submission.active %}
     <!-- SMTP: Submission only -->
     <outgoingServer type="smtp">
       <hostname>smtp.{{ network.domain }}</hostname>
@@ -42,5 +43,6 @@
       <username>%EMAILLOCALPART%</username>
       <authentication>password-cleartext</authentication>
     </outgoingServer>
+{% endif %}
   </emailProvider>
 </clientConfig>

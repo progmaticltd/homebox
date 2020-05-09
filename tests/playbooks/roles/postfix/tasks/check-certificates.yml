@@ -29,6 +29,7 @@
 
 - name: Check the certificate using SMTP and STARTTLS on submission port
   tags: systemctl, postfix
+  when: mail.postfix.submission.active
   shell: >-
     set -o pipefail ;
     echo QUIT | openssl s_client

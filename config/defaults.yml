@@ -87,6 +87,7 @@ mail_default:
       port: 465             # https://tools.ietf.org/html/rfc8314#section-3.3
     submission:             # Submission port with STARTTLS available
       port: 587
+      active: true
     # Obfuscate user agent, or complete remove
     # - version: remove the version.
     # - remove: remove the whole user agent information
