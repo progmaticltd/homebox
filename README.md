@@ -21,6 +21,13 @@ support, and another one dedicated for development.
 - General questions: https://framalistes.org/sympa/info/homebox-general
 - Development: https://framalistes.org/sympa/info/homebox-dev
 
+## Continuous Integration Status
+
+| Type          | Branch | Status                                                                          |
+|---------------|--------|---------------------------------------------------------------------------------|
+| Documentation | dev    | ![BS](https://jenkins.homebox.space/buildStatus/icon?job=homebox-docs%2Fdev)    |
+| Documentation | master | ![BS](https://jenkins.homebox.space/buildStatus/icon?job=homebox-docs%2Fmaster) |
+
 ## Current project status
 
 ## Current status and supported features
