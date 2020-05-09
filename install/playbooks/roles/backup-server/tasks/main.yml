@@ -16,11 +16,12 @@
 - name: List the backup locations that can be mounted
   when: backup.locations is defined
   set_fact:
-    mountable_backup_locations: '{{ backup.locations
-                                    | selectattr("url", "defined")
-                                    | rejectattr("url", "contains", "dir://")
-                                    | rejectattr("url", "contains", "ssh://")
-                                    | list }}'
+    mountable_backup_locations: >-
+      {{ backup.locations
+      | selectattr("url", "defined")
+      | rejectattr("url", "match", "^dir://")
+      | rejectattr("url", "match", "^ssh://")
+      | list }}
 
 - name: Add the backup folder for the users
   when: backup.locations is not defined or
