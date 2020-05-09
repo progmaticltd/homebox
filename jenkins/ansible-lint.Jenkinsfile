@@ -19,7 +19,7 @@ pipeline {
       }
       stage('Uninstall playbooks') {
          steps {
-            sh 'ansible-lint uninstall/playbooks/*.ml'
+            sh 'ansible-lint uninstall/playbooks/*.yml'
          }
       }
    }
