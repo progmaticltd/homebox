@@ -264,8 +264,7 @@ Any file stored by the users in their home folders is backed up too.
 Some folders are excluded from the backup, like the email indexes and temporary files.
 
 !!! Note
-    - If [Gogs](/gogs-configuration/) is installed, the repository files are automatically excluded from backup.
-    - If the Transmission bittorrent daemon is installed, the downloaded files are excluded as well.
+    - If the Transmission bittorrent daemon is installed, the downloaded files are excluded fron backup.
 
 # Emails reporting
 
