@@ -320,17 +320,6 @@ Some clients: [XMPP client software](https://xmpp.org/software/clients.html).
 
 # Other features
 
-## Gogs git server
-
-You can optionally install a small, fast and lightweight git server called [gogs](https://gogs.io/). The server is configured
-with the following features:
-
-- HTTPS certificate
-- LDAP authentication
-- Automatic update
-- Two factors authentication
-- Repository mirroring
-
 ## Bittorrent download station
 
 You can install the transmission bittorrent daemon, accessible over https on a dedicated domain.
