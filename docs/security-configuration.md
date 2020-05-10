@@ -72,6 +72,17 @@ users:
       xcLmuv8NO2siwhqWmZfvrXEWlQ==
 ```
 
+When the remote access is granted, SSH user access with password is also
+allowed by default. If you want to restrict SSH user access to private key
+authentication only, you can use the following parameter:
+
+```yaml
+# Security settings
+security:
+  …
+  ssh_disable_users_access_with_password: true
+```
+
 ## Locking root access
 
 The root account is locked by default, which means only SSH access is possible. However, if you have defined
