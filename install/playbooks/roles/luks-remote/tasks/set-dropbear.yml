@@ -1,7 +1,5 @@
 ---
 
-# FIXME: The key conversion does not work anymore on Buster
-
 - name: Install the required packages
   tags: apt
   apt:
@@ -9,40 +7,35 @@
     name: '{{ packages }}'
     state: present
 
+- name: Create dropbear log folder
+  file:
+    path: /var/log/dropbear
+    owner: root
+    group: root
+    mode: '0700'
+
 - name: Copy the ssh public key for authentication
+  notify: Update initramfs
   copy:
     src: /root/.ssh/authorized_keys
     dest: /etc/dropbear-initramfs/authorized_keys
     remote_src: yes
 
+# FIXME: The key conversion does not work anymore on Buster
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=955384
+# For now, I copy the default keys
+- name: List dropbear keys
+  register: keys_list
+  find:
+    path: /etc/dropbear
+    pattern: '*key'
+
 - name: Remove dropbear default keys
-  file:
-    path: '/etc/dropbear-initramfs/{{ key.dest }}'
-    state: absent
-  with_items: '{{ keys_convert }}'
-  loop_control:
-    loop_var: key
-
-- name: Convert the openssh key already existing for dropbear
   notify: Update initramfs
-  shell: >-
-    /usr/lib/dropbear/dropbearconvert openssh dropbear
-    /etc/ssh/{{ key.src }} /etc/dropbear-initramfs/{{ key.dest }}
-  args:
-    creates: '/etc/dropbear-initramfs/{{ key.dest }}'
-  with_items:
-    - '{{ keys_convert }}'
-  loop_control:
-    loop_var: key
-
-- name: Convert the openssh key already existing for dropbear
-  notify: Update initramfs
-  shell: >-
-    /usr/lib/dropbear/dropbearconvert openssh dropbear
-    /etc/ssh/{{ key.src }} /etc/dropbear/{{ key.dest }}
-  args:
-    creates: '/etc/dropbear/{{ key.dest }}'
-  with_items:
-    - '{{ keys_convert }}'
+  copy:
+    src: '{{ key.path }}'
+    dest: '/etc/dropbear-initramfs/{{ key.path | basename }}'
+    remote_src: true
+  with_items: '{{ keys_list.files }}'
   loop_control:
     loop_var: key

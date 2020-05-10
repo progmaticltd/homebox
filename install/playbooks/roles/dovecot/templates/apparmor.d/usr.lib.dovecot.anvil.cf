@@ -1,0 +1,12 @@
+#include <tunables/global>
+
+/usr/lib/dovecot/anvil {
+  #include <abstractions/base>
+  #include <abstractions/dovecot-common>
+
+  capability setuid,
+  capability sys_chroot,
+
+  /run/dovecot/anvil rw,
+  /usr/lib/dovecot/anvil mr,
+}

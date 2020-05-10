@@ -29,6 +29,8 @@ if envelope :matches "to" "*@{{ network.domain }}" {
 }
 
 # Sent messages: mark the email as read and move it to the sent folder
+# Use the first recipient delimiter character.
+# Since Dovecot 2.3, recipient_delimiter is a string of possible characters
 if string :is "${from}{{ mail.recipient_delimiter[0] }}Sent" "${to}" {
   setflag "\\Seen";
   fileinto "Sent";
