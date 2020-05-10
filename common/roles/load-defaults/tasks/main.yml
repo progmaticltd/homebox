@@ -395,6 +395,16 @@
                     }
                   }, recursive=True) }}'
 
+
+- name: Detect docker environment for testing
+  register: docker_env_cmd
+  failed_when: false
+  shell: grep -c docker /proc/1/cgroup
+
+- name: Store the docker environment flag
+  set_fact:
+    docker_env: docker_env_cmd.stdout != "0"
+
 ################################################################################
 # Marking the default settings as loaded should increase the speed of the deployment
 - name: Mark the default settings as loaded

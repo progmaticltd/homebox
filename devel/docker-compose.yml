@@ -1,7 +1,11 @@
-version: '3'
+---
+
+version: '3.5'
+
 services:
   pebble:
     image: letsencrypt/pebble:latest
+    container_name: pebble
     # Might need '-strict false' in the future
     command: pebble -config /test/config/pebble-config.json -dnsserver 10.30.50.3:8053
     environment:
@@ -20,6 +24,7 @@ services:
       acmenet:
         ipv4_address: 10.30.50.2
   challtestsrv:
+    container_name: challtestsrv
     image: letsencrypt/pebble-challtestsrv:latest
     command: pebble-challtestsrv -defaultIPv6 "" -defaultIPv4 10.30.50.3
     ports:
@@ -29,6 +34,7 @@ services:
         ipv4_address: 10.30.50.3
   apt-cacher:
     build: apt-cacher
+    container_name: cacher
     ports:
       - 3142:3142
     volumes:
@@ -36,6 +42,15 @@ services:
     networks:
       acmenet:
         ipv4_address: 10.30.50.4
+  # Homebox test machine
+  test9:
+    build: homebox
+    container_name: homebox
+    ports:
+      - 2222:2222
+    networks:
+      acmenet:
+        ipv4_address: 10.30.50.5
 
 networks:
   acmenet:
