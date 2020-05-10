@@ -21,6 +21,25 @@ support, and another one dedicated for development.
 - General questions: https://framalistes.org/sympa/info/homebox-general
 - Development: https://framalistes.org/sympa/info/homebox-dev
 
+## Continuous Integration Status
+
+The continuous integration server is based on Jenkins. It is not publicly accessible, except for the buld status.
+You can request access if you are a developer.
+
+### Development branch
+
+| Type                | Status                                                                               |
+|---------------------|--------------------------------------------------------------------------------------|
+| Documentation<br /> | ![BS](https://jenkins.homebox.space/buildStatus/icon?job=homebox-docs%2Fdev)         |
+| Ansible lint        | ![BS](https://jenkins.homebox.space/buildStatus/icon?job=homebox-ansible-lint%2Fdev) |
+
+### Master branch
+
+| Type          | Status                                                                                  |
+|---------------|-----------------------------------------------------------------------------------------|
+| Documentation | ![BS](https://jenkins.homebox.space/buildStatus/icon?job=homebox-docs%2Fmaster)         |
+| Ansible lint  | ![BS](https://jenkins.homebox.space/buildStatus/icon?job=homebox-ansible-lint%2Fmaster) |
+
 ## Current project status
 
 ## Current status and supported features
