@@ -41,7 +41,7 @@
           value: '0 0 0 \.'
         - name: '_imaps._tcp.{{ network.domain }}'
           value: 'imap\.{{ network.domain }}'
-        - name: '_submission._tcp.{{ network.domain }}'
+        - name: '_submissions._tcp.{{ network.domain }}'
           value: 'smtp\.{{ network.domain }}'
   roles:
     - dns-records

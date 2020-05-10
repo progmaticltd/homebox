@@ -54,6 +54,10 @@
 - import_playbook: dns-records-email-pop3.yml
   when: bind.install and mail.pop3
 
+# Test submission specific DNS records
+- import_playbook: dns-records-email-submission.yml
+  when: mail.postfix.submission.active
+
 # Test Jabber client to client functions
 - import_playbook: dns-records-jabber-c2s.yml
   when: bind.install and ejabberd.install

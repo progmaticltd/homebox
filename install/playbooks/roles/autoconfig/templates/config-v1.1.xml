@@ -26,6 +26,15 @@
     </incomingServer>
 
 {% endif %}
+    <!-- SMTP: Submission over TLS only -->
+    <outgoingServer type="smtp">
+      <hostname>smtp.{{ network.domain }}</hostname>
+      <port>{{ mail.postfix.submissions.port }}</port>
+      <socketType>SSL</socketType>
+      <username>%EMAILLOCALPART%</username>
+      <authentication>password-cleartext</authentication>
+    </outgoingServer>
+{% if mail.postfix.submission.active %}
     <!-- SMTP: Submission only -->
     <outgoingServer type="smtp">
       <hostname>smtp.{{ network.domain }}</hostname>
@@ -34,5 +43,6 @@
       <username>%EMAILLOCALPART%</username>
       <authentication>password-cleartext</authentication>
     </outgoingServer>
+{% endif %}
   </emailProvider>
 </clientConfig>

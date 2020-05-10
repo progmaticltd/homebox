@@ -1,0 +1,12 @@
+---
+
+# Test the DNS server for service records
+- hosts: homebox
+  vars:
+    records:
+      type: SRV
+      list:
+        - name: '_submission._tcp.{{ network.domain }}'
+          value: 'smtp\.{{ network.domain }}'
+  roles:
+    - dns-records
