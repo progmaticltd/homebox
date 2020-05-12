@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/sh
+
+set -e
 
 # From .git/hooks/pre-push.sample
 # Not used for now
@@ -6,11 +8,21 @@
 # url="$2"
 z40=0000000000000000000000000000000000000000
 
+# Check if ansible is usable
+ansible-lint --version >/dev/null || {
+	cat >&2 <<- EOF
+
+	Please make sure ansible-lint is installed and usable.
+
+	The git pre-push hook uses ansible-lint to validate ansible playbooks YAML
+	files on commits.
+
+	EOF
+	exit 1
+}
+
 # Create the logs directory if not exists. It is ignored by git anyway
 test -d logs || mkdir logs
-
-# Manage errors in pipelines
-set -o pipefail
 
 while read -r local_ref local_sha _ _ # remote_ref and remote_sha are not used
 do
@@ -21,70 +33,76 @@ do
 		:
 		# Continue processing the next branch if any
 	else
-		# Create a temporary directory
-		tmp_dir="$(mktemp -d)/"
+		echo "Let's check files with ansible-lint"
 
-		# Remember the main working tree toplevel
-		main_working_tree_dir="$(git rev-parse --show-toplevel)"
+		# Create a temporary file to list ansible files to check
+		tmp_checklist=$(mktemp)
+
+		# Write the list of the main ansible files and directories
+		find \
+			common/roles/* \
+			install/playbooks/main.yml \
+			tests/playbooks/main.yml \
+			uninstall/playbooks/*.yml \
+			-maxdepth 0 -print0 \
+			> "$tmp_checklist"
+
+		# Create a temporary directory
+		tmp_dir="$(mktemp -d)"
+
+		# Set the log file
+		log_file="$(git rev-parse --show-toplevel)/logs/ansible-lint-pre-push.log"
 
 		# Export the branch to the temporary directory
 		echo "Exporting $local_ref to $tmp_dir"
 		git archive "$local_sha" | tar -x -C "$tmp_dir" || exit $?
 
-		# Run ansible-lint in the temporary directory on the main
-		# ansible files and directories and exit from the subshell on
-		# error
+		# Use a subshell to get to the temporary directory, run ansible-lint
+		# with a different error handling, and remember the exit status of the
+		# xargs call if any error
+		lint_result=0
 		(
-			cd "$tmp_dir" || exit 2 # Not an ansible-lint error
+			cd "$tmp_dir"
 
-			# Run ansible lint on the common roles
-			ansible-lint common/roles/* 2>&1 \
-				| tee "$main_working_tree_dir"/logs/ansible-lint-common.log \
-				|| exit $?
+			# Do not exit on error until the end of the subshell
+			set +e
 
-			# Run ansible lint on the installation playbooks
-			ansible-lint install/playbooks/main.yml 2>&1 \
-				| tee "$main_working_tree_dir"/logs/ansible-lint-install.log \
-				|| exit $?
+			echo "Running ansible-lint on all playbooks"
+			echo "Full log is being written to $log_file"
+			# shellcheck disable=SC2016
+			xargs -0 -I {} \
+				sh -c 'PYTHONUNBUFFERED=1 ansible-lint "$1" 2>&1' -- "{}" \
+				< "$tmp_checklist" \
+				> "$log_file"
 
-			# Run ansible lint on the test playbooks
-			ansible-lint tests/playbooks/main.yml 2>&1 \
-				| tee "$main_working_tree_dir"/logs/ansible-lint-tests.log \
-				|| exit $?
-
-			# Run ansible lint on the uninstall playbooks
-			ansible-lint uninstall/playbooks/*.yml 2>&1 \
-				| tee "$main_working_tree_dir"/logs/ansible-lint-uninstall.log \
-				|| exit $?
-
-		) ; lint_result=$?
+		# Back to: set -e
+		) || lint_result=$?
 
 		# Remove the temporary directory
 		rm -rf "$tmp_dir"
 
+		# Remove the temporary checklist file
+		rm -f "$tmp_checklist"
+
 		case "$lint_result" in
 			"0")
-				echo "Please beware of any warning"
+				if grep --color=auto -h -e 'WARNING:' "$log_file" >&2
+				then
+					echo "Please address the ansible-lint warnings"
+					exit 1
+				fi
 				echo "Looks good for ansible-lint"
 				# Continue processing the next branch if any
 				;;
-			"1")
-				echo "Please fix the ansible-lint errors"
-				exit $lint_result
-				;;
-			"126"|"127") # ansible-lint cannot be run or is not found
-				cat <<- EOF
-
-				Please make sure ansible-lint is installed and usable.
-
-				The git pre-push hook uses ansible-lint to validate YAML ansible playbooks
-				files on commits.
-
-				EOF
+			"123")
+				grep --color=auto -h -A 11 -e 'Syntax Error' "$log_file" >&2 || true
+				grep --color=auto -h -e '\[E...]' "$log_file" >&2 || true
+				grep --color=auto -h -e 'WARNING:' "$log_file" >&2 || true
+				echo "Please fix the ansible-lint errors and warnings"
 				exit $lint_result
 				;;
 			*)
-				echo "Sorry, something wrong happened"
+				echo >&2 "Sorry, something wrong happened"
 				exit $lint_result
 				;;
 		esac
