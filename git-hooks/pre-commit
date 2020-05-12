@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 # From .git/hooks/pre-commit.sample
 if git rev-parse --verify HEAD >/dev/null 2>&1
 then
@@ -11,7 +13,7 @@ fi
 
 # If there are whitespace errors or leftover merge conflicts markers,
 # print the offending file names and fail.
-git diff-index --check --cached "$against" -- || exit $?
+git diff-index --check --cached "$against" --
 
 # Create a temporary file to list ansible files to check
 tmp_checklist=$(mktemp)
@@ -34,49 +36,77 @@ git diff-index --cached --name-only --diff-filter=ACMR -z "$against" -- \
 # If the checklist file is not empty, run ansible-lint
 if [ -s "$tmp_checklist" ]
 then
+	# Check if ansible is usable
+	ansible-lint --version >/dev/null || {
+		cat >&2 <<- EOF
+
+		Please make sure ansible-lint is installed and usable.
+
+		The git pre-push hook uses ansible-lint to validate ansible playbooks YAML
+		files on commits.
+
+		EOF
+		exit 1
+	}
 	echo "Let's check files with ansible-lint"
 
 	# Create a temporary directory
-	tmp_dir="$(mktemp -d)/"
+	tmp_dir="$(mktemp -d)"
+
+	# Set the log file
+	log_file="$(git rev-parse --show-toplevel)/logs/ansible-lint-pre-commit.log"
 
 	# Checkout all the files in the index to the temporary directory
 	echo "Checking out all files in the index to $tmp_dir"
-	git checkout-index --prefix="$tmp_dir" -a
+	git checkout-index --prefix="$tmp_dir/" -a
 
-	# Run ansible-lint in the temporary directory on the ansible YAML files
-	# to be committed and remember the return value of the xargs call
-	( cd "$tmp_dir" \
-		&& xargs -0 ansible-lint < "$tmp_checklist" ) ; lint_result=$?
+	# Use a subshell to get to the temporary directory, run ansible-lint
+	# with a different error handling, and remember the exit status of the
+	# xargs call if any error
+	lint_result=0
+	(
+		cd "$tmp_dir"
+
+		# Do not exit on error until the end of the subshell
+		set +e
+
+		echo "Running ansible-lint on modified ansible files"
+		echo "Full log is being written to $log_file"
+		# shellcheck disable=SC2016
+		xargs -0 -I{} \
+			sh -c 'PYTHONUNBUFFERED=1 ansible-lint "$1" 2>&1' -- "{}" \
+			< "$tmp_checklist" \
+			> "$log_file" 2>&1
+
+	# Back to: set -e
+	) || lint_result=$?
 
 	# Remove the temporary directory
 	rm -rf "$tmp_dir"
 
+	# Remove the temporary checklist file
+	rm -f "$tmp_checklist"
+
 	case "$lint_result" in
 		"0")
-			echo "Please beware of any warning"
+			if grep --color=auto -h -e 'WARNING:' "$log_file" >&2
+			then
+				echo "Please address the ansible-lint warnings"
+				exit 1
+			fi
 			echo "Looks good for ansible-lint"
 			;;
 		"123")
-			echo "Please fix the ansible-lint errors"
-			;;
-		"126"|"127") # ansible-lint cannot be run or is not found
-			cat << EOF
-
-Please make sure ansible-lint is installed and usable.
-
-The git pre-commit hook uses ansible-lint to validate YAML ansible playbooks
-files on commits.
-
-EOF
+			grep --color=auto -h -A 11 -e 'Syntax Error' "$log_file" >&2 || true
+			grep --color=auto -h -e '\[E...]' "$log_file" >&2 || true
+			grep --color=auto -h -e 'WARNING:' "$log_file" >&2 || true
+			echo "Please fix the ansible-lint errors and warnings"
 			;;
 		*)
-			echo "Sorry, something wrong happened"
+			echo >&2 "Sorry, something wrong happened"
 			;;
 	esac
 fi
-
-# Remove the temporary checklist file
-rm -f "$tmp_checklist"
 
 # Fail in case of error
 exit ${lint_result:-0}
