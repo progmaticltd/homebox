@@ -177,13 +177,6 @@ ejabberd:
   install: true
 
 ###############################################################################
-# Gogs installation with LDAP authentication
-# The super administrator is "postmaster" for now.
-gogs:
-  install: false
-  public: false
-
-###############################################################################
 # Transmission installation
 transmission:
   install: false
