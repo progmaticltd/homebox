@@ -75,6 +75,13 @@
   loop_control:
     loop_var: file
 
+# Debian Stretch, the port 465 is not named submission<s>
+- name: Ensure submission<s> is in the services list
+  replace:
+    path: /etc/services
+    regexp: '(urd\s+465/tcp\s+ssmtp smtps)(\s+)(#.*)'
+    replace: '\1 submissions\2\3'
+
 - name: Refresh the senders bcc map
   tags: postfix
   notify: Restart postfix
