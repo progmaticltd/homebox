@@ -43,9 +43,9 @@ log_rate_limit: 100
 hosts:
   - "{{ network.domain }}"
 
-host_config:
-  "conference.{{ network.domain }}":
-    domain_certfile: "/etc/ejabberd/conference.pem"
+certfiles:
+  - "/etc/ejabberd/default.pem"
+  - "/etc/ejabberd/conference.pem"
 
 ###.  ===============
 ###'  LISTENING PORTS
@@ -57,7 +57,6 @@ listen:
   - port: 5222
     ip: "::"
     module: ejabberd_c2s
-    certfile: "/etc/ejabberd/default.pem"
     dhfile: "/etc/ssl/ffdhe{{ security.dhparam_size }}.pem"
     starttls: true
     starttls_required: true
@@ -99,7 +98,6 @@ disable_sasl_mechanisms: "digest-md5"
 {% if ejabberd.s2s.active %}
 s2s_use_starttls: '{{ ejabberd.s2s.use_starttls }}'
 s2s_dhfile: "/etc/ssl/ffdhe{{ security.dhparam_size }}.pem"
-s2s_certfile: "/etc/ejabberd/default.pem"
 
 ## Custom OpenSSL options
 s2s_protocol_options:
