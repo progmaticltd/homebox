@@ -438,6 +438,7 @@ bind_default:
   install: true
   # Custom delays and retries to check DNS propagation
   propagation:
+    check: true
     retries: 10
     delay: 60
   # Default servers to forward queries
