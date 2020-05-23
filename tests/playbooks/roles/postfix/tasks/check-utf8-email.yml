@@ -3,7 +3,7 @@
 - name: Create a unique subject for testing
   tags: postfix
   set_fact:
-    test_subject: 'Test email {{ ansible_date_time.iso8601_micro | to_uuid }}'
+    test_subject: "Test email {{ lookup( 'password', '/dev/null length=32' ) | to_uuid }}"
 
 - name: Create an email template
   tags: postfix
