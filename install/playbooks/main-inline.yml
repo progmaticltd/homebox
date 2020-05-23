@@ -1,9 +1,6 @@
 ---
 ## Main installation playbook
 
-
-# Load default settings once, this is needed to defined
-# some conditional flags used below
 - hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'

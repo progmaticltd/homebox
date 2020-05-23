@@ -2,16 +2,23 @@
 
 # Entire list of certificates to create
 certificates:
-  # - type: ldap
-  # - type: rspamd
-  # - type: smtp
-  #   domain_alias: smtp2
-  # - type: pop3
-  # - type: imap
-  # - type: xmpp
-  # - type: mta-sts
-  # - type: sogo
-  # - type: '@'
-  # - type: conference
+  - type: ldap
+  - type: rspamd
+    create: '{{ mail.antispam.webui.active }}'
+  - type: smtp
+    domain_alias: smtp2
+  - type: pop3
+    create: '{{ mail.pop3 }}'
+  - type: imap
+  - type: xmpp
+    create: '{{ ejabberd.install }}'
+  - type: mta-sts
+  - type: sogo
+    create: '{{ sogo.install }}'
+  - type: '@'
+  - type: conference
+    create: '{{ ejabberd.install }}'
   - type: autoconfig
+    create: '{{ mail.autoconfig }}'
   - type: autodiscover
+    create: '{{ mail.autodiscover }}'
