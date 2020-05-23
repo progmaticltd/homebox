@@ -38,6 +38,7 @@
     state: link
 
 - name: Create a unique ID for mta-sts DNS record
+  tags: bind
   set_fact:
     mta_sts_uid: "{{ lookup('password', '/dev/null length=16 chars=ascii_letters,digits') }}"
 
