@@ -7,8 +7,6 @@
 
 - hosts: homebox
   vars:
-    clean_users: '{{ clean | default(false) }}'
-    clean_groups: '{{ clean | default(false) }}'
     certificate:
       type: ldap
   roles:

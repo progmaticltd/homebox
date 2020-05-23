@@ -55,7 +55,7 @@
   import_role:
     name: cert-perms
   vars:
-    cert_dir: '{{ certificate.type }}.{{ network.domain }}'
+    cert_dir: 'mta-sts.{{ network.domain }}'
     entity_group: 'www-data'
 
 # AppArmor configuration ======================================================

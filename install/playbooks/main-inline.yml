@@ -1,0 +1,81 @@
+---
+## Main installation playbook
+
+
+# Load default settings once, this is needed to defined
+# some conditional flags used below
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+  roles:
+    - role: load-defaults
+    - role: external-ip-type
+    - role: packages
+    - role: system-prepare
+    - role: remote-access
+    - role: luks-remote
+    - role: nginx
+    - role: dns-server-bind
+      when: bind.install
+    - role: dns-server-check-propagation
+      when: bind.install and bind.propagation.check
+    - role: certificates-all
+    - role: ldap
+    - role: user-setup
+    - role: access-check
+      when: access_check.active
+    - role: access-report
+      when: access_check.active
+    - role: backup-server
+    - role: rspamd
+      when: mail.antispam.active
+    - role: rspamd-web
+      when: mail.antispam.webui.active
+    - role: clamav
+      when: mail.antivirus.active
+    - role: opendkim
+    - role: opendmarc
+    - role: postfix
+    - role: mta-sts
+    - role: dovecot
+    - role: roundcube
+      when: webmail.install and webmail.type == 'roundcube'
+    - role: roundcube-milters
+      when: webmail.install and webmail.milters.active
+    - role: sogo
+      when: sogo.install
+    - role: sogo-milters
+      when: sogo.install and sogo.milters.active
+    - role: ejabberd
+      when: ejabberd.install
+    - role: website-simple
+      when: website.install
+    - role: autodiscover
+      when: mail.autodiscover
+    - role: autoconfig
+      when: mail.autoconfig
+    - role: borg-backup
+      when: backup.install
+    - role: transmission
+      when: transmission.install
+    - role: dns-server-bind-refresh
+      when: bind.install
+    - role: tor
+      when: tor.install
+    - role: privoxy
+      when: privoxy.install
+    - role: zabbix-server
+      when: zabbix.install
+    - role: import-accounts
+      when: mail.import.active and not system.devel
+    - role: extra-certs
+      when: extra_certs is defined
+    - role: well-known-services
+    - role: system-post-install
+
+# Install fwknop (Single Packet Authorization)
+- import_playbook: fwknop-client.yml
+  when: firewall.fwknop.install
+- import_playbook: fwknop-server.yml
+  when: firewall.fwknop.install

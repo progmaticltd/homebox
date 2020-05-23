@@ -1,0 +1,4 @@
+---
+
+clean_users: '{{ lookup("env", "CLEAN_USERS") | default(false, true) }}'
+clean_groups: '{{ lookup("env", "CLEAN_GROUPS") | default(false, true) }}'

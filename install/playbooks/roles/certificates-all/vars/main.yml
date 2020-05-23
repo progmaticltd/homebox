@@ -1,0 +1,17 @@
+---
+
+# Entire list of certificates to create
+certificates:
+  # - type: ldap
+  # - type: rspamd
+  # - type: smtp
+  #   domain_alias: smtp2
+  # - type: pop3
+  # - type: imap
+  # - type: xmpp
+  # - type: mta-sts
+  # - type: sogo
+  # - type: '@'
+  # - type: conference
+  - type: autoconfig
+  - type: autodiscover
