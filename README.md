@@ -1,5 +1,5 @@
-__Please, note this branch will receive only bug fixes and security updates. all the developments are now focused on the
-[Debian Buster branch](https://github.com/progmaticltd/homebox/tree/dev).__
+__Please, note the Stretch version will receive only bug fixes and security updates. all the developments are now
+focused on the [Buster version](https://github.com/progmaticltd/homebox/tree/dev).__
 
 A set of Ansible scripts to setup a secure email and personal files server. This project is for you if:
 
@@ -23,22 +23,68 @@ support, and another one dedicated for development.
 
 ## Continuous Integration Status
 
-The continuous integration server is based on Jenkins. It is not publicly accessible, except for the buld status.
-You can request access if you are a developer.
+The continuous integration jobs are based on Jenkins pipelines. The server is accessible at
+[jenkins.homebox.space](https://jenkins.homebox.space).
 
-### Development branch
-
-| Type                | Status                                                                               |
-|---------------------|--------------------------------------------------------------------------------------|
-| Documentation<br /> | ![BS](https://jenkins.homebox.space/buildStatus/icon?job=homebox-docs%2Fdev)         |
-| Ansible lint        | ![BS](https://jenkins.homebox.space/buildStatus/icon?job=homebox-ansible-lint%2Fdev) |
-
-### Master branch
-
-| Type          | Status                                                                                  |
-|---------------|-----------------------------------------------------------------------------------------|
-| Documentation | ![BS](https://jenkins.homebox.space/buildStatus/icon?job=homebox-docs%2Fmaster)         |
-| Ansible lint  | ![BS](https://jenkins.homebox.space/buildStatus/icon?job=homebox-ansible-lint%2Fmaster) |
+<table>
+  <tr>
+    <th>Job</th>
+    <th>Development branch</th>
+    <th>Master branch</th>
+  </tr>
+  <tr>
+    <td>Documentation</td>
+    <td>
+      <a href='https://jenkins.homebox.space/job/homebox-docs/job/dev/'>
+        <img src='https://jenkins.homebox.space/job/homebox-docs/job/dev/badge/icon'>
+      </a>
+    </td>
+    <td>
+      <a href='https://jenkins.homebox.space/job/homebox-docs/job/master/'>
+        <img src='https://jenkins.homebox.space/job/homebox-docs/job/master/badge/icon'>
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>Ansible lint</td>
+    <td>
+      <a href='https://jenkins.homebox.space/job/homebox-ansible-lint/job/dev/'>
+        <img src='https://jenkins.homebox.space/job/homebox-ansible-lint/job/dev/badge/icon'>
+      </a>
+    </td>
+    <td>
+      <a href='https://jenkins.homebox.space/job/homebox-ansible-lint/job/master/'>
+        <img src='https://jenkins.homebox.space/job/homebox-ansible-lint/job/master/badge/icon'>
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>Deployment</td>
+    <td>
+      <a href='https://jenkins.homebox.space/job/ci-buster-nano-dev-deploy/'>
+        <img src='https://jenkins.homebox.space/job/ci-buster-nano-dev-deploy/badge/icon'>
+      </a>
+    </td>
+    <td>
+      <a href='https://jenkins.homebox.space/job/ci-buster-nano-master-deploy/'>
+        <img src='https://jenkins.homebox.space/job/ci-buster-nano-master-deploy/badge/icon'>
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>Tests</td>
+    <td>
+      <a href='https://jenkins.homebox.space/job/ci-buster-nano-dev-tests/'>
+        <img src='https://jenkins.homebox.space/job/ci-buster-nano-dev-tests/badge/icon'>
+      </a>
+    </td>
+    <td>
+      <a href='https://jenkins.homebox.space/job/ci-buster-nano-master-tests/'>
+        <img src='https://jenkins.homebox.space/job/ci-buster-nano-master-tests/badge/icon'>
+      </a>
+    </td>
+  </tr>
+</table>
 
 ## Current project status
 
