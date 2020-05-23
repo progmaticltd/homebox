@@ -39,4 +39,8 @@ SLAPD_SENTINEL_FILE=/etc/ldap/noslapd
 #export KRB5_KTNAME=/etc/krb5.keytab
 
 # Additional options to pass to slapd
+{% if system.debug %}
+SLAPD_OPTIONS="-s 7"
+{% else %}
 SLAPD_OPTIONS=""
+{% endif %}
