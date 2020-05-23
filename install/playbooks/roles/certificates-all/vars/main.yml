@@ -3,19 +3,24 @@
 # Entire list of certificates to create
 certificates:
   - type: ldap
+    create: true
   - type: rspamd
     create: '{{ mail.antispam.webui.active }}'
   - type: smtp
     domain_alias: smtp2
+    create: true
   - type: pop3
     create: '{{ mail.pop3 }}'
   - type: imap
+    create: true
   - type: xmpp
     create: '{{ ejabberd.install }}'
   - type: mta-sts
+    create: true
   - type: sogo
     create: '{{ sogo.install }}'
   - type: '@'
+    create: true
   - type: conference
     create: '{{ ejabberd.install }}'
   - type: autoconfig
