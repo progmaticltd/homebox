@@ -1,11 +1,13 @@
 ---
 
 - name: Restart rspamd
-  service:
+  systemd:
     name: rspamd
     state: restarted
+    no_block: true
 
 - name: Restart AppArmor service
-  service:
+  systemd:
     name: apparmor
     state: restarted
+    no_block: true

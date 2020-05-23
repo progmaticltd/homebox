@@ -1,12 +1,14 @@
 ---
 
 - name: Restart OpenDMARC service
-  service:
+  systemd:
     name: opendmarc
     state: restarted
     enabled: true
+    no_block: true
 
 - name: Restart AppArmor service
-  service:
+  systemd:
     name: apparmor
     state: restarted
+    no_block: true

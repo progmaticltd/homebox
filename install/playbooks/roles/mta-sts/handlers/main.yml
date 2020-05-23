@@ -4,11 +4,13 @@
   command: 'aa-enforce usr.sbin.nginx'
 
 - name: Restart AppArmor service
-  service:
+  systemd:
     name: apparmor
     state: restarted
+    no_block: true
 
 - name: Restart nginx
-  service:
+  systemd:
     name: nginx
     state: restarted
+    no_block: true

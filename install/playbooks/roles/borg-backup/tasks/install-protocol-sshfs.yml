@@ -122,3 +122,4 @@
     name: 'mnt-backup-{{ location.name }}.automount'
     enabled: true
     state: restarted
+    no_block: true

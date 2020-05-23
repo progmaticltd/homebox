@@ -4,16 +4,19 @@
   shell: nginx -t
 
 - name: Restart nginx
-  service:
+  systemd:
     name: nginx
     state: restarted
+    no_block: true
 
 - name: Restart AppArmor service
-  service:
+  systemd:
     name: apparmor
     state: restarted
+    no_block: true
 
 - name: Restart transmission daemon
-  service:
+  systemd:
     name: transmission-daemon
     state: reloaded
+    no_block: true

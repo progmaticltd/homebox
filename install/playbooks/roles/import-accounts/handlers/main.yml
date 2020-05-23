@@ -2,6 +2,7 @@
 
 - name: Restart dovecot
   tags: dovecot
-  service:
+  systemd:
     name: dovecot
     state: restarted
+    no_block: true

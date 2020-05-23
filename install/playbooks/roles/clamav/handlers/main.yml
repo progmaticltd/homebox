@@ -1,9 +1,10 @@
 
 - name: Restart clamav services
-  service:
+  systemd:
     name: '{{ service }}'
     state: restarted
     enabled: yes
+    no_block: true
   with_items:
     - clamsmtp
     - clamav-daemon

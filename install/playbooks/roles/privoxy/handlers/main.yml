@@ -1,11 +1,13 @@
 ---
 
 - name: Restart privoxy
-  service:
+  systemd:
     name: privoxy
     state: restarted
+    no_block: true
 
 - name: Restart AppArmor service
-  service:
+  systemd:
     name: apparmor
     state: restarted
+    no_block: true

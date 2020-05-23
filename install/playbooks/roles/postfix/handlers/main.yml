@@ -1,9 +1,10 @@
 
 - name: Restart postfix
   tags: postfix
-  service:
+  systemd:
     name: '{{ service }}'
     state: restarted
+    no_block: true
   with_items:
     - postfix
     - postfix@-
@@ -11,11 +12,13 @@
     loop_var: service
 
 - name: Restart AppArmor service
-  service:
+  systemd:
     name: apparmor
     state: restarted
+    no_block: true
 
 - name: Restart fail2ban
-  service:
+  systemd:
     name: fail2ban
     state: restarted
+    no_block: true

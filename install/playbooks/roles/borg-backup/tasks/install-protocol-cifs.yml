@@ -100,3 +100,4 @@
     enabled: true
     daemon_reload: true
     state: restarted
+    no_block: true

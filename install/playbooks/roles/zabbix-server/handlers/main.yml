@@ -5,21 +5,25 @@
   command: 'aa-enforce usr.sbin.nginx'
 
 - name: Restart AppArmor service
-  service:
+  systemd:
     name: apparmor
     state: restarted
+    no_block: true
 
 - name: Restart php-fpm
-  service:
+  systemd:
     name: php7.0-fpm
     state: restarted
+    no_block: true
 
 - name: Restart nginx
-  service:
+  systemd:
     name: nginx
     state: restarted
+    no_block: true
 
 - name: Restart Zabbix server
-  service:
+  systemd:
     name: zabbix-server
     state: restarted
+    no_block: true

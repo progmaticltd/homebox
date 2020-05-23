@@ -5,11 +5,13 @@
     daemon_reload: yes
 
 - name: Restart Systemd local fs target
-  service:
+  systemd:
     name: local-fs.target
     state: restarted
+    no_block: true
 
 - name: Restart memcached
-  service:
+  systemd:
     name: memcached
     state: restarted
+    no_block: true

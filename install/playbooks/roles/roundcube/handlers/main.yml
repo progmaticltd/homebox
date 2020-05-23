@@ -4,19 +4,22 @@
   command: 'aa-enforce usr.sbin.nginx'
 
 - name: Restart AppArmor service
-  service:
+  systemd:
     name: apparmor
     state: restarted
+    no_block: true
 
 - name: Restart php-fpm
-  service:
+  systemd:
     name: 'php{{ php_version }}-fpm'
     state: restarted
+    no_block: true
 
 - name: Restart nginx
   notify:
     - Restart IMAP proxy
     - Restart php-fpm
-  service:
+  systemd:
     name: nginx
     state: restarted
+    no_block: true

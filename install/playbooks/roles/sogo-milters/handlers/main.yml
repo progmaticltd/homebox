@@ -5,12 +5,14 @@
     daemon_reload: true
 
 - name: Restart milter service
-  service:
+  systemd:
     name: milter-sogo-abook
     state: restarted
     enabled: true
+    no_block: true
 
 - name: Reload postfix
-  service:
+  systemd:
     name: postfix
     state: restarted
+    no_block: true

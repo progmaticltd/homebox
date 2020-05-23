@@ -4,6 +4,7 @@
   command: /usr/sbin/locale-gen
 
 - name: Restart ufw
-  service:
+  systemd:
     name: ufw
     state: restarted
+    no_block: true

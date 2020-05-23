@@ -1,16 +1,19 @@
 ---
 
 - name: Restart SSH
-  service:
+  systemd:
     name: ssh
     state: restarted
+    no_block: true
 
 - name: Restart Postfix
-  service:
+  systemd:
     name: postfix
     state: restarted
+    no_block: true
 
 - name: Restart Dovecot
-  service:
+  systemd:
     name: dovecot
     state: restarted
+    no_block: true

@@ -1,6 +1,7 @@
 ---
 
 - name: Restart bind
-  service:
+  systemd:
     name: bind9
     state: restarted
+    no_block: true

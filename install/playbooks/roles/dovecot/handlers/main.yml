@@ -2,9 +2,10 @@
 - name: Restart dovecot
   tags: dovecot
   notify: Compile global sieve scripts
-  service:
+  systemd:
     name: dovecot
     state: restarted
+    no_block: true
 
 - name: Compile global sieve scripts
   tags: dovecot
@@ -15,16 +16,19 @@
     loop_var: file
 
 - name: Restart AppArmor service
-  service:
+  systemd:
     name: apparmor
     state: restarted
+    no_block: true
 
 - name: Restart fail2ban
-  service:
+  systemd:
     name: fail2ban
     state: restarted
+    no_block: true
 
 - name: Restart tomcat
-  service:
+  systemd:
     service: 'tomcat{{ tomcat_version[ansible_distribution_release] }}'
     state: restarted
+    no_block: true
