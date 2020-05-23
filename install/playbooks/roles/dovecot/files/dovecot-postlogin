@@ -66,6 +66,9 @@ DISPLAY_SCORE=$(grep DISPLAY_SCORE /etc/homebox/access-check.conf | cut -f 2 -d 
 # Get the external xmpp/email alert address
 ALERT_ADDRESS=$(grep ALERT_ADDRESS /etc/homebox/access-check.conf | cut -f 2 -d =)
 
+# Let the post-login script to run external queries (for instance to IP address lookups)
+ALLOW_EXTERNAL_QUERIES=$(grep ALLOW_EXTERNAL_QUERIES /etc/homebox/access-check.conf | cut -f 2 -d =)
+
 # When importing emails, the remote command is always '127.0.0.1'
 # Run the import then exit.
 if [ "$MASTER_USER" = "import" ]; then
@@ -151,6 +154,9 @@ PASS_ENV="$PASS_ENV ALLOW_EXTERNAL_QUERIES=$ALLOW_EXTERNAL_QUERIES"
 # is set as "POSTMASTER". Pass it in a new var called "ORIG_USER"
 PASS_ENV="$PASS_ENV ORIG_USER=$USER"
 
+# Add the source (Roundcube/SOGo/IMAP) to the environment
+PASS_ENV="$PASS_ENV SOURCE=$SOURCE"
+
 # Call all the scripts in the folder /etc/dovecot/login-scripts,
 # These scrips are non blocking, and run as the user
 # shellcheck disable=SC2166
@@ -186,9 +192,6 @@ for script in $login_scripts; do
         logger "Warning: Skipping the script $script (connection denied)"
         continue
     fi
-
-    # Add the source (Roundcube/SOGo/IMAP) to the environment
-    PASS_ENV="$PASS_ENV SOURCE=$SOURCE"
 
     if [ "$reportingScript" = "1" ]; then
         # Add the global / external email address to send alerts

@@ -45,12 +45,12 @@ CUSTOM_COUNTRIES_TRUST=$(grep -c '^COUNTRIES_TRUST=' "$userConf")
 CUSTOM_COUNTRIES_TRUST_HOME=$(grep -c '^COUNTRIES_TRUST_HOME=' "$userConf")
 
 # Allow the use to defined extra trusted countries
-if [ "$CUSTOM_COUNTRIES_TRUST" = 1 ]; then
+if [ "$CUSTOM_COUNTRIES_TRUST" = "1" ]; then
     COUNTRIES_TRUST=$(grep '^COUNTRIES_TRUST=' "$userConf" | cut -f 2 -d = | sed "s/'//g")
     logger "Using custom value for user $USER for trusted countries: $COUNTRIES_TRUST"
 fi
 
-if [ "$CUSTOM_COUNTRIES_TRUST_HOME" = 1 ]; then
+if [ "$CUSTOM_COUNTRIES_TRUST_HOME" = "1" ]; then
     COUNTRIES_TRUST_HOME=$(grep '^COUNTRIES_TRUST_HOME=' "$userConf" | cut -f 2 -d = | sed "s/'//g")
     logger "Using custom value for user $USER for trusting home country: $COUNTRIES_TRUST_HOME"
 fi
