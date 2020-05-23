@@ -1,7 +1,7 @@
 ---
 
 - name: Open the port 80 if necessary
-  tags: security
+  tags: security, cert
   register: ufw_http
   ufw:
     proto: tcp
@@ -22,11 +22,13 @@
     {{ "-d " + domain_alias + "." + network.domain if domain_alias is defined and (domain_alias | length > 0) else "" }}
     --email "admin@{{ network.domain }}"
     {{ domain_alias_cmd is defined | ternary("--expand", "") }}
-    {{ system.devel | ternary("--test-cert", "") }}
+    {{ "" if not system.devel
+          else "--test-cert" if devel.acme_server == 'staging'
+          else "--no-verify-ssl --server https://10.30.50.2:14000/dir --force-renewal --renew-with-new-domains" }}
     --agree-tos
 
 - name: Remove the firewall rule if it has been added
-  tags: security
+  tags: security, cert
   when: ufw_http.changed
   ufw:
     proto: tcp

@@ -10,6 +10,7 @@
 
 - name: Test opendmarc configuration
   tags: systemctl,opendmarc
+  when: bind.propagation.check
   shell: opendmarc-check '{{ network.domain }}'
   become: yes
   become_method: sudo
