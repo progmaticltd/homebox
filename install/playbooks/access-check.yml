@@ -3,9 +3,6 @@
 # Check and log accesses per country or IP address
 # Send alerts over xmpp / or email to an external account
 - hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
     - sendxmpp
     - access-check

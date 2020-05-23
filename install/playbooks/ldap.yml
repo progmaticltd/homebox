@@ -6,9 +6,6 @@
 # Do not delete the previous users if running again the script
 
 - hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/../../config/defaults.yml'
   vars:
     clean_users: '{{ clean | default(false) }}'
     clean_groups: '{{ clean | default(false) }}'

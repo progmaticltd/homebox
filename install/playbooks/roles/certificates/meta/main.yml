@@ -1,5 +1,0 @@
----
-
-dependencies:
-  - { role: load-defaults, when: defaults_loaded is not defined }
-  - { role: external-ip-type, when: system.devel and devel.acme_server == 'pebble' }

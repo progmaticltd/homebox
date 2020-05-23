@@ -1,4 +1,0 @@
----
-
-dependencies:
-  - { role: external-ip-type }

@@ -2,8 +2,5 @@
 
 # Install Tor and Privoxy,and chain them together
 - hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
     - privoxy

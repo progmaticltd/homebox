@@ -1,0 +1,6 @@
+---
+
+# Get the external IP address type
+- hosts: homebox
+  roles:
+    - external-ip-type

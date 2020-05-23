@@ -6,9 +6,6 @@
     redirect: true
     certificate:
       type: '@'
-  vars_files:
-    - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
     - role: certificates
       tags: certificates
@@ -19,9 +16,6 @@
   vars:
     certificate:
       type: 'xmpp'
-  vars_files:
-    - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
     - role: certificates
       tags: certificates
@@ -31,17 +25,11 @@
   vars:
     certificate:
       type: conference
-  vars_files:
-    - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
     - role: certificates
       tags: certificates
 
 # Install a ejabberd (https://docs.ejabberd.im)
 - hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
     - ejabberd

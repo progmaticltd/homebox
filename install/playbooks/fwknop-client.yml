@@ -2,8 +2,5 @@
 
 # Install fwknop client
 - hosts: localhost
-  vars_files:
-    - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
     - fwknop-client

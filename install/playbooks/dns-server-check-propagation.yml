@@ -2,8 +2,5 @@
 
 # Check if the DNS server entries have been propagated on internet
 - hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../../config/defaults.yml'
-    - '{{ playbook_dir }}/../../config/system.yml'
   roles:
     - dns-server-check-propagation

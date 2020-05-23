@@ -5,6 +5,9 @@
 # some conditional flags used below
 - import_playbook: load-defaults.yml
 
+# Load external IP type information
+- import_playbook: external-ip-type.yml
+
 # Prepare the system, get its external IP address,
 # and set up remote access
 - import_playbook: system-prepare.yml

@@ -14,16 +14,10 @@
 
 # Start by forcing load defaults, if the acript is used manually by itself
 - hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
     - load-defaults
 
 - hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/../../config/defaults.yml'
   vars:
     key:
       path: '{{ backup.key.path | default("/root/.ssh/") }}'
