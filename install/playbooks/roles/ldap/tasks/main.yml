@@ -100,6 +100,7 @@
   vars:
     cert_dir: 'ldap.{{ network.domain }}'
     entity_group: openldap
+    access_private_key: true
 
 - name: Configure the ldap server for SSL / TLS
   notify: Restart the ldap service
