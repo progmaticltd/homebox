@@ -220,6 +220,7 @@ system_default:
   reboot_timeout: 180      # max time to wait when restarting the server
   keep_certs: false        # keep the letsencrypt certificates locally,
                            # even when using a live environment
+  apt_cacher: ~            # IP address or DNS name for an apt-cacher
 
 ###############################################################################
 # Once the system is in place, it is possible to use 'limit' for the rule,

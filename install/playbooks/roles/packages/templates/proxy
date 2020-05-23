@@ -1,0 +1,1 @@
+Acquire::http { Proxy "http://{{ system.apt_cacher }}:3142"; }
