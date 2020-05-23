@@ -139,7 +139,7 @@
   tags: cert
   when: is_valid.stdout == "0"
         or (system.devel and devel.acme_server == 'pebble' and generate_cert_from_pebble)
-  include_tasks: gencert.yml
+  import_tasks: gencert.yml
 
 # These permissions are needed to avoid problems with the
 

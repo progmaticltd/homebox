@@ -6,4 +6,5 @@
     - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/../../config/defaults.yml'
   roles:
-    - extra-certs
+    - role: extra-certs
+      tags: certificates
