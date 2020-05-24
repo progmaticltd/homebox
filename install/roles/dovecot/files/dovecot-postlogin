@@ -69,7 +69,7 @@ ALERT_ADDRESS=$(grep ALERT_ADDRESS /etc/homebox/access-check.conf | cut -f 2 -d 
 # Let the post-login script to run external queries (for instance to IP address lookups)
 ALLOW_EXTERNAL_QUERIES=$(grep ALLOW_EXTERNAL_QUERIES /etc/homebox/access-check.conf | cut -f 2 -d =)
 
-# When importing emails, the remote IP is always '127.0.0.1'
+# When importing emails, the remote command is always '127.0.0.1'
 # Run the import then exit.
 if [ "$MASTER_USER" = "import" ]; then
 

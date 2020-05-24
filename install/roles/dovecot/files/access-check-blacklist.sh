@@ -65,7 +65,7 @@ fi
 # Check if the IP address is blacklisted
 blacklisted="0"
 if [ -r "$blacklistFile" ]; then
-    blacklisted=$(echo "$IP" | grepcidr -x -c -f "$blacklistFile")
+    blacklisted=$(grepcidr -x -c "$IP" "$blacklistFile")
 fi
 
 # Exit directly if the IP address has been blacklisted

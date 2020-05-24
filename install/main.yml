@@ -27,7 +27,7 @@
       when: bind.install and bind.propagation.check
       tags: bind
     - role: certificates-all
-      tags: ssl
+      tags: cert
     - role: ldap
       tags: ldap
     - role: user-setup
