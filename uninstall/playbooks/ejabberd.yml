@@ -4,7 +4,7 @@
 - hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/../../config/defaults.yml'
+    - '{{ playbook_dir }}/../config/defaults.yml'
   vars:
     certificate:
       type: conference
@@ -14,7 +14,7 @@
 - hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/../../config/defaults.yml'
+    - '{{ playbook_dir }}/../config/defaults.yml'
   vars:
     certificate:
       type: xmpp
@@ -24,7 +24,7 @@
 - hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../../config/system.yml'
-    - '{{ playbook_dir }}/../../config/defaults.yml'
+    - '{{ playbook_dir }}/../config/defaults.yml'
   roles:
     - role: ejabberd
       tags: uninstall

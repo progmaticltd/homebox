@@ -1,0 +1,84 @@
+---
+
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../config/defaults.yml'
+    - '{{ playbook_dir }}/../config/system.yml'
+  roles:
+    - external-ip-type
+
+# Test the DNS server for mail records
+- hosts: homebox
+  vars:
+    records:
+      type: '{{ external_ip_type }}'
+      list:
+        - name: 'main.{{ network.domain }}'
+          value: '{{ network.external_ip }}'
+  roles:
+    - dns-records
+
+# Test the DNS server for mail records
+- hosts: homebox
+  vars:
+    records:
+      type: '{{ external_ip_type }}'
+      list:
+        - name: 'imap.{{ network.domain }}'
+          value: '{{ network.external_ip }}'
+        - name: 'smtp.{{ network.domain }}'
+          value: '{{ network.external_ip }}'
+  roles:
+    - dns-records
+
+# Test the DNS server for service records
+- hosts: homebox
+  vars:
+    records:
+      type: SRV
+      list:
+        - name: '_imap._tcp.{{ network.domain }}'
+          value: '0 0 0 \.'
+        - name: '_imaps._tcp.{{ network.domain }}'
+          value: 'imap\.{{ network.domain }}'
+        - name: '_submissions._tcp.{{ network.domain }}'
+          value: 'smtp\.{{ network.domain }}'
+  roles:
+    - dns-records
+
+# Test the DNS server for service records
+- hosts: homebox
+  vars:
+    records:
+      type: TXT
+      list:
+        - name: '_dmarc.{{ network.domain }}'
+          value: 'ru[af]=mailto:postmaster@{{ network.domain }}'
+        - name: '{{ dkim.selector }}._domainkey.{{ network.domain }}'
+          value: '{{ dkim.selector }}.{{ network.domain }}'
+  roles:
+    - dns-records
+
+# Test the DNS server for MX records, should return at least one record
+- hosts: homebox
+  vars:
+    records:
+      type: MX
+      list:
+        - name: '{{ network.domain }}'
+          value: 'smtp.{{ network.domain }}'
+  roles:
+    - dns-records
+
+# Check the MTA-STS and TLS-RPT records
+- hosts: homebox
+  vars:
+    records:
+      type: TXT
+      list:
+        - name: '_mta-sts.{{ network.domain }}'
+          value: 'v=STSv1; id=[a-zA-Z0-9]+'
+        - name: '_smtp._tls.{{ network.domain }}'
+          value: 'v=TLSRPTv1; rua=mailto:security@{{ network.domain }};'
+  roles:
+    - dns-records

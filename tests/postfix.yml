@@ -1,9 +1,9 @@
 ---
 
+# Test postfix installation
 - hosts: homebox
   vars_files:
-    - '{{ playbook_dir }}/../../config/system.yml'
     - '{{ playbook_dir }}/../config/defaults.yml'
+    - '{{ playbook_dir }}/../config/system.yml'
   roles:
-    - role: tor
-      tags: uninstall
+    - postfix
