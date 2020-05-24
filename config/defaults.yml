@@ -11,7 +11,7 @@ network_default:
 
 # Shortcut notation to the backup directory. All the build artifacts will be
 # saved in this directory
-backup_directory: "{{ playbook_dir }}/../../backup/{{ network.domain }}"
+backup_directory: "{{ playbook_dir }}/../backup/{{ network.domain }}"
 
 # Standard policies
 policies:
