@@ -1,6 +1,0 @@
----
-
-# Cleanup the system before going live
-- hosts: homebox
-  roles:
-    - system-post-install

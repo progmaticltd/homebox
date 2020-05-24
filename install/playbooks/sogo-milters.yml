@@ -1,6 +1,0 @@
----
-
-# Install SOGo milters
-- hosts: homebox
-  roles:
-    - role: sogo-milters

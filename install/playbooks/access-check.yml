@@ -1,8 +1,0 @@
----
-
-# Check and log accesses per country or IP address
-# Send alerts over xmpp / or email to an external account
-- hosts: homebox
-  roles:
-    - sendxmpp
-    - access-check

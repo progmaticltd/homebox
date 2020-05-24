@@ -1,7 +1,0 @@
----
-
-# Generate additional certificates
-- hosts: homebox
-  roles:
-    - role: extra-certs
-      tags: certificates

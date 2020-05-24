@@ -1,6 +1,0 @@
----
-
-# Install and configure oendkim
-- hosts: homebox
-  roles:
-    - opendkim

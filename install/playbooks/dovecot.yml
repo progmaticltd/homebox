@@ -1,6 +1,0 @@
----
-
-# Install Dovecot mail server
-- hosts: homebox
-  roles:
-    - dovecot

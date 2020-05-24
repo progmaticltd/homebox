@@ -1,6 +1,0 @@
----
-
-# Install RoundCube milters
-- hosts: homebox
-  roles:
-    - role: roundcube-milters

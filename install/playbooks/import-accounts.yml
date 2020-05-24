@@ -1,6 +1,0 @@
----
-
-# This playbook integrates other email accounts into the system
-- hosts: homebox
-  roles:
-    - import-accounts

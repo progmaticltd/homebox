@@ -1,6 +1,0 @@
----
-
-# Install a minimal SSH server to remotely unlock the system, via SSH
-- hosts: homebox
-  roles:
-    - luks-remote

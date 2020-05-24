@@ -1,5 +1,0 @@
----
-# Initialise remote access (via SSH)
-- hosts: homebox
-  roles:
-    - remote-access

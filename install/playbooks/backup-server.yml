@@ -1,5 +1,0 @@
-# Configure SSH for remote backup access using borgbackup
-
-- hosts: homebox
-  roles:
-    - backup-server

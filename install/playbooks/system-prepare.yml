@@ -1,7 +1,0 @@
----
-
-# Prepare the system
-- hosts: homebox
-  roles:
-    - packages
-    - system-prepare

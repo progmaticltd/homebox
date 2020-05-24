@@ -1,6 +1,0 @@
----
-
-# Install bind9 DNS server
-- hosts: homebox
-  roles:
-    - dns-server-bind-refresh

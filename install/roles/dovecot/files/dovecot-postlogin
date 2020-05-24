@@ -1,0 +1,298 @@
+#!/bin/dash
+
+# Postlogin script for Dovecot.
+# This script will calls other scripts in /etc/dovecot/login-scripts
+# Each script may contains specific comments like below:
+# Blocking: <Yes|No*>
+# RunAs: <User*|Postmaster>
+# NeedDecryptKey: <Yes|No*>
+# Description: description of the script
+# ReportingScript: <Yes|No*>
+# Score: <Bonus|Malus>
+#
+# Explanation:
+# - Blocking: <Yes|No> (default=No)
+#   Wait for the script execution to be finished before continuing,
+#   This might be used to block login, for instance from some countries or to use TFA
+# - RunAs: <User|Postmaster> (default=User)
+#   User: Run the script as the user that tries to login, by dropping privileges.
+#   This is useful, for instance to import emails from other servers
+#   Postmaster: Run as the postmaster user, with more privileges
+# - NeedDecryptKey: <Yes|No> (default=No)
+#   The decryption key is needed for instance when importing emails from other platforms,
+#   to decrypt the import settings (e.g. credentials)
+# - ReportingScript: <Yes|No> (default=No)
+#   When set to yes, receive the external email address to send security alerts
+# - Score: <Bonus|Malus>
+#   Malus: The script add a "malus" to the reputation of the connection
+#   Bonus: The script add a "bonus" to the reputation of the connection
+#   Once all the scripts have been run the final score is checked against limits
+#   to accept, warn or deny the connection.
+
+# Get the list of scripts to run
+login_scripts=$(ls /etc/dovecot/login-scripts)
+
+# Exit codes
+CONTINUE=0
+ERROR=1
+
+# Maximum number of seconds SOGo use to make a new connection (5s average)
+SOGO_CONNECTIION_SECONDS=10
+
+log_error() {
+    echo "$@" 1>&2;
+}
+
+# TODO: Only display log_debug in debug mode
+log_debug() {
+    logger "$@"
+}
+
+# The following variables will be logged by the last script
+# Or used to send a warning in real time to the user
+SOURCE='imap'
+STATUS='OK'
+
+# Warning score: score above which a warning is sent to the user
+WARNING_SCORE=$(grep WARNING /etc/homebox/access-check.conf | cut -f 2 -d =)
+
+# Deny score: score above which the connection requires a confirmation
+DENIED_SCORE=$(grep DENIED_SCORE /etc/homebox/access-check.conf | cut -f 2 -d =)
+
+# Should we display the scores in the alerts ?
+# It is more informative for development but it might be confusing for new users
+DISPLAY_SCORE=$(grep DISPLAY_SCORE /etc/homebox/access-check.conf | cut -f 2 -d =)
+
+# Get the external xmpp/email alert address
+ALERT_ADDRESS=$(grep ALERT_ADDRESS /etc/homebox/access-check.conf | cut -f 2 -d =)
+
+# Let the post-login script to run external queries (for instance to IP address lookups)
+ALLOW_EXTERNAL_QUERIES=$(grep ALLOW_EXTERNAL_QUERIES /etc/homebox/access-check.conf | cut -f 2 -d =)
+
+# When importing emails, the remote IP is always '127.0.0.1'
+# Run the import then exit.
+if [ "$MASTER_USER" = "import" ]; then
+
+    # Check the remote IP is local
+    if [ "$IP" = "127.0.0.1" ]; then
+        exec "$@"
+    fi
+
+    # TODO: Send an alert to the postmaster and to root!
+    # The import account should be only used to import emails from 127.0.0.1
+    log_error "Error: remote access with the import account from IP <$IP>"
+    exit "$DENIED"
+fi
+
+if [ "$IP" = "127.0.0.1" ]; then
+
+    # SOGo users can login using their ID or their full name. However, the
+    # SOGo daemon is sending the ID command after the authentication
+    # instead of sending it before.
+    # Details here: https://sogo.nu/bugs/view.php?id=2979
+
+    # This part of the script tries to get the real IP address
+    # from SOGo successful connection entries in the SOGo log file
+
+    # Build a regular expression to get the last successful entry from this user
+    fullName=$(getent passwd "$USER" | cut -f 5 -d :)
+    regex="successful login from '[0-9a-f\\.:]+' for user '(${USER}|${fullName})'"
+
+    # Get the last successful entry in the SOGo logs, for this user
+    found=$(tail -n 1000 /var/log/sogo/sogo.log | grep -E "$regex" | tail -n 1)
+
+    # If this is empty, then the user might access the platform using a local IMAP connection
+    # Do not accept connection from loopback
+    if [ "$found" = "" ]; then
+        log_error "Error: cannot find real IP for logged in user '$USER'"
+        exit $CONTINUE
+    fi
+
+    # Get the unix time for this entry
+    date=$(echo "$found" | cut -f 1,2,3 -d ' ')
+    conntime=$(date -d "$date" +%s)
+    now=$(date +%s)
+    delay=$(( now - conntime ))
+
+    if [ $delay -lt $SOGO_CONNECTIION_SECONDS ]; then
+        IP=$(echo "$found" | sed -E "s/.*successful login from '([^']+)'.*/\\1/")
+        SOURCE=SOGo
+    else
+        log_error "Error: cannot find real IP for logged in user '$USER' lip: '$LOCAL_IP'"
+        exit $ERROR
+    fi
+
+elif [ "$LOCAL_IP" = "127.0.0.2" ]; then
+    # This is a simple trick to recognise RoundCube logins,
+    # see the role roundcube and the plugin dovecot_ident
+    SOURCE=Roundcube
+fi
+
+# The initial score is 0, meaning the connection
+# is accepted
+score=0
+
+# Will contains all messages from all the scripts, one per line
+fullDetails=""
+
+# Check if the connection is local (LAN network)
+isPrivate=$(ipcalc "$IP" | grep -c "Private Internet")
+
+# These details will be passed to the scripts
+if [ -r /var/log/fail2ban.log ]; then
+    TIMES_BANNED=$(grep -c "Ban $IP" /var/log/fail2ban.log)
+else
+    TIMES_BANNED=0
+fi
+
+# The environment variables to pass to the script
+PASS_ENV="TIMES_BANNED=$TIMES_BANNED"
+PASS_ENV="$PASS_ENV DISPLAY_SCORE=$DISPLAY_SCORE"
+PASS_ENV="$PASS_ENV ALLOW_EXTERNAL_QUERIES=$ALLOW_EXTERNAL_QUERIES"
+
+# When calling a script as postmaster, the original environment variable USER
+# is set as "POSTMASTER". Pass it in a new var called "ORIG_USER"
+PASS_ENV="$PASS_ENV ORIG_USER=$USER"
+
+# Add the source (Roundcube/SOGo/IMAP) to the environment
+PASS_ENV="$PASS_ENV SOURCE=$SOURCE"
+
+# Call all the scripts in the folder /etc/dovecot/login-scripts,
+# These scrips are non blocking, and run as the user
+# shellcheck disable=SC2166
+for script in $login_scripts; do
+
+    # Check the scripts requirements
+    scriptPath="/etc/dovecot/login-scripts/$script"
+
+    # read script flags
+    runAsUser=$(grep -c '^# RunAs: User' "$scriptPath")
+    runAsPostmaster=$(grep -c '^# RunAs: Postmaster' "$scriptPath")
+    needDecriptKey=$(grep -c '^# NeedDecryptKey: Yes' "$scriptPath")
+    blocking=$(grep -c '^# Blocking: Yes' "$scriptPath")
+    scriptDescription=$(grep '^# Description:' "$scriptPath" | sed 's/.*: //')
+    reportingScript=$(grep -c '^# Reporting: Yes' "$scriptPath")
+
+    # By default, scripts are not called for LAN connections
+    manageLan=$(grep -c '^# ManageLAN: Yes' "$scriptPath")
+
+    # Malus script, add "bad" points to the final score
+    malusScript=$(grep -c '^# Score: Malus' "${scriptPath}")
+
+    # Bonus script, remove points; e.g trusted IP addresses
+    bonusScript=$(grep -c '^# Score: Bonus' "${scriptPath}")
+
+    if [ "$isPrivate" = "1" ] && [ "$manageLan" = "0" ]; then
+        logger "Skipping script '$script' for user '$USER' from IP address <$IP>"
+        continue
+    fi
+
+    # Skip this script, do not do anything sensitive if the connection is denied
+    if [ "$STATUS" = "DENIED" ] && [ "$needDecriptKey" = "1" ]; then
+        logger "Warning: Skipping the script $script (connection denied)"
+        continue
+    fi
+
+    if [ "$reportingScript" = "1" ]; then
+        # Add the global / external email address to send alerts
+        # And the status of the connection
+        PASS_ENV="$PASS_ENV ALERT_ADDRESS=$ALERT_ADDRESS SCORE=$score"
+        PASS_ENV="$PASS_ENV STATUS=$STATUS DETAILS='$fullDetails'"
+
+    # Email import scripts need the decryption key to access the password
+    # Pass the decryption key only if the current access is valid
+    elif [ "$STATUS" = "OK" ] && [ "$needDecriptKey" = "1" ]; then
+        # Pass the sytem key to the login scripts,
+        # So they can decrypt sensitive content.
+        DECRYPT_KEY=$(cat /etc/homebox/system-key)
+        PASS_ENV="$PASS_ENV DECRYPT_KEY=$DECRYPT_KEY"
+    fi
+
+    # Email import scripts run as the current user
+    # But the TFA for instance will run as postmaster
+
+    # Run as user by default
+    RunAs="$USER"
+    if [ "$runAsPostmaster" = "1" ]; then
+        RunAs="postmaster"
+    elif [ "$runAsUser" = "1" ]; then
+        RunAs="$USER"
+    else
+        logger "Warning: the script '$script' will be run as '$USER' by default"
+    fi
+
+    # Launch non blocking script in background and continue.
+    # This is actually used by the external emails import script.
+    if [ "$blocking" = "0" ]; then
+        log_debug "Launching background script $scriptPath ($scriptDescription) as '$RunAs'"
+        su "$RunAs" -s /bin/sh -c "$PASS_ENV $scriptPath" 1>&2 &
+        continue
+    fi
+
+    # Running foreground scripts
+    log_debug "Running blocking script ${scriptPath} ($scriptDescription) as '$RunAs'"
+    details=$(su "$RunAs" -s /bin/sh -c "${PASS_ENV} ${scriptPath}")
+    scoreCost=$?
+
+    # Skip trusted policies
+    if [ "$scoreCost" = "0" ]; then
+        continue
+    fi
+
+    # If a score is blacklist or whitelist, make sure it is respected
+    if [ "$scoreCost" = "255" ]; then
+        scoreCost=1000
+    fi
+
+    # Compute the current score
+    if [ "$malusScript" = "1" ]; then
+        score=$(( score + scoreCost ))
+        log_debug "$script: Added $scoreCost to the score, now $score"
+        log_debug "Details: $details"
+        sign="+"
+    elif [ "$bonusScript" = "1" ]; then
+        score=$(( score - scoreCost ))
+        log_debug "$script: Substracted $scoreCost to the score, now $score"
+        log_debug "Details: $details"
+        sign="-"
+    else
+        log_debug "Warning: no bonus/malus type specified in the comments for the script $script (returned $scoreCost)"
+    fi
+
+    if [ "$DISPLAY_SCORE" = "YES" ]; then
+        scoreDetails=" (${sign}${scoreCost} points)"
+    fi
+
+    # Build the details list used by the warning script
+    if [ "$details" != "" ]; then
+       fullDetails="$fullDetails\n- $details$scoreDetails"
+    fi
+
+    # Set the status according to the current score
+    if  [ $score -ge "$DENIED_SCORE" ]; then
+        STATUS='DENIED'
+    elif [ "$score" -ge "$WARNING_SCORE" ]; then
+        STATUS='WARNING'
+    else
+        STATUS='OK'
+    fi
+
+done
+
+# If the access is denied, send an alert to the user using xmpp
+if [ "$STATUS" = "DENIED" ]; then
+    # This may happens when the user has activated restrictions by IP or country
+    log_error "IMAP connection denied for '$USER@$IP'"
+    printf "* NO [ALERT] Access denied\r\n"
+    exit 0
+fi
+
+if [ "$STATUS" = "WARNING" ]; then
+    # Send a warning to the user, perhaps using xmpp
+    log_error  "IMAP connection warning for '$USER@$IP'"
+    printf "* OK [ALERT] Warning on this connection\r\n"
+    exec "$@"
+fi
+
+# Continue the normal execution process
+exec "$@"

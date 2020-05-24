@@ -1,6 +1,0 @@
----
-
-# Install the nginx web server
-- hosts: homebox
-  roles:
-    - nginx

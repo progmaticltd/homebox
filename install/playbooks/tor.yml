@@ -1,6 +1,0 @@
----
-
-# Install and configure Tor
-- hosts: homebox
-  roles:
-    - tor

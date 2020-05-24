@@ -1,6 +1,0 @@
----
-
-# Install fwknop client
-- hosts: localhost
-  roles:
-    - fwknop-client

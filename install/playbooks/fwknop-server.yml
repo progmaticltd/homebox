@@ -1,6 +1,0 @@
----
-
-# Install fwknop - server side
-- hosts: homebox
-  roles:
-    - fwknop-server

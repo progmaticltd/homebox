@@ -1,6 +1,0 @@
----
-
-# Check if the DNS server entries have been propagated on internet
-- hosts: homebox
-  roles:
-    - dns-server-check-propagation

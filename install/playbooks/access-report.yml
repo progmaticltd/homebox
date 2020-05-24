@@ -1,6 +1,0 @@
----
-
-# Send a monthly report to each user the first day of the month
-- hosts: homebox
-  roles:
-    - access-report

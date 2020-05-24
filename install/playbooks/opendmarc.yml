@@ -1,6 +1,0 @@
----
-
-# Install and configure opendmarc
-- hosts: homebox
-  roles:
-    - opendmarc

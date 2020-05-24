@@ -1,6 +1,0 @@
----
-
-# Add antispam filtering via rspamd
-- hosts: homebox
-  roles:
-    - rspamd

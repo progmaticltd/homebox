@@ -1,6 +1,0 @@
----
-
-# Set-up user accounts (home, sudo groups, etc)
-- hosts: homebox
-  roles:
-    - user-setup

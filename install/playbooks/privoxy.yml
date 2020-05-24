@@ -1,6 +1,0 @@
----
-
-# Install Tor and Privoxy,and chain them together
-- hosts: homebox
-  roles:
-    - privoxy

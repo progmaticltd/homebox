@@ -1,6 +1,0 @@
----
-
-# Install an antivirus to analyse the attachments
-- hosts: homebox
-  roles:
-    - clamav
