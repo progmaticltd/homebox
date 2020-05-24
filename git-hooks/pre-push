@@ -41,7 +41,7 @@ do
 		# Write the list of the main ansible files and directories
 		find \
 			common/roles/* \
-			install/playbooks/main.yml \
+			install/main.yml \
 			tests/playbooks/main.yml \
 			uninstall/playbooks/*.yml \
 			-maxdepth 0 -print0 \
