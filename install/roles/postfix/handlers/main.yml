@@ -1,0 +1,24 @@
+
+- name: Restart postfix
+  tags: postfix
+  systemd:
+    name: '{{ service }}'
+    state: restarted
+    no_block: true
+  with_items:
+    - postfix
+    - postfix@-
+  loop_control:
+    loop_var: service
+
+- name: Restart AppArmor service
+  systemd:
+    name: apparmor
+    state: restarted
+    no_block: true
+
+- name: Restart fail2ban
+  systemd:
+    name: fail2ban
+    state: restarted
+    no_block: true

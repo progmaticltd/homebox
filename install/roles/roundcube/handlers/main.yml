@@ -1,0 +1,25 @@
+---
+
+- name: Activate AppArmor profile
+  command: 'aa-enforce usr.sbin.nginx'
+
+- name: Restart AppArmor service
+  systemd:
+    name: apparmor
+    state: restarted
+    no_block: true
+
+- name: Restart php-fpm
+  systemd:
+    name: 'php{{ php_version }}-fpm'
+    state: restarted
+    no_block: true
+
+- name: Restart nginx
+  notify:
+    - Restart IMAP proxy
+    - Restart php-fpm
+  systemd:
+    name: nginx
+    state: restarted
+    no_block: true

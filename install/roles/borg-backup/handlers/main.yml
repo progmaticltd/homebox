@@ -1,0 +1,17 @@
+---
+
+- name: Reload Systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Restart Systemd local fs target
+  systemd:
+    name: local-fs.target
+    state: restarted
+    no_block: true
+
+- name: Restart memcached
+  systemd:
+    name: memcached
+    state: restarted
+    no_block: true

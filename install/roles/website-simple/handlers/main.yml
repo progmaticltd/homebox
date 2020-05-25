@@ -1,0 +1,13 @@
+---
+
+- name: Restart AppArmor service
+  systemd:
+    name: apparmor
+    state: restarted
+    no_block: true
+
+- name: Restart nginx
+  systemd:
+    name: nginx
+    state: restarted
+    no_block: true

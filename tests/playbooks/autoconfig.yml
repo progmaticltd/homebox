@@ -1,9 +1,0 @@
----
-
-# Check autoconfig response
-- hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../../config/defaults.yml'
-    - '{{ playbook_dir }}/../../config/system.yml'
-  roles:
-    - autoconfig

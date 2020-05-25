@@ -1,0 +1,17 @@
+
+- name: Restart clamav services
+  systemd:
+    name: '{{ service }}'
+    state: restarted
+    enabled: yes
+    no_block: true
+  with_items:
+    - clamsmtp
+    - clamav-daemon
+  loop_control:
+    loop_var: service
+
+- name: Restart AppArmor service
+  service:
+    name: apparmor
+    state: reloaded

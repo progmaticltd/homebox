@@ -1,0 +1,33 @@
+---
+
+- name: Check internet access
+  tags: network
+  uri:
+    url: https://duckduckgo.com/
+    return_content: true
+
+- name: Check if apt works normally
+  tags: apt
+  apt:
+    update_cache: true
+
+- name: Check basic required packages
+  tags: network
+  shell: dpkg -s ufw
+
+- name: Check if AppArmor is enabled
+  tags: security
+  shell: aa-enabled
+
+- name: Check if the firewall is enabled
+  tags: security
+  shell: >-
+    set -o pipefail ;
+    ufw status | head -n 1 |
+    grep "^Status: active$"
+  args:
+    executable: /bin/bash
+
+- name: Check if certbot is installed
+  tags: apt
+  shell: dpkg -s certbot

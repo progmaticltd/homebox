@@ -1,0 +1,607 @@
+---
+
+- name: Network settings
+  tags: debug
+  debug:
+    var: network
+
+- name: Create a directory for ldap passwords backup if it does not exists
+  delegate_to: localhost
+  file:
+    path: '{{ backup_directory }}/ldap/'
+    state: directory
+    mode: '0700'
+
+- name: Display LDAP tree settings
+  tags: debug
+  when: system.debug
+  debug:
+    var: ldap
+
+- name: Ensure the LDAP server FQDN resolves to localhost
+  lineinfile:
+    path: /etc/hosts
+    line: '127.0.0.1    ldap.{{ network.domain }}'
+
+- name: Check if the OpenLDAP server is already installed
+  register: slapd_stats
+  stat:
+    path: /usr/sbin/slapd
+
+# Pre-configure the LDAP sever before instaling
+- name: Configure the LDAP administration account
+  when: not slapd_stats.stat.exists
+  no_log: true
+  debconf:
+    name: slapd
+    question: '{{ conf.question }}'
+    value: '{{ conf.value }}'
+    vtype: '{{ conf.type }}'
+  with_items:
+    - question: slapd/password1
+      type: password
+      value: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    - question: slapd/password2
+      type: password
+      value: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    - question: slapd/purge_database
+      value: false
+      type: boolean
+    - question: slapd/invalid_config
+      value: false
+      type: boolean
+    - question: shared/organization
+      value: '{{ ldap.organization.domain }}'
+      type: string
+    - question: slapd/domain
+      value: '{{ ldap.organization.domain }}'
+      type: string
+    - question: slapd/backend
+      value: 'MDB'
+      type: select
+    - question: slapd/move_old_database
+      value: true
+      type: boolean
+    - question: slapd/unsafe_selfwrite_acl
+      value: false
+      type: boolean
+    - question: slapd/password_mismatch
+      value: false
+      type: boolean
+  loop_control:
+    loop_var: conf
+
+# Install LDAP server
+- name: Remove conflicting packages
+  tags: dpkg
+  apt:
+    name: '{{ packages.remove }}'
+    state: absent
+
+- name: Install the required packages
+  tags: dpkg
+  apt:
+    name: '{{ packages.install }}'
+    state: present
+
+# Changes in the database will be stored there
+- name: Create the ldap config changes folder
+  file:
+    path: /etc/ldap/changes
+    state: directory
+
+################################################################################
+# At this point, the certificates should have been created already #############
+# in order to have SSL and TLS encryption activated.                           #
+- name: Set the default permissions for the imap certificate folders
+  tags: certificates
+  import_role:
+    name: cert-perms
+  vars:
+    cert_dir: 'ldap.{{ network.domain }}'
+    entity_group: openldap
+    access_private_key: true
+
+- name: Configure the ldap server for SSL / TLS
+  notify: Restart the ldap service
+  tags: cert
+  template:
+    src: default-slapd
+    dest: /etc/default/slapd
+
+- name: Copy the certificate renewal hook
+  tags: cert
+  copy:
+    src: renew-cert.sh
+    dest: /etc/letsencrypt/renewal-hooks/deploy/10-ldap.sh
+    mode: '0755'
+
+- name: Copy the ldap ssl config on the server before running it
+  notify: Restart the ldap service
+  tags: cert
+  register: ldap_ssl
+  template:
+    src: ssl-config.ldif
+    dest: /etc/ldap/changes/ssl-config.ldif
+
+- name: Modify the configuration if not already done
+  when: ldap_ssl.changed
+  notify: Restart the ldap service
+  tags: cert
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ssl-config.ldif
+#                                                                              #
+# End of TLS / SSL Configuration ###############################################
+
+- name: Copy the client configuration
+  template:
+    src: ldap.conf
+    dest: /etc/ldap/ldap.conf
+
+# Activate password policies
+- name: Copy deref module loading into the changes directory
+  register: deref_module
+  template:
+    src: deref-module.ldif
+    dest: /etc/ldap/changes/deref-module.ldif
+
+- name: Load deref module into the OLC database
+  when: deref_module.changed
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/deref-module.ldif
+
+- name: Copy password policies module loading into the changes directory
+  register: ppolicy_module
+  template:
+    src: ppolicy-module.ldif
+    dest: /etc/ldap/changes/ppolicy-module.ldif
+
+- name: Load password policy module into the OLC database
+  when: ppolicy_module.changed
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ppolicy-module.ldif
+
+- name: Copy the password policy schema into the changes directory
+  register: ppolicy_schema
+  copy:
+    src: /etc/ldap/schema/ppolicy.ldif
+    dest: /etc/ldap/changes/ppolicy-schema.ldif
+    remote_src: true
+
+- name: Activate password policies schema
+  when: ppolicy_schema.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ppolicy-schema.ldif
+
+- name: Copy the overlay into the changes directory
+  register: ldap_pwd_overlay
+  template:
+    src: overlay.ldif
+    dest: /etc/ldap/changes/overlay.ldif
+
+- name: Load the overlay definition
+  when: ldap_pwd_overlay.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/overlay.ldif
+
+- name: Copy password hash overlay into the changes directory
+  register: passwd_hash
+  template:
+    src: password-hash.ldif
+    dest: /etc/ldap/changes/password-hash.ldif
+
+- name: Load the password hash overlay
+  when: passwd_hash.changed
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/password-hash.ldif
+
+# Create a password policy for all the users
+- name: Create the password policies parent entry
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'ou=pwpolicies,{{ ldap.organization.base }}'
+    objectClass:
+      - organizationalUnit
+      - top
+    attributes:
+      ou: pwpolicies
+    state: present
+
+- name: Create the default password policy
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: cn=default,ou=pwpolicies,{{ ldap.organization.base }}
+    objectClass:
+      - pwdPolicy
+      - person
+      - top
+    attributes:
+      cn: default
+      sn: default
+      pwdMaxAge: '{{ passwords.max_age }}'
+      pwdInHistory: '{{ passwords.remember }}'
+      pwdCheckQuality: '{{ passwords.quality.enforce | ternary(1,0) }}'
+      pwdLockoutDuration: 0
+      pwdGraceAuthNLimit: 0
+      pwdFailureCountInterval: 300
+      pwdMinLength: '{{ passwords.min_length }}'
+      pwdAttribute: userPassword
+      pwdMaxFailure: '{{ passwords.max_failure }}'
+      pwdExpireWarning: '{{ passwords.expire_warning }}'
+
+- name: Create the system account password policy
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: cn=system,ou=pwpolicies,{{ ldap.organization.base }}
+    objectClass:
+      - pwdPolicy
+      - person
+      - top
+    attributes:
+      cn: default
+      sn: default
+      pwdMaxAge: 0
+      pwdInHistory: 0
+      pwdCheckQuality: 0
+      pwdLockoutDuration: 0
+      pwdGraceAuthNLimit: 0
+      pwdFailureCountInterval: 300
+      pwdMinLength: 16
+      pwdAttribute: userPassword
+
+# Users and groups creation
+- name: Make sure we have a parent entry for groups
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: '{{ ldap.groups.dn }}'
+    objectClass: organizationalUnit
+    state: present
+
+# Remove all groups created before
+- name: Remove old groups if presents
+  when: clean_groups
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
+    state: absent
+  with_items:
+    - '{{ posix_groups }}'
+  loop_control:
+    loop_var: group
+
+- name: Create all the group accounts
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
+    attributes:
+      cn:  '{{ group.description }}'
+      gidNumber: '{{ group.gidNumber }}'
+    objectClass:
+      - top
+      - posixGroup
+  with_items:
+    - '{{ posix_groups }}'
+  loop_control:
+    loop_var: group
+
+- name: Make sure we have a parent entry for users
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: '{{ ldap.users.dn }}'
+    objectClass: organizationalUnit
+    state: present
+
+- name: Remove previous users
+  when: clean_users
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
+    state: absent
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Copy the local misc schema in the changes directory
+  register: misc_schema
+  copy:
+    src: /etc/ldap/schema/misc.ldif
+    dest: /etc/ldap/changes/misc.ldif
+    remote_src: true
+
+- name: Load misc schema for multiple email addresses
+  when: misc_schema.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/misc.ldif
+
+- name: Copy the internatinal email addresses schema into the changes directory
+  tags: smtputf8
+  register: intlmailaddr_schema
+  template:
+    src: intlmailaddr.schema
+    dest: /etc/ldap/changes/intlmailaddr.schema
+
+- name: Activate internatinal email addresses schema
+  tags: smtputf8
+  when: intlmailaddr_schema.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/intlmailaddr.schema
+
+- name: Create all the user accounts
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn={{ user.1.cn }},{{ ldap.users.dn }}'
+    state: present
+    attributes:
+      uid: '{{ user.1.uid }}'
+      givenName: '{{ user.1.first_name }}'
+      sn: '{{ user.1.last_name }}'
+      userPassword: "{{ user.1.password | default(lookup('password', backup_directory + '/ldap/' + user.1.uid + '.pwd' )) }}"
+      pwdPolicySubentry: 'cn=default,ou=pwpolicies,{{ ldap.organization.base }}'
+      homeDirectory: '/home/users/{{ user.1.uid }}'
+      loginShell: '{{ user.1.shell | default(users_defaults.shell) }}'
+      uidNumber: '{{ users_defaults.uid_start + user.0 }}'
+      gidNumber: '{{ users_defaults.gid_start }}'
+      mail: '{{ user.1.mail }}'
+      intlMailAddr: '{{ user.1.aliases | default([]) }}'
+      shadowMin: 0
+      shadowMax: 999999
+      shadowWarning: 7
+      shadowInactive: -1
+      shadowFlag: 0
+    objectClass:
+      - top
+      - person
+      - posixAccount
+      - shadowAccount
+      - inetOrgPerson
+      - inetLocalMailRecipient
+      - mailboxRelatedObject
+  with_indexed_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Remove the manager account
+  tags: manager
+  when: clean_users
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn=manager account,{{ ldap.users.dn }}'
+    state: absent
+
+- name: Create the manager account
+  tags: manager
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn=manager account,{{ ldap.users.dn }}'
+    state: present
+    attributes:
+      uid: '{{ ldap.manager.uid }}'
+      userPassword: '{{ lookup("password", ldap.managerPasswdParams) }}'
+      givenName: Manager
+      sn: Account
+    objectClass:
+      - top
+      - person
+      - inetOrgPerson
+
+- name: Remove the readonly account
+  when: clean_users
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn=readonly account,{{ ldap.users.dn }}'
+    state: absent
+
+- name: Create a readonly account
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn=readonly account,{{ ldap.users.dn }}'
+    state: present
+    attributes:
+      uid: 'readonly'
+      userPassword: '{{ lookup("password", ldap.roPasswdParams) }}'
+      pwdPolicySubentry: 'cn=system,ou=pwpolicies,{{ ldap.organization.base }}'
+      givenName: Readonly
+      sn: Account
+    objectClass:
+      - top
+      - person
+      - inetOrgPerson
+
+- name: Remove the postmaster account
+  tags: postmaster
+  when: clean_users
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn=postmaster account,{{ ldap.users.dn }}'
+    state: absent
+
+- name: Create the default postmaster aliases
+  tags: postmaster
+  set_fact:
+    postmaster_aliases: '{{ ldap.postmaster.mailAliases }}'
+
+- name: Extend the postmaster aliases when sogo is installed
+  when: sogo.install
+  tags: postmaster
+  set_fact:
+    postmaster_aliases: '{{ postmaster_aliases | union(["sogo@" + network.domain]) }}'
+
+- name: Create the postmaster account
+  tags: postmaster
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: '{{ ldap.postmaster.dn }}'
+    state: present
+    attributes:
+      uid: postmaster
+      givenName: 'Postmaster'
+      sn: 'Account'
+      userPassword: '{{ lookup("password", ldap.postmasterPasswdParams) }}'
+      pwdPolicySubentry: 'cn=system,ou=pwpolicies,{{ ldap.organization.base }}'
+      homeDirectory: '/home/users/postmaster'
+      loginShell: '{{ users_defaults.shell }}'
+      uidNumber: '{{ users_defaults.uid_start + 999 }}'
+      gidNumber: '{{ users_defaults.gid_start }}'
+      mail: 'postmaster@{{ network.domain }}'
+      intlMailAddr: '{{ postmaster_aliases }}'
+      shadowMin: 0
+      shadowMax: 999999
+      shadowWarning: 7
+      shadowInactive: -1
+      shadowFlag: 0
+    objectClass:
+      - top
+      - person
+      - posixAccount
+      - shadowAccount
+      - inetOrgPerson
+      - inetLocalMailRecipient
+      - mailboxRelatedObject
+
+- name: Configure libnss to use passwords and groups
+  debconf:
+    name: libnss-ldap
+    question: 'libnss-ldapd/nsswitch'
+    value: 'passwd, group, shadow'
+    vtype: multiselect
+
+- name: Install the required packages for interactive login
+  vars:
+    pkgs:
+      - libnss-ldapd
+      - libpam-ldapd
+  apt:
+    name: '{{ pkgs }}'
+    state: present
+
+- name: Update the ldap configuration file
+  template:
+    src: nslcd.conf
+    dest: /etc/nslcd.conf
+    mode: '0600'
+
+- name: Copy the access policies on the server
+  register: access_policies
+  template:
+    src: access-policies.ldif
+    dest: /etc/ldap/changes/access-policies.ldif
+
+- name: Load access policies
+  when: access_policies.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/access-policies.ldif
+
+- name: Copy index definitions on the server
+  tags: indexes
+  register: index_defs
+  template:
+    src: indexes.ldif
+    dest: /etc/ldap/changes/indexes.ldif
+
+- name: Add indexes to the database for optimisation
+  tags: indexes
+  when: index_defs.changed
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/indexes.ldif
+
+# Sudo to update the indexes as the openldap user
+- name: Install the required packages
+  tags: apt
+  apt:
+    name: sudo
+    state: present
+
+- name: Update the indexes
+  when: index_defs.changed
+  tags: indexes
+  become: true
+  become_user: openldap
+  become_method: sudo
+  command: 'slapindex -n 1 -v {{ field }}'
+  with_items: '{{ indexed_fields }}'
+  loop_control:
+    loop_var: field
+
+- name: Add local accounts to users groups
+  tags: groups
+  ldap_attr:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn=mail_users,{{ ldap.groups.dn }}'
+    name: memberUid
+    values: '{{ user.uid }}'
+    state: present
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Add system accounts to administrators groups
+  tags: groups
+  ldap_attr:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn=administrators,{{ ldap.groups.dn }}'
+    name: memberUid
+    values: '{{ uid }}'
+    state: present
+  with_items:
+    - manager
+    - postmaster
+  loop_control:
+    loop_var: uid
+
+- name: Install the nslcd package to map LDAP users to system users
+  notify: Restart the ldap service
+  tags: apt
+  apt:
+    name: nslcd
+    state: present
+
+# Password quality enforcement ================================================
+
+- name: Check if the password quality module is in place
+  register: line_found
+  shell: >-
+    grep -c pam_pwquality
+    /etc/pam.d/common-password
+  changed_when: false
+  failed_when: false
+
+- name: Build password quality parameters string
+  when: passwords.quality.enforce
+  tags: password
+  set_fact:
+    pwq_params: '{{ pwq_params | default("") }}{{ item.name }}={{ item.value }} '
+  with_items:
+    - '{{ passwords.quality.params }}'
+
+- name: Configure password quality module
+  when: passwords.quality.enforce and line_found.stdout == '0'
+  tags: password
+  replace:
+    path: /etc/pam.d/common-password
+    regexp: '^password\s+requisite\s+pam_pwquality.so.*$'
+    replace: 'password requisite pam_pwquality.so {{ pwq_params | trim() }}'
+
+- name: Configure password quality module
+  when: passwords.remember > 0
+  tags: password
+  replace:
+    path: /etc/pam.d/common-password
+    regexp: '^(password.*pam_unix.so.*sha512)$'
+    replace: '\1 remember={{ passwords.remember }}'
+
+- name: Add a script to edit users
+  tags: script
+  template:
+    src: ldap-user-edit
+    dest: /usr/local/sbin/ldap-user-edit
+    mode: '0700'

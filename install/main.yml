@@ -1,0 +1,136 @@
+---
+## Main installation playbook
+
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../config/system.yml'
+    - '{{ playbook_dir }}/../config/defaults.yml'
+  roles:
+    - role: load-defaults
+      tags: always
+    - role: external-ip-type
+      tags: always
+    - role: packages
+      tags: apt
+    - role: system-prepare
+      tags: system
+    - role: remote-access
+      tags: ssh
+    - role: luks-remote
+      tags: luks
+    - role: nginx
+      tags: nginx
+    - role: dns-server-bind
+      when: bind.install
+      tags: bind
+    - role: dns-server-check-propagation
+      when: bind.install and bind.propagation.check
+      tags: bind
+    - role: certificates-all
+      tags: cert
+    - role: ldap
+      tags: ldap
+    - role: user-setup
+      tags: user
+    - role: access-check
+      when: access_check.active
+      tags: access
+    - role: access-report
+      when: access_check.active
+      tags: access
+    - role: backup-server
+      tags: borg
+    - role: rspamd
+      when: mail.antispam.active
+      tags: rspamd
+    - role: rspamd-web
+      when: mail.antispam.webui.active
+      tags: rspamd,nginx
+    - role: clamav
+      when: mail.antivirus.active
+      tags: clamav
+    - role: opendkim
+      tags: dkim
+    - role: opendmarc
+      tags: dmarc
+    - role: postfix
+      tags: postfix
+    - role: mta-sts
+      tags: mta-sts
+    - role: dovecot
+      tags: dovecot
+    - role: roundcube
+      when: webmail.install and webmail.type == 'roundcube'
+      tags: roundcube
+    - role: roundcube-milters
+      when: webmail.install and webmail.milters.active
+      tags: roundcube
+    - role: sogo
+      when: sogo.install
+      tags: sogo
+    - role: sogo-milters
+      when: sogo.install and sogo.milters.active
+      tags: sogo
+    - role: ejabberd
+      when: ejabberd.install
+      tags: jabber
+    - role: website-simple
+      when: website.install
+      tags: nginx,www
+    - role: autodiscover
+      when: mail.autodiscover
+      tags: autodiscover
+    - role: autoconfig
+      when: mail.autoconfig
+      tags: autoconfig
+    - role: borg-backup
+      when: backup.install
+      tags: borg
+    - role: transmission
+      when: transmission.install
+      tags: transmission
+    - role: dns-server-bind-refresh
+      when: bind.install
+      tags: bind
+    - role: tor
+      when: tor.install
+      tags: tor
+    - role: privoxy
+      when: privoxy.install
+      tags: privoxy
+    - role: zabbix-server
+      when: zabbix.install
+      tags: zabbix
+    - role: import-accounts
+      when: mail.import.active and not system.devel
+      tags: import
+    - role: extra-certs
+      when: extra_certs is defined
+      tags: ssl
+    - role: well-known-services
+      tags: nginx
+    - role: system-post-install
+      tags: always
+
+# fwknop client/server SPA (Single Packet Authorization)
+- name: Install fwknop executable on the client host
+  hosts: localhost
+  vars_files:
+    - '{{ playbook_dir }}/../config/system.yml'
+    - '{{ playbook_dir }}/../config/defaults.yml'
+  roles:
+    - role: load-defaults
+      tags: always
+    - role: fwknop-client.yml
+      when: firewall.fwknop.install
+
+- name: Install fwknop server on the remote host
+  hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../config/system.yml'
+    - '{{ playbook_dir }}/../config/defaults.yml'
+  roles:
+    - role: load-defaults
+      tags: always
+    - role: fwknop-server.yml
+      when: firewall.fwknop.install

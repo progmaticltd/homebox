@@ -1,0 +1,10 @@
+---
+
+- name: Rebuild locales
+  command: /usr/sbin/locale-gen
+
+- name: Restart ufw
+  systemd:
+    name: ufw
+    state: restarted
+    no_block: true

@@ -1,0 +1,383 @@
+---
+
+################################################################################
+# Install dovecot packages
+# Set the default repository to download dovecot packages
+- name: Install dovecot packages
+  tags: dovecot
+  apt:
+    name: '{{ dovecot.packages }}'
+    state: present
+
+- name: Install dovecot packages for full text search
+  when: mail.fts.active
+  tags: dovecot
+  apt:
+    name: dovecot-solr
+    state: present
+
+- name: Allow mail damon to access the users directory
+  file:
+    path: /home/users
+    mode: '0755'
+
+- name: Make sure loopback interface is "trusted"
+  notify: Restart dovecot
+  replace:
+    path: /etc/dovecot/dovecot.conf
+    regexp: '^#?\s?login_trusted_networks.*'
+    replace: 'login_trusted_networks = 127.0.0.1 ::1'
+
+################################################################################
+# At this point, the certificates should have been created already #############
+# in order to have SSL and TLS encryption activated.                           #
+- name: Set the default permissions for the imap certificate folders
+  tags: certificates
+  import_role:
+    name: cert-perms
+  vars:
+    cert_dir: 'imap.{{ network.domain }}'
+    entity_group: dovecot
+
+- name: Copy the certificate renewal hook
+  tags: scripts
+  copy:
+    src: renewal-hook.sh
+    dest: /etc/letsencrypt/renewal-hooks/deploy/20-dovecot.sh
+    mode: '0700'
+
+- name: Set the default permissions for the pop3 certificate folders
+  tags: certificates
+  when: mail.pop3
+  import_role:
+    name: cert-perms
+  vars:
+    cert_dir: 'pop3.{{ network.domain }}'
+    entity_group: dovecot
+
+- name: Copy the certificate renewal hook
+  tags: cert
+  copy:
+    src: renew-cert.sh
+    dest: /etc/letsencrypt/renewal-hooks/deploy/30-dovecot.sh
+    mode: '0755'
+
+#                                                                              #
+# End of TLS / SSL Configuration ###############################################
+
+- name: Ensure the imap server FQDN resolves to localhost
+  tags: dovecot
+  lineinfile:
+    path: /etc/hosts
+    line: '127.0.0.1    imap.{{ network.domain }}'
+
+# Activate SSL on the imap server
+- name: Activate SSL configuration
+  tags: ssl, config
+  notify: Restart dovecot
+  template:
+    src: 'conf.d/{{ file }}'
+    dest: '/etc/dovecot/conf.d/{{ file }}'
+  with_items:
+    - 10-ssl.conf
+  loop_control:
+    loop_var: file
+
+- name: Create dovecot global configuration files
+  tags: config
+  notify: Restart dovecot
+  template:
+    src: '{{ file }}'
+    dest: '/etc/dovecot/{{ file }}'
+    mode: '0600'
+  with_items:
+    - dovecot-ldap.conf.ext
+  loop_control:
+    loop_var: file
+
+- name: Create the initial list of mail_plugins
+  tags: config
+  set_fact:
+    mail_plugins: $mail_plugins quota
+
+- name: Add fts to the list of mail plugins
+  tags: config
+  when: mail.fts.active
+  set_fact:
+    mail_plugins: "{{ mail_plugins }} fts fts_solr"
+
+- name: Add virtual mailboxes to the list of mail plugins
+  tags: config
+  when: mail.virtual_folders.active
+  set_fact:
+    mail_plugins: "{{ mail_plugins }} virtual"
+
+- name: Create dovecot conf.d configuration files
+  tags: config
+  notify: Restart dovecot
+  template:
+    src: 'conf.d/{{ file }}'
+    dest: '/etc/dovecot/conf.d/{{ file }}'
+  with_items:
+    - 10-auth.conf
+    - 10-master.conf
+    - 10-mail.conf
+    - 10-logging.conf
+    - 15-lda.conf
+    - 15-mailboxes.conf
+    - 20-managesieve.conf
+    - 20-imap.conf
+    - 20-lmtp.conf
+    - 90-sieve.conf
+    - 90-plugin.conf
+    - 90-quota.conf
+  loop_control:
+    loop_var: file
+
+- name: Create the global sieve directory
+  tags: sieve
+  file:
+    path: /etc/dovecot/sieve
+    state: directory
+
+- name: Copy global sieve configuration
+  tags: sieve
+  notify: Restart dovecot
+  template:
+    src: 'sieve/{{ file }}'
+    dest: '/etc/dovecot/sieve/{{ file }}'
+    mode: '0644'
+  with_items:
+    - '{{ sieve.global_scripts }}'
+  loop_control:
+    loop_var: file
+
+- name: Copy global sieve custom pipe scripts
+  when: mail.antispam.active
+  tags: sieve, scripts
+  notify: Restart dovecot
+  template:
+    src: learn-hamorspam.sh
+    dest: /etc/dovecot/sieve/learn-hamorspam.sh
+    mode: '0755'
+
+- name: Configure the firewall for default access
+  tags: security
+  ufw:
+    rule: allow
+    proto: tcp
+    src: any
+    port: '{{ rule.port }}'
+    comment: '{{ rule.comment }}'
+  with_items:
+    - comment: Allow IMAPS access
+      port: 993
+    - comment: Allow Managesieve access
+      port: 4190
+  loop_control:
+    loop_var: rule
+
+- name: Configure the firewall for POP3 access
+  when: mail.pop3
+  tags: security
+  ufw:
+    rule: allow
+    proto: tcp
+    src: any
+    port: 995
+    comment: Allow POP3S access
+
+- name: Create the post-login script directory
+  file:
+    path: /etc/dovecot/login-scripts
+    state: directory
+
+# Dovecot impersonate feature =================================================
+- name: Import imersonate tasks
+  when: mail.impersonate.active
+  import_tasks: impersonate.yml
+
+# Dovecot access check script =================================================
+- name: Import dovecot access check tasks
+  when: access_check.active
+  import_tasks: access-check.yml
+
+# Import emails from other accounts ===========================================
+
+# This user account will impersonate each user, to store their emails after migration
+# from other accounts
+- name: Initialise the import user password parameters
+  when: mail.import.active
+  tags: impersonate
+  set_fact:
+    import_password_params: "{{ backup_directory }}/ldap/import.pwd {{ policies.system.password }}"
+
+- name: Create the import user account password
+  when: mail.import.active
+  tags: impersonate
+  no_log: true
+  set_fact:
+    import_password: '{{ lookup("password", import_password_params) }}'
+
+- name: Create the import email master user account
+  when: mail.import.active
+  tags: impersonate
+  htpasswd:
+    path: /etc/dovecot/master-users
+    name: 'import'
+    password: '{{ import_password }}'
+    owner: dovecot
+    group: dovecot
+    mode: '0400'
+    crypt_scheme: ldap_sha1
+
+- name: Copy the default postlogin script
+  tags: scripts
+  copy:
+    src: dovecot-postlogin
+    dest: /usr/local/sbin/dovecot-postlogin
+    mode: '0755'
+    owner: root
+    group: root
+
+# Backup handling
+- name: Add some patterns to exclude in the backups
+  tags: backup
+  lineinfile:
+    path: /etc/homebox/backup-exclude
+    line: '{{ line }}'
+  with_items:
+    - '# Dovecot: Exclude indexes from backup'
+    - '/home/users/*/mails/indexes/*'
+    - '/home/users/*/.dovecot.lda-dupes*'
+    - '/home/users/*/mails/sieve/logs/*'
+  loop_control:
+    loop_var: line
+
+# AppArmor configuration ======================================================
+# - name: Create empty profiles for AppArmor
+#   tags: security, apparmor
+#   template:
+#     src: apparmor.d/empty-local.cf
+#     dest: '/etc/apparmor.d/local/{{ path }}'
+#   with_items: '{{ apparmor.empty_profiles }}'
+#   loop_control:
+#     loop_var: path
+
+- name: Install some dovecot AppArmor profile
+  tags: security, apparmor
+  register: aa_templates
+  template:
+    src: 'apparmor.d/{{ aa_config }}.cf'
+    dest: '/etc/apparmor.d/{{ aa_config }}'
+  with_items: '{{ apparmor.profiles }}'
+  loop_control:
+    loop_var: aa_config
+
+- name: Get the list of dovecot AppArmor profiles
+  register: dovecot_apparmor_profiles
+  find:
+    paths: /etc/apparmor.d/
+    patterns: '*dovecot*'
+
+- name: Activate AppArmor profiles
+  when: aa_templates.changed
+  tags: dovecot, security, apparmor
+  notify: Restart AppArmor service
+  command: >-
+    aa-{{ system.devel | ternary("complain", "enforce") }}
+    {{ file.path | basename }}
+  with_items:
+    - '{{ dovecot_apparmor_profiles.files }}'
+  loop_control:
+    loop_var: file
+
+################################################################################
+- name: Activate core dumps or not
+  tags: debug
+  notify: Restart dovecot
+  replace:
+    path: /etc/default/dovecot
+    regexp: '^#?ALLOW_COREDUMPS=[01]'
+    replace: 'ALLOW_COREDUMPS={{ system.debug | ternary(1,0) }}'
+
+################################################################################
+
+# Full text search support ====================================================
+
+- name: Include full text search tasks
+  when: mail.fts.active
+  include_tasks: fts.yml
+
+# Virtual mailboxes creation ==================================================
+
+- name: Include virtual mailboxes tasks
+  tags: virtual
+  when: mail.virtual_folders.active
+  include_tasks: virtual.yml
+
+# AppArmor configuration ======================================================
+- name: Install dovecot indexer AppArmor profile
+  when: mail.fts.active
+  tags: dovecot, security, apparmor
+  register: aa_templates
+  template:
+    src: 'apparmor.d/{{ aa_config }}.cf'
+    dest: '/etc/apparmor.d/{{ aa_config }}'
+  with_items:
+    - usr.lib.dovecot.indexer
+    - usr.lib.dovecot.indexer-worker
+    - usr.local.bin.decode2text
+  loop_control:
+    loop_var: aa_config
+
+- name: Activate AppArmor profiles
+  when: mail.fts.active and aa_templates.changed
+  tags: dovecot, security, apparmor
+  notify: Restart AppArmor service
+  command: 'aa-enforce {{ aa_config }}'
+  with_items:
+    - usr.lib.dovecot.indexer
+    - usr.lib.dovecot.indexer-worker
+    - usr.local.bin.decode2text
+  loop_control:
+    loop_var: aa_config
+
+# fail2ban configuration ======================================================
+- name: Activate fail2ban for dovecot
+  tags: security, fail2ban
+  notify: Restart fail2ban
+  ini_file:
+    path: /etc/fail2ban/jail.conf
+    option: enabled
+    section: '{{ section }}'
+    value: true
+    create: no
+  with_items:
+    - dovecot
+    - sieve
+  loop_control:
+    loop_var: section
+
+- name: Set fail2ban time
+  tags: security, fail2ban
+  notify: Restart fail2ban
+  ini_file:
+    path: /etc/fail2ban/jail.conf
+    option: bantime
+    section: '{{ section }}'
+    value: '{{ mail.fail2ban.time }}'
+    create: no
+  with_items:
+    - dovecot
+    - sieve
+  loop_control:
+    loop_var: section
+
+# Create entries for the DNS server ===========================================
+- name: Generate DNS records for bind
+  tags: bind
+  when: bind.install
+  template:
+    src: 40-dovecot.bind
+    dest: /etc/homebox/dns-entries.d/40-dovecot.bind

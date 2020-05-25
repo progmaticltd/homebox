@@ -1,0 +1,13 @@
+---
+
+- name: Restart AppArmor service
+  systemd:
+    name: apparmor
+    state: restarted
+    no_block: true
+
+- name: Restart Tor
+  systemd:
+    name: tor
+    state: restarted
+    no_block: true

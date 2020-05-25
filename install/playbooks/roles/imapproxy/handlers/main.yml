@@ -1,6 +1,0 @@
----
-
-- name: Restart IMAP proxy
-  service:
-    name: imapproxy
-    state: restarted

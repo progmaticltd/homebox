@@ -1,0 +1,13 @@
+---
+
+- name: Restart SSH
+  systemd:
+    name: ssh
+    state: restarted
+    no_block: true
+
+- name: Restart UFW
+  systemd:
+    name: ufw
+    state: restarted
+    no_block: true

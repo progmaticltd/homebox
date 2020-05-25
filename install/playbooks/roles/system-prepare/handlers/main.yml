@@ -1,9 +1,0 @@
----
-
-- name: Rebuild locales
-  command: /usr/sbin/locale-gen
-
-- name: Restart ufw
-  service:
-    name: ufw
-    state: restarted

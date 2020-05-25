@@ -1,0 +1,30 @@
+---
+
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../config/defaults.yml'
+    - '{{ playbook_dir }}/../config/system.yml'
+  roles:
+    - external-ip-type
+
+- hosts: homebox
+  vars:
+    records:
+      type: '{{ external_ip_type }}'
+      list:
+        - name: 'pop3.{{ network.domain }}'
+          value: '{{ network.external_ip }}'
+  roles:
+    - dns-records
+
+- hosts: homebox
+  vars:
+    records:
+      type: SRV
+      list:
+        - name: '_pop3._tcp.{{ network.domain }}'
+          value: '0 0 0 \.'
+        - name: '_pop3s._tcp.{{ network.domain }}'
+          value: 'pop3\.{{ network.domain }}'
+  roles:
+    - dns-records

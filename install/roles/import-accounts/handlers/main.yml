@@ -1,0 +1,8 @@
+---
+
+- name: Restart dovecot
+  tags: dovecot
+  systemd:
+    name: dovecot
+    state: restarted
+    no_block: true
