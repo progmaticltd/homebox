@@ -1,7 +1,6 @@
 
 - name: Restart dovecot
   tags: dovecot
-  notify: Compile global sieve scripts
   systemd:
     name: dovecot
     state: restarted

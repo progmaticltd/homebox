@@ -163,7 +163,7 @@ disable_vrfy_command = yes
 
 # Send a copy of each email for a user to himself,
 # the mail will be stored in the Sent folder
-sender_bcc_maps = hash:/etc/postfix/senders-bcc.cf
+sender_bcc_maps = regexp:/etc/postfix/senders-bcc.cf
 
 # Message size, computed from max attachment size and base64 overhead
 message_size_limit = {{ message_size_limit }}
