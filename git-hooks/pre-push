@@ -42,8 +42,8 @@ do
 		find \
 			common/roles/* \
 			install/main.yml \
-			tests/playbooks/main.yml \
-			uninstall/playbooks/*.yml \
+			tests/main.yml \
+			uninstall/*.yml \
 			-maxdepth 0 -print0 \
 			> "$tmp_checklist"
 
