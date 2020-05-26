@@ -24,17 +24,11 @@ git diff-index --cached --name-only --diff-filter=ACMR -z "$against" -- \
 	"install/*.yml" \
 	"uninstall/*.yml" \
 	"tests/*.yml" \
-	"**/ansible/*.yml" \
-	"**/config/*.yml" \
-	"**/playbooks/*.yml" \
-	"**/defaults/*.yml" \
-	"**/handlers/*.yml" \
-	"**/meta/*.yml" \
-	"**/playbooks/*.yml" \
-	"**/tasks/*.yml" \
-	"**/vars/*.yml" \
-	":(exclude)**/files/*.yml" \
-	":(exclude)**/templates/*.yml" \
+	"preseed/ansible/*.yml" \
+	"preseed/config/*.yml" \
+	"preseed/playbooks/*.yml" \
+	":(exclude)*/files/*.yml" \
+	":(exclude)*/templates/*.yml" \
 	> "$tmp_checklist"
 
 # If the checklist file is not empty, run ansible-lint
