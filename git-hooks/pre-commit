@@ -20,9 +20,13 @@ tmp_checklist=$(mktemp)
 
 # Write the list of modified ansible YAML files to be committed
 git diff-index --cached --name-only --diff-filter=ACMR -z "$against" -- \
-	"**/ansible/*.yml" \
 	"config/*.yml" \
+	"install/*.yml" \
+	"uninstall/*.yml" \
+	"tests/*.yml" \
+	"**/ansible/*.yml" \
 	"**/config/*.yml" \
+	"**/playbooks/*.yml" \
 	"**/defaults/*.yml" \
 	"**/handlers/*.yml" \
 	"**/meta/*.yml" \
