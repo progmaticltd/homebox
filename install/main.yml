@@ -121,7 +121,7 @@
   roles:
     - role: load-defaults
       tags: always
-    - role: fwknop-client.yml
+    - role: fwknop-client
       when: firewall.fwknop.install
 
 - name: Install fwknop server on the remote host
@@ -132,5 +132,5 @@
   roles:
     - role: load-defaults
       tags: always
-    - role: fwknop-server.yml
+    - role: fwknop-server
       when: firewall.fwknop.install
