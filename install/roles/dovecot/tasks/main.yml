@@ -39,6 +39,15 @@
     cert_dir: 'imap.{{ network.domain }}'
     entity_group: dovecot
 
+- name: Set the default permissions for the ldap certificate folders
+  tags: certificates
+  import_role:
+    name: cert-perms
+  vars:
+    cert_dir: 'ldap.{{ network.domain }}'
+    entity_group: dovecot
+    access_private_key: false
+
 - name: Copy the certificate renewal hook
   tags: scripts
   copy:
