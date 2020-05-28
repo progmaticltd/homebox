@@ -8,17 +8,9 @@
     name: "{{ postfix_pkgs }}"
     state: present
 
-################################################################################
-# At this point, the certificates should have been created already #############
-# in order to have SSL and TLS encryption activated.                           #
-- name: Set the default permissions for the smtp certificate folders
-  tags: certificates
-  import_role:
-    name: cert-perms
-  vars:
-    cert_dir: 'smtp.{{ network.domain }}'
-    entity_group: postfix
-
+#################################################################################
+## At this point, the certificates should have been created already #############
+## in order to have SSL and TLS encryption activated.                           #
 - name: Copy the certificate renewal hook
   tags: cert
   copy:
