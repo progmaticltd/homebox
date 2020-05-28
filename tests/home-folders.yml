@@ -1,9 +1,0 @@
----
-
-# Test home folders functions
-- hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../config/defaults.yml'
-    - '{{ playbook_dir }}/../config/system.yml'
-  roles:
-    - home-folders

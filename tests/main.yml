@@ -2,93 +2,323 @@
 ## Self diagnostic / basic unit tests suite to run before commiting
 ##
 
-# Install development support packages needed to run the tests
-- import_playbook: dev-support.yml
+- hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../config/defaults.yml'
+    - '{{ playbook_dir }}/../config/system.yml'
+  roles:
+    - role: load-defaults
+      tags: always
 
-# Test the basic functions
-- import_playbook: system-base.yml
+    - role: external-ip-type
+      tags: always
 
-# Test LDAP functions and home folders
-- import_playbook: ldap.yml
-- import_playbook: home-folders.yml
+    # Install development support packages needed to run the tests
+    - role: dev-support
+      tags: dev-support
 
-# Test rspamd program
-- import_playbook: rspamd.yml
-  when: mail.antispam.active
+    # Test the basic functions
+    - role: system-base
+      tags: system-base
 
-# Test opendmarc and opendkim
-- import_playbook: opendmarc.yml
-- import_playbook: opendkim.yml
-  when: bind.propagation.check
+    # Test LDAP functions and home folders
+    - role: ldap
+      tags: ldap
+    - role: home-folders
+      tags: home-folders
 
-# Test mail related certificates
-- import_playbook: mail-certificates.yml
+    # Test rspamd program
+    - role: rspamd
+      tags: rspamd
+      when: mail.antispam.active
 
-# Test webmail certificate
-- import_playbook: webmail-certificate.yml
-  when: webmail.install
+    # Test opendmarc and opendkim
+    - role: opendmarc
+      tags: opendmarc
+    - role: opendkim
+      tags: opendkim
+      when: bind.propagation.check
 
-# Test MTA (postfix) functions
-- import_playbook: postfix.yml
+    # Test mail related certificates
+    - role: certificate
+      tags: mail-certificates
+      vars:
+        certificate:
+          type: smtp
 
-# Test MDA (dovecot) functions
-- import_playbook: dovecot.yml
+    - role: certificate
+      tags: mail-certificates
+      when: mail.pop3
+      vars:
+        certificate:
+          type: pop3
 
-  # Test Full text search
-- import_playbook: dovecot-fts.yml
-  when: mail.fts.active
+    - role: certificate
+      tags: mail-certificates
+      vars:
+        certificate:
+          type: imap
 
-# Test autoconfiguration server
-- import_playbook: autoconfig.yml
-  when: mail.autoconfig
 
-# Test autodiscover server
-- import_playbook: autodiscover.yml
-  when: mail.autodiscover
+    # Test webmail certificate
+    - role: certificate
+      tags: webmail-certificate
+      when: webmail.install
+      vars:
+        certificate:
+          type: webmail
 
-# Test DNS records for emails
-- import_playbook: dns-records-email.yml
-  when: bind.install
+    # Test MTA (postfix) functions
+    - role: postfix
+      tags: postfix
 
-# Test pop3 specific DNS records
-- import_playbook: dns-records-email-pop3.yml
-  when: bind.install and mail.pop3
+    # Test MDA (dovecot) functions
+    - role: dovecot
+      tags: dovecot
 
-# Test submission specific DNS records
-- import_playbook: dns-records-email-submission.yml
-  when: mail.postfix.submission.active
+    # Test Full text search
+    - role: dovecot-fts
+      tags: dovecot-fts
+      when: mail.fts.active
+      vars:
+        test_dovecot: false
+        test_script: true
 
-# Test Jabber client to client functions
-- import_playbook: dns-records-jabber-c2s.yml
-  when: bind.install and ejabberd.install
+    # Test autoconfiguration server
+    - role: autoconfig
+      tags: autoconfig
+      when: mail.autoconfig
 
-# Test Jabber server to server functions
-- import_playbook: dns-records-jabber-s2s.yml
-  when: bind.install and ejabberd.install and ejabberd.s2s.active
+    # Test autodiscover server
+    - role: autodiscover
+      tags: autodiscover
+      when: mail.autodiscover
 
-# DNS records (SSHFP)
-- import_playbook: dns-records-sshfp.yml
-  when: bind.install and bind.dnssec.active
+    # Test DNS records for emails
+    - role: dns-records
+      tags: dns-records-email
+      when: bind.install
+      vars:
+        records:
+          type: '{{ external_ip_type }}'
+          list:
+            - name: 'main.{{ network.domain }}'
+              value: '{{ network.external_ip }}'
 
-# DNS records (Autoconfig)
-- import_playbook: dns-records-autoconfig.yml
-  when: bind.install and mail.autoconfig
+    - role: dns-records
+      tags: dns-records-email
+      when: bind.install
+      vars:
+        records:
+          type: '{{ external_ip_type }}'
+          list:
+            - name: 'imap.{{ network.domain }}'
+              value: '{{ network.external_ip }}'
+            - name: 'smtp.{{ network.domain }}'
+              value: '{{ network.external_ip }}'
 
-# DNS records (Autodiscover)
-- import_playbook: dns-records-autodiscover.yml
-  when: bind.install and mail.autoconfig
+    - role: dns-records
+      tags: dns-records-email
+      when: bind.install
+      vars:
+        records:
+          type: SRV
+          list:
+            - name: '_imap._tcp.{{ network.domain }}'
+              value: '0 0 0 \.'
+            - name: '_imaps._tcp.{{ network.domain }}'
+              value: 'imap\.{{ network.domain }}'
+            - name: '_submissions._tcp.{{ network.domain }}'
+              value: 'smtp\.{{ network.domain }}'
 
-# Proxies test: privoxy and tor
-- import_playbook: privoxy.yml
-  when: privoxy.install
+    - role: dns-records
+      tags: dns-records-email
+      when: bind.install
+      vars:
+        records:
+          type: TXT
+          list:
+            - name: '_dmarc.{{ network.domain }}'
+              value: 'ru[af]=mailto:postmaster@{{ network.domain }}'
+            - name: '{{ dkim.selector }}._domainkey.{{ network.domain }}'
+              value: '{{ dkim.selector }}.{{ network.domain }}'
 
-- import_playbook: tor.yml
-  when: tor.install
+    - role: dns-records
+      tags: dns-records-email
+      when: bind.install
+      vars:
+        records:
+          type: MX
+          list:
+            - name: '{{ network.domain }}'
+              value: 'smtp.{{ network.domain }}'
 
-# Zabbix server
-- import_playbook: zabbix.yml
-  when: zabbix.install
+    - role: dns-records
+      tags: dns-records-email
+      when: bind.install
+      vars:
+        records:
+          type: TXT
+          list:
+            - name: '_mta-sts.{{ network.domain }}'
+              value: 'v=STSv1; id=[a-zA-Z0-9]+'
+            - name: '_smtp._tls.{{ network.domain }}'
+              value: 'v=TLSRPTv1; rua=mailto:security@{{ network.domain }};'
 
-# Test https server quality
-- import_playbook: https-grades.yml
-  when: bind.propagation.check
+
+    # Test pop3 specific DNS records
+    - role: dns-records
+      tags: dns-records-email-pop3
+      when: bind.install and mail.pop3
+      vars:
+        records:
+          type: '{{ external_ip_type }}'
+          list:
+            - name: 'pop3.{{ network.domain }}'
+              value: '{{ network.external_ip }}'
+
+    - role: dns-records
+      tags: dns-records-email-pop3
+      when: bind.install and mail.pop3
+      vars:
+        records:
+          type: SRV
+          list:
+            - name: '_pop3._tcp.{{ network.domain }}'
+              value: '0 0 0 \.'
+            - name: '_pop3s._tcp.{{ network.domain }}'
+              value: 'pop3\.{{ network.domain }}'
+
+
+    # Test submission specific DNS records
+    - role: dns-records
+      tags: dns-records-email-submission
+      when: mail.postfix.submission.active
+      vars:
+        records:
+          type: SRV
+          list:
+            - name: '_submission._tcp.{{ network.domain }}'
+              value: 'smtp\.{{ network.domain }}'
+
+
+    # Test Jabber client to client functions
+    - role: dns-records
+      tags: dns-records-jabber-c2s
+      when: bind.install and ejabberd.install
+      vars:
+        records:
+          type: A
+          list:
+            - name: 'xmpp.{{ network.domain }}'
+              value: '{{ network.external_ip }}'
+
+    - role: dns-records
+      tags: dns-records-jabber-c2s
+      when: bind.install and ejabberd.install
+      vars:
+        records:
+          type: SRV
+          list:
+            - name: '_xmpp-client._tcp.{{ network.domain }}'
+              value: 'xmpp\.{{ network.domain }}\.$'
+
+
+    # Test Jabber server to server functions
+    - role: dns-records
+      tags: dns-records-jabber-s2s
+      when: bind.install and ejabberd.install and ejabberd.s2s.active
+      vars:
+        records:
+          type: SRV
+          list:
+            - name: '_xmpp-server._tcp.{{ network.domain }}'
+              value: 'xmpp\.{{ network.domain }}\.$'
+
+    # DNS records (SSHFP)
+    - role: dns-records
+      tags: dns-records-sshfp
+      when: bind.install and bind.dnssec.active
+      vars:
+        records:
+          type: SSHFP
+          list:
+            - name: '{{ network.domain }}'
+              value: '\s[A-F0-9]{40}$'
+            - name: '{{ network.domain }}'
+              value: '\s[A-F0-9]{56} [A-F0-9]{8}$'
+
+    # DNS records (Autoconfig)
+    - role: dns-records
+      tags: dns-records-autoconfig
+      when: bind.install and mail.autoconfig
+      vars:
+        records:
+          type: CNAME
+          list:
+            - name: 'autoconfig.{{ network.domain }}'
+              value: 'main.{{ network.domain }}'
+
+    # DNS records (Autodiscover)
+    - role: dns-records
+      tags: dns-records-autodiscover
+      when: bind.install and mail.autodiscover
+      vars:
+        records:
+          type: CNAME
+          list:
+            - name: 'autodiscover.{{ network.domain }}'
+              value: 'main.{{ network.domain }}'
+
+    # Proxies test: privoxy and tor
+    - role: privoxy
+      tags: privoxy
+      when: privoxy.install
+      environment:
+        http_proxy: 'http://127.0.0.1:{{ privoxy.port }}'
+        https_proxy: 'http://127.0.0.1:{{ privoxy.port }}'
+
+    - role: tor
+      tags: tor
+      when: tor.install
+
+
+    # Zabbix server
+    - role: zabbix
+      tags: zabbix
+      when: zabbix.install
+
+    # Test https server quality
+    - role: https-grade
+      tags: https-grade
+      when: bind.propagation.check
+      vars:
+        tests:
+          - name: autoconfig
+            url: 'https://autoconfig.{{ network.domain }}/mail/config-v1.1.xml'
+            expect: 'A+'
+            condition: '{{ mail.autoconfig }}'
+          - name: autodiscover
+            url: 'https://autodiscover.{{ network.domain }}/autodiscover/autodiscover.xml'
+            expect: 'A+'
+            condition: '{{ mail.autodiscover }}'
+          - name: www
+            url: 'https://www.{{ network.domain }}/'
+            expect: 'A+'
+            condition: '{{ website.install }}'
+          - name: default
+            url: 'https://{{ network.domain }}/'
+            expect: 'A+'
+            condition: '{{ website.install }}'
+          - name: roundcube
+            url: 'https://webmail.{{ network.domain }}/'
+            expect: 'A'
+            condition: '{{ webmail.install }}'
+          - name: sogo
+            url: 'https://sogo.{{ network.domain }}/'
+            expect: 'A'
+            condition: '{{ sogo.install }}'
+          - name: mta_sts
+            url: 'https://mta-sts.{{ network.domain }}/'
+            expect: 'A+'
+            condition: true
