@@ -152,9 +152,7 @@
 
 - name: Copy global sieve configuration
   tags: sieve
-  notify:
-    - Compile global sieve scripts
-    - Restart dovecot
+  notify: Restart dovecot
   template:
     src: 'sieve/{{ file }}'
     dest: '/etc/dovecot/sieve/{{ file }}'
