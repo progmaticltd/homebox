@@ -15,7 +15,7 @@ smtp      inet  n       -       y       -       -       smtpd
 #dnsblog   unix  -       -       y       -       0       dnsblog
 #tlsproxy  unix  -       -       y       -       0       tlsproxy
 subcleanup unix  n       -       -       -       0       cleanup
-    -o header_checks=pcre:/etc/postfix/headers-check.cf
+  -o header_checks=pcre:/etc/postfix/headers-check.cf
 submissions inet n       -       y       -       -       smtpd
   -o syslog_name=postfix/submissions
   -o cleanup_service_name=subcleanup
