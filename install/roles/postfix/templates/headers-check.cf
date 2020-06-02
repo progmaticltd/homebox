@@ -7,7 +7,8 @@
 /^User-Agent: .*$/                      IGNORE
 /^X-Mailer: .*$/                        IGNORE
 {% endif %}
-
+# Remove client's IP address
+/^X-Originating-IP:/                    IGNORE
 # Remove links that contains LAN details
 /^Received: from [a-z]+\.{{ network.domain | regex_escape() }}.*/       IGNORE
 /^Received: from.*\[192\.168\.[0-9]+\.[0-9]+\].*/                       IGNORE
