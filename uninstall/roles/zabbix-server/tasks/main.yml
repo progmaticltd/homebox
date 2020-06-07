@@ -5,7 +5,7 @@
   tags: apt
   apt:
     name: python-psycopg2
-    state: installed
+    state: present
 
 - name: Stop the Zabbix server
   service:

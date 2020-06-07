@@ -4,7 +4,7 @@
   tags: systemctl, autoconfig
   apt:
     name: libxml2-utils
-    state: installed
+    state: present
 
 - name: Check the autoconfig answer is valid
   tags: systemctl, autoconfig
