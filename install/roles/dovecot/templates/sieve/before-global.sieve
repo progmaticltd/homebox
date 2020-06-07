@@ -30,17 +30,15 @@ if envelope :matches "to" "*@{{ network.domain }}" {
 
 # Sent messages: mark the email as read and move it to the sent folder
 # Use the first recipient delimiter character.
-# Since Dovecot 2.3, recipient_delimiter is a string of possible characters
+# Do not stop the processing here, as the sent-check script will also
+# check that the email is not stored twice.
 if string :is "${from}{{ mail.recipient_delimiter[0] }}Sent" "${to}" {
   setflag "\\Seen";
   fileinto "Sent";
-  keep;
-  stop;
 }
 
 # Flag the Homebox email alerts as important and keep them in inbox
-# This header is used for backup
+# This header is used for backup; we do not stop processing, though.
 if header :matches "X-Postmaster-Alert" "*" {
   addflag "$label1";
-  stop;
 }
