@@ -73,7 +73,10 @@ myhostname = smtp.{{ network.domain }}
 virtual_alias_maps = ldap:/etc/postfix/ldap-aliases.cf
 virtual_mailbox_maps = ldap:/etc/postfix/ldap-aliases.cf
 virtual_mailbox_domains = {{ network.domain }}
+
+# Use LMTP both for virtual and local mailbox transport
 virtual_transport = lmtp:unix:private/dovecot-lmtp
+mailbox_transport = lmtp:unix:private/dovecot-lmtp
 
 # Do not use NIS for now (remove warnings "dict_nis_init: NIS domain name not set - NIS lookups disabled")
 # https://unix.stackexchange.com/questions/244199/postfix-mail-logs-keep-showing-nis-domain-not-set
@@ -160,16 +163,22 @@ content_filter = scan:127.0.0.1:{{ mail.antivirus.port + 1 }}
 policy-spf_time_limit = 3600s
 disable_vrfy_command = yes
 
-# Send a copy of each email for a user to himself,
-# the mail will be stored in the Sent folder
-sender_bcc_maps = regexp:/etc/postfix/senders-bcc.cf
-
 # Message size, computed from max attachment size and base64 overhead
 message_size_limit = {{ message_size_limit }}
 
 # Help: http://www.postfix.org/SMTPUTF8_README.html
 smtputf8_enable = yes
 smtputf8_autodetect_classes = verify
+
+{% if system.debug %}
+# If you really want to debug postfix, uncomment the block below
+# and use -D instead of -v in master.cf
+# debugger_command =
+#     PATH=/bin:/usr/bin:/usr/local/bin; export PATH; (echo cont; echo
+#     where; sleep 8640000) | gdb $daemon_directory/$process_name
+#     $process_id 2>&1
+#     >$config_directory/$process_name.$process_id.log & sleep 5
+{% endif %}
 
 {% if mail.postfix.extra_settings is defined %}
 # Additional postfix configuration

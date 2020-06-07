@@ -52,6 +52,13 @@
     src: mailname
     dest: /etc/mailname
 
+# It is also possible to use -D, with a debugger and gdb
+# See http://www.postfix.org/DEBUG_README.html
+- name: Set SMTP flag for debugging or development
+  when: system.debug or system.devel
+  set_fact:
+    smtpd_flags: '-v'
+
 - name: Copy configuration template
   tags: config
   notify: Restart postfix
@@ -73,15 +80,6 @@
     path: /etc/services
     regexp: '(urd\s+465/tcp\s+ssmtp smtps)(\s+)(#.*)'
     replace: '\1 submissions\2\3'
-
-- name: Refresh the senders bcc map
-  tags: postfix
-  notify: Restart postfix
-  command: "postmap /etc/postfix/{{ file }}"
-  with_items:
-    - senders-bcc.cf
-  loop_control:
-    loop_var: file
 
 - name: Configure the firewall for default access
   tags: postfix,security
