@@ -16,11 +16,13 @@ submissions inet n       -       y       -       -      smtpd {{ smtpd_flags }}
   -o smtpd_tls_wrappermode=yes
   -o smtpd_relay_restrictions=permit_mynetworks,permit_sasl_authenticated,reject
   -o cleanup_service_name=subcleanup
+{% if mail.postfix.submission.active %}
 submission inet n       -       y       -       -       smtpd {{ smtpd_flags }}
   -o syslog_name=postfix/submission
   -o smtpd_discard_ehlo_keywords=silent-discard,etrn
   -o smtpd_relay_restrictions=permit_mynetworks,permit_sasl_authenticated,reject
   -o cleanup_service_name=subcleanup
+{% endif %}
 pickup    unix  n       -       y       60      1       pickup
 cleanup   unix  n       -       y       -       0       cleanup
   -o sender_bcc_maps=regexp:/etc/postfix/senders-bcc.cf
