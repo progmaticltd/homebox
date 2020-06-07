@@ -69,8 +69,11 @@
     recurse: yes
     patterns: 'privkey*'
 
-# Posix permissions: files should be readable, by default, only by root.
-# The ACL will extend this to other daemons
+# The initial mode for the certificate is 0644, although the files should only
+# readable by root. This tasks is running *before* any ACL applied by the role
+# 'cert-perms', in the aim of granular access to certain daemon (LDAP at this time)
+# Since the chmod command on linux resets ACLs already in place, we need to apply
+# the change only onto files recently created, i.e. with a persmissions set to 0644
 - name: Set the unix mode for the certificate files readable by root only
   tags: cert
   file:
@@ -79,8 +82,8 @@
     group: root
     mode: '0600'
   with_items:
-    - '{{ certs.files | selectattr("mode", "ne", "0600") | list }}'
-    - '{{ keys.files | selectattr("mode", "ne", "0600") | list }}'
+    - '{{ certs.files | selectattr("mode", "eq", "0644") | list }}'
+    - '{{ keys.files | selectattr("mode", "eq", "0644") | list }}'
   loop_control:
     loop_var: file
 
