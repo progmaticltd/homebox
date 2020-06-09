@@ -55,6 +55,38 @@
     delete: yes
     comment: Allow LetsEncrypt temporarily
 
+- name: Get the certificates list
+  register: certs
+  find:
+    path: '/etc/letsencrypt/archive/'
+    recurse: yes
+    patterns: 'cert*,chain*,fullchain*'
+
+- name: Get the keys list
+  register: keys
+  find:
+    path: '/etc/letsencrypt/archive/'
+    recurse: yes
+    patterns: 'privkey*'
+
+# The initial mode for the certificate is 0644, although the files should only
+# readable by root. This tasks is running *before* any ACL applied by the role
+# 'cert-perms', in the aim of granular access to certain daemon (LDAP at this time)
+# Since the chmod command on linux resets ACLs already in place, we need to apply
+# the change only onto files recently created, i.e. with a persmissions set to 0644
+- name: Set the unix mode for the certificate files readable by root only
+  tags: cert
+  file:
+    path: '{{ file.path }}'
+    owner: root
+    group: root
+    mode: '0600'
+  with_items:
+    - '{{ certs.files | selectattr("mode", "eq", "0644") | list }}'
+    - '{{ keys.files | selectattr("mode", "eq", "0644") | list }}'
+  loop_control:
+    loop_var: file
+
 # In this direction, we should overwrite the symbolic links,
 # in case the certificates have been renewed
 # We force the permissions to 755 for dirs and 600 for files

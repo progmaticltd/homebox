@@ -11,7 +11,10 @@
   /usr/sbin/sendmail rPx,
 
   # Global sieve scripts
-  /etc/dovecot/sieve/** rwk,
+  /etc/dovecot/sieve/** r,
+
+  # Dovecot write temporary files in the sieve scripts folder
+  /var/lib/dovecot/sieve/* rw,
 
   # When storing indexes outside maildir
   owner /home/users/*/mails/indexes/**/dovecot.index.log rak,

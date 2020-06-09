@@ -21,21 +21,6 @@
   set_fact:
     access_private_key: true
 
-# Posix permissions: files should be readable, by default, only by root.
-# The ACL will extend this to other daemons
-- name: Set the unix mode for the certificate files readable by root only
-  tags: cert
-  file:
-    path: '{{ file.path }}'
-    owner: root
-    group: root
-    mode: '0600'
-  with_items:
-    - '{{ certs.files | selectattr("mode", "ne", "0600") | list }}'
-    - '{{ keys.files | selectattr("mode", "ne", "0600") | list }}'
-  loop_control:
-    loop_var: file
-
 # Now, we set the default acl for this directory: new certificates
 # will be automatically marked as readable by the entity.
 # This doesn't need to be done for nginx, as the certificates

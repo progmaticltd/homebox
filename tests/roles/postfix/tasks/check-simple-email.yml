@@ -10,7 +10,7 @@
   template:
     src: testmsg-01.txt
     dest: /tmp/testmsg-01.txt
-    mode: '0600'
+    mode: '0644'
     owner: postfix
     group: postfix
 
@@ -20,16 +20,18 @@
     swaks
     --from="{{ users[0].mail }}"
     --to "{{ users[1].mail }}"
-    --h-Subject '{{ test_subject }}'
-    -tls --tls-verify
+    --h-Subject "{{ test_subject }}"
+    --tls-verify
     --auth
     --auth-user="{{ user0_uid }}"
     --auth-password="{{ user0_password }}"
     --server smtp.{{ network.domain }}
+    --header "Content-Type: text/plain; charset=UTF-8; format=flowed"
+    --protocol SSMTP
     --body /tmp/testmsg-01.txt
   become: yes
   become_method: sudo
-  become_user: postfix
+  become_user: '{{ users[0].uid }}'
 
 - name: Check if the email has been received
   tags: postfix
