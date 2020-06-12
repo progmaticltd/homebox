@@ -62,7 +62,7 @@ Once you have modified the file, you are ready to start the installation.
 
 ```sh
 cd install
-ansible-playbook -i ../config/hosts.yml playbooks/main.yml
+ansible-playbook -i ../config/hosts.yml main.yml
 ```
 
 # Most important sections
