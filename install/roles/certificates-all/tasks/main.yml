@@ -92,6 +92,49 @@
   loop_control:
     loop_var: file
 
+# Align with certbot's default access rights for the archive and live
+# directories. Use the acl module to avoid resetting the mask, so that any
+# existing ACL rules are preserved.
+- name: Make sure the archive and live directories are owned by root
+  file:
+    path: '{{ path }}'
+    state: directory
+    owner: root
+    group: root
+  with_items:
+    - /etc/letsencrypt/archive
+    - /etc/letsencrypt/live
+  loop_control:
+    loop_var: path
+
+- name: Make sure the archive and live directories are not accessible by any group
+  acl:
+    path: '{{ path }}'
+    etype: group
+    permissions: '-'
+    recursive: false
+    state: present
+    recalculate_mask: no_mask
+  with_items:
+    - /etc/letsencrypt/archive
+    - /etc/letsencrypt/live
+  loop_control:
+    loop_var: path
+
+- name: Make sure the archive and live directories are not accessible by any other user
+  acl:
+    path: '{{ path }}'
+    etype: other
+    permissions: '-'
+    recursive: false
+    state: present
+    recalculate_mask: no_mask
+  with_items:
+    - /etc/letsencrypt/archive
+    - /etc/letsencrypt/live
+  loop_control:
+    loop_var: path
+
 - name: Open the port 80 if necessary
   tags: security, cert
   register: ufw_http

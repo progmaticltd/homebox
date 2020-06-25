@@ -21,11 +21,28 @@
   set_fact:
     access_private_key: true
 
+- name: Set the acl for the traversal of the directory hierarchy
+  tags: cert
+  acl:
+    path: '{{ path }}'
+    entity: '{{ entity_group }}'
+    etype: user
+    permissions: 'x'
+    recursive: false
+    state: present
+  with_items:
+    - '/etc/letsencrypt/archive'
+    - '/etc/letsencrypt/live'
+    - '/etc/letsencrypt/archive/{{ cert_dir }}'
+    - '/etc/letsencrypt/live/{{ cert_dir }}'
+  loop_control:
+    loop_var: path
+
 # Now, we set the default acl for this directory: new certificates
 # will be automatically marked as readable by the entity.
 # This doesn't need to be done for nginx, as the certificates
 # are read by root anyway.
-- name: Set the acl and default acl permissions for the directory
+- name: Set the default user acl permissions for the directory
   when: access_private_key
   tags: cert
   acl:
@@ -38,11 +55,60 @@
     default: true
   with_items:
       - '/etc/letsencrypt/archive/{{ cert_dir }}'
+      - '/etc/letsencrypt/live/{{ cert_dir }}'
   loop_control:
     loop_var: path
 
-# Create the list of files to modify. When the entity is nginx,
-# do not include the private key
+- name: Set the default owning group acl permissions for the directory
+  when: access_private_key
+  tags: cert
+  acl:
+    path: '{{ path }}'
+    etype: group
+    permissions: '-'
+    recursive: false
+    state: present
+    default: true
+  with_items:
+      - '/etc/letsencrypt/archive/{{ cert_dir }}'
+      - '/etc/letsencrypt/live/{{ cert_dir }}'
+  loop_control:
+    loop_var: path
+
+- name: Set the default other acl permissions for the directory
+  when: access_private_key
+  tags: cert
+  acl:
+    path: '{{ path }}'
+    etype: other
+    permissions: '-'
+    recursive: false
+    state: present
+    default: true
+  with_items:
+      - '/etc/letsencrypt/archive/{{ cert_dir }}'
+      - '/etc/letsencrypt/live/{{ cert_dir }}'
+  loop_control:
+    loop_var: path
+
+- name: Set the default mask acl permissions for the directory
+  when: access_private_key
+  tags: cert
+  acl:
+    path: '{{ path }}'
+    etype: mask
+    permissions: 'r'
+    recursive: false
+    state: present
+    default: true
+  with_items:
+      - '/etc/letsencrypt/archive/{{ cert_dir }}'
+      - '/etc/letsencrypt/live/{{ cert_dir }}'
+  loop_control:
+    loop_var: path
+
+# Create the list of files to modify: only the certificates if the entity does
+# not require access to the private key.
 - name: Create the list of files to modify
   when: not access_private_key
   set_fact:
@@ -55,25 +121,8 @@
   set_fact:
     files_list: '{{ certs.files + keys.files }}'
 
-# Explicitly set the mask for this files as read. Because the parent
-# directory permissions are '0777', any ACL modification would create
-# a mask as executable! This flaw is in the acl command, not ansible.
-- name: Set the acl mask for the files
-  tags: cert
-  acl:
-    path: '{{ file.path }}'
-    etype: mask
-    state: present
-    permissions: 'r'
-  with_items:
-    - '{{ files_list }}'
-  loop_control:
-    loop_var: file
-
 # Finally, we set the existing certificates ACLs to be readable by
-# the entity. This is crucial, especially when restoring certificates
-# Do not recalculate the mask, or the files will be marked as executable!
-# This flaw is done by the acl command, not ansible.
+# the entity. This is crucial, especially when restoring certificates.
 - name: Set the acl for the files
   tags: cert
   acl:
@@ -82,7 +131,6 @@
     entity: '{{ entity_group }}'
     state: present
     permissions: 'r'
-    recalculate_mask: no_mask
   with_items:
     - '{{ files_list }}'
   loop_control:
