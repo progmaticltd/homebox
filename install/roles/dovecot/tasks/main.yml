@@ -31,15 +31,6 @@
 ################################################################################
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
-- name: Set the default permissions for the imap certificate folders
-  tags: certificates
-  import_role:
-    name: cert-perms
-  vars:
-    cert_dir: 'imap.{{ network.domain }}'
-    entity_group: dovecot
-    access_private_key: true
-
 - name: Set the default permissions for the ldap certificate folders
   tags: certificates
   import_role:
@@ -55,15 +46,6 @@
     src: renewal-hook.sh
     dest: /etc/letsencrypt/renewal-hooks/deploy/20-dovecot.sh
     mode: '0700'
-
-- name: Set the default permissions for the pop3 certificate folders
-  tags: certificates
-  when: mail.pop3
-  import_role:
-    name: cert-perms
-  vars:
-    cert_dir: 'pop3.{{ network.domain }}'
-    entity_group: dovecot
 
 - name: Copy the certificate renewal hook
   tags: cert
