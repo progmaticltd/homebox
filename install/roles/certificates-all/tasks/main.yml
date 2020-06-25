@@ -28,6 +28,70 @@
       - '--update'
       - '--chmod=D0755,F0600'
 
+# With certbot < 0.29.0 (eg in stretch, certbot 0.28.0), the initial mode for
+# the keys was 0644, although the keys should only be 0600. This task is run on
+# exisiting private key files that might have been created by these older
+# versions to fix the access rights.
+# The chmod command on linux resets the acl mask, limiting access of existing
+# ACL rules. The acl module is used to set the access rights without resetting
+# the mask, so that any existing ACL rules are preserved.
+- name: Get the keys list
+  register: keys
+  find:
+    path: '/etc/letsencrypt/archive/'
+    recurse: yes
+    patterns: 'privkey*'
+
+- name: Make sure the private keys are owned by the root user
+  tags: cert
+  file:
+    path: '{{ file.path }}'
+    owner: root
+    group: root
+  with_items:
+    - '{{ keys.files | list }}'
+  loop_control:
+    loop_var: file
+
+- name: Make sure the private keys are accessible by the root user
+  tags: cert
+  acl:
+    path: '{{ file.path }}'
+    etype: user
+    permissions: rw
+    state: present
+    recalculate_mask: no_mask
+  with_items:
+    - '{{ keys.files | selectattr("mode", "eq", "0644") | list }}'
+  loop_control:
+    loop_var: file
+
+- name: Make sure the private keys are not accessible by any group
+  tags: cert
+  acl:
+    path: '{{ file.path }}'
+    etype: group
+    permissions: '-'
+    state: present
+    recalculate_mask: no_mask
+  with_items:
+    - '{{ keys.files | selectattr("mode", "eq", "0644") | list }}'
+  loop_control:
+    loop_var: file
+
+- name: Make sure the private keys are not accessible by any other user
+  tags: cert
+  acl:
+    path: '{{ file.path }}'
+    etype: other
+    permissions: '-'
+    state: present
+    recalculate_mask: no_mask
+  with_items:
+    - '{{ keys.files | selectattr("mode", "eq", "0644") | list }}'
+  loop_control:
+    loop_var: file
+
 - name: Open the port 80 if necessary
   tags: security, cert
   register: ufw_http
@@ -54,38 +118,6 @@
     port: 80
     delete: yes
     comment: Allow LetsEncrypt temporarily
-
-- name: Get the certificates list
-  register: certs
-  find:
-    path: '/etc/letsencrypt/archive/'
-    recurse: yes
-    patterns: 'cert*,chain*,fullchain*'
-
-- name: Get the keys list
-  register: keys
-  find:
-    path: '/etc/letsencrypt/archive/'
-    recurse: yes
-    patterns: 'privkey*'
-
-# The initial mode for the certificate is 0644, although the files should only
-# readable by root. This tasks is running *before* any ACL applied by the role
-# 'cert-perms', in the aim of granular access to certain daemon (LDAP at this time)
-# Since the chmod command on linux resets ACLs already in place, we need to apply
-# the change only onto files recently created, i.e. with a persmissions set to 0644
-- name: Set the unix mode for the certificate files readable by root only
-  tags: cert
-  file:
-    path: '{{ file.path }}'
-    owner: root
-    group: root
-    mode: '0600'
-  with_items:
-    - '{{ certs.files | selectattr("mode", "eq", "0644") | list }}'
-    - '{{ keys.files | selectattr("mode", "eq", "0644") | list }}'
-  loop_control:
-    loop_var: file
 
 # In this direction, we should overwrite the symbolic links,
 # in case the certificates have been renewed
