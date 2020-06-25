@@ -40,7 +40,7 @@
     entity_group: dovecot
     access_private_key: false
 
-- name: Copy the certificate renewal hook
+- name: Copy the certificate renewal hook for the LDAP certificate access
   tags: scripts
   copy:
     src: renewal-hook.sh
