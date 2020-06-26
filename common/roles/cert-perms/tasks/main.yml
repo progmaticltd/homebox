@@ -1,4 +1,9 @@
 ---
+# Requires the following role parameters:
+# - `cert_dir`: name of the per FQDN directory;
+# - `entity_group` : name of the entity accessing the certificate;
+# - `access_private_key` : boolean value to indicate if the entity requires
+# access to the private key.
 
 - name: Get the certificates list
   register: certs
@@ -13,13 +18,6 @@
     path: '/etc/letsencrypt/archive/{{ cert_dir }}'
     recurse: yes
     patterns: 'privkey*'
-
-# By default, consider the access to the private key is requested.
-# This might change to be explicitely requested by the caller task.
-- name: Set the default value of the "access_private_key" flag
-  when: access_private_key is not defined
-  set_fact:
-    access_private_key: true
 
 - name: Set the acl for the traversal of the directory hierarchy
   tags: cert
