@@ -6,7 +6,7 @@
   set_fact:
     certificate_fqdn: "{{ network.domain }}"
     site_root: "/var/www/default"
-    redirect_to_https: "{{ redirect | default(false) }}"
+    redirect_to_https: "{{ redirect | default(true) }}"
     domain_alias: "{{ certificate.domain_alias | default(None) }}"
 
 - name: Create the certificate fqdn with the subdomain
@@ -15,7 +15,7 @@
   set_fact:
     certificate_fqdn: "{{ certificate.type }}.{{ network.domain }}"
     site_root: "/var/www/{{ certificate.type }}"
-    redirect_to_https: "{{ redirect | default(false) }}"
+    redirect_to_https: "{{ redirect | default(true) }}"
     domain_alias: "{{ certificate.domain_alias | default(None) }}"
 
 - name: Create a directory for the site if it does not exists

@@ -228,13 +228,13 @@ You only have to add one variable `extra-certs` in your configuration file, for 
 ```yaml
 extra_certs:
   - type: gitlab
-    redirect: true
   - type: packages
-    redirect: true
+    redirect: false
 ```
 
 By adding these lines, certificates will be automatically generated for the sub domains "gitlab" and "packages", using
 letsencrypt.
 
 !!! Tip
-    The flag "redirect" means the users will be automatically redirect from http to https when entering the address.
+    By default, all requests will be redirected from http to https, except those needed to validate the certificate
+    generation. The flag "redirect" set to false allow to also serve the domain via plain http.
