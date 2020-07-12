@@ -55,9 +55,8 @@
 # It is also possible to use -D, with a debugger and gdb
 # See http://www.postfix.org/DEBUG_README.html
 - name: Set SMTP flag for debugging or development
-  when: system.debug or system.devel
   set_fact:
-    smtpd_flags: '-v'
+    smtpd_flags: '{{ (system.debug or system.devel) | ternary("-v", "") }}'
 
 - name: Copy configuration template
   tags: config
