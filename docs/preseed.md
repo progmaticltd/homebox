@@ -44,7 +44,7 @@ $ sudo adduser bob docker
 Copy system-example.yml to system.yml, and modify the values accordingly:
 
 ```sh
-cd preseed
+cd preseed/config
 cp system-example.yml system.yml
 nano system.yml
 ```
