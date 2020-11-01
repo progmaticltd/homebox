@@ -6,7 +6,7 @@
   set_fact:
     certificate_fqdn: "{{ network.domain }}"
     site_root: "/var/www/default"
-    redirect_to_https: "{{ redirect | default(false) }}"
+    redirect_to_https: "{{ redirect | default(true) }}"
     domain_alias: "{{ certificate.domain_alias | default(None) }}"
 
 - name: Create the certificate fqdn with the subdomain
@@ -15,7 +15,7 @@
   set_fact:
     certificate_fqdn: "{{ certificate.type }}.{{ network.domain }}"
     site_root: "/var/www/{{ certificate.type }}"
-    redirect_to_https: "{{ redirect | default(false) }}"
+    redirect_to_https: "{{ redirect | default(true) }}"
     domain_alias: "{{ certificate.domain_alias | default(None) }}"
 
 - name: Create a directory for the site if it does not exists
@@ -113,19 +113,3 @@
   when: is_valid.stdout == "0"
         or (system.devel and devel.acme_server == 'pebble' and generate_cert_from_pebble)
   import_tasks: gencert.yml
-
-# These permissions are needed to avoid problems with the
-
-- name: Set the permissions for certificate directories
-  file:
-    path: '{{ path }}'
-    state: directory
-    mode: '0755'
-  with_items:
-    - '/etc/letsencrypt'
-    - '/etc/letsencrypt/archive'
-    - '/etc/letsencrypt/live'
-    - '/etc/letsencrypt/archive/{{ certificate_fqdn }}'
-    - '/etc/letsencrypt/live/{{ certificate_fqdn }}'
-  loop_control:
-    loop_var: path

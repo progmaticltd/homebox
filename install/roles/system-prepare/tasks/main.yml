@@ -67,17 +67,6 @@
     name: "{{ system_excluded }}"
     state: absent
 
-- name: Make sure letsencrypt directory exists
-  file:
-    path: '{{ path }}'
-    state: directory
-    mode: '0750'
-  with_items:
-    - /etc/letsencrypt/archive
-    - /etc/letsencrypt/live
-  loop_control:
-    loop_var: path
-
 - name: Install RFC7919 Diffie-Hellman parameters files for DHE ciphers
   copy:
     src: '{{ file }}'
