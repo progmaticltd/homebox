@@ -50,10 +50,15 @@
 
 ###############################################################################
 
+- name: Get the local machine locale
+  delegate_to: localhost
+  set_fact:
+    def_lang: '{{ lookup("env", "LANG") }}'
+
 - name: Get the remote locale
   tags: locale
   set_fact:
-    lang: '{{ ansible_env.LANG | regex_replace("\..*", "") }}'
+    lang: '{{ ansible_env.LANG | default(def_lang) | regex_replace("\..*", "") }}'
 
 - name: Create the clamsmtp templates directory
   file:
