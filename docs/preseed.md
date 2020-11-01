@@ -37,8 +37,16 @@ do the former using the terminal:
 ```sh
 $ sudo adduser bob docker
 ```
+## 2. Clone the homebox repository
 
-## 2. Configure your system
+Clone the homebox repository to a a place of your liking. And then cd into the directory.
+
+```sh
+git clone https://github.com/progmaticltd/homebox
+cd homebox
+````
+
+## 3. Configure your system
 
 
 Copy system-example.yml to system.yml, and modify the values accordingly:
@@ -101,7 +109,7 @@ debug: true
     If you do not have physical access to your box, don't worry, you will be able to enter the passphrase remotely over
     SSH.
 
-## 3. Set up remote access
+## 4. Set up remote access
 
 The second thing to do is to copy your SSH public key into the folder `config/authorized_key`. This file will be copied
 into the `/root/.ssh/authorized_keys` by the automatic installer. This setup is absolutely required for Ansible to work.
@@ -114,7 +122,7 @@ $ cat ~/.ssh/*.pub >config/authorized_key
 
 [comment]: <> (TODO: Add this step in the installation process)
 
-## 4. Build the ISO image
+## 5. Build the ISO image
 
 You are now ready to build the ISO image, run this command:
 
@@ -126,7 +134,7 @@ cd preseed
 This will create the ISO image in `/tmp/build-${hostname}/${hostname}-install.iso` folder, for instance
 `/tmp/homebox/homebox-install.iso`
 
-## 5. Boot the system
+## 6. Boot the system
 
 The whole installation should be automatic, both with LVM and software RAID. For LVM, there is a volume called "reserved"
 you can remove. This will let you resize the other volumes according to your needs.
