@@ -10,12 +10,12 @@ users_defaults:
 packages:
   install:
     - acl
-    - slapd
-    - python-ldap
-    - python-passlib
     - ldapscripts
-    - libpam-pwquality
     - ldapvi
+    - libpam-pwquality
+    - python3-ldap
+    - python3-passlib
+    - slapd
     - unscd
   remove:
     - libpam-cracklib
