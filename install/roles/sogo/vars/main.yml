@@ -5,7 +5,7 @@ sogo_pkgs:
   - sogo-common
   - sogo
   - memcached
-  - python-psycopg2
+  - python3-psycopg2
   - zip
 
 

@@ -62,6 +62,16 @@
     name: sogo
     owner: sogo
 
+- name: Initialise grants
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_privs:
+    db: sogo
+    objs: ALL_IN_SCHEMA
+    privs: ALL
+    role: sogo
+
 - name: Copy the database initialisation script
   tags: postgres
   template:
@@ -88,16 +98,6 @@
     src: /tmp/sogo-db-install.log
     dest: /var/log/sogo/db-install.log
     remote_src: true
-
-- name: Initialise grants
-  tags: postgres
-  become: true
-  become_user: postgres
-  postgresql_privs:
-    db: sogo
-    objs: ALL_IN_SCHEMA
-    privs: ALL
-    role: sogo
 
 # Other configuration =========================================================
 
