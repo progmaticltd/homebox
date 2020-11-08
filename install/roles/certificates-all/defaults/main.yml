@@ -1,0 +1,36 @@
+---
+
+certificates:
+  - type: ldap
+    create: true
+  - type: rspamd
+    create: '{{ mail.antispam.webui.active }}'
+  - type: smtp
+    domain_alias: smtp2
+    create: true
+  - type: pop3
+    create: '{{ mail.pop3 }}'
+  - type: imap
+    create: true
+  - type: xmpp
+    create: '{{ ejabberd.install }}'
+  - type: mta-sts
+    create: true
+  - type: sogo
+    create: '{{ sogo.install }}'
+  - type: '@'
+    create: true
+  - type: www
+    create: '{{ website.install }}'
+  - type: conference
+    create: '{{ ejabberd.install }}'
+  - type: autoconfig
+    create: '{{ mail.autoconfig }}'
+  - type: autodiscover
+    create: '{{ mail.autodiscover }}'
+  - type: webmail
+    create: '{{ webmail.install and webmail.type == "roundcube" }}'
+  - type: transmission
+    create: '{{ transmission.install }}'
+  - type: zabbix
+    create: '{{ zabbix.install }}'
