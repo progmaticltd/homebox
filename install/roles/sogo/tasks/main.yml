@@ -99,18 +99,6 @@
     dest: /var/log/sogo/db-install.log
     remote_src: true
 
-# See https://sogo.nu/bugs/view.php?id=5221
-- name: Activate the buster repository
-  apt_repository:
-    repo: deb https://deb.debian.org/debian/ buster main
-    filename: buster
-
-- name: Install the previous version of libxmlsec1-openssl
-  apt:
-    name: libxmlsec1-openssl
-    default_release: buster
-    force: yes
-
 # Other configuration =========================================================
 
 - name: Get server's timezone
