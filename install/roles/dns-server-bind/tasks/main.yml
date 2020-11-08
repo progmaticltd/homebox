@@ -20,7 +20,7 @@
 - name: Install the required packages
   when:
     - ansible_facts['distribution'] == "Debian"
-    - ansible_facts['distribution_major_version']|int >= 10
+    - ansible_facts['distribution_major_version']|int != 9
   apt:
     name:
       - bind9
@@ -31,8 +31,9 @@
   register: bind_minor_version
   shell: >-
     set -o pipefail ;
-    bind9-config --version
-    | sed -En 's/.*=9\.([0-9]+).*/\1/p'
+    dpkg -s bind9
+    | sed -n 's/^Version: 1://p'
+    | sed -En 's/.*9\.([0-9]+).*/\1/p'
   args:
     executable: /bin/bash
 
