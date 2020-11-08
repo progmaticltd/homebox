@@ -1,5 +1,11 @@
 ---
 
+- name: Install python apt library
+  tags: apt
+  apt:
+    name: python3-apt
+    state: present
+
 # Initialise the packages repository to a standard,
 # including backports, contrib and non-free software
 - name: Initialise default repositories

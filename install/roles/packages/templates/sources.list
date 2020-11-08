@@ -2,8 +2,9 @@
 deb http://deb.debian.org/debian/ {{ ansible_facts['distribution_release'] }} main non-free contrib
 deb-src http://deb.debian.org/debian/ {{ ansible_facts['distribution_release'] }} main non-free contrib
 
-deb http://security.debian.org/ {{ ansible_facts['distribution_release'] }}/updates main contrib non-free
-deb-src http://security.debian.org/ {{ ansible_facts['distribution_release'] }}/updates main contrib non-free
+# Security updates
+# deb http://security.debian.org/ {{ ansible_facts['distribution_release'] }}/updates main contrib non-free
+# deb-src http://security.debian.org/ {{ ansible_facts['distribution_release'] }}/updates main contrib non-free
 
 # {{ ansible_facts['distribution_release'] }}-updates, previously known as 'volatile'
 deb http://deb.debian.org/debian/ {{ ansible_facts['distribution_release'] }}-updates main contrib non-free
