@@ -53,7 +53,6 @@
     role_attr_flags: LOGIN
 
 - name: Create the database
-  register: sogodb
   tags: postgres
   become: true
   become_user: postgres
@@ -73,20 +72,21 @@
     role: sogo
 
 - name: Copy the database initialisation script
+  register: sogodb_schema
   tags: postgres
   template:
     src: db-init.sql
-    dest: /tmp/sogo-db-init.sql
+    dest: /etc/sogo/db-init.sql
 
 - name: Initialise the database
-  when: sogodb.changed
+  when: sogodb_schema.changed
   tags: postgres
   register: db_init
   become: true
   become_user: postgres
   shell: >-
     set -o pipefail ;
-    cat /tmp/sogo-db-init.sql
+    cat /etc/sogo/db-init.sql
     | psql -a -d sogo -o /tmp/sogo-db-install.log
   args:
     creates: /tmp/sogo-db-install.log
@@ -98,6 +98,18 @@
     src: /tmp/sogo-db-install.log
     dest: /var/log/sogo/db-install.log
     remote_src: true
+
+# See https://sogo.nu/bugs/view.php?id=5221
+- name: Activate the buster repository
+  apt_repository:
+    repo: deb https://deb.debian.org/debian/ buster main
+    filename: buster
+
+- name: Install the previous version of libxmlsec1-openssl
+  apt:
+    name: libxmlsec1-openssl
+    default_release: buster
+    force: yes
 
 # Other configuration =========================================================
 
