@@ -1,4 +1,4 @@
-This is the home documentation for "Homebox", and set if Ansible scripts to deploy
+This is the home documentation for "Homebox", a set of Ansible scripts to deploy
 a fully functional _and_ secure mail server at home or online.
 
 The source code is on [GitHub](https://github.com/progmaticltd/homebox).
