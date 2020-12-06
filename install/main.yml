@@ -62,6 +62,8 @@
             create: '{{ transmission.install }}'
           - type: zabbix
             create: '{{ zabbix.install }}'
+          - type: openpgpkey
+            create: '{{ pgp is defined }}'
       tags: cert
     - role: ldap
       tags: ldap
@@ -150,6 +152,9 @@
       tags: cert, extra-certs
     - role: well-known-services
       tags: nginx
+    - role: openpgp-wkd
+      when: pgp is defined
+      tags: openpgp-wkd
     - role: system-post-install
       tags: always
 

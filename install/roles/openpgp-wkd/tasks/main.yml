@@ -1,0 +1,98 @@
+---
+
+- name: Register PGP public keys details
+  command:
+    cmd: gpg --no-keyring --no-options --show-keys --with-wkd-hash
+    stdin: '{{ item.ascii_armored_public_key }}'
+  register: pgp_details
+  loop: "{{ pgp | list }}"
+  loop_control:
+    label: "{{ item.uid }}"
+
+- name: Register usable PGP public keys information
+  set_fact:
+    pgp_public_keys: >-
+      {{ pgp_public_keys
+        | default([])
+        | union([
+          {
+            'uid': item.item.uid,
+            'wkd_hash': item.stdout | regex_search('(?<!<)([0-9a-z]{32})(?=@)',
+                                                    Multiline=True),
+            'ascii_armored_public_key': item.item.ascii_armored_public_key
+          }
+        ])
+      }}
+  with_items: "{{ pgp_details.results | select('succeeded') | list }}"
+
+- name: Publish the files for the advanced method
+  vars:
+    public_keys: "{{ pgp_public_keys }}"
+    well_known_dir: '/var/www/openpgpkey/.well-known/openpgpkey/{{ network.domain }}'
+  import_tasks: create_wkd_files.yml
+
+- name: Publish the files for the direct method
+  vars:
+    public_keys: "{{ pgp_public_keys }}"
+    well_known_dir:  '/var/www/default/.well-known/openpgpkey'
+  import_tasks: create_wkd_files.yml
+
+- name: Create the nginx template
+  tags: nginx
+  notify: Restart nginx
+  vars:
+    csp: '{{ csp_default }}'
+    fp: '{{ fp_default }}'
+  template:
+    src: nginx.conf
+    dest: '/etc/nginx/sites-available/openpgpkey.{{ network.domain }}.conf'
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Activate openpgpkey web site
+  tags: nginx
+  notify: Restart nginx
+  file:
+    src: '/etc/nginx/sites-available/openpgpkey.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/openpgpkey.{{ network.domain }}.conf'
+    state: link
+
+- name: Add the openpgpkey DNS sub-domain to bind
+  tags: bind
+  when: bind.install
+  template:
+    src: 80-openpgpkey.bind
+    dest: /etc/homebox/dns-entries.d/80-openpgpkey.bind
+
+# AppArmor configuration ======================================================
+
+- name: Install nginx AppArmor profile
+  notify:
+    - Activate AppArmor profile
+    - Restart AppArmor service
+    - Restart nginx
+  tags: security, apparmor
+  template:
+    src: apparmor.d/local/openpgpkey
+    dest: /etc/apparmor.d/local/openpgpkey
+
+- name: Check if AppArmor nginx configuration already contains the line
+  register: line_found
+  shell: >-
+    grep -c 'include <local/openpgpkey>'
+    /etc/apparmor.d/usr.sbin.nginx
+  changed_when: false
+  failed_when: false
+
+- name: Add AppArmor specific configuration
+  when: line_found.stdout == '0'
+  notify:
+    - Activate AppArmor profile
+    - Restart AppArmor service
+    - Restart nginx
+  tags: security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/openpgpkey>'
+    insertbefore: '# End of local includes for homebox'
