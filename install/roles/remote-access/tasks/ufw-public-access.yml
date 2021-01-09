@@ -22,7 +22,7 @@
   delegate_to: localhost
   register: ext_ip6_api_response
   uri:
-    url: https://api6.ipify.org/
+    url: https://api64.ipify.org/
     return_content: true
 
 - name: Make sure the external IP address is working as well
