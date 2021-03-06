@@ -217,7 +217,7 @@ passwords_default:
 ###############################################################################
 # Default system settings
 system_default:
-  release: stretch         # distribution to use (stretch/buster)
+  release: bullseye        # distribution to use (stretch/buster/bullseye)
   devel: false             # mark the system as a development machine
   debug: false             # activate debug options
   reboot_timeout: 180      # max time to wait when restarting the server
