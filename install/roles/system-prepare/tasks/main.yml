@@ -293,3 +293,15 @@
   template:
     src: bashrc
     dest: /root/.bashrc
+
+- name: Create the folder for renewal hooks
+  file:
+    path: /etc/letsencrypt/renewal-hooks/deploy
+    state: directory
+
+- name: Use python3 interpreter by default
+  file:
+    src: /usr/bin/python3
+    dest: /usr/bin/python
+    state: link
+    force: yes
