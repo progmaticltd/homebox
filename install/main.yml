@@ -105,14 +105,6 @@
     - role: import-accounts
       when: mail.import.active and not system.devel
       tags: import
-    - role: certificates-all
-      vars:
-        certificates: >
-          {{ extra_certs
-            | default([])
-            | map("combine", { "create": true })
-            | list }}
-      when: extra_certs is defined
       tags: cert, extra-certs
     - role: well-known-services
       tags: nginx
