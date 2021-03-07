@@ -434,6 +434,8 @@
         create: '{{ transmission.install }}'
       - type: zabbix
         create: '{{ zabbix.install }}'
+      - type: openpgpkey
+        create: '{{ pgp is defined }}'
 
 - name: Add extra
   set_fact:
