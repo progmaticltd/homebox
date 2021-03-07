@@ -63,6 +63,9 @@
     - role: roundcube
       when: webmail.install and webmail.type == 'roundcube'
       tags: roundcube
+    - role: imapproxy
+      when: sogo.install
+      tags: imapproxy
     - role: roundcube-milters
       when: webmail.install and webmail.milters.active
       tags: roundcube
