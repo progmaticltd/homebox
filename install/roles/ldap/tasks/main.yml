@@ -93,7 +93,7 @@
 ################################################################################
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
-- name: Set the default permissions for the imap certificate folders
+- name: Set the default permissions for the ldap certificate folders
   tags: cert
   import_role:
     name: cert-perms
