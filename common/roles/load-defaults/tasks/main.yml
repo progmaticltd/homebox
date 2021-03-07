@@ -395,9 +395,12 @@
                     }
                   }, recursive=True) }}'
 
+################################################################################
+# Create the complete list of certificates to genetarate
+
 - name: Initialise the list of certificates
   set_fact:
-    certificates:
+    standard_certificates:
       - type: ldap
         create: true
       - type: rspamd
@@ -431,6 +434,18 @@
         create: '{{ transmission.install }}'
       - type: zabbix
         create: '{{ zabbix.install }}'
+
+- name: Add extra
+  set_fact:
+    extra_certs: >-
+      {{ extra_certs
+      | default([])
+      | map("combine", { "create": true })
+      | list }}
+
+- name: Initialise the list of certificates
+  set_fact:
+    certificates: '{{ standard_certificates + extra_certs }}'
 
 ################################################################################
 # Marking the default settings as loaded should increase the speed of the deployment
