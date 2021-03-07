@@ -19,13 +19,25 @@
     recurse: yes
     patterns: 'privkey*'
 
+- name: Ensure all the paths exists
+  file:
+    path: '{{ path }}'
+    state: directory
+  with_items:
+    - '/etc/letsencrypt/archive'
+    - '/etc/letsencrypt/live'
+    - '/etc/letsencrypt/archive/{{ cert_dir }}'
+    - '/etc/letsencrypt/live/{{ cert_dir }}'
+  loop_control:
+    loop_var: path
+
 - name: Set the acl for the traversal of the directory hierarchy
   tags: cert
   acl:
     path: '{{ path }}'
     entity: '{{ entity_group }}'
     etype: user
-    permissions: 'x'
+    permissions: 'rx'
     recursive: false
     state: present
   with_items:
