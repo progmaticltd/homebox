@@ -21,12 +21,6 @@
 #                                                                              #
 # End of TLS / SSL Configuration ###############################################
 
-- name: Ensure the imap server FQDN resolves to localhost
-  tags: postfix
-  lineinfile:
-    path: /etc/hosts
-    line: '127.0.0.1    smtp.{{ network.domain }}'
-
 - name: Install postfix packages for local administration
   tags: postfix
   notify: Restart postfix
