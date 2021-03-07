@@ -1,0 +1,29 @@
+---
+
+# Expects :
+# - `well_known_dir`: base directory for the `hu` directory and `policy` file
+# - `public_keys`: the list of public keys with ascii armor with corresponding
+#                  uid and wkd_hash
+
+- name: Create the directories for the openpgp keys
+  file:
+    path: '{{ well_known_dir }}/hu'
+    state: directory
+
+- name: Create an empty policy file as required
+  file:
+    path: '{{ well_known_dir }}/policy'
+    state: touch
+    modification_time: preserve
+    access_time: preserve
+
+- name: Loop over wkd hashes for the direct method
+  vars:
+    filename: "{{ well_known_dir }}/hu/{{ item.wkd_hash }}"
+  command:
+    cmd: gpg --no-keyring --no-options --import --import-options import-export --output "{{ filename }}"
+    stdin: '{{ item.ascii_armored_public_key }}'
+    creates: "{{ filename }}"
+  loop: "{{ public_keys }}"
+  loop_control:
+    label: "{{ item.uid }}"
