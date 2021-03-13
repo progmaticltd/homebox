@@ -6,7 +6,7 @@
 # This key will be copied into the /root/.ssh/authorized_keys for you to connect to your linux server
 
 # 2. Customisation:
-# Copy this file to common.yml, and modify the values accordingly
+# Copy this file to system.yml, and modify the values accordingly
 # You can use a dedicated Linux machine as an ISO image builder, or use your workstation.
 # Associated with libvirt, and snapshots, it can be used as a development environment for the mail server.
 
@@ -33,7 +33,7 @@
 # system:
 #   hostname: mail
 #   preseed: luks
-#   version: 9.6
+#   version: 9.13
 #   arch: amd64
 #   boot_timeout: 5   # In seconds
 #   passphrase: I will not give you my password
@@ -48,7 +48,7 @@
 # system:
 #   hostname: mail
 #   preseed: raid
-#   version: 9.6
+#   version: 9.13
 #   arch: amd64
 #   boot_timeout: 5   # In seconds
 #   hw:
@@ -64,7 +64,7 @@
 # system:
 #   hostname: mail
 #   preseed: lvm
-#   version: 9.6
+#   version: 9.13
 #   arch: amd64
 #   boot_timeout: 5   # In seconds
 #   hw:
