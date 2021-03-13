@@ -94,7 +94,7 @@ locale:
 
 # Repository specific values
 repo:
-  release: stretch
+  release: bullseye
   main: ftp.uk.debian.org
   security: security.debian.org
   sections: main contrib non-free
