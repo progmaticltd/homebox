@@ -1,5 +1,5 @@
 __Please, note the Stretch version will receive only bug fixes and security updates. all the developments are now
-focused on the [Buster version](https://github.com/progmaticltd/homebox/tree/dev).__
+focused on the [Next version](https://github.com/progmaticltd/homebox/tree/dev).__
 
 A set of Ansible scripts to setup a secure email and personal files server. This project is for you if:
 
