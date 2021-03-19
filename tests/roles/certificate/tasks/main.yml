@@ -4,8 +4,15 @@
   when: devel.acme_server == 'staging'
   register: root_ca
   get_url:
-    url: https://letsencrypt.org/certs/fakelerootx1.pem
-    dest:  /usr/local/share/ca-certificates/fakelerootx1.crt
+    url: '{{ cert.url }}'
+    dest: '{{ cert.dest }}'
+  loop:
+    - url: https://letsencrypt.org/certs/fakelerootx1.pem
+      dest: /usr/local/share/ca-certificates/fakelerootx1.crt
+    - url: https://letsencrypt.org/certs/staging/letsencrypt-stg-root-x1.pem
+      dest: /usr/local/share/ca-certificates/letsencrypt-stg-root-x1.crt
+  loop_control:
+    loop_var: cert
 
 - name: Install the acme server root CA when using pebble
   when: devel.acme_server == 'pebble'
