@@ -33,15 +33,3 @@
       dest: /etc/dovecot/fts-mime-types.conf
   loop_control:
     loop_var: file
-
-- name: Copy solr configuration files
-  tags: config
-  notify: Restart tomcat
-  template:
-    src: '{{ file.src }}'
-    dest: '{{ file.dest }}'
-  with_items:
-    - src: 'fts/solr-schema-{{ ansible_distribution_release }}.xml'
-      dest: /etc/solr/conf/schema.xml
-  loop_control:
-    loop_var: file

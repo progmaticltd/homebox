@@ -25,8 +25,7 @@ dovecot:
     - dovecot-sieve
     - dovecot-ldap
   fts_packages:
-    - solr-tomcat
-    - dovecot-solr
+    - dovecot-fts-xapian
     - poppler-utils
     - catdoc
     - unzip
