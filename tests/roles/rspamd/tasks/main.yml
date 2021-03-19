@@ -7,10 +7,3 @@
 - name: Check if the rspamd service is up and running # noqa 303
   tags: systemctl,rspamd
   shell: systemctl status rspamd
-
-- name: Test rspamd configuration
-  tags: systemctl,rspamd
-  shell: rspamd -t
-  become: yes
-  become_method: sudo
-  become_user: _rspamd
