@@ -13,7 +13,7 @@ for fqdn in $RENEWED_DOMAINS; do
 
     if [ "$sub" = "ldap" ]; then
         cd "$RENEWED_LINEAGE"
-        setfacl -m u:dovecot:r -m m:r cert*pem *chain*.pem
+        setfacl -m u:dovecot:r -m m:r cert*pem *chain*.pem privkey*.pem
         # Restart the dovecot server (might be not needed)
         echo "Reloading Dovecot server"
         systemctl restart dovecot
