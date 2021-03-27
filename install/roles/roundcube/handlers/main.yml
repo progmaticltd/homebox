@@ -15,6 +15,12 @@
     state: restarted
     no_block: true
 
+- name: Restart IMAP proxy
+  systemd:
+    name: imapproxy
+    state: restarted
+    no_block: true
+
 - name: Restart nginx
   notify:
     - Restart IMAP proxy

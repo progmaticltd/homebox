@@ -40,7 +40,7 @@ roundcube_plugins:
 
 roundcube_packages:
   - postgresql
-  - roundcube-pgsql
+  - roundcube-sqlite3
   - roundcube-core
   - roundcube-plugins
   - roundcube-plugins-extra
