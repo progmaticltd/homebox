@@ -98,6 +98,7 @@
   /usr/bin/pptx2txt rix,
   /usr/bin/xlsx2csv r,
   /usr/bin/xlsx2csv rix,
+  /usr/share/xlsx2csv/ r,
   /usr/share/xlsx2csv/xlsx2csv.py r,
   /usr/share/xlsx2csv/xlsx2csv.py rix,
 

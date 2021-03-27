@@ -105,7 +105,7 @@
   tags: config
   when: mail.fts.active
   set_fact:
-    mail_plugins: "{{ mail_plugins }} fts fts_solr"
+    mail_plugins: "{{ mail_plugins }} fts fts_xapian"
 
 - name: Add virtual mailboxes to the list of mail plugins
   tags: config

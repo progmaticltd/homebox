@@ -3,14 +3,6 @@
 # List of attachments to test
 
 attachments:
-  # Proprietary extensions
-  - uid: d27dddc0-513a-11e8-9653-e7af3c54987f
-    extension: tnef
-    mime: application/vnd.ms-tnef
-    description: TNEF document from Microsoft Outlook
-    search: damned@world.std.com
-    smtp_test: true
-    script_test: true
   # Simplest documents
   - uid: b93a4d30-4fd7-11e8-9988-0bff21231c37
     extension: csv
@@ -179,5 +171,13 @@ attachments:
     extension: ppt
     mime:  application/vnd.ms-powerpoint
     description: Microsoft Powerpoint presentation
+    smtp_test: false
+    script_test: false
+  # Proprietary extensions
+  - uid: d27dddc0-513a-11e8-9653-e7af3c54987f
+    extension: tnef
+    mime: application/vnd.ms-tnef
+    description: TNEF document from Microsoft Outlook
+    search: damned@world.std.com
     smtp_test: false
     script_test: false
