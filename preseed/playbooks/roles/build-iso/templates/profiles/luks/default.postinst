@@ -1,7 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
 # Script to be run after the installation
 touch /tmp/installed
 
 # Download the public keys for installation
-

@@ -1,0 +1,1 @@
+{{ dkim.selector }}._domainkey.{{ network.domain }} {{ network.domain }}:{{ dkim.selector }}:/etc/opendkim/keys/{{ dkim.selector }}.private

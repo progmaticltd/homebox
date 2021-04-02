@@ -1,0 +1,50 @@
+---
+
+- name: Install packages required to autmatically update the rules
+  apt:
+    name: '{{ auto_update_rules_pkgs }}'
+    state: present
+
+- name: Create the list of rules files to read
+  notify: Restart privoxy
+  tags: config
+  template:
+    src: adblock-lists.conf
+    dest: /etc/privoxy/adblock-lists.conf
+    mode: '0644'
+
+- name: Copy the privoxy rules update script
+  notify: Restart privoxy
+  tags: scripts
+  copy:
+    src: update-rules.sh
+    dest: /usr/local/sbin/privoxy-update-rules.sh
+    mode: '0700'
+
+- name: Run the script once to get the filter and actions list
+  notify: Restart privoxy
+  shell: >-
+    /usr/local/bin/privoxy-update-rules.sh
+    && touch /etc/privoxy/.rules-installed
+  changed_when: false
+  args:
+    creates: /etc/privoxy/.rules-installed
+
+- name: Add a cron task to download the rules automatically
+  template:
+    src: update-rules.cron
+    dest: /etc/cron.d/privoxy-update-rules
+
+- name: Copy the privoxy update rules script AppArmor profile
+  register: aa_template
+  tags: security, apparmor
+  notify: Restart AppArmor service
+  template:
+    src: 'apparmor-privoxy-update-rules.cf'
+    dest: '/etc/apparmor.d/usr.local.sbin.privoxy-update-rules.sh'
+
+- name: Activate AppArmor update rules script profiles
+  when: aa_template.changed
+  tags: security, apparmor
+  notify: Restart AppArmor service
+  command: 'aa-enforce usr.local.sbin.privoxy-update-rules.sh'

@@ -1,0 +1,15 @@
+---
+
+- name: Install imapproxy
+  apt:
+    name: imapproxy
+    state: present
+
+- name: Configure the IMAP proxy
+  notify: Restart IMAP proxy
+  template:
+    src: imapproxy.conf
+    dest: /etc/imapproxy.conf
+    owner: root
+    group: root
+    mode: '0644'

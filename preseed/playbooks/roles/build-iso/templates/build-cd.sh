@@ -1,19 +1,19 @@
 #!/bin/bash
 
 # The first parameter is the name of the server to build the iso image
-export HOSTNAME={{ system.hostname }}
+export HOSTNAME="{{ system.hostname }}"
 
-{% if debug %}
+# {% if debug %}
 set -x
-{% endif %}
+# {% endif %}
 
 # Remove the previous version
 rm -f '{{ build_dir }}/images/debian-{{ system.version }}-{{ system.arch }}-DVD-1.iso'
 
 # Use proxy if defined
-{% if network.proxy is defined %}
+# {% if network.proxy is defined %}
 export http_proxy='{{ network.proxy }}'
-{% endif %}
+# {% endif %}
 
 # Parameters
 DIST='{{ repo.release }}'

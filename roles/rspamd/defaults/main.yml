@@ -1,0 +1,13 @@
+# Default rspamd configuration
+rspamd:
+  proxy:
+    port: '{{ mail.antispam.port }}'
+  normal:
+    port: '{{ 1 + (mail.antispam.port | int) }}'
+  controller:
+    port: '{{ 2 + (mail.antispam.port | int) }}'
+
+antispam:
+  milter:
+    name: rspamd
+    port: '{{ mail.antispam.port }}'
