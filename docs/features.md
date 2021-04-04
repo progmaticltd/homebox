@@ -15,7 +15,7 @@ Because this feature can be useful to other projects, a dedicated project has be
 
 ## Multiple encrypted backups
 
-You can setup multiple backups for your users' home folders, remote or local, with multiple frequencies as well. For
+You can set up multiple backups for your users' home folders, remote or local, with multiple frequencies as well. For
 instance, one daily backup on your NAS using a Samba share, and a weekly backup on a remote server using SSH. All the
 backups are encrypted and managed by the excellent _borgbackup_ package. A [summary email](/backup/#emails-reporting) is
 sent at the end of the backup process. If you have opted for the Jabber installation, a short message is sent as well,
@@ -70,7 +70,7 @@ communication with the server.
 
 Password complexity is enforced using the [pwquality module](https://packages.debian.org/stretch/libpam-pwquality). You
 can specify minimum length, mandatory characters like symbols and a mix of lowercase / uppercase letters. You can also
-remember the last passwords for each users, avoiding them to re-use the same passwords or use a password too similar
+remember the last passwords for each user, avoiding them to re-use the same passwords or use a password too similar
 than the previous ones.
 
 ## Automatic security update
@@ -87,7 +87,7 @@ The installer can deploy a complete monitoring solution, [Zabbix](https://zabbix
 
 - You can set up email or XMPP alerts, on various events.
 - You can add other servers / machines to your monitoring server.
-- You can set-up SMS alerts if, for instance, your internet connection goes down.
+- You can set up SMS alerts if, for instance, your internet connection goes down.
 
 By default, the guest account is deleted, and a strong password is generated.
 
@@ -100,7 +100,7 @@ and dovecot, a 2048 Diffie-Helman parameter file is generated upon installation.
 ## Unusual behaviour detection
 
 This advanced feature is unique amongst both commercial and self-hosted solutions. It is actually restricted to IMAP,
-but will be extended to other services. It is working by using a "points" system, where more points generate warnings or
+but will be extended to other services. It is working by using a “points” system, where more points generate warnings or
 even deny the connection.
 
 The following behaviours are detected:
@@ -207,7 +207,7 @@ sent by your users are checked as well, avoiding your IP address to be blacklist
 compromised.
 
 You can also choose to explicitly reject (bounce) emails containing viruses. In all case, the analysis is done after the
-email queue, making the process non blocking and efficient on small resourced hardware.
+email queue, making the process non-blocking and efficient on small resourced hardware.
 
 ## Antispam with automatic learning
 
@@ -221,7 +221,7 @@ It is powered by rspamd, a pioneer application in terms of junk email detection.
 You can add other email accounts (Yahoo, GMail, Outlook.com, etc.). The emails will be automatically downloaded and
 synchronised when you connect with any client, and will appear in your account.
 
-Because the folders hierarchy will be copied as well, it is possible to migrate from another account very easily.
+Because the folders’ hierarchy will be copied as well, it is possible to migrate from another account very easily.
 
 ## Roundcube Webmail
 
@@ -333,8 +333,8 @@ You can install the transmission bittorrent daemon, accessible over https on a d
 
 ## Privoxy server
 
-The platform configures Privoxy with an automatic import of adblock rules from easylist, updated every day. The following rules
-are activated by default:
+The platform configures Privoxy with an automatic import of adblock rules from easylist, updated every day. The
+following rules are activated by default:
 
 - EasyList
 - EasyPrivacy
@@ -348,11 +348,11 @@ together.
 
 ## Multiple IP scheme
 
-Homebox can be configured with two static IP addresses, with a mix of IPv4 amd IPv6. This is useful if you are using a
+Homebox can be configured with two static IP addresses, with a mix of IPv4 and IPv6. This is useful if you are using a
 VPN that provides you a static IP address or if you are using 3G / 4G as a backup connection.
 
 IPv6 is actually tested on [vultr.com](https://vultr.com/), a provider that supports full IPv6, on virtual
-servers. Digital Ocean does not allows SMTP or Submission on IPv6.
+servers. Digital Ocean does not allow SMTP or Submission on IPv6.
 
 ## DNSSEC Support
 

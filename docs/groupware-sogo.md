@@ -35,7 +35,7 @@ sogo:
 
 | Flag                          | Role                                                                                               |
 |-------------------------------|----------------------------------------------------------------------------------------------------|
-| appointment_send_emails       | Send emails when apointments are created.                                                          |
+| appointment_send_emails       | Send emails when appointments are created.                                                         |
 | vacation                      | Activate vacation functionality in the web interface.                                              |
 | forward                       | Activate automatic forward functionality in the web interface.                                     |
 | sieve_scripts                 | Allow you to filter your emails using advanced server side filters.                                |
@@ -44,7 +44,7 @@ sogo:
 | time_format                   | The format used to display the time. See the [strftime](http://strftime.org/) function for format. |
 | refresh_view_check            | The time interval to check for new emails.                                                         |
 | auxiliary_accounts            | Allow you to retrieve emails from external accounts, directly from the web interface.              |
-| language                      | The defaut language of the web interface¹                                                          |
+| language                      | The default language of the web interface¹                                                         |
 | enable_public_access          | Allow public access to your calendars and address books, using a specific URL.                     |
 | password_change               | Allow you to change your passwords from the web interface.                                         |
 
@@ -58,7 +58,7 @@ Some advanced features can be deployed along SOGo.
 
 For now, there is one mail filter compatible with SOGo, that searches the addresses in the email received in your address
 books, and "tags" the messages accordingly. Coupled with Sieve filters, this allows you to set specific rules for
-contacts in your address books. For instance, one auto-reposonder for personal contacts, and one for professional ones.
+contacts in your address books. For instance, one auto-responder for personal contacts, and one for professional ones.
 
 ![Filter message by address book](img/sogo/abook-based-filter.png)
 

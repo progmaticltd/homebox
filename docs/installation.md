@@ -56,7 +56,7 @@ Once you have modified the file, you are ready to start the installation.
     value without having to copy entire branches.
 
 !!! Warning
-    Be careful with the indentation in your Yaml file, the number of spaces is significant.
+    You need to be careful with the indentation in your Yaml file, the number of spaces is significant.
 
 ## Step 3: Start the installation
 
@@ -105,7 +105,7 @@ network:
 
 ## Users list
 
-The file format should be self explanatory. The other piece of information you need to fill first is the user list. In
+The file format should be self-explanatory. The other piece of information you need to fill first is the user list. In
 its simplest form, you will have something like this:
 
 ``` yaml
@@ -140,7 +140,7 @@ You can also add more advanced features, like:
 !!! Note
     You do not have to set the passwords for each user if you don't want to. In this case, a random password will be
     generated, and saved in the deployment backup directory, in the ldap folder. In this case, there will be one file
-    called 'jane.pwd'. Otherwise, you can specify the password in clear text. For complex passwords, use quotes
+    called 'jane.pwd'. Otherwise, you can specify the password in clear text. For complex passwords, use quotes.
 
 ## Email options
 
@@ -232,9 +232,9 @@ extra_certs:
     redirect: false
 ```
 
-By adding these lines, certificates will be automatically generated for the sub domains "gitlab" and "packages", using
-letsencrypt.
+By adding these lines, certificates will be automatically generated for the subdomains “gitlab” and “packages”, using
+LetsEncrypt.
 
 !!! Tip
     By default, all requests will be redirected from http to https, except those needed to validate the certificate
-    generation. The flag "redirect" set to false allow to also serve the domain via plain http.
+    generation. The flag “redirect” set to false allow to also serve the domain via plain http.

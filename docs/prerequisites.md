@@ -1,10 +1,10 @@
 
 # Introduction
 
-This section will explains all the necessary steps _before_ the installation really starts, like the DNS records or your
+This section will explain all the necessary steps _before_ the installation really starts, like the DNS records or your
 home network set-up.
 
-It is not a "Self hosting for newbies", but if you follow the instructions carefully, you do not need strong technical
+It is not a “Self hosting for newbies”, but if you follow the instructions carefully, you do not need strong technical
 knowledge to achieve the above.
 
 You still need some basic understanding though, like what is an IP address or a port, how to run Ansible in a console,
@@ -86,7 +86,7 @@ The preseed configuration (see next step) provides an option to use software RAI
 prefer.
 
 !!! Warning
-    You still need to regularly backup your data, even if you are using RAID.
+    You still need to regularly back up your data, even if you are using RAID.
 
 ## Set-up your home network
 
