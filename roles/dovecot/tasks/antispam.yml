@@ -1,0 +1,10 @@
+---
+
+- name: Copy global sieve custom pipe scripts
+  when: mail.antispam.active
+  tags: sieve, scripts
+  notify: Restart dovecot
+  template:
+    src: learn-hamorspam.sh
+    dest: /etc/dovecot/sieve/learn-hamorspam.sh
+    mode: '0755'

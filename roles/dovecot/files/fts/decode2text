@@ -268,13 +268,13 @@ parse_file() {
             ;;
 
         # Uncompress archives ##################################
-	# the format is compatible with 7z
+        # the format is compatible with 7z
         application/*zip | application/x-?ar | application/*-tnef)
             uncompress_and_parse $attach 1
             ;;
 
         # Uncompress tnef archives #############################
-	# the format is *not* compatible with 7z
+        # the format is *not* compatible with 7z
         application/*-tnef)
             uncompress_and_parse $attach 0
             ;;

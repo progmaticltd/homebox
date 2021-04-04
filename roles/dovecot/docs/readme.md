@@ -1,6 +1,6 @@
 # Post login scripts
 
-The post login scripts for Deovecot receive the following parameters:
+The post login scripts for Dovecot receive the following parameters:
 
 ```
 # USERDB_KEYS=HOME UID GID MAIL AUTH_TOKEN

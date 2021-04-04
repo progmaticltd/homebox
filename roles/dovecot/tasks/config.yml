@@ -1,0 +1,86 @@
+---
+
+# Activate SSL on the imap server
+- name: Activate SSL configuration
+  tags: ssl, config
+  notify: Restart dovecot
+  template:
+    src: 'conf.d/{{ file }}'
+    dest: '/etc/dovecot/conf.d/{{ file }}'
+  with_items:
+    - 10-ssl.conf
+  loop_control:
+    loop_var: file
+
+- name: Create dovecot global configuration files
+  tags: config
+  notify: Restart dovecot
+  template:
+    src: '{{ file }}'
+    dest: '/etc/dovecot/{{ file }}'
+    mode: '0600'
+  with_items:
+    - dovecot-ldap.conf.ext
+  loop_control:
+    loop_var: file
+
+- name: Create the initial list of mail_plugins
+  tags: config
+  set_fact:
+    mail_plugins: $mail_plugins quota
+
+- name: Add fts to the list of mail plugins
+  tags: config
+  when: mail.fts.active
+  set_fact:
+    mail_plugins: "{{ mail_plugins }} fts fts_xapian"
+
+- name: Add virtual mailboxes to the list of mail plugins
+  tags: config
+  when: mail.virtual_folders.active
+  set_fact:
+    mail_plugins: "{{ mail_plugins }} virtual"
+
+- name: Create dovecot conf.d configuration files
+  tags: config
+  notify: Restart dovecot
+  template:
+    src: 'conf.d/{{ file }}'
+    dest: '/etc/dovecot/conf.d/{{ file }}'
+  with_items:
+    - 10-auth.conf
+    - 10-master.conf
+    - 10-mail.conf
+    - 10-logging.conf
+    - 15-lda.conf
+    - 15-mailboxes.conf
+    - 20-managesieve.conf
+    - 20-imap.conf
+    - 20-lmtp.conf
+    - 90-sieve.conf
+    - 90-plugin.conf
+    - 90-quota.conf
+  loop_control:
+    loop_var: file
+
+- name: Create the post-login script directory
+  file:
+    path: /etc/dovecot/login-scripts
+    state: directory
+
+- name: Copy the default postlogin script
+  tags: scripts
+  copy:
+    src: dovecot-postlogin
+    dest: /usr/local/sbin/dovecot-postlogin
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Activate core dumps or not
+  tags: debug
+  notify: Restart dovecot
+  replace:
+    path: /etc/default/dovecot
+    regexp: '^#?ALLOW_COREDUMPS=[01]'
+    replace: 'ALLOW_COREDUMPS={{ system.debug | ternary(1,0) }}'

@@ -14,7 +14,7 @@
     dest: /usr/local/bin/decode2text
     mode: '0755'
 
-- name: Copy decode2text script
+- name: Make sure the log file exist
   tags: logs
   file:
     path: /var/log/decode2text.log

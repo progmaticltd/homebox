@@ -1,0 +1,25 @@
+---
+
+# This user account will impersonate each user, to store their emails after migration
+# from other accounts
+- name: Initialise the import user password parameters
+  tags: impersonate
+  set_fact:
+    import_password_params: "{{ backup_directory }}/ldap/import.pwd {{ policies.system.password }}"
+
+- name: Create the import user account password
+  tags: impersonate
+  no_log: true
+  set_fact:
+    import_password: '{{ lookup("password", import_password_params) }}'
+
+- name: Create the import email master user account
+  tags: impersonate
+  htpasswd:
+    path: /etc/dovecot/master-users
+    name: 'import'
+    password: '{{ import_password }}'
+    owner: dovecot
+    group: dovecot
+    mode: '0400'
+    crypt_scheme: ldap_sha1
