@@ -66,6 +66,17 @@
   apt:
     name: "{{ system_excluded }}"
     state: absent
+    purge: yes
+
+# Despite what the configuration files comment says
+# fail2ban banned its own IP address! I may raise a
+# bug on Debian BTS later if confirmed
+- name: Avoid fail2ban banning its own IP address
+  notify: Restart fail2ban
+  replace:
+    path: /etc/fail2ban/jail.conf
+    regexp: '^(#|\s)*ignoreip = 127.0.0.1/8 ::1$'
+    replace: 'ignoreip = 127.0.0.1/8 ::1 {{ external_ip }} {{ backup_ip | default(omit) }}'
 
 - name: Install RFC7919 Diffie-Hellman parameters files for DHE ciphers
   copy:
@@ -305,3 +316,5 @@
     dest: /usr/bin/python
     state: link
     force: yes
+
+-
