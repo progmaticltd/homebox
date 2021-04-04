@@ -20,10 +20,6 @@ if string :matches "${user}" "import" {
 }
 {% endif %}
 
-# Discard duplicate messages based on Message-ID in this folder, perhaps a
-# client already made a copy in the Sent folder.
-# Some email clients keep the same Message-ID when using the feature "edit as new"
-# The one second prevent different messages to be deleted.
-if duplicate :seconds 1 {
-   discard;
-}
+# This script is only called when the mail client copies emails to the sent folder.
+# This should not be done as the emails are copied automatically using the BCC address
+discard;
