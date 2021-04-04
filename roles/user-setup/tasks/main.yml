@@ -17,6 +17,7 @@
     owner: root
     group: users
     state: directory
+    mode: '0755'
 
 - name: Add homebox mail and config folders to the skeleton
   tags: accounts
