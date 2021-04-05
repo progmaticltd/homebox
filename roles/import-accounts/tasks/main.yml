@@ -2,12 +2,8 @@
 
 - name: Install isync package
   apt:
-    name: '{{ pkgs }}'
+    name: '{{ mail_import_pkgs }}'
     state: present
-  vars:
-    pkgs:
-      - isync
-      - libsasl2-modules
 
 # Get the import master account password
 - name: Initialise the import user password parameters
@@ -20,9 +16,9 @@
     import_password: '{{ lookup("password", import_password_params) }}'
 
 - name: Build a template for each account and each user, and encrypt it using the system key
-  include_tasks: isync-template.yml
+  include_tasks: setup-user.yml
   with_items:
-    - '{{ users }}'
+    - '{{ users | selectattr("external_accounts", "defined") | list }}'
   loop_control:
     loop_var: user
 

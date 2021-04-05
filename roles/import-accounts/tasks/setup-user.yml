@@ -10,6 +10,8 @@
   with_items:
     - '/home/users/{{ user.uid }}/mails/import/safe'
     - '/home/users/{{ user.uid }}/mails/import/conf'
+    - '/home/users/{{ user.uid }}/mails/import/logs'
+    - '/home/users/{{ user.uid }}/mails/import/status'
   loop_control:
     loop_var: path
 

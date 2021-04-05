@@ -47,12 +47,15 @@ imports=$(find ./safe/*conf 2>/dev/null)
 # Remove dead lock files
 find . -maxdepth 1 -mmin +60 -name '*lock' -delete
 
-# make the directories I need if they do not exists
+# Create the needed directories if they don't exists
 test -d logs || mkdir logs
 test -d status || mkdir status
 
 # Encryption parameters
 CIPHER=aes-256-cbc
+
+# Create the sieve script to authorise email append in the sent folder
+echo 'keep;stop;' >"$HOME/mails/sieve/pre-sent-checks.sieve"
 
 for import_path in $imports; do
 
@@ -89,3 +92,7 @@ for import_path in $imports; do
     echo "$date: Finished to import for account '${import}'" >> "$logfile"
 
 done
+
+# Do not keep the emails appended in the sent folder any more
+echo 'require ["include"];' >"$HOME/mails/sieve/pre-sent-checks.sieve"
+echo 'return;' >>"$HOME/mails/sieve/pre-sent-checks.sieve"
