@@ -3,23 +3,16 @@
 # stored in the sent folder, using recipient delimiter and +Sent.
 # In this case, this would create a "duplicate" email, with the same Message-ID header.
 require [
-  "variables",
-  "environment",
-  "duplicate",
-  "imapsieve"
+  "imapsieve",
+  "include"
 ];
 
-{% if mail.import.active %}
-# Keep emails imported automatically, trust the user choice or the other server.
-if environment :matches "imap.user" "*" {
-  set "user" "${1}";
-}
-if string :matches "${user}" "import" {
-  keep;
-  stop;
-}
-{% endif %}
+# The pre-sent-checks sieve script is created during email importation.
+# During this phase only, emails can be appended to the sent folder.
+# Once the importation is finished, the script is removed and no emails
+# can be appended to the sent folder again.
+include :personal :optional "pre-sent-checks";
 
 # This script is only called when the mail client copies emails to the sent folder.
-# This should not be done as the emails are copied automatically using the BCC address
+# This should not be done as the emails are copied automatically using the BCC address.
 discard;
