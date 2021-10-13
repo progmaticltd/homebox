@@ -56,7 +56,7 @@
 - name: Rebuild mail indexes
   tags: restore
   become: true
-  become_user: dovecot
+  become_user: '{{ user.uid }}'
   shell: >-
     doveadm index -u {{ user.uid }} *
   with_items:
