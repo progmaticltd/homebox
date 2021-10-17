@@ -1,4 +1,5 @@
 ---
+
 ## Main installation playbook
 
 - name: Install Homebox
@@ -95,7 +96,7 @@
       tags: transmission
     - role: dns-server-bind-refresh
       when: bind.install
-      tags: bind
+      tags: bind, bind-refresh
     - role: tor
       when: tor.install
       tags: tor
@@ -108,7 +109,6 @@
     - role: import-accounts
       when: mail.import.active and not system.devel
       tags: import
-      tags: cert, extra-certs
     - role: well-known-services
       tags: nginx
     - role: openpgp-wkd
