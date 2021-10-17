@@ -4,7 +4,6 @@
   apt:
     name: ejabberd
     state: present
-    # default_release: buster-backports
 
 - name: Install graphics library for thumbnails generation
   apt:
@@ -27,43 +26,6 @@
 ################################################################################
 # At this point, the certificates should have been created already #############
 # in order to have SSL and TLS encryption activated.                           #
-
-- name: Remove the self signed certificate
-  file:
-    path: /etc/ejabberd/ejabberd.pem
-    state: absent
-
-- name: Create a key / certificate pair
-  notify: Restart ejabberd
-  tags: ssl
-  shell: >-
-    cd /etc/letsencrypt/live/{{ network.domain }} &&
-    /bin/cat privkey.pem fullchain.pem > /etc/ejabberd/default.pem
-  args:
-    creates: /etc/ejabberd/default.pem
-
-- name: Create a key / certificate pair
-  notify: Restart ejabberd
-  tags: ssl
-  shell: >-
-    cd /etc/letsencrypt/live/conference.{{ network.domain }} &&
-    /bin/cat privkey.pem fullchain.pem > /etc/ejabberd/conference.pem
-  args:
-    creates: /etc/ejabberd/conference.pem
-
-- name: Ensure sensitive files has proper owner and permissions
-  notify: Restart ejabberd
-  tags: ssl
-  file:
-    path: '{{ file }}'
-    owner: root
-    group: ejabberd
-    mode: '0440'
-  with_items:
-    - /etc/ejabberd/default.pem
-    - /etc/ejabberd/conference.pem
-  loop_control:
-    loop_var: file
 
 - name: Copy the certificate renewal hook
   tags: scripts
@@ -123,6 +85,30 @@
     group: root
     mode: '0644'
 
+# SQlite database initialisation ==============================================
+
+- name: Copy the database initialisation schema
+  copy:
+    src: database.sql
+    dest: /etc/ejabberd/database.sql
+    owner: ejabberd
+    group: ejabberd
+    mode: '0600'
+
+- name: Create sqlite database for message storage
+  shell: >-
+    cat /etc/ejabberd/database.sql
+    | sqlite3 /var/lib/ejabberd/storage.db
+  args:
+    creates: /var/lib/ejabberd/storage.db
+
+- name: Ensure the database permissions
+  file:
+    path: /var/lib/ejabberd/storage.db
+    owner: ejabberd
+    group: ejabberd
+    mode: '0600'
+
 # Firewall configuration ======================================================
 - name: Open the firewall for s2c communication
   tags: ufw
@@ -181,20 +167,6 @@
     loop_var: rule
 
 # AppArmor configuration ======================================================
-- name: Install ejabberdctl AppArmor profile
-  tags: security, apparmor
-  register: aa_templates
-  template:
-    src: 'apparmor.d/local/usr.sbin.ejabberdctl'
-    dest: '/etc/apparmor.d/local/usr.sbin.ejabberdctl'
-
-- name: Activate AppArmor profiles
-  when: aa_templates.changed
-  tags: security, apparmor
-  notify: Restart AppArmor service
-  command: 'aa-enforce usr.sbin.ejabberdctl'
-
-# AppArmor configuration (web frontend) =======================================
 
 - name: Install ejabberdctl AppArmor profile
   tags: security, apparmor
@@ -203,13 +175,18 @@
     src: 'apparmor.d/local/jabber-frontend'
     dest: '/etc/apparmor.d/local/nginx-jabber-frontend'
 
-# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=860951
-- name: Allow ejabberdctl to run su
-  tags: config, apparmor
-  replace:
-    path: /etc/apparmor.d/usr.sbin.ejabberdctl
-    regexp: '(\s+/bin/su\s+)r,$'
-    replace: '\1mr,'
+- name: Install ejabberdctl AppArmor profile
+  tags: security, apparmor
+  register: aa_templates
+  template:
+    src: 'apparmor.d/usr.sbin.ejabberdctl'
+    dest: '/etc/apparmor.d/usr.sbin.ejabberdctl'
+
+- name: Activate AppArmor profiles
+  when: aa_templates.changed
+  tags: security, apparmor
+  notify: Restart AppArmor service
+  command: 'aa-enforce usr.sbin.ejabberdctl'
 
 - name: Check if AppArmor nginx configuration already contains the line
   register: line_found

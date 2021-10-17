@@ -1,0 +1,111 @@
+#include <tunables/global>
+
+/usr/sbin/ejabberdctl flags=(complain) {
+
+    #include <abstractions/base>
+    #include <abstractions/consoles>
+    #include <abstractions/nameservice>
+
+    capability net_bind_service,
+    capability dac_override,
+    capability dac_read_search, # for sed
+
+    /{,usr/}bin/bash rmix,
+    /{,usr/}bin/cat ix,
+    /{,usr/}bin/dash rmix,
+    /{,usr/}bin/date ix,
+    /{,usr/}bin/df ix,
+    /{,usr/}bin/{,p}grep ix,
+    /{,usr/}bin/ps ix,
+    /{,usr/}bin/sed ix,
+    /{,usr/}bin/sleep ix,
+
+
+    /{,usr/}bin/su px -> /usr/sbin/ejabberdctl//su,
+
+    profile su flags=(attach_disconnected) {
+        #include <abstractions/authentication>
+        #include <abstractions/base>
+        #include <abstractions/nameservice>
+        #include <abstractions/wutmp>
+
+        deny capability net_admin, # setsockopt() with SO_RCVBUFFORCE
+
+        capability audit_write,
+        capability setgid,
+        capability setuid,
+        capability sys_resource,
+
+        @{PROC}/@{pid}/loginuid r,
+        @{PROC}/1/limits r,
+
+        /{,usr/}bin/bash px -> /usr/sbin/ejabberdctl,
+        /{,usr/}bin/dash px -> /usr/sbin/ejabberdctl,
+        /{,usr/}bin/su rm,
+        /{,usr/}sbin/unix_chkpwd rmix,
+        /run/systemd/journal/dev-log w,
+
+        /etc/environment r,
+        /etc/default/locale r,
+        /etc/security/limits.d r,
+
+        /lib/@{multiarch}/libpam.so rm,
+        /usr/lib/erlang/p1_pam/bin/epam rm,
+    }
+
+
+    /etc/default/ejabberd r,
+    /etc/ejabberd r,
+    /etc/ImageMagick r,
+
+    /run/ejabberd rw,
+
+    /sys/devices/system/cpu r,
+    /sys/devices/system/node r,
+    /proc/sys/kernel/osrelease r, # for pgrep
+    /proc/sys/kernel/random/uuid r,
+
+    @{PROC}/ r, # for pgrep
+
+    owner @{PROC}/@{pid}/mountinfo r, # for df
+    owner @{PROC}/@{pid}/mounts r, # for df
+
+    /usr/bin/cut ix,
+    /usr/bin/erl ix,
+    /usr/bin/expr ix,
+    /usr/bin/flock ix,
+    /usr/bin/getent ix,
+    /usr/bin/id ix,
+    /usr/bin/inotifywait ix,
+    /usr/bin/seq ix,
+    /usr/bin/uuidgen ix,
+
+    /usr/lib/erlang/bin/erl ix,
+    /usr/lib/erlang/erts-*/bin/beam ix,
+    /usr/lib/erlang/erts-*/bin/child_setup ix,
+    /usr/lib/erlang/erts-*/bin/epmd ix,
+    /usr/lib/erlang/erts-*/bin/erl_child_setup ix,
+    /usr/lib/erlang/erts-*/bin/erlexec ix,
+    /usr/lib/erlang/erts-*/bin/inet_gethost ix,
+    /usr/lib/erlang/lib/**.so rm,
+    /usr/lib/erlang/lib/os_mon*/priv/bin/memsup ix,
+    /usr/lib/erlang/lib/p1_eimp*/priv/bin/eimp ix,
+    /usr/lib/erlang/p1_pam/bin/epam px -> /usr/sbin/ejabberdctl//su,
+
+    /usr/lib/@{multiarch}/ImageMagick-*/ ix,
+
+    /usr/sbin/ejabberdctl r,
+
+    /usr/share/ejabberd r,
+    /usr/share/ImageMagick-*/ rix,
+
+    /var/backups/ rw,
+    /var/backups/ejabberd rwlk,
+    /var/lib/ejabberd rw,
+    /var/log/ejabberd/ rwlk,
+
+    /var/run/ejabberd rw,
+
+    # Site-specific additions and overrides. See local/README for details.
+    #include <local/usr.sbin.ejabberdctl>
+}
