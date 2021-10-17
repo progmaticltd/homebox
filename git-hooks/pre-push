@@ -2,6 +2,9 @@
 
 set -e
 
+# Manually added options to skip to the command line.
+# ansible-lint seem to ignore them in the configuration file
+
 # From .git/hooks/pre-push.sample
 # Not used for now
 # remote="$1"
@@ -71,7 +74,7 @@ do
 			echo "Full log is being written to $log_file"
 			# shellcheck disable=SC2016
 			xargs -0 -I {} \
-				sh -c 'PYTHONUNBUFFERED=1 ansible-lint "$1" 2>&1' -- "{}" \
+				sh -c 'PYTHONUNBUFFERED=1 ansible-lint -x 106,207,208 "$1" 2>&1' -- "{}" \
 				< "$tmp_checklist" \
 				> "$log_file"
 

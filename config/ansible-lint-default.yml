@@ -30,6 +30,10 @@ exclude_paths:
 parseable: true
 quiet: false
 rulesdir: []
+warn_list:
+  - '106'     # Role name (some roles have ‘-’ in their name)
+  - '207'     # Nested jinja pattern (experimental, does not work)
+  - '208'     # Files permissions unset or incorrect
 skip_list:
   - '701'     # No 'galaxy_info' found
   - '503'     # Tasks that run when changed should likely be handlers
