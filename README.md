@@ -1,12 +1,9 @@
-__Please, note the Stretch version will receive only bug fixes and security updates. all the developments are now
-focused on the [Next version](https://github.com/progmaticltd/homebox/tree/dev).__
-
 A set of Ansible scripts to setup a secure email and personal files server. This project is for you if:
 
 - You are interested to host your emails yourself, for privacy, security or any other reason.
 - You want your server to be secure against both physical and remote intrusion.
 - You want a low maintenance box that keep itself updated automatically.
-- You trust the Debian community to publish security updates.
+- You trust the _Debian community_ to publish security updates.
 
 ## Official documentation and user's guide
 
@@ -15,76 +12,11 @@ A set of Ansible scripts to setup a secure email and personal files server. This
 
 ## Mailing lists
 
-Thanks to [Framasoft](https://framasoft.org/), two mailing lists have been created, one for general questions, suggestions and
-support, and another one dedicated for development.
+Thanks to [Framasoft](https://framasoft.org/), two mailing lists have been created, one for general questions,
+suggestions and support, and another one dedicated for development.
 
 - General questions: https://framalistes.org/sympa/info/homebox-general
 - Development: https://framalistes.org/sympa/info/homebox-dev
-
-## Continuous Integration Status
-
-The continuous integration jobs are based on Jenkins pipelines. The server is accessible at
-[jenkins.homebox.space](https://jenkins.homebox.space).
-
-<table>
-  <tr>
-    <th>Job</th>
-    <th>Development branch</th>
-    <th>Master branch</th>
-  </tr>
-  <tr>
-    <td>Documentation</td>
-    <td>
-      <a href='https://jenkins.homebox.space/job/homebox-docs/job/dev/'>
-        <img src='https://jenkins.homebox.space/job/homebox-docs/job/dev/badge/icon'>
-      </a>
-    </td>
-    <td>
-      <a href='https://jenkins.homebox.space/job/homebox-docs/job/master/'>
-        <img src='https://jenkins.homebox.space/job/homebox-docs/job/master/badge/icon'>
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td>Ansible lint</td>
-    <td>
-      <a href='https://jenkins.homebox.space/job/homebox-ansible-lint/job/dev/'>
-        <img src='https://jenkins.homebox.space/job/homebox-ansible-lint/job/dev/badge/icon'>
-      </a>
-    </td>
-    <td>
-      <a href='https://jenkins.homebox.space/job/homebox-ansible-lint/job/master/'>
-        <img src='https://jenkins.homebox.space/job/homebox-ansible-lint/job/master/badge/icon'>
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td>Deployment</td>
-    <td>
-      <a href='https://jenkins.homebox.space/job/ci-buster-nano-dev-deploy/'>
-        <img src='https://jenkins.homebox.space/job/ci-buster-nano-dev-deploy/badge/icon'>
-      </a>
-    </td>
-    <td>
-      <a href='https://jenkins.homebox.space/job/ci-buster-nano-master-deploy/'>
-        <img src='https://jenkins.homebox.space/job/ci-buster-nano-master-deploy/badge/icon'>
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td>Tests</td>
-    <td>
-      <a href='https://jenkins.homebox.space/job/ci-buster-nano-dev-tests/'>
-        <img src='https://jenkins.homebox.space/job/ci-buster-nano-dev-tests/badge/icon'>
-      </a>
-    </td>
-    <td>
-      <a href='https://jenkins.homebox.space/job/ci-buster-nano-master-tests/'>
-        <img src='https://jenkins.homebox.space/job/ci-buster-nano-master-tests/badge/icon'>
-      </a>
-    </td>
-  </tr>
-</table>
 
 ## Current project status
 
