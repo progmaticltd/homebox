@@ -164,8 +164,8 @@ options {
     // If BIND logs error messages about the root key being expired,
     // you will need to update your keys.  See https://www.isc.org/bind-keys
     //========================================================================
-    dnssec-validation auto;
-    auth-nxdomain no;    # conform to RFC1035
+    dnssec-validation no;
+    auth-nxdomain no;       # conform to RFC1035
 {% if ipv6_used %}
     listen-on-v6 { any; };
 {% endif %}
