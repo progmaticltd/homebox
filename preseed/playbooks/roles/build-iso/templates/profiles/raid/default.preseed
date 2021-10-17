@@ -1,4 +1,4 @@
-#### Contents of the preconfiguration file (for stretch)
+#### Contents of the preconfiguration file (for bullseye)
 ### Localization
 
 {% include "templates/profiles/common/localization.preseed" %}
@@ -46,7 +46,7 @@ partman-base partman/confirm_nooverwrite boolean true
 # enough to hold them all.
 # Note that in the example shown here the mountpoint for /boot
 # (which is not encapsulated within LVM) is specified in the
-# partman-auto-raid recipe, rather than in the corresponding 
+# partman-auto-raid recipe, rather than in the corresponding
 # raid partition definition below.
 d-i partman-auto/expert_recipe string                        \
         multiraid ::                                         \

@@ -1,8 +1,8 @@
-# Start from Debian stable (Stretch)
-FROM debian:stretch
+# Start from Debian stable (Bullseye)
+FROM debian:bullseye
 
 # Add backports repository
-RUN echo 'deb http://deb.debian.org/debian/ stretch-backports main contrib non-free' >>/etc/apt/sources.list
+RUN echo 'deb http://deb.debian.org/debian/ bullseye-backports main contrib non-free' >>/etc/apt/sources.list
 
 # Install the required package
 RUN apt -qq update
@@ -15,10 +15,10 @@ RUN mkdir -p /home/cdbuild/misc/root/.ssh
 COPY --chown=cdbuild:cdbuild ./config/authorized_keys /home/cdbuild/misc/root/.ssh/authorized_keys
 
 # Install the last version of simple-cdd
-RUN apt -qq install -t stretch-backports -y simple-cdd
+RUN apt -qq install -t bullseye-backports -y simple-cdd
 
 # Install the last version of ansible to build the preseed file
-RUN apt -qq install -t stretch-backports -y ansible
+RUN apt -qq install -t bullseye-backports -y ansible
 
 # Copy the miscellaneous files to be part of the CD image
 # but remove the doc file

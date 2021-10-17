@@ -1,7 +1,7 @@
 #!/bin/dash
 
 # This is a simple script that buid the CD image
-# inside a docker container running simple-cdd on Debian stretch
+# inside a docker container running simple-cdd on Debian bullseye
 # The most important is the configuration file 'system.yml' in the preseed folder
 
 # If there is no authorised key file, create it from the current user public keys
