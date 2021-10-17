@@ -10,6 +10,7 @@
   #include <abstractions/ssl_keys>
 
   # Capabilities and network
+  capability chown,
   capability dac_override,
   capability dac_read_search,
   capability net_bind_service,
