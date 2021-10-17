@@ -11,7 +11,8 @@ require [
 # During this phase only, emails can be appended to the sent folder.
 # Once the importation is finished, the script is removed and no emails
 # can be appended to the sent folder again.
-include :personal :optional "pre-sent-checks";
+# FIXME: Does not work on Bullseye
+# include :personal :optional "pre-sent-checks";
 
 # This script is only called when the mail client copies emails to the sent folder.
 # This should not be done as the emails are copied automatically using the BCC address.
