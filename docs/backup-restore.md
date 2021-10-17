@@ -23,8 +23,8 @@ backups will be provided in a future version. In the mean time, the process has 
 # Data restoration
 
 Something bad happened, for instance you just deleted a lot of emails, contacts or calendar events. In this case, before
-the next backup occurs and backs up your mistake, you can quickly restore your emails, calendar events and contacts, with
-just one line.
+the next backup occurs and backs up your mistake, you can quickly restore your emails, calendar events and contacts,
+with just one line.
 
 So, just run the main borgbackup installation script:
 

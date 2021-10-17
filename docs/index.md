@@ -43,8 +43,7 @@ This project is for you if:
 
 ## Other projects to mention
 
-If you are interested in self-hosting, you will find a lot of
-interesting projects on the internet, for instance:
+If you are interested in self-hosting, you will find a lot of interesting projects on the internet, for instance:
 
 - [Sovereign](https://github.com/sovereign/sovereign): A different
   target, but a similar deployment approach using Ansible.
@@ -54,5 +53,4 @@ interesting projects on the internet, for instance:
   hosting, but very good as well.
 - [and many others...](https://github.com/Kickball/awesome-selfhosted)
 
-All have plenty of features, but maybe a different approach to
-self-hosting, though.
+All have plenty of features, but maybe a different approach to self-hosting, though.

@@ -325,7 +325,8 @@ Some clients: [XMPP client software](https://xmpp.org/software/clients.html).
 You can install the transmission bittorrent daemon, accessible over https on a dedicated domain.
 
 - The web interface and the RPC servers are protected with the LDAP credentials, unless you are at home.
-- Downloaded files can be accessed directly from your web browser, still using the LDAP credentials if you are not at home.
+- Downloaded files can be accessed directly from your web browser, still using the LDAP credentials if you are not at
+  home.
 - The daemon runs in a proper AppArmor profile.
 - Easy to use form to search downloaded files in your web browser.
 - Automatic firewall configuration to allow bittorrent both input and output.
