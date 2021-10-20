@@ -12,6 +12,7 @@
   template:
     src: '{{ dot_file }}'
     dest: '/root/.{{ dot_file }}'
+    mode: '0600'
   with_items:
     - bashrc
     - zshrc

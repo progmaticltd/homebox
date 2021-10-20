@@ -23,6 +23,7 @@
   file:
     path: '{{ path }}'
     state: directory
+    mode: '0755'
   with_items:
     - '/etc/letsencrypt/archive'
     - '/etc/letsencrypt/live'

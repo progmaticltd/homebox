@@ -1,0 +1,13 @@
+---
+
+# Crate the certificate for dovecot (IMAP)
+- hosts: homebox
+  vars:
+    certificate:
+      type: files
+  vars_files:
+    - '{{ playbook_dir }}/../../config/system.yml'
+    - '{{ playbook_dir }}/../../config/defaults.yml'
+  roles:
+    - role: certificates
+      tags: certificates

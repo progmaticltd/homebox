@@ -1,8 +1,0 @@
-# Everything in this folder will be decompressed on the target
-# before the first boot, at the same level
-!misc/readme.md
-misc/*
-
-# Ignores your system configuration and your public key
-config/*
-!config/*-example.yml

@@ -3,6 +3,10 @@
 # Build the ISO image inside the docker container
 - hosts: localhost
   connection: local
+  vars:
+    - build_dist: '{{ repo.release }}'
+    - build_locale: '{{ locale.id }}'
+    - build_mirror: 'http://{{ repo.main }}/debian/'
   vars_files:
     - '{{ playbook_dir }}/../config/system.yml'
   roles:
