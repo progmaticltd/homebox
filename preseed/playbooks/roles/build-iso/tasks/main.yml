@@ -18,6 +18,10 @@
     path: '{{ build_dir }}/profiles'
     state: directory
 
+- name: Get the first disk size (used for lvm & raid)
+  set_fact:
+    dsize: '{{ system.hw.disks[0].size | regex_replace("[^0-9]", "") | int }}'
+
 - name: Copy the profile folder content
   tags: preseed
   template:

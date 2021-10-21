@@ -35,7 +35,54 @@ d-i partman-lvm/confirm_nooverwrite boolean true
 # - atomic: all files in one partition
 # - home:   separate /home partition
 # - multi:  separate /home, /var, and /tmp partitions
-d-i partman-auto/choose_recipe select multi
+d-i partman-auto/choose_recipe select homebox-lvm
+
+# You can define the amount of space that will be used for the LVM volume
+# group. It can either be a size with its unit (eg. 20 GB), a percentage of
+# free space or the 'max' keyword.
+d-i partman-auto-lvm/guided_size string {{ partitions.disk_usage }}
+
+{% set default_fs = partitions.default_fs %}
+
+d-i partman-auto/expert_recipe string homebox-lvm ::       \
+    {{ partitions.boot.min | int }}                        \
+    {{ partitions.boot.priority | default(0) }}            \
+    {{ partitions.boot.max | int }}                        \
+    ext4                                                   \
+      $primary{ }                                          \
+      $bootable{ }                                         \
+      method{ format }                                     \
+      format{ }                                            \
+      use_filesystem{ }                                    \
+      filesystem{ {{ partitions.boot_fs }} }               \
+      label{ boot }                                        \
+      mountpoint{ /boot }                                  \
+    .                                                      \
+{% for part in partitions.list %}
+      {{ ((dsize|int) * (part.size|int) * 9) | int }}      \
+      {{ ((dsize|int) * (part.priority|int) * 10) | int }} \
+      {{ ((dsize|int) * (part.size|int) * 11) | int }}     \
+      ext4                                                 \
+      method{ format }                                     \
+      format{ }                                            \
+      use_filesystem{ }                                    \
+      filesystem{ {{ part.fs | default(default_fs) }} }    \
+      lv_name{ {{ part.name }} }                           \
+      $defaultignore{ }                                    \
+      $lvmok{ }                                            \
+      mountpoint{ {{ part.mountpoint }} }                  \
+    .                                                      \
+{% endfor %}
+    {{ partitions.swap.min | int }}                        \
+    {{ partitions.swap.priority | default(0) }}            \
+    {{ partitions.swap.max | int }}                        \
+      linux-swap                                           \
+      $lvmok{ }                                            \
+      $defaultignore{ }                                    \
+      lv_name{ swap }                                      \
+      method{ swap }                                       \
+      format{ }                                            \
+    .
 
 # This makes partman automatically partition without confirmation, provided
 # that you told it what to do using one of the methods above.

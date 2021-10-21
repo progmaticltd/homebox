@@ -10,3 +10,46 @@ packages:
   - simple-cdd
   - mtools
   - xorriso
+
+# Partition sizes for homebox-lvm profile
+# The “disk_usage” and all “size” values are in percent
+partitions:
+  disk_usage: 90%
+  default_fs: ext4
+  boot_fs: ext4
+  boot:
+    min: 256
+    max: 512
+  swap:
+    min: 1024
+    max: 2048
+  list:
+    - name: home
+      mountpoint: /home
+      priority: 80
+      size: 80
+    - name: system
+      mountpoint: /
+      priority: 4
+      size: 4
+    - name: root
+      mountpoint: /root
+      priority: 1
+      size: 1
+    - name: usr
+      mountpoint: /usr
+      priority: 4
+      size: 4
+    - name: tmp
+      mountpoint: /tmp
+      priority: 1
+      size: 1
+    - name: var
+      mountpoint: /var
+      priority: 7
+      size: 7
+      fs: ext4
+    - name: log
+      mountpoint: /var/log
+      priority:
+      size: 3
