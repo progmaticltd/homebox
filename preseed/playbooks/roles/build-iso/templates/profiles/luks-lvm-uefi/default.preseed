@@ -135,10 +135,7 @@ d-i partman/mount_style select uuid
 
 ### Package selection
 tasksel tasksel/first multiselect standard, ssh-server
-
-# Individual additional packages to install
-# Install AppArmor by default, because it will be activated on the first boot
-d-i pkgsel/include string apparmor apparmor-utils
+d-i pkgsel/include string dropbear-initramfs cryptsetup-initramfs
 
 # Whether to upgrade packages after debootstrap.
 # Allowed values: none, safe-upgrade, full-upgrade
