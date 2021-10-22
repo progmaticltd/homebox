@@ -23,22 +23,7 @@ base.
 
 # Steps to do
 
-## 1. Install Docker CE
-
-Docker will only be used to create an automatic installer as an ISO image. You can use this ISO image both at home or
-with a VPS that supports ISO image installation.
-
-- On Debian: [Get Docker CE for Debian](https://docs.docker.com/install/linux/docker-ce/debian/).
-- On Ubuntu: [Get Docker CE for Ubuntu](https://docs.docker.com/install/linux/docker-ce/ubuntu/).
-
-If you did not use docker before, you may need to add your user to the docker group, and restart your session. You can
-do the former using the terminal:
-
-```sh
-$ sudo adduser bob docker
-```
-
-## 2. Configure your system
+## 1. Configure your system
 
 
 Copy system-example.yml to system.yml, and modify the values accordingly:
@@ -56,7 +41,7 @@ system:
   hostname: mail
   passphrase: Correct horse battery stapple
   preseed: luks
-  version: 9.9
+  version: 11.1
   arch: amd64
   boot_timeout: 5   # In seconds
 
@@ -78,7 +63,7 @@ locale:
 
 # Repository specific values
 repo:
-  release: stretch
+  release: bullseye
   main: ftp.uk.debian.org
   security: security.debian.org
   sections: main contrib non-free
@@ -120,7 +105,7 @@ You are now ready to build the ISO image, run this command:
 
 ``` sh
 cd preseed
-./build.sh
+ansible-playbook -i ../config/hosts.yml playbooks/build-iso.yml
 ```
 
 This will create the ISO image in `/tmp/build-${hostname}/${hostname}-install.iso` folder, for instance
@@ -128,8 +113,8 @@ This will create the ISO image in `/tmp/build-${hostname}/${hostname}-install.is
 
 ## 5. Boot the system
 
-The whole installation should be automatic, both with LVM and software RAID. For LVM, there is a volume called "reserved"
-you can remove. This will let you resize the other volumes according to your needs.
+The whole installation should be automatic, both with LVM and software RAID. By default, only 90% of the disk is
+used. This will let you resize the other volumes according to your needs.
 
 If anything goes wrong, use issues on [Github project page](https://github.com/progmaticltd/homebox) for support.
 
@@ -162,7 +147,11 @@ If you are interested, you can achieve redundancy of the system drive, using a h
 Use `preseed: raid`. Please, note that if you are using software RAID, the drives won't be encrypted. There are some
 considerations to use file level encryption, but this is not implemented and might not be at all.
 
-## LVM only
+## LVM on BIOS
 
-Use `preseed: lvm`. No redundancy and no encryption. This is probably not what you want for a live system, but might be
+Use `preseed: lvm-bios`. No redundancy and no encryption. This is probably not what you want for a live system, but might be
 useful for debugging.
+
+## LVM on BIOS UEFI/Secure boot
+
+Use `preseed: lvm-uefi`. Same as the previous one, with UEFI / Secure boot support included.

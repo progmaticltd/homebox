@@ -17,8 +17,13 @@ partitions:
   disk_usage: 90%
   default_fs: ext4
   boot_fs: ext4
+  uefi:
+    min: 256
+    priority: 256
+    max: 512
   boot:
     min: 256
+    priority: 256
     max: 512
   swap:
     min: 1024

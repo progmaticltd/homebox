@@ -11,11 +11,12 @@
 # This first command is run as early as possible, just after
 # preseeding is read.
 #d-i preseed/early_command string anna-install some-udeb
+
 # This command is run immediately before the partitioner starts. It may be
 # useful to apply dynamic partitioner preseeding that depends on the state
 # of the disks (which may not be visible when preseed/early_command runs).
 #d-i partman/early_command \
-#       string debconf-set partman-auto/disk "$(list-devices disk | head -n1)"
+#    string debconf-set partman-auto/disk "$(list-devices disk | head -n1)"
 
 # This command is run just before the install finishes, but when there is
 # still a usable /target directory. You can chroot to /target and use it
