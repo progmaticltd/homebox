@@ -1,5 +1,4 @@
 # If non-free firmware is needed for the network or other hardware, you can
 # configure the installer to always try to load it, without prompting. Or
 # change to false to disable asking.
-#d-i hw-detect/load_firmware boolean true
-
+d-i hw-detect/load_firmware boolean false

@@ -135,7 +135,7 @@ d-i partman/mount_style select uuid
 
 ### Package selection
 tasksel tasksel/first multiselect standard, ssh-server
-d-i pkgsel/include string dropbear-initramfs cryptsetup-initramfs
+d-i pkgsel/include string plymouth dropbear-initramfs cryptsetup-initramfs
 
 # Whether to upgrade packages after debootstrap.
 # Allowed values: none, safe-upgrade, full-upgrade

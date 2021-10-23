@@ -3,7 +3,7 @@
 # Default variables to build the ISO image
 
 # Temporary directory
-build_dir: '/tmp/homebox-build-{{ system.hostname }}.{{ system.domain }}'
+build_dir: '/var/tmp/homebox/build-{{ system.hostname }}.{{ system.domain }}'
 
 # These packages need to be installed on the system
 packages:

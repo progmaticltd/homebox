@@ -20,5 +20,4 @@ d-i debian-installer/exit/poweroff boolean true
 # Use the following option to add additional boot parameters for the
 # installed system (if supported by the bootloader installer).
 # Note: options passed to the installer will be added automatically.
-# Activate AppArmor on next boot
-d-i debian-installer/add-kernel-opts string security=apparmor apparmor=1
+d-i debian-installer/add-kernel-opts string splash
