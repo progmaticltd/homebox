@@ -1,0 +1,327 @@
+# UEFI Secure Boot password:
+shim-signed-common	shim/secureboot_key	password
+# Re-enter password to verify:
+shim-signed-common	shim/secureboot_key_again	password
+# Linux default command line:
+grub-efi-amd64	grub2/linux_cmdline_default	string	quiet
+# Invalid configuration value for default dictionary
+dictionaries-common	dictionaries-common/invalid_debconf_value	error
+# Your system has UEFI Secure Boot enabled
+shim-signed-common	shim/secureboot_explanation	note
+# System default ispell dictionary:
+# Choices: american (American English), british (British English), Manual symlink setting
+dictionaries-common	dictionaries-common/default-ispell	select	british (British English)
+# for internal use
+d-i	keyboard-configuration/store_defaults_in_debconf_db	boolean	true
+keyboard-configuration	keyboard-configuration/store_defaults_in_debconf_db	boolean	true
+# Keep default keyboard options ()?
+d-i	keyboard-configuration/unsupported_options	boolean	true
+keyboard-configuration	keyboard-configuration/unsupported_options	boolean	true
+# Continue with cryptsetup removal?
+cryptsetup	cryptsetup/prerm_active_mappings	boolean	true
+# Do you want to move the group ?
+base-passwd	base-passwd/group-move	boolean	true
+# Do you want to remove the group ?
+base-passwd	base-passwd/group-remove	boolean	true
+# Keep default keyboard layout ()?
+d-i	keyboard-configuration/unsupported_layout	boolean	true
+keyboard-configuration	keyboard-configuration/unsupported_layout	boolean	true
+# Force extra installation to the EFI removable media path?
+grub-efi-amd64	grub2/force_efi_extra_removable	boolean	false
+# Do you want to add the user ?
+base-passwd	base-passwd/user-add	boolean	true
+# Failure restarting some services for OpenSSL upgrade
+libssl1.1:amd64	libssl1.1/restart-failed	error
+# Time zone:
+# Choices: Adak, Anchorage, Anguilla, Antigua, Araguaina, Buenos Aires (Argentina), Catamarca (Argentina), Cordoba (Argentina), Jujuy (Argentina), La Rioja (Argentina), Mendoza (Argentina), Rio Gallegos (Argentina), Salta (Argentina), San Juan (Argentina), San Luis (Argentina), Tucuman (Argentina), Ushuaia (Argentina), Aruba, Asuncion, Atikokan, Atka, Bahia, Bahia_Banderas, Barbados, Belem, Belize, Blanc-Sablon, Boa Vista, Bogota, Boise, Cambridge Bay, Campo Grande, Cancun, Caracas, Cayenne, Cayman, Chicago, Chihuahua, Coral Harbour, Costa Rica, Creston, Cuiaba, Curaçao, Danmarkshavn, Dawson, Dawson Creek, Denver, Detroit, Dominica, Edmonton, Eirunepe, El Salvador, Ensenada, Fort_Nelson, Fortaleza, Glace Bay, Godthab, Goose Bay, Grand Turk, Grenada, Guadeloupe, Guatemala, Guayaquil, Guyana, Halifax, Havana, Hermosillo, Indianapolis (Indiana), Knox (Indiana), Marengo (Indiana), Petersburg (Indiana), Tell City (Indiana), Vevay (Indiana), Vincennes (Indiana), Winamac (Indiana), Inuvik, Iqaluit, Jamaica, Juneau, Louisville (Kentucky), Monticello (Kentucky), Kralendijk, La Paz, Lima, Los Angeles, Lower Princes, Maceio, Managua, Manaus, Marigot, Martinique, Matamoros, Mazatlan, Menominee, Merida, Metlakatla, Mexico City, Miquelon, Moncton, Monterrey, Montevideo, Montreal, Montserrat, Nassau, New York, Nipigon, Nome, Fernando de Noronha, Beulah (North Dakota), Center (North Dakota), New Salem (North Dakota), Nuuk, Ojinaga, Panama, Pangnirtung, Paramaribo, Phoenix, Port-au-Prince, Port of Spain, Porto Acre, Porto Velho, Puerto Rico, Punta_Arenas, Rainy River, Rankin Inlet, Recife, Regina, Resolute, Rio Branco, Santa Isabel, Santarém, Santiago, Santo Domingo, São Paulo, Scoresbysund, Shiprock, Sitka, St Barthelemy, St Johns, St Kitts, St Lucia, St Thomas, St Vincent, Swift Current, Tegucigalpa, Thule, Thunder Bay, Tijuana, Toronto, Tortola, Vancouver, Virgin, Whitehorse, Winnipeg, Yakutat, Yellowknife
+tzdata	tzdata/Zones/America	select
+# Should apt-listchanges skip changes that have already been seen?
+apt-listchanges	apt-listchanges/save-seen	boolean	true
+# Country of origin for the keyboard:
+# Choices:
+d-i	keyboard-configuration/layout	select
+keyboard-configuration	keyboard-configuration/layout	select
+# for internal use only
+d-i	debian-installer/language	string	en_GB:en
+# for internal use
+console-setup	console-setup/store_defaults_in_debconf_db	boolean	true
+# Font for the console:
+# Choices: Fixed, Terminus, TerminusBold, TerminusBoldVGA, VGA, Do not change the boot/kernel font, Let the system select a suitable font
+console-setup	console-setup/fontface47	select	Fixed
+# What do you want to do about modified configuration file ?
+# Choices: install the package maintainer's version, keep the local version currently installed, show the differences between the versions, show a side-by-side difference between the versions, show a 3-way difference between available versions, do a 3-way merge between available versions, start a new shell to examine the situation
+ucf	ucf/changeprompt_threeway	select	keep_current
+# Remove obsolete /etc/dictionary link?
+dictionaries-common	dictionaries-common/old_wordlist_link	boolean	true
+# Changes displayed with APT:
+# Choices: news, changelogs, both
+apt-listchanges	apt-listchanges/which	select	news
+# Choose software to install:
+# Choices: Debian desktop environment, ... GNOME, ... Xfce, ... GNOME Flashback, ... KDE Plasma, ... Cinnamon, ... MATE, ... LXDE, ... LXQt, web server, SSH server, standard system utilities
+tasksel	tasksel/first	multiselect	standard, ssh-server
+# System default wordlist:
+# Choices: american (American English), Manual symlink setting
+dictionaries-common	dictionaries-common/default-wordlist	select	american (American English)
+# Keyboard layout:
+# Choices: Indian, Indian - Bangla (India), Indian - Bangla (India\, Baishakhi), Indian - Bangla (India\, Baishakhi Inscript), Indian - Bangla (India\, Bornona), Indian - Bangla (India\, Probhat), Indian - Bangla (India\, Uni Gitanjali), Indian - English (India\, with rupee), Indian - Gujarati, Indian - Hindi (Bolnagri), Indian - Hindi (KaGaPa phonetic), Indian - Hindi (Wx), Indian - Kannada, Indian - Kannada (KaGaPa phonetic), Indian - Malayalam, Indian - Malayalam (enhanced Inscript\, with rupee), Indian - Malayalam (Lalitha), Indian - Manipuri (Eeyek), Indian - Marathi (KaGaPa phonetic), Indian - Ol Chiki, Indian - Oriya, Indian - Punjabi (Gurmukhi), Indian - Punjabi (Gurmukhi Jhelum), Indian - Sanskrit (KaGaPa phonetic), Indian - Tamil (Inscript), Indian - Tamil (TamilNet 99), Indian - Tamil (TamilNet 99\, TAB encoding), Indian - Tamil (TamilNet 99\, TSCII encoding), Indian - Tamil (TamilNet 99 with Tamil numerals), Indian - Telugu, Indian - Telugu (KaGaPa phonetic), Indian - Telugu (Sarala), Indian - Urdu (alt. phonetic), Indian - Urdu (phonetic), Indian - Urdu (Win keys), Other
+d-i	keyboard-configuration/variant	select	Indian - Bangla (India)
+keyboard-configuration	keyboard-configuration/variant	select	Indian - Bangla (India)
+# Services to restart for GNU libc library upgrade:
+libc6	glibc/restart-services	string
+libc6:amd64	glibc/restart-services	string
+# Compose key:
+# Choices: No compose key, Right Alt (AltGr), Right Control, Right Logo key, Menu key, Left Logo key, Caps Lock
+d-i	keyboard-configuration/compose	select	No compose key
+keyboard-configuration	keyboard-configuration/compose	select	No compose key
+# Locales to be generated:
+# Choices: All locales, aa_DJ ISO-8859-1, aa_DJ.UTF-8 UTF-8, aa_ER UTF-8, aa_ER@saaho UTF-8, aa_ET UTF-8, af_ZA ISO-8859-1, af_ZA.UTF-8 UTF-8, agr_PE UTF-8, ak_GH UTF-8, am_ET UTF-8, an_ES ISO-8859-15, an_ES.UTF-8 UTF-8, anp_IN UTF-8, ar_AE ISO-8859-6, ar_AE.UTF-8 UTF-8, ar_BH ISO-8859-6, ar_BH.UTF-8 UTF-8, ar_DZ ISO-8859-6, ar_DZ.UTF-8 UTF-8, ar_EG ISO-8859-6, ar_EG.UTF-8 UTF-8, ar_IN UTF-8, ar_IQ ISO-8859-6, ar_IQ.UTF-8 UTF-8, ar_JO ISO-8859-6, ar_JO.UTF-8 UTF-8, ar_KW ISO-8859-6, ar_KW.UTF-8 UTF-8, ar_LB ISO-8859-6, ar_LB.UTF-8 UTF-8, ar_LY ISO-8859-6, ar_LY.UTF-8 UTF-8, ar_MA ISO-8859-6, ar_MA.UTF-8 UTF-8, ar_OM ISO-8859-6, ar_OM.UTF-8 UTF-8, ar_QA ISO-8859-6, ar_QA.UTF-8 UTF-8, ar_SA ISO-8859-6, ar_SA.UTF-8 UTF-8, ar_SD ISO-8859-6, ar_SD.UTF-8 UTF-8, ar_SS UTF-8, ar_SY ISO-8859-6, ar_SY.UTF-8 UTF-8, ar_TN ISO-8859-6, ar_TN.UTF-8 UTF-8, ar_YE ISO-8859-6, ar_YE.UTF-8 UTF-8, as_IN UTF-8, ast_ES ISO-8859-15, ast_ES.UTF-8 UTF-8, ayc_PE UTF-8, az_AZ UTF-8, az_IR UTF-8, be_BY CP1251, be_BY.UTF-8 UTF-8, be_BY@latin UTF-8, bem_ZM UTF-8, ber_DZ UTF-8, ber_MA UTF-8, bg_BG CP1251, bg_BG.UTF-8 UTF-8, bhb_IN.UTF-8 UTF-8, bho_IN UTF-8, bho_NP UTF-8, bi_VU UTF-8, bn_BD UTF-8, bn_IN UTF-8, bo_CN UTF-8, bo_IN UTF-8, br_FR ISO-8859-1, br_FR.UTF-8 UTF-8, br_FR@euro ISO-8859-15, brx_IN UTF-8, bs_BA ISO-8859-2, bs_BA.UTF-8 UTF-8, byn_ER UTF-8, ca_AD ISO-8859-15, ca_AD.UTF-8 UTF-8, ca_ES ISO-8859-1, ca_ES.UTF-8 UTF-8, ca_ES@euro ISO-8859-15, ca_ES@valencia UTF-8, ca_FR ISO-8859-15, ca_FR.UTF-8 UTF-8, ca_IT ISO-8859-15, ca_IT.UTF-8 UTF-8, ce_RU UTF-8, chr_US UTF-8, cmn_TW UTF-8, crh_UA UTF-8, cs_CZ ISO-8859-2, cs_CZ.UTF-8 UTF-8, csb_PL UTF-8, cv_RU UTF-8, cy_GB ISO-8859-14, cy_GB.UTF-8 UTF-8, da_DK ISO-8859-1, da_DK.UTF-8 UTF-8, de_AT ISO-8859-1, de_AT.UTF-8 UTF-8, de_AT@euro ISO-8859-15, de_BE ISO-8859-1, de_BE.UTF-8 UTF-8, de_BE@euro ISO-8859-15, de_CH ISO-8859-1, de_CH.UTF-8 UTF-8, de_DE ISO-8859-1, de_DE.UTF-8 UTF-8, de_DE@euro ISO-8859-15, de_IT ISO-8859-1, de_IT.UTF-8 UTF-8, de_LI.UTF-8 UTF-8, de_LU ISO-8859-1, de_LU.UTF-8 UTF-8, de_LU@euro ISO-8859-15, doi_IN UTF-8, dsb_DE UTF-8, dv_MV UTF-8, dz_BT UTF-8, el_CY ISO-8859-7, el_CY.UTF-8 UTF-8, el_GR ISO-8859-7, el_GR.UTF-8 UTF-8, el_GR@euro ISO-8859-7, en_AG UTF-8, en_AU ISO-8859-1, en_AU.UTF-8 UTF-8, en_BW ISO-8859-1, en_BW.UTF-8 UTF-8, en_CA ISO-8859-1, en_CA.UTF-8 UTF-8, en_DK ISO-8859-1, en_DK.ISO-8859-15 ISO-8859-15, en_DK.UTF-8 UTF-8, en_GB ISO-8859-1, en_GB.ISO-8859-15 ISO-8859-15, en_GB.UTF-8 UTF-8, en_HK ISO-8859-1, en_HK.UTF-8 UTF-8, en_IE ISO-8859-1, en_IE.UTF-8 UTF-8, en_IE@euro ISO-8859-15, en_IL UTF-8, en_IN UTF-8, en_NG UTF-8, en_NZ ISO-8859-1, en_NZ.UTF-8 UTF-8, en_PH ISO-8859-1, en_PH.UTF-8 UTF-8, en_SC.UTF-8 UTF-8, en_SG ISO-8859-1, en_SG.UTF-8 UTF-8, en_US ISO-8859-1, en_US.ISO-8859-15 ISO-8859-15, en_US.UTF-8 UTF-8, en_ZA ISO-8859-1, en_ZA.UTF-8 UTF-8, en_ZM UTF-8, en_ZW ISO-8859-1, en_ZW.UTF-8 UTF-8, eo UTF-8, es_AR ISO-8859-1, es_AR.UTF-8 UTF-8, es_BO ISO-8859-1, es_BO.UTF-8 UTF-8, es_CL ISO-8859-1, es_CL.UTF-8 UTF-8, es_CO ISO-8859-1, es_CO.UTF-8 UTF-8, es_CR ISO-8859-1, es_CR.UTF-8 UTF-8, es_CU UTF-8, es_DO ISO-8859-1, es_DO.UTF-8 UTF-8, es_EC ISO-8859-1, es_EC.UTF-8 UTF-8, es_ES ISO-8859-1, es_ES.UTF-8 UTF-8, es_ES@euro ISO-8859-15, es_GT ISO-8859-1, es_GT.UTF-8 UTF-8, es_HN ISO-8859-1, es_HN.UTF-8 UTF-8, es_MX ISO-8859-1, es_MX.UTF-8 UTF-8, es_NI ISO-8859-1, es_NI.UTF-8 UTF-8, es_PA ISO-8859-1, es_PA.UTF-8 UTF-8, es_PE ISO-8859-1, es_PE.UTF-8 UTF-8, es_PR ISO-8859-1, es_PR.UTF-8 UTF-8, es_PY ISO-8859-1, es_PY.UTF-8 UTF-8, es_SV ISO-8859-1, es_SV.UTF-8 UTF-8, es_US ISO-8859-1, es_US.UTF-8 UTF-8, es_UY ISO-8859-1, es_UY.UTF-8 UTF-8, es_VE ISO-8859-1, es_VE.UTF-8 UTF-8, et_EE ISO-8859-1, et_EE.ISO-8859-15 ISO-8859-15, et_EE.UTF-8 UTF-8, eu_ES ISO-8859-1, eu_ES.UTF-8 UTF-8, eu_ES@euro ISO-8859-15, eu_FR ISO-8859-1, eu_FR.UTF-8 UTF-8, eu_FR@euro ISO-8859-15, fa_IR UTF-8, ff_SN UTF-8, fi_FI ISO-8859-1, fi_FI.UTF-8 UTF-8, fi_FI@euro ISO-8859-15, fil_PH UTF-8, fo_FO ISO-8859-1, fo_FO.UTF-8 UTF-8, fr_BE ISO-8859-1, fr_BE.UTF-8 UTF-8, fr_BE@euro ISO-8859-15, fr_CA ISO-8859-1, fr_CA.UTF-8 UTF-8, fr_CH ISO-8859-1, fr_CH.UTF-8 UTF-8, fr_FR ISO-8859-1, fr_FR.UTF-8 UTF-8, fr_FR@euro ISO-8859-15, fr_LU ISO-8859-1, fr_LU.UTF-8 UTF-8, fr_LU@euro ISO-8859-15, fur_IT UTF-8, fy_DE UTF-8, fy_NL UTF-8, ga_IE ISO-8859-1, ga_IE.UTF-8 UTF-8, ga_IE@euro ISO-8859-15, gd_GB ISO-8859-15, gd_GB.UTF-8 UTF-8, gez_ER UTF-8, gez_ER@abegede UTF-8, gez_ET UTF-8, gez_ET@abegede UTF-8, gl_ES ISO-8859-1, gl_ES.UTF-8 UTF-8, gl_ES@euro ISO-8859-15, gu_IN UTF-8, gv_GB ISO-8859-1, gv_GB.UTF-8 UTF-8, ha_NG UTF-8, hak_TW UTF-8, he_IL ISO-8859-8, he_IL.UTF-8 UTF-8, hi_IN UTF-8, hif_FJ UTF-8, hne_IN UTF-8, hr_HR ISO-8859-2, hr_HR.UTF-8 UTF-8, hsb_DE ISO-8859-2, hsb_DE.UTF-8 UTF-8, ht_HT UTF-8, hu_HU ISO-8859-2, hu_HU.UTF-8 UTF-8, hy_AM UTF-8, hy_AM.ARMSCII-8 ARMSCII-8, ia_FR UTF-8, id_ID ISO-8859-1, id_ID.UTF-8 UTF-8, ig_NG UTF-8, ik_CA UTF-8, is_IS ISO-8859-1, is_IS.UTF-8 UTF-8, it_CH ISO-8859-1, it_CH.UTF-8 UTF-8, it_IT ISO-8859-1, it_IT.UTF-8 UTF-8, it_IT@euro ISO-8859-15, iu_CA UTF-8, ja_JP.EUC-JP EUC-JP, ja_JP.UTF-8 UTF-8, ka_GE GEORGIAN-PS, ka_GE.UTF-8 UTF-8, kab_DZ UTF-8, kk_KZ PT154, kk_KZ.RK1048 RK1048, kk_KZ.UTF-8 UTF-8, kl_GL ISO-8859-1, kl_GL.UTF-8 UTF-8, km_KH UTF-8, kn_IN UTF-8, ko_KR.EUC-KR EUC-KR, ko_KR.UTF-8 UTF-8, kok_IN UTF-8, ks_IN UTF-8, ks_IN@devanagari UTF-8, ku_TR ISO-8859-9, ku_TR.UTF-8 UTF-8, kw_GB ISO-8859-1, kw_GB.UTF-8 UTF-8, ky_KG UTF-8, lb_LU UTF-8, lg_UG ISO-8859-10, lg_UG.UTF-8 UTF-8, li_BE UTF-8, li_NL UTF-8, lij_IT UTF-8, ln_CD UTF-8, lo_LA UTF-8, lt_LT ISO-8859-13, lt_LT.UTF-8 UTF-8, lv_LV ISO-8859-13, lv_LV.UTF-8 UTF-8, lzh_TW UTF-8, mag_IN UTF-8, mai_IN UTF-8, mai_NP UTF-8, mfe_MU UTF-8, mg_MG ISO-8859-15, mg_MG.UTF-8 UTF-8, mhr_RU UTF-8, mi_NZ ISO-8859-13, mi_NZ.UTF-8 UTF-8, miq_NI UTF-8, mjw_IN UTF-8, mk_MK ISO-8859-5, mk_MK.UTF-8 UTF-8, ml_IN UTF-8, mn_MN UTF-8, mni_IN UTF-8, mnw_MM UTF-8, mr_IN UTF-8, ms_MY ISO-8859-1, ms_MY.UTF-8 UTF-8, mt_MT ISO-8859-3, mt_MT.UTF-8 UTF-8, my_MM UTF-8, nan_TW UTF-8, nan_TW@latin UTF-8, nb_NO ISO-8859-1, nb_NO.UTF-8 UTF-8, nds_DE UTF-8, nds_NL UTF-8, ne_NP UTF-8, nhn_MX UTF-8, niu_NU UTF-8, niu_NZ UTF-8, nl_AW UTF-8, nl_BE ISO-8859-1, nl_BE.UTF-8 UTF-8, nl_BE@euro ISO-8859-15, nl_NL ISO-8859-1, nl_NL.UTF-8 UTF-8, nl_NL@euro ISO-8859-15, nn_NO ISO-8859-1, nn_NO.UTF-8 UTF-8, nr_ZA UTF-8, nso_ZA UTF-8, oc_FR ISO-8859-1, oc_FR.UTF-8 UTF-8, om_ET UTF-8, om_KE ISO-8859-1, om_KE.UTF-8 UTF-8, or_IN UTF-8, os_RU UTF-8, pa_IN UTF-8, pa_PK UTF-8, pap_AW UTF-8, pap_CW UTF-8, pl_PL ISO-8859-2, pl_PL.UTF-8 UTF-8, ps_AF UTF-8, pt_BR ISO-8859-1, pt_BR.UTF-8 UTF-8, pt_PT ISO-8859-1, pt_PT.UTF-8 UTF-8, pt_PT@euro ISO-8859-15, quz_PE UTF-8, raj_IN UTF-8, ro_RO ISO-8859-2, ro_RO.UTF-8 UTF-8, ru_RU ISO-8859-5, ru_RU.CP1251 CP1251, ru_RU.KOI8-R KOI8-R, ru_RU.UTF-8 UTF-8, ru_UA KOI8-U, ru_UA.UTF-8 UTF-8, rw_RW UTF-8, sa_IN UTF-8, sah_RU UTF-8, sat_IN UTF-8, sc_IT UTF-8, sd_IN UTF-8, sd_IN@devanagari UTF-8, se_NO UTF-8, sgs_LT UTF-8, shn_MM UTF-8, shs_CA UTF-8, si_LK UTF-8, sid_ET UTF-8, sk_SK ISO-8859-2, sk_SK.UTF-8 UTF-8, sl_SI ISO-8859-2, sl_SI.UTF-8 UTF-8, sm_WS UTF-8, so_DJ ISO-8859-1, so_DJ.UTF-8 UTF-8, so_ET UTF-8, so_KE ISO-8859-1, so_KE.UTF-8 UTF-8, so_SO ISO-8859-1, so_SO.UTF-8 UTF-8, sq_AL ISO-8859-1, sq_AL.UTF-8 UTF-8, sq_MK UTF-8, sr_ME UTF-8, sr_RS UTF-8, sr_RS@latin UTF-8, ss_ZA UTF-8, st_ZA ISO-8859-1, st_ZA.UTF-8 UTF-8, sv_FI ISO-8859-1, sv_FI.UTF-8 UTF-8, sv_FI@euro ISO-8859-15, sv_SE ISO-8859-1, sv_SE.ISO-8859-15 ISO-8859-15, sv_SE.UTF-8 UTF-8, sw_KE UTF-8, sw_TZ UTF-8, szl_PL UTF-8, ta_IN UTF-8, ta_LK UTF-8, tcy_IN.UTF-8 UTF-8, te_IN UTF-8, tg_TJ KOI8-T, tg_TJ.UTF-8 UTF-8, th_TH TIS-620, th_TH.UTF-8 UTF-8, the_NP UTF-8, ti_ER UTF-8, ti_ET UTF-8, tig_ER UTF-8, tk_TM UTF-8, tl_PH ISO-8859-1, tl_PH.UTF-8 UTF-8, tn_ZA UTF-8, to_TO UTF-8, tpi_PG UTF-8, tr_CY ISO-8859-9, tr_CY.UTF-8 UTF-8, tr_TR ISO-8859-9, tr_TR.UTF-8 UTF-8, ts_ZA UTF-8, tt_RU UTF-8, tt_RU@iqtelif UTF-8, ug_CN UTF-8, uk_UA KOI8-U, uk_UA.UTF-8 UTF-8, unm_US UTF-8, ur_IN UTF-8, ur_PK UTF-8, uz_UZ ISO-8859-1, uz_UZ.UTF-8 UTF-8, uz_UZ@cyrillic UTF-8, ve_ZA UTF-8, vi_VN UTF-8, wa_BE ISO-8859-1, wa_BE.UTF-8 UTF-8, wa_BE@euro ISO-8859-15, wae_CH UTF-8, wal_ET UTF-8, wo_SN UTF-8, xh_ZA ISO-8859-1, xh_ZA.UTF-8 UTF-8, yi_US CP1255, yi_US.UTF-8 UTF-8, yo_NG UTF-8, yue_HK UTF-8, yuw_PG UTF-8, zh_CN GB2312, zh_CN.GB18030 GB18030, zh_CN.GBK GBK, zh_CN.UTF-8 UTF-8, zh_HK BIG5-HKSCS, zh_HK.UTF-8 UTF-8, zh_SG GB2312, zh_SG.GBK GBK, zh_SG.UTF-8 UTF-8, zh_TW BIG5, zh_TW.EUC-TW EUC-TW, zh_TW.UTF-8 UTF-8, zu_ZA ISO-8859-1, zu_ZA.UTF-8 UTF-8
+locales	locales/locales_to_be_generated	multiselect
+# Default values for ispell dictionary/wordlist not set
+dictionaries-common	dictionaries-common/selecting_ispell_wordlist_default	note
+# New certificates to activate:
+# Choices:
+ca-certificates	ca-certificates/new_crts	multiselect
+# Do you want system-wide readable home directories?
+adduser	adduser/homedir-permission	boolean	true
+# Do you want to change the UID of user ?
+base-passwd	base-passwd/user-change-uid	boolean	true
+# Username for your account:
+user-setup-udeb	passwd/username	string
+# for internal use
+d-i	keyboard-configuration/layoutcode	string	us,in
+keyboard-configuration	keyboard-configuration/layoutcode	string	us,in
+# Services to restart to make them use the new libraries:
+libssl1.1:amd64	libssl1.1/restart-services	string
+# Kernel version not supported
+libc6	glibc/kernel-not-supported	note
+libc6:amd64	glibc/kernel-not-supported	note
+# Possible debconf database corruption
+dictionaries-common	dictionaries-common/debconf_database_corruption	error
+# Invalid password
+shim-signed-common	shim/error/bad_secureboot_key	error
+# Time zone:
+# Choices: Alaska, Aleutian, Arizona, Central, Eastern, Hawaii, Starke County (Indiana), Michigan, Mountain, Pacific Ocean, Samoa
+tzdata	tzdata/Zones/US	select
+# Do you want to move the user ?
+base-passwd	base-passwd/user-move	boolean	true
+# for internal use
+d-i	keyboard-configuration/modelcode	string	pc105
+keyboard-configuration	keyboard-configuration/modelcode	string	pc105
+# Keep the current keyboard layout in the configuration file?
+d-i	keyboard-configuration/unsupported_config_layout	boolean	true
+keyboard-configuration	keyboard-configuration/unsupported_config_layout	boolean	true
+# for internal use
+d-i	keyboard-configuration/variantcode	string	,ben
+keyboard-configuration	keyboard-configuration/variantcode	string	,ben
+# Should man and mandb be installed 'setuid man'?
+man-db	man-db/install-setuid	boolean	false
+# Failure restarting some services for GNU libc upgrade
+libc6	glibc/restart-failed	error
+libc6:amd64	glibc/restart-failed	error
+# Time zone:
+# Choices: Apia, Auckland, Bougainville, Chatham, Chuuk, Easter, Efate, Enderbury, Fakaofo, Fiji, Funafuti, Galapagos, Gambier, Guadalcanal, Guam, Honolulu, Johnston, Kiritimati, Kosrae, Kwajalein, Majuro, Marquesas, Midway, Nauru, Niue, Norfolk, Noumea, Pago Pago, Palau, Pitcairn, Pohnpei, Pohnpei, Port Moresby, Rarotonga, Saipan, Samoa, Tahiti, Tarawa, Tongatapu, Truk, Wake, Wallis, Yap
+tzdata	tzdata/Zones/Pacific	select
+# What do you want to do about modified configuration file ?
+# Choices: install the package maintainer's version, keep the local version currently installed, show the differences between the versions, show a side-by-side difference between the versions, start a new shell to examine the situation
+ucf	ucf/changeprompt	select	keep_current
+# Conflicts found in three-way merge
+ucf	ucf/conflicts_found	error
+# Time zone:
+# Choices: Aden, Almaty, Amman, Anadyr, Aqtau, Aqtobe, Ashgabat, Atyrau, Baghdad, Bahrain, Baku, Bangkok, Barnaul, Beirut, Bishkek, Brunei, Chita, Choibalsan, Chongqing, Colombo, Damascus, Dhaka, Dili, Dubai, Dushanbe, Famagusta, Gaza, Harbin, Hebron, Ho Chi Minh City, Hong Kong, Hovd, Irkutsk, Istanbul, Jakarta, Jayapura, Jerusalem, Kabul, Kamchatka, Karachi, Kashgar, Katmandu, Khandyga, Kolkata, Krasnoyarsk, Kuala Lumpur, Kuching, Kuwait, Macau, Magadan, Makassar, Manila, Muscat, Nicosia, Novokuznetsk, Novosibirsk, Omsk, Oral, Phnom Penh, Pontianak, Pyongyang, Qatar, Qostanay, Qyzylorda, Rangoon, Riyadh, Sakhalin, Samarkand, Seoul, Shanghai, Singapore, Srednekolymsk, Taipei, Tashkent, Tbilisi, Tehran, Tel Aviv, Thimphu, Tokyo, Tomsk, Ujung Pandang, Ulaanbaatar, Urumqi, Ust-Nera, Vientiane, Vladivostok, Yakutsk, Yangon, Yekaterinburg, Yerevan
+tzdata	tzdata/Zones/Asia	select
+# Kernel must be upgraded
+libc6	glibc/kernel-too-old	error
+libc6:amd64	glibc/kernel-too-old	error
+# Use dash as the default system shell (/bin/sh)?
+dash	dash/sh	boolean	true
+# Method for temporarily toggling between national and Latin input:
+# Choices: No temporary switch, Both Logo keys, Right Alt (AltGr), Right Logo key, Left Alt, Left Logo key
+d-i	keyboard-configuration/switch	select	No temporary switch
+keyboard-configuration	keyboard-configuration/switch	select	No temporary switch
+# Allow password authentication?
+openssh-server	openssh-server/password-authentication	boolean	true
+# Linux command line:
+grub-efi-amd64	grub2/linux_cmdline	string	splash
+# Time zone:
+# Choices: Longyearbyen
+tzdata	tzdata/Zones/Arctic	select
+# Key to function as AltGr:
+# Choices: The default for the keyboard layout, No AltGr key, Right Alt (AltGr), Right Control, Right Logo key, Menu key, Left Alt, Left Logo key, Keypad Enter key, Both Logo keys, Both Alt keys
+d-i	keyboard-configuration/altgr	select	The default for the keyboard layout
+keyboard-configuration	keyboard-configuration/altgr	select	The default for the keyboard layout
+# Time zone:
+# Choices: Amsterdam, Andorra, Astrakhan, Athens, Belfast, Belgrade, Berlin, Bratislava, Brussels, Bucharest, Budapest, Büsingen, Chisinau, Copenhagen, Dublin, Gibraltar, Guernsey, Helsinki, Isle of Man, Istanbul, Jersey, Kaliningrad, Kiev, Kirov, Lisbon, Ljubljana, London, Luxembourg, Madrid, Malta, Mariehamn, Minsk, Monaco, Moscow, Nicosia, Oslo, Paris, Podgorica, Prague, Riga, Rome, Samara, San Marino, Sarajevo, Saratov, Simferopol, Skopje, Sofia, Stockholm, Tallinn, Tirane, Tiraspol, Ulyanovsk, Uzhgorod, Vaduz, Vatican, Vienna, Vilnius, Volgograd, Warsaw, Zagreb, Zaporozhye, Zurich
+tzdata	tzdata/Zones/Europe	select
+# Geographic area:
+# Choices: Africa, America, Antarctica, Australia, Arctic Ocean, Asia, Atlantic Ocean, Europe, Indian Ocean, Pacific Ocean, US, None of the above
+tzdata	tzdata/Areas	select	Etc
+# Do you want to add the group ?
+base-passwd	base-passwd/group-add	boolean	true
+# xscreensaver and xlockmore must be restarted before upgrading
+libc6	glibc/disable-screensaver	error
+libc6:amd64	glibc/disable-screensaver	error
+# Format of e-mail messages:
+# Choices: text, html
+apt-listchanges	apt-listchanges/email-format	select	text
+# Certificates to activate:
+# Choices: mozilla/ACCVRAIZ1.crt, mozilla/AC_RAIZ_FNMT-RCM.crt, mozilla/Actalis_Authentication_Root_CA.crt, mozilla/AffirmTrust_Commercial.crt, mozilla/AffirmTrust_Networking.crt, mozilla/AffirmTrust_Premium.crt, mozilla/AffirmTrust_Premium_ECC.crt, mozilla/Amazon_Root_CA_1.crt, mozilla/Amazon_Root_CA_2.crt, mozilla/Amazon_Root_CA_3.crt, mozilla/Amazon_Root_CA_4.crt, mozilla/Atos_TrustedRoot_2011.crt, mozilla/Autoridad_de_Certificacion_Firmaprofesional_CIF_A62634068.crt, mozilla/Baltimore_CyberTrust_Root.crt, mozilla/Buypass_Class_2_Root_CA.crt, mozilla/Buypass_Class_3_Root_CA.crt, mozilla/CA_Disig_Root_R2.crt, mozilla/Certigna.crt, mozilla/Certigna_Root_CA.crt, mozilla/certSIGN_ROOT_CA.crt, mozilla/certSIGN_Root_CA_G2.crt, mozilla/Certum_Trusted_Network_CA_2.crt, mozilla/Certum_Trusted_Network_CA.crt, mozilla/CFCA_EV_ROOT.crt, mozilla/Chambers_of_Commerce_Root_-_2008.crt, mozilla/Comodo_AAA_Services_root.crt, mozilla/COMODO_Certification_Authority.crt, mozilla/COMODO_ECC_Certification_Authority.crt, mozilla/COMODO_RSA_Certification_Authority.crt, mozilla/Cybertrust_Global_Root.crt, mozilla/DigiCert_Assured_ID_Root_CA.crt, mozilla/DigiCert_Assured_ID_Root_G2.crt, mozilla/DigiCert_Assured_ID_Root_G3.crt, mozilla/DigiCert_Global_Root_CA.crt, mozilla/DigiCert_Global_Root_G2.crt, mozilla/DigiCert_Global_Root_G3.crt, mozilla/DigiCert_High_Assurance_EV_Root_CA.crt, mozilla/DigiCert_Trusted_Root_G4.crt, mozilla/DST_Root_CA_X3.crt, mozilla/D-TRUST_Root_Class_3_CA_2_2009.crt, mozilla/D-TRUST_Root_Class_3_CA_2_EV_2009.crt, mozilla/EC-ACC.crt, mozilla/emSign_ECC_Root_CA_-_C3.crt, mozilla/emSign_ECC_Root_CA_-_G3.crt, mozilla/emSign_Root_CA_-_C1.crt, mozilla/emSign_Root_CA_-_G1.crt, mozilla/Entrust.net_Premium_2048_Secure_Server_CA.crt, mozilla/Entrust_Root_Certification_Authority.crt, mozilla/Entrust_Root_Certification_Authority_-_EC1.crt, mozilla/Entrust_Root_Certification_Authority_-_G2.crt, mozilla/Entrust_Root_Certification_Authority_-_G4.crt, mozilla/ePKI_Root_Certification_Authority.crt, mozilla/e-Szigno_Root_CA_2017.crt, mozilla/E-Tugra_Certification_Authority.crt, mozilla/GDCA_TrustAUTH_R5_ROOT.crt, mozilla/GeoTrust_Primary_Certification_Authority_-_G2.crt, mozilla/Global_Chambersign_Root_-_2008.crt, mozilla/GlobalSign_ECC_Root_CA_-_R4.crt, mozilla/GlobalSign_ECC_Root_CA_-_R5.crt, mozilla/GlobalSign_Root_CA.crt, mozilla/GlobalSign_Root_CA_-_R2.crt, mozilla/GlobalSign_Root_CA_-_R3.crt, mozilla/GlobalSign_Root_CA_-_R6.crt, mozilla/Go_Daddy_Class_2_CA.crt, mozilla/Go_Daddy_Root_Certificate_Authority_-_G2.crt, mozilla/GTS_Root_R1.crt, mozilla/GTS_Root_R2.crt, mozilla/GTS_Root_R3.crt, mozilla/GTS_Root_R4.crt, mozilla/Hellenic_Academic_and_Research_Institutions_ECC_RootCA_2015.crt, mozilla/Hellenic_Academic_and_Research_Institutions_RootCA_2011.crt, mozilla/Hellenic_Academic_and_Research_Institutions_RootCA_2015.crt, mozilla/Hongkong_Post_Root_CA_1.crt, mozilla/Hongkong_Post_Root_CA_3.crt, mozilla/IdenTrust_Commercial_Root_CA_1.crt, mozilla/IdenTrust_Public_Sector_Root_CA_1.crt, mozilla/ISRG_Root_X1.crt, mozilla/Izenpe.com.crt, mozilla/Microsec_e-Szigno_Root_CA_2009.crt, mozilla/Microsoft_ECC_Root_Certificate_Authority_2017.crt, mozilla/Microsoft_RSA_Root_Certificate_Authority_2017.crt, mozilla/NAVER_Global_Root_Certification_Authority.crt, mozilla/NetLock_Arany_=Class_Gold=_Főtanúsítvány.crt, mozilla/Network_Solutions_Certificate_Authority.crt, mozilla/OISTE_WISeKey_Global_Root_GB_CA.crt, mozilla/OISTE_WISeKey_Global_Root_GC_CA.crt, mozilla/QuoVadis_Root_CA_1_G3.crt, mozilla/QuoVadis_Root_CA_2.crt, mozilla/QuoVadis_Root_CA_2_G3.crt, mozilla/QuoVadis_Root_CA_3.crt, mozilla/QuoVadis_Root_CA_3_G3.crt, mozilla/QuoVadis_Root_CA.crt, mozilla/Secure_Global_CA.crt, mozilla/SecureSign_RootCA11.crt, mozilla/SecureTrust_CA.crt, mozilla/Security_Communication_RootCA2.crt, mozilla/Security_Communication_Root_CA.crt, mozilla/Sonera_Class_2_Root_CA.crt, mozilla/SSL.com_EV_Root_Certification_Authority_ECC.crt, mozilla/SSL.com_EV_Root_Certification_Authority_RSA_R2.crt, mozilla/SSL.com_Root_Certification_Authority_ECC.crt, mozilla/SSL.com_Root_Certification_Authority_RSA.crt, mozilla/Staat_der_Nederlanden_EV_Root_CA.crt, mozilla/Staat_der_Nederlanden_Root_CA_-_G3.crt, mozilla/Starfield_Class_2_CA.crt, mozilla/Starfield_Root_Certificate_Authority_-_G2.crt, mozilla/Starfield_Services_Root_Certificate_Authority_-_G2.crt, mozilla/SwissSign_Gold_CA_-_G2.crt, mozilla/SwissSign_Silver_CA_-_G2.crt, mozilla/SZAFIR_ROOT_CA2.crt, mozilla/TeliaSonera_Root_CA_v1.crt, mozilla/TrustCor_ECA-1.crt, mozilla/TrustCor_RootCert_CA-1.crt, mozilla/TrustCor_RootCert_CA-2.crt, mozilla/Trustis_FPS_Root_CA.crt, mozilla/Trustwave_Global_Certification_Authority.crt, mozilla/Trustwave_Global_ECC_P256_Certification_Authority.crt, mozilla/Trustwave_Global_ECC_P384_Certification_Authority.crt, mozilla/T-TeleSec_GlobalRoot_Class_2.crt, mozilla/T-TeleSec_GlobalRoot_Class_3.crt, mozilla/TUBITAK_Kamu_SM_SSL_Kok_Sertifikasi_-_Surum_1.crt, mozilla/TWCA_Global_Root_CA.crt, mozilla/TWCA_Root_Certification_Authority.crt, mozilla/UCA_Extended_Validation_Root.crt, mozilla/UCA_Global_G2_Root.crt, mozilla/USERTrust_ECC_Certification_Authority.crt, mozilla/USERTrust_RSA_Certification_Authority.crt, mozilla/VeriSign_Universal_Root_Certification_Authority.crt, mozilla/XRamp_Global_CA_Root.crt
+ca-certificates	ca-certificates/enable_crts	multiselect	mozilla/ACCVRAIZ1.crt, mozilla/AC_RAIZ_FNMT-RCM.crt, mozilla/Actalis_Authentication_Root_CA.crt, mozilla/AffirmTrust_Commercial.crt, mozilla/AffirmTrust_Networking.crt, mozilla/AffirmTrust_Premium.crt, mozilla/AffirmTrust_Premium_ECC.crt, mozilla/Amazon_Root_CA_1.crt, mozilla/Amazon_Root_CA_2.crt, mozilla/Amazon_Root_CA_3.crt, mozilla/Amazon_Root_CA_4.crt, mozilla/Atos_TrustedRoot_2011.crt, mozilla/Autoridad_de_Certificacion_Firmaprofesional_CIF_A62634068.crt, mozilla/Baltimore_CyberTrust_Root.crt, mozilla/Buypass_Class_2_Root_CA.crt, mozilla/Buypass_Class_3_Root_CA.crt, mozilla/CA_Disig_Root_R2.crt, mozilla/Certigna.crt, mozilla/Certigna_Root_CA.crt, mozilla/certSIGN_ROOT_CA.crt, mozilla/certSIGN_Root_CA_G2.crt, mozilla/Certum_Trusted_Network_CA_2.crt, mozilla/Certum_Trusted_Network_CA.crt, mozilla/CFCA_EV_ROOT.crt, mozilla/Chambers_of_Commerce_Root_-_2008.crt, mozilla/Comodo_AAA_Services_root.crt, mozilla/COMODO_Certification_Authority.crt, mozilla/COMODO_ECC_Certification_Authority.crt, mozilla/COMODO_RSA_Certification_Authority.crt, mozilla/Cybertrust_Global_Root.crt, mozilla/DigiCert_Assured_ID_Root_CA.crt, mozilla/DigiCert_Assured_ID_Root_G2.crt, mozilla/DigiCert_Assured_ID_Root_G3.crt, mozilla/DigiCert_Global_Root_CA.crt, mozilla/DigiCert_Global_Root_G2.crt, mozilla/DigiCert_Global_Root_G3.crt, mozilla/DigiCert_High_Assurance_EV_Root_CA.crt, mozilla/DigiCert_Trusted_Root_G4.crt, mozilla/DST_Root_CA_X3.crt, mozilla/D-TRUST_Root_Class_3_CA_2_2009.crt, mozilla/D-TRUST_Root_Class_3_CA_2_EV_2009.crt, mozilla/EC-ACC.crt, mozilla/emSign_ECC_Root_CA_-_C3.crt, mozilla/emSign_ECC_Root_CA_-_G3.crt, mozilla/emSign_Root_CA_-_C1.crt, mozilla/emSign_Root_CA_-_G1.crt, mozilla/Entrust.net_Premium_2048_Secure_Server_CA.crt, mozilla/Entrust_Root_Certification_Authority.crt, mozilla/Entrust_Root_Certification_Authority_-_EC1.crt, mozilla/Entrust_Root_Certification_Authority_-_G2.crt, mozilla/Entrust_Root_Certification_Authority_-_G4.crt, mozilla/ePKI_Root_Certification_Authority.crt, mozilla/e-Szigno_Root_CA_2017.crt, mozilla/E-Tugra_Certification_Authority.crt, mozilla/GDCA_TrustAUTH_R5_ROOT.crt, mozilla/GeoTrust_Primary_Certification_Authority_-_G2.crt, mozilla/Global_Chambersign_Root_-_2008.crt, mozilla/GlobalSign_ECC_Root_CA_-_R4.crt, mozilla/GlobalSign_ECC_Root_CA_-_R5.crt, mozilla/GlobalSign_Root_CA.crt, mozilla/GlobalSign_Root_CA_-_R2.crt, mozilla/GlobalSign_Root_CA_-_R3.crt, mozilla/GlobalSign_Root_CA_-_R6.crt, mozilla/Go_Daddy_Class_2_CA.crt, mozilla/Go_Daddy_Root_Certificate_Authority_-_G2.crt, mozilla/GTS_Root_R1.crt, mozilla/GTS_Root_R2.crt, mozilla/GTS_Root_R3.crt, mozilla/GTS_Root_R4.crt, mozilla/Hellenic_Academic_and_Research_Institutions_ECC_RootCA_2015.crt, mozilla/Hellenic_Academic_and_Research_Institutions_RootCA_2011.crt, mozilla/Hellenic_Academic_and_Research_Institutions_RootCA_2015.crt, mozilla/Hongkong_Post_Root_CA_1.crt, mozilla/Hongkong_Post_Root_CA_3.crt, mozilla/IdenTrust_Commercial_Root_CA_1.crt, mozilla/IdenTrust_Public_Sector_Root_CA_1.crt, mozilla/ISRG_Root_X1.crt, mozilla/Izenpe.com.crt, mozilla/Microsec_e-Szigno_Root_CA_2009.crt, mozilla/Microsoft_ECC_Root_Certificate_Authority_2017.crt, mozilla/Microsoft_RSA_Root_Certificate_Authority_2017.crt, mozilla/NAVER_Global_Root_Certification_Authority.crt, mozilla/NetLock_Arany_=Class_Gold=_Főtanúsítvány.crt, mozilla/Network_Solutions_Certificate_Authority.crt, mozilla/OISTE_WISeKey_Global_Root_GB_CA.crt, mozilla/OISTE_WISeKey_Global_Root_GC_CA.crt, mozilla/QuoVadis_Root_CA_1_G3.crt, mozilla/QuoVadis_Root_CA_2.crt, mozilla/QuoVadis_Root_CA_2_G3.crt, mozilla/QuoVadis_Root_CA_3.crt, mozilla/QuoVadis_Root_CA_3_G3.crt, mozilla/QuoVadis_Root_CA.crt, mozilla/Secure_Global_CA.crt, mozilla/SecureSign_RootCA11.crt, mozilla/SecureTrust_CA.crt, mozilla/Security_Communication_RootCA2.crt, mozilla/Security_Communication_Root_CA.crt, mozilla/Sonera_Class_2_Root_CA.crt, mozilla/SSL.com_EV_Root_Certification_Authority_ECC.crt, mozilla/SSL.com_EV_Root_Certification_Authority_RSA_R2.crt, mozilla/SSL.com_Root_Certification_Authority_ECC.crt, mozilla/SSL.com_Root_Certification_Authority_RSA.crt, mozilla/Staat_der_Nederlanden_EV_Root_CA.crt, mozilla/Staat_der_Nederlanden_Root_CA_-_G3.crt, mozilla/Starfield_Class_2_CA.crt, mozilla/Starfield_Root_Certificate_Authority_-_G2.crt, mozilla/Starfield_Services_Root_Certificate_Authority_-_G2.crt, mozilla/SwissSign_Gold_CA_-_G2.crt, mozilla/SwissSign_Silver_CA_-_G2.crt, mozilla/SZAFIR_ROOT_CA2.crt, mozilla/TeliaSonera_Root_CA_v1.crt, mozilla/TrustCor_ECA-1.crt, mozilla/TrustCor_RootCert_CA-1.crt, mozilla/TrustCor_RootCert_CA-2.crt, mozilla/Trustis_FPS_Root_CA.crt, mozilla/Trustwave_Global_Certification_Authority.crt, mozilla/Trustwave_Global_ECC_P256_Certification_Authority.crt, mozilla/Trustwave_Global_ECC_P384_Certification_Authority.crt, mozilla/T-TeleSec_GlobalRoot_Class_2.crt, mozilla/T-TeleSec_GlobalRoot_Class_3.crt, mozilla/TUBITAK_Kamu_SM_SSL_Kok_Sertifikasi_-_Surum_1.crt, mozilla/TWCA_Global_Root_CA.crt, mozilla/TWCA_Root_Certification_Authority.crt, mozilla/UCA_Extended_Validation_Root.crt, mozilla/UCA_Global_G2_Root.crt, mozilla/USERTrust_ECC_Certification_Authority.crt, mozilla/USERTrust_RSA_Certification_Authority.crt, mozilla/VeriSign_Universal_Root_Certification_Authority.crt, mozilla/XRamp_Global_CA_Root.crt
+# xscreensaver and xlockmore must be restarted before upgrading
+libpam-modules	libpam-modules/disable-screensaver	error
+# Allow ordinary users to run ip vrf exec using capabilities?
+iproute2	iproute2/setcaps	boolean	false
+# Method to be used to display changes:
+# Choices: pager, browser, xterm-pager, xterm-browser, gtk, text, mail, none
+apt-listchanges	apt-listchanges/frontend	select	pager
+# Encoding to use on the console:
+# Choices: ARMSCII-8, CP1251, CP1255, CP1256, GEORGIAN-ACADEMY, GEORGIAN-PS, IBM1133, ISIRI-3342, ISO-8859-1, ISO-8859-10, ISO-8859-11, ISO-8859-13, ISO-8859-14, ISO-8859-15, ISO-8859-16, ISO-8859-2, ISO-8859-3, ISO-8859-4, ISO-8859-5, ISO-8859-6, ISO-8859-7, ISO-8859-8, ISO-8859-9, KOI8-R, KOI8-U, TIS-620, UTF-8, VISCII
+console-setup	console-setup/charmap47	select	UTF-8
+# Time zone:
+# Choices: Adelaide, Brisbane, Broken Hill, Canberra, Currie, Darwin, Eucla, Hobart, Lindeman, Lord Howe, Melbourne, Perth, Sydney, Yancowinna
+tzdata	tzdata/Zones/Australia	select
+# Dummy template
+unattended-upgrades	unattended-upgrades/enable_auto_updates	boolean	false
+# kFreeBSD default command line:
+grub-efi-amd64	grub2/kfreebsd_cmdline_default	string	quiet
+# Services to restart for PAM library upgrade:
+libpam0g:amd64	libpam0g/restart-services	string
+# Disable UEFI Secure Boot?
+shim-signed-common	shim/disable_secureboot	boolean	true
+# you are using pam_tally or pam_tally2 in your configuration
+libpam-modules	libpam-modules/deprecate-tally	error
+# Do you want to upgrade glibc now?
+libc6	glibc/upgrade	boolean	true
+libc6:amd64	glibc/upgrade	boolean	true
+# Line by line differences between versions
+ucf	ucf/show_diff	note
+# Font size:
+# Choices:
+console-setup	console-setup/fontsize-text47	select	8x16
+# Failure restarting some services for PAM upgrade
+libpam0g:amd64	libpam0g/restart-failed	error
+# Abort kernel removal?
+linux-base	linux-base/removing-running-kernel	boolean	true
+# Enable UEFI Secure Boot?
+shim-signed-common	shim/enable_secureboot	boolean	false
+# Time zone:
+# Choices: Casey, Davis, Dumont d'Urville, Macquarie, Mawson, McMurdo (South Pole), Palmer, Rothera, Syowa, Troll, Vostok
+tzdata	tzdata/Zones/Antarctica	select
+# Override local changes to /etc/pam.d/common-*?
+libpam-runtime	libpam-runtime/override	boolean	false
+# No PAM profiles have been selected.
+libpam-runtime	libpam-runtime/no_profiles_chosen	error
+# Disable SSH password authentication for root?
+openssh-server	openssh-server/permit-root-login	boolean	true
+# This can be preseeded to override the default desktop.
+# Choices: gnome, kde, xfce, lxde, gnome-flashback, cinnamon, mate, lxqt
+tasksel	tasksel/desktop	multiselect
+# Continue with cryptsetup-initramfs removal?
+cryptsetup-initramfs	cryptsetup-initramfs/prerm_active_mappings	boolean	true
+# Prompt for confirmation after displaying changes?
+apt-listchanges	apt-listchanges/confirm	boolean	false
+# Insert headers before changelogs?
+apt-listchanges	apt-listchanges/headers	boolean	false
+# Time zone:
+# Choices: Azores, Bermuda, Canary, Cape Verde, Faroe, Jan Mayen, Madeira, Reykjavik, South Georgia, St. Helena, Stanley
+tzdata	tzdata/Zones/Atlantic	select
+# Problems rebuilding an  hash file ()
+dictionaries-common	dictionaries-common/ispell-autobuildhash-message	note
+# Default locale for the system environment:
+# Choices: None, C.UTF-8,
+locales	locales/default_environment_locale	select	None
+# Restart services during package upgrades without asking?
+libc6	libraries/restart-without-asking	boolean	false
+libc6:amd64	libraries/restart-without-asking	boolean	false
+libpam0g:amd64	libraries/restart-without-asking	boolean	false
+# Keep current keyboard options in the configuration file?
+d-i	keyboard-configuration/unsupported_config_options	boolean	true
+keyboard-configuration	keyboard-configuration/unsupported_config_options	boolean	true
+# Character set to support:
+# Choices: . Arabic, # Armenian, # Cyrillic - KOI8-R and KOI8-U, # Cyrillic - non-Slavic languages, . Cyrillic - non-Slavic languages (for blind users), # Cyrillic - Slavic languages (also Bosnian and Serbian Latin), . Cyrillic - Slavic languages (for blind users), . Ethiopic, # Georgian, # Greek, . Greek (for blind users), # Hebrew, # Lao, # Latin1 and Latin5 - western Europe and Turkic languages, # Latin2 - central Europe and Romanian, # Latin3 and Latin8 - Chichewa; Esperanto; Irish; Maltese and Welsh, # Latin7 - Lithuanian; Latvian; Maori and Marshallese, . Latin - Vietnamese, # Thai, . Combined - Latin; Slavic Cyrillic; Hebrew; basic Arabic, . Combined - Latin; Slavic Cyrillic; Greek, . Combined - Latin; Slavic and non-Slavic Cyrillic, Guess optimal character set
+console-setup	console-setup/codeset47	select	# Latin1 and Latin5 - western Europe and Turkic languages
+# Ignore questions with a priority less than:
+# Choices: critical, high, medium, low
+debconf	debconf/priority	select	high
+# Choose software to install:
+# Choices:
+tasksel	tasksel/tasks	multiselect
+# Time zone:
+# Choices: GMT, GMT+0, GMT+1, GMT+10, GMT+11, GMT+12, GMT+2, GMT+3, GMT+4, GMT+5, GMT+6, GMT+7, GMT+8, GMT+9, GMT-0, GMT-1, GMT-10, GMT-11, GMT-12, GMT-13, GMT-14, GMT-2, GMT-3, GMT-4, GMT-5, GMT-6, GMT-7, GMT-8, GMT-9, GMT0, Greenwich, UCT, UTC, Universal, Zulu
+tzdata	tzdata/Zones/Etc	select	UTC
+# PAM Profiles with Deprecated Modules Disabled
+libpam-modules	libpam-modules/profiles-disabled	error
+# Do you want to change the GECOS of user ?
+base-passwd	base-passwd/user-change-gecos	boolean	true
+# Interface to use:
+# Choices: Dialog, Readline, Gnome, Kde, Editor, Noninteractive
+debconf	debconf/frontend	select	Dialog
+# for internal use; can be preseeded
+man-db	man-db/auto-update	boolean	true
+# Packages to install:
+# Choices:
+discover	discover/install_hw_packages	multiselect
+# Trust new certificates from certificate authorities?
+# Choices: yes, no, ask
+ca-certificates	ca-certificates/trust_new_crts	select	yes
+# E-mail address(es) which will receive changes:
+apt-listchanges	apt-listchanges/email-address	string	root
+# Do you want to remove the user ?
+base-passwd	base-passwd/user-remove	boolean	true
+# Do you want to change the GID of user ?
+base-passwd	base-passwd/user-change-gid	boolean	true
+# Time zone:
+# Choices: Abidjan, Accra, Addis Ababa, Algiers, Asmara, Bamako, Bangui, Banjul, Bissau, Blantyre, Brazzaville, Bujumbura, Cairo, Casablanca, Ceuta, Conakry, Dakar, Dar es Salaam, Djibouti, Douala, El-Aaiún, Freetown, Gaborone, Harare, Johannesburg, Juba, Kampala, Khartoum, Kigali, Kinshasa, Lagos, Libreville, Lome, Luanda, Lubumbashi, Lusaka, Malabo, Maputo, Maseru, Mbabane, Mogadishu, Monrovia, Nairobi, Ndjamena, Niamey, Nouakchott, Ouagadougou, Porto-Novo, Sao Tome, Timbuktu, Tripoli, Tunis, Windhoek
+tzdata	tzdata/Zones/Africa	select
+# Keymap to use:
+# Choices: American English, Albanian, Arabic, Asturian, Bangladesh, Belarusian, Bengali, Belgian, Berber (Latin), Bosnian, Brazilian, British English, Bulgarian (BDS layout), Bulgarian (phonetic layout), Burmese, Canadian French, Canadian Multilingual, Catalan, Chinese, Croatian, Czech, Danish, Dutch, Dvorak, Dzongkha, Esperanto, Estonian, Ethiopian, Finnish, French, Georgian, German, Greek, Gujarati, Gurmukhi, Hebrew, Hindi, Hungarian, Icelandic, Irish, Italian, Japanese, Kannada, Kazakh, Khmer, Kirghiz, Korean, Kurdish (F layout), Kurdish (Q layout), Lao, Latin American, Latvian, Lithuanian, Macedonian, Malayalam, Nepali, Northern Sami, Norwegian, Persian, Philippines, Polish, Portuguese, Punjabi, Romanian, Russian, Serbian (Cyrillic), Sindhi, Sinhala, Slovak, Slovenian, Spanish, Swedish, Swiss French, Swiss German, Tajik, Tamil, Telugu, Thai, Tibetan, Turkish (F layout), Turkish (Q layout), Ukrainian, Uyghur, Vietnamese
+d-i	keyboard-configuration/xkb-keymap	select	in(ben)
+keyboard-configuration	keyboard-configuration/xkb-keymap	select	in(ben)
+# Use Control+Alt+Backspace to terminate the X server?
+d-i	keyboard-configuration/ctrl_alt_bksp	boolean	false
+keyboard-configuration	keyboard-configuration/ctrl_alt_bksp	boolean	false
+# for internal use
+console-setup	console-setup/codesetcode	string	Lat15
+# for internal use
+console-setup	console-setup/fontsize	string	8x16
+# Time zone:
+# Choices: Antananarivo, Chagos, Christmas, Cocos, Comoro, Kerguelen, Mahe, Maldives, Mauritius, Mayotte, Reunion
+tzdata	tzdata/Zones/Indian	select
+# Show changes in reverse order?
+apt-listchanges	apt-listchanges/reverse	boolean	false
+# Do you want to change the shell of user ?
+base-passwd	base-passwd/user-change-shell	boolean	true
+# Method for toggling between national and Latin mode:
+# Choices: Caps Lock, Right Alt (AltGr), Right Control, Right Shift, Right Logo key, Menu key, Alt+Shift, Control+Shift, Control+Alt, Alt+Caps Lock, Left Control+Left Shift, Left Alt, Left Control, Left Shift, Left Logo key, Scroll Lock key, No toggling
+d-i	keyboard-configuration/toggle	select	Alt+Shift
+keyboard-configuration	keyboard-configuration/toggle	select	Alt+Shift
+# Do you want to change the GID of group ?
+base-passwd	base-passwd/group-change-gid	boolean	true
+# PAM profiles to enable:
+# Choices: Unix authentication, Register user sessions in the systemd control group hierarchy, Create home directory on login
+libpam-runtime	libpam-runtime/profiles	multiselect	unix, systemd
+# Do you want to change the home directory of user ?
+base-passwd	base-passwd/user-change-home	boolean	true
+# Incompatible PAM profiles selected.
+libpam-runtime	libpam-runtime/conflicts	error
+# for internal use
+d-i	keyboard-configuration/optionscode	string	grp:alt_shift_toggle,grp_led:scroll
+keyboard-configuration	keyboard-configuration/optionscode	string	grp:alt_shift_toggle,grp_led:scroll
+# Disable retrieving changes over network?
+apt-listchanges	apt-listchanges/no-network	boolean	false
+# Keyboard model:
+# Choices: A4Tech KB-21, A4Tech KBS-8, A4Tech Wireless Desktop RFKB-23, Acer AirKey V, Acer C300, Acer Ferrari 4000, Acer laptop, Advance Scorpius KI, Amiga, Apple, Apple Aluminium (ANSI), Apple Aluminium (ISO), Apple Aluminium (JIS), Apple laptop, Asus laptop, Atari TT, Azona RF2300 wireless Internet, BenQ X-Touch, BenQ X-Touch 730, BenQ X-Touch 800, Brother Internet, BTC 5090, BTC 5113RF Multimedia, BTC 5126T, BTC 6301URF, BTC 9000, BTC 9000A, BTC 9001AH, BTC 9019U, BTC 9116U Mini Wireless Internet and Gaming, Cherry Blue Line CyBo@rd, Cherry Blue Line CyBo@rd (alt.), Cherry B.UNLIMITED, Cherry CyBo@rd USB-Hub, Cherry CyMotion Expert, Cherry CyMotion Master Linux, Cherry CyMotion Master XPress, Chicony Internet, Chicony KB-9885, Chicony KU-0108, Chicony KU-0420, Chromebook, Classmate PC, Compaq Armada laptop, Compaq Easy Access, Compaq Internet (13 keys), Compaq Internet (18 keys), Compaq Internet (7 keys), Compaq iPaq, Compaq Presario laptop, Creative Desktop Wireless 7000, Dell, Dell 101-key PC, Dell Inspiron 6000/8000 laptop, Dell Latitude laptop, Dell Precision M65 laptop, Dell Precision M laptop, Dell SK-8125, Dell SK-8135, Dell USB Multimedia, Dexxa Wireless Desktop, Diamond 9801/9802, DTK2000, eMachines m6800 laptop, Ennyah DKB-1008, Everex STEPnote, FL90, Fujitsu-Siemens Amilo laptop, Generic 101-key PC, Generic 102-key PC (intl.), Generic 104-key PC, Generic 105-key PC (intl.), Genius Comfy KB-12e, Genius Comfy KB-16M/Multimedia KWD-910, Genius Comfy KB-21e-Scroll, Genius KB-19e NB, Genius KKB-2050HS, Gyration, Happy Hacking, Happy Hacking for Mac, Hewlett-Packard Internet, Hewlett-Packard Mini 110 laptop, Hewlett-Packard NEC SK-2500 Multimedia, Hewlett-Packard nx9020, Hewlett-Packard Omnibook 500, Hewlett-Packard Omnibook 500 FA, Hewlett-Packard Omnibook 6000/6100, Hewlett-Packard Omnibook XE3 GC, Hewlett-Packard Omnibook XE3 GF, Hewlett-Packard Omnibook XT1000, Hewlett-Packard Pavilion dv5, Hewlett-Packard Pavilion ZT1100, Honeywell Euroboard, IBM Rapid Access, IBM Rapid Access II, IBM Space Saver, IBM ThinkPad 560Z/600/600E/A22E, IBM ThinkPad R60/T60/R61/T61, IBM ThinkPad Z60m/Z60t/Z61m/Z61t, Keytronic FlexPro, Kinesis, Logitech, Logitech Access, Logitech Cordless Desktop, Logitech Cordless Desktop (alt.), Logitech Cordless Desktop EX110, Logitech Cordless Desktop iTouch, Logitech Cordless Desktop LX-300, Logitech Cordless Desktop Navigator, Logitech Cordless Desktop Optical, Logitech Cordless Desktop Pro (2nd alt.), Logitech Cordless Freedom/Desktop Navigator, Logitech diNovo, Logitech diNovo Edge, Logitech G15 extra keys via G15daemon, Logitech Internet, Logitech Internet 350, Logitech Internet Navigator, Logitech iTouch, Logitech iTouch Cordless Y-RB6, Logitech iTouch Internet Navigator SE, Logitech iTouch Internet Navigator SE USB, Logitech Ultra-X, Logitech Ultra-X Cordless Media Desktop, MacBook/MacBook Pro, MacBook/MacBook Pro (intl.), Macintosh, Macintosh Old, Memorex MX1998, Memorex MX2500 EZ-Access, Memorex MX2750, Microsoft Comfort Curve 2000, Microsoft Internet, Microsoft Internet Pro (Swedish), Microsoft Natural, Microsoft Natural Elite, Microsoft Natural Ergonomic 4000, Microsoft Natural Pro OEM, Microsoft Natural Pro/Internet Pro, Microsoft Natural Pro USB/Internet Pro, Microsoft Natural Wireless Ergonomic 7000, Microsoft Office Keyboard, Microsoft Surface, Microsoft Wireless Multimedia 1.0A, NEC SK-1300, NEC SK-2500, NEC SK-6200, NEC SK-7100, Northgate OmniKey 101, OLPC, Ortek Multimedia/Internet MCK-800, PC-98, Propeller Voyager KTEZ-1000, QTronix Scorpius 98N+, Samsung SDM 4500P, Samsung SDM 4510P, Sanwa Supply SKB-KG3, Silvercrest Multimedia Wireless, SteelSeries Apex 300 (Apex RAW), Sun Type 4, Sun Type 5, Sun Type 6 (Japanese), Sun Type 6/7 USB, Sun Type 6/7 USB (European), Sun Type 6 USB (Japanese), Sun Type 6 USB (Unix), Sun Type 7 USB, Sun Type 7 USB (European), Sun Type 7 USB (Japanese)/Japanese 106-key, Sun Type 7 USB (Unix), Super Power Multimedia, SVEN Ergonomic 2500, SVEN Slim 303, Symplon PaceBook tablet, Targa Visionary 811, Toshiba Satellite S3000, Truly Ergonomic 227, Truly Ergonomic 229, Truly Ergonomic Computer Keyboard Model 227 (Wide Alt keys), Truly Ergonomic Computer Keyboard Model 229 (Standard sized Alt keys\, additional Super and Menu key), Trust Direct Access, Trust Slimline, Trust Wireless Classic, TypeMatrix EZ-Reach 2020, TypeMatrix EZ-Reach 2030 PS2, TypeMatrix EZ-Reach 2030 USB, TypeMatrix EZ-Reach 2030 USB (102/105:EU mode), TypeMatrix EZ-Reach 2030 USB (106:JP mode), Unitek KB-1925, ViewSonic KU-306 Internet, Winbook Model XP5, Yahoo! Internet
+d-i	keyboard-configuration/model	select	Generic 105-key PC (intl.)
+keyboard-configuration	keyboard-configuration/model	select	Generic 105-key PC (intl.)
+# Font size:
+# Choices: 8x13, 8x14, 8x15, 8x16, 8x18
+console-setup	console-setup/fontsize-fb47	select	8x16
+# kFreeBSD command line:
+grub-efi-amd64	grub2/kfreebsd_cmdline	string
+# Update NVRAM variables to automatically boot into Debian?
+grub-efi-amd64	grub2/update_nvram	boolean	true
+# Password input error
+shim-signed-common	shim/error/secureboot_key_mismatch	error
+# Display manager must be restarted manually
+libpam0g:amd64	libpam0g/xdm-needs-restart	error
+# for internal use; can be preseeded
+d-i	debian-installer/country	string	UK

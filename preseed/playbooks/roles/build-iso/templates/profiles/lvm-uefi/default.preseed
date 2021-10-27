@@ -16,6 +16,8 @@
 
 {% include "templates/profiles/common/clock.preseed" %}
 
+{% include "templates/profiles/common/security.preseed" %}
+
 ### Partitioning
 d-i partman-auto/method string lvm
 

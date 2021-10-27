@@ -17,6 +17,8 @@
 
 {% include "templates/profiles/common/clock.preseed" %}
 
+{% include "templates/profiles/common/security.preseed" %}
+
 ### Partitioning
 # Alternatively, you may specify a disk to partition. If the system has only
 d-i partman-auto/method string raid

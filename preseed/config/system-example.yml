@@ -80,11 +80,22 @@ network:
   domain: example.com
   iface: auto            # or use eth0, ens3, etc...
 
+
+
 # Country and locales definition
 country:
   code: uk
   timezone: Europe/London
 
+# Keyboard variants:
+# American English, Albanian, Arabic, Asturian, Bangladesh, Belarusian, Bengali, Belgian, Berber (Latin), Bosnian,
+# Brazilian, British English, Bulgarian (BDS layout), Bulgarian (phonetic layout), Burmese, Canadian French,
+# Canadian Multilingual, Catalan, Chinese, Croatian, Czech, Danish, Dutch, Dvorak, Dzongkha, Esperanto, Estonian,
+# Ethiopian, Finnish, French, Georgian, German, Greek, Gujarati, Gurmukhi, Hebrew, Hindi, Hungarian, Icelandic, Irish,
+# Italian, Japanese, Kannada, Kazakh, Khmer, Kirghiz, Korean, Kurdish (F layout), Kurdish (Q layout), Lao, Latin American,
+# Latvian, Lithuanian, Macedonian, Malayalam, Nepali, Northern Sami, Norwegian, Persian, Philippines, Polish, Portuguese,
+# Punjabi, Romanian, Russian, Serbian (Cyrillic), Sindhi, Sinhala, Slovak, Slovenian, Spanish, Swedish, Swiss French,
+# Swiss German, Tajik, Tamil, Telugu, Thai, Tibetan, Turkish (F layout), Turkish (Q layout), Ukrainian, Uyghur, Vietnamese
 locale:
   id: en_GB
   language: en

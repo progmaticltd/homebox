@@ -16,6 +16,8 @@
 
 {% include "templates/profiles/common/clock.preseed" %}
 
+{% include "templates/profiles/common/security.preseed" %}
+
 ### Partitioning
 d-i partman-auto/method string crypto
 
@@ -53,6 +55,9 @@ d-i partman-auto/choose_recipe select boot-crypto
 # group. It can either be a size with its unit (eg. 20 GB), a percentage of
 # free space or the 'max' keyword.
 d-i partman-auto-lvm/guided_size string {{ partitions.disk_usage }}
+
+# See https://wiki.debian.org/UEFI
+grub-efi-amd64  grub2/force_efi_extra_removable boolean true
 
 {% set default_fs = partitions.default_fs %}
 
@@ -135,7 +140,7 @@ d-i partman/mount_style select uuid
 
 ### Package selection
 tasksel tasksel/first multiselect standard, ssh-server
-d-i pkgsel/include string plymouth dropbear-initramfs cryptsetup-initramfs
+d-i pkgsel/include string plymouth cryptsetup-initramfs
 
 # Whether to upgrade packages after debootstrap.
 # Allowed values: none, safe-upgrade, full-upgrade

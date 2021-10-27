@@ -1,0 +1,5 @@
+
+# UEFI Secure Boot password:
+# shim-signed-common shim/secureboot_key password xxx-wip
+# Re-enter password to verify:
+# shim-signed-common shim/secureboot_key_again password xxx-wip

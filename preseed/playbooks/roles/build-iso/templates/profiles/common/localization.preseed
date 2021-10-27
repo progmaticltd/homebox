@@ -10,6 +10,5 @@ d-i debian-installer/locale string {{ locale.id }}.{{ locale.charset }}
 # Keyboard selection.
 d-i console-keymaps-at/keymap select {{ locale.keymap }}
 d-i keyboard-configuration/xkb-keymap select {{ locale.keymap }}
-d-i keyboard-configuration/variant select
+d-i keyboard-configuration/variant select {{ locale.keyboard_variant }}
 d-i keyboard-configuration/toggle select No toggling
-
