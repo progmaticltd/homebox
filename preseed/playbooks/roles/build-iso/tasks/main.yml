@@ -6,6 +6,11 @@
     path: '{{ build_dir }}'
     state: directory
 
+- name: Prepare additional kernel parameters
+  set_fact:
+    kernel_params: >-
+      locale={{ locale.id }}.{{ locale.charset }} keymap={{ locale.keymap }}
+
 - name: Copy the configuration file
   tags: preseed
   template:

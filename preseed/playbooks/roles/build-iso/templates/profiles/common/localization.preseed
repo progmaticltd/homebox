@@ -2,13 +2,13 @@
 # The values can also be preseeded individually for greater flexibility.
 d-i debian-installer/language string {{ locale.id }}:{{ locale.language }}
 d-i debian-installer/country string {{ locale.country }}
-d-i debian-installer/locale string {{ locale.id }}.{{ locale.charset }}
+d-i debian-installer/locale string {{ locale.id }}
 
 # Optionally specify additional locales to be generated.
 # d-i localechooser/supported-locales multiselect en_GB.UTF-8
 
 # Keyboard selection.
-d-i console-keymaps-at/keymap select {{ locale.keymap }}
+d-i console-keymaps-at/keymap string {{ locale.keymap }}
 d-i keyboard-configuration/xkb-keymap select {{ locale.keymap }}
 d-i keyboard-configuration/variant select {{ locale.keyboard_variant }}
 d-i keyboard-configuration/toggle select No toggling
