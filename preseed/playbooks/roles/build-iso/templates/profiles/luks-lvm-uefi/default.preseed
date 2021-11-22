@@ -20,6 +20,7 @@
 
 ### Partitioning
 d-i partman-auto/method string crypto
+d-i partman-auto/disk string /dev/{{ disk_name | default("sda") }}
 
 # Passphrase for the encryption
 d-i partman-crypto/passphrase password {{ system.passphrase }}

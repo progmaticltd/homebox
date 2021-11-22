@@ -14,7 +14,7 @@ packages:
 # Partition sizes for homebox-lvm profile
 # The “disk_usage” and all “size” values are in percent
 partitions:
-  disk_usage: 90%
+  disk_usage: 95%
   default_fs: ext4
   boot_fs: ext4
   uefi:
@@ -31,30 +31,30 @@ partitions:
   list:
     - name: home
       mountpoint: /home
-      priority: 80
-      size: 80
+      priority: 75
+      size: 75
     - name: system
       mountpoint: /
       priority: 4
       size: 4
-    - name: root
-      mountpoint: /root
-      priority: 1
-      size: 1
     - name: usr
       mountpoint: /usr
-      priority: 4
-      size: 4
-    - name: tmp
-      mountpoint: /tmp
-      priority: 1
-      size: 1
+      priority: 9
+      size: 9
     - name: var
       mountpoint: /var
       priority: 7
       size: 7
       fs: ext4
+    - name: tmp
+      mountpoint: /tmp
+      priority: 1
+      size: 1
     - name: log
       mountpoint: /var/log
       priority:
       size: 3
+    - name: root
+      mountpoint: /root
+      priority: 1
+      size: 1
