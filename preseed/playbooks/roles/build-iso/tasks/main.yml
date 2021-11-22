@@ -26,6 +26,7 @@
 - name: Get the first disk size (used for lvm & raid)
   set_fact:
     dsize: '{{ system.hw.disks[0].size | regex_replace("[^0-9]", "") | int }}'
+    disk_name: '{{ system.hw.disks[0].name }}'
 
 - name: Copy the profile folder content
   tags: preseed
