@@ -149,9 +149,40 @@ considerations to use file level encryption, but this is not implemented and mig
 
 ## LVM on BIOS
 
-Use `preseed: lvm-bios`. No redundancy and no encryption. This is probably not what you want for a live system, but might be
-useful for debugging.
+Use `preseed: lvm-bios`. No redundancy and no encryption. This is probably not what you want for a live system, but
+might be useful for debugging.
 
 ## LVM on BIOS UEFI/Secure boot
 
 Use `preseed: lvm-uefi`. Same as the previous one, with UEFI / Secure boot support included.
+
+With a 32GB disk, the partitions sizes result is displayed below:
+
+```
+root@mail:~# df -h
+Filesystem                   Size  Used Avail Use% Mounted on
+udev                         1.9G     0  1.9G   0% /dev
+tmpfs                        383M  664K  382M   1% /run
+/dev/mapper/mail--vg-system  1.1G  3.3M  956M   1% /
+/dev/mapper/mail--vg-usr     2.3G  784M  1.4G  36% /usr
+tmpfs                        1.9G     0  1.9G   0% /dev/shm
+tmpfs                        5.0M     0  5.0M   0% /run/lock
+/dev/sda2                    231M   57M  158M  27% /boot
+/dev/mapper/mail--vg-tmp     250M   11K  233M   1% /tmp
+/dev/mapper/mail--vg-root    250M   18K  233M   1% /root
+/dev/mapper/mail--vg-home     20G   24K   19G   1% /home
+/dev/mapper/mail--vg-var     1.8G  143M  1.6G   9% /var
+/dev/sda1                    240M  274K  239M   1% /boot/efi
+/dev/mapper/mail--vg-log     766M   24M  688M   4% /var/log
+tmpfs                        383M     0  383M   0% /run/user/0
+root@mail:~# pvs
+  PV                     VG      Fmt  Attr PSize  PFree
+    /dev/mapper/sda3_crypt mail-vg lvm2 a--  28.83g <1.46g
+
+```
+
+You can easily extend and resize one partition, on the fly, with a command like this:
+
+```sh
+lvextend -r -L +500M /tmp
+```
