@@ -77,7 +77,7 @@ for import_path in $imports; do
     echo "$date: Starting to import for account '$import'" >> "$logfile"
 
     # decrypt the configuration file using the encryption key passed in the environment
-    openssl $CIPHER -d -in "safe/${import}.conf" -out "conf/${import}.conf" -pass env:DECRYPT_KEY
+    openssl $CIPHER -pbkdf2 -iter 100000 -d -in "safe/${import}.conf" -out "conf/${import}.conf" -pass env:DECRYPT_KEY
 
     # Start the import command and remove the lock once finished
     # Run in background, if there is multiple accounts
