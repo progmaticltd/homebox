@@ -22,7 +22,7 @@ limits:
     nofile: 2048        # Maximum number of open file descriptors: 2048
     maxlogins: 20       # Maximum number of logins
     data: 524288        # Maximum data size: 512M
-    fsize: 131072       # Maximum file size: 128MB
+    fsize: 524288       # Maximum file size: 512M
 
 # Tuning on a live system
 # nofile: lsof -u <user> | wc -l
