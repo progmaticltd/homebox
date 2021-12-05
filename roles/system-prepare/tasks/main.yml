@@ -163,60 +163,6 @@
 # We are also installing fail2ban, so the other services might use it, like postfix, dovecot and roundcube
 # The package 'unattended-upgrades' download and install security updates by default
 
-- name: Install AppArmor packages
-  tags: security
-  apt:
-    name: '{{ apparmor_pkgs }}'
-    state: present
-
-- name: Configure grub to add apparmor by default on boot
-  register: grub_config
-  tags: security
-  lineinfile:
-    path: /etc/default/grub
-    backrefs: true
-    regexp: 'GRUB_CMDLINE_LINUX_DEFAULT="(?!apparmor=1 security=apparmor)(.*)"'
-    line: 'GRUB_CMDLINE_LINUX_DEFAULT="apparmor=1 security=apparmor \1"'
-    state: present
-
-# AppArmor will be enabled on the next reboot
-- name: Update grub
-  when: grub_config.changed
-  command: update-grub2
-
-- name: Enable AppArmor service
-  tags: security
-  service:
-    name: apparmor
-    enabled: true
-
-- name: Check if AppArmor is enabled
-  register: aa_enabled
-  tags: security
-  shell: aa-enabled
-  failed_when: false
-  changed_when: false
-
-- name: Reboot to activate AppArmor if not already active
-  when: aa_enabled.rc == 1
-  tags: security, apparmor
-  shell: >-
-    sleep 2 &&
-    systemctl reboot --message
-    "Restarting the system to activate AppArmor"
-  async: 60
-  poll: 0
-  ignore_errors: true
-
-- name: Wait for the server to come back online
-  when: aa_enabled.rc == 1
-  tags: security
-  delegate_to: localhost
-  wait_for_connection:
-    delay: 30
-    sleep: 10
-    timeout: '{{ system.reboot_timeout }}'
-
 - name: Create a random password for file encryption on the server
   tags: encryption
   no_log: true
@@ -287,13 +233,14 @@
 
 # LUKS management
 - name: Install Yubikey key decryption
-  tags: luks
   when: security.luks.yubikey
+  tags: luks
   apt:
     name: yubikey-luks
     state: present
 
 - name: Add a script to register the Yubikey
+  when: security.luks.yubikey
   tags: luks
   copy:
     src: yubikey-enroll.sh
@@ -316,5 +263,3 @@
     dest: /usr/bin/python
     state: link
     force: yes
-
--
