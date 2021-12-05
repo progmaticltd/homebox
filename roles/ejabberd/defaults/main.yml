@@ -10,3 +10,12 @@ nginx_sec_headers:
     value: same-origin
   - id: X-Frame-Options
     value: sameorigin
+
+jabber_certificates:
+  - conference
+  - files
+  - proxy
+  - pubsub
+  - upload
+  - vjud
+  - xmpp

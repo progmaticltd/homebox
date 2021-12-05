@@ -1,5 +1,10 @@
 ---
 
+- name: Install sqlite for ejabberd
+  apt:
+    name: sqlite3
+    state: present
+
 - name: Install the packages required for ejabberd
   apt:
     name: ejabberd
@@ -33,6 +38,27 @@
     src: renewal-hook.sh
     dest: /etc/letsencrypt/renewal-hooks/deploy/40-ejabberd.sh
     mode: '0700'
+
+- name: Let jabber access the default certificate and private keys
+  tags: cert
+  include_role:
+    name: cert-perms
+  vars:
+    cert_dir: '{{ network.domain }}'
+    entity_group: ejabberd
+    access_private_key: true
+
+- name: Let jabber access the specific certificate and private keys
+  tags: cert
+  include_role:
+    name: cert-perms
+  vars:
+    cert_dir: '{{ cert }}.{{ network.domain }}'
+    entity_group: ejabberd
+    access_private_key: true
+  loop: '{{ jabber_certificates }}'
+  loop_control:
+    loop_var: cert
 
 #
 # End of TLS / SSL Configuration ###############################################

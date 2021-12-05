@@ -41,6 +41,14 @@ certfiles:
   - "/etc/letsencrypt/live/xmpp.{{ network.domain }}/privkey.pem"
   - "/etc/letsencrypt/live/conference.{{ network.domain }}/fullchain.pem"
   - "/etc/letsencrypt/live/conference.{{ network.domain }}/privkey.pem"
+  - "/etc/letsencrypt/live/upload.{{ network.domain }}/fullchain.pem"
+  - "/etc/letsencrypt/live/upload.{{ network.domain }}/privkey.pem"
+  - "/etc/letsencrypt/live/pubsub.{{ network.domain }}/fullchain.pem"
+  - "/etc/letsencrypt/live/pubsub.{{ network.domain }}/privkey.pem"
+  - "/etc/letsencrypt/live/proxy.{{ network.domain }}/fullchain.pem"
+  - "/etc/letsencrypt/live/proxy.{{ network.domain }}/privkey.pem"
+  - "/etc/letsencrypt/live/vjud.{{ network.domain }}/fullchain.pem"
+  - "/etc/letsencrypt/live/vjud.{{ network.domain }}/privkey.pem"
 
 # TLS configuration
 define_macro:

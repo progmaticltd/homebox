@@ -5,21 +5,23 @@
     #include <abstractions/base>
     #include <abstractions/consoles>
     #include <abstractions/nameservice>
+    #include <abstractions/openssl>
+    #include <abstractions/ssl_keys>
+    #include <local/usr.sbin.ejabberdctl>
 
     capability net_bind_service,
     capability dac_override,
     capability dac_read_search, # for sed
 
-    /{,usr/}bin/bash rmix,
+    /{,usr/}bin/bash mrix,
     /{,usr/}bin/cat ix,
-    /{,usr/}bin/dash rmix,
+    /{,usr/}bin/dash mrix,
     /{,usr/}bin/date ix,
     /{,usr/}bin/df ix,
     /{,usr/}bin/{,p}grep ix,
     /{,usr/}bin/ps ix,
     /{,usr/}bin/sed ix,
     /{,usr/}bin/sleep ix,
-
 
     /{,usr/}bin/su px -> /usr/sbin/ejabberdctl//su,
 
@@ -42,12 +44,13 @@
         /{,usr/}bin/bash px -> /usr/sbin/ejabberdctl,
         /{,usr/}bin/dash px -> /usr/sbin/ejabberdctl,
         /{,usr/}bin/su rm,
-        /{,usr/}sbin/unix_chkpwd rmix,
+        /{,usr/}sbin/unix_chkpwd mrix,
         /run/systemd/journal/dev-log w,
 
         /etc/environment r,
         /etc/default/locale r,
         /etc/security/limits.d r,
+        /etc/security/limits.d/* r,
 
         /lib/@{multiarch}/libpam.so rm,
         /usr/lib/erlang/p1_pam/bin/epam rm,
@@ -56,14 +59,19 @@
 
     /etc/default/ejabberd r,
     /etc/ejabberd r,
+    /etc/ejabberd/* r,
+    /etc/ejabberd/modules.d/ r,
+    /etc/ejabberd/modules.d/* r,
     /etc/ImageMagick r,
 
-    /run/ejabberd rw,
+    owner /run/ejabberd rw,
+    owner /run/ejabberd/ejabberd.pid w,
 
-    /sys/devices/system/cpu r,
-    /sys/devices/system/node r,
+    /sys/devices/system/** r,
+    /sys/fs/cgroup/cgroup.controllers r,
     /proc/sys/kernel/osrelease r, # for pgrep
     /proc/sys/kernel/random/uuid r,
+    /proc/*/fd/ r,
 
     @{PROC}/ r, # for pgrep
 
@@ -81,7 +89,7 @@
     /usr/bin/uuidgen ix,
 
     /usr/lib/erlang/bin/erl ix,
-    /usr/lib/erlang/erts-*/bin/beam ix,
+    /usr/lib/erlang/erts-*/bin/beam* mrix,
     /usr/lib/erlang/erts-*/bin/child_setup ix,
     /usr/lib/erlang/erts-*/bin/epmd ix,
     /usr/lib/erlang/erts-*/bin/erl_child_setup ix,
@@ -99,12 +107,15 @@
     /usr/share/ejabberd r,
     /usr/share/ImageMagick-*/ rix,
 
-    /var/backups/ rw,
-    /var/backups/ejabberd rwlk,
-    /var/lib/ejabberd rw,
-    /var/log/ejabberd/ rwlk,
+    owner /var/backups/backups/*/ r,
+    owner /var/backups/ rw,
+    owner /var/backups/ejabberd rwlk,
 
-    /var/run/ejabberd rw,
+    owner /var/lib/ejabberd/ r,
+    owner /var/lib/ejabberd/** rw,
+
+    owner /var/log/ejabberd/ rwlk,
+    owner /var/log/ejabberd/*.log w,
 
     # Site-specific additions and overrides. See local/README for details.
     #include <local/usr.sbin.ejabberdctl>
