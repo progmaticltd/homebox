@@ -13,9 +13,9 @@
   /etc/GNUstep/GNUstep.conf r,
   /etc/sogo/sogo.conf r,
   /etc/timezone r,
+  /etc/gss/mech.d/ r,
 
   # Capabilities.
-  # TODO: restrict to minimal requirement
   capability dac_override,
 
   # sogo-tool regularly requests read access to the root filesystem.
@@ -39,8 +39,9 @@
   /etc/ldap/ldap.conf r,
 
   # Global backup folders
-  /var/backups/sogo/ rw,
-  /var/backups/sogo/** rw,
+  owner /var/backups/sogo/ rw,
+  owner /var/backups/sogo/** rw,
+  owner /var/backups/backups/sogo-*/* w,
 
   # Allow to remove old backups
   /bin/rm rix,

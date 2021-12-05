@@ -12,6 +12,7 @@
   /etc/timezone r,
   /etc/ssl/openssl.cnf r,
   /etc/gss/mech.d r,
+  /etc/gss/mech.d/ r,
 
   # sogo-ealarms-notify requests read access to the root filesystem.
   # reported here: https://sogo.nu/bugs/view.php?id=4704

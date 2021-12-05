@@ -12,6 +12,7 @@
   /etc/sogo/sogo.conf r,
   /etc/ssl/openssl.cnf r,
   /etc/ldap/ldap.conf r,
+  /etc/gss/mech.d/ r,
 
   # I am not sure why SOGo need to read the attributes of the root folder…
   allow / r,
@@ -25,10 +26,11 @@
   /usr/bin/zip rix,
 
   # proc and run filesystem
-  /proc/@{pid}/cmdline r,
-  /proc/@{pid}/stat r,
-  /proc/@{pid}/status r,
-  /proc/@{pid}/mounts r,
+  owner /proc/@{pid}/cmdline r,
+  owner /proc/@{pid}/stat r,
+  owner /proc/@{pid}/status r,
+  owner /proc/@{pid}/mounts r,
+  owner /proc/@{pid}/fd/ r,
   /run/sogo/ r,
   /run/sogo/** rwk,
 
