@@ -10,6 +10,7 @@
 - name: Create dropbear log folder
   file:
     path: /var/log/dropbear
+    state: directory
     owner: root
     group: root
     mode: '0700'
