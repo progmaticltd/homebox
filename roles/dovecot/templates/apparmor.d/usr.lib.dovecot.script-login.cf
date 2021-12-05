@@ -12,6 +12,7 @@
   # Capabilities
   capability audit_write,
   capability dac_override,
+  capability dac_read_search,
   capability net_admin,
   capability setgid,
   capability setuid,
@@ -159,8 +160,11 @@
   /usr/bin/sendxmpp px,
   owner /home/users/postmaster/.sendxmpprc r,
 
-  # proc filesystem
+  # proc and run filesystem
+  owner /run/systemd/userdb/ r,
+  owner /run/systemd/userdb/* r,
   /proc/*/fd/ r,
   /proc/*/limits r,
   /proc/*/loginuid r,
+  /proc/sys/kernel/random/boot_id r,
 }
