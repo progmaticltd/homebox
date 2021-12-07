@@ -19,16 +19,17 @@
   vars:
     cert_dir: 'imap.{{ network.domain }}'
     entity_group: dovecot
-    access_private_key: true
+    access_private_key: false
 
 - name: Set the default permissions for the ldap certificate folders
+  when: mail.pop3
   tags: cert
   import_role:
     name: cert-perms
   vars:
     cert_dir: 'pop3.{{ network.domain }}'
     entity_group: dovecot
-    access_private_key: true
+    access_private_key: false
 
 - name: Copy the certificate renewal hook for the LDAP certificate access
   tags: scripts
