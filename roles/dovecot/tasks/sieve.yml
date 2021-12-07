@@ -64,13 +64,13 @@
   loop_control:
     loop_var: file
 
-- name: Allow users to read global the compiled sieve scripts
+- name: Allow users to read the compiled sieve scripts
   tags: dovecot
   file:
-    path: '/var/lib/dovecot/sieve/{{ file }}'
+    path: '/var/lib/dovecot/sieve/{{ file | replace(".sieve", ".svbin") }}'
     mode: '0644'
     owner: root
-    group: users
+    group: root
   with_items:
     - '{{ sieve.global_scripts }}'
   loop_control:
