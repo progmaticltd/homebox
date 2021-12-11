@@ -1,11 +1,12 @@
 ---
 # SOGo packages to install
 sogo_pkgs:
-  - postgresql
-  - sogo-common
-  - sogo
+  - libxmlsec1-openssl
   - memcached
+  - postgresql
   - python3-psycopg2
+  - sogo
+  - sogo-common
   - zip
 
 
