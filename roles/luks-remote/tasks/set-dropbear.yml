@@ -22,14 +22,37 @@
     dest: /etc/dropbear-initramfs/authorized_keys
     remote_src: yes
 
-# FIXME: The key conversion does not work anymore on Buster
-# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=955384
-# For now, I copy the default keys
-- name: List dropbear keys
+# NOTE: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=955384
+- name: List OpenSSH keys
   register: keys_list
   find:
-    path: /etc/dropbear
+    path: /etc/ssh
     pattern: '*key'
+
+- name: Create the temporary directory to convert the key
+  file:
+    path: /root/ssh-keys-convert
+    state: directory
+    mode: '0700'
+
+- name: Copy the key in the temporary directory
+  copy:
+    src: '{{ file.path }}'
+    dest: '/root/ssh-keys-convert/{{ file.path | basename }}'
+    mode: '0400'
+    remote_src: true
+  loop: '{{ keys_list.files }}'
+  loop_control:
+    loop_var: file
+
+- name: Convert the key to PEM format
+  shell: >-
+    ssh-keygen -p -N "" -m PEM -f {{ file.path | basename }}
+  args:
+    chdir: /root/ssh-keys-convert
+  loop: '{{ keys_list.files }}'
+  loop_control:
+    loop_var: file
 
 - name: Remove dropbear default keys
   notify: Update initramfs
@@ -37,6 +60,39 @@
     src: '{{ key.path }}'
     dest: '/etc/dropbear-initramfs/{{ key.path | basename }}'
     remote_src: true
-  with_items: '{{ keys_list.files }}'
+  loop: '{{ keys_list.files }}'
   loop_control:
     loop_var: key
+
+- name: Convert the key to dropbear format
+  shell: >-
+    dropbearconvert
+    openssh dropbear
+    {{ file.path | basename }}
+    /etc/dropbear/{{ file.path | basename | replace("ssh_host", "dropbear") | replace("_key", "_host_key") }}
+  args:
+    chdir: /root/ssh-keys-convert
+  loop: '{{ keys_list.files }}'
+  loop_control:
+    loop_var: file
+
+- name: List new dropbear keys
+  register: keys_list
+  find:
+    path: /etc/dropbear
+    pattern: '*key'
+
+- name: Copy the new keys for dropbear initramfs
+  copy:
+    src: '{{ file.path }}'
+    dest: '/etc/dropbear-initramfs/{{ file.path | basename }}'
+    mode: '0400'
+    remote_src: true
+  loop: '{{ keys_list.files }}'
+  loop_control:
+    loop_var: file
+
+- name: Remove the temporary directory to convert the key
+  file:
+    path: /root/ssh-keys-convert
+    state: absent
