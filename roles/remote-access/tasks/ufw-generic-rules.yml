@@ -3,8 +3,8 @@
 - name: Configure the firewall for SSH access
   tags: security
   ufw:
-    proto: tcp
-    port: 22
+    proto: '{{ access.proto | default("tcp") }}'
+    port: '{{ access.port | default(22) }}'
     src: '{{ access.src }}'
     rule: '{{ access.rule | default("allow") }}'
     comment: '{{ access.comment | default("Allow SSH access") }}'
