@@ -195,7 +195,7 @@
   when: not system.devel
   tags: apt
   apt:
-    name: python-psycopg2
+    name: python3-psycopg2
     state: absent
 
 # Create entries for the DNS server ===========================================
