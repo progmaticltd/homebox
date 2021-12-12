@@ -1,72 +1,32 @@
 ---
-# sudo is required to impersonate both SOGo and dovecot when
-# restoring data. Once restored, we don't needt it anymore,
-# so we will remove it if we are installing it.
-- name: Make sure sudo is installed
-  register: sudo_pkg
-  apt:
-    name: sudo
-    state: present
 
-- name: Restore /home and /var/backups folders from a previous installation
+- name: Deploy the services to restore the backup
+  notify: Start restore services
   tags: restore
-  shell: >-
-    /usr/local/sbin/homebox-backup --action restore --config {{ location.name }}
-  with_items:
-    - '{{ backup.locations | selectattr("restore", "defined") | selectattr("restore", "equalto", true) | list }}'
+  template:
+    src: backup-restore.systemd
+    dest: /etc/systemd/system/backup-restore-{{ location.name }}.service
+  loop: '{{ backup.locations }}'
   loop_control:
     loop_var: location
 
-- name: Check if SOGo backup exists
-  register: sogo_backup_dir
-  tags: restore
-  when: sogo.install
-  file:
-    path: /var/backups/sogo
-    state: directory
-
-- name: Get the name of the last SOGo backup
-  tags: restore
-  when: sogo.install and not sogo_backup_dir.changed
-  register: sogo_last_backup_dir
-  shell: >-
-    set -o pipefail ;
-    ls -1t /var/backups/sogo/ | head -n 1
-  args:
-    executable: /bin/bash
-
-- name: Restore address books and calendars
-  tags: restore
-  become: true
-  become_user: sogo
-  become_method: sudo
-  when: sogo.install and not sogo_backup_dir.changed and (sogo_last_backup_dir.stdout | length > 0)
-  notify: Restart memcached
-  shell: >-
-    test -f /var/backups/sogo/{{ sogo_last_backup_dir.stdout }}/{{ user.uid }} &&
-    /usr/sbin/sogo-tool restore -F ALL
-    /var/backups/sogo/{{ sogo_last_backup_dir.stdout }}
-    {{ user.uid }}
-    || /bin/true
-  with_items:
-    - '{{ users }}'
+- name: Enable the services to restore backup
+  notify: Start restore services
+  systemd:
+    name: backup-restore-{{ location.name }}
+    enabled: '{{ location.restore | default(false) }}'
+  loop: '{{ backup.locations }}'
   loop_control:
-    loop_var: user
+    loop_var: location
 
-- name: Rebuild mail indexes
-  tags: restore
-  become: true
-  become_user: '{{ user.uid }}'
-  shell: >-
-    doveadm index -u {{ user.uid }} *
-  with_items:
-    - '{{ users }}'
-    - uid: postmaster
-  loop_control:
-    loop_var: user
+- name: Copy the SOGo restore script
+  copy:
+    src: sogo-restore.sh
+    dest: /usr/local/sbin/sogo-restore.sh
 
-- name: Remove sudo if we have installed it previously
-  when: sudo_pkg.changed
-  apt:
-    name: sudo
-    state: absent
+- name: Install a dovecot index update cron job
+  cron:
+    cron_file: dovecot-indexes
+    special_time: daily
+    job: "doveadm -v index -q -A '*'"
+    user: root

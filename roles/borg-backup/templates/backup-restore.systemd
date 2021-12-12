@@ -1,0 +1,19 @@
+# Backup restoration service for {{ location.name }}.
+
+[Unit]
+Description=Backup restoration service for {{ location.name }}
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+ExecStart=/usr/local/sbin/homebox-backup --action restore --config {{ location.name }}
+StandardOutput=syslog
+StandardError=syslog
+Restart=on-failure
+PIDFile=/run/homebox-backup-{{ location.name }}/restore.pid
+WorkingDirectory=/run/homebox-backup-{{ location.name }}
+RuntimeDirectory=/run/homebox-backup-{{ location.name }}
+
+[Install]
+WantedBy=default.target

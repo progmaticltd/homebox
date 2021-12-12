@@ -49,7 +49,6 @@
   systemd:
     name: 'mnt-backup-{{ location.name }}.mount'
     enabled: true
-    state: started
 
 - name: Add automount definition for this device
   notify: Reload Systemd

@@ -15,3 +15,12 @@
     name: memcached
     state: restarted
     no_block: true
+
+- name: Start restore services
+  systemd:
+    name: backup-restore-{{ location.name }}
+    state: '{{ location.restore | ternary("started", omit) }}'
+    no_block: true
+  loop: '{{ backup.locations }}'
+  loop_control:
+    loop_var: location
