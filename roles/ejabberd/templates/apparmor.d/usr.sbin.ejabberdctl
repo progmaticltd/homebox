@@ -1,6 +1,6 @@
 #include <tunables/global>
 
-/usr/sbin/ejabberdctl flags=(complain) {
+/usr/sbin/ejabberdctl {
 
     #include <abstractions/base>
     #include <abstractions/consoles>
@@ -49,7 +49,7 @@
 
         /etc/environment r,
         /etc/default/locale r,
-        /etc/security/limits.d r,
+        /etc/security/limits.d/ r,
         /etc/security/limits.d/* r,
 
         /lib/@{multiarch}/libpam.so rm,
