@@ -15,6 +15,11 @@
     group: root
     mode: '0700'
 
+- name: Create dropbear log folder
+  file:
+    path: /etc/dropbear-initramfs
+    state: directory
+
 - name: Copy the ssh public key for authentication
   notify: Update initramfs
   copy:
