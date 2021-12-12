@@ -220,10 +220,11 @@ system_default:
   release: bullseye        # distribution to use (stretch/buster/bullseye)
   devel: false             # mark the system as a development machine
   debug: false             # activate debug options
-  reboot_timeout: 180      # max time to wait when restarting the server
   keep_certs: false        # keep the letsencrypt certificates locally,
                            # even when using a live environment
   apt_cacher: ~            # IP address or DNS name for an apt-cacher
+  apt:                     # The apt sections to use,
+    sections: [ main ]     # contrib and non-free not activated by default
 
 ###############################################################################
 # Once the system is in place, it is possible to use 'limit' for the rule,
@@ -234,7 +235,7 @@ firewall_default:
   fwknop:
     install: false
     port: random
-  ssh:
+  input:
     - src: any
       rule: allow
       comment: allow SSH from anywhere
@@ -247,7 +248,11 @@ firewall_default:
       - dest: any
         proto: udp
         port: 53
-        comment: 'Allow DNS requests'
+        comment: 'Allow DNS requests (udp)'
+      - dest: any
+        proto: tcp
+        port: 53
+        comment: 'Allow DNS requests (tcp)'
       - dest: any
         proto: udp
         port: 123
@@ -287,15 +292,18 @@ security_default:
   # https://wiki.mozilla.org/Security/Server_Side_TLS
   tls:
     openssl_ciphers:
-      "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:\
-       ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:\
-       ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:\
-       DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
+      - ECDHE-ECDSA-AES128-GCM-SHA256
+      - ECDHE-RSA-AES128-GCM-SHA256
+      - ECDHE-ECDSA-AES256-GCM-SHA384
+      - ECDHE-RSA-AES256-GCM-SHA384
+      - ECDHE-ECDSA-CHACHA20-POLY1305
+      - ECDHE-RSA-CHACHA20-POLY1305
+      - DHE-RSA-AES128-GCM-SHA256
+      - DHE-RSA-AES256-GCM-SHA384
     # Protocol versions listed from oldest to newest
     versions:
+      - 'TLSv1.3'
       - 'TLSv1.2'
-      - 'TLSv1.3'    # TLSv1.3 will be ignored for platforms not supporting it
-                     # eg Debian 9 (stretch)
     unused_versions:
       - 'SSLv2'
       - 'SSLv3'
