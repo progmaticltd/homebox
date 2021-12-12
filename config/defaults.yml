@@ -302,8 +302,8 @@ security_default:
       - DHE-RSA-AES256-GCM-SHA384
     # Protocol versions listed from oldest to newest
     versions:
-      - 'TLSv1.3'
       - 'TLSv1.2'
+      - 'TLSv1.3'
     unused_versions:
       - 'SSLv2'
       - 'SSLv3'

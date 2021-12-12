@@ -379,23 +379,6 @@
     backup: '{{ backup_default }}'
 
 ################################################################################
-# Filter settings for distribution specific parameters
-- name: Filter out TLSv1.3 for Debian 9 (stretch)
-  run_once: true
-  when:
-    - ansible_facts['distribution'] == "Debian"
-    - ansible_facts['distribution_major_version'] == "9"
-  set_fact:
-    security: '{{ security
-                | combine({
-                    "tls": {
-                      "versions": security.tls.versions
-                                | reject("eq", "TLSv1.3")
-                                | list
-                    }
-                  }, recursive=True) }}'
-
-################################################################################
 # Create the complete list of certificates to genetarate
 
 - name: Initialise the list of certificates
