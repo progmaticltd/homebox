@@ -17,9 +17,3 @@
     name: fail2ban
     state: restarted
     no_block: true
-
-- name: Restart tomcat
-  systemd:
-    service: 'tomcat{{ tomcat_version[ansible_distribution_release] }}'
-    state: restarted
-    no_block: true

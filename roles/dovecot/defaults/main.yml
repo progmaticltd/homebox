@@ -1,46 +1,42 @@
 ---
 
-tomcat_version:
-  stretch: 8
-  buster: 9
-
 sieve:
   global_scripts:
-    - duplicate-checks.sieve
-    - sent-checks.sieve
     - before-global.sieve
-    - report-spam.sieve
-    - report-ham.sieve
-    - tags-important.sieve
     - draft-rules.sieve
+    - duplicate-checks.sieve
+    - report-ham.sieve
+    - report-spam.sieve
+    - sent-checks.sieve
+    - tags-important.sieve
 
 # Default dovecot packages to install
 dovecot:
   packages:
     - dovecot-core
     - dovecot-imapd
-    - dovecot-lmtpd
-    - dovecot-pop3d
-    - dovecot-managesieved
-    - dovecot-sieve
     - dovecot-ldap
+    - dovecot-lmtpd
+    - dovecot-managesieved
+    - dovecot-pop3d
+    - dovecot-sieve
   fts_packages:
-    - dovecot-fts-xapian
-    - poppler-utils
     - catdoc
-    - unzip
     - docx2txt
-    - odt2txt
-    - xlsx2csv
-    - unrtf
+    - dovecot-fts-xapian
     - gzip
+    - odt2txt
     - p7zip-full
-    - p7zip-rar
+    - poppler-utils
     - tnef
+    - unrar-free
+    - unrtf
+    - unzip
+    - xlsx2csv
   access_check_packages:
+    - curl
     - grepcidr
     - sqlite3
-    - curl
   settings:
     mail_max_userip_connections: 64
     lda_mailbox_autocreate: no

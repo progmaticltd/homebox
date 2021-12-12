@@ -141,7 +141,7 @@ uncompress_and_parse() {
         shortname="$(basename $attach).rar"
         if [ "$encrypted" = "0" ]; then
             mv $attach $shortname
-            7z x $shortname || exit $ERROR_EXTRACTION
+            unrar -x $shortname || exit $ERROR_EXTRACTION
             rm $shortname
         else
             # Just print the list of entries
