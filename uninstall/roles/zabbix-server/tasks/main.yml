@@ -4,7 +4,7 @@
   register: psycopg2_pkg
   tags: apt
   apt:
-    name: python-psycopg2
+    name: python3-psycopg2
     state: present
 
 - name: Stop the Zabbix server
@@ -95,5 +95,5 @@
   when: psycopg2_pkg.changed and not system.devel
   tags: apt
   apt:
-    name: python-psycopg2
+    name: python3-psycopg2
     state: absent
