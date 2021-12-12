@@ -1,15 +1,16 @@
 # Main repository
-deb http://deb.debian.org/debian/ {{ system.release }} main non-free contrib
-deb-src http://deb.debian.org/debian/ {{ system.release }} main non-free contrib
+deb http://deb.debian.org/debian/ {{ system.release }} {{ system.apt.sections | join(" ") }}
+deb-src http://deb.debian.org/debian/ {{ system.release }} {{ system.apt.sections | join(" ") }}
 
 # Security updates
-# deb http://security.debian.org/ {{ system.release }}/updates main contrib non-free
-# deb-src http://security.debian.org/ {{ system.release }}/updates main contrib non-free
+# deb http://security.debian.org/ {{ system.release }}/updates {{ system.apt.sections | join(" ") }}
+# deb-src http://security.debian.org/ {{ system.release }}/updates {{ system.apt.sections | join(" ") }}
 
 # {{ system.release }}-updates, previously known as 'volatile'
-deb http://deb.debian.org/debian/ {{ system.release }}-updates main contrib non-free
-deb-src http://deb.debian.org/debian/ {{ system.release }}-updates main contrib non-free
+deb http://deb.debian.org/debian/ {{ system.release }}-updates {{ system.apt.sections | join(" ") }}
+deb-src http://deb.debian.org/debian/ {{ system.release }}-updates {{ system.apt.sections | join(" ") }}
 
+# Uncomment to activate backports
 # {{ system.release }}-backports, previously on backports.debian.org
-deb http://deb.debian.org/debian/ {{ system.release }}-backports main contrib non-free
-deb-src http://deb.debian.org/debian/ {{ system.release }}-backports main contrib non-free
+# deb http://deb.debian.org/debian/ {{ system.release }}-backports {{ system.apt.sections | join(" ") }}
+# deb-src http://deb.debian.org/debian/ {{ system.release }}-backports {{ system.apt.sections | join(" ") }}
