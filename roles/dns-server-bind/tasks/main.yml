@@ -10,6 +10,7 @@
 # When IPv6 is used, bind9 should be taken from backports
 - name: Install the required packages
   apt:
+    update_cache: true
     name: '{{ bind_packages }}'
     state: present
 

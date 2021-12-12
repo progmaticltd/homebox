@@ -2,4 +2,7 @@
 
 bind_packages:
   - bind9
-  - dnsutils
+  - bind9-dnsutils
+  - bind9-host
+  - bind9-libs
+  - bind9-utils
