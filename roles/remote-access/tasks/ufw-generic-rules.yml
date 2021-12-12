@@ -1,5 +1,7 @@
 ---
 
+# the value firewall.ssh is here for compatibility with the stretch version
+
 - name: Configure the firewall for SSH access
   tags: security
   ufw:
@@ -10,7 +12,7 @@
     comment: '{{ access.comment | default("Allow SSH access") }}'
     state: enabled
   with_items:
-    - '{{ firewall.ssh }}'
+    - '{{ firewall.input | default(firewall.ssh) | default([]) }}'
   loop_control:
     loop_var: access
 
