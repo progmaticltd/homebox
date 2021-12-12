@@ -55,6 +55,16 @@
   args:
     chdir: '{{ build_dir }}'
 
+- name: Create the etc directory to be deployed
+  file:
+    path: '{{ playbook_dir }}/../misc/etc'
+    state: directory
+
+- name: Add the environment file to be deployed
+  template:
+    src: environment.conf
+    dest: '{{ playbook_dir }}/../misc/etc/environment'
+
 - name: Create the miscellaneous files archive for the cd image
   shell: >-
     tar c -C "{{ playbook_dir }}/../misc" \

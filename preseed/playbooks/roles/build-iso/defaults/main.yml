@@ -18,9 +18,9 @@ partitions:
   default_fs: ext4
   boot_fs: ext4
   uefi:
-    min: 32
-    priority: 48
-    max: 64
+    min: 64
+    priority: 96
+    max: 128
   boot:
     min: 256
     priority: 384
