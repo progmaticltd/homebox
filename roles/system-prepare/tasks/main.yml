@@ -1,21 +1,5 @@
 ---
 
-# This seems to happen with some cloud providers, the first time the server boots
-# Wait until no one locks the dpkg / apt loc file
-- name: Wait for apt to be unlocked
-  tags: apt
-  register: result
-  retries: 9
-  delay: 5
-  shell: >-
-    set -o pipefail ;
-    test -f /var/lib/dpkg/lock &&
-    ls -l /proc/*/fd/* 2>/dev/null | grep '/var/lib/dpkg/lock' ;
-    echo
-  args:
-    executable: /bin/bash
-  until: (result.stdout | length) == 0
-
 # Install the most required packages
 - name: Update packages cache if older than 1h
   tags: apt
@@ -29,6 +13,40 @@
   apt:
     name: dphys-swapfile
     state: present
+
+- name: Get the locale value on the current machine
+  tags: locale
+  delegate_to: localhost
+  set_fact:
+    locale: "{{ lookup('env','LANG') }}"
+
+- name: Configure locales
+  tags: locale
+  debconf:
+    name: locales
+    question: '{{ conf.question }}'
+    value: '{{ conf.value }}'
+    vtype: '{{ conf.type }}'
+  with_items:
+    - question: locales/locales_to_be_generated
+      value: '{{ locale }}'
+      type: multiselect
+    - question: locales/default_environment_locale
+      value: '{{ locale }}'
+      type: boolean
+  loop_control:
+    loop_var: conf
+
+- name: Update /etc/locales
+  tags: locale
+  replace:
+    path: /etc/locale.gen
+    regexp: '^# {{ locale | regex_escape }}'
+    replace: '{{ locale }}'
+
+- name: Configure locales
+  tags: locale
+  shell: dpkg-reconfigure -phigh locales
 
 - name: Create a homebox directory to store any specific configuration
   register: homebox_dir
@@ -121,42 +139,6 @@
       type: boolean
   loop_control:
     loop_var: conf
-
-- name: Get the locale value on the current machine
-  tags: locale
-  delegate_to: localhost
-  set_fact:
-    locale: "{{ lookup('env','LANG') }}"
-
-# We are going to install the "unattended-upgrades" package, and to
-# configure it to install security updates automatically.
-- name: Configure locales
-  tags: locale
-  debconf:
-    name: locales
-    question: '{{ conf.question }}'
-    value: '{{ conf.value }}'
-    vtype: '{{ conf.type }}'
-  with_items:
-    - question: locales/locales_to_be_generated
-      value: '{{ locale }}'
-      type: multiselect
-    - question: locales/default_environment_locale
-      value: '{{ locale }}'
-      type: boolean
-  loop_control:
-    loop_var: conf
-
-- name: Update /etc/locales
-  tags: locale
-  replace:
-    path: /etc/locale.gen
-    regexp: '^# {{ locale | regex_escape }}'
-    replace: '{{ locale }}'
-
-- name: Configure locales
-  tags: locale
-  shell: dpkg-reconfigure -phigh locales
 
 # Install the firewall, but do not configure any rule.
 # The other tasks will setup the rules themselves
@@ -258,8 +240,7 @@
     state: directory
 
 - name: Use python3 interpreter by default
-  file:
-    src: /usr/bin/python3
-    dest: /usr/bin/python
-    state: link
-    force: yes
+  alternatives:
+    name: python
+    link: /usr/bin/python
+    path: /usr/bin/python3
