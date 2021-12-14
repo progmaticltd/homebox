@@ -3,13 +3,7 @@
 - name: Install required python packages
   tags: apt
   apt:
-    name: python3-psutil
-    state: present
-
-- name: Install borgbackup package
-  tags: apt
-  apt:
-    name: borgbackup
+    name: '{{ packages }}'
     state: present
 
 - name: Create the backups mount point root

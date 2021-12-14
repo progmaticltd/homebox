@@ -1,0 +1,6 @@
+---
+
+packages:
+  - borgbackup
+  - python3-llfuse
+  - python3-psutil
