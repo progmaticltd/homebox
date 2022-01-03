@@ -105,7 +105,7 @@ listen:
       /api: mod_http_api
       /bosh: mod_bosh
       ## /captcha: ejabberd_captcha
-      ## /upload: mod_http_upload
+      /upload: mod_http_upload
       /ws: ejabberd_http_ws
   - port: 5280
     ip: "::"
@@ -121,7 +121,7 @@ listen:
     module: ejabberd_stun
     use_turn: true
     ## The server's public IPv4 address:
-    turn_ipv4_address: "51.148.128.87"
+    turn_ipv4_address: "{{ }}"
     ## The server's public IPv6 address:
     # turn_ipv6_address: "2001:db8::3"
   - port: 1883
@@ -138,9 +138,9 @@ ldap_servers:
   - "ldap.{{ network.domain }}"
 ldap_encrypt: none
 ldap_port: 389
-ldap_rootdn: "cn=readonly account, ou=users, dc=rodier,dc=me"
-ldap_password: "q73VfGfHerLuQkp9"
-ldap_base: "ou=users,dc=rodier,dc=me"
+ldap_rootdn: "{{ ldap.readonly.dn }}"
+ldap_password: "{{ lookup('password', ldap.roPasswdParams) }}"
+ldap_base: "{{ ldap.users.dn }}"
 ldap_filter: "(objectClass=shadowAccount)"
 ldap_uids:
   mail: "%u@{{ network.domain }}"
@@ -273,13 +273,11 @@ modules:
     max_size: 104857600
     secret_length: 40
     access: local
+    custom_headers:
+      "Access-Control-Allow-Origin": "https://@HOST@"
+      "Access-Control-Allow-Methods": "GET,HEAD,PUT,OPTIONS"
+      "Access-Control-Allow-Headers": "Content-Type"
   ### Message Archive Management
-  ## mod_http_upload:
-  ##   put_url: https://@HOST@:5443/upload
-  ##   custom_headers:
-  ##     "Access-Control-Allow-Origin": "https://@HOST@"
-  ##     "Access-Control-Allow-Methods": "GET,HEAD,PUT,OPTIONS"
-  ##     "Access-Control-Allow-Headers": "Content-Type"
   mod_last: {}
   mod_mam:
     ## Mnesia is limited to 2GB, better to use an SQL backend
@@ -385,8 +383,3 @@ modules:
   mod_stun_disco: {}
   mod_vcard_xupdate: {}
   mod_version: {}
-
-### Local Variables:
-### mode: yaml
-### End:
-### vim: set filetype=yaml tabstop=8
