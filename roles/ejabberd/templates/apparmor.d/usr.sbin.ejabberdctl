@@ -117,6 +117,10 @@
     owner /var/log/ejabberd/ rwlk,
     owner /var/log/ejabberd/*.log w,
 
+    # Uploaded files
+    owner /var/www/xmpp/files/ w,
+    owner /var/www/xmpp/files/** w,
+
     # Site-specific additions and overrides. See local/README for details.
     #include <local/usr.sbin.ejabberdctl>
 }

@@ -3,7 +3,7 @@
 # Default nginx security headers for the jabber upload area
 nginx_sec_headers:
   - id: Strict-Transport-Security
-    value: mxax-age=31536000
+    value: max-age=31536000
   - id: X-Content-Type-Options
     value: nosniff
   - id: Referrer-Policy
