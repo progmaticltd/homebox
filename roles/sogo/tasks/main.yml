@@ -209,7 +209,7 @@
 - name: Add SOGo backups directory
   tags: backup
   file:
-    path: /var/backups/sogo
+    path: /var/backups/backups
     state: directory
     owner: sogo
     group: sogo
