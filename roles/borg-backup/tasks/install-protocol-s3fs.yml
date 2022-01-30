@@ -67,11 +67,23 @@
 - name: Set mount options for s3fs
   set_fact:
     mount_options:
-      - 'endpoint={{ location.region }}'
       - 'default_acl=private'
       - 'passwd_file=/etc/homebox/s3fs-{{ location.name }}'
       - 'use_cache=/home/.backup-cache/'
       - 'del_cache'
+
+- name: Add region if specified
+  when: >-
+    "region" in location
+  set_fact:
+    mount_options:
+      - 'endpoint={{ location.region }}'
+
+- name: Add custom host if not using AWS
+  when: >-
+    "host" in location
+  set_fact:
+    mount_options: '{{ mount_options + [ "host=https://"+location.host ] }}'
 
 - name: Add mount point definition for this device
   register: mount_systemd
