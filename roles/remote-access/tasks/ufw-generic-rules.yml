@@ -3,7 +3,6 @@
 # the value firewall.ssh is here for compatibility with the stretch version
 
 - name: Configure the firewall for SSH access
-  tags: security
   ufw:
     proto: '{{ access.proto | default("tcp") }}'
     port: '{{ access.port | default(22) }}'
@@ -17,13 +16,11 @@
     loop_var: access
 
 - name: Configure firewall output default policy
-  tags: security
   ufw:
     policy: '{{ firewall.output.policy }}'
     direction: outgoing
 
 - name: Configure firewall output rules
-  tags: security
   ufw:
     proto: '{{ access.proto | default("tcp") }}'
     port: '{{ access.port }}'
@@ -37,7 +34,6 @@
     loop_var: access
 
 - name: Allow external echo requests
-  tags: security
   notify: Restart UFW
   lineinfile:
     path: /etc/ufw/before.rules

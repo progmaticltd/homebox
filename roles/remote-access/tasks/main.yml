@@ -1,4 +1,7 @@
 ---
+- name: Make sure ufw is installed
+  apt:
+    name: ufw
 
 - name: Store the remote IP address
   set_fact:
@@ -21,7 +24,6 @@
 
 - name: Remove root password access from SSH
   when: security.ssh_disable_root_access_with_password
-  tags: security
   notify: Restart SSH
   replace:
     path: /etc/ssh/sshd_config
@@ -30,14 +32,12 @@
     mode: '0600'
 
 - name: Lock root account
-  tags: security
   user:
     name: root
     password_lock: '{{ security.lock_root_password }}'
 
 - name: Remove users password access from SSH
   when: security.ssh_disable_users_access_with_password
-  tags: security
   notify: Restart SSH
   replace:
     path: /etc/ssh/sshd_config

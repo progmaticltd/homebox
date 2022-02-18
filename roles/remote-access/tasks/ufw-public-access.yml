@@ -8,7 +8,6 @@
     return_content: true
 
 - name: Make sure the external IP address is working as well
-  tags: security
   ufw:
     proto: tcp
     port: 22
@@ -31,7 +30,6 @@
 # the IP address returned is a real IPv6.
 - name: Make sure the external IP address is working as well
   when: ext_ip6_api_response.content | ipv6
-  tags: security
   ufw:
     proto: tcp
     port: 22
