@@ -23,11 +23,10 @@
 # 301: Commands should not change things if nothing needs doing
 # Maybe some of the commands can be made as handlers
 
-exclude_paths:
-  - playbooks/roles/ldap/tasks/main.yml
+exclude_paths: [ ]
 parseable: true
 quiet: false
-rulesdir: []
+rulesdir: [ ]
 warn_list:
   - '106'     # Role name (some roles have ‘-’ in their name)
   - '207'     # Nested jinja pattern (experimental, does not work)
@@ -37,6 +36,6 @@ skip_list:
   - '503'     # Tasks that run when changed should likely be handlers
   - '305'     # Use shell only when shell functionality is required
   - '301'     # Commands should not change things if nothing needs doing
-tags: []
+tags: [ ]
 use_default_rules: true
 verbosity: 1
