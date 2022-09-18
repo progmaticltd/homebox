@@ -1,51 +1,13 @@
 ---
 
-- name: Install opendmarc related packages
-  apt:
-    name: opendmarc
-    state: present
+- name: Install the packages
+  include_tasks: packages.yml
 
-- name: Comment all active socket for DMARC
-  notify: Restart OpenDMARC service
-  replace:
-    path: /etc/default/opendmarc
-    regexp: '^SOCKET=(.*)'
-    replace: '#SOCKET=\1'
+- name: Configure the packages
+  include_tasks: config.yml
 
-- name: Comment all active socket for DMARC
-  notify: Restart OpenDMARC service
-  replace:
-    path: /etc/opendmarc.conf
-    regexp: '^Socket(.*)'
-    replace: '# Socket=\1'
+- name: Set the DNS entries
+  include_tasks: dns.yml
 
-- name: Add tcp interface on localhost
-  notify: Restart OpenDMARC service
-  lineinfile:
-    path: /etc/opendmarc.conf
-    line: '{{ line }}'
-  with_items:
-    - 'Socket inet:{{ dmarc.milter.port }}@localhost'
-    - 'AutoRestart 1'
-  loop_control:
-    loop_var: line
-
-# name server config ==========================================================
-
-- name: Generate DMARC record from settings
-  when: bind.install
-  template:
-    src: 20-dmarc.bind
-    dest: /etc/homebox/dns-entries.d/20-dmarc.bind
-
-# AppArmor configuration ======================================================
-
-- name: Install opendmarc AppArmor profile
-  template:
-    src: 'apparmor.d/usr.sbin.opendmarc.cf'
-    dest: '/etc/apparmor.d/usr.sbin.opendmarc'
-    force: no
-
-- name: Activate AppArmor profiles
-  command: 'aa-enforce usr.sbin.opendmarc'
-  notify: Restart AppArmor service
+- name: Configure AppArmor
+  include_tasks: apparmor.yml

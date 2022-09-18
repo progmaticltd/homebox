@@ -1,0 +1,24 @@
+---
+
+- name: Remove opendmarc packages
+  apt:
+    name: '{{ packages }}'
+    state: absent
+    purge: true
+    autoremove: true
+
+- name: Remove the configuration directory
+  file:
+    path: /etc/opendmarc
+    state: absent
+
+- name: Remove opendmarc AppArmor profile
+  notify: Restart AppArmor service
+  file:
+    path: /etc/apparmor.d/usr.sbin.opendmarc
+    state: absent
+
+- name: Removes DNS record
+  shell: >-
+    pdnsutil delete-rrset
+    {{ network.domain }} _dmarc TXT

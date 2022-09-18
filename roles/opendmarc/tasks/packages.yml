@@ -1,0 +1,6 @@
+---
+
+- name: Install opendmarc related packages
+  apt:
+    name: '{{ packages }}'
+    state: present
