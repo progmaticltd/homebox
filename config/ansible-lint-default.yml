@@ -24,9 +24,7 @@
 # Maybe some of the commands can be made as handlers
 
 exclude_paths:
-  - install/playbooks/roles/ldap/tasks/main.yml
-  - install/playbooks/roles/postfix/tasks/main.yml
-  - install/playbooks/roles/dovecot/tasks/main.yml
+  - playbooks/roles/ldap/tasks/main.yml
 parseable: true
 quiet: false
 rulesdir: []
