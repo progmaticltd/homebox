@@ -44,7 +44,7 @@ do
 		# Write the list of the main ansible files and directories
 		find \
 			common/roles/* \
-			playbook/main.yml \
+			playbook/install.yml \
 			-maxdepth 0 -print0 \
 			> "$tmp_checklist"
 
