@@ -6,8 +6,8 @@
     state: restarted
     no_block: true
 
-- name: Restart UFW
+- name: Restart nftables
   systemd:
-    name: ufw
+    name: nftables
     state: restarted
-    no_block: true
+    enabled: true

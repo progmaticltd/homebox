@@ -1,0 +1,30 @@
+---
+
+# The "--ignore-existing" option skip the files already existing,
+# especially the symbolic links in the live folder
+# The '--update' option make sure to not overwrite new certificates.
+# - name: If the certificates have been generated before, copy them on the remote server
+#   when: (system.devel and devel.acme_server == 'staging') or system.keep_certs
+#   tags: cert,sync
+#   synchronize:
+#     src: '{{ backup_directory }}/certificates/'
+#     dest: /etc
+#     links: true
+#     owner: no
+#     group: no
+#     perms: yes
+#     rsync_opts:
+#       - '--no-motd'
+#       - '--exclude=readme.md'
+#       - '--exclude=renewal-hooks'
+#       - '--ignore-existing'
+#       - '--update'
+#       - '--chmod=D0755,F0600'
+
+- name: Create the lego directory
+  file:
+    path: /etc/lego
+    state: directory
+    mode: 0755
+    owner: root
+    group: root

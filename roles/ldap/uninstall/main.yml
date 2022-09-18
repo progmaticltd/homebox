@@ -1,0 +1,23 @@
+---
+
+- name: Remove the DNS record if not existing
+  shell: >-
+    pdnsutil delete-rrset {{ network.domain }}
+    ldap CNAME
+  changed_when: true
+
+- name: Remove all the installed packages
+  apt:
+    name: '{{ ldap_packages.install }}'
+    state: absent
+    purge: true
+
+- name: Remove the ldap config directory
+  file:
+    path: /etc/ldap
+    state: absent
+
+- name: Remove the ldap database directory
+  file:
+    path: /var/lib/ldap
+    state: absent

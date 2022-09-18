@@ -1,74 +1,16 @@
 ---
 
-- name: Create a directory for the rspamd passwords
-  tags: rspamd
-  delegate_to: localhost
-  file:
-    path: '{{ backup_directory }}/rspamd/'
-    state: directory
+- name: Install the packages
+  include_tasks: packages.yml
 
-- name: Install rspamd packages
-  tags: rspamd
-  apt:
-    name: "{{ rspamd_pkgs }}"
-    state: present
+- name: Set the facts
+  include_tasks: facts.yml
 
-- name: Set facts for rspamd password generation
-  tags: rspamd
-  set_fact:
-    password_path: "{{ backup_directory }}/rspamd/admin.pwd"
-    password_params: "length=16 chars=ascii_letters,digits"
+- name: Configure the packages
+  include_tasks: config.yml
 
-- name: Generate a random password for rspamd
-  tags: rspamd
-  no_log: true
-  set_fact:
-    rspamd_password: '{{ lookup("password", "{{ password_path }} {{ password_params }}") }}'
-
-- name: Set password for the rspamd account
-  tags: rspamd
-  no_log: true
-  register: rspamd_password_fact
-  command: 'rspamadm pw -p "{{ rspamd_password }}"'
-
-- name: display the encrypted password
-  tags: rspamd
-  set_fact:
-    rspamd_password: rspamd_password_fact.stdout
-
-- name: Create local configuration files
-  tags: rspamd
-  notify: Restart rspamd
-  template:
-    src: '{{ file }}'
-    dest: '/etc/rspamd/local.d/{{ file }}'
-  with_items:
-    - classifier-bayes.conf
-    - worker-controller.inc
-    - worker-normal.inc
-    - worker-proxy.inc
-    - milter_headers.conf
-    - replies.conf
-    - surbl.conf
-    - url_reputation.conf
-    - url_tags.conf
-    - phishing.conf
-    - redis.conf
-    - logging.conf
-  loop_control:
-    loop_var: file
-
-- name: Install rspamd AppArmor profile
-  tags: rspamd, security, apparmor
-  notify: Restart AppArmor service
-  template:
-    src: apparmor.d/usr.bin.rspamd
-    dest: /etc/apparmor.d/usr.bin.rspamd
-
-- name: Activate AppArmor profiles
-  tags: rspamd, security, apparmor
-  notify: Restart AppArmor service
-  command: 'aa-enforce rspamd'
+- name: Configure AppArmor
+  include_tasks: apparmor.yml
 
 - name: Include DMARC reporting if activated
   when: dmarc.send_reports.active

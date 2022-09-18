@@ -1,140 +1,16 @@
 ---
 
-- name: Install opendkim packages for mail signing
-  tags: dkim
-  notify: Restart opendkim
-  vars:
-    pkgs:
-      - opendkim
-      - opendkim-tools
-  apt:
-    name: "{{ pkgs }}"
-    state: present
+- name: Install the packages
+  include_tasks: packages.yml
 
-- name: Create directory to install the keys
-  tags: dkim
-  notify: Restart opendkim
-  file:
-    path: /etc/opendkim/keys
-    state: directory
-    owner: opendkim
-    group: opendkim
-    mode: '0700'
+- name: Create the keys
+  include_tasks: keys.yml
 
-- name: Create a directory for DKIM keys backup if it does not exists
-  tags: dkim
-  delegate_to: localhost
-  file:
-    path: '{{ backup_directory }}/dkim-keys/'
-    state: directory
+- name: Configure the packages
+  include_tasks: config.yml
 
-- name: If the DKIM have been generated before, copy them on the remote server
-  tags: dkim
-  synchronize:
-    src: '{{ backup_directory }}/dkim-keys/'
-    dest: '/etc/opendkim/keys/'
-    mode: push
-    owner: no
-    group: no
-    perms: yes
-    rsync_opts:
-      - '--no-motd'
-      - '--checksum'
-      - '--ignore-existing'
-      - '--update'
+- name: Set DNS entries
+  include_tasks: dns.yml
 
-- name: Run the command to create the keys
-  tags: dkim
-  notify: Restart opendkim
-  register: keys
-  command: >-
-    opendkim-genkey
-    --restrict
-    -D /etc/opendkim/keys
-    -d '{{ network.domain }}'
-    -b '{{ dkim.key_size }}'
-    -s '{{ dkim.selector }}'
-    -n '{{ dkim.note }}'
-  args:
-    creates: '/etc/opendkim/keys/{{ dkim.selector }}.txt'
-
-- name: Set the default permissions
-  tags: dkim
-  notify: Restart opendkim
-  file:
-    path: '{{ file.path }}'
-    mode: '{{ file.mode }}'
-    owner: opendkim
-    group: opendkim
-  with_items:
-    - path: '/etc/opendkim/keys/{{ dkim.selector }}.private'
-      mode: '0600'
-    - path: '/etc/opendkim/keys/{{ dkim.selector }}.txt'
-      mode: '0640'
-  loop_control:
-    loop_var: file
-
-- name: Backup the dkim on your local machine
-  tags: dkim
-  synchronize:
-    mode: pull
-    src: '/etc/opendkim/keys/{{ item }}'
-    dest: '{{ backup_directory }}/dkim-keys/'
-    perms: yes
-    rsync_opts:
-      - '--no-motd'
-      - '--exclude=readme.md'
-      - '--update'
-  with_items:
-    - '{{ dkim.selector }}.txt'
-    - '{{ dkim.selector }}.private'
-
-- name: Create the configuration file
-  tags: dkim
-  notify: Restart opendkim
-  template:
-    src: opendkim.conf
-    dest: /etc/opendkim.conf
-
-- name: Update the default configuration file for the socket
-  tags: dkim
-  notify: Restart opendkim
-  replace:
-    path: /etc/default/opendkim
-    regexp: '^SOCKET.*'
-    replace: 'SOCKET="inet:{{ dkim.milter.port }}@localhost"'
-
-- name: Create the keys and signing table
-  tags: dkim
-  notify: Restart opendkim
-  template:
-    src: '{{ file }}'
-    dest: '/etc/opendkim/{{ file }}'
-  with_items:
-    - keytable
-    - signingtable
-    - trusted-hosts
-  loop_control:
-    loop_var: file
-
-- name: Link the DKIM key file in the fordward directory
-  tags: bind
-  when: bind.install
-  file:
-    src: '/etc/opendkim/keys/{{ dkim.selector }}.txt'
-    dest: '/etc/homebox/dns-entries.d/10-dkim.bind'
-    state: link
-
-# AppArmor configuration ======================================================
-
-- name: Install opendkim AppArmor profile
-  tags: security, apparmor
-  template:
-    src: 'apparmor.d/usr.sbin.opendkim.cf'
-    dest: '/etc/apparmor.d/usr.sbin.opendkim'
-    force: no
-
-- name: Activate AppArmor profiles
-  tags: security, apparmor
-  command: 'aa-enforce usr.sbin.opendkim'
-  notify: Restart AppArmor service
+- name: Configure AppArmor
+  include_tasks: apparmor.yml

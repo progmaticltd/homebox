@@ -1,0 +1,5 @@
+---
+
+dkim_pkgs:
+  - opendkim
+  - opendkim-tools

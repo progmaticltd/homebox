@@ -1,0 +1,24 @@
+---
+
+- name: Remove root password access from SSH
+  when: security.ssh_disable_root_access_with_password
+  notify: Restart SSH
+  replace:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin yes'
+    replace: 'PermitRootLogin without-password'
+    mode: '0600'
+
+- name: Lock root account
+  user:
+    name: root
+    password_lock: '{{ security.lock_root_password }}'
+
+- name: Remove users password access from SSH
+  when: security.ssh_disable_users_access_with_password
+  notify: Restart SSH
+  replace:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PasswordAuthentication yes.*'
+    replace: 'PasswordAuthentication no'
+    mode: '0600'

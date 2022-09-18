@@ -1,0 +1,8 @@
+---
+
+pdns_packages:
+  - bind9-dnsutils
+  - pdns-server
+  - pdns-tools
+  - pdns-backend-sqlite3
+  - sqlite3

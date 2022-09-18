@@ -8,4 +8,4 @@ packages:
   - clamav-freshclam
   - clamdscan
   - clamsmtp
-  - ipcalc
+  - libclamav9

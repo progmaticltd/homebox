@@ -1,6 +1,6 @@
 ---
 # Various cleanup tasks before the system goes live
-- name: Check if postfix and dovector are installed
+- name: Check if postfix and dovecot are installed
   set_fact:
     postfix_installed: '{{ lookup("pipe", "dpkg -l | grep -c postfix || true") | bool }}'
     dovecot_installed: '{{ lookup("pipe", "dpkg -l | grep -c dovecot-core || true") | bool }}'

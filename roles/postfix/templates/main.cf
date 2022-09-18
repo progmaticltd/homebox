@@ -128,6 +128,9 @@ smtpd_milters =
     unix:private/milter-rc-abook.socket
 {% endif %}
 
+# Special filters on the headers
+header_checks = pcre:/etc/postfix/headers-check.cf
+
 # A list of Milter applications for new mail that does not arrive via the Postfix smtpd(8) server.
 # This includes local submission via the sendmail(1) command line, new mail that arrives via the Postfix
 # qmqpd(8) server, and old mail that is re-injected into the queue with "postsuper -r".

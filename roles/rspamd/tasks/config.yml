@@ -1,0 +1,22 @@
+---
+
+- name: Create local configuration files
+  notify: Restart rspamd
+  template:
+    src: '{{ file }}'
+    dest: '/etc/rspamd/local.d/{{ file }}'
+  loop:
+    - classifier-bayes.conf
+    - worker-controller.inc
+    - worker-normal.inc
+    - worker-proxy.inc
+    - milter_headers.conf
+    - replies.conf
+    - surbl.conf
+    - url_reputation.conf
+    - url_tags.conf
+    - phishing.conf
+    - redis.conf
+    - logging.conf
+  loop_control:
+    loop_var: file

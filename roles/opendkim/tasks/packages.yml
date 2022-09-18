@@ -1,0 +1,7 @@
+---
+
+- name: Install opendkim packages for mail signing
+  notify: Restart opendkim
+  apt:
+    name: "{{ dkim_pkgs }}"
+    state: present

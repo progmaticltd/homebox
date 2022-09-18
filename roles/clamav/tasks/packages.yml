@@ -1,0 +1,7 @@
+---
+
+- name: Install clamav antivirus suite
+  register: clamav_packages
+  apt:
+    name: '{{ packages }}'
+    state: present

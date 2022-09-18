@@ -2,7 +2,7 @@
 
 - name: Install nginx
   apt:
-    name: nginx
+    name: '{{ packages }}'
     state: present
 
 - name: Disable nginx default site
@@ -12,37 +12,17 @@
     state: absent
     force: yes
 
-- name: Configure the firewall for default access
-  tags: ufw, security
-  ufw:
-    rule: allow
-    proto: tcp
-    src: any
-    port: '{{ rule.port }}'
-    comment: '{{ rule.comment }}'
-  with_items:
-    - comment: Allow http/https access
-      port: 80,443
-  loop_control:
-    loop_var: rule
-
-
-# Security improvements =======================================================
-
 - name: Install nginx secure configuration
   notify: Restart nginx
   template:
     src: nginx.conf
     dest: /etc/nginx/nginx.conf
 
-# AppArmor configuration ======================================================
-
 - name: Install nginx AppArmor profile
   notify:
     - Activate AppArmor profiles
     - Restart AppArmor service
     - Restart nginx
-  tags: security, apparmor
   template:
     src: 'apparmor.d/usr.sbin.nginx'
     dest: '/etc/apparmor.d/usr.sbin.nginx'

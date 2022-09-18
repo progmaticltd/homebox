@@ -1,0 +1,6 @@
+---
+
+- name: Install rspamd packages
+  apt:
+    name: "{{ rspamd_pkgs }}"
+    state: present

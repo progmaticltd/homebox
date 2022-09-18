@@ -1,0 +1,22 @@
+---
+
+- name: Create the zone update file
+  register: nsupdate_file
+  shell: >-
+    opendkim-genzone
+    -d {{ network.domain }}
+    -C hostmaster@{{ network.domain }}
+    -F
+    -M
+    -u
+    -o nsupdate.conf
+  args:
+    chdir: /etc/opendkim/keys
+    creates: nsupdate.conf
+
+- name: Store the public key in DNS
+  when: nsupdate_file.changed
+  shell: >-
+    nsupdate nsupdate.conf
+  args:
+    chdir: /etc/opendkim/keys

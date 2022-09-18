@@ -1,0 +1,23 @@
+---
+
+- name: Stop PowerDNS
+  systemd:
+    name: pdns
+    state: stopped
+  ignore_errors: true
+
+- name: Remove the installed packages
+  apt:
+    name: '{{ pdns_packages }}'
+    state: absent
+    purge: true
+
+- name: Remove the sqlite for the database
+  file:
+    path: '{{ path }}'
+    state: absent
+  loop:
+    - /var/lib/pdns
+    - /etc/powerdns
+  loop_control:
+    loop_var: path

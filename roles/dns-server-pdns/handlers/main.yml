@@ -1,0 +1,6 @@
+---
+
+- name: Restart PowerDNS
+  systemd:
+    name: pdns
+    state: restarted

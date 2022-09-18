@@ -1,0 +1,39 @@
+---
+
+- name: Set up the configuration file
+  notify: Restart clamav services
+  template:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+  with_items:
+    - src: clamsmtpd.conf
+      dest: /etc/clamsmtpd.conf
+    - src: freshclam.conf
+      dest: /etc/clamav/freshclam.conf
+  loop_control:
+    loop_var: file
+
+- name: Get the local machine locale
+  delegate_to: localhost
+  set_fact:
+    def_lang: '{{ lookup("env", "LANG") }}'
+
+- name: Get the remote locale
+  set_fact:
+    lang: '{{ ansible_env.LANG | default(def_lang) | regex_replace("\..*", "") }}'
+
+- name: Create the clamsmtp templates directory
+  file:
+    path: /etc/clamsmtp
+    state: directory
+    owner: clamsmtp
+    group: clamsmtp
+    mode: '0700'
+
+- name: Create the logs folder for clamsmtp
+  file:
+    path: /var/log/clamsmtp
+    owner: clamsmtp
+    group: clamsmtp
+    mode: '0700'
+    state: directory

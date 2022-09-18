@@ -1,0 +1,34 @@
+---
+
+## Uninstallation playbook for one role
+
+# export the role you want to run in the ‘ROLE’ environment variable
+# and run the playbook.
+
+- name: Run the uninstall tasks of one role
+  hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../config/system.yml'
+    - '{{ playbook_dir }}/../config/defaults.yml'
+  roles:
+    - role: load-defaults
+
+- name: Run the tasks
+  hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../config/system.yml'
+    - '{{ playbook_dir }}/../config/defaults.yml'
+  tasks:
+    - include_role:
+        name: '{{ lookup("env", "ROLE") }}'
+        tasks_from: ../uninstall/main.yml
+
+- name: Remove AppArmor unknown profiles
+  hosts: homebox
+  tasks:
+    - shell: aa-remove-unknown
+
+- name: Clean packages cache
+  hosts: homebox
+  tasks:
+    - shell: apt-get clean

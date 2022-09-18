@@ -1,0 +1,24 @@
+---
+
+## Installation playbook for one role
+
+# export the role you want to run in the ‘ROLE’ environment variable
+# and run the playbook.
+
+- name: Run the install tasks of one role
+  hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../config/system.yml'
+    - '{{ playbook_dir }}/../config/defaults.yml'
+  roles:
+    - role: load-defaults
+    - role: external-ip-type
+
+- name: Run the tasks
+  vars_files:
+    - '{{ playbook_dir }}/../config/system.yml'
+    - '{{ playbook_dir }}/../config/defaults.yml'
+  hosts: homebox
+  tasks:
+    - include_role:
+        name: '{{ lookup("env", "ROLE") }}'

@@ -1,8 +1,28 @@
 ---
-- name: Make sure ufw is installed
+
+- name: Remove ufw
+  register: ufw_pkg
   apt:
     name: ufw
+    state: absent
+    purge: yes
 
+- name: Install the nftable package
+  register: nft_pkg
+  apt:
+    name: nftables
+    state: present
+
+- name: Restart nftables now
+  when: nft_pkg.changed or ufw_pkg.changed
+  systemd:
+    name: nftables
+    state: restarted
+
+- name: Set the generic firewall rules
+  include_tasks: generic-rules.yml
+
+# The following tasks are run when the system is remote (e.g. cloud server)
 - name: Store the remote IP address
   set_fact:
     remote_ip: '{{ hostvars[inventory_hostname]["ansible_default_ipv4"]["address"] }}'
@@ -13,34 +33,11 @@
 
 - name: Set the remote access firewall rules for public networks
   when: not remote_ip_private
-  include_tasks: ufw-public-access.yml
+  include_tasks: public-access.yml
 
-- name: Set the remote access firewall rules for private networks
-  when: system.devel and remote_ip_private
-  include_tasks: ufw-private-access.yml
+# - name: Set the remote access firewall rules for private networks
+#   when: system.devel and remote_ip_private
+#   include_tasks: private-access.yml
 
-- name: Set the generic firewall rules
-  include_tasks: ufw-generic-rules.yml
-
-- name: Remove root password access from SSH
-  when: security.ssh_disable_root_access_with_password
-  notify: Restart SSH
-  replace:
-    path: /etc/ssh/sshd_config
-    regexp: '^PermitRootLogin yes'
-    replace: 'PermitRootLogin without-password'
-    mode: '0600'
-
-- name: Lock root account
-  user:
-    name: root
-    password_lock: '{{ security.lock_root_password }}'
-
-- name: Remove users password access from SSH
-  when: security.ssh_disable_users_access_with_password
-  notify: Restart SSH
-  replace:
-    path: /etc/ssh/sshd_config
-    regexp: '^#?PasswordAuthentication yes.*'
-    replace: 'PasswordAuthentication no'
-    mode: '0600'
+- name: Configure the ssh server
+  include_tasks: ssh-config.yml

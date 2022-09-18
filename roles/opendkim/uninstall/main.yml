@@ -1,0 +1,24 @@
+---
+
+- name: Remove opendkim packages
+  apt:
+    name: "{{ dkim_pkgs }}"
+    state: absent
+    purge: true
+    autoremove: true
+
+- name: Remove the configuration directory
+  file:
+    path: /etc/opendkim
+    state: absent
+
+- name: Remove opendkim AppArmor profile
+  notify: Restart AppArmor service
+  file:
+    path: /etc/apparmor.d/usr.sbin.opendkim
+    state: absent
+
+- name: Removes DNS record
+  shell: >-
+    pdnsutil delete-rrset
+    {{ network.domain }} main._domainkey TXT

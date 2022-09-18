@@ -305,8 +305,6 @@ users:
 
 ############################################################################
 # Additional certificates to generate
-# extra_certs:
-#   - type: gitlab
-#     redirect: true
-#   - type: packages
-#     redirect: true
+extra_certs:
+  - type: openpgpkey
+    redirect: true

@@ -1,0 +1,10 @@
+---
+
+user_directories:
+  - /etc/skel/mails/maildir
+  - /etc/skel/mails/sieve
+  - /etc/skel/mails/sieve/logs
+  - /etc/skel/mails/indexes
+  - /etc/skel/mails/import
+  - /etc/skel/mails/indexes/xapian-indexes
+  - /etc/skel/.config/homebox

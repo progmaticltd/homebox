@@ -1,3 +1,5 @@
+---
+
 # Default rspamd configuration
 rspamd:
   proxy:

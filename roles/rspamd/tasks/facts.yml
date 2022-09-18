@@ -1,0 +1,18 @@
+---
+
+- name: Generate a random password for rspamd
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    rspamd_password: >-
+      {{ lookup(creds.store,
+      creds.prefix + "rspamd/admin"
+      + creds.opts.create + creds.opts.system) }}
+
+- name: Set password for the rspamd account
+  no_log: '{{ not system.devel }}'
+  register: rspamd_password_fact
+  command: 'rspamadm pw -p "{{ rspamd_password }}"'
+
+- name: display the encrypted password
+  set_fact:
+    rspamd_password: rspamd_password_fact.stdout

@@ -1,0 +1,60 @@
+---
+
+- name: Check if the OpenLDAP server is already installed
+  register: slapd_stats
+  stat:
+    path: /usr/sbin/slapd
+
+# Pre-configure the LDAP sever before instaling
+- name: Configure the LDAP administration account
+  when: not slapd_stats.stat.exists
+  no_log: '{{ not system.devel }}'
+  debconf:
+    name: slapd
+    question: '{{ conf.question }}'
+    value: '{{ conf.value }}'
+    vtype: '{{ conf.type }}'
+  with_items:
+    - question: slapd/password1
+      type: password
+      value: '{{ admin_password }}'
+    - question: slapd/password2
+      type: password
+      value: '{{ admin_password }}'
+    - question: slapd/purge_database
+      value: false
+      type: boolean
+    - question: slapd/invalid_config
+      value: false
+      type: boolean
+    - question: shared/organization
+      value: '{{ ldap.organization.domain }}'
+      type: string
+    - question: slapd/domain
+      value: '{{ ldap.organization.domain }}'
+      type: string
+    - question: slapd/backend
+      value: 'MDB'
+      type: select
+    - question: slapd/move_old_database
+      value: true
+      type: boolean
+    - question: slapd/unsafe_selfwrite_acl
+      value: false
+      type: boolean
+    - question: slapd/password_mismatch
+      value: false
+      type: boolean
+  loop_control:
+    loop_var: conf
+
+- name: Remove conflicting packages first
+  apt:
+    name: '{{ ldap_packages.remove }}'
+    state: absent
+    purge: true
+
+- name: Install the required packages
+  apt:
+    name: '{{ ldap_packages.install }}'
+    state: present

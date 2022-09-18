@@ -33,5 +33,8 @@
 
 - name: Check and remember if IPv6 is used
   set_fact:
-    ipv6_used: '{{ external_ip_type == "AAAA" or
-                   (backup_ip_type is defined and backup_ip_type == "AAAA") }}'
+    ipv6_used: >-
+      {{ external_ip_type == "AAAA"
+      or
+      (backup_ip_type is defined and backup_ip_type == "AAAA")
+      }}

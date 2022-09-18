@@ -2,23 +2,24 @@
 
 # Initialise the packages repository to a standard,
 # including backports, contrib and non-free software
+- name: Store the sections list
+  set_fact:
+    sections: '{{ system.apt.sections | join(" ") }}'
+
 - name: Initialise default repositories
   register: repositories
-  tags: apt
   template:
     src: sources.list
     dest: /etc/apt/sources.list
 
 - name: Use a proxy if needed
   when: system.apt_cacher != None
-  tags: apt
   template:
-    src: proxy
+    src: proxy.conf
     dest: /etc/apt/apt.conf.d/proxy
 
 - name: Make sure no proxy is configured if not needed
   when: system.apt_cacher == None
-  tags: apt
   file:
     path: /etc/apt/apt.conf.d/proxy
     state: absent
@@ -28,18 +29,15 @@
 - name: Force the packages cache update on the first installation
   when: repositories.changed
   register: packages_cache
-  tags: apt
   apt:
     update_cache: yes
 
 - name: Upgrade the distribution
   when: packages_cache.changed
-  tags: apt
   apt:
     upgrade: yes
 
 - name: Install apticron to send email alerts
-  tags: apt
   apt:
     name: apticron
     state: present
@@ -53,7 +51,6 @@
 
 # The default apticron.conf file is available in /usr/lib/apticron
 - name: Install distribution default configuration of apticron if not already present
-  tags: apt
   when: not apticron_conf_stat.stat.exists
   copy:
     remote_src: yes
@@ -61,7 +58,6 @@
     dest: /etc/apticron/apticron.conf
 
 - name: Configure apticron to send email alerts
-  tags: apt
   replace:
     path: /etc/apticron/apticron.conf
     regexp: '^#?EMAIL=".*"'

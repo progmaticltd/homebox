@@ -5,13 +5,12 @@
     administrators: '{{ users | selectattr("sudo", "defined") | selectattr("sudo", "equalto", true) | list }}'
 
 - name: Install the sudo package if required
-  when: administrators != []
+  when: administrators != [ ]
   apt:
     name: sudo
     state: present
 
 - name: Create the group home folders if necessary
-  tags: accounts
   file:
     path: /home/users
     owner: root
@@ -20,7 +19,6 @@
     mode: '0755'
 
 - name: Add homebox mail and config folders to the skeleton
-  tags: accounts
   file:
     path: '{{ dir }}'
     owner: root
@@ -28,30 +26,20 @@
     state: directory
     mode: '0700'
     recurse: true
-  with_items:
-    - /etc/skel/mails/maildir
-    - /etc/skel/mails/sieve
-    - /etc/skel/mails/sieve/logs
-    - /etc/skel/mails/indexes
-    - /etc/skel/mails/import
-    - /etc/skel/mails/indexes/xapian-indexes
-    - /etc/skel/.config/homebox
+  loop: '{{ user_directories }}'
   loop_control:
     loop_var: dir
 
 - name: Create the users home folders from /etc/skel
-  tags: accounts
   command: 'mkhomedir_helper {{ user.uid }} 077 /etc/skel'
-  with_items:
-    - '{{ users }}'
-    - '{{ ldap.postmaster }}'
+  loop: '{{ users }}'
   loop_control:
     loop_var: user
 
 - name: Create home directory for users on first login
-  lineinfile:
-    dest: /etc/pam.d/common-account
-    line: 'session    required    pam_mkhomedir.so skel=/etc/skel/ umask=0022'
+  shell: >-
+    pam-auth-update --package --enable mkhomedir
+  changed_when: true
 
 # These tasks are configuring the system to give access
 # to some administrators, without having to logon as root.
@@ -60,29 +48,20 @@
 - name: Add SSH keys for the administrators
   authorized_key:
     user: '{{ user.uid }}'
-    state: present
     key: >-
       {{ user.ssh_key.type }}
       {{ user.ssh_key.data | regex_replace(" ") }}
       {{ user.ssh_key.comment }}
-  with_items:
-    - '{{ users | selectattr("ssh_key", "defined") | list }}'
+    state: present
+  loop: '{{ users | selectattr("ssh_key", "defined") | list }}'
   loop_control:
     loop_var: user
 
 - name: Add the administrators to the sudo group
   user:
     name: '{{ user.uid }}'
-    groups:
-      - sudo
-  with_items:
-    - '{{ administrators | list }}'
+    groups: sudo
+    append: true
+  loop: '{{ administrators }}'
   loop_control:
     loop_var: user
-
-- name: Set the home folders to the group users
-  tags: accounts
-  file:
-    path: '/home/users/'
-    group: users
-    recurse: yes

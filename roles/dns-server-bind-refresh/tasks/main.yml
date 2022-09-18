@@ -1,7 +1,6 @@
 ---
 
 - name: Build the final bind configuration
-  tags: config
   notify: Restart bind
   assemble:
     src: '/etc/homebox/dns-entries.d/'

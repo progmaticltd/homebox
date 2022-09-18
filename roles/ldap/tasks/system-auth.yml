@@ -1,0 +1,29 @@
+---
+
+- name: Configure libnss to use passwords and groups
+  debconf:
+    name: libnss-ldap
+    question: 'libnss-ldapd/nsswitch'
+    value: 'passwd, group, shadow'
+    vtype: multiselect
+
+- name: Install the required packages for interactive login
+  vars:
+    pkgs:
+      - libnss-ldapd
+      - libpam-ldapd
+  apt:
+    name: '{{ pkgs }}'
+    state: present
+
+- name: Update the ldap configuration file
+  template:
+    src: nslcd.conf
+    dest: /etc/nslcd.conf
+    mode: '0600'
+
+# Sudo to update the indexes as the openldap user
+- name: Install the required packages
+  apt:
+    name: sudo
+    state: present

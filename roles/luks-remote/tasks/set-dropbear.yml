@@ -1,7 +1,6 @@
 ---
 
 - name: Install the required packages
-  tags: apt
   apt:
     update_cache: true
     name: '{{ packages }}'

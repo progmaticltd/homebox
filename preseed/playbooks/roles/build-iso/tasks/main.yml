@@ -50,6 +50,7 @@
 - name: Build debian mirror
   shell: >-
     simple-cdd
+    --verbose
     --debian-mirror {{ build_mirror }} --locale {{ build_locale }} --dist {{ build_dist }}
     --do-mirror --mirror-only --keyring /usr/share/keyrings/debian-archive-keyring.gpg
   args:

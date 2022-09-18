@@ -1,0 +1,11 @@
+---
+
+- name: Install xkcdpass to generate the user passwords
+  apt:
+    name: xkcdpass
+    state: present
+
+- name: Ensure the LDAP server FQDN resolves to localhost
+  lineinfile:
+    path: /etc/hosts
+    line: '127.0.0.1    ldap.{{ network.domain }}'

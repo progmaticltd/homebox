@@ -1,0 +1,11 @@
+---
+
+- name: Install opendkim AppArmor profile
+  template:
+    src: 'apparmor.d/usr.sbin.opendkim.cf'
+    dest: '/etc/apparmor.d/usr.sbin.opendkim'
+    force: no
+
+- name: Activate AppArmor profiles
+  command: 'aa-enforce usr.sbin.opendkim'
+  notify: Restart AppArmor service

@@ -7,30 +7,36 @@ users_defaults:
   shell: /bin/dash
 
 
-packages:
+ldap_packages:
   install:
-    - acl
+    - cracklib-runtime
+    - ldap-utils
     - ldapscripts
     - ldapvi
+    - libldap-common
+    - libpam-cracklib
     - libpam-pwquality
     - python3-ldap
     - python3-ldap3
     - python3-passlib
     - slapd
+    - ssl-cert
+    - ca-certificates
+    - openssl
     - unscd
   remove:
-    - libpam-cracklib
     - nscd
 
 indexed_fields:
-  - uid
   - cn
-  - sn
-  - givenName
-  - mail
-  - memberUid
-  - uidNumber
-  - gidNumber
-  - intlMailAddr
   - displayName
+  - gidNumber
+  - givenName
+  - intlMailAddr
+  - mail
+  - member
+  - memberUid
+  - sn
   - telephoneNumber
+  - uid
+  - uidNumber

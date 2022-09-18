@@ -1,7 +1,6 @@
 ---
 
 - name: Create a directory for DNSSEC keys backup if it does not exists
-  tags: cert
   delegate_to: localhost
   file:
     path: '{{ backup_directory }}/dnssec-keys/'
@@ -32,19 +31,16 @@
 # Build main and reverse IP address information
 # Main IP address
 - name: Build the reverse IP address (works for IPv4 or IPv6)
-  tags: facts
   set_fact:
     reverse_ip: "{{ external_ip | ipaddr('revdns') }}"
 
 # Backup IP address
 - name: Build the reverse IP address (works for IPv4 or IPv6)
   when: backup_ip is defined and (backup_ip | length > 0)
-  tags: facts
   set_fact:
     reverse_backup_ip: "{{ backup_ip | ipaddr('revdns') }}"
 
 - name: Copy the forward configuration template
-  tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
   template:
@@ -67,7 +63,6 @@
 
 - name: Copy the main reverse configuration template
   when: bind.generate_reverse
-  tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
     record_name: "{{ 'smtp' if postfix.install else 'main' }}"
@@ -79,7 +74,6 @@
 
 - name: Copy the backup reverse configuration template
   when: bind.generate_reverse and backup_ip is defined and (backup_ip | length > 0)
-  tags: config
   vars:
     serial: "{{ lookup('pipe', 'date +%s') }}"
     record_name: "{{ 'smtp2' if postfix.install else 'backup' }}"
@@ -102,7 +96,6 @@
     state: absent
 
 - name: Build the final bind configuration
-  tags: config
   assemble:
     src: '/etc/homebox/dns-entries.d/'
     dest: '/etc/bind/forward.{{ network.domain }}'
@@ -112,7 +105,6 @@
 - name: Create the folder for the keys
   when: bind.dnssec.active
   register: keys_dir
-  tags: encryption
   file:
     path: '{{ path }}'
     state: directory
@@ -135,7 +127,6 @@
 
 - name: If the DNSSEC keys have been generated before, copy them on the remote server
   when: bind.dnssec.active
-  tags: backup-push
   synchronize:
     src: '{{ backup_directory }}/dnssec-keys/'
     dest: '/etc/bind/keys/'
@@ -189,7 +180,6 @@
 
 - name: Generate the key signing key (KSK)
   when: bind.dnssec.active
-  tags: encryption
   shell: >-
     set -o pipefail ;
     ( test -f /etc/bind/keys/*key && grep "key-signing key" /etc/bind/keys/*key )
@@ -284,21 +274,18 @@
     state: started
 
 - name: Ensure the main record resolves to me
-  tags: hosts
   lineinfile:
     path: /etc/hosts
     line: '127.0.0.1    main.{{ network.domain }}'
 
 - name: Ensure the backup record resolves to me
   when: backup_ip is defined and (backup_ip | length > 0)
-  tags: hosts
   lineinfile:
     path: /etc/hosts
     line: '127.0.0.1    backup.{{ network.domain }}'
 
 - name: Backup the keys on your local machine
   when: bind.dnssec.active
-  tags: backup-pull
   synchronize:
     mode: pull
     src: '/etc/bind/keys/{{ item }}'

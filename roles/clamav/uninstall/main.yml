@@ -1,0 +1,22 @@
+---
+
+- name: Uninstall clamav antivirus suite
+  apt:
+    name: '{{ packages }}'
+    state: absent
+    purge: true
+
+- name: Remove AppArmor profiles
+  file:
+    path: /etc/apparmor.d/usr.sbin.clamsmtpd
+    state: absent
+
+- name: Remove config folder
+  file:
+    path: /etc/clamsmtp
+    state: absent
+
+- name: Remove log folder
+  file:
+    path: /var/log/clamsmtp
+    state: absent

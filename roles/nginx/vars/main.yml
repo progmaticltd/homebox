@@ -1,0 +1,6 @@
+---
+
+packages:
+  - nginx
+  - nginx-common
+  - nginx-core

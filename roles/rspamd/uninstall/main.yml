@@ -1,0 +1,17 @@
+---
+
+- name: Remove the packages
+  apt:
+    name: '{{ rspamd_pkgs }}'
+    state: absent
+    purge: true
+
+- name: Remove the configuration directory
+  file:
+    path: /etc/rspamd
+    state: absent
+
+- name: Remove the apparmor config file
+  file:
+    path: /etc/apparmor.d/usr.bin.rspamd
+    state: absent

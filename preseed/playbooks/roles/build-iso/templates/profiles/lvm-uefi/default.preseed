@@ -52,6 +52,9 @@ d-i partman-auto/choose_recipe select homebox-lvm
 # free space or the 'max' keyword.
 d-i partman-auto-lvm/guided_size string {{ partitions.disk_usage }}
 
+# See https://wiki.debian.org/UEFI
+grub-efi-amd64  grub2/force_efi_extra_removable boolean true
+
 {% set default_fs = partitions.default_fs %}
 
 d-i partman-auto/expert_recipe string homebox-lvm ::       \

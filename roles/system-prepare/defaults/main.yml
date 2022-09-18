@@ -8,19 +8,18 @@ system_required:
   - apparmor-profiles
   - apparmor-utils
   - certbot
-  - fail2ban
   - haveged
   - locales
   - makepasswd
   - nginx
   - rblcheck
   - rsync
-  - ufw
   - unattended-upgrades
 
 # Packages to exclude
 system_excluded:
   - resolvconf
+  - ufw
 
 
 ###############################################################################

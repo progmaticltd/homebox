@@ -1,0 +1,30 @@
+---
+
+- name: Install nginx AppArmor profile
+  tags: rspamd, security, apparmor
+  template:
+    src: apparmor.d/local/rspamd-web
+    dest: /etc/apparmor.d/local/nginx-rspamd-web
+
+- name: Check if AppArmor nginx configuration already contains the line
+  register: line_found
+  shell: >-
+    grep -c 'include <local/nginx-rspamd-web>'
+    /etc/apparmor.d/usr.sbin.nginx
+  changed_when: false
+  failed_when: false
+
+- name: Add rspamd AppAromor specific configuration
+  when: line_found.stdout == '0'
+  register: aa_config
+  tags: rspamd, security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/nginx-rspamd-web>'
+    insertbefore: '# End of local includes for homebox'
+
+- name: Activate AppArmor profiles
+  when: aa_config.changed
+  tags: rspamd, security, apparmor
+  command: 'aa-enforce usr.sbin.nginx'
+  notify: Restart AppArmor service

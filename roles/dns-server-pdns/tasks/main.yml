@@ -1,0 +1,13 @@
+---
+
+- name: Install the packages required
+  apt:
+    name: '{{ pdns_packages }}'
+    install_recommends: false
+    state: present
+
+- name: Run the configuration tasks
+  include_tasks: config.yml
+
+- name: Initialise the database with some content
+  include_tasks: init-db.yml

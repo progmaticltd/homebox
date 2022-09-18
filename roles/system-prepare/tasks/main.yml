@@ -2,7 +2,6 @@
 
 # Install the most required packages
 - name: Update packages cache if older than 1h
-  tags: apt
   apt:
     cache_valid_time: 3600
     update_cache: true
@@ -15,13 +14,11 @@
     state: present
 
 - name: Get the locale value on the current machine
-  tags: locale
   delegate_to: localhost
   set_fact:
     locale: "{{ lookup('env','LANG') }}"
 
 - name: Configure locales
-  tags: locale
   debconf:
     name: locales
     question: '{{ conf.question }}'
@@ -38,14 +35,12 @@
     loop_var: conf
 
 - name: Update /etc/locales
-  tags: locale
   replace:
     path: /etc/locale.gen
     regexp: '^# {{ locale | regex_escape }}'
     replace: '{{ locale }}'
 
 - name: Configure locales
-  tags: locale
   shell: dpkg-reconfigure -phigh locales
 
 - name: Create a homebox directory to store any specific configuration
@@ -56,45 +51,30 @@
     mode: '0755'
 
 - name: Create the configuration file that defines paths to exclude for backup
-  tags: backup
   template:
     src: backup-exclude
     dest: /etc/homebox/backup-exclude
 
 - name: Create the main configuration file for other services
-  tags: config
   template:
     src: main.cf
     dest: /etc/homebox/main.cf
 
 - name: Upgrade the distribution the first time this script is run
   when: homebox_dir.changed
-  tags: apt
   apt:
     upgrade: true
 
 - name: Install required packages
-  tags: apt
   apt:
     name: "{{ system_required }}"
     state: present
 
 - name: Remove packages to exclude
-  tags: apt
   apt:
     name: "{{ system_excluded }}"
     state: absent
     purge: yes
-
-# Despite what the configuration files comment says
-# fail2ban banned its own IP address! I may raise a
-# bug on Debian BTS later if confirmed
-- name: Avoid fail2ban banning its own IP address
-  notify: Restart fail2ban
-  replace:
-    path: /etc/fail2ban/jail.conf
-    regexp: '^(#|\s)*ignoreip = 127.0.0.1/8 ::1$'
-    replace: 'ignoreip = 127.0.0.1/8 ::1 {{ external_ip }} {{ backup_ip | default(omit) }}'
 
 - name: Install RFC7919 Diffie-Hellman parameters files for DHE ciphers
   copy:
@@ -110,21 +90,18 @@
 # Update packages cache, and install any security update
 - name: Update packages cache and install security updates
   register: packages_cache
-  tags: apt
   apt:
     update_cache: yes
     cache_valid_time: 3600
 
 - name: Upgrade the distribution, and install security updates if needed
   when: packages_cache.changed
-  tags: apt
   apt:
     upgrade: yes
 
 # We are going to install the "unattended-upgrades" package, and to
 # configure it to install security updates automatically.
 - name: Configure the automatic security updates
-  tags: security
   debconf:
     name: unattended-upgrades
     question: '{{ conf.question }}'
@@ -140,13 +117,7 @@
   loop_control:
     loop_var: conf
 
-# Install the firewall, but do not configure any rule.
-# The other tasks will setup the rules themselves
-# We are also installing fail2ban, so the other services might use it, like postfix, dovecot and roundcube
-# The package 'unattended-upgrades' download and install security updates by default
-
 - name: Create a random password for file encryption on the server
-  tags: encryption
   no_log: true
   set_fact:
     system_key: '{{ lookup("password", "{{ encryption.systemKeyParams }}") }}'
@@ -169,13 +140,6 @@
   loop_control:
     loop_var: dict
 
-- name: Create a composition directory for bind
-  when: bind.install
-  tags: bind
-  file:
-    path: /etc/homebox/dns-entries.d/
-    state: directory
-
 # If IPv6 is not needed, disable it entirely
 - name: Disable IPv6 if not needed
   sysctl:
@@ -186,13 +150,6 @@
     - net.ipv6.conf.default.disable_ipv6
   loop_control:
     loop_var: entry_name
-
-- name: Update UFW IPv6 configuration
-  notify: Restart ufw
-  replace:
-    path: /etc/default/ufw
-    regexp: '^IPV6=(yes|no)'
-    replace: 'IPV6={{ "yes" if ipv6_used else "no" }}'
 
 # SSHFP (fingerprints) are only active with DNSSEC
 - name: Create the SSHFP records for bind
@@ -206,12 +163,19 @@
   args:
     executable: /bin/bash
 
-- name: Add the SSHFP records
-  when: bind.install and bind.dnssec.active
-  tags: bind
-  template:
-    src: sshfp.bind
-    dest: /etc/homebox/dns-entries.d/01-sshfp.bind
+# - name: Create a composition directory for bind
+#   when: bind.install
+#   tags: bind
+#   file:
+#     path: /etc/homebox/dns-entries.d/
+#     state: directory
+
+# - name: Add the SSHFP records
+#   when: bind.install and bind.dnssec.active
+#   tags: bind
+#   template:
+#     src: sshfp.bind
+#     dest: /etc/homebox/dns-entries.d/01-sshfp.bind
 
 # LUKS management
 - name: Install Yubikey key decryption

@@ -1,12 +1,7 @@
 ---
 
 - name: Create local configuration files
-  tags: rspamd
   notify: Restart rspamd
   template:
-    src: '{{ file }}'
-    dest: '/etc/rspamd/local.d/{{ file }}'
-  with_items:
-    - dmarc.conf
-  loop_control:
-    loop_var: file
+    src: dmarc.conf
+    dest: /etc/rspamd/local.d/dmarc.conf

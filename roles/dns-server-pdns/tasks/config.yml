@@ -1,0 +1,54 @@
+---
+
+- name: Install the packages required
+  apt:
+    name: '{{ pdns_packages }}'
+    install_recommends: false
+    state: present
+
+- name: Create the directory to store data
+  file:
+    path: /var/lib/pdns/
+    state: directory
+    owner: pdns
+    group: pdns
+    mode: 0700
+
+- name: Load the database
+  become: true
+  become_user: pdns
+  shell: >-
+    cat /usr/share/pdns-backend-sqlite3/schema/schema.sqlite3.sql
+    | sqlite3 default.db
+  args:
+    creates: /var/lib/pdns/default.db
+    chdir: /var/lib/pdns/
+
+- name: Set the right permissions
+  notify: Restart PowerDNS
+  file:
+    path: /var/lib/pdns/default.db
+    owner: pdns
+    group: pdns
+    mode: 0644
+
+- name: Create configuration subdir
+  file:
+    path: /etc/powerdns/pdns.d
+    state: directory
+
+- name: Create a custom api key
+  set_fact:
+    api_key: >-
+      {{ lookup(creds.store, creds.prefix + "dns/api-key"
+      + creds.opts.create + creds.opts.system)
+      }}
+
+- name: Add custom settings
+  notify: Restart PowerDNS
+  template:
+    src: pdns.conf
+    dest: /etc/powerdns/pdns.d/homebox.conf
+    owner: root
+    group: pdns
+    mode: 0640

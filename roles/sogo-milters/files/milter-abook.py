@@ -44,7 +44,8 @@ configParser.read(configFilePath)
 # This implementation use a simple sqlite database, mainly for testing.
 # The records in the database are anonymised using sha256, for security purposes
 def searchInSQLite(fromAddress, recipients, debug):
-    """Search for an address in a local sqlite database. Only email hashes are stored (sha256)"""
+    """Search for an address in a local sqlite database.
+    Only email hashes are stored (sha256)"""
     sources = []
 
     try:
@@ -121,7 +122,8 @@ def searchInSOGo(fromAddress, recipients, debug, dbConnection):
                 abName = tableInfo[0]
                 tableName = tableInfo[1]
                 cursor = dbConnection.cursor()
-                countQuery = "select count(*) from {} where c_content LIKE '%EMAIL%:{}%';".format(tableName, fromAddress)
+                countQuery = "select count(*) from {} where c_content LIKE '%EMAIL%:{}%';".format(
+                    tableName, fromAddress)
                 if debug:
                     GlobalLogQueue.put("Searching in table {} ({})".format(tableName, abName))
                 cursor.execute(countQuery)
@@ -290,7 +292,8 @@ def main():
             pidFile.write(str(pid))
             pidFile.close()
 
-        print("Started SOGo address book search and tag milter (pid={}, debug={})".format(pid, debug))
+        print("Started SOGo address book search and tag milter (pid={}, debug={})".format(
+            pid, debug))
         sys.stdout.flush()
 
         # Start the background thread

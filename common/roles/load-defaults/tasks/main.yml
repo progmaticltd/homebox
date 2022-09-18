@@ -1,4 +1,5 @@
 ---
+
 # This role load all the default values, and merge them with user specified values.
 # This is a first version, roughly copy and paste, but will evolve to something more
 # elaborated later. The final purpose is fulfilled:
@@ -379,69 +380,85 @@
     backup: '{{ backup_default }}'
 
 ################################################################################
+# Merge defaults creds settings
+- name: Combine default and user defined creds settings
+  run_once: true
+  when: creds is defined
+  tags: defaults
+  set_fact:
+    creds: '{{ creds_default | combine(creds, recursive=True) }}'
+
+- name: Use default creds settings
+  run_once: true
+  when: creds is not defined
+  tags: defaults
+  set_fact:
+    creds: '{{ creds_default }}'
+
+################################################################################
 # Create the complete list of certificates to genetarate
 
-- name: Initialise the list of certificates
-  set_fact:
-    standard_certificates:
-      - type: ldap
-        create: true
-      - type: '@'
-        create: true
-      - type: smtp
-        domain_alias: smtp2
-        create: true
-      - type: pop3
-        create: '{{ mail.pop3 }}'
-      - type: imap
-        create: true
-      - type: mta-sts
-        create: true
-      - type: rspamd
-        create: '{{ mail.antispam.webui.active }}'
-      - type: sogo
-        create: '{{ sogo.install }}'
-      - type: www
-        create: '{{ website.install }}'
-      - type: autoconfig
-        create: '{{ mail.autoconfig }}'
-      - type: autodiscover
-        create: '{{ mail.autodiscover }}'
-      - type: webmail
-        create: '{{ webmail.install and webmail.type == "roundcube" }}'
-      - type: transmission
-        create: '{{ transmission.install }}'
-      - type: zabbix
-        create: '{{ zabbix.install }}'
-      - type: openpgpkey
-        create: '{{ pgp is defined }}'
-      # jabber server
-      - type: conference
-        create: '{{ ejabberd.install }}'
-      - type: xmpp
-        create: '{{ ejabberd.install }}'
-      - type: files
-        create: '{{ ejabberd.install }}'
-      - type: upload
-        create: '{{ ejabberd.install }}'
-      - type: vjud
-        create: '{{ ejabberd.install }}'
-      - type: pubsub
-        create: '{{ ejabberd.install }}'
-      - type: proxy
-        create: '{{ ejabberd.install }}'
+# - name: Initialise the list of certificates
+#   set_fact:
+#     standard_certificates:
+#       - name: ldap
+#         create: true
+#       - name: '@'
+#         create: true
+#       - name: smtp
+#         domain_alias: smtp2
+#         create: true
+#       - name: pop3
+#         create: '{{ mail.pop3 }}'
+#       - name: imap
+#         create: true
+#       - name: mta-sts
+#         create: true
+#       - name: rspamd
+#         create: '{{ mail.antispam.webui.active }}'
+#       - name: sogo
+#         create: '{{ sogo.install }}'
+#       - name: www
+#         create: '{{ website.install }}'
+#       - name: autoconfig
+#         create: '{{ mail.autoconfig }}'
+#       - name: autodiscover
+#         create: '{{ mail.autodiscover }}'
+#       - name: webmail
+#         create: '{{ webmail.install and webmail.type == "roundcube" }}'
+#       - name: transmission
+#         create: '{{ transmission.install }}'
+#       - name: zabbix
+#         create: '{{ zabbix.install }}'
+#       - name: openpgpkey
+#         create: '{{ pgp is defined }}'
+#       # jabber server
+#       - name: conference
+#         create: '{{ ejabberd.install }}'
+#       - name: xmpp
+#         create: '{{ ejabberd.install }}'
+#       - name: files
+#         create: '{{ ejabberd.install }}'
+#       - name: upload
+#         create: '{{ ejabberd.install }}'
+#       - name: vjud
+#         create: '{{ ejabberd.install }}'
+#       - name: pubsub
+#         create: '{{ ejabberd.install }}'
+#       - name: proxy
+#         create: '{{ ejabberd.install }}'
 
-- name: Add extra
-  set_fact:
-    extra_certs: >-
-      {{ extra_certs
-      | default([])
-      | map("combine", { "create": true })
-      | list }}
+# - name: Add extra
+#   set_fact:
+#     extra_certs: >-
+#       {{ extra_certs
+#       | default([])
+#       | map("combine", { "create": true })
+#       | list }}
 
-- name: Initialise the list of certificates
-  set_fact:
-    certificates: '{{ standard_certificates + extra_certs }}'
+# - name: Initialise the list of certificates
+#   set_fact:
+#     certificates: '{{ standard_certificates + extra_certs }}'
 
 ################################################################################
 # Marking the default settings as loaded should increase the speed of the deployment

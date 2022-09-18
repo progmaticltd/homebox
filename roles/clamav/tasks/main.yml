@@ -1,101 +1,13 @@
 ---
 
-- name: Install clamav antivirus suite
-  register: clamav_packages
-  apt:
-    name: '{{ packages }}'
-    state: present
+- name: Install the packages
+  include_tasks: packages.yml
 
-- name: Set up the configuration file
-  tags: config
-  notify: Restart clamav services
-  template:
-    src: '{{ file.src }}'
-    dest: '{{ file.dest }}'
-  with_items:
-    - src: clamsmtpd.conf
-      dest: /etc/clamsmtpd.conf
-    - src: freshclam.conf
-      dest: /etc/clamav/freshclam.conf
-  loop_control:
-    loop_var: file
+- name: Configure the packages
+  include_tasks: config.yml
 
-###############################################################################
-# See the Debian bug report:
-# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=827909
-#
-- name: Start clamav freshclam service
-  register: clamav_freshclam
-  service:
-    name: clamav-freshclam
-    state: started
-    enabled: yes
+- name: Update the virus database
+  include_tasks: update.yml
 
-- name: Wait for the freshclam service to have downloaded daily update on the first installation
-  when: clamav_packages.changed
-  wait_for:
-    path: /var/lib/clamav/daily.cvd
-    sleep: 1
-    timeout: 300
-
-- name: Start clamav service
-  register: clamav_daemon
-  service:
-    name: clamav-daemon
-    state: started
-    enabled: yes
-  retries: 12
-  until: clamav_daemon is not failed
-  delay: 10
-
-###############################################################################
-
-- name: Get the local machine locale
-  delegate_to: localhost
-  set_fact:
-    def_lang: '{{ lookup("env", "LANG") }}'
-
-- name: Get the remote locale
-  tags: locale
-  set_fact:
-    lang: '{{ ansible_env.LANG | default(def_lang) | regex_replace("\..*", "") }}'
-
-- name: Create the clamsmtp templates directory
-  file:
-    path: /etc/clamsmtp
-    state: directory
-    owner: clamsmtp
-    group: clamsmtp
-    mode: '0700'
-
-- name: Create the logs folder for clamsmtp
-  file:
-    path: /var/log/clamsmtp
-    owner: clamsmtp
-    group: clamsmtp
-    mode: '0700'
-    state: directory
-
-# AppArmor configuration ======================================================
-- name: Install some clamav AppArmor profiles
-  notify: Restart clamav services
-  tags: security, apparmor
-  register: aa_templates
-  template:
-    src: 'apparmor.d/{{ aa_config }}'
-    dest: '/etc/apparmor.d/{{ aa_config }}'
-  with_items:
-    - usr.sbin.clamsmtpd
-  loop_control:
-    loop_var: aa_config
-
-- name: Activate AppArmor profiles
-  when: aa_templates.changed
-  tags: security, apparmor
-  notify: Restart AppArmor service
-  command: 'aa-enforce {{ aa_config }}'
-  with_items:
-    - usr.bin.freshclam
-    - usr.sbin.clamd
-  loop_control:
-    loop_var: aa_config
+- name: Configure AppArmor
+  include_tasks: apparmor.yml

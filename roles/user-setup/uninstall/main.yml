@@ -1,0 +1,29 @@
+---
+
+- name: Remove homebox mail and config folders to the skeleton
+  file:
+    path: '{{ dir }}'
+    state: absent
+  loop: '{{ user_directories }}'
+  loop_control:
+    loop_var: dir
+
+- name: Reset the groups for each user
+  user:
+    name: '{{ user.uid }}'
+    groups: [ users, mail_users ]
+    append: false
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Remove mkhomedir configuration
+  shell: >-
+    pam-auth-update --package --remove mkhomedir
+  changed_when: true
+
+
+- name: Create the group home folders if necessary
+  file:
+    path: /home/users
+    state: absent

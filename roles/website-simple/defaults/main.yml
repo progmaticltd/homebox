@@ -14,7 +14,7 @@ nginx_sec_headers:
 
 ####
 csp_default:
-  default: "'none'"
+  default: "'self'"
   list:
     - id: default-src
       value: "https: 'self'"

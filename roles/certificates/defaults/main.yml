@@ -1,0 +1,46 @@
+---
+
+certificates:
+  # - name: '@'
+  #   create: true
+  - name: ldap
+    create: true
+  - name: rspamd
+    create: '{{ mail.antispam.webui.active }}'
+  - name: smtp
+    create: true
+  - name: pop3
+    create: '{{ mail.pop3 }}'
+  - name: imap
+    create: true
+  - name: mta-sts
+    create: true
+  - name: sogo
+    create: '{{ sogo.install }}'
+  - name: www
+    create: '{{ website.install }}'
+  - name: autoconfig
+    create: '{{ mail.autoconfig }}'
+  - name: autodiscover
+    create: '{{ mail.autodiscover }}'
+  - name: transmission
+    create: '{{ transmission.install }}'
+  # Jabber
+  - name: conference
+    create: '{{ ejabberd.install }}'
+  - name: xmpp
+    create: '{{ ejabberd.install }}'
+  - name: zabbix
+    create: '{{ zabbix.install }}'
+  - name: files
+    create: '{{ ejabberd.install }}'
+  - name: upload
+    create: '{{ ejabberd.install }}'
+  - name: vjud
+    create: '{{ ejabberd.install }}'
+  - name: pubsub
+    create: '{{ ejabberd.install }}'
+  - name: proxy
+    create: '{{ ejabberd.install }}'
+  - name: openpgpkey
+    create: '{{ pgp | default([]) | length > 0 }}'
