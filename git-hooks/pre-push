@@ -44,9 +44,7 @@ do
 		# Write the list of the main ansible files and directories
 		find \
 			common/roles/* \
-			install/main.yml \
-			tests/main.yml \
-			uninstall/*.yml \
+			playbook/main.yml \
 			-maxdepth 0 -print0 \
 			> "$tmp_checklist"
 
