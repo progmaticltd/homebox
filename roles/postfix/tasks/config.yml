@@ -1,0 +1,33 @@
+---
+
+# The typical base64 overhead is 33%, and the value in the configuration file is in Mb
+# So the value is max_attachment_size * 1.33 * 1024 * 1024, i.e. max_attachment_size * 1394606
+# Adding 1Kb for the message text, because we are generous (sic)
+- name: Compute max message size from max attachment size
+  set_fact:
+    message_size_limit: '{{ 1024 + mail.max_attachment_size * 1394606 | int }}'
+
+# It is also possible to use -D, with a debugger and gdb
+# See http://www.postfix.org/DEBUG_README.html
+- name: Set SMTP flag for debugging or development
+  set_fact:
+    smtpd_flags: '{{ (system.debug or system.devel) | ternary("-v", "") }}'
+
+- name: Copy configuration template
+  notify: Restart postfix
+  template:
+    src: "{{ file }}"
+    dest: "/etc/postfix/{{ file }}"
+  loop:
+    - master.cf
+    - main.cf
+    - ldap-aliases.cf
+    - senders-bcc.cf
+    - headers-check.cf
+  loop_control:
+    loop_var: file
+
+- name: Copy the template for /etc/mailname for completeness
+  template:
+    src: mailname
+    dest: /etc/mailname

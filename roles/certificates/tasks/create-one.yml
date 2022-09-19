@@ -1,21 +1,28 @@
 ---
 
-- name: Check if the record already exists
-  register: dns_query
-  shell: >-
-    dig -t CNAME {{ certificate.name }}.{{ network.domain }}
-    @127.0.0.1 | grep 'ANSWER: 1'
-  ignore_errors: true
-  changed_when: false
+# - name: Check if the record already exists
+#   register: dns_query
+#   shell: >-
+#     dig -t {{ certificate.type | default("CNAME") }} {{ certificate.name }}.{{ network.domain }}
+#     @127.0.0.1 | grep 'ANSWER: 1'
+#   ignore_errors: true
+#   changed_when: false
 
-- name: Create the DNS record if not existing
-  when: dns_query.failed
-  shell: >-
-    pdnsutil add-record {{ network.domain }}
-    {{ certificate.name }} CNAME main.{{ network.domain }}.
-  changed_when: true
+# - name: Create the DNS record if not existing
+#   when: dns_query.failed
+#   shell: >-
+#     pdnsutil add-record {{ network.domain }}
+#     {{ certificate.name }} {{ certificate.type | default("CNAME") }}
+#     main.{{ network.domain }}.
+#   changed_when: true
+
+- name: Check if the certificate file already exists
+  register: cert_file
+  stat:
+    path: '/etc/lego/certificates/{{ certificate.name }}.{{ network.domain }}.crt'
 
 - name: Check if the certificate exists and is valid
+  when: cert_file.stat.exists
   register: cert_check_cmd
   shell: >-
     openssl verify -verbose
@@ -26,13 +33,13 @@
   changed_when: false
 
 - name: Get the DNS api key
-  when: cert_check_cmd.failed
+  when: not cert_file.stat.exists or cert_check_cmd.failed
   no_log: true
   set_fact:
     api_key: '{{ lookup(creds.store, creds.prefix + "dns/api-key") }}'
 
 - name: Create the certificate
-  when: cert_check_cmd.failed
+  when: not cert_file.stat.exists or cert_check_cmd.failed
   environment:
     PDNS_API_URL: http://127.0.0.1:8081/
     PDNS_API_KEY: '{{ api_key }}'

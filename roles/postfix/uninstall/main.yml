@@ -1,0 +1,40 @@
+---
+
+- name: Install postfix packages
+  apt:
+    name: "{{ postfix_pkgs }}"
+    state: absent
+    purge: true
+    autoremove: true
+
+- name: Remove postfix AppArmor profiles
+  notify: Restart AppArmor service
+  file:
+    path: '/etc/apparmor.d/{{ aa_config }}'
+    state: absent
+  loop: '{{ postfix_apparmor_profiles }}'
+  loop_control:
+    loop_var: aa_config
+
+- name: Remove the primary DNS records
+  shell: >-
+    pdnsutil delete-rrset {{ network.domain }} smtp {{ external_ip_type }}
+
+- name: Remove the secondary DNS records
+  when: backup_ip is defined
+  shell: >-
+    pdnsutil delete-rrset {{ network.domain }} smtp2 {{ backup_ip_type }}
+
+- name: Get all postfix log files
+  register: postfix_logs
+  find:
+    path: /var/log/
+    pattern: 'mail.*'
+
+- name: Remove postfix log files
+  file:
+    path: '{{ file.path }}'
+    state: absent
+  loop: '{{ postfix_logs.files }}'
+  loop_control:
+    loop_var: file

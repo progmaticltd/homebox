@@ -1,0 +1,7 @@
+---
+
+- name: Install postfix packages
+  notify: Restart postfix
+  apt:
+    name: "{{ postfix_pkgs }}"
+    state: present

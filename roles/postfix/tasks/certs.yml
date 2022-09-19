@@ -1,0 +1,59 @@
+---
+
+- name: Check if the primary record already exists
+  register: dns_query
+  shell: >-
+    dig -t {{ external_ip_type }} smtp.{{ network.domain }}
+    @127.0.0.1 | grep 'ANSWER: 1'
+  ignore_errors: true
+  changed_when: false
+
+- name: Create the first DNS record if not existing
+  when: dns_query.failed
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    smtp {{ external_ip_type }}
+    {{ external_ip }}
+  changed_when: true
+
+- name: Check if the secondary record already exists
+  when: backup_ip is defined
+  register: backup_dns_query
+  shell: >-
+    dig -t {{ backup_ip_type }} smtp2.{{ network.domain }}
+    @127.0.0.1 | grep 'ANSWER: 1'
+  ignore_errors: true
+  changed_when: false
+
+- name: Create the first DNS record if not existing
+  when: backup_ip is defined and backup_dns_query.failed
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    smtp2 {{ backup_ip_type }}
+    {{ backup_ip }}
+  changed_when: true
+
+- name: Copy the certificates in the debian standard directory
+  copy:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: yes
+  loop:
+    - src: /etc/lego/certificates/smtp.{{ network.domain }}.issuer.crt
+      dest: /etc/ssl/certs/smtp.{{ network.domain }}.issuer.crt
+    - src: /etc/lego/certificates/smtp.{{ network.domain }}.crt
+      dest: /etc/ssl/certs/smtp.{{ network.domain }}.crt
+  loop_control:
+    loop_var: file
+
+- name: Copy the private key in the debian standard directory
+  copy:
+    src: /etc/lego/certificates/smtp.{{ network.domain }}.key
+    dest: /etc/ssl/private/smtp.{{ network.domain }}.key
+    remote_src: yes
+    owner: root
+    group: ssl-cert
+    mode: 0640
