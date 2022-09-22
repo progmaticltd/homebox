@@ -1,0 +1,36 @@
+---
+
+- name: Create the directories for the site
+  file:
+    path: /var/www/mta-sts/.well-known
+    state: directory
+
+- name: Add the site content files
+  template:
+    src: '{{ file.name }}'
+    dest: '/var/www/mta-sts/{{ file.folder | default("") }}{{ file.name }}'
+  loop:
+    - name: index.html
+    - name: mta-sts.txt
+      folder: .well-known/
+  loop_control:
+    loop_var: file
+
+- name: Create the nginx template
+  notify: Restart nginx
+  vars:
+    csp: '{{ csp_default }}'
+    fp: '{{ fp_default }}'
+  template:
+    src: nginx.conf
+    dest: '/etc/nginx/sites-available/mta-sts.{{ network.domain }}.conf'
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Activate mta-sts web site
+  notify: Restart nginx
+  file:
+    src: '/etc/nginx/sites-available/mta-sts.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/mta-sts.{{ network.domain }}.conf'
+    state: link

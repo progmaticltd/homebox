@@ -1,0 +1,11 @@
+---
+
+- name: Create a unique ID for mta-sts DNS record
+  set_fact:
+    mta_sts_uid: "{{ lookup('password', '/dev/null length=16 chars=ascii_letters,digits') }}"
+
+- name: Create the text recond
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    _mta-sts TXT '"v=STSv1; id={{ mta_sts_uid }};"'
+  changed_when: true

@@ -1,76 +1,13 @@
 ---
 
-- name: Create the directories for the site
-  file:
-    path: /var/www/mta-sts/.well-known
-    state: directory
+- name: Copy the certificates
+  include_tasks: certs.yml
 
-- name: Add the site content files
-  template:
-    src: '{{ file.name }}'
-    dest: '/var/www/mta-sts/{{ file.folder | default("") }}{{ file.name }}'
-  with_items:
-    - name: index.html
-    - name: mta-sts.txt
-      folder: .well-known/
-  loop_control:
-    loop_var: file
+- name: Configure nginx
+  include_tasks: nginx.yml
 
-- name: Create the nginx template
-  notify: Restart nginx
-  vars:
-    csp: '{{ csp_default }}'
-    fp: '{{ fp_default }}'
-  template:
-    src: nginx.conf
-    dest: '/etc/nginx/sites-available/mta-sts.{{ network.domain }}.conf'
-    owner: root
-    group: root
-    mode: '0644'
+- name: Configure AppArmor
+  include_tasks: apparmor.yml
 
-- name: Activate mta-sts web site
-  notify: Restart nginx
-  file:
-    src: '/etc/nginx/sites-available/mta-sts.{{ network.domain }}.conf'
-    dest: '/etc/nginx/sites-enabled/mta-sts.{{ network.domain }}.conf'
-    state: link
-
-- name: Create a unique ID for mta-sts DNS record
-  set_fact:
-    mta_sts_uid: "{{ lookup('password', '/dev/null length=16 chars=ascii_letters,digits') }}"
-
-- name: Add the bind mta-sts TXT record template
-  when: bind.install
-  template:
-    src: 35-mta-sts.bind
-    dest: /etc/homebox/dns-entries.d/35-mta-sts.bind
-
-# AppArmor configuration ======================================================
-
-- name: Install nginx AppArmor profile
-  notify:
-    - Activate AppArmor profile
-    - Restart AppArmor service
-    - Restart nginx
-  template:
-    src: apparmor.d/local/mta-sts
-    dest: /etc/apparmor.d/local/mta-sts
-
-- name: Check if AppArmor nginx configuration already contains the line
-  register: line_found
-  shell: >-
-    grep -c 'include <local/mta-sts>'
-    /etc/apparmor.d/usr.sbin.nginx
-  changed_when: false
-  failed_when: false
-
-- name: Add AppArmor specific configuration
-  when: line_found.stdout == '0'
-  notify:
-    - Activate AppArmor profile
-    - Restart AppArmor service
-    - Restart nginx
-  lineinfile:
-    path: /etc/apparmor.d/usr.sbin.nginx
-    line: '  #include <local/mta-sts>'
-    insertbefore: '# End of local includes for homebox'
+- name: Configure DNS
+  include_tasks: dns.yml

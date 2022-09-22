@@ -1,0 +1,63 @@
+---
+
+- name: Remove the site content files
+  file:
+    path: /var/www/mta-sts
+    state: absent
+
+- name: Remove the nginx templates
+  notify: Restart nginx
+  file:
+    path: '{{ path }}'
+    state: absent
+  loop:
+    - /etc/nginx/sites-available/mta-sts.{{ network.domain }}.conf
+    - /etc/nginx/sites-enabled/mta-sts.{{ network.domain }}.conf
+  loop_control:
+    loop_var: path
+
+- name: Remove the DNS text recond
+  shell: >-
+    pdnsutil delete-rrset {{ network.domain }}
+    {{ record.name }} {{ record.type }}
+  changed_when: true
+  loop:
+    - name: _mta-sts
+      type: TXT
+    - name: mta-sts
+      type: A
+    - name: mta-sts
+      type: AAAA
+  loop_control:
+    loop_var: record
+
+- name: Remove nginx AppArmor profile
+  notify:
+    - Restart AppArmor service
+    - Restart nginx
+  file:
+    path: /etc/apparmor.d/local/mta-sts
+    state: absent
+
+- name: Remove apparmor include
+  notify:
+    - Restart AppArmor service
+    - Restart nginx
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '#include <local/mta-sts>'
+    state: absent
+
+- name: Get all nginx log files
+  register: postfix_logs
+  find:
+    path: /var/log/nginx
+    pattern: 'mta-sts-*'
+
+- name: Remove nginx log files
+  file:
+    path: '{{ file.path }}'
+    state: absent
+  loop: '{{ postfix_logs.files }}'
+  loop_control:
+    loop_var: file
