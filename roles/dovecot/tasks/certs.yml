@@ -1,0 +1,86 @@
+---
+
+- name: Check if the primary record already exists
+  register: dns_query
+  shell: >-
+    dig -t {{ external_ip_type }} imap.{{ network.domain }}
+    @127.0.0.1 | grep 'ANSWER: 1'
+  ignore_errors: true
+  changed_when: false
+
+- name: Create the first DNS record if not existing
+  when: dns_query.failed
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    imap {{ external_ip_type }}
+    {{ external_ip }}
+  changed_when: true
+
+- name: Check if the secondary record already exists
+  when: backup_ip is defined
+  register: backup_dns_query
+  shell: >-
+    dig -t {{ backup_ip_type }} imap.{{ network.domain }}
+    @127.0.0.1 | grep 'ANSWER: 1'
+  ignore_errors: true
+  changed_when: false
+
+- name: Create the first DNS record if not existing
+  when: backup_ip is defined and backup_dns_query.failed
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    imap {{ backup_ip_type }}
+    {{ backup_ip }}
+  changed_when: true
+
+- name: Copy the imap certificates in the debian standard directory
+  copy:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: yes
+  loop:
+    - src: /etc/lego/certificates/imap.{{ network.domain }}.issuer.crt
+      dest: /etc/ssl/certs/imap.{{ network.domain }}.issuer.crt
+    - src: /etc/lego/certificates/imap.{{ network.domain }}.crt
+      dest: /etc/ssl/certs/imap.{{ network.domain }}.crt
+  loop_control:
+    loop_var: file
+
+- name: Copy the imap private key in the debian standard directory
+  copy:
+    src: /etc/lego/certificates/imap.{{ network.domain }}.key
+    dest: /etc/ssl/private/imap.{{ network.domain }}.key
+    remote_src: yes
+    owner: root
+    group: ssl-cert
+    mode: 0640
+
+- name: Copy the pop3 certificates in the debian standard directory
+  when: mail.pop3
+  copy:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: yes
+  loop:
+    - src: /etc/lego/certificates/pop3.{{ network.domain }}.issuer.crt
+      dest: /etc/ssl/certs/pop3.{{ network.domain }}.issuer.crt
+    - src: /etc/lego/certificates/pop3.{{ network.domain }}.crt
+      dest: /etc/ssl/certs/pop3.{{ network.domain }}.crt
+  loop_control:
+    loop_var: file
+
+- name: Copy the pop3 private key in the debian standard directory
+  when: mail.pop3
+  copy:
+    src: /etc/lego/certificates/pop3.{{ network.domain }}.key
+    dest: /etc/ssl/private/pop3.{{ network.domain }}.key
+    remote_src: yes
+    owner: root
+    group: ssl-cert
+    mode: 0640

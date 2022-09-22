@@ -1,0 +1,21 @@
+---
+
+- name: Load or create the password for the read-only account
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    readonly_password: '{{ lookup(creds.store, "ldap/readonly") }}'
+
+- name: Load or create the passwords for the manager account
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    manager_password: '{{ lookup(creds.store, "ldap/manager") }}'
+
+- name: Load or create the passwords for the admin account
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    admin_password: '{{ lookup(creds.store, "ldap/admin") }}'
+
+- name: Create a normal password for the postmaster
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    postmaster_password: '{{ lookup(creds.store, "ldap/postmaster") }}'

@@ -3,11 +3,14 @@
 - name: Install the required packages
   include_tasks: packages.yml
 
+- name: Install the certificates
+  include_tasks: certs.yml
+
 - name: Configure network settings
   include_tasks: network.yml
 
-- name: Configure certificates
-  include_tasks: certificates.yml
+- name: Load ldap facts
+  include_tasks: facts.yml
 
 - name: Set some configuration files
   include_tasks: config.yml
@@ -44,6 +47,3 @@
   tags: virtual
   when: mail.virtual_folders.active
   include_tasks: virtual.yml
-
-- name: Configure fail2ban
-  include_tasks: fail2ban.yml

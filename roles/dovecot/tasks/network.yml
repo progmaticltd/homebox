@@ -12,36 +12,3 @@
   lineinfile:
     path: /etc/hosts
     line: '127.0.0.1    imap.{{ network.domain }}'
-
-- name: Configure the firewall for default access
-  tags: security
-  ufw:
-    rule: allow
-    proto: tcp
-    src: any
-    port: '{{ rule.port }}'
-    comment: '{{ rule.comment }}'
-  with_items:
-    - comment: Allow IMAPS access
-      port: 993
-    - comment: Allow Managesieve access
-      port: 4190
-  loop_control:
-    loop_var: rule
-
-- name: Configure the firewall for POP3 access
-  when: mail.pop3
-  tags: security
-  ufw:
-    rule: allow
-    proto: tcp
-    src: any
-    port: 995
-    comment: Allow POP3S access
-
-- name: Generate DNS records for bind
-  tags: bind
-  when: bind.install
-  template:
-    src: 40-dovecot.bind
-    dest: /etc/homebox/dns-entries.d/40-dovecot.bind

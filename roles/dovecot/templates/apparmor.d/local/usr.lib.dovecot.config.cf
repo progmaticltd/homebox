@@ -1,8 +1,10 @@
 
-  /etc/letsencrypt/archive/imap.{{ network.domain }}/* r,
+  /etc/ssl/certs/imap.{{ network.domain }}.* r,
+  /etc/ssl/private/imap.{{ network.domain }}.* r,
 
 {% if mail.pop3 %}
-  /etc/letsencrypt/archive/pop3.{{ network.domain }}/* r,
+  /etc/ssl/certs/pop3.{{ network.domain }}.* r,
+  /etc/ssl/private/pop3.{{ network.domain }}.* r,
 {% endif %}
 
   /var/lib/dovecot/* r,

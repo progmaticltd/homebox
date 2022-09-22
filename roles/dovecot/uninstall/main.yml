@@ -1,0 +1,10 @@
+---
+
+- name: Remove the DNS text recond
+  shell: >-
+    pdnsutil delete-rrset {{ network.domain }}
+    {{ sub }} CNAME
+  changed_when: true
+  loop: [ imap, pop3 ]
+  loop_control:
+    loop_var: sub

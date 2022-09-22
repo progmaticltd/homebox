@@ -80,9 +80,7 @@
     group: users
     mode: '0600'
     force: no
-  with_items:
-    - '{{ users }}'
-    - uid: postmaster
+  loop: '{{ users }}'
   loop_control:
     loop_var: user
 
@@ -94,9 +92,7 @@
     group: users
     mode: '0600'
     force: no
-  with_items:
-    - '{{ users }}'
-    - uid: postmaster
+  loop: '{{ users }}'
   loop_control:
     loop_var: user
 
@@ -106,7 +102,7 @@
     src: '{{ script.name }}.sh'
     dest: '/etc/dovecot/login-scripts/{{ script.order }}-{{ script.name }}'
     mode: '0755'
-  with_items:
+  loop:
     # malus scripts
     - name: access-check-country
       order: 100

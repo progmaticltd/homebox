@@ -21,14 +21,14 @@
 
 # LDAP URIs to use. You can use this instead of hosts list. Note that this
 # setting isn't supported by all LDAP libraries.
-uris = ldap://{{ ldap.hostname }}/
+uris = ldap://ldap.{{ network.domain }}/
 
 # Distinguished Name - the username used to login to the LDAP server.
 # Leave it commented out to bind anonymously (useful with auth_bind=yes).
 dn = {{ ldap.readonly.dn }}
 
 # Password for LDAP server, if dn is specified.
-dnpass = {{ lookup("password", ldap.roPasswdParams) }}
+dnpass = {{ readonly_password }}
 
 # Use SASL binding instead of the simple binding. Note that this changes
 # ldap_version automatically to be 3 if it's lower.

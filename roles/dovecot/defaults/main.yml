@@ -1,5 +1,39 @@
 ---
 
+# LDAP configuration
+ldap:
+  hostname: 'ldap.{{ network.domain }}'
+  organization:
+    domain: '{{ network.domain }}'
+    base: 'dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+  users:
+    dn: 'ou=users,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+  groups:
+    dn: 'ou=groups,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+  manager:
+    uid: manager
+    dn: 'cn=manager account, ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+  readonly:
+    uid: readonly
+    dn: 'cn=readonly account, ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+  admin:
+    dn: 'cn=admin,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+    desc: administrator account
+  postmaster:
+    uid: postmaster
+    dn: 'cn=postmaster account, ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+    # See https://www.ietf.org/rfc/rfc2142.txt
+    mailAliases:
+      - 'abuse@{{ network.domain }}'
+      - 'noc@{{ network.domain }}'
+      - 'security@{{ network.domain }}'
+      - 'mailer-daemon@{{ network.domain }}'
+      - 'webmaster@{{ network.domain }}'
+      - 'hostmaster@{{ network.domain }}'
+      - 'admin@{{ network.domain }}'
+      - 'root@{{ network.domain }}'
+
+
 sieve:
   global_scripts:
     - before-global.sieve
