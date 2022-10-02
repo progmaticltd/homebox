@@ -11,6 +11,7 @@
     name: '{{ pdns_packages }}'
     state: absent
     purge: true
+    autoremove: true
 
 - name: Remove the sqlite for the database
   file:

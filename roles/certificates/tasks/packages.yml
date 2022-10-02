@@ -2,4 +2,4 @@
 
 - name: Install the required packages
   apt:
-    name: '{{ packages }}'
+    name: '{{ cert_packages }}'

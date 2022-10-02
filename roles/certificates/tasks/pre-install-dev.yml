@@ -1,0 +1,22 @@
+---
+
+- name: Use the staging Acme url
+  set_fact:
+    acme_url: https://acme-staging-v02.api.letsencrypt.org/directory
+
+- name: Allow LetsEncrypt web site access in the proxy
+  lineinfile:
+    path: /etc/tinyproxy/filter
+    line: acme-staging-v02.api.letsencrypt.org
+
+- name: Download the staging root CA for certificate verification
+  environment:
+    https_proxy: 'http://127.0.0.1:8888/'
+  uri:
+    url: https://letsencrypt.org/certs/staging/letsencrypt-stg-root-x1.pem
+    dest: /tmp/acme-root.crt
+    status_code: [ 200, 304 ]
+
+- name: Use the temporary store for verification
+  set_fact:
+    acme_root: /tmp/acme-root.crt

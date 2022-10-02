@@ -1,0 +1,32 @@
+---
+
+- name: Get the external IP address
+  delegate_to: localhost
+  register: ext_ip_api_response
+  uri:
+    url: https://api.ipify.org/
+    return_content: true
+
+- name: Store the public IP
+  set_fact:
+    public_ip4: '{{ ext_ip_api_response.content }}'
+
+# If IPv6 is disabled on the local machine,
+# this task will fail, and we will just skip
+# the next firewall update.
+- name: Get the external IP address (IPv6)
+  delegate_to: localhost
+  register: ext_ip6_api_response
+  uri:
+    url: https://api64.ipify.org/
+    return_content: true
+
+- name: Store the public IP
+  set_fact:
+    public_ip6: '{{ ext_ip6_api_response.content }}'
+
+- name: Deploy the SSH public access file
+  notify: Restart nftables
+  template:
+    src: ssh-public-access.nft
+    dest: /etc/nftables/ssh-public-access.nft

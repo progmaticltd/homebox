@@ -1,0 +1,134 @@
+# don't display lengthy license and version information on startup
+startup_message off
+
+# don't log new windows to utmp (who and such won't work, which is fine)
+deflogin off
+
+# automatically detach on terminal hangup (so that one can attach again and
+# continue working)
+autodetach on
+
+# ignore case on searches in copy-mode
+ignorecase on
+
+# assume UTF-8 encoding
+defutf8 on
+
+# use 256-color palette
+term screen-256color-bce
+
+# Or use 24 bits color palette
+# term screen-24bits
+
+# disable flow control as it conflicts with Ctrl-S prefix
+defflow off
+
+# erase background with current bg color
+defbce on
+
+# remove delay after pressing escape key inside screen
+maptimeout 0
+
+# start screen with a new layout (none by default)
+layout new initial
+
+# wait up to three seconds before hiding last message (default is 5 seconds)
+msgwait 3
+
+# enable alternative screen
+altscreen on
+
+# use big scrollback buffer
+defscrollback 5000
+
+# suppress trailing blank lines when scrolling up text into the history buffer
+compacthist o
+
+# set color of borders and command-line (cyan background, black foreground)
+rendition so = ck
+
+# status line with current window highlighted
+hardstatus alwayslastline "%{= KW}%{= Kw}%{-} %-Lw%{= bW}%n%f %t%{-}%+Lw %=%`"
+
+# change prefix key to Ctrl-#
+escape "^A^A"
+
+# Try to configure Ctrl+A twice to switch to the last visited window
+bind "^A" eval "other"
+
+# vim-like navigation between windows
+bind h focus left
+bind j focus down
+bind k focus up
+bind l focus right
+
+# reload configuration file (note that this creates extra layout due to
+# `layout new initial` command)
+bind r source ~/.screenrc
+
+# create new window with a shell prompt
+bind C screen
+
+# split horizontally creating new shell prompt
+# bind - eval split 'focus down' screen
+
+# split vertically creating new shell prompt
+# bind | eval 'split -v' 'focus right' screen
+
+# create new layout with a shell prompt
+bind c eval 'layout new' screen
+
+# switch between layouts with Alt+Number
+# bindkey "^[0" layout select 0
+# bindkey "^[1" layout select 1
+# bindkey "^[2" layout select 2
+# bindkey "^[3" layout select 3
+# bindkey "^[4" layout select 4
+# bindkey "^[5" layout select 5
+# bindkey "^[6" layout select 6
+# bindkey "^[7" layout select 7
+# bindkey "^[8" layout select 8
+# bindkey "^[9" layout select 9
+
+# switch to next layout
+# bind n layout next
+
+# switch to previous layout
+# bind p layout prev
+
+# create new empty layout
+# bind N layout new
+
+# remove current layout
+# bind q layout remove
+
+# v - start selection
+# y - start line-wise selection
+# J - scroll down
+# K - scroll up
+markkeys "^M=v:y=V:^E=J:^Y=K"
+
+# > - copy selection to system clipboard
+# bindkey -m > eval "stuff ' '" writebuf "exec sh -c 'xsel < /tmp/screen-exchange'"
+
+# put screen into resize mode
+# bind R command -c rsz
+
+# use hjkl keys to resize regions
+# bind -c rsz h eval "resize -h -5" "command -c rsz"
+# bind -c rsz j eval "resize -v -5" "command -c rsz"
+# bind -c rsz k eval "resize -v +5" "command -c rsz"
+# bind -c rsz l eval "resize -h +5" "command -c rsz"
+
+# use HJKL keys to move between regions
+# bind -c rsz H eval "focus left"  "command -c rsz"
+# bind -c rsz J eval "focus down"  "command -c rsz"
+# bind -c rsz K eval "focus up"    "command -c rsz"
+# bind -c rsz L eval "focus right" "command -c rsz"
+
+# set-window-option -g alternate-screen on
+termcapinfo * 'hs:ts=\E]0;:fs=\007:ds=\E]0;\007'
+
+defhstatus "screen ^E (^Et) | $USER@^EH"
+
+hardstatus off

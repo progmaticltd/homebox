@@ -1,6 +1,7 @@
 ---
 
 - name: Show variables at the beginning
+  when: system.devel
   include_tasks: debug.yml
 
 - name: Initialise or load the passwords
@@ -8,6 +9,9 @@
 
 - name: Create the certificate
   include_tasks: cert.yml
+
+- name: Create the DNS record
+  include_tasks: dns.yml
 
 - name: Preinstalation tasks
   include_tasks: pre-install.yml

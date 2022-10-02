@@ -1,0 +1,27 @@
+---
+
+- name: Install apticron to send email alerts
+  apt:
+    name: apticron
+    state: present
+
+# Starting from Debian buster (10), /etc/apticron/apticron.conf is not
+# installed by default
+- name: Check if the apticron configuration file is present
+  register: apticron_conf_stat
+  stat:
+    path: /etc/apticron/apticron.conf
+
+# The default apticron.conf file is available in /usr/lib/apticron
+- name: Install distribution default configuration of apticron if not already present
+  when: not apticron_conf_stat.stat.exists
+  copy:
+    remote_src: yes
+    src: /usr/lib/apticron/apticron.conf
+    dest: /etc/apticron/apticron.conf
+
+- name: Configure apticron to send email alerts
+  replace:
+    path: /etc/apticron/apticron.conf
+    regexp: '^#?EMAIL=".*"'
+    replace: EMAIL="{{ security.alerts_email | join(' ') }}"

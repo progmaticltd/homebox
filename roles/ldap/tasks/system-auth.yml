@@ -22,8 +22,14 @@
     dest: /etc/nslcd.conf
     mode: '0600'
 
-# Sudo to update the indexes as the openldap user
-- name: Install the required packages
-  apt:
-    name: sudo
-    state: present
+- name: Ensure nsswithch is configured correctly
+  replace:
+    path: /etc/nsswitch.conf
+    regexp: '{{ entry }}'
+    replace: '\1 ldap'
+  loop:
+    - '^(passwd:\s+files systemd)$'
+    - '^(group:\s+files systemd)$'
+    - '^(shadow:\s+files)$'
+  loop_control:
+    loop_var: entry

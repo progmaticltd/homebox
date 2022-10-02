@@ -1,0 +1,21 @@
+#!/usr/sbin/nft -f
+
+# Allow SSH access from the initial installer IPs
+# both IPv4 and IPv6
+
+table inet filter {
+
+    chain input {
+
+        ip saddr {{ public_ip4 }} \
+        tcp dport ssh ct state new counter accept \
+        comment "Trusted ssh connections from installer IPv4"
+
+{% if public_ip6 != public_ip4 %}
+        ip6 saddr {{ public_ip6 }} \
+        tcp dport ssh ct state new counter accept \
+        comment "Trusted ssh connections from installer IPv6"
+{% endif %}
+    }
+
+}

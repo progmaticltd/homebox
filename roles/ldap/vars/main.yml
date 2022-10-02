@@ -1,6 +1,5 @@
 ---
 
-###############################################################################
 users_defaults:
   uid_start: 1001
   gid_start: 1001
@@ -20,9 +19,6 @@ ldap_packages:
     - python3-ldap3
     - python3-passlib
     - slapd
-    - ssl-cert
-    - ca-certificates
-    - openssl
     - unscd
   remove:
     - nscd

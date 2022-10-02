@@ -1,0 +1,27 @@
+---
+
+# the value firewall.ssh is here for compatibility with the stretch version
+
+- name: Create the nftables directory
+  file:
+    path: /etc/nftables
+    state: directory
+
+- name: Install the nftable package
+  register: nft_pkg
+  apt:
+    name: nftables
+    state: present
+
+- name: Restart nftables now
+  when: nft_pkg.changed
+  systemd:
+    name: nftables
+    state: restarted
+
+- name: Copy the nftables configuration files
+  notify: Restart nftables
+  template:
+    src: nftables.nft
+    dest: /etc/nftables.conf
+    mode: '0600'

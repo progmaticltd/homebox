@@ -1,0 +1,16 @@
+---
+
+- name: Deploy the SSH private access file
+  when: remote_ip_private
+  notify: Restart nftables
+  template:
+    src: ssh-private-access.nft
+    dest: /etc/nftables/ssh-private-access.nft
+
+
+- name: Remove the SSH private access file
+  when: not remote_ip_private
+  notify: Restart nftables
+  file:
+    path: /etc/nftables/ssh-private-access.nft
+    state: absent

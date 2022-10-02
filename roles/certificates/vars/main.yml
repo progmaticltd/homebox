@@ -1,6 +1,6 @@
 ---
 
-packages:
+cert_packages:
   - ca-certificates
   - lego
   - ssl-cert

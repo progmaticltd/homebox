@@ -5,5 +5,6 @@ olcDbIndex: default pres,eq
 olcDbIndex: cn,sn,givenName,uid,displayName,telephoneNumber eq,sub,subinitial
 olcDbIndex: objectclass eq
 olcDbIndex: memberUid,uidNumber,gidNumber eq
+olcDbIndex: member eq
 olcDbIndex: mail pres,eq,sub
 olcDbIndex: intlMailAddr pres,eq

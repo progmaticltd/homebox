@@ -1,0 +1,116 @@
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+table inet filter {
+
+    chain input {
+
+        type filter hook input priority 0
+        policy drop
+
+        # Accept any localhost traffic
+        iif lo accept
+
+        # DHCP
+        udp sport 67 udp dport 68 limit rate 1/second counter accept \
+        comment "IPv4 DHCP client"
+        udp sport 547 udp dport 546 limit rate 1/second counter accept \
+        comment "IPv6 DHCP client"
+
+        # Accept traffic originated from us
+        ct state established,related counter accept \
+        comment "Established connections"
+
+        # Allow ssh
+        tcp dport ssh limit rate 2/second ct state new counter accept \
+        comment "New ssh connections"
+
+        # DNS traffic
+        meta l4proto { tcp, udp } th dport domain ct state new counter accept \
+        comment "DNS queries"
+
+        # Allow http(s)
+        tcp dport { http, https } ct state new counter accept \
+        comment "Incoming http(s) connections"
+
+        # Accept neighbour discovery otherwise IPv6 connectivity breaks
+        icmpv6 type { nd-neighbor-solicit, nd-router-advert, nd-neighbor-advert } \
+        counter accept \
+        comment "Minimal IPv6 connectivity"
+
+        # limit pings
+        icmp type echo-request limit rate 5/second ct state new counter accept \
+        comment "Allow pings"
+
+        limit rate 10/second log prefix "nft-in: drop " \
+        comment "Drop and log everything not whitelisted"
+
+    }
+
+    chain forward {
+
+        type filter hook forward priority 0
+        policy drop
+
+        # Accept traffic originated from us
+        ct state established counter accept \
+        comment "Established connections"
+        ct state related counter accept \
+        comment "Related connections"
+
+        limit rate 10/second log prefix "nft-fwd: drop " \
+        comment "Drop everything not whitelisted"
+
+    }
+
+    chain output {
+
+        type filter hook output priority 0
+        policy drop
+
+        # accept any localhost traffic
+        oif lo accept
+
+        # Accept traffic originated from us
+        ct state established,related counter accept \
+        comment "Established connections"
+
+        # ntp traffic
+        udp dport ntp limit rate 10/second counter accept \
+        comment "NTP queries"
+
+        # common icmp
+        icmp type { echo-request, time-exceeded, destination-unreachable } \
+        limit rate 5/second counter accept \
+        comment "Standard ICMPv4 traffic"
+
+        # DNS traffic
+        meta l4proto { tcp, udp } th dport domain ct state new counter accept \
+        comment "DNS queries"
+
+        # Authorise web traffic from the proxy only
+		meta skuid tinyproxy \
+        tcp dport { http, https } ct state new counter accept \
+        comment "http(s) traffic"
+
+        # accept neighbour discovery otherwise IPv6 connectivity breaks
+        icmpv6 type { nd-neighbor-solicit, \
+        nd-router-advert, nd-neighbor-advert, mld-listener-report } counter accept \
+        comment "IPv6 standard traffic"
+
+        # DHCP settings
+        udp sport 68 udp dport 67 limit rate 1/second counter accept \
+        comment "IPv4 DHCP queries"
+
+        udp sport 546 udp dport 547 limit rate 1/second counter accept \
+        comment "IPv6 DHCP queries"
+
+        limit rate 10/second log prefix "nft-out: drop " flags skuid \
+        counter reject comment "Log and reject non whitelisted traffic"
+
+    }
+}
+
+# Include custom rules
+include "/etc/nftables/*.nft"

@@ -1,0 +1,5 @@
+---
+
+- name: Install the packages absolutely required
+  apt:
+    name: '{{ base_packages }}'

@@ -1,0 +1,14 @@
+---
+
+- name: Create the lego directory to store the certificates
+  file:
+    path: /etc/lego
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Get the DNS api key
+  no_log: true
+  set_fact:
+    api_key: '{{ lookup(creds.store, creds.prefix + "dns/api-key") }}'

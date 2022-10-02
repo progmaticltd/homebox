@@ -1,0 +1,10 @@
+---
+
+# The following tasks are run when the system is remote (e.g. cloud server)
+- name: Store the remote IP address
+  set_fact:
+    remote_ip: '{{ hostvars[inventory_hostname]["ansible_default_ipv4"]["address"] }}'
+
+- name: Check the type of IP address for the remote host
+  set_fact:
+    remote_ip_private: '{{ (remote_ip | ipaddr("private")) != None }}'

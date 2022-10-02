@@ -1,0 +1,14 @@
+#!/usr/sbin/nft -f
+
+# Allow SSH access from the LAN IPs
+
+table inet filter {
+
+    chain input {
+
+        ip saddr { {{ dev_lan_cidrs | join(",") }} } \
+        tcp dport ssh ct state new counter accept \
+        comment "Trusted ssh connections from the local network IPv4"
+    }
+
+}

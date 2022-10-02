@@ -1,0 +1,16 @@
+---
+
+- name: Remove ufw and cleanup
+  include_tasks: cleanup.yml
+
+- name: Load network information
+  include_tasks: facts.yml
+
+- name: Set the generic firewall rules
+  include_tasks: generic-rules.yml
+
+- name: Set the remote access firewall rules for public networks
+  include_tasks: public-access.yml
+
+- name: Set the remote access firewall rules for private networks
+  include_tasks: private-access.yml

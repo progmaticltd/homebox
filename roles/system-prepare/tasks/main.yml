@@ -13,36 +13,6 @@
     name: dphys-swapfile
     state: present
 
-- name: Get the locale value on the current machine
-  delegate_to: localhost
-  set_fact:
-    locale: "{{ lookup('env','LANG') }}"
-
-- name: Configure locales
-  debconf:
-    name: locales
-    question: '{{ conf.question }}'
-    value: '{{ conf.value }}'
-    vtype: '{{ conf.type }}'
-  with_items:
-    - question: locales/locales_to_be_generated
-      value: '{{ locale }}'
-      type: multiselect
-    - question: locales/default_environment_locale
-      value: '{{ locale }}'
-      type: boolean
-  loop_control:
-    loop_var: conf
-
-- name: Update /etc/locales
-  replace:
-    path: /etc/locale.gen
-    regexp: '^# {{ locale | regex_escape }}'
-    replace: '{{ locale }}'
-
-- name: Configure locales
-  shell: dpkg-reconfigure -phigh locales
-
 - name: Create a homebox directory to store any specific configuration
   register: homebox_dir
   file:
@@ -75,17 +45,6 @@
     name: "{{ system_excluded }}"
     state: absent
     purge: yes
-
-- name: Install RFC7919 Diffie-Hellman parameters files for DHE ciphers
-  copy:
-    src: '{{ file }}'
-    dest: '/etc/ssl/{{ file }}'
-    mode: '0644'
-  with_items:
-    - ffdhe2048.pem
-    - ffdhe4096.pem
-  loop_control:
-    loop_var: file
 
 # Update packages cache, and install any security update
 - name: Update packages cache and install security updates

@@ -1,0 +1,31 @@
+---
+
+- name: Get the locale value on the current machine
+  delegate_to: localhost
+  set_fact:
+    locale: "{{ lookup('env','LANG') }}"
+
+- name: Configure locales
+  debconf:
+    name: locales
+    question: '{{ conf.question }}'
+    value: '{{ conf.value }}'
+    vtype: '{{ conf.type }}'
+  with_items:
+    - question: locales/locales_to_be_generated
+      value: '{{ locale }}'
+      type: multiselect
+    - question: locales/default_environment_locale
+      value: '{{ locale }}'
+      type: boolean
+  loop_control:
+    loop_var: conf
+
+- name: Update /etc/locales
+  replace:
+    path: /etc/locale.gen
+    regexp: '^# {{ locale | regex_escape }}'
+    replace: '{{ locale }}'
+
+- name: Configure locales
+  shell: dpkg-reconfigure -phigh locales

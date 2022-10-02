@@ -1,0 +1,14 @@
+---
+
+whitelisted_hosts:
+  - deb.debian.org
+  - security.debian.org
+  - letsencrypt.org
+
+# These packages are absolutely required to run homebox
+base_packages:
+  - apparmor-utils
+  - ca-certificates
+  - openssl
+  - ssl-cert
+  - sudo

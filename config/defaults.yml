@@ -316,29 +316,29 @@ webmail_default:
 
 devel_default:
   packages:
-    - mc
-    - telnet
-    - dnsutils
-    - whois
-    - tmux
-    - pfqueue
     - aptitude
-    - man
-    - less
-    - vim
-    - net-tools
-    - file
-    - swaks
-    - libnet-ssleay-perl
-    - curl
-    - locate
-    - colorized-logs
     - bash-completion
+    - curl
     - cyrus-clients
+    - dnsutils
+    - file
+    - less
+    - libnet-ssleay-perl
+    - lnav
+    - locate
+    - man
+    - mc
+    - net-tools
+    - netcat-openbsd
+    - pfqueue
+    - swaks
+    - screen
+    - tcpdump
+    - vim
+    - whois
     - zsh
   root:
     shell: /bin/zsh
-  acme_server: staging  # "staging" or "pebble"
 
 
 ###############################################################################

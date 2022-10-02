@@ -3,14 +3,19 @@
 - name: Install the packages needed
   include_tasks: packages.yml
 
-- name: Run pre installation tasks
-  include_tasks: pre-install.yml
+- name: Run the common pre installation tasks
+  include_tasks: pre-install-common.yml
+
+- name: Run the development pre installation tasks
+  when: system.devel
+  include_tasks: pre-install-dev.yml
+
+- name: Run the live pre installation tasks
+  when: not system.devel
+  include_tasks: pre-install-live.yml
 
 - name: Create all the certificates
   include_tasks: create-one.yml
-  loop: '{{ certificates | selectattr("create", "equalto", true) | list }}'
+  loop: '{{ certificates | selectattr("create", "equalto", true) }}'
   loop_control:
     loop_var: certificate
-
-- name: Run post installation tasks
-  include_tasks: post-install.yml

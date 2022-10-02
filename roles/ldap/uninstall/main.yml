@@ -11,6 +11,7 @@
     name: '{{ ldap_packages.install }}'
     state: absent
     purge: true
+    autoremove: true
 
 - name: Remove the ldap config directory
   file:

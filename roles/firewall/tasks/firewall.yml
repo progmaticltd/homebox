@@ -1,0 +1,35 @@
+---
+
+- name: Install bootstrap packages
+  apt:
+    name: '{{ bootstrap_packages }}'
+    state: present
+
+- name: Create the nftables directory
+  file:
+    path: /etc/nftables
+    state: directory
+
+# The following tasks are run when the system is remote (e.g. cloud server)
+- name: Store the remote IP address
+  set_fact:
+    remote_ip: '{{ hostvars[inventory_hostname]["ansible_default_ipv4"]["address"] }}'
+
+- name: Check the type of IP address for the remote host
+  set_fact:
+    remote_ip_private: '{{ (remote_ip | ipaddr("private")) != None }}'
+
+- name: Set the remote access firewall rules for public networks
+  when: not remote_ip_private
+  include_tasks: public-access.yml
+
+- name: Set the remote access firewall rules for private networks
+  when: system.devel and remote_ip_private
+  include_tasks: private-access.yml
+
+- name: Copy the nftables configuration files
+  notify: Restart nftables
+  template:
+    src: firewall/nftables.nft
+    dest: /etc/nftables.conf
+    mode: '0600'

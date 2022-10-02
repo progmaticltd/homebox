@@ -1,0 +1,19 @@
+---
+
+- name: Initialise and update the packages repository
+  include_tasks: apt.yml
+
+- name: Install the base required packages
+  include_tasks: packages.yml
+
+- name: Configure the locales
+  include_tasks: locales.yml
+
+- name: Configure the basic SSL settings
+  include_tasks: ssl.yml
+
+- name: Configure the packages repository
+  include_tasks: apticron.yml
+
+- name: Configure the proxy
+  include_tasks: proxy.yml

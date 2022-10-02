@@ -1,0 +1,12 @@
+---
+
+- name: Install RFC7919 Diffie-Hellman parameters files for DHE ciphers
+  copy:
+    src: '{{ file }}'
+    dest: '/etc/ssl/{{ file }}'
+    mode: '0644'
+  loop:
+    - ffdhe2048.pem
+    - ffdhe4096.pem
+  loop_control:
+    loop_var: file

@@ -1,0 +1,14 @@
+---
+
+- name: Remove ufw if installed
+  register: ufw_pkg
+  apt:
+    name: ufw
+    state: absent
+    purge: true
+    autoremove: true
+
+- name: Remove ufw directory
+  file:
+    path: /etc/ufw
+    state: absent

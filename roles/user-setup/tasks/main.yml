@@ -1,15 +1,5 @@
 ---
 
-- name: Get the administrators
-  set_fact:
-    administrators: '{{ users | selectattr("sudo", "defined") | selectattr("sudo", "equalto", true) | list }}'
-
-- name: Install the sudo package if required
-  when: administrators != [ ]
-  apt:
-    name: sudo
-    state: present
-
 - name: Create the group home folders if necessary
   file:
     path: /home/users
@@ -41,6 +31,10 @@
     pam-auth-update --package --enable mkhomedir
   changed_when: true
 
+- name: Create the administrators list
+  set_fact:
+    administrators: '{{ users | selectattr("ssh_key", "defined") | list }}'
+
 # These tasks are configuring the system to give access
 # to some administrators, without having to logon as root.
 # You need to define a public SSH key for each user.
@@ -53,7 +47,7 @@
       {{ user.ssh_key.data | regex_replace(" ") }}
       {{ user.ssh_key.comment }}
     state: present
-  loop: '{{ users | selectattr("ssh_key", "defined") | list }}'
+  loop: '{{ administrators }}'
   loop_control:
     loop_var: user
 

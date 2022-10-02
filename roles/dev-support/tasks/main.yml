@@ -1,0 +1,25 @@
+---
+
+- name: Install Development support packages
+  apt:
+    name: '{{ devel.packages }}'
+    state: present
+    install_recommends: no
+
+- name: Set basic rc files for root
+  template:
+    src: '{{ dot_file }}rc'
+    dest: '/root/.{{ dot_file }}rc'
+    mode: '0600'
+  loop:
+    - bash
+    - zsh
+    - vim
+    - screen
+  loop_control:
+    loop_var: dot_file
+
+- name: Set the default shell for the root user
+  user:
+    name: root
+    shell: '{{ devel.root.shell }}'

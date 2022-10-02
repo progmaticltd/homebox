@@ -1,11 +1,5 @@
 ---
 
-- name: Install the packages required
-  apt:
-    name: '{{ pdns_packages }}'
-    install_recommends: false
-    state: present
-
 - name: Create the directory to store data
   file:
     path: /var/lib/pdns/
@@ -23,6 +17,7 @@
   args:
     creates: /var/lib/pdns/default.db
     chdir: /var/lib/pdns/
+  changed_when: true
 
 - name: Set the right permissions
   notify: Restart PowerDNS

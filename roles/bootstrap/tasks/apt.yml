@@ -1,0 +1,41 @@
+---
+
+# Initialise the packages repository to a standard,
+# including backports, contrib and non-free software
+- name: Store the sections list
+  set_fact:
+    sections: '{{ system.apt.sections | join(" ") }}'
+
+- name: Initialise default repositories
+  register: repositories
+  template:
+    src: sources.list
+    dest: /etc/apt/sources.list
+
+- name: Find all third party repositories
+  register: tp_repositories_found
+  find:
+    path: /etc/apt/sources.list.d
+
+- name: Comment out third party repositories
+  register: tp_repositories
+  replace:
+    path: '{{ file.path }}'
+    regexp: '^deb (.*)'
+    replace: '# deb \1'
+  loop: '{{ tp_repositories_found.files }}'
+  loop_control:
+    loop_var: file
+
+# Some cloud providers, the cache_valid_time condition
+# is not working just after the installation (vultr)
+- name: Force the packages cache update on the first installation
+  when: repositories.changed
+  register: packages_cache
+  apt:
+    update_cache: yes
+
+- name: Upgrade the distribution
+  when: packages_cache.changed
+  apt:
+    upgrade: yes

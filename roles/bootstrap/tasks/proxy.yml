@@ -1,0 +1,43 @@
+---
+
+- name: Install tinyproxy for restricted http(s) access
+  apt:
+    name: tinyproxy
+    state: present
+
+- name: Enforce whitelisting on tinyproxy
+  replace:
+    path: /etc/tinyproxy/tinyproxy.conf
+    regexp: '^#FilterDefaultDeny Yes'
+    replace: 'FilterDefaultDeny Yes'
+
+- name: Use whitelist configuration file
+  replace:
+    path: /etc/tinyproxy/tinyproxy.conf
+    regexp: '^#Filter "/etc/tinyproxy/filter"'
+    replace: 'Filter "/etc/tinyproxy/filter"'
+
+- name: Allow Debian repositories access
+  lineinfile:
+    path: /etc/tinyproxy/filter
+    line: '{{ host }}'
+    create: true
+  loop: '{{ whitelisted_hosts }}'
+  loop_control:
+    loop_var: host
+
+- name: Now, ensure apt is using the system proxy
+  template:
+    src: proxy.conf
+    dest: /etc/apt/apt.conf.d/00proxy
+
+- name: Advertise the proxy as environment variables
+  lineinfile:
+    path: /etc/environment
+    line: '{{ line }}'
+  loop:
+    - http_proxy=http://127.0.0.1:8888/
+    - https_proxy=http://127.0.0.1:8888/
+    - no_proxy=127.0.0.1
+  loop_control:
+    loop_var: line

@@ -1,0 +1,15 @@
+---
+
+- name: Check if the DNS record already exist
+  register: dns_entry
+  getent:
+    database: hosts
+    key: ldap.{{ network.domain }}
+  ignore_errors: true
+
+- name: Remove the DNS record if not existing
+  when: dns_entry.failed
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    ldap CNAME main
+  changed_when: true
