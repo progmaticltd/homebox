@@ -15,3 +15,8 @@
   service:
     name: apparmor
     state: reloaded
+
+- name: Restart tinyproxy
+  service:
+    name: tinyproxy
+    state: restarted

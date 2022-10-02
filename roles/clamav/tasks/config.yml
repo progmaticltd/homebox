@@ -5,7 +5,7 @@
   template:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
-  with_items:
+  loop:
     - src: clamsmtpd.conf
       dest: /etc/clamsmtpd.conf
     - src: freshclam.conf
@@ -37,3 +37,9 @@
     group: clamsmtp
     mode: '0700'
     state: directory
+
+- name: Whitelist auto update domains in the proxy
+  notify: Restart tinyproxy
+  lineinfile:
+    path: /etc/tinyproxy/filter
+    line: database.clamav.net

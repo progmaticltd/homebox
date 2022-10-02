@@ -5,8 +5,10 @@
     name: '{{ packages }}'
     state: absent
     purge: true
+    autoremove: true
 
 - name: Remove AppArmor profiles
+  notify: Restart AppArmor service
   file:
     path: /etc/apparmor.d/usr.sbin.clamsmtpd
     state: absent
@@ -16,7 +18,7 @@
     path: /etc/clamsmtp
     state: absent
 
-- name: Remove log folder
+- name: Remove logs folder
   file:
     path: /var/log/clamsmtp
     state: absent

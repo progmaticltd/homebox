@@ -1,25 +1,30 @@
 ---
 
-- name: Remove opendkim packages
+- name: Remove opendmarc package
   apt:
-    name: "{{ dkim_pkgs }}"
+    name: opendmarc
     state: absent
     purge: true
     autoremove: true
 
 - name: Remove the configuration directory
   file:
-    path: /etc/opendkim
+    path: /etc/opendmarc
+    state: absent
+
+- name: Remove the db configuration file
+  file:
+    path: /etc/dbconfig-common/opendmarc.conf
     state: absent
 
 - name: Remove opendkim AppArmor profile
   notify: Restart AppArmor service
   file:
-    path: /etc/apparmor.d/usr.sbin.opendkim
+    path: /etc/apparmor.d/usr.sbin.opendmarc
     state: absent
 
 - name: Removes DNS record
   shell: >-
     pdnsutil delete-rrset
-    {{ network.domain }} main._domainkey TXT
+    {{ network.domain }} _dmarc TXT
   changed_when: true
