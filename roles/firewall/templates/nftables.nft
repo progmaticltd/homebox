@@ -18,6 +18,13 @@ define icmp6_in = {
 
 table inet filter {
 
+    set ssh_denylist {
+        type ipv4_addr
+        size 65535
+        flags dynamic,timeout
+        timeout 5m
+    }
+
     chain input {
 
         type filter hook input priority 0
@@ -57,7 +64,12 @@ table inet filter {
         icmp type echo-request limit rate 5/second ct state new counter accept \
         comment "Allow pings"
 
-        limit rate 10/second log prefix "nft-in: drop " \
+		# Limit new SSH connections ala fail2ban
+        ip protocol tcp ct state new,untracked tcp dport ssh \
+		limit rate over 10/minute add @ssh_denylist { ip saddr }
+        ip saddr @ssh_denylist drop
+
+		limit rate 10/second log prefix "nft-in: drop " \
         comment "Drop and log everything not whitelisted"
 
     }
