@@ -1,0 +1,10 @@
+---
+
+- name: Set ldap org base
+  set_fact:
+    ldap_org_base: 'dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+
+- name: Load or create the password for the read-only account
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    ldap_ro_password: '{{ lookup(creds.store, "ldap/readonly") }}'

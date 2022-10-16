@@ -1,0 +1,43 @@
+---
+
+- name: Check if the main smtp record exists
+  register: main_smtp_record
+  shell: >-
+    dig -t {{ external_ip_type }}
+    +nocomments +noall +answer
+    smtp.{{ network.domain }} @127.0.0.1
+  changed_when: false
+  failed_when: false
+
+- name: Store the fact for the main SMTP record
+  set_fact:
+    main_smtp_record_missing: '{{ main_smtp_record.stdout == "" }}'
+
+- name: Check if the backup smtp record exists
+  when: backup_ip is defined
+  register: backup_smtp_record
+  shell: >-
+    dig -t {{ backup_ip_type }}
+    +nocomments +noall +answer
+    smtp2.{{ network.domain }} @127.0.0.1
+  changed_when: false
+  failed_when: false
+
+- name: Store the fact for the backup SMTP record
+  when: backup_ip is defined
+  set_fact:
+    backup_smtp_record_missing: '{{ backup_smtp_record.stdout == "" }}'
+
+- name: Create the main SMTP record
+  when: main_smtp_record_missing
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    smtp {{ external_ip_type }} {{ external_ip }}
+  changed_when: true
+
+- name: Create the backup SMTP record
+  when: backup_ip is defined and backup_smtp_record_missing
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    smtp2 {{ backup_ip_type }} {{ backup_ip }}
+  changed_when: true

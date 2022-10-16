@@ -1,0 +1,37 @@
+---
+
+- name: Add the site content files
+  file:
+    path: /var/www/mta-sts/
+    state: absent
+
+- name: Remove the nginx enabled site
+  notify: Restart nginx
+  file:
+    path: /etc/nginx/sites-enabled/mta-sts.{{ network.domain }}.conf
+    state: absent
+
+- name: Remove the nginx site config
+  notify: Restart nginx
+  file:
+    path: /etc/nginx/sites-available/mta-sts.{{ network.domain }}.conf
+    state: absent
+
+- name: Remove the directory for the site
+  file:
+    path: /var/www/mta-sts/
+    state: absent
+
+- name: List nginx log files
+  register: nginx_log_files
+  find:
+    path: /var/log/nginx/
+    pattern: mta-tls*
+
+- name: Remove nginx log files
+  file:
+    path: '{{ file.path }}'
+    state: absent
+  loop: '{{ nginx_log_files.files }}'
+  loop_control:
+    loop_var: file

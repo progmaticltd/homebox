@@ -1,0 +1,45 @@
+---
+
+# The typical base64 overhead is 33%, and the value in the configuration file is in Mb
+# So the value is max_attachment_size * 1.33 * 1024 * 1024, i.e. max_attachment_size * 1394606
+# Adding 1Kb for the message text, because we are generous (sic)
+- name: Compute max message size from max attachment size
+  set_fact:
+    message_size_limit: '{{ 1024 + mail.max_attachment_size * 1394606 | int }}'
+
+# It is also possible to use -D, with a debugger and gdb
+# See http://www.postfix.org/DEBUG_README.html
+- name: Set SMTP flag for debugging or development
+  set_fact:
+    smtpd_flags: '{{ (system.debug or system.devel) | ternary("-v", "") }}'
+
+# Use IP addresses as SPF mechanisms for the server itself
+- name: Add the external IP address as SPF sender
+  set_fact:
+    spf_senders: '{{ "ip6:" + external_ip if external_ip | ipv6 else "ip4:" + external_ip }}'
+
+- name: Add the backup IP address as SPF sender
+  when: backup_ip is defined
+  set_fact:
+    spf_senders: '{{ spf_senders }} {{ "ip6:" + backup_ip if backup_ip | ipv6 else "ip4:" + backup_ip }}'
+
+- name: Add the user configured extra senders to the SPF record
+  when: mail.extra_senders
+  set_fact:
+    spf_senders: '{{ spf_senders }} {{ mail.extra_senders | join(" ") }}'
+
+# Use "soft fail" in development mode
+- name: Set the SPF qualifier as "soft fail"
+  when: system.devel or system.debug
+  set_fact:
+    spf_qualifier: '~'
+
+# Use "fail" (strict) otherwise
+- name: Set the SPF qualifier as strict
+  when: not system.devel and not system.debug
+  set_fact:
+    spf_qualifier: '-'
+
+- name: Set ldap search base
+  set_fact:
+    ldap_search_base: 'dc={{ network.domain | regex_replace("\.", ",dc=") }}'

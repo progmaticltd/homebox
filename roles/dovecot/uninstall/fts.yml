@@ -1,0 +1,27 @@
+---
+
+- name: Uninstall packages needed for dovecot fts
+  apt:
+    name: '{{ dovecot.fts_packages }}'
+    state: absent
+    purge: true
+    autoremove: true
+
+- name: Remove decode2text script
+  file:
+    path: /usr/local/bin/decode2text
+    state: absent
+
+- name: List log files
+  register: log_files
+  find:
+    path: /var/log/
+    pattern: decode2text.log*
+
+- name: Delete log files
+  file:
+    path: '{{ file }}'
+    state: absent
+  loop: '{{ log_files.files }}'
+  loop_control:
+    loop_var: file

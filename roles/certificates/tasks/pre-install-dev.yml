@@ -20,3 +20,10 @@
 - name: Use the temporary store for verification
   set_fact:
     acme_root: /tmp/acme-root.crt
+
+- name: Copy the certificate on the system for the tests
+  notify: Reload certificates
+  copy:
+    src: /tmp/acme-root.crt
+    dest: /usr/local/share/ca-certificates/acme-root.crt
+    remote_src: true

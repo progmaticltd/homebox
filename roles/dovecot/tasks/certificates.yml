@@ -1,46 +1,53 @@
 ---
 
-# At this point, the certificates should have been created already #############
-# in order to have SSL and TLS encryption activated.                           #
-
-# - name: Set the default permissions for the ldap certificate folders
-#   tags: cert
-#   import_role:
-#     name: cert-perms
-#   vars:
-#     cert_dir: 'ldap.{{ network.domain }}'
-#     entity_group: dovecot
-#     access_private_key: false
-
-# - name: Set the default permissions for the ldap certificate folders
-#   tags: cert
-#   import_role:
-#     name: cert-perms
-#   vars:
-#     cert_dir: 'imap.{{ network.domain }}'
-#     entity_group: dovecot
-#     access_private_key: false
-
-# - name: Set the default permissions for the ldap certificate folders
-#   when: mail.pop3
-#   tags: cert
-#   import_role:
-#     name: cert-perms
-#   vars:
-#     cert_dir: 'pop3.{{ network.domain }}'
-#     entity_group: dovecot
-#     access_private_key: false
-
-- name: Copy the certificate renewal hook for the LDAP certificate access
-  tags: scripts
+- name: Copy the imap certificates in the debian standard directory
   copy:
-    src: renewal-hook.sh
-    dest: /etc/letsencrypt/renewal-hooks/deploy/20-dovecot.sh
-    mode: '0700'
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: yes
+  loop:
+    - src: /etc/lego/certificates/imap.{{ network.domain }}.issuer.crt
+      dest: /etc/ssl/certs/imap.{{ network.domain }}.issuer.crt
+    - src: /etc/lego/certificates/imap.{{ network.domain }}.crt
+      dest: /etc/ssl/certs/imap.{{ network.domain }}.crt
+  loop_control:
+    loop_var: file
 
-- name: Copy the certificate renewal hook
-  tags: cert
+- name: Copy the imap private key in the debian standard directory
   copy:
-    src: renew-cert.sh
-    dest: /etc/letsencrypt/renewal-hooks/deploy/30-dovecot.sh
-    mode: '0755'
+    src: /etc/lego/certificates/imap.{{ network.domain }}.key
+    dest: /etc/ssl/private/imap.{{ network.domain }}.key
+    remote_src: yes
+    owner: root
+    group: ssl-cert
+    mode: 0640
+
+- name: Copy the pop3 certificates in the debian standard directory
+  when: mail.pop3
+  copy:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: yes
+  loop:
+    - src: /etc/lego/certificates/pop3.{{ network.domain }}.issuer.crt
+      dest: /etc/ssl/certs/pop3.{{ network.domain }}.issuer.crt
+    - src: /etc/lego/certificates/pop3.{{ network.domain }}.crt
+      dest: /etc/ssl/certs/pop3.{{ network.domain }}.crt
+  loop_control:
+    loop_var: file
+
+- name: Copy the pop3 private key in the debian standard directory
+  when: mail.pop3
+  copy:
+    src: /etc/lego/certificates/pop3.{{ network.domain }}.key
+    dest: /etc/ssl/private/pop3.{{ network.domain }}.key
+    remote_src: yes
+    owner: root
+    group: ssl-cert
+    mode: 0640

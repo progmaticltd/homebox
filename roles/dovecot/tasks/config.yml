@@ -1,5 +1,12 @@
 ---
 
+- name: Make sure loopback interface is “trusted”
+  notify: Restart dovecot
+  replace:
+    path: /etc/dovecot/dovecot.conf
+    regexp: '^#?\s?login_trusted_networks.*'
+    replace: 'login_trusted_networks = 127.0.0.1 ::1'
+
 # Activate SSL on the imap server
 - name: Activate SSL configuration
   tags: ssl, config
@@ -47,7 +54,7 @@
   template:
     src: 'conf.d/{{ file }}'
     dest: '/etc/dovecot/conf.d/{{ file }}'
-  with_items:
+  loop:
     - 10-auth.conf
     - 10-master.conf
     - 10-mail.conf
@@ -62,20 +69,6 @@
     - 90-quota.conf
   loop_control:
     loop_var: file
-
-- name: Create the post-login script directory
-  file:
-    path: /etc/dovecot/login-scripts
-    state: directory
-
-- name: Copy the default postlogin script
-  tags: scripts
-  copy:
-    src: dovecot-postlogin
-    dest: /usr/local/sbin/dovecot-postlogin
-    mode: '0755'
-    owner: root
-    group: root
 
 - name: Activate core dumps or not
   tags: debug

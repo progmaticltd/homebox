@@ -1,0 +1,15 @@
+---
+
+- name: Get all log files
+  register: postfix_log
+  find:
+    path: /var/log
+    pattern: mail.*
+
+- name: Delete all log files
+  file:
+    path: '{{ file.path }}'
+    state: absent
+  loop: '{{ postfix_log.files }}'
+  loop_control:
+    loop_var: file

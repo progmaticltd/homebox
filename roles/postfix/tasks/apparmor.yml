@@ -1,0 +1,21 @@
+---
+
+- name: Install some postfix AppArmor profile
+  notify: Restart postfix
+  register: aa_templates
+  template:
+    src: 'apparmor.d/{{ aa_config }}'
+    dest: '/etc/apparmor.d/{{ aa_config }}'
+  with_items:
+    - '{{ postfix_apparmor_profiles }}'
+  loop_control:
+    loop_var: aa_config
+
+- name: Activate AppArmor profiles
+  when: aa_templates.changed
+  notify: Restart AppArmor service
+  command: 'aa-enforce {{ aa_config }}'
+  with_items:
+    - '{{ postfix_apparmor_profiles }}'
+  loop_control:
+    loop_var: aa_config

@@ -13,6 +13,7 @@
   shell: >-
     pdnsutil add-record {{ network.domain }}
     main {{ external_ip_type }} {{ external_ip }}
+  changed_when: true
 
 - name: Add the backup external IP record
   when:
@@ -21,12 +22,14 @@
   shell: >-
     pdnsutil add-record {{ network.domain }}
     backup {{ backup_ip_type }} {{ backup_ip }}
+  changed_when: true
 
 - name: Add the main external IP record
   when: zone_create_cmd.changed
   shell: >-
     pdnsutil add-record {{ network.domain }}
     @ {{ external_ip_type }} {{ external_ip }}
+  changed_when: true
 
 - name: Add the backup external IP record
   when:
@@ -35,12 +38,14 @@
   shell: >-
     pdnsutil add-record {{ network.domain }}
     @ {{ backup_ip_type }} {{ backup_ip }}
+  changed_when: true
 
 - name: Add the main external record
   when: zone_create_cmd.changed
   shell: >-
     pdnsutil add-record {{ network.domain }}
     @ NS main.{{ network.domain }}
+  changed_when: true
 
 - name: Add the backup external record
   when:
@@ -49,6 +54,7 @@
   shell: >-
     pdnsutil add-record {{ network.domain }}
     @ NS backup.{{ network.domain }}
+  changed_when: true
 
 # CAA records: https://en.wikipedia.org/wiki/DNS_Certification_Authority_Authorization
 - name: Create CAA records
@@ -57,6 +63,7 @@
     pdnsutil add-record {{ network.domain }}
     '*' CAA
     '0 issue "letsencrypt.org"'
+  changed_when: true
 
 - name: Create CAA records
   when: zone_create_cmd.changed
@@ -64,3 +71,4 @@
     pdnsutil add-record {{ network.domain }}
     '*' CAA
     '0 iodef "mailto:security@{{ network.domain }}"'
+  changed_when: true

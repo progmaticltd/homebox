@@ -26,6 +26,12 @@
   loop_control:
     loop_var: host
 
+- name: Allow loopback access
+  lineinfile:
+    path: /etc/tinyproxy/filter
+    line: '.{{ network.domain }}'
+    create: true
+
 - name: Now, ensure apt is using the system proxy
   template:
     src: proxy.conf

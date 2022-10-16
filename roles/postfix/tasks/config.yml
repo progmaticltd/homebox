@@ -1,0 +1,22 @@
+---
+
+- name: Copy configuration template
+  notify: Restart postfix
+  template:
+    src: "{{ file }}"
+    dest: "/etc/postfix/{{ file }}"
+  loop:
+    - master.cf
+    - main.cf
+    - ldap-aliases.cf
+    - senders-bcc.cf
+    - headers-check.cf
+  loop_control:
+    loop_var: file
+
+# Debian Stretch, the port 465 is not named submission<s>
+- name: Ensure submission<s> is in the services list
+  replace:
+    path: /etc/services
+    regexp: '(urd\s+465/tcp\s+ssmtp smtps)(\s+)(#.*)'
+    replace: '\1 submissions\2\3'

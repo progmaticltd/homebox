@@ -1,0 +1,16 @@
+---
+
+- name: Remove dovecot folder
+  file:
+    path: /etc/dovecot
+    state: absent
+
+- name: Remove dovecot default settings
+  file:
+    path: /etc/default/dovecot
+    state: absent
+
+- name: Remove dovecot var files
+  file:
+    path: /var/lib/dovecot
+    state: absent

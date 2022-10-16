@@ -1,12 +1,14 @@
 ---
 
 postfix_pkgs:
+  - bsd-mailx
+  - pfqueue
   - postfix
   - postfix-cdb
-  - postfix-pcre
   - postfix-ldap
-  - sasl2-bin
+  - postfix-pcre
   - postfix-policyd-spf-python
+  - sasl2-bin
 
 postfix_apparmor_profiles:
   - usr.lib.postfix.anvil

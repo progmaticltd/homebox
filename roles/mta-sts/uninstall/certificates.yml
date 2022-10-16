@@ -1,0 +1,26 @@
+---
+
+- name: Copy the certificates in the debian standard directory
+  copy:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: yes
+  loop:
+    - src: /etc/lego/certificates/mta-sts.{{ network.domain }}.issuer.crt
+      dest: /etc/ssl/certs/mta-sts.{{ network.domain }}.issuer.crt
+    - src: /etc/lego/certificates/mta-sts.{{ network.domain }}.crt
+      dest: /etc/ssl/certs/mta-sts.{{ network.domain }}.crt
+  loop_control:
+    loop_var: file
+
+- name: Copy the private key in the debian standard directory
+  copy:
+    src: /etc/lego/certificates/mta-sts.{{ network.domain }}.key
+    dest: /etc/ssl/private/mta-sts.{{ network.domain }}.key
+    remote_src: yes
+    owner: root
+    group: ssl-cert
+    mode: 0640

@@ -1,3 +1,4 @@
+---
 
 - name: Restart dovecot
   tags: dovecot
@@ -15,5 +16,11 @@
 - name: Restart fail2ban
   systemd:
     name: fail2ban
+    state: restarted
+    no_block: true
+
+- name: Restart nftables
+  systemd:
+    name: nftables
     state: restarted
     no_block: true

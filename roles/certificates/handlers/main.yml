@@ -1,0 +1,5 @@
+---
+
+- name: Reload certificates
+  shell: update-ca-certificates -v
+  changed_when: true

@@ -5,7 +5,9 @@
   lineinfile:
     path: /etc/homebox/backup-exclude
     line: '{{ line }}'
-  with_items:
+    create: true
+    state: present
+  loop:
     - '# Dovecot: Exclude indexes from backup'
     - '/home/users/*/mails/indexes/*'
     - '/home/users/*/.dovecot.lda-dupes*'

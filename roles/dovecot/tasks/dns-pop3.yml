@@ -1,0 +1,87 @@
+---
+
+- name: Check if the main pop record exists
+  register: main_pop_record
+  shell: >-
+    dig -t {{ external_ip_type }}
+    +nocomments +noall +answer
+    pop.{{ network.domain }} @127.0.0.1
+  changed_when: false
+  failed_when: false
+
+- name: Store the fact for the main POP record
+  set_fact:
+    main_pop_record_missing: '{{ main_pop_record.stdout == "" }}'
+
+- name: Check if the backup pop record exists
+  when: backup_ip is defined
+  register: backup_pop_record
+  shell: >-
+    dig -t {{ backup_ip_type }}
+    +nocomments +noall +answer
+    pop.{{ network.domain }} @127.0.0.1
+  changed_when: false
+  failed_when: false
+
+- name: Store the fact for the backup POP record
+  when: backup_ip is defined
+  set_fact:
+    backup_pop_record_missing: '{{ backup_pop_record.stdout == "" }}'
+
+- name: Create the main POP record
+  when: main_pop_record_missing
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    pop {{ external_ip_type }} {{ external_ip }}
+  changed_when: true
+
+- name: Create the backup POP record
+  when: backup_ip is defined and backup_pop_record_missing
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    pop {{ backup_ip_type }} {{ backup_ip }}
+  changed_when: true
+
+# RFC 6186 entries, should point to an "A" record
+# See section 3.4 for examples of priorities and unavailable ports:
+# https://tools.ietf.org/html/rfc6186#section-3.4
+
+- name: Check if the POP3 SRV record exists
+  register: pop3_srv_record_cmd
+  shell: >-
+    dig -t SRV
+    +nocomments +noall +answer
+    _pop3._tcp.{{ network.domain }} @127.0.0.1
+  changed_when: false
+  failed_when: false
+
+- name: Store the fact for the POP3 SRV record
+  set_fact:
+    pop3_srv_record_missing: '{{ pop3_srv_record_cmd.stdout == "" }}'
+
+- name: Check if the POP3S SRV record exists
+  register: pop3s_srv_record_cmd
+  shell: >-
+    dig -t SRV
+    +nocomments +noall +answer
+    _pop3s._tcp.{{ network.domain }} @127.0.0.1
+  changed_when: false
+  failed_when: false
+
+- name: Store the fact for the POP3S SRV record
+  set_fact:
+    pop3s_srv_record_missing: '{{ pop3s_srv_record_cmd.stdout == "" }}'
+
+- name: Create the POP3 SRV record to prevent pop3 access
+  when: pop3_srv_record_missing
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    _pop3._tcp SRV "0 0 0 ."
+  changed_when: true
+
+- name: Create the POP3S SRV record
+  when: pop3s_srv_record_missing
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    _pop3s._tcp SRV "20 0 995 pop3.{{ network.domain }}"
+  changed_when: true

@@ -1,0 +1,10 @@
+---
+
+- name: Load some facts
+  include_tasks: facts.yml
+
+- name: Set DNS records
+  include_tasks: check/dns.yml
+
+- name: Web server configuration
+  include_tasks: check/nginx.yml

@@ -1,0 +1,12 @@
+#!/usr/sbin/nft -f
+# Accept pop3(110) and pop3s(995)
+
+table inet filter {
+
+    chain input {
+
+        tcp dport { pop3, pop3s } ct state new counter accept \
+        comment "Accept pop3/pop3s connections"
+    }
+
+}

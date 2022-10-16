@@ -1,10 +1,20 @@
 ---
 
+- name: Set facts
+  include_tasks: facts.yml
+
 - name: Install the required packages
   include_tasks: packages.yml
 
-- name: Configure network settings
-  include_tasks: network.yml
+- name: Configure firewall
+  include_tasks: firewall.yml
+
+- name: Configure IMAP DNS records
+  include_tasks: dns-imap.yml
+
+- name: Configure POP3 DNS records
+  when: mail.pop3
+  include_tasks: dns-pop3.yml
 
 - name: Configure certificates
   include_tasks: certificates.yml
@@ -22,9 +32,9 @@
   when: mail.impersonate.active
   include_tasks: impersonate.yml
 
-- name: Import dovecot access check tasks
-  when: access_check.active
-  include_tasks: access-check.yml
+# - name: Import dovecot access check tasks
+#   when: access_check.active
+#   include_tasks: access-check.yml
 
 - name: Run import tasks
   when: mail.import.active
@@ -41,7 +51,6 @@
   include_tasks: fts.yml
 
 - name: Include virtual mailboxes tasks
-  tags: virtual
   when: mail.virtual_folders.active
   include_tasks: virtual.yml
 

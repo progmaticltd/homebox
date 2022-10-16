@@ -1,0 +1,87 @@
+---
+
+- name: Check if the main imap record exists
+  register: main_imap_record
+  shell: >-
+    dig -t {{ external_ip_type }}
+    +nocomments +noall +answer
+    imap.{{ network.domain }} @127.0.0.1
+  changed_when: false
+  failed_when: false
+
+- name: Store the fact for the main IMAP record
+  set_fact:
+    main_imap_record_missing: '{{ main_imap_record.stdout == "" }}'
+
+- name: Check if the backup imap record exists
+  when: backup_ip is defined
+  register: backup_imap_record
+  shell: >-
+    dig -t {{ backup_ip_type }}
+    +nocomments +noall +answer
+    imap.{{ network.domain }} @127.0.0.1
+  changed_when: false
+  failed_when: false
+
+- name: Store the fact for the backup IMAP record
+  when: backup_ip is defined
+  set_fact:
+    backup_imap_record_missing: '{{ backup_imap_record.stdout == "" }}'
+
+- name: Create the main IMAP record
+  when: main_imap_record_missing
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    imap {{ external_ip_type }} {{ external_ip }}
+  changed_when: true
+
+- name: Create the backup IMAP record
+  when: backup_ip is defined and backup_imap_record_missing
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    imap {{ backup_ip_type }} {{ backup_ip }}
+  changed_when: true
+
+# RFC 6186 entries, should point to an "A" record
+# See section 3.4 for examples of priorities and unavailable ports:
+# https://tools.ietf.org/html/rfc6186#section-3.4
+
+- name: Check if the IMAP SRV record exists
+  register: imap_srv_record_cmd
+  shell: >-
+    dig -t SRV
+    +nocomments +noall +answer
+    _imap._tcp.{{ network.domain }} @127.0.0.1
+  changed_when: false
+  failed_when: false
+
+- name: Store the fact for the IMAP SRV record
+  set_fact:
+    imap_srv_record_missing: '{{ imap_srv_record_cmd.stdout == "" }}'
+
+- name: Check if the IMAPS SRV record exists
+  register: imaps_srv_record_cmd
+  shell: >-
+    dig -t SRV
+    +nocomments +noall +answer
+    _imaps._tcp.{{ network.domain }} @127.0.0.1
+  changed_when: false
+  failed_when: false
+
+- name: Store the fact for the IMAPS SRV record
+  set_fact:
+    imaps_srv_record_missing: '{{ imaps_srv_record_cmd.stdout == "" }}'
+
+- name: Create the IMAP SRV record to prevent IMAP access
+  when: imap_srv_record_missing
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    _imap._tcp SRV "0 0 0 ."
+  changed_when: true
+
+- name: Create the IMAPS SRV record
+  when: imaps_srv_record_missing
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    _imaps._tcp SRV "10 0 993 imap.{{ network.domain }}"
+  changed_when: true

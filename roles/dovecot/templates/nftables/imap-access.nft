@@ -1,0 +1,12 @@
+#!/usr/sbin/nft -f
+# Accept imap (143) and imaps(993)
+
+table inet filter {
+
+    chain input {
+
+        tcp dport { imap, imaps } ct state new counter accept \
+        comment "Accept imap/imaps connections"
+    }
+
+}

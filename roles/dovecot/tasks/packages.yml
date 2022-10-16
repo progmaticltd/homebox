@@ -1,17 +1,12 @@
 ---
 
-################################################################################
-# Install dovecot packages
-# Set the default repository to download dovecot packages
 - name: Install dovecot packages
-  tags: dovecot
   apt:
     name: '{{ dovecot.packages }}'
     state: present
 
 - name: Install dovecot packages for full text search
   when: mail.fts.active
-  tags: dovecot
   apt:
     name: '{{ dovecot.fts_packages }}'
     state: present

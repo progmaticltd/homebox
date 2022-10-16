@@ -1,0 +1,14 @@
+---
+
+- name: Deploy IMAP access firewall rules
+  notify: Restart nftables
+  template:
+    src: nftables/imap-access.nft
+    dest: /etc/nftables/imap-access.nft
+
+- name: Deploy POP3 access firewall rules
+  when: mail.pop3
+  notify: Restart nftables
+  template:
+    src: nftables/pop3-access.nft
+    dest: /etc/nftables/pop3-access.nft

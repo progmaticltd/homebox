@@ -1,0 +1,13 @@
+---
+
+- name: Remove DNS records
+  include_tasks: uninstall/dns.yml
+
+- name: Remove nginx config
+  include_tasks: uninstall/nginx.yml
+
+- name: Remove the certificates
+  include_tasks: uninstall/certificates.yml
+
+- name: Remove apparmor config
+  include_tasks: uninstall/apparmor.yml

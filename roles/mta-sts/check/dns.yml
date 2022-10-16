@@ -1,0 +1,14 @@
+---
+
+- name: Check the main DNS record
+  assert:
+    that: mta_record_missing == false
+
+- name: Check the first web DNS record
+  assert:
+    that: mta_main_web_record_missing == false
+
+- name: Check the backup DNS record
+  when: backup_ip is defined
+  assert:
+    that: mta_backup_web_record_missing == false

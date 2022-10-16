@@ -5,6 +5,7 @@ whitelisted_hosts:
   - security.debian.org
   - letsencrypt.org
 
+
 # These packages are absolutely required to run homebox
 base_packages:
   - apparmor-utils

@@ -1,0 +1,18 @@
+---
+
+- name: Remove nginx AppArmor profile
+  file:
+    path: /etc/apparmor.d/local/mta-sts
+    state: absent
+  notify:
+    - Restart AppArmor service
+    - Restart nginx
+
+- name: Remove line in nginx AppArmor profile
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/mta-sts>'
+    state: absent
+  notify:
+    - Restart AppArmor service
+    - Restart nginx

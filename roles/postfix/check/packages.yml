@@ -1,0 +1,8 @@
+---
+
+- name: Check each postfix package
+  shell: >-
+    dpkg -s {{ pkg }}
+  loop: '{{ postfix_pkgs }}'
+  loop_control:
+    loop_var: pkg

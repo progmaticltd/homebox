@@ -1,0 +1,10 @@
+---
+
+- name: Install some postfix AppArmor profile
+  notify: Restart AppArmor service
+  file:
+    path: '/etc/apparmor.d/{{ aa_config }}'
+    state: absent
+  loop: '{{ postfix_apparmor_profiles }}'
+  loop_control:
+    loop_var: aa_config

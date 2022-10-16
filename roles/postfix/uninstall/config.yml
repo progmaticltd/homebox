@@ -1,0 +1,6 @@
+---
+
+- name: Remove configuration folder
+  file:
+    path: /etc/postfix/
+    state: absent

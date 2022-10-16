@@ -1,0 +1,16 @@
+---
+
+- name: Add some patterns to exclude in the backups
+  tags: backup
+  lineinfile:
+    path: /etc/homebox/backup-exclude
+    line: '{{ line }}'
+    create: true
+    state: absent
+  loop:
+    - '# Dovecot: Exclude indexes from backup'
+    - '/home/users/*/mails/indexes/*'
+    - '/home/users/*/.dovecot.lda-dupes*'
+    - '/home/users/*/mails/sieve/logs/*'
+  loop_control:
+    loop_var: line

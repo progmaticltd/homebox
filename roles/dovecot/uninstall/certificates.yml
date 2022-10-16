@@ -1,0 +1,24 @@
+---
+
+- name: Remove the imap certificates in the debian standard directory
+  file:
+    path: '{{ file }}'
+    state: absent
+  loop:
+    - /etc/ssl/certs/imap.{{ network.domain }}.issuer.crt
+    - /etc/ssl/certs/imap.{{ network.domain }}.crt
+    - /etc/ssl/private/imap.{{ network.domain }}.key
+  loop_control:
+    loop_var: file
+
+- name: Remove the pop3 certificates in the debian standard directory
+  when: mail.pop3
+  file:
+    path: '{{ file }}'
+    state: absent
+  loop:
+    - /etc/ssl/certs/pop3.{{ network.domain }}.issuer.crt
+    - /etc/ssl/certs/pop3.{{ network.domain }}.crt
+    - /etc/ssl/private/pop3.{{ network.domain }}.key
+  loop_control:
+    loop_var: file

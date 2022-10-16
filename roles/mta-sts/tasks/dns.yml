@@ -1,0 +1,30 @@
+---
+
+- name: Add the mta-sts TXT record
+  when: mta_record_missing
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    _mta-sts TXT
+    '"v=STSv1; id={{ mta_sts_uid }};"'
+  changed_when: true
+  notify: Restart PowerDNS
+
+- name: Add the main mta-sts web record
+  when: mta_main_web_record_missing
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    mta-sts {{ external_ip_type }}
+    {{ external_ip }}
+  changed_when: true
+  notify: Restart PowerDNS
+
+- name: Add the backup mta-sts web record
+  when:
+    - backup_ip is defined
+    - mta_backup_web_record_missing
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    mta-sts {{ backup_ip_type }}
+    {{ backup_ip }}
+  changed_when: true
+  notify: Restart PowerDNS

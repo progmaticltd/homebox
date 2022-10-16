@@ -1,0 +1,7 @@
+---
+
+- name: Set the initial facts
+  include_tasks: facts.yml
+
+- name: Install the packages
+  include_tasks: check/packages.yml
