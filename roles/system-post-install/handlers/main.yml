@@ -7,14 +7,12 @@
     no_block: true
 
 - name: Restart Postfix
-  when: postfix_installed
   systemd:
     name: postfix
     state: restarted
     no_block: true
 
 - name: Restart Dovecot
-  when: dovecot_installed
   systemd:
     name: dovecot
     state: restarted

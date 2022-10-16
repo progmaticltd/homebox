@@ -20,5 +20,6 @@
     - '{{ playbook_dir }}/../config/defaults.yml'
   hosts: homebox
   tasks:
-    - include_role:
+    - name: Run the role selected
+      include_role:
         name: '{{ lookup("env", "ROLE") }}'

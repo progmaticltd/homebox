@@ -1,0 +1,7 @@
+---
+
+rc_files:
+  - bash
+  - zsh
+  - vim
+  - screen

@@ -1,0 +1,7 @@
+---
+
+# Remove packages that are not needed for a live system:
+
+cleanup_packages:
+  - resolvconf
+  - rdnssd

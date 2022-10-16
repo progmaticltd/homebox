@@ -1,7 +1,0 @@
-# Access check policy for Homebox
-
-# A comma separated list of country codes to trust (e.g. FR,DE,GB)
-# COUNTRIES_TRUST='{{ access_check.countries.trust | join(",") }}'
-
-# Trust the home country, i.e. the country where the box is hosted (YES/NO)
-# COUNTRIES_TRUST_HOME='{{ access_check.countries.trust_home | bool | ternary("YES", "NO") }}'

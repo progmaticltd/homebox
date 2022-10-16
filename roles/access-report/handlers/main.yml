@@ -1,7 +1,0 @@
----
-
-- name: Restart AppArmor service
-  systemd:
-    name: apparmor
-    state: restarted
-    no_block: true

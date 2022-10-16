@@ -1,17 +1,7 @@
 ---
 # Various cleanup tasks before the system goes live
-- name: Check if postfix and dovecot are installed
-  set_fact:
-    postfix_installed: '{{ lookup("pipe", "dpkg -l | grep -c postfix || true") | bool }}'
-    dovecot_installed: '{{ lookup("pipe", "dpkg -l | grep -c dovecot-core || true") | bool }}'
-    bind_installed: '{{ lookup("pipe", "dpkg -l | grep -c bind || true") | bool }}'
-
 - name: Include common cleanup tasks
   include_tasks: cleanup-common.yml
-
-- name: Include bind related cleanup tasks
-  when: bind.install and bind_installed
-  include_tasks: network-bind.yml
 
 - name: Partitions security
   include_tasks: partitions-security.yml
