@@ -1,0 +1,26 @@
+---
+
+- name: Copy the smtp certificates in the debian standard directory
+  copy:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: yes
+  loop:
+    - src: /etc/lego/certificates/smtp.{{ network.domain }}.issuer.crt
+      dest: /etc/ssl/certs/smtp.{{ network.domain }}.issuer.crt
+    - src: /etc/lego/certificates/smtp.{{ network.domain }}.crt
+      dest: /etc/ssl/certs/smtp.{{ network.domain }}.crt
+  loop_control:
+    loop_var: file
+
+- name: Copy the smtp private key in the debian standard directory
+  copy:
+    src: /etc/lego/certificates/smtp.{{ network.domain }}.key
+    dest: /etc/ssl/private/smtp.{{ network.domain }}.key
+    remote_src: yes
+    owner: root
+    group: ssl-cert
+    mode: 0640

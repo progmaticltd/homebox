@@ -27,9 +27,9 @@ debug_peer_list = 127.0.0.1
 compatibility_level = 2
 
 # TLS parameters
-smtpd_tls_cert_file=/etc/letsencrypt/live/smtp.{{ network.domain }}/fullchain.pem
-smtpd_tls_key_file=/etc/letsencrypt/live/smtp.{{ network.domain }}/privkey.pem
-smtpd_tls_CAfile=/etc/letsencrypt/live/smtp.{{ network.domain }}/fullchain.pem
+smtpd_tls_cert_file=/etc/ssl/certs/smtp.{{ network.domain }}.issuer.crt
+smtpd_tls_key_file=/etc/ssl/certs/smtp.{{ network.domain }}.crt
+smtpd_tls_CAfile=/etc/ssl/private/smtp.{{ network.domain }}.key
 
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache

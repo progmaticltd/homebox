@@ -6,6 +6,9 @@
 - name: Set the initial facts
   include_tasks: facts.yml
 
+- name: Copy the certificates
+  include_tasks: certificates.yml
+
 - name: Pre-installation tasks
   include_tasks: preinstall.yml
 

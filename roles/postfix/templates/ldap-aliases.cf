@@ -2,7 +2,7 @@
 server_host = ldap://ldap.{{ network.domain }}/
 start_tls = yes
 
-search_base = '{{ ldap_search_base }}'
+search_base = {{ ldap_search_base }}
 
 # Allow advanced LDAP search with the recipient delimiter
 query_filter = (|(mail=%s)(intlMailAddr=%s))
