@@ -5,6 +5,7 @@
     name: '{{ packages }}'
     state: absent
     purge: true
+    autoremove: true
 
 - name: Remove nginx secure configuration
   file:

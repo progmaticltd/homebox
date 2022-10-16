@@ -2,6 +2,20 @@
 
 flush ruleset
 
+define icmp6_out = {
+	nd-neighbor-solicit,
+	nd-neighbor-advert,
+    nd-router-advert,
+	nd-router-solicit,
+	mld-listener-report
+}
+
+define icmp6_in = {
+	nd-neighbor-solicit,
+	nd-router-advert,
+	nd-neighbor-advert
+}
+
 table inet filter {
 
     chain input {
@@ -35,7 +49,7 @@ table inet filter {
         comment "Incoming http(s) connections"
 
         # Accept neighbour discovery otherwise IPv6 connectivity breaks
-        icmpv6 type { nd-neighbor-solicit, nd-router-advert, nd-neighbor-advert } \
+        icmpv6 type $icmp6_in \
         counter accept \
         comment "Minimal IPv6 connectivity"
 
@@ -95,9 +109,8 @@ table inet filter {
         comment "http(s) traffic"
 
         # accept neighbour discovery otherwise IPv6 connectivity breaks
-        icmpv6 type { nd-neighbor-solicit, \
-        nd-router-advert, nd-neighbor-advert, mld-listener-report } counter accept \
-        comment "IPv6 standard traffic"
+        icmpv6 type $icmp6_out counter accept \
+        comment "IPv6 standard output traffic"
 
         # DHCP settings
         udp sport 68 udp dport 67 limit rate 1/second counter accept \

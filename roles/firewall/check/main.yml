@@ -1,0 +1,10 @@
+---
+
+- name: Check the firewall rules
+  shell: nft -c -f /etc/nftables.conf
+  changed_when: false
+
+- name: Ensure there are some rules
+  register: nft_rules
+  shell: nft list ruleset
+  failed_when: nft_rules.stdout == ''
