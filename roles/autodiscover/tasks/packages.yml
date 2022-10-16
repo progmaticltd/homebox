@@ -1,0 +1,6 @@
+---
+
+- name: Install the required packages
+  apt:
+    name: '{{ autodiscover_packages }}'
+    state: present

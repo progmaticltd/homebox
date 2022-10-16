@@ -1,80 +1,19 @@
 ---
 
-- name: Create the autoconfiguration directories
-  tags: autoconfig
-  file:
-    path: /var/www/autoconfig/mail/
-    state: directory
+- name: Install the required packages
+  include_tasks: packages.yml
 
-- name: Copy autoconfig XML template
-  tags: autoconfig
-  template:
-    src: config-v1.1.xml
-    dest: /var/www/autoconfig/mail/config-v1.1.xml
-    owner: root
-    group: root
-    mode: '0644'
+- name: Load some facts
+  include_tasks: facts.yml
 
-- name: Create the autoconfig site
-  tags: autoconfig
-  notify: Restart nginx server
-  vars:
-    csp: '{{ csp_default }}'
-    fp: '{{ fp_default }}'
-  template:
-    src: nginx.conf
-    dest: '/etc/nginx/sites-available/autoconfig.{{ network.domain }}.conf'
-    owner: root
-    group: root
-    mode: '0644'
+- name: Deploy nginx config
+  include_tasks: nginx.yml
 
-- name: Ensure autoconfig resolves to localhost
-  lineinfile:
-    path: /etc/hosts
-    line: '127.0.0.1    autoconfig.{{ network.domain }}'
+- name: Configure AppArmor
+  include_tasks: apparmor.yml
 
-- name: Enable nginx site
-  tags: autoconfig
-  file:
-    src: '/etc/nginx/sites-available/autoconfig.{{ network.domain }}.conf'
-    dest: '/etc/nginx/sites-enabled/autoconfig.{{ network.domain }}.conf'
-    state: link
+- name: Copy the certificates
+  include_tasks: certificates.yml
 
-# AppArmor configuration ======================================================
-
-- name: Install nginx AppArmor profile
-  tags: autoconfig, security, apparmor
-  template:
-    src: 'apparmor.d/local/autoconfig'
-    dest: '/etc/apparmor.d/local/nginx-autoconfig'
-
-- name: Check if AppArmor nginx configuration already contains the line
-  register: line_found
-  shell: >-
-    grep -c 'include <local/nginx-autoconfig>'
-    /etc/apparmor.d/usr.sbin.nginx
-  changed_when: false
-  failed_when: false
-
-- name: Add autoconfig AppAromor specific configuration
-  when: line_found.stdout == '0'
-  tags: autoconfig, security, apparmor
-  register: aa_config
-  lineinfile:
-    path: /etc/apparmor.d/usr.sbin.nginx
-    line: '  #include <local/nginx-autoconfig>'
-    insertbefore: '# End of local includes for homebox'
-
-- name: Activate AppArmor profiles
-  when: aa_config.changed
-  tags: autoconfig, security, apparmor
-  command: 'aa-enforce usr.sbin.nginx'
-  notify: Restart AppArmor service
-
-# Create entries for the DNS server ===========================================
-- name: Generate DNS records for bind
-  tags: bind
-  when: bind.install
-  template:
-    src: 60-autoconfig.bind
-    dest: /etc/homebox/dns-entries.d/60-autoconfig.bind
+- name: Set the DNS records
+  include_tasks: dns.yml

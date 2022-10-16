@@ -1,2 +1,0 @@
-;; Microsoft Outlook automatic configuration
-autodiscover  IN       CNAME      main

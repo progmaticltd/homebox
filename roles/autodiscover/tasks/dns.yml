@@ -1,0 +1,8 @@
+---
+
+- name: Create the main record
+  when: autodiscover_record_missing
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    autodiscover CNAME main.{{ network.domain }}
+  changed_when: true

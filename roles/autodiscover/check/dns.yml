@@ -1,0 +1,5 @@
+---
+
+- name: Check the DNS record
+  assert:
+    that: autodiscover_record_missing == false

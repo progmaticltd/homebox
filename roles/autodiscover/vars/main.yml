@@ -45,3 +45,7 @@ fp_default:
     - id: vibrate
     - id: fullscreen
     - id: payment
+
+# Packages to install
+autodiscover_packages:
+  - libxml2-utils

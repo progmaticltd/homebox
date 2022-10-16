@@ -1,0 +1,14 @@
+---
+
+- name: Check if the CNAME record exists
+  register: autoconfig_record_cmd
+  shell: >-
+    dig -t CNAME
+    +nocomments +noall +answer
+    autoconfig.{{ network.domain }} @127.0.0.1
+  changed_when: false
+  failed_when: false
+
+- name: Store the fact for the DNS record
+  set_fact:
+    autoconfig_record_missing: '{{ autoconfig_record_cmd.stdout == "" }}'
