@@ -4,7 +4,7 @@
   when: remote_ip_private
   notify: Restart nftables
   template:
-    src: 20-ssh-private.nft
+    src: rules/20-ssh-private.nft
     dest: /etc/nftables/20-ssh-private.nft
 
 - name: Remove the SSH private access file

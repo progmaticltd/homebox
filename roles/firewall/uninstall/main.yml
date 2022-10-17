@@ -1,0 +1,12 @@
+---
+
+- name: Remove nftables package
+  apt:
+    name: '{{ firewall_packages }}'
+    state: absent
+    purge: true
+
+- name: Remove nftables directory
+  file:
+    path: /etc/nftables
+    state: absent

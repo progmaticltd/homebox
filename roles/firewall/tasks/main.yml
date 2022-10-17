@@ -6,6 +6,9 @@
 - name: Load network information
   include_tasks: facts.yml
 
+- name: Install the required packages
+  include_tasks: packages.yml
+
 - name: Set the generic firewall rules
   include_tasks: generic-rules.yml
 

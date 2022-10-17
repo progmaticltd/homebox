@@ -8,3 +8,13 @@
   register: nft_rules
   shell: nft list ruleset
   failed_when: nft_rules.stdout == ''
+
+- name: List the rule files
+  register: rule_files
+  find:
+    path: /etc/nftables
+    pattern: '*.nft'
+
+- name: Check that the number of copied files
+  assert:
+    that: rule_files.files | length == 8

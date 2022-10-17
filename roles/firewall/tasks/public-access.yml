@@ -28,5 +28,5 @@
 - name: Deploy the SSH public access file
   notify: Restart nftables
   template:
-    src: 20-ssh-public.nft
+    src: rules/20-ssh-public.nft
     dest: /etc/nftables/20-ssh-public.nft

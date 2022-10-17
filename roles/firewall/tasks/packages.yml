@@ -1,0 +1,6 @@
+---
+
+- name: Install the required packages
+  apt:
+    name: '{{ firewall_packages }}'
+    state: present
