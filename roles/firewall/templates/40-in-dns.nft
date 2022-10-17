@@ -1,0 +1,11 @@
+#!/usr/sbin/nft -f
+
+table inet filter {
+
+    chain input {
+
+        meta l4proto { tcp, udp } th dport domain ct state new counter accept \
+        comment "DNS queries"
+
+    }
+}

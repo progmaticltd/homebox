@@ -10,6 +10,20 @@
     path: /etc/nftables
     state: directory
 
+- name: List other firewall files
+  register: other_firewall_rules
+  find:
+    path: /etc/nftables
+    pattern: '*.nft'
+
+- name: Delete other firewall files
+  file:
+    path: '{{ file.path }}'
+    state: absent
+  loop: '{{ other_firewall_rules.files }}'
+  loop_control:
+    loop_var: files
+
 # The following tasks are run when the system is remote (e.g. cloud server)
 - name: Store the remote IP address
   set_fact:
@@ -32,4 +46,11 @@
   template:
     src: firewall/nftables.nft
     dest: /etc/nftables.conf
+    mode: '0600'
+
+- name: Copy the nftables end of rules file
+  notify: Restart nftables
+  template:
+    src: close-rules.nft
+    dest: /etc/nftables/900-close-rules.nft
     mode: '0600'

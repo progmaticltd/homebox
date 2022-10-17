@@ -1,0 +1,25 @@
+#!/usr/sbin/nft -f
+
+table inet filter {
+
+    chain input {
+
+		limit rate 10/second log prefix "nft-in: drop " \
+        comment "Drop and log everything not whitelisted"
+
+    }
+
+    chain forward {
+
+        limit rate 10/second log prefix "nft-fwd: drop " \
+        comment "Drop everything not whitelisted"
+
+    }
+
+    chain output {
+
+        limit rate 10/second log prefix "nft-out: drop " flags skuid \
+        counter reject comment "Log and reject non whitelisted traffic"
+
+    }
+}

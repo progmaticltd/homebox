@@ -19,9 +19,19 @@
     name: nftables
     state: restarted
 
-- name: Copy the nftables configuration files
+- name: Copy the main rules files
   notify: Restart nftables
   template:
-    src: nftables.nft
+    src: '{{ name }}.nft'
+    dest: /etc/nftables/{{ name }}.nft
+    mode: 0600
+  loop: '{{ rule_files }}'
+  loop_control:
+    loop_var: name
+
+- name: Copy the nftables parent configuration file
+  notify: Restart nftables
+  template:
+    src: main.nft
     dest: /etc/nftables.conf
     mode: '0600'

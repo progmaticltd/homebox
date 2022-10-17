@@ -1,0 +1,41 @@
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+define icmp6_out = {
+	nd-neighbor-solicit,
+	nd-neighbor-advert,
+    nd-router-advert,
+	nd-router-solicit,
+	mld-listener-report
+}
+
+define icmp6_in = {
+	nd-neighbor-solicit,
+	nd-router-advert,
+	nd-neighbor-advert
+}
+
+table inet filter {
+
+    chain input {
+
+        type filter hook input priority 0
+        policy drop
+
+    }
+
+    chain forward {
+
+        type filter hook forward priority 0
+        policy drop
+
+    }
+
+    chain output {
+
+        type filter hook output priority 0
+        policy drop
+
+    }
+}

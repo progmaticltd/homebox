@@ -1,0 +1,12 @@
+---
+
+# These rules are included in numeric order,
+# to generate the final firewall rules set.
+rule_files:
+  - 00-init
+  - 10-base
+  - 10-outbound
+  - 30-ssh-other
+  - 40-in-dns
+  - 50-in-http
+  - 90-close

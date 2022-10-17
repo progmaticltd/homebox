@@ -1,0 +1,67 @@
+#!/usr/sbin/nft -f
+
+table inet filter {
+
+    chain input {
+
+        # Accept any localhost traffic
+        iif lo accept
+
+        # DHCP
+        udp sport 67 udp dport 68 limit rate 1/second counter accept \
+        comment "IPv4 DHCP client"
+        udp sport 547 udp dport 546 limit rate 1/second counter accept \
+        comment "IPv6 DHCP client"
+
+        # Accept traffic originated from us, and reject invalid
+		ct state vmap { established : accept, related : accept, invalid : drop }
+
+        # Accept neighbour discovery otherwise IPv6 connectivity breaks
+        icmpv6 type $icmp6_in \
+        counter accept \
+        comment "Minimal IPv6 connectivity"
+
+        # limit ICMP to ping
+        icmp type echo-request limit rate 5/second ct state new counter accept \
+        comment "Allow pings"
+
+    }
+
+    chain forward {
+
+        # Accept traffic originated from us
+        ct state established counter accept \
+        comment "Established connections"
+
+        ct state related counter accept \
+        comment "Related connections"
+
+    }
+
+    chain output {
+
+        # accept any localhost traffic
+        oif lo accept
+
+        # Accept traffic originated from us
+        ct state established,related counter accept \
+        comment "Established connections"
+
+        # DHCP settings
+        udp sport 68 udp dport 67 limit rate 1/second counter accept \
+        comment "IPv4 DHCP queries"
+
+        udp sport 546 udp dport 547 limit rate 1/second counter accept \
+        comment "IPv6 DHCP queries"
+
+        # Common ICMP
+        icmp type { echo-request, time-exceeded, destination-unreachable } \
+        limit rate 5/second counter accept \
+        comment "Standard ICMPv4 traffic"
+
+        # Accept neighbour discovery otherwise IPv6 connectivity breaks
+        icmpv6 type $icmp6_out counter accept \
+        comment "IPv6 standard output traffic"
+
+    }
+}

@@ -1,0 +1,25 @@
+#!/usr/sbin/nft -f
+
+table inet filter {
+
+    set ssh_denylist {
+        type ipv4_addr
+        size 65535
+        flags dynamic,timeout
+        timeout 5m
+    }
+
+    chain input {
+
+		# Limit new SSH connections ala fail2ban
+        ip protocol tcp ct state new,untracked tcp dport ssh \
+		limit rate over 1/minute add @ssh_denylist { ip saddr }
+        ip saddr @ssh_denylist drop
+
+        # Allow ssh
+        tcp dport ssh ct state new counter accept \
+        comment "New ssh connections"
+
+    }
+
+}
