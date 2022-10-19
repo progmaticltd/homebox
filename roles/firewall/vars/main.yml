@@ -2,7 +2,6 @@
 
 firewall_packages:
   - nftables
-  - ulogd2
 
 # These rules are included in numeric order,
 # to generate the final firewall rules set.

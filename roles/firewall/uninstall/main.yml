@@ -10,3 +10,13 @@
   file:
     path: /etc/nftables
     state: absent
+
+- name: Remove the system log configuration
+  file:
+    path: /etc/rsyslog.d/nftables.conf
+    state: absent
+
+- name: Remove the logrotate configutation
+  file:
+    path: /etc/logrotate.d/nftables
+    state: absent

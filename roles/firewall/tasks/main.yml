@@ -9,6 +9,9 @@
 - name: Install the required packages
   include_tasks: packages.yml
 
+- name: Prepare logging
+  include_tasks: logging.yml
+
 - name: Set the generic firewall rules
   include_tasks: generic-rules.yml
 
