@@ -5,6 +5,7 @@
     name: '{{ firewall_packages }}'
     state: absent
     purge: true
+    autoremove: true
 
 - name: Remove nftables directory
   file:
