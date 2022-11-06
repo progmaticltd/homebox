@@ -12,8 +12,8 @@
   become: true
   become_user: pdns
   shell: >-
-    cat /usr/share/pdns-backend-sqlite3/schema/schema.sqlite3.sql
-    | sqlite3 default.db
+    sqlite3 -init /usr/share/pdns-backend-sqlite3/schema/schema.sqlite3.sql
+    default.db
   args:
     creates: /var/lib/pdns/default.db
     chdir: /var/lib/pdns/
