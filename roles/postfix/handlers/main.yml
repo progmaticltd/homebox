@@ -22,3 +22,9 @@
     name: fail2ban
     state: restarted
     no_block: true
+
+- name: Restart firewall
+  systemd:
+    name: nftables
+    state: restarted
+    no_block: true

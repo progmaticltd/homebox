@@ -1,0 +1,28 @@
+#!/usr/sbin/nft -f
+
+define mail_ports = {
+	smtp,
+	submission,
+	ssmtp
+}
+
+table inet filter {
+
+	chain input {
+
+        tcp dport $mail_ports \
+		ct state new counter accept \
+        comment "Ingoing mail"
+
+	}
+
+    chain output {
+
+		meta skuid { postfix, root } \
+        tcp dport $mail_ports \
+		ct state new counter accept \
+        comment "Outgoing mail"
+
+    }
+
+}

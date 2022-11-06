@@ -55,5 +55,6 @@
   lineinfile:
     path: /root/user-passwords.txt
     line: '{{ user.uid }}: {{ user_password }}'
+    regexp: '^{{ user.uid }}:.*'
     create: true
     mode: 0600

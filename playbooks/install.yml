@@ -14,12 +14,22 @@
     - role: load-defaults
     - role: external-ip-type
 
+- name: Load the roles to run
+  hosts: homebox
+  tasks:
+    - name: Load the roles to run
+      set_fact:
+        roles_list: '{{ lookup("env", "ROLE").split(",") }}'
+
 - name: Run the tasks
+  hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../config/system.yml'
     - '{{ playbook_dir }}/../config/defaults.yml'
-  hosts: homebox
   tasks:
     - name: Run the role selected
       include_role:
-        name: '{{ lookup("env", "ROLE") }}'
+        name: '{{ role }}'
+      loop: '{{ roles_list }}'
+      loop_control:
+        loop_var: role

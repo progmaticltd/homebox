@@ -5,6 +5,7 @@
     pdnsutil delete-rrset ldap.{{ network.domain }}
     ldap CNAME
   changed_when: true
+  failed_when: false
 
 - name: Remove all the installed packages
   apt:

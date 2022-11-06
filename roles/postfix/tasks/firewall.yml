@@ -1,0 +1,8 @@
+---
+
+- name: Copy the firewall configuration file
+  notify: Restart firewall
+  template:
+    src: firewall.nft
+    dest: /etc/nftables/60-postfix.nft
+    mode: 0600
