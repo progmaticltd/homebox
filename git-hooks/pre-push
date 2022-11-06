@@ -43,7 +43,7 @@ do
 
 		# Write the list of the main ansible files and directories
 		find \
-			common/roles/* \
+			roles/* \
 			tests/main.yml \
 			uninstall/*.yml \
 			-maxdepth 0 -print0 \
