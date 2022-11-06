@@ -11,7 +11,7 @@
 
 - name: Store the fact for the main IMAP record
   set_fact:
-    main_imap_record_missing: '{{ main_imap_record.stdout == "" }}'
+    main_imap_record_missing: '{{ main_imap_record.stdout is empty string }}'
 
 - name: Check if the backup imap record exists
   when: backup_ip is defined
@@ -26,7 +26,7 @@
 - name: Store the fact for the backup IMAP record
   when: backup_ip is defined
   set_fact:
-    backup_imap_record_missing: '{{ backup_imap_record.stdout == "" }}'
+    backup_imap_record_missing: '{{ backup_imap_record.stdout is empty string }}'
 
 - name: Create the main IMAP record
   when: main_imap_record_missing
@@ -57,7 +57,7 @@
 
 - name: Store the fact for the IMAP SRV record
   set_fact:
-    imap_srv_record_missing: '{{ imap_srv_record_cmd.stdout == "" }}'
+    imap_srv_record_missing: '{{ imap_srv_record_cmd.stdout is empty string }}'
 
 - name: Check if the IMAPS SRV record exists
   register: imaps_srv_record_cmd
@@ -70,7 +70,7 @@
 
 - name: Store the fact for the IMAPS SRV record
   set_fact:
-    imaps_srv_record_missing: '{{ imaps_srv_record_cmd.stdout == "" }}'
+    imaps_srv_record_missing: '{{ imaps_srv_record_cmd.stdout is empty string }}'
 
 - name: Create the IMAP SRV record to prevent IMAP access
   when: imap_srv_record_missing

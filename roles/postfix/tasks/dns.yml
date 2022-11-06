@@ -11,7 +11,7 @@
 
 - name: Store the fact for the main SMTP record
   set_fact:
-    main_smtp_record_missing: '{{ main_smtp_record.stdout == "" }}'
+    main_smtp_record_missing: '{{ main_smtp_record.stdout is empty string }}'
 
 - name: Check if the backup smtp record exists
   when: backup_ip is defined
@@ -26,7 +26,7 @@
 - name: Store the fact for the backup SMTP record
   when: backup_ip is defined
   set_fact:
-    backup_smtp_record_missing: '{{ backup_smtp_record.stdout == "" }}'
+    backup_smtp_record_missing: '{{ backup_smtp_record.stdout is empty string }}'
 
 - name: Create the main SMTP record
   when: main_smtp_record_missing
