@@ -28,7 +28,7 @@ uris = ldap://ldap.{{ network.domain }}/
 dn = cn=readonly account, ou=users, {{ ldap_org_base }}
 
 # Password for LDAP server, if dn is specified.
-dnpass = {{ lookup("password", ldap_ro_password) }}
+dnpass = {{ ldap_ro_password }}
 
 # Use SASL binding instead of the simple binding. Note that this changes
 # ldap_version automatically to be 3 if it's lower.
@@ -128,7 +128,7 @@ scope = subtree
 #
 # There are also other special fields which can be returned, see
 # http://wiki2.dovecot.org/UserDatabase/ExtraFields
-user_attrs = homeDirectory=home,uidNumber=uid,gidNumber=gid,mail=mail,uid=user
+user_attrs = homeDirectory=home,uidNumber=uid,gidNumber=gid,mail=mail,uid=user,userdb_mail_crypt_private_password=password
 
 # Filter for user lookup. Some variables can be used (see
 # http://wiki2.dovecot.org/Variables for full list):

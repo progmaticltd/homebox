@@ -11,4 +11,4 @@
 
 - name: Store the fact for the DNS record
   set_fact:
-    autoconfig_record_missing: '{{ autoconfig_record_cmd.stdout is empty string }}'
+    autoconfig_record_missing: '{{ autoconfig_record_cmd.stdout | length == 0 }}'

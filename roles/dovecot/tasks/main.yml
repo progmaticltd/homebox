@@ -32,10 +32,6 @@
   when: mail.impersonate.active
   include_tasks: impersonate.yml
 
-# - name: Import dovecot access check tasks
-#   when: access_check.active
-#   include_tasks: access-check.yml
-
 - name: Run import tasks
   when: mail.import.active
   include_tasks: import.yml
@@ -54,5 +50,8 @@
   when: mail.virtual_folders.active
   include_tasks: virtual.yml
 
-- name: Configure fail2ban
-  include_tasks: fail2ban.yml
+- name: Set-up user encryption
+  include_tasks: encryption.yml
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user

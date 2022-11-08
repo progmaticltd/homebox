@@ -1,0 +1,34 @@
+---
+
+- name: Load current user’s password
+  register: user_passwd_cmd
+  shell: >-
+    sed -En 's/^{{ user.uid }}: //p' user-passwords.txt
+  args:
+    chdir: /root
+
+- name: Store the user’s password
+  set_fact:
+    user_password: '{{ user_passwd_cmd.stdout }}'
+
+- name: Create private key for the user
+  no_log: '{{ system.devel }}'
+  openssl_privatekey:
+    path: /home/users/{{ user.uid }}/mails/encryption/default-private-key.pem
+    type: ECC
+    passphrase: '{{ user_password }}'
+    cipher: auto
+    curve: secp256r1
+    mode: 0600
+    owner: '{{ user.uid }}'
+    group: 'users'
+
+- name: Create the public key for the user
+  openssl_publickey:
+    privatekey_path: /home/users/{{ user.uid }}/mails/encryption/default-private-key.pem
+    path: /home/users/{{ user.uid }}/mails/encryption/default-public-key.pem
+    privatekey_passphrase: '{{ user_password }}'
+    mode: 0644
+    format: PEM
+    owner: '{{ user.uid }}'
+    group: 'users'

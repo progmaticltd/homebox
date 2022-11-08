@@ -11,7 +11,7 @@
 
 - name: Store the fact for the DNS record
   set_fact:
-    mta_record_missing: '{{ mta_record_cmd.stdout is empty string }}'
+    mta_record_missing: '{{ mta_record_cmd.stdout | length == 0 }}'
 
 - name: Create a new ID for mta-sts DNS record
   when: mta_record_missing
@@ -34,7 +34,7 @@
 
 - name: Store the fact for the DNS record
   set_fact:
-    mta_main_web_record_missing: '{{ mta_main_web_record_cmd.stdout is empty string }}'
+    mta_main_web_record_missing: '{{ mta_main_web_record_cmd.stdout | length == 0 }}'
 
 - name: Check if the mta-sts backup web record exists
   register: mta_backup_web_record_cmd
@@ -47,4 +47,4 @@
 
 - name: Store the fact for the DNS record
   set_fact:
-    mta_backup_web_record_missing: '{{ mta_backup_web_record_cmd.stdout is empty string }}'
+    mta_backup_web_record_missing: '{{ mta_backup_web_record_cmd.stdout | length == 0 }}'

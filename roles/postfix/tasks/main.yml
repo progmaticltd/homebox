@@ -1,25 +1,25 @@
 ---
 
-# - name: Install the packages
-#   include_tasks: packages.yml
+- name: Install the packages
+  include_tasks: packages.yml
 
-# - name: Set the initial facts
-#   include_tasks: facts.yml
+- name: Set the initial facts
+  include_tasks: facts.yml
 
-# - name: Copy the certificates
-#   include_tasks: certificates.yml
+- name: Copy the certificates
+  include_tasks: certificates.yml
 
-# - name: Pre-installation tasks
-#   include_tasks: preinstall.yml
+- name: Pre-installation tasks
+  include_tasks: preinstall.yml
 
-# - name: Generic config
-#   include_tasks: config.yml
+- name: Generic config
+  include_tasks: config.yml
 
 - name: Firewall configuration
   include_tasks: firewall.yml
 
-# - name: AppArmor configuration
-#   include_tasks: apparmor.yml
+- name: AppArmor configuration
+  include_tasks: apparmor.yml
 
-# - name: DNS configuration
-#   include_tasks: dns.yml
+- name: DNS configuration
+  include_tasks: dns.yml
