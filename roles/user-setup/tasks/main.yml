@@ -26,6 +26,9 @@
   loop_control:
     loop_var: user
 
+- name: Create the users home folders for postmaster
+  command: 'mkhomedir_helper postmaster 077 /etc/skel'
+
 - name: Create home directory for users on first login
   shell: >-
     pam-auth-update --package --enable mkhomedir

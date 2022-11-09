@@ -22,6 +22,7 @@
     mode: 0600
     owner: '{{ user.uid }}'
     group: 'users'
+    force: true
 
 - name: Create the public key for the user
   openssl_publickey:
@@ -32,3 +33,23 @@
     format: PEM
     owner: '{{ user.uid }}'
     group: 'users'
+    force: true
+
+- name: Generate the user’s default keys
+  shell: >-
+    doveadm
+    -o plugin/mail_crypt_private_password='{{ user_password }}'
+    mailbox cryptokey generate
+    -u {{ user.uid }} -UR
+  args:
+    warn: false
+
+- name: Generate the user’s folders keys
+  shell: >-
+    doveadm
+    -o plugin/mail_crypt_private_password='{{ user_password }}'
+    mailbox cryptokey generate
+    -u {{ user.uid }} -U {{ folder }}
+  loop: '{{ user_folders }}'
+  loop_control:
+    loop_var: folder

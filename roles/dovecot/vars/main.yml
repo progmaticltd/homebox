@@ -83,3 +83,9 @@ dovecot:
     - usr.lib.dovecot.pop3-login
     - usr.lib.dovecot.ssl-params
     - usr.sbin.dovecot
+
+
+# Default dovecot folders to create
+user_folders:
+  - INBOX
+  - Sent
