@@ -1,0 +1,25 @@
+---
+
+- name: Copy sogo configuration
+  tags: config
+  notify: Restart sogo service
+  template:
+    src: sogo.conf
+    dest: '/etc/sogo/sogo.conf'
+    owner: root
+    group: sogo
+    mode: '0640'
+
+- name: Copy sogo cron table
+  tags: config
+  template:
+    src: sogo.cron
+    dest: '/etc/cron.d/sogo'
+
+- name: Add SOGo backups directory
+  tags: backup
+  file:
+    path: /var/backups/backups
+    state: directory
+    owner: sogo
+    group: sogo

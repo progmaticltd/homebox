@@ -1,0 +1,8 @@
+---
+
+- name: Remove the python / psycopg2 package
+  when: not system.devel
+  tags: apt
+  apt:
+    name: python3-psycopg2
+    state: absent

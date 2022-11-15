@@ -1,0 +1,29 @@
+---
+
+- name: Create the database user
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_user:
+    name: sogo
+    password: '{{ sogo_db_password }}'
+    role_attr_flags: LOGIN
+
+- name: Create the database
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_db:
+    encoding: utf8
+    name: sogo
+    owner: sogo
+
+- name: Initialise grants
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_privs:
+    db: sogo
+    objs: ALL_IN_SCHEMA
+    privs: ALL
+    role: sogo

@@ -17,7 +17,10 @@
   changed_when: false
 
 - name: Create the certificate
-  when: not cert_file.stat.exists or cert_check_cmd.failed
+  when: >-
+    not cert_file.stat.exists
+    or cert_recreate
+    or cert_check_cmd.failed
   environment:
     PDNS_API_URL: http://127.0.0.1:8081/
     PDNS_API_KEY: '{{ api_key }}'
@@ -26,10 +29,12 @@
   shell: >-
     lego
     --server {{ acme_url }}
+    --key-type {{ certificate.type | default("rsa2048") }}
     --email security@{{ network.domain }}
     --dns pdns
     --accept-tos
     --path /etc/lego
     --domains {{ certificate.name }}.{{ network.domain }}
+    {{ certificate.pem | bool | ternary("--pem", " ") }}
     run
   changed_when: true

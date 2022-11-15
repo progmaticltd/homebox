@@ -1,215 +1,31 @@
 ---
 
-- name: Start by installing the required packages
-  tags: apt
-  apt:
-    name: '{{ sogo_pkgs }}'
-    state: present
+- name: Set the facts
+  include_tasks: facts.yml
 
-# Web server configuration ====================================================
+- name: Install the packages
+  include_tasks: packages.yml
 
-- name: Copy nginx configuration
-  tags: nginx
-  notify: Restart nginx
-  vars:
-    csp: '{{ sogo.csp | default(csp_default) }}'
-    fp: '{{ sogo.fp | default(fp_default) }}'
-  template:
-    src: nginx.conf
-    dest: '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'
-    owner: root
-    group: root
-    mode: '0644'
+- name: Configure the certificates
+  include_tasks: certificates.yml
 
-- name: Activate sogo web site
-  tags: nginx
-  notify: Restart nginx
-  file:
-    src: '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'
-    dest: '/etc/nginx/sites-enabled/sogo.{{ network.domain }}.conf'
-    state: link
+- name: Configure nginx
+  include_tasks: nginx.yml
 
-# Database configuration ======================================================
+- name: Configure the database
+  include_tasks: database.yml
 
-- name: Initialise the sogo database password parameters
-  tags: facts
-  set_fact:
-    sogo_password_params: "{{ backup_directory }}/postgresql/sogo.pwd {{ policies.system.password }}"
-    roPasswdParams: "{{ backup_directory }}/ldap/readonly.pwd length=16 chars=ascii_letters,digits"
+- name: Configure the sieve filters
+  include_tasks: sieve.yml
 
-- name: Create the sogo database account password
-  tags: facts
-  no_log: true
-  set_fact:
-    sogo_db_password: '{{ lookup("password", sogo_password_params) }}'
+- name: Configure AppArmor
+  include_tasks: apparmor.yml
 
-- name: Create the database user
-  tags: postgres
-  become: true
-  become_user: postgres
-  postgresql_user:
-    name: sogo
-    password: '{{ sogo_db_password }}'
-    role_attr_flags: LOGIN
+- name: Create DNS records
+  include_tasks: dns.yml
 
-- name: Create the database
-  tags: postgres
-  become: true
-  become_user: postgres
-  postgresql_db:
-    encoding: utf8
-    name: sogo
-    owner: sogo
+- name: Configure
+  include_tasks: config.yml
 
-- name: Initialise grants
-  tags: postgres
-  become: true
-  become_user: postgres
-  postgresql_privs:
-    db: sogo
-    objs: ALL_IN_SCHEMA
-    privs: ALL
-    role: sogo
-
-- name: Copy the database initialisation script
-  register: sogodb_schema
-  tags: postgres
-  template:
-    src: db-init.sql
-    dest: /etc/sogo/db-init.sql
-
-- name: Initialise the database
-  when: sogodb_schema.changed
-  tags: postgres
-  register: db_init
-  become: true
-  become_user: postgres
-  shell: >-
-    set -o pipefail ;
-    cat /etc/sogo/db-init.sql
-    | psql -a -d sogo -o /tmp/sogo-db-install.log
-  args:
-    creates: /tmp/sogo-db-install.log
-    executable: /bin/bash
-
-- name: Keep the DB logs
-  when: db_init.changed
-  copy:
-    src: /tmp/sogo-db-install.log
-    dest: /var/log/sogo/db-install.log
-    remote_src: true
-
-# Other configuration =========================================================
-
-- name: Get server's timezone
-  tags: config
-  register: tz_command
-  command: cat /etc/timezone
-
-- name: Get the server timezone
-  tags: config
-  set_fact:
-    server_time_zone: '{{ tz_command.stdout }}'
-  changed_when: false
-
-- name: Copy sogo configuration
-  tags: config
-  notify: Restart sogo service
-  template:
-    src: sogo.conf
-    dest: '/etc/sogo/sogo.conf'
-    owner: root
-    group: sogo
-    mode: '0640'
-
-- name: Copy sogo cron table
-  tags: config
-  template:
-    src: sogo.cron
-    dest: '/etc/cron.d/sogo'
-
-- name: Create SOGo's sieve filters file
-  tags: config
-  when: sogo.sieve_scripts
-  file:
-    path: '/home/users/{{ user.uid }}/mails/sieve/sogo.sieve'
-    owner: '{{ user.uid }}'
-    group: 'users'
-    mode: '0600'
-    state: touch
-    modification_time: preserve
-    access_time: preserve
-  with_items:
-    - '{{ users }}'
-  loop_control:
-    loop_var: user
-
-# AppArmor configuration ======================================================
-
-- name: Install nginx AppArmor profile
-  tags: security, apparmor
-  notify:
-    - Activate AppArmor profile
-    - Restart AppArmor service
-    - Restart nginx
-  template:
-    src: '{{ profile.src }}'
-    dest: '{{ profile.dest }}'
-  with_items:
-    - src: apparmor.d/local/nginx-sogo
-      dest: '/etc/apparmor.d/local/nginx-sogo'
-    - src: apparmor.d/usr.sbin.sogod
-      dest: '/etc/apparmor.d/usr.sbin.sogod'
-    - src: apparmor.d/usr.sbin.sogo-ealarms-notify
-      dest: '/etc/apparmor.d/usr.sbin.sogo-ealarms-notify'
-    - src: apparmor.d/usr.sbin.sogo-slapd-sockd
-      dest: '/etc/apparmor.d/usr.sbin.sogo-slapd-sockd'
-    - src: apparmor.d/usr.sbin.sogo-tool
-      dest: '/etc/apparmor.d/usr.sbin.sogo-tool'
-    - src: apparmor.d/usr.sbin.sogo-backup
-      dest: '/etc/apparmor.d/usr.sbin.sogo-backup'
-  loop_control:
-    loop_var: profile
-
-- name: Check if AppArmor nginx configuration already contains the line
-  register: line_found
-  shell: >-
-    grep -c 'include <local/nginx-sogo>'
-    /etc/apparmor.d/usr.sbin.nginx
-  changed_when: false
-  failed_when: false
-
-- name: Add sogo AppArmor specific configuration
-  when: line_found.stdout == '0'
-  notify:
-    - Activate AppArmor profile
-    - Restart AppArmor service
-    - Restart nginx
-  tags: security, apparmor
-  lineinfile:
-    path: /etc/apparmor.d/usr.sbin.nginx
-    line: '  #include <local/nginx-sogo>'
-    insertbefore: '# End of local includes for homebox'
-
-- name: Remove the python / psycopg2 package
-  when: not system.devel
-  tags: apt
-  apt:
-    name: python3-psycopg2
-    state: absent
-
-# Create entries for the DNS server ===========================================
-- name: Generate DNS records for bind
-  tags: bind
-  when: bind.install
-  template:
-    src: 50-sogo.bind
-    dest: /etc/homebox/dns-entries.d/50-sogo.bind
-
-- name: Add SOGo backups directory
-  tags: backup
-  file:
-    path: /var/backups/backups
-    state: directory
-    owner: sogo
-    group: sogo
+- name: Cleanup after the installation
+  include_tasks: cleanup.yml

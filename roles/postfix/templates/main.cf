@@ -15,7 +15,7 @@ append_dot_mydomain = no
 # The time after which the sender receives a copy of the message headers of mail that is still queued.
 # Uncomment the next line to generate "delayed mail" warnings
 delay_warning_time = 4h
-
+3C
 {% if system.debug %}
 # Optional list of remote client or server hostname or network address patterns
 # that cause the verbose logging level
@@ -27,9 +27,10 @@ debug_peer_list = 127.0.0.1
 compatibility_level = 2
 
 # TLS parameters
-smtpd_tls_cert_file=/etc/ssl/certs/smtp.{{ network.domain }}.issuer.crt
-smtpd_tls_key_file=/etc/ssl/certs/smtp.{{ network.domain }}.crt
-smtpd_tls_CAfile=/etc/ssl/private/smtp.{{ network.domain }}.key
+#smtpd_tls_cert_file=/etc/ssl/certs/smtp.{{ network.domain }}.issuer.crt
+#smtpd_tls_key_file=/etc/ssl/private/smtp.{{ network.domain }}.key
+#smtpd_tls_CAfile=/etc/ssl/certs/ca-certificates.crt
+smtpd_tls_chain_files=/etc/postfix/smtp.{{ network.domain }}.pem
 
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache

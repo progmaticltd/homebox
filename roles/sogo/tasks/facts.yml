@@ -1,0 +1,28 @@
+---
+
+- name: Get the server’s timezone
+  tags: config
+  register: tz_command
+  command: cat /etc/timezone
+
+- name: Get the server timezone
+  tags: config
+  set_fact:
+    server_time_zone: '{{ tz_command.stdout }}'
+  changed_when: false
+
+- name: Create or get the sogo database account password
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    sogo_db_password: >-
+      {{ lookup(creds.store, network.domain + "/postgresql/sogo"
+      + creds.opts.create + creds.opts.system) }}
+
+- name: Load or create the password for the read-only account
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    ldap_ro_password: '{{ lookup(creds.store, network.domain + "/ldap/readonly") }}'
+
+- name: Compute the users DN
+  set_fact:
+    ldap_users_dn: 'ou=users,dc={{ network.domain.split(".") | join(",dc=") }}'

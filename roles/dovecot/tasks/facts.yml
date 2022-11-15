@@ -7,4 +7,4 @@
 - name: Load or create the password for the read-only account
   no_log: '{{ not system.devel }}'
   set_fact:
-    ldap_ro_password: '{{ lookup(creds.store, "ldap/readonly") }}'
+    ldap_ro_password: '{{ lookup(creds.store, network.domain + "/ldap/readonly") }}'

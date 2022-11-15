@@ -1,4 +1,5 @@
 ---
+
 # SOGo packages to install
 sogo_pkgs:
   - libxmlsec1-openssl

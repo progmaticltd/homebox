@@ -9,6 +9,8 @@ certificates:
     create: '{{ mail.antispam.webui.active }}'
   - name: smtp
     create: true
+    type: rsa2048
+    pem: true
   - name: pop3
     create: '{{ mail.pop3 }}'
   - name: imap
@@ -44,3 +46,8 @@ certificates:
     create: '{{ ejabberd.install }}'
   - name: openpgpkey
     create: '{{ pgp | default([]) | length > 0 }}'
+
+
+# Do not recreate the certificates by default,
+# unless they are not valid
+cert_recreate: false

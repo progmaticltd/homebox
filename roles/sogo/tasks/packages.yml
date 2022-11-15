@@ -1,0 +1,7 @@
+---
+
+- name: Start by installing the required packages
+  tags: apt
+  apt:
+    name: '{{ sogo_pkgs }}'
+    state: present

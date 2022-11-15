@@ -1,0 +1,26 @@
+---
+
+- name: Create SOGo's sieve filters file
+  when: sogo.sieve_scripts
+  file:
+    path: '/home/users/{{ user.uid }}/mails/sieve/sogo.sieve'
+    owner: '{{ user.uid }}'
+    group: 'users'
+    mode: '0600'
+    state: touch
+    modification_time: preserve
+    access_time: preserve
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Create postmaster SOGo's sieve filters file
+  when: sogo.sieve_scripts
+  file:
+    path: '/home/users/postmaster/mails/sieve/sogo.sieve'
+    owner: 'postmaster'
+    group: 'users'
+    mode: '0600'
+    state: touch
+    modification_time: preserve
+    access_time: preserve

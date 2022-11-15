@@ -7,7 +7,7 @@
     key: rspamd.{{ network.domain }}
   ignore_errors: true
 
-- name: Remove the DNS record if not existing
+- name: Create the DNS record if not existing
   when: dns_entry.failed
   shell: >-
     pdnsutil add-record {{ network.domain }}

@@ -14,7 +14,5 @@
   /var/log/nginx/sogo-error.log rwkl,
 
   # Active sync log file
-  /var/log/nginx/sogo-activesync.log ra,
   /var/log/nginx/sogo-activesync.log rwkl,
-  /var/log/nginx/sogo-activesync-error.log ra,
   /var/log/nginx/sogo-activesync-error.log rwkl,

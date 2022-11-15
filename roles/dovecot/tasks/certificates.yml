@@ -1,6 +1,7 @@
 ---
 
 - name: Copy the imap certificates in the debian standard directory
+  notify: Restart dovecot
   copy:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
@@ -17,6 +18,7 @@
     loop_var: file
 
 - name: Copy the imap private key in the debian standard directory
+  notify: Restart dovecot
   copy:
     src: /etc/lego/certificates/imap.{{ network.domain }}.key
     dest: /etc/ssl/private/imap.{{ network.domain }}.key
@@ -26,6 +28,7 @@
     mode: 0640
 
 - name: Copy the pop3 certificates in the debian standard directory
+  notify: Restart dovecot
   when: mail.pop3
   copy:
     src: '{{ file.src }}'
@@ -43,6 +46,7 @@
     loop_var: file
 
 - name: Copy the pop3 private key in the debian standard directory
+  notify: Restart dovecot
   when: mail.pop3
   copy:
     src: /etc/lego/certificates/pop3.{{ network.domain }}.key
