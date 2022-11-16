@@ -1,0 +1,25 @@
+---
+
+# - name: Unset nginx
+#   include_tasks: uninstall/nginx.yml
+
+# - name: Remove the certificates
+#   include_tasks: uninstall/certificates.yml
+
+# - name: Remove the packages
+#   include_tasks: uninstall/packages.yml
+
+# - name: Remove the database
+#   include_tasks: uninstall/database.yml
+
+# - name: Remove config files
+#   include_tasks: uninstall/config.yml
+
+- name: Remove DNS records
+  include_tasks: uninstall/dns.yml
+
+# - name: Remove AppArmor config
+#   include_tasks: uninstall/apparmor.yml
+
+# - name: Configure the sieve filters
+#   include_tasks: uninstall/sieve.yml

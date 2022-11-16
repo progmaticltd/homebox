@@ -1,0 +1,28 @@
+---
+
+- name: Remove AppArmor profile
+  tags: security, apparmor
+  notify:
+    - Restart AppArmor service
+    - Restart nginx
+  file:
+    path: '{{ path }}'
+    state: absent
+  loop:
+    - /etc/apparmor.d/local/nginx-sogo
+    - /etc/apparmor.d/usr.sbin.sogod
+    - /etc/apparmor.d/usr.sbin.sogo-ealarms-notify
+    - /etc/apparmor.d/usr.sbin.sogo-slapd-sockd
+    - /etc/apparmor.d/usr.sbin.sogo-tool
+    - /etc/apparmor.d/usr.sbin.sogo-backup
+  loop_control:
+    loop_var: path
+
+- name: Remove sogo AppArmor specific configuration
+  notify:
+    - Restart AppArmor service
+    - Restart nginx
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/nginx-sogo>'
+    state: absent

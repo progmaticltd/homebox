@@ -1,0 +1,12 @@
+---
+
+- name: Remove sogo web site
+  notify: Restart nginx
+  file:
+    path: '{{ path }}'
+    state: absent
+  loop:
+    - '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'
+    - '/etc/nginx/sites-enabled/sogo.{{ network.domain }}.conf'
+  loop_control:
+    loop_var: path

@@ -1,0 +1,16 @@
+---
+
+- name: Copy sogo configuration
+  file:
+    path: /etc/sogo
+    state: absent
+
+- name: Remove sogo cron table
+  file:
+    path: /etc/cron.d/sogo
+    state: absent
+
+- name: Remove SOGo backups directory
+  file:
+    path: /var/backups/backups
+    state: absent

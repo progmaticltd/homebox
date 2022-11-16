@@ -1,0 +1,8 @@
+---
+
+- name: Start by installing the required packages
+  apt:
+    name: '{{ sogo_pkgs }}'
+    state: absent
+    purge: true
+    autoremove: true

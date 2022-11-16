@@ -41,3 +41,42 @@
     pdnsutil add-record {{ network.domain }}
     sogo2 {{ backup_ip_type }} {{ backup_ip }}
   changed_when: true
+
+- name: Store the extra records to generate
+  set_fact:
+    extra_dns_records:
+      - name: _caldavs
+        type: SRV
+        value: '10 0 443 sogo.{{ network.domain }}'
+      - name: _caldavs
+        type: TXT
+        value: '"path=/SOGo/dav/"'
+      - name: _carddavs
+        type: SRV
+        value: '10 0 443 sogo.{{ network.domain }}'
+      - name: _carddavs
+        type: TXT
+        value: '"path=/SOGo/dav/"'
+
+- name: Check if the extra records exists
+  register: extra_records_status
+  shell: >-
+    dig -t {{ record.type }}
+    +nocomments +noall +answer
+    {{ record.name }}._tcp.{{ network.domain }} @127.0.0.1
+  changed_when: false
+  loop: '{{ extra_dns_records }}'
+  loop_control:
+    loop_var: record
+
+- name: Create the other records
+  when: 'extra_records_status.results[loop_index].stdout == ""'
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    {{ record.name }}._tcp {{ record.type }}
+    '{{ record.value }}'
+  changed_when: true
+  loop: '{{ extra_dns_records }}'
+  loop_control:
+    loop_var: record
+    index_var: loop_index
