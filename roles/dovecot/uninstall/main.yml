@@ -15,12 +15,8 @@
 - name: AppArmor tasks
   include_tasks: uninstall/apparmor.yml
 
-- name: Delete IMAP DNS records
-  include_tasks: uninstall/dns-imap.yml
-
-- name: Delete POP3 DNS records
-  when: mail.pop3
-  include_tasks: uninstall/dns-pop3.yml
+- name: Delete DNS records
+  include_tasks: uninstall/dns.yml
 
 - name: Configure backup locations
   include_tasks: uninstall/backup.yml

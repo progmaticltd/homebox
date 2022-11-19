@@ -6,6 +6,12 @@
     state: present
     install_recommends: no
 
+- name: Install etckeeper to follow the changes
+  apt:
+    name: etckeeper
+    state: present
+    install_recommends: no
+
 - name: Set basic rc files for root
   template:
     src: '{{ rcfile }}.rc'

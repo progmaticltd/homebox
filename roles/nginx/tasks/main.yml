@@ -6,5 +6,8 @@
 - name: Configure the package
   include_tasks: config.yml
 
+- name: Create the default DNS entries
+  include_tasks: dns.yml
+
 - name: Configure AppArmor
   include_tasks: apparmor.yml

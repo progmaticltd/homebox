@@ -16,8 +16,6 @@
       tags: always
     - role: firewall
       tags: firewall
-    - role: nginx
-      tags: nginx
     - role: dns-pdns
       tags: pdns
     - role: certificates
@@ -26,11 +24,10 @@
       tags: ldap
     - role: user-setup
       tags: user
+    - role: nginx
+      tags: nginx
     - role: rspamd
       tags: rspamd
-    - role: clamav
-      when: mail.antivirus.active
-      tags: clamav
     - role: opendkim
       tags: dkim
     - role: opendmarc

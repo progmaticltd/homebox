@@ -74,22 +74,6 @@
     system: '{{ system_default }}'
 
 ################################################################################
-# Merge firewall defaults
-- name: Combine default and user defined firewall settings
-  run_once: true
-  when: firewall is defined
-  tags: defaults
-  set_fact:
-    firewall: '{{ firewall_default | combine(firewall, recursive=True) }}'
-
-- name: Use default firewall settings
-  run_once: true
-  when: firewall is not defined
-  tags: defaults
-  set_fact:
-    firewall: '{{ firewall_default }}'
-
-################################################################################
 # Merge security defaults
 - name: Combine default and user defined security settings
   run_once: true
@@ -394,71 +378,6 @@
   tags: defaults
   set_fact:
     creds: '{{ creds_default }}'
-
-################################################################################
-# Create the complete list of certificates to genetarate
-
-# - name: Initialise the list of certificates
-#   set_fact:
-#     standard_certificates:
-#       - name: ldap
-#         create: true
-#       - name: '@'
-#         create: true
-#       - name: smtp
-#         domain_alias: smtp2
-#         create: true
-#       - name: pop3
-#         create: '{{ mail.pop3 }}'
-#       - name: imap
-#         create: true
-#       - name: mta-sts
-#         create: true
-#       - name: rspamd
-#         create: '{{ mail.antispam.webui.active }}'
-#       - name: sogo
-#         create: '{{ sogo.install }}'
-#       - name: www
-#         create: '{{ website.install }}'
-#       - name: autoconfig
-#         create: '{{ mail.autoconfig }}'
-#       - name: autodiscover
-#         create: '{{ mail.autodiscover }}'
-#       - name: webmail
-#         create: '{{ webmail.install and webmail.type == "roundcube" }}'
-#       - name: transmission
-#         create: '{{ transmission.install }}'
-#       - name: zabbix
-#         create: '{{ zabbix.install }}'
-#       - name: openpgpkey
-#         create: '{{ pgp is defined }}'
-#       # jabber server
-#       - name: conference
-#         create: '{{ ejabberd.install }}'
-#       - name: xmpp
-#         create: '{{ ejabberd.install }}'
-#       - name: files
-#         create: '{{ ejabberd.install }}'
-#       - name: upload
-#         create: '{{ ejabberd.install }}'
-#       - name: vjud
-#         create: '{{ ejabberd.install }}'
-#       - name: pubsub
-#         create: '{{ ejabberd.install }}'
-#       - name: proxy
-#         create: '{{ ejabberd.install }}'
-
-# - name: Add extra
-#   set_fact:
-#     extra_certs: >-
-#       {{ extra_certs
-#       | default([])
-#       | map("combine", { "create": true })
-#       | list }}
-
-# - name: Initialise the list of certificates
-#   set_fact:
-#     certificates: '{{ standard_certificates + extra_certs }}'
 
 ################################################################################
 # Marking the default settings as loaded should increase the speed of the deployment

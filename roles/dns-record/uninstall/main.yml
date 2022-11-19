@@ -1,0 +1,9 @@
+---
+
+- name: Remove the DNS records
+  shell: >-
+    pdnsutil delete-rrset {{ network.domain }}
+    {{ record.name }} {{ record.type }}
+  loop: '{{ dns_records }}'
+  loop_control:
+    loop_var: record

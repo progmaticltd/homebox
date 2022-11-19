@@ -40,3 +40,60 @@ postfix_apparmor_profiles:
   - usr.sbin.postdrop
   - usr.sbin.postqueue
   - usr.sbin.postalias
+
+
+dns_records_main:
+  - name: smtp
+    type: '{{ external_ip_type }}'
+    value: '{{ external_ip }}'
+    create: true
+  - name: '@'
+    type: MX
+    value: smtp.{{ network.domain }}
+    create: true
+    priority: 10
+  - name: _submissions._tcp
+    type: SRV
+    port: '{{ mail.postfix.submissions.port }}'
+    value: 'smtp.{{ network.domain }}'
+    prioriy: 10
+    create: true
+  - name: _submission._tcp
+    type: SRV
+    prioriy: 20
+    port: '{{ mail.postfix.submission.port }}'
+    value: 'smtp.{{ network.domain }}'
+    create: '{{ mail.postfix.submission.active }}'
+  - name: '@'
+    type: TXT
+    search: 'v=spf1'
+    value: 'v=spf1 {{ spf_senders }} {{ spf_qualifier }}all'
+    create: true
+  - name: _smtp._tls
+    type: TXT
+    search: 'v=TLSRPTv1'
+    value: 'v=TLSRPTv1; rua=mailto:security@{{ network.domain }};'
+    create: true
+
+dns_records_backup:
+  - name: smtp2
+    type: '{{ backup_ip_type }}'
+    value: '{{ backup_ip }}'
+    create: true
+  - name: '@'
+    type: MX
+    value: smtp2.{{ network.domain }}
+    priority: 20
+    create: true
+  - name: _submissions._tcp
+    type: SRV
+    prioriy: 30
+    port: '{{ mail.postfix.submissions.port }}'
+    value: 'smtp2.{{ network.domain }}'
+    create: true
+  - name: _submission._tcp
+    type: SRV
+    prioriy: 40
+    port: '{{ mail.postfix.submission.port }}'
+    value: 'smtp2.{{ network.domain }}'
+    create: '{{ mail.postfix.submission.active }}'

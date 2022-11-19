@@ -76,7 +76,7 @@ mail_default:
   #############################################################################
   antivirus:                # Check inbound and outbound emails for viruses
     port: 34000             # port to use for the antivirus daemon
-    active: true            # or false
+    active: false           # or false
     action: drop            # Action to do when a virus is found in an email: bounce or drop
                             # be careful, bouncing external emails is a way to expose clamav
                             # usage
@@ -187,55 +187,8 @@ system_default:
   release: bullseye        # distribution to use (stretch/buster/bullseye)
   devel: false             # mark the system as a development machine
   debug: false             # activate debug options
-  keep_certs: false        # keep the letsencrypt certificates locally,
-                           # even when using a live environment
-  apt_cacher: ~            # IP address or DNS name for an apt-cacher
   apt:                     # The apt sections to use,
     sections: [ main ]     # contrib and non-free not activated by default
-
-
-###############################################################################
-# Once the system is in place, it is possible to use 'limit' for the rule,
-# instead of allow. It is also possible to use fail2ban, which is installed anyway
-# You can have as many sources as you want, with a comment to easily keep track
-# of your rules
-firewall_default:
-  fwknop:
-    install: false
-    port: random
-  input:
-    - src: any
-      rule: allow
-      comment: allow SSH from anywhere
-  output:
-    policy: deny
-    rules:
-      - dest: any
-        port: 80,443
-        comment: 'Allow web access'
-      - dest: any
-        proto: udp
-        port: 53
-        comment: 'Allow DNS requests (udp)'
-      - dest: any
-        proto: tcp
-        port: 53
-        comment: 'Allow DNS requests (tcp)'
-      - dest: any
-        proto: udp
-        port: 123
-        comment: 'Allow NTP requests'
-      - dest: any
-        proto: udp
-        from_port: 68
-        port: 67
-        comment: 'Allow DHCP requests'
-      - dest: any
-        port: 25
-        comment: 'Allow SMTP connections to other servers'
-      - dest: any
-        port: 110,995,143,993
-        comment: 'Allow the retrieval of emails from other servers (POP/IMAP)'
 
 
 ###############################################################################
@@ -319,11 +272,10 @@ devel_default:
     - aptitude
     - bash-completion
     - curl
-    - cyrus-clients
     - dnsutils
     - file
+    - htop
     - less
-    - libnet-ssleay-perl
     - lnav
     - locate
     - man

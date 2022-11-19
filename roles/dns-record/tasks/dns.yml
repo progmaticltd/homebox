@@ -1,0 +1,70 @@
+---
+
+- name: Set the record to search when not empty
+  when: record.name != '@'
+  set_fact:
+    query: '{{ record.name }}.{{ network.domain }}'
+
+- name: Set the record to search when empty
+  when: record.name == '@'
+  set_fact:
+    query: '{{ network.domain }}'
+
+- name: Check if the record exists with dig
+  register: main_imap_record
+  shell: >-
+    dig +nocomments +noall +answer
+    -q {{ query }}
+    -t {{ record.type | upper }}
+    @127.0.0.1
+    | grep -c '{{ record.search | default(record.value) | regex_escape }}'
+  changed_when: false
+  failed_when: false
+
+- name: Store the fact to create the record or not
+  set_fact:
+    create_record: '{{ main_imap_record.stdout == "0" }}'
+
+- name: Create a generic DNS record if not existing
+  when:
+    - create_record
+    - record.type | upper not in [ 'TXT', 'SRV', 'MX' ]
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    {{ record.name }} {{ record.type | upper }}
+    {{ record.value }}
+  changed_when: true
+
+- name: Create the TXT DNS record if not existing
+  when:
+    - create_record
+    - record.type | upper == 'TXT'
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    {{ record.name }} {{ record.type | upper }}
+    '"{{ record.value }}"'
+  changed_when: true
+
+- name: Create the SRV DNS record if not existing
+  when:
+    - create_record
+    - record.type | upper == 'SRV'
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    {{ record.name }} {{ record.type | upper }}
+    "{{ record.priority | default(0) }}
+     {{ record.weight | default(0) }}
+     {{ record.port }}
+     {{ record.value }}"
+  changed_when: true
+
+- name: Create the MX DNS record if not existing
+  when:
+    - create_record
+    - record.type | upper == 'MX'
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    {{ record.name }} {{ record.type | upper }}
+    "{{ record.priority | default(0) }}
+     {{ record.value }}"
+  changed_when: true

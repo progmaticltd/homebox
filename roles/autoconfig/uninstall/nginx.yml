@@ -1,0 +1,18 @@
+---
+
+- name: Create the autoconfiguration directories
+  file:
+    path: /var/www/autoconfig
+    state: absent
+
+- name: Disable nginx site
+  notify: Restart nginx server
+  file:
+    path: /etc/nginx/sites-enabled/autoconfig.{{ network.domain }}.conf
+    state: absent
+
+- name: Remove the autoconfig site
+  notify: Restart nginx server
+  file:
+    path: /etc/nginx/sites-available/autoconfig.{{ network.domain }}.conf
+    state: absent

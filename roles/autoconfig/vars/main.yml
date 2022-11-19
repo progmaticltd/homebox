@@ -49,3 +49,20 @@ fp_default:
 # Packages to install
 autoconfig_packages:
   - libxml2-utils
+
+# DNS records information
+dns_records_main:
+  - name: imap
+    type: '{{ external_ip_type }}'
+    value: '{{ external_ip }}'
+    create: true
+
+dns_records_backup:
+  - name: imap
+    type: '{{ backup_ip_type }}'
+    value: '{{ backup_ip }}'
+    create: true
+  - name: pop3
+    type: '{{ backup_ip_type }}'
+    value: '{{ backup_ip }}'
+    create: '{{ mail.pop3 }}'

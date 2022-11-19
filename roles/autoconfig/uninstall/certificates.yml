@@ -1,0 +1,12 @@
+---
+
+- name: Remove all the certificate files
+  file:
+    path: '{{ file }}'
+    state: absent
+  loop:
+    - /etc/ssl/certs/autoconfig.{{ network.domain }}.issuer.crt
+    - /etc/ssl/certs/autoconfig.{{ network.domain }}.crt
+    - /etc/ssl/private/autoconfig.{{ network.domain }}.key
+  loop_control:
+    loop_var: file

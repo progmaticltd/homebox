@@ -3,9 +3,6 @@
 - name: Install the required packages
   include_tasks: packages.yml
 
-- name: Load some facts
-  include_tasks: facts.yml
-
 - name: Deploy nginx config
   include_tasks: nginx.yml
 

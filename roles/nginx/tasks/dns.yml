@@ -1,9 +1,9 @@
 ---
 
-- name: Create a DNS entry for LDAP
+- name: Create a DNS entry for www
   vars:
     dns_records:
-      - name: ldap
+      - name: www
         value: main.{{ network.domain }}
         type: cname
   include_role:

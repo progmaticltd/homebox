@@ -89,3 +89,46 @@ dovecot:
 user_folders:
   - INBOX
   - Sent
+
+# DNS records information
+dns_records_main:
+  - name: imap
+    type: '{{ external_ip_type }}'
+    value: '{{ external_ip }}'
+    create: true
+  - name: _imap._tcp
+    type: SRV
+    port: 0
+    value: '.'
+    create: true
+  - name: _imaps._tcp
+    type: SRV
+    port: 993
+    value: 'imap.{{ network.domain }}'
+    prioriy: 10
+    create: true
+  - name: pop3
+    type: '{{ external_ip_type }}'
+    value: '{{ external_ip }}'
+    create: '{{ mail.pop3 }}'
+  - name: _pop3._tcp
+    type: SRV
+    port: 0
+    value: '.'
+    create: '{{ mail.pop3 }}'
+  - name: _pop3s._tcp
+    type: SRV
+    port: 995
+    value: 'pop3.{{ network.domain }}'
+    prioriy: 10
+    create: '{{ mail.pop3 }}'
+
+dns_records_backup:
+  - name: imap
+    type: '{{ backup_ip_type }}'
+    value: '{{ backup_ip }}'
+    create: true
+  - name: pop3
+    type: '{{ backup_ip_type }}'
+    value: '{{ backup_ip }}'
+    create: '{{ mail.pop3 }}'

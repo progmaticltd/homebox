@@ -9,12 +9,8 @@
 - name: Configure firewall
   include_tasks: firewall.yml
 
-- name: Configure IMAP DNS records
-  include_tasks: dns-imap.yml
-
-- name: Configure POP3 DNS records
-  when: mail.pop3
-  include_tasks: dns-pop3.yml
+- name: Configure all DNS records
+  include_tasks: dns.yml
 
 - name: Configure certificates
   include_tasks: certificates.yml

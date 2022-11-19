@@ -1,0 +1,7 @@
+---
+
+- name: Create the required DNS records
+  include_tasks: dns.yml
+  loop: '{{ dns_records }}'
+  loop_control:
+    loop_var: record

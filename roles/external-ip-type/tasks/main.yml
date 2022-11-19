@@ -10,7 +10,7 @@
 # First IP address, mandatory
 - name: Store the extenal IP address specified manually
   set_fact:
-    external_ip: '{{ network.external_ip }}'
+    external_ip: '{{ network.external_ip | regex_replace("(\.|:)0+", "\1") }}'
 
 - name: Set external IP address type (A or AAAA)
   set_fact:
@@ -20,7 +20,7 @@
 - name: Get the backup IP address
   when: network.backup_ip != None and (network.backup_ip | length > 0)
   set_fact:
-    backup_ip: '{{ network.backup_ip }}'
+    backup_ip: '{{ network.backup_ip | regex_replace("(\.|:)0+", "\1") }}'
 
 - name: Set backup IP address type (A or AAAA)
   when: backup_ip is defined and (backup_ip | length > 0)

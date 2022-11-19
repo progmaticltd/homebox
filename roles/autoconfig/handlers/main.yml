@@ -1,3 +1,5 @@
+---
+
 - name: Restart nginx server
   systemd:
     name: nginx

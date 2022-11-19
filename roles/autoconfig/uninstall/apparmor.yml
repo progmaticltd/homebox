@@ -1,0 +1,12 @@
+---
+
+- name: Remove nginx AppArmor profile
+  file:
+    path: /etc/apparmor.d/local/nginx-autoconfig
+    state: absent
+
+- name: Remove autoconfig AppAromor specific configuration
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/nginx-autoconfig>'
+    state: absent

@@ -132,3 +132,11 @@ termcapinfo * 'hs:ts=\E]0;:fs=\007:ds=\E]0;\007'
 defhstatus "screen ^E (^Et) | $USER@^EH"
 
 hardstatus off
+
+# panes
+screen -t vim vi
+screen -t Shell
+screen -t logs lnav
+
+# Select second screen
+select 1
