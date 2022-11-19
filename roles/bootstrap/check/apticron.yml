@@ -1,0 +1,4 @@
+---
+
+- name: Check if apticron is installed
+  shell: dpkg -s apticron

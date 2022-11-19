@@ -13,14 +13,29 @@
     path: /etc/apparmor.d/usr.sbin.clamsmtpd
     state: absent
 
-- name: Remove config folder
+- name: Remove config folders
   file:
-    path: /etc/clamsmtp
+    path: '{{ path }}'
     state: absent
+  loop:
+    - /etc/clamsmtp
+    - /etc/clamav
+  loop_control:
+    loop_var: path
 
 - name: Remove logs folder
   file:
-    path: /var/log/clamsmtp
+    path: '{{ path }}'
+    state: absent
+  loop:
+    - /var/log/clamsmtp
+    - /var/log/clamav
+  loop_control:
+    loop_var: path
+
+- name: Remove lib store folder
+  file:
+    path: /var/lib/clamav
     state: absent
 
 - name: Remove whitelisted domain

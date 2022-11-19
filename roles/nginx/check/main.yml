@@ -1,0 +1,5 @@
+---
+
+- name: Check if nginx is running
+  shell:
+    systemctl is-active nginx

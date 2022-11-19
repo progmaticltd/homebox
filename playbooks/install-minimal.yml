@@ -18,10 +18,8 @@
       tags: firewall
     - role: nginx
       tags: nginx
-    - role: dns-server-pdns
+    - role: dns-pdns
       tags: pdns
-    - role: dns-check-propagation
-      tags: dns
     - role: certificates
       tags: cert
     - role: ldap
@@ -29,7 +27,6 @@
     - role: user-setup
       tags: user
     - role: rspamd
-      when: mail.antispam.active
       tags: rspamd
     - role: clamav
       when: mail.antivirus.active
@@ -45,10 +42,8 @@
     - role: dovecot
       tags: dovecot
     - role: autodiscover
-      when: mail.autodiscover
       tags: autodiscover
     - role: autoconfig
-      when: mail.autoconfig
       tags: autoconfig
     - role: system-post-install
       tags: post-install

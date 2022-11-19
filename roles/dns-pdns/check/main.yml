@@ -1,5 +1,9 @@
 ---
 
+- name: Check if PowerDNS is running
+  shell:
+    systemctl is-active pdns
+
 # This is checking that the DNS server has been fully propagated
 - name: Check DNS propagation
   register: external_ip_check

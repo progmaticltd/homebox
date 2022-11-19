@@ -1,8 +1,0 @@
-;; SOGo server IP address
-sogo    IN       {{ "%-4s" | format(external_ip_type) }}      {{ external_ip }}
-
-;; RFC 6186 entries, should point to an "A" record
-_caldavs._tcp 3600  IN SRV 10 0 443 sogo.{{ network.domain }}.
-_caldavs._tcp       IN TXT          "path=/SOGo/dav/"
-_carddavs._tcp 3600 IN SRV 10 0 443 sogo.{{ network.domain }}.
-_carddavs._tcp      IN TXT          "path=/SOGo/dav/"

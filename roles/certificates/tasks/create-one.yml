@@ -35,6 +35,6 @@
     --accept-tos
     --path /etc/lego
     --domains {{ certificate.name }}.{{ network.domain }}
-    {{ certificate.pem | bool | ternary("--pem", " ") }}
+    {{ certificate.pem | default(false) | ternary("--pem", " ") }}
     run
   changed_when: true

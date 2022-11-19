@@ -1,0 +1,8 @@
+---
+
+- name: Check that all packages are installed
+  shell: >-
+    dpkg -s '{{ pkg }}'
+  loop: '{{ base_packages }}'
+  loop_control:
+    loop_var: pkg

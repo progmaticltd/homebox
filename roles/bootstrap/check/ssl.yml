@@ -1,0 +1,10 @@
+---
+
+- name: Check if RFC7919 Diffie-Hellman parameters files exists
+  shell: >-
+    test -f /etc/ssl/{{ file }}
+  loop:
+    - ffdhe2048.pem
+    - ffdhe4096.pem
+  loop_control:
+    loop_var: file

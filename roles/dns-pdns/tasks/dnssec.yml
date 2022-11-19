@@ -1,0 +1,8 @@
+---
+
+- name: Set-up DNSSEC
+  shell: >-
+    pdnsutil secure-zone {{ network.domain }}
+    && touch /etc/powerdns/secured
+  args:
+    creates: /etc/powerdns/secured

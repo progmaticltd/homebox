@@ -1,0 +1,11 @@
+---
+
+- name: Install nginx AppArmor profile
+  notify:
+    - Activate AppArmor profiles
+    - Restart AppArmor service
+    - Restart nginx
+  template:
+    src: 'apparmor.d/usr.sbin.nginx'
+    dest: '/etc/apparmor.d/usr.sbin.nginx'
+    force: no

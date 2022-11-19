@@ -2,8 +2,8 @@
 
 ## Run check playbook for one role
 
-# export the role you want to run in the ‘ROLE’ environment variable
-# and run the playbook.
+# export the roles you want to run in the ‘ROLE’ environment variable,
+# using a coma separated list.
 
 - name: Load the common tasks
   hosts: homebox
@@ -14,12 +14,25 @@
     - role: load-defaults
     - role: external-ip-type
 
-- name: Run the tasks
+- name: Load the roles to run
+  hosts: homebox
+  tasks:
+    - name: Load the roles to run
+      set_fact:
+        roles_list: '{{ lookup("env", "ROLE").split(",") }}'
+
+- name: Run the checking tasks for each role
   hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../config/system.yml'
     - '{{ playbook_dir }}/../config/defaults.yml'
   tasks:
-    - include_role:
-        name: '{{ lookup("env", "ROLE") }}'
+    - name: Reset the SSH connection
+      meta: reset_connection
+    - name: Run the roles selected
+      include_role:
+        name: '{{ role }}'
         tasks_from: ../check/main.yml
+      loop: '{{ roles_list }}'
+      loop_control:
+        loop_var: role

@@ -1,0 +1,5 @@
+---
+
+- name: Check if we can run apt update without error
+  apt:
+    update_cache: yes

@@ -6,7 +6,7 @@
   template:
     src: 'apparmor.d/{{ aa_config }}'
     dest: '/etc/apparmor.d/{{ aa_config }}'
-  with_items:
+  loop:
     - usr.sbin.clamsmtpd
   loop_control:
     loop_var: aa_config
@@ -15,7 +15,7 @@
   when: aa_templates.changed
   notify: Restart AppArmor service
   command: 'aa-enforce {{ aa_config }}'
-  with_items:
+  loop:
     - usr.bin.freshclam
     - usr.sbin.clamd
   loop_control:

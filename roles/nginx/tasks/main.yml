@@ -1,29 +1,10 @@
 ---
 
-- name: Install nginx
-  apt:
-    name: '{{ packages }}'
-    state: present
+- name: Install the base required packages
+  include_tasks: packages.yml
 
-- name: Disable nginx default site
-  notify: Restart nginx
-  file:
-    path: '/etc/nginx/sites-enabled/default'
-    state: absent
-    force: yes
+- name: Configure the package
+  include_tasks: config.yml
 
-- name: Install nginx secure configuration
-  notify: Restart nginx
-  template:
-    src: nginx.conf
-    dest: /etc/nginx/nginx.conf
-
-- name: Install nginx AppArmor profile
-  notify:
-    - Activate AppArmor profiles
-    - Restart AppArmor service
-    - Restart nginx
-  template:
-    src: 'apparmor.d/usr.sbin.nginx'
-    dest: '/etc/apparmor.d/usr.sbin.nginx'
-    force: no
+- name: Configure AppArmor
+  include_tasks: apparmor.yml

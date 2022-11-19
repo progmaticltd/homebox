@@ -16,10 +16,7 @@
 
 - name: Start clamav service
   register: clamav_daemon
-  service:
+  systemd:
     name: clamav-daemon
     state: started
-    enabled: yes
-  retries: 12
-  until: clamav_daemon is not failed
-  delay: 10
+    no_block: true

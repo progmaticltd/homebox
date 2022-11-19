@@ -17,6 +17,11 @@
     path: /var/log/nginx
     state: absent
 
+- name: Remove nginx default site
+  file:
+    path: /var/www/html
+    state: absent
+
 - name: Remove nginx AppArmor profile
   notify: Restart AppArmor service
   file:

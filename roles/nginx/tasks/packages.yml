@@ -1,0 +1,6 @@
+---
+
+- name: Install nginx
+  apt:
+    name: '{{ packages }}'
+    state: present

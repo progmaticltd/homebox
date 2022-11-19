@@ -8,11 +8,13 @@
     group: pdns
     mode: 0700
 
-- name: Load the database
+- name: Initialise the database
+  register: database
   become: true
   become_user: pdns
   shell: >-
-    sqlite3 -init /usr/share/pdns-backend-sqlite3/schema/schema.sqlite3.sql
+    sqlite3 -init
+    /usr/share/pdns-backend-sqlite3/schema/schema.sqlite3.sql
     default.db
   args:
     creates: /var/lib/pdns/default.db
