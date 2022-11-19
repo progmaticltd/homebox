@@ -1,64 +1,10 @@
 ---
 
-- name: Create the group home folders if necessary
-  file:
-    path: /home/users
-    owner: root
-    group: users
-    state: directory
-    mode: '0755'
+- name: Create user directories
+  include_tasks: create-dirs.yml
 
-- name: Add homebox mail and config folders to the skeleton
-  file:
-    path: '{{ dir }}'
-    owner: root
-    group: root
-    state: directory
-    mode: '0700'
-    recurse: true
-  loop: '{{ user_directories }}'
-  loop_control:
-    loop_var: dir
+- name: Configure pam
+  include_tasks: pam.yml
 
-- name: Create the users home folders from /etc/skel
-  command: 'mkhomedir_helper {{ user.uid }} 077 /etc/skel'
-  loop: '{{ users }}'
-  loop_control:
-    loop_var: user
-
-- name: Create the users home folders for postmaster
-  command: 'mkhomedir_helper postmaster 077 /etc/skel'
-
-- name: Create home directory for users on first login
-  shell: >-
-    pam-auth-update --package --enable mkhomedir
-  changed_when: true
-
-- name: Create the administrators list
-  set_fact:
-    administrators: '{{ users | selectattr("ssh_key", "defined") | list }}'
-
-# These tasks are configuring the system to give access
-# to some administrators, without having to logon as root.
-# You need to define a public SSH key for each user.
-# see example YAML file
-- name: Add SSH keys for the administrators
-  authorized_key:
-    user: '{{ user.uid }}'
-    key: >-
-      {{ user.ssh_key.type }}
-      {{ user.ssh_key.data | regex_replace(" ") }}
-      {{ user.ssh_key.comment }}
-    state: present
-  loop: '{{ administrators }}'
-  loop_control:
-    loop_var: user
-
-- name: Add the administrators to the sudo group
-  user:
-    name: '{{ user.uid }}'
-    groups: sudo
-    append: true
-  loop: '{{ administrators }}'
-  loop_control:
-    loop_var: user
+- name: Set-up administrator accounts
+  include_tasks: admins.yml

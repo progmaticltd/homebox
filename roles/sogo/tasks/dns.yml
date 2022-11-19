@@ -70,7 +70,7 @@
     loop_var: record
 
 - name: Create the other records
-  when: 'extra_records_status.results[loop_index].stdout == ""'
+  when: 'extra_records_status.results[loop_index].stdout | bool == false'
   shell: >-
     pdnsutil add-record {{ network.domain }}
     {{ record.name }}._tcp {{ record.type }}

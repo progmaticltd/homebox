@@ -35,6 +35,11 @@
   apt:
     update_cache: yes
 
+- name: Disable recommended and suggested packages
+  template:
+    src: extra-packages.conf
+    dest: /etc/apt/90extra
+
 - name: Upgrade the distribution
   when: packages_cache.changed
   apt:

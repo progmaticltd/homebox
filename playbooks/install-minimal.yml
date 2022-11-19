@@ -35,10 +35,10 @@
       tags: dkim
     - role: opendmarc
       tags: dmarc
-    - role: postfix
-      tags: postfix
     - role: mta-sts
       tags: mta-sts
+    - role: postfix
+      tags: postfix
     - role: dovecot
       tags: dovecot
     - role: autodiscover

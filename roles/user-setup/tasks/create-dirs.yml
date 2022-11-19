@@ -1,0 +1,30 @@
+---
+
+- name: Create the group home folders if necessary
+  file:
+    path: /home/users
+    owner: root
+    group: users
+    state: directory
+    mode: '0755'
+
+- name: Add homebox mail and config folders to the skeleton
+  file:
+    path: '{{ dir }}'
+    owner: root
+    group: root
+    state: directory
+    mode: '0700'
+    recurse: true
+  loop: '{{ user_directories }}'
+  loop_control:
+    loop_var: dir
+
+- name: Create the users home folders from /etc/skel
+  command: 'mkhomedir_helper {{ user.uid }} 077 /etc/skel'
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Create the users home folders for postmaster
+  command: 'mkhomedir_helper postmaster 077 /etc/skel'
