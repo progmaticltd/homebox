@@ -1,10 +1,10 @@
 ---
 
-- name: Create the main DNS record
+- name: Delete the main DNS record
   vars:
     dns_records:
       - name: autodiscover
         type: CNAME
-        value: 'main.{{ network.domain }}'
   include_role:
     name: dns-record
+    tasks_from: ../uninstall/main.yml
