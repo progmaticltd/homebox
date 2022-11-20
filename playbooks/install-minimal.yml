@@ -42,5 +42,5 @@
       tags: autodiscover
     - role: autoconfig
       tags: autoconfig
-    - role: system-post-install
+    - role: post-install
       tags: post-install
