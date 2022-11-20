@@ -45,7 +45,6 @@ do
 		find \
 			roles/* \
 			tests/main.yml \
-			uninstall/*.yml \
 			-maxdepth 0 -print0 \
 			> "$tmp_checklist"
 
