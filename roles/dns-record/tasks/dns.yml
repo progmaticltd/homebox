@@ -13,6 +13,7 @@
 - name: Check if the record exists with dig
   register: main_imap_record
   shell: >-
+    set -o pipefail ;
     dig +nocomments +noall +answer
     -q {{ query }}
     -t {{ record.type | upper }}
