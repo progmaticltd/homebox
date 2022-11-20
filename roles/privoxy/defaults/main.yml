@@ -1,5 +1,0 @@
----
-
-auto_update_rules_pkgs:
-  - wget
-  - p7zip-full

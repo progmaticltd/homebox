@@ -1,9 +1,0 @@
----
-# Packages used by the SOGo milter
-packages:
-  - python3-milter
-  - python3-psycopg2
-
-# When testing with an sqlite database, you will need these packages:
-# - sqlite3
-# - python-pysqlite2

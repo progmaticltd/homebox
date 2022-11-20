@@ -10,6 +10,8 @@ whitelisted_hosts:
 base_packages:
   - apparmor-utils
   - ca-certificates
+  - needrestart
   - openssl
   - ssl-cert
   - sudo
+  - unattended-upgrades

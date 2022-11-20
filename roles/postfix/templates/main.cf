@@ -122,12 +122,6 @@ smtpd_milters =
 {% if mail.antispam.active %}
     inet:localhost:{{ mail.antispam.port }}
 {% endif %}
-{% if sogo.milters.active %}
-    unix:private/milter-sogo-abook.socket
-{% endif %}
-{% if webmail.milters.active %}
-    unix:private/milter-rc-abook.socket
-{% endif %}
 
 # Special filters on the headers
 header_checks = pcre:/etc/postfix/headers-check.cf

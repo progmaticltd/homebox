@@ -1,5 +1,7 @@
 ---
+
 # Various cleanup tasks before the system goes live
+
 - name: Include common cleanup tasks
   include_tasks: cleanup-common.yml
 
@@ -9,5 +11,5 @@
 - name: Set limits for users
   include_tasks: set-limits.yml
 
-# At this point, it might be necessary to reboot
-# To reload all bash instances
+- name: Check if the system need to be restarted
+  include_tasks: reboot.yml

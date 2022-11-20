@@ -13,15 +13,6 @@
   loop_control:
     loop_var: file
 
-- name: Get the local machine locale
-  delegate_to: localhost
-  set_fact:
-    def_lang: '{{ lookup("env", "LANG") }}'
-
-- name: Get the remote locale
-  set_fact:
-    lang: '{{ ansible_env.LANG | default(def_lang) | regex_replace("\..*", "") }}'
-
 - name: Create the clamsmtp templates directory
   file:
     path: /etc/clamsmtp

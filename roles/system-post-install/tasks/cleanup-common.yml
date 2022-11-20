@@ -10,6 +10,7 @@
   apt:
     name: '{{ cleanup_packages }}'
     state: absent
+    autoremove: true
     purge: yes
 
 - name: Cleanup packages cache
@@ -20,14 +21,16 @@
 # SSH and remote access cleanup
 - name: Check if some users are configured with remote access
   set_fact:
-    user_remote: '{{ users | selectattr("ssh_key", "defined") | list != [] }}'
+    remote_user_access: '{{ users | selectattr("ssh_key", "defined") | list != [] }}'
 
 # The next task will completely disable the remote access with SSH and root,
 # only if these two conditions are meet:
 # - some users are configured to connect through SSH and they ssh key is defined
 # - the flag 'security.ssh_disable_root_access' has been set to true
 - name: Completely disable root SSH login
-  when: user_remote and security.ssh_disable_root_access
+  when:
+    - remote_user_access
+    - security.ssh_disable_root_access
   tags: security
   notify: Restart SSH
   replace:

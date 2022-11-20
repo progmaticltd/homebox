@@ -188,6 +188,7 @@ system_default:
   devel: false             # mark the system as a development machine
   debug: false             # activate debug options
   track_changes: true      # track changes in /etc
+  reboot_timeout: 300      # wait 5 minutes max when rebooting the system
   apt:                     # The apt sections to use,
     sections: [ main ]     # contrib and non-free not activated by default
 

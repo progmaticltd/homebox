@@ -1,7 +1,0 @@
----
-
-- name: Restart IMAP proxy
-  systemd:
-    name: imapproxy
-    state: restarted
-    no_block: true
