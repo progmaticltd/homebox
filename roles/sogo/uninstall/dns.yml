@@ -5,7 +5,7 @@
     dns_records: '{{ dns_records_main }}'
   include_role:
     name: dns-record
-    tasks_from: uninstall/main.yml
+    tasks_from: ../uninstall/main.yml
 
 - name: Delete the backup DNS entries
   when: backup_ip is defined
@@ -13,4 +13,4 @@
     dns_records: '{{ dns_records_backup }}'
   include_role:
     name: dns-record
-    tasks_from: uninstall/main.yml
+    tasks_from: ../uninstall/main.yml

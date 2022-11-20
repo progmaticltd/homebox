@@ -74,22 +74,22 @@ dns_records_main:
   - name: sogo
     type: '{{ external_ip_type }}'
     value: '{{ external_ip }}'
-  - name: _caldavs
+  - name: _caldavs._tcp
     type: SRV
     port: 443
     value: 'sogo.{{ network.domain }}'
-  - name: _caldavs
+  - name: _caldavs._tcp
     type: SRV
     port: 443
     value: 'sogo.{{ network.domain }}'
-  - name: _caldavs
+  - name: _caldavs._tcp
     type: TXT
     value: 'path=/SOGo/dav/'
-  - name: _carddavs
+  - name: _carddavs._tcp
     type: SRV
     port: 443
     value: 'sogo.{{ network.domain }}'
-  - name: _carddavs
+  - name: _carddavs._tcp
     type: TXT
     value: 'path=/SOGo/dav/'
 

@@ -10,7 +10,7 @@
 
 # Email alarms - runs every five minutes
 # Wait one minute as well, to avoid broken lock files error messages
-*/5 * * * *    sogo    sleep 60 && /usr/sbin/sogo-ealarms-notify
+*/5 * * * *    sogo    sleep 60 && /usr/sbin/sogo-ealarms-notify >/dev/null 2>&1
 
 # Daily backups
 #   - writes backups to /var/backups/sogo/
