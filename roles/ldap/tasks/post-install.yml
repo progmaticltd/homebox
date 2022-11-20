@@ -38,7 +38,7 @@
     loop_var: uid
 
 - name: Install the nslcd package to map LDAP users to system users
-  notify: Restart the ldap service
+  notify: Restart the ldap stack
   apt:
     name: nslcd
     state: present

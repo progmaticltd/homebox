@@ -17,6 +17,7 @@
     state: present
 
 - name: Update the ldap configuration file
+  notify: Restart the ldap stack
   template:
     src: nslcd.conf
     dest: /etc/nslcd.conf
