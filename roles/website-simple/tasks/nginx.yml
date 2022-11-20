@@ -1,0 +1,22 @@
+---
+
+- name: Create the website configuration file
+  tags: nginx
+  notify: Restart nginx
+  vars:
+    csp: '{{ website.csp | default(csp_default) }}'
+    fp: '{{ website.fp | default(fp_default) }}'
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/sites-available/www.{{ network.domain }}.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Enable nginx site
+  tags: nginx
+  notify: Restart nginx
+  file:
+    src: /etc/nginx/sites-available/www.{{ network.domain }}.conf
+    dest: /etc/nginx/sites-enabled/www.{{ network.domain }}.conf
+    state: link

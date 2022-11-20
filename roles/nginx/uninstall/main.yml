@@ -17,6 +17,12 @@
     path: /var/log/nginx
     state: absent
 
+- name: Remove the nftables rules files
+  notify: Restart nftables
+  file:
+    path: /etc/nftables/50-in-http.nft
+    state: absent
+
 - name: Remove nginx default site
   file:
     path: /var/www/html
@@ -27,6 +33,16 @@
   file:
     path: /etc/apparmor.d/usr.sbin.nginx
     state: absent
+
+- name: Remove DNS entry for www
+  vars:
+    dns_records:
+      - name: www
+        value: main.{{ network.domain }}
+        type: cname
+  include_role:
+    name: dns-record
+    tasks_from: uninstall/main.yml
 
 - name: Ensure AppArmor does not contains nginx profile
   register: aa_remove

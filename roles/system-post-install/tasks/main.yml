@@ -1,7 +1,5 @@
 ---
 
-# Various cleanup tasks before the system goes live
-
 - name: Include common cleanup tasks
   include_tasks: cleanup-common.yml
 

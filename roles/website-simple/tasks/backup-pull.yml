@@ -1,0 +1,15 @@
+
+# Backup the site locally
+- name: Backup the site content on your local machine
+  tags: sync
+  synchronize:
+    mode: pull
+    src: /var/www/default/*
+    dest: '{{ backup_directory }}/website-simple/'
+    perms: yes
+    archive: false
+    recursive: true
+    rsync_opts:
+      - '--no-motd'
+      - '--update'
+      - '--exclude=*demo*'

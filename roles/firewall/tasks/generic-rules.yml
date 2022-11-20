@@ -1,7 +1,5 @@
 ---
 
-# the value firewall.ssh is here for compatibility with the stretch version
-
 - name: Create the nftables directory
   file:
     path: /etc/nftables

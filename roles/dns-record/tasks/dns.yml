@@ -19,6 +19,8 @@
     -t {{ record.type | upper }}
     @127.0.0.1
     | grep -c '{{ record.search | default(record.value) | regex_escape }}'
+  args:
+    executable: /usr/bin/bash
   changed_when: false
   failed_when: false
 

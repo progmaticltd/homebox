@@ -1,0 +1,28 @@
+---
+
+- name: Copy the www certificate in the debian standard directory
+  notify: Restart nginx
+  copy:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: yes
+  loop:
+    - src: /etc/lego/certificates/www.{{ network.domain }}.issuer.crt
+      dest: /etc/ssl/certs/www.{{ network.domain }}.issuer.crt
+    - src: /etc/lego/certificates/www.{{ network.domain }}.crt
+      dest: /etc/ssl/certs/www.{{ network.domain }}.crt
+  loop_control:
+    loop_var: file
+
+- name: Copy the www private key in the debian standard directory
+  notify: Restart nginx
+  copy:
+    src: /etc/lego/certificates/www.{{ network.domain }}.key
+    dest: /etc/ssl/private/www.{{ network.domain }}.key
+    remote_src: yes
+    owner: root
+    group: ssl-cert
+    mode: 0640

@@ -9,5 +9,8 @@
 - name: Create the default DNS entries
   include_tasks: dns.yml
 
+- name: Create the firewall rules
+  include_tasks: nftables.yml
+
 - name: Configure AppArmor
   include_tasks: apparmor.yml

@@ -1,151 +1,22 @@
 ---
 
-- name: Create a directory for web site backup if it does not exists
-  tags: backup
-  delegate_to: localhost
-  file:
-    path: '{{ backup_directory }}/website-simple/'
-    state: directory
+- name: Push the web site if it already exists
+  include_tasks: backup-push.yml
 
-# Push the site if already backup up
-- name: If the web site has been generated before, copy the files on the remote server
-  tags: sync
-  synchronize:
-    src: '{{ backup_directory }}/website-simple/'
-    dest: /var/www/default
-    owner: no
-    group: no
-    perms: yes
-    rsync_opts:
-      - '--no-motd'
-      - '--update'
+- name: Create default web site
+  include_tasks: default-content.yml
 
-- name: Check if you have already uploaded a web page named 'index.html'
-  tags: website
-  register: index_page
-  stat:
-    path: /var/www/default/index.html
+- name: Create the DNS record
+  include_tasks: dns.yml
 
-- name: Create the website site root folder if needed
-  when: not index_page.stat.exists
-  tags: website
-  file:
-    path: '{{ path }}'
-    state: directory
-    owner: root
-    group: www-data
-    mode: '0750'
-  with_items:
-    - /var/www/default
-    - /var/www/default/css
-    - /var/www/default/js
-  loop_control:
-    loop_var: path
+- name: Copy the certificate
+  include_tasks: certificates.yml
 
-- name: Get the locale information to build a default web site page.
-  when: not index_page.stat.exists
-  tags: website
-  set_fact:
-    website_language: '{{ website.locale | regex_replace("_.*", "") }}'
-    website_charset: '{{ website.locale | regex_replace(".*\.", "") }}'
+- name: Configure nginx
+  include_tasks: nginx.yml
 
-# Create the real one, and name it index.html. it will not be overwritten if you redeploy
-# same for main.css and main.js
-- name: Create a very simple fallback page.
-  when: not index_page.stat.exists
-  tags: website
-  template:
-    src: '{{ path.name }}'
-    dest: '{{ path.dest }}'
-    owner: root
-    group: www-data
-    mode: '0640'
-  with_items:
-    - name: index-demo.html
-      dest: /var/www/default/index-demo.html
-    - name: demo.css
-      dest: /var/www/default/css/demo.css
-    - name: demo.js
-      dest: /var/www/default/js/demo.js
-  loop_control:
-    loop_var: path
+- name: Configure apparmor
+  include_tasks: apparmor.yml
 
-- name: Remove the demo files if there is a real index file
-  when: index_page.stat.exists
-  tags: website
-  file:
-    path: '/var/www/default/{{ path }}'
-    state: absent
-  with_items:
-      - index-demo.html
-      - css/demo.css
-      - js/demo.js
-  loop_control:
-    loop_var: path
-
-- name: Create the website configuration file
-  tags: nginx
-  notify: Restart nginx
-  vars:
-    csp: '{{ website.csp | default(csp_default) }}'
-    fp: '{{ website.fp | default(fp_default) }}'
-  template:
-    src: nginx.conf
-    dest: /etc/nginx/sites-available/www.{{ network.domain }}.conf
-    owner: root
-    group: root
-    mode: '0644'
-
-- name: Enable nginx site
-  tags: nginx
-  notify: Restart nginx
-  file:
-    src: /etc/nginx/sites-available/www.{{ network.domain }}.conf
-    dest: /etc/nginx/sites-enabled/www.{{ network.domain }}.conf
-    state: link
-
-# AppArmor configuration ======================================================
-
-- name: Install web site AppArmor profile
-  tags: website-simple, security, apparmor
-  template:
-    src: apparmor.d/local/website-simple
-    dest: /etc/apparmor.d/local/nginx-website-simple
-
-- name: Check if AppArmor nginx configuration already contains the line
-  register: line_found
-  shell: >-
-    grep -c 'include <local/nginx-website-simple>'
-    /etc/apparmor.d/usr.sbin.nginx
-  changed_when: false
-  failed_when: false
-
-- name: Add website-simple AppAromor specific configuration
-  when: line_found.stdout == '0'
-  register: aa_config
-  tags: nginx, security, apparmor
-  lineinfile:
-    path: /etc/apparmor.d/usr.sbin.nginx
-    line: '  #include <local/nginx-website-simple>'
-    insertbefore: '# End of local includes for homebox'
-
-- name: Activate AppArmor profiles
-  notify: Restart AppArmor service
-  when: aa_config.changed
-  tags: website-simple, security, apparmor
-  command: 'aa-enforce usr.sbin.nginx'
-
-# Backup the site locally
-- name: Backup the site content on your local machine
-  tags: sync
-  synchronize:
-    mode: pull
-    src: /var/www/default/*
-    dest: '{{ backup_directory }}/website-simple/'
-    perms: yes
-    archive: false
-    recursive: true
-    rsync_opts:
-      - '--no-motd'
-      - '--update'
-      - '--exclude=*demo*'
+- name: Pull the web site content
+  include_tasks: backup-pull.yml

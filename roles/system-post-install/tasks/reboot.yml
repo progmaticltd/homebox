@@ -1,10 +1,12 @@
 ---
 
 - name: Restart the system if needed
+  register: reboot_needed_cmd
   shell: >-
     set -o pipefail ;
     needrestart -b -k | tail -n 1 | cut -f 2 -d ' '
-  register: reboot_needed_cmd
+  args:
+    executable: /usr/bin/bash
 
 # See /usr/share/doc/needrestart/README.batch.md
 - name: Store the value

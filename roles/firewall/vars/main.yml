@@ -11,5 +11,4 @@ rule_files:
   - 10-outbound
   - 30-ssh-other
   - 40-in-dns
-  - 50-in-http
   - 90-close
