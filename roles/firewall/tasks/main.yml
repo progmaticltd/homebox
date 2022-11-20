@@ -20,3 +20,6 @@
 
 - name: Set the remote access firewall rules for private networks
   include_tasks: private-access.yml
+
+- name: Start the firewall now if needed
+  meta: flush_handlers
