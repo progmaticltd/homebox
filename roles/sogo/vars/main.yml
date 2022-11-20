@@ -68,3 +68,33 @@ fp_default:
     - id: vibrate
     - id: fullscreen
     - id: payment
+
+
+dns_records_main:
+  - name: sogo
+    type: '{{ external_ip_type }}'
+    value: '{{ external_ip }}'
+  - name: _caldavs
+    type: SRV
+    port: 443
+    value: 'sogo.{{ network.domain }}'
+  - name: _caldavs
+    type: SRV
+    port: 443
+    value: 'sogo.{{ network.domain }}'
+  - name: _caldavs
+    type: TXT
+    value: 'path=/SOGo/dav/'
+  - name: _carddavs
+    type: SRV
+    port: 443
+    value: 'sogo.{{ network.domain }}'
+  - name: _carddavs
+    type: TXT
+    value: 'path=/SOGo/dav/'
+
+
+dns_records_backup:
+  - name: sogo
+    type: '{{ backup_ip_type }}'
+    value: '{{ backup_ip }}'
