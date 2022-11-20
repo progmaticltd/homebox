@@ -1,8 +1,0 @@
----
-
-# Packages to remove
-zabbix_pkgs:
-  - zabbix-server-pgsql
-  - zabbix-agent
-  - zabbix-frontend-php
-  - postgresql-client
