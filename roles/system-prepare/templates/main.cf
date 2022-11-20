@@ -1,4 +1,0 @@
-# Main configuration settings for homebox
-
-# Domain name for the system
-DOMAIN={{ network.domain }}
