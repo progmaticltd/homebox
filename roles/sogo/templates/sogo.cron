@@ -6,7 +6,7 @@
 # Session cleanup - runs every hour
 #   - Ajust the nbMinutes parameter to suit your needs
 # Wait 30 seconds, to avoid broken lock files error messages
-0 * * * *      sogo    sleep 30 && /usr/sbin/sogo-tool expire-sessions 60
+0 * * * *      sogo    sleep 30 && /usr/sbin/sogo-tool expire-sessions 60 >/dev/null 2>&1
 
 # Email alarms - runs every five minutes
 # Wait one minute as well, to avoid broken lock files error messages
