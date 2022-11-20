@@ -1,0 +1,5 @@
+---
+
+- name: Remove packages not needed on first boot
+  apt:
+    autoremove: true

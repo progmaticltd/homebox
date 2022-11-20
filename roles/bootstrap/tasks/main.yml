@@ -1,5 +1,13 @@
 ---
 
+# This seems to be required on first boot on cloud servers
+- name: Remove packages not required
+  include_tasks: pre-clean.yml
+
+- name: Track changes in the system
+  when: system.track_changes
+  include_tasks: track-changes.yml
+
 - name: Initialise and update the packages repository
   include_tasks: apt.yml
 

@@ -1,20 +1,25 @@
 ---
 
-- name: Delete the DNS record
-  shell: >-
-    pdnsutil delete-rrset {{ network.domain }}
-    _mta-sts TXT
-  changed_when: true
+- name: Delete the DNS entries
+  vars:
+    dns_records:
+      - name: _mta-sts
+        type: TXT
+        search: 'v=STSv1'
+      - name: mta-sts
+        type: '{{ external_ip_type }}'
+        value: '{{ external_ip }}'
+  include_role:
+    name: dns-record
+    tasks_from: ../uninstall/main.yml
 
-- name: Delete the main web record
-  shell: >-
-    pdnsutil delete-rrset {{ network.domain }}
-    mta-sts {{ external_ip_type }}
-  changed_when: true
-
-- name: Delete the backup web record
+- name: Delete the backup DNS entries
   when: backup_ip is defined
-  shell: >-
-    pdnsutil delete-rrset {{ network.domain }}
-    mta-sts {{ backup_ip_type }}
-  changed_when: true
+  vars:
+    dns_records:
+      - name: mta-sts
+        type: '{{ backup_ip_type }}'
+        value: '{{ backup_ip }}'
+  include_role:
+    name: dns-record
+    tasks_from: ../uninstall/main.yml

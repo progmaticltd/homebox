@@ -1,5 +1,8 @@
 ---
 
+- name: Load the common facts
+  include_tasks: facts.yml
+
 - name: Remove DNS records
   include_tasks: uninstall/dns.yml
 

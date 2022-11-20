@@ -22,29 +22,3 @@
   when: not mta_record_missing
   set_fact:
     mta_sts_uid: '{{ mta_record_cmd.stdout | regex_replace(".*id=([^;]+);.*", "\1") }}'
-
-- name: Check if the mta-sts main web record exists
-  register: mta_main_web_record_cmd
-  shell: >-
-    dig -t {{ external_ip_type }}
-    +nocomments +noall +answer
-    mta-sts.{{ network.domain }} @127.0.0.1
-  changed_when: false
-  failed_when: false
-
-- name: Store the fact for the DNS record
-  set_fact:
-    mta_main_web_record_missing: '{{ mta_main_web_record_cmd.stdout | length == 0 }}'
-
-- name: Check if the mta-sts backup web record exists
-  register: mta_backup_web_record_cmd
-  shell: >-
-    dig -t {{ backup_ip_type }}
-    +nocomments +noall +answer
-    mta-sts.{{ network.domain }} @127.0.0.1
-  changed_when: false
-  failed_when: false
-
-- name: Store the fact for the DNS record
-  set_fact:
-    mta_backup_web_record_missing: '{{ mta_backup_web_record_cmd.stdout | length == 0 }}'

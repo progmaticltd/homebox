@@ -2,7 +2,7 @@
 
 - name: Install apticron to send email alerts
   apt:
-    name: apticron
+    name: apticron-systemd
     state: present
 
 # Starting from Debian buster (10), /etc/apticron/apticron.conf is not

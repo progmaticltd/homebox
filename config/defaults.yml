@@ -187,6 +187,7 @@ system_default:
   release: bullseye        # distribution to use (stretch/buster/bullseye)
   devel: false             # mark the system as a development machine
   debug: false             # activate debug options
+  track_changes: true      # track changes in /etc
   apt:                     # The apt sections to use,
     sections: [ main ]     # contrib and non-free not activated by default
 

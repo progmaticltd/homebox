@@ -1,0 +1,6 @@
+---
+
+- name: Install etckeeper
+  apt:
+    name: etckeeper
+    state: present

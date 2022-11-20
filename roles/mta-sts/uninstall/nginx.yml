@@ -1,6 +1,6 @@
 ---
 
-- name: Add the site content files
+- name: Remove the site content files
   file:
     path: /var/www/mta-sts/
     state: absent

@@ -1,0 +1,8 @@
+---
+
+- name: Remove opendmarc package
+  apt:
+    name: opendmarc
+    state: absent
+    purge: true
+    autoremove: true

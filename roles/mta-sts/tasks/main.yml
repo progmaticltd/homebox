@@ -1,6 +1,6 @@
 ---
 
-- name: Load some facts
+- name: Load the common facts
   include_tasks: facts.yml
 
 - name: Set DNS records
