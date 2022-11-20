@@ -26,7 +26,6 @@ apparmor:
     - usr.lib.dovecot.ssl-params
     - usr.lib.dovecot.quota-status
     - usr.lib.dovecot.script
-    - usr.lib.dovecot.script-login
     - usr.lib.dovecot.stats
     - usr.local.sbin.dovecot-postlogin
 
