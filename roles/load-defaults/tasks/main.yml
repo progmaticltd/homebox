@@ -7,6 +7,7 @@
 # about new version changes.
 
 
+
 ################################################################################
 # Merge user options with default options
 - name: Combine default and user defined network settings
@@ -23,6 +24,7 @@
   set_fact:
     network: '{{ network_default }}'
 
+
 ################################################################################
 # Merge user options with default options
 - name: Combine default and user defined mail settings
@@ -38,6 +40,7 @@
   tags: defaults
   set_fact:
     mail: '{{ mail_default }}'
+
 
 ################################################################################
 # Merge user options with default options
@@ -57,6 +60,7 @@
   set_fact:
     passwords: '{{ passwords_default }}'
 
+
 ################################################################################
 # Merge system defaults
 - name: Combine default and user defined system settings
@@ -72,6 +76,7 @@
   tags: defaults
   set_fact:
     system: '{{ system_default }}'
+
 
 ################################################################################
 # Merge security defaults
@@ -89,6 +94,7 @@
   set_fact:
     security: '{{ security_default }}'
 
+
 ################################################################################
 # Merge dictionaries defaults
 - name: Combine default and user defined dictionaries settings
@@ -104,21 +110,6 @@
   tags: defaults
   set_fact:
     dictionaries: '{{ dictionaries_default }}'
-
-# Merge webmail defaults
-- name: Combine default and user defined webmail settings
-  run_once: true
-  when: webmail is defined
-  tags: defaults
-  set_fact:
-    webmail: '{{ webmail_default | combine(webmail, recursive=True) }}'
-
-- name: Use default webmail settings
-  run_once: true
-  when: webmail is not defined
-  tags: defaults
-  set_fact:
-    webmail: '{{ webmail_default }}'
 
 
 ################################################################################
@@ -137,6 +128,7 @@
   set_fact:
     website: '{{ website_default }}'
 
+
 ################################################################################
 # Merge backup defaults
 - name: Combine default and user defined backup settings
@@ -153,6 +145,7 @@
   set_fact:
     backup: '{{ backup_default }}'
 
+
 ################################################################################
 # Merge defaults development settings
 - name: Combine default and user defined devel settings
@@ -168,6 +161,7 @@
   tags: defaults
   set_fact:
     devel: '{{ devel_default }}'
+
 
 ################################################################################
 # Merge defaults DKIM keys settings
@@ -186,6 +180,7 @@
     dkim: '{{ dkim_default }}'
 
 
+
 ################################################################################
 # Merge defaults DMARC keys settings
 - name: Combine default and user defined dmarc settings
@@ -202,6 +197,7 @@
   set_fact:
     dmarc: '{{ dmarc_default }}'
 
+
 ################################################################################
 # Merge defaults ejabberd settings
 - name: Combine default and user defined ejabberd settings
@@ -217,6 +213,7 @@
   tags: defaults
   set_fact:
     ejabberd: '{{ ejabberd_default }}'
+
 
 ################################################################################
 # Merge defaults bind settings
@@ -251,6 +248,7 @@
   set_fact:
     transmission: '{{ transmission_default }}'
 
+
 ################################################################################
 # Merge defaults posix_groups settings
 - name: Combine default and user defined posix_groups settings
@@ -267,53 +265,6 @@
   set_fact:
     posix_groups: '{{ posix_groups_default }}'
 
-################################################################################
-# Merge defaults privoxy settings
-- name: Combine default and user defined privoxy settings
-  run_once: true
-  when: privoxy is defined
-  tags: defaults
-  set_fact:
-    privoxy: '{{ privoxy_default | combine(privoxy, recursive=True) }}'
-
-- name: Use default privoxy settings
-  run_once: true
-  when: privoxy is not defined
-  tags: defaults
-  set_fact:
-    privoxy: '{{ privoxy_default }}'
-
-################################################################################
-# Merge defaults tor settings
-- name: Combine default and user defined tor settings
-  run_once: true
-  when: tor is defined
-  tags: defaults
-  set_fact:
-    tor: '{{ tor_default | combine(tor, recursive=True) }}'
-
-- name: Use default tor settings
-  run_once: true
-  when: tor is not defined
-  tags: defaults
-  set_fact:
-    tor: '{{ tor_default }}'
-
-################################################################################
-# Merge defaults zabbix settings
-- name: Combine default and user defined zabbix settings
-  run_once: true
-  when: zabbix is defined
-  tags: defaults
-  set_fact:
-    zabbix: '{{ zabbix_default | combine(zabbix, recursive=True) }}'
-
-- name: Use default zabbix settings
-  run_once: true
-  when: zabbix is not defined
-  tags: defaults
-  set_fact:
-    zabbix: '{{ zabbix_default }}'
 
 ################################################################################
 # Merge defaults sogo settings
@@ -331,21 +282,6 @@
   set_fact:
     sogo: '{{ sogo_default }}'
 
-################################################################################
-# Merge defaults access_check settings
-- name: Combine default and user defined access_check settings
-  run_once: true
-  when: access_check is defined
-  tags: defaults
-  set_fact:
-    access_check: '{{ access_check_default | combine(access_check, recursive=True) }}'
-
-- name: Use default access_check settings
-  run_once: true
-  when: access_check is not defined
-  tags: defaults
-  set_fact:
-    access_check: '{{ access_check_default }}'
 
 ################################################################################
 # Merge defaults backup settings
@@ -363,6 +299,7 @@
   set_fact:
     backup: '{{ backup_default }}'
 
+
 ################################################################################
 # Merge defaults creds settings
 - name: Combine default and user defined creds settings
@@ -378,6 +315,7 @@
   tags: defaults
   set_fact:
     creds: '{{ creds_default }}'
+
 
 ################################################################################
 # Marking the default settings as loaded should increase the speed of the deployment

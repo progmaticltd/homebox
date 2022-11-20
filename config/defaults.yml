@@ -98,7 +98,7 @@ mail_default:
   #############################################################################
   # Dovecot / solr FTS (Full Text search)
   fts:
-    active: true
+    active: false
     langs:
       - id: fr
         name: French
@@ -254,16 +254,6 @@ website_default:
 
 
 ###############################################################################
-# Install a webmail, or not...
-webmail_default:
-  install: true
-  type: roundcube
-  milters:
-    active: false
-    debug: true
-
-
-###############################################################################
 # Default list of development packages to install
 # You can override it in your config/system.yml file
 # they are installed when running the playbook dev-support,
@@ -374,109 +364,6 @@ ejabberd_default:
     proxyrate: 10240 # file transfer proxy
 
 
-###############################################################################
-# Bind server defaults
-bind_default:
-  install: true
-  # Custom delays and retries to check DNS propagation
-  propagation:
-    check: true
-    retries: 10
-    delay: 60
-  # Default servers to forward queries
-  forward:
-    - 8.8.8.8
-    - 8.8.4.4
-    - 1.1.1.1
-  # Timing configuration (see https://www.ripe.net/publications/docs/ripe-203)
-  refresh: 86400          # 24 hours
-  retry: 7200             # 2 hours
-  expire: 3600000         # 10000 hours
-  neg_cache_ttl: 172800   # 2 days
-  ttl: 3600               # 1 hour
-  # List of secondary nameservers.
-  # These servers will be announced as additionnal nameservers and allowed by
-  # IP address to request transfers from the server (AXFR requests).
-  # The default is the empty list, which disallow zone transfers by default.
-  ns_backup: []
-  # Example of record for gandi.net's secondary nameserver
-  # ns_backup:
-  #   - fqdn: ns6.gandi.net
-  #     ip: 217.70.177.40
-  # https://docs.gandi.net/en/domain_names/advanced_users/secondary_nameserver.html
-  # General MX configuration
-  mx_priority: 10
-  # List of backup MX records. If the server is unreachable,
-  # emails will be delivered to this server. Along with email
-  # import (see above), this feature prevent loss of emails
-  # if your server is offline.
-  # The default is an empty list
-  mx_backup: []
-  # Example of records
-  # mx_backup:
-  #   - fqdn: spool.mail.gandi.net
-  #     priority: 10
-  #   - fqdn: fb.mail.gandi.net
-  #     priority: 50
-  # List of trusted servers to accept cache / recursive queries
-  trusted:
-    - src: 192.168.0.0/16
-      comment: LAN
-    - src: localhost
-    - src: localnets
-      comment: Local networks
-  #  - src: 72.13.58.64
-  #    comment: https://dnssec-analyzer.verisignlabs.com
-  # DNSSEC: enforce origin authentication
-  # https://en.wikipedia.org/wiki/Domain_Name_System_Security_Extensions
-  # If you set it to true, you will have to publish both ZSK and KSK
-  # If you don't know what is it, then just keep this to false.
-  dnssec:
-    active: false
-    algo: RSASHA256
-  # Aditional records to be generated
-  extra_records: []
-  # Generate reverse zones for the server's IP addresses.
-  # This is needed only if the reverse zones corresponding to these IP
-  # addresses were delegated to you by your ISP or hosting provider.
-  # You are most likely not in that situation and might need to configure the
-  # reverse DNS records at the level of your ISP or hosting provider.
-  generate_reverse: false
-
-
-###############################################################################
-# Transmission bittorrent client installation
-transmission_default:
-  install: false
-  public: false         # not open to public by default, only to local networks
-  allow:                # a list of IP address that can access the web interface
-    - 192.168.0.0/16    # RFC1918 local networks
-    - 172.16.0.0/12
-    - 10.0.0.0/8
-  # Block list
-  # example: http://john.bitsurge.net/public/biglist.p2p.gz
-  blocklist_url: ~
-  # Protocol options
-  pex: true
-  dht: true
-  port_forwarding: false
-  # Encryption parameters
-  # 0 = unencrypted, 1 = prefer encrypted, 2 = require encrypted
-  encryption: 2
-  # Directories
-  download_dir: /var/lib/transmission-daemon/downloads
-  incomplete_dir: /var/lib/transmission-daemon/incomplete
-  # Download parameters
-  speed_limit_down: 0
-  download_limit: 100
-  download_queue: 5
-  download_theme: light    # or dark
-  # Upload limits
-  speed_limit_up: 0
-  upload_limit: 100
-  seed_queue_size: 5
-
-
 # Default posix groups
 posix_groups_default:
 - gid: mail_users
@@ -487,48 +374,6 @@ posix_groups_default:
   description: Administrators
   gidNumber: 2000
   mail: 'admin@{{ network.domain }}'
-
-
-# The onion router
-tor_default:
-  install: false
-  port: 9050
-  accept_from:
-    - 127.0.0.1
-
-
-# Privoxy privacy proxy
-privoxy_default:
-  install: false
-  tor_forward: false
-  port: 8118
-  accept_from:
-    - 10.0.0.0/8
-    - 192.168.0.0/16
-    - 172.16.0.0/20
-  # Automatically add and update rules using adblockplus community rules
-  adblock_rules:
-    install: true
-    list:
-      - https://easylist.to/easylist/easylist.txt
-      - https://easylist.to/easylist/easyprivacy.txt
-      - https://easylist.to/easylist/fanboy-annoyance.txt
-      - https://easylist.to/easylist/fanboy-social.txt
-  # Custom options for privoxy
-  custom_settings: |
-    # Put anything you want here,
-    # even on multiple lines
-
-
-# Zabbix monitoring
-zabbix_default:
-  install: false
-  guest_account: false  # Allow guest account or not
-  public: false         # not open to public by default
-  allow:                # a list of IP address that can access the web interface
-    - 192.168.0.0/16    # RFC1918 local networks
-    - 172.16.0.0/12
-    - 10.0.0.0/8
 
 
 # Default settings for SOGo groupware
@@ -551,40 +396,6 @@ sogo_default:
   milters:
     active: false
     debug: true
-
-
-#############################################################################
-# Security policies per country / IP address / behaviour / etc
-# Check access times and IP addresses, and reject or warn the user
-# This improves security and auditing of access.
-# This is - actually - used by dovecot to warn or deny IMAP connections
-# and works with Roundcube / Sogo as well
-access_check_default:
-  active: false
-  allow_ext_queries: true     # Allow the access check script to run external queries to ip-api.com.
-  whitelist_bonus: 255        # Bonus to apply when an IP or country is whitelisted. Max value is 255
-  blacklist_malus: 255        # Malus to apply when an IP or country is blacklisted. Max value is 255
-  warning_score: 40           # Score threshold to generate a warning
-  denied_score: 120           # Score threshold to deny a connection
-  display_score: false        # Should we display the scores in the alerts ?
-                              # It is more informative for development
-                              # but it might be confusing for new users
-  time:                       # Standard time range you are normally checking your emails.
-    zone: auto                # The timezone to consider when checking the access time.
-    start: 8                  # start-end:  the more you are outside this range, the more malus points
-    end: 18                   #   are added. 10 points per hour outside the range
-                              #   Perhaps this will generate one warning if you check your emails
-                              #   from home at midnight or at 2am.
-  countries:                  # Countries check parameters
-    trust: []                 # A list of additional countries to trust, i.e. that will not generate points.
-                              #   However, other restrictions are still applying (e.g. blacklisted IP address)
-    blacklist: []             # A list of blacklisted countries. Connections from these countries will be denied.
-    trust_home: true          # Trust home country by default (the country where the box is hosted)
-    foreign_malus: 40         # The number of points added when connecting from a foreign country
-    unknown_malus: 40         # The number of points added when the country cannot be identified
-  ip:
-    rbl_malus: 60             # The number of points added to the score when an IP address is blacklisted
-    fail2ban_malus: 10        # Malus to apply each time an IP address has blacklisted by fail2ban
 
 
 #############################################################################

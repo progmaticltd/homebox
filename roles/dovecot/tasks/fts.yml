@@ -28,7 +28,7 @@
   template:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
-  with_items:
+  loop:
     - src: fts/mime-supported.conf
       dest: /etc/dovecot/fts-mime-types.conf
   loop_control:

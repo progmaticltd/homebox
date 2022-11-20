@@ -54,10 +54,6 @@ dovecot:
     - unrtf
     - unzip
     - xlsx2csv
-  access_check_packages:
-    - curl
-    - grepcidr
-    - sqlite3
   settings:
     mail_max_userip_connections: 64
     lda_mailbox_autocreate: no
