@@ -28,10 +28,6 @@
   when: mail.impersonate.active
   include_tasks: impersonate.yml
 
-- name: Run import tasks
-  when: mail.import.active
-  include_tasks: import.yml
-
 - name: AppArmor tasks
   include_tasks: apparmor.yml
 
