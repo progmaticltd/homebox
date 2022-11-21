@@ -1,0 +1,28 @@
+---
+
+- name: Install sqlite for ejabberd
+  apt:
+    name: sqlite3
+    state: present
+
+- name: Copy the database initialisation schema
+  copy:
+    src: database.sql
+    dest: /etc/ejabberd/database.sql
+    owner: ejabberd
+    group: ejabberd
+    mode: '0600'
+
+- name: Create sqlite database for message storage
+  shell: >-
+    cat /etc/ejabberd/database.sql
+    | sqlite3 /var/lib/ejabberd/storage.db
+  args:
+    creates: /var/lib/ejabberd/storage.db
+
+- name: Ensure the database permissions
+  file:
+    path: /var/lib/ejabberd/storage.db
+    owner: ejabberd
+    group: ejabberd
+    mode: '0600'

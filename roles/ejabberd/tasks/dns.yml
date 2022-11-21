@@ -1,0 +1,7 @@
+# # Create entries for the DNS server ===========================================
+# - name: Generate DNS records for bind
+#   tags: bind
+#   when: bind.install
+#   template:
+#     src: 50-jabber.bind
+#     dest: /etc/homebox/dns-entries.d/50-jabber.bind

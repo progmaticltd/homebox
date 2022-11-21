@@ -1,0 +1,15 @@
+---
+
+# Packages to install
+packages:
+  - acl
+  - ejabberd
+
+std_cert_names:
+  - conference
+  - xmpp
+  - files
+  - upload
+  - vjud
+  - pubsub
+  - proxy

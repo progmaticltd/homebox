@@ -1,0 +1,16 @@
+---
+
+- name: Add the ejabberd user to the SSL certificates group
+  user:
+    name: ejabberd
+    groups: ssl-cert
+    append: true
+
+- name: Copy ejabberd configuration
+  notify: Restart ejabberd
+  template:
+    src: conf/ejabberd.yml
+    dest: /etc/ejabberd/ejabberd.yml
+    mode: 0600
+    owner: ejabberd
+    group: ejabberd

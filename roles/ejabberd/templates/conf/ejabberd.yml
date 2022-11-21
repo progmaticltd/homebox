@@ -35,20 +35,20 @@ acme:
   auto: false
 
 certfiles:
-  - "/etc/letsencrypt/live/{{ network.domain }}/fullchain.pem"
-  - "/etc/letsencrypt/live/{{ network.domain }}/privkey.pem"
-  - "/etc/letsencrypt/live/xmpp.{{ network.domain }}/fullchain.pem"
-  - "/etc/letsencrypt/live/xmpp.{{ network.domain }}/privkey.pem"
-  - "/etc/letsencrypt/live/conference.{{ network.domain }}/fullchain.pem"
-  - "/etc/letsencrypt/live/conference.{{ network.domain }}/privkey.pem"
-  - "/etc/letsencrypt/live/upload.{{ network.domain }}/fullchain.pem"
-  - "/etc/letsencrypt/live/upload.{{ network.domain }}/privkey.pem"
-  - "/etc/letsencrypt/live/pubsub.{{ network.domain }}/fullchain.pem"
-  - "/etc/letsencrypt/live/pubsub.{{ network.domain }}/privkey.pem"
-  - "/etc/letsencrypt/live/proxy.{{ network.domain }}/fullchain.pem"
-  - "/etc/letsencrypt/live/proxy.{{ network.domain }}/privkey.pem"
-  - "/etc/letsencrypt/live/vjud.{{ network.domain }}/fullchain.pem"
-  - "/etc/letsencrypt/live/vjud.{{ network.domain }}/privkey.pem"
+  - "/etc/ssl/private/{{ network.domain }}.key"
+  - "/etc/ssl/private/xmpp.{{ network.domain }}.key"
+  - "/etc/ssl/private/conference.{{ network.domain }}.key"
+  - "/etc/ssl/private/upload.{{ network.domain }}.key"
+  - "/etc/ssl/private/pubsub.{{ network.domain }}.key"
+  - "/etc/ssl/private/proxy.{{ network.domain }}.key"
+  - "/etc/ssl/private/vjud.{{ network.domain }}.key"
+  - "/etc/ssl/certs/{{ network.domain }}.crt"
+  - "/etc/ssl/certs/xmpp.{{ network.domain }}.crt"
+  - "/etc/ssl/certs/conference.{{ network.domain }}.crt"
+  - "/etc/ssl/certs/upload.{{ network.domain }}.crt"
+  - "/etc/ssl/certs/pubsub.{{ network.domain }}.crt"
+  - "/etc/ssl/certs/proxy.{{ network.domain }}.crt"
+  - "/etc/ssl/certs/vjud.{{ network.domain }}.crt"
 
 # TLS configuration
 define_macro:
@@ -121,7 +121,7 @@ listen:
     module: ejabberd_stun
     use_turn: true
     ## The server's public IPv4 address:
-    turn_ipv4_address: "{{ network.external_ip }}"
+    turn_ipv4_address: "{{ external_ip }}"
     ## The server's public IPv6 address:
     # turn_ipv6_address: "2001:db8::3"
   - port: 1883
@@ -136,11 +136,11 @@ listen:
 auth_method: ldap
 ldap_servers:
   - "ldap.{{ network.domain }}"
-ldap_encrypt: none
-ldap_port: 389
-ldap_rootdn: "{{ ldap.readonly.dn }}"
-ldap_password: "{{ lookup('password', ldap.roPasswdParams) }}"
-ldap_base: "{{ ldap.users.dn }}"
+ldap_encrypt: tls
+ldap_port: 636
+ldap_rootdn: "{{ ldap_readonly_dn }}"
+ldap_password: "{{ ldap_ro_password }}"
+ldap_base: "{{ ldap_users_dn }}"
 ldap_filter: "(objectClass=shadowAccount)"
 ldap_uids:
   mail: "%u@{{ network.domain }}"

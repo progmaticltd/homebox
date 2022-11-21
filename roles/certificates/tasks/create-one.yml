@@ -1,5 +1,15 @@
 ---
 
+- name: Build the certificate FQDN
+  when: certificate.name != 'default'
+  set_fact:
+    fqdn: '{{ certificate.name }}.{{ network.domain }}'
+
+- name: Build the certificate FQDN
+  when: certificate.name == 'default'
+  set_fact:
+    fqdn: '{{ network.domain }}'
+
 - name: Check if the certificate exists
   register: cert_file
   stat:
@@ -11,8 +21,8 @@
   shell: >-
     openssl verify -verbose
     -CAfile {{ acme_root }}
-    -untrusted /etc/lego/certificates/{{ certificate.name }}.{{ network.domain }}.issuer.crt
-    /etc/lego/certificates/{{ certificate.name }}.{{ network.domain }}.crt
+    -untrusted /etc/lego/certificates/{{ fqdn }}.issuer.crt
+    /etc/lego/certificates/{{ fqdn }}.crt
   ignore_errors: true
   changed_when: false
 
@@ -34,7 +44,7 @@
     --dns pdns
     --accept-tos
     --path /etc/lego
-    --domains {{ certificate.name }}.{{ network.domain }}
+    --domains {{ fqdn }}
     {{ certificate.pem | default(false) | ternary("--pem", " ") }}
     run
   changed_when: true

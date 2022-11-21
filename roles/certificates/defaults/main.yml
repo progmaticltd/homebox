@@ -1,8 +1,8 @@
 ---
 
 certificates:
-  # - name: '@'
-  #   create: true
+  - name: default
+    create: true
   - name: ldap
     create: true
   - name: rspamd
@@ -25,15 +25,11 @@ certificates:
     create: '{{ mail.autoconfig }}'
   - name: autodiscover
     create: '{{ mail.autodiscover }}'
-  - name: transmission
-    create: '{{ transmission.install }}'
   # Jabber
   - name: conference
     create: '{{ ejabberd.install }}'
   - name: xmpp
     create: '{{ ejabberd.install }}'
-  - name: zabbix
-    create: '{{ zabbix.install }}'
   - name: files
     create: '{{ ejabberd.install }}'
   - name: upload

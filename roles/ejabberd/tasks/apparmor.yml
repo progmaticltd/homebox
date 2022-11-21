@@ -1,0 +1,39 @@
+---
+
+- name: Install ejabberdctl AppArmor profile
+  tags: security, apparmor
+  register: aa_templates
+  template:
+    src: 'apparmor.d/local/jabber-frontend'
+    dest: '/etc/apparmor.d/local/nginx-jabber-frontend'
+
+- name: Install ejabberdctl AppArmor profile
+  tags: security, apparmor
+  register: aa_templates
+  template:
+    src: 'apparmor.d/usr.sbin.ejabberdctl'
+    dest: '/etc/apparmor.d/usr.sbin.ejabberdctl'
+
+- name: Activate AppArmor profiles
+  when: aa_templates.changed
+  tags: security, apparmor
+  notify: Restart AppArmor service
+  command: 'aa-enforce usr.sbin.ejabberdctl'
+
+- name: Check if AppArmor nginx configuration already contains the line
+  register: line_found
+  tags: facts,apparmor
+  shell: >-
+    grep -c 'include <local/nginx-jabber-frontend>'
+    /etc/apparmor.d/usr.sbin.nginx
+  changed_when: false
+  failed_when: false
+
+- name: Add ejabberd AppArmor specific configuration
+  when: line_found.stdout == '0'
+  notify: Restart AppArmor service
+  tags: nginx, security, apparmor
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/nginx-jabber-frontend>'
+    insertbefore: '# End of local includes for homebox'

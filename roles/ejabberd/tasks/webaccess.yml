@@ -1,0 +1,51 @@
+---
+
+- name: Install graphics library for thumbnails generation
+  vars:
+    pkgs:
+      - graphicsmagick
+      - graphicsmagick-imagemagick-compat
+  apt:
+    name: '{{ pkgs }}'
+    state: present
+
+- name: Create the jabber site frontend configuration file
+  notify: Restart nginx
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/sites-available/xmpp.{{ network.domain }}.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable nginx site
+  notify: Restart nginx
+  file:
+    src: /etc/nginx/sites-available/xmpp.{{ network.domain }}.conf
+    dest: /etc/nginx/sites-enabled/xmpp.{{ network.domain }}.conf
+    state: link
+
+- name: Create the http upload directory
+  file:
+    path: /var/www/ejabberd/files
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Allow the jabber server to write in the folder
+  acl:
+    path: /var/www/ejabberd/files
+    entity: ejabberd
+    etype: user
+    permissions: rwx
+    state: present
+    default: yes
+
+- name: Create the http upload jabber site
+  template:
+    src: upload-home.html
+    dest: /var/www/ejabberd/files/index.html
+    owner: root
+    group: root
+    mode: 0644

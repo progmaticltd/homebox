@@ -1,0 +1,14 @@
+---
+
+- name: Remove client to server rules
+  notify: Restart nftables
+  file:
+    path: /etc/nftables/70-jabber-c2s.nft
+    state: absent
+
+- name: Remove server to server rules
+  when: ejabberd.s2s
+  notify: Restart nftables
+  file:
+    path: /etc/nftables/70-jabber-s2s.nft
+    state: absent

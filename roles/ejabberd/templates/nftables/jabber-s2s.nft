@@ -1,0 +1,17 @@
+#!/usr/sbin/nft -f
+# Accept pop3(110) and pop3s(995)
+
+table inet filter {
+
+    chain input {
+        tcp dport xmpp-server ct state new counter accept \
+        comment "Accept pop3/pop3s connections"
+    }
+
+    chain output {
+        meta skuid ejabberd \
+        tcp dport xmpp-server \
+		ct state new counter accept \
+        comment "Server to server communictaion"
+    }
+}

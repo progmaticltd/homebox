@@ -16,4 +16,9 @@
   systemd:
     name: nginx
     state: restarted
+
+- name: Restart nftables
+  systemd:
+    name: nftables
+    state: restarted
     no_block: true
