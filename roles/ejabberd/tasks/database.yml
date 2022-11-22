@@ -15,9 +15,11 @@
 
 - name: Create sqlite database for message storage
   shell: >-
+    set -o pipefail ;
     cat /etc/ejabberd/database.sql
     | sqlite3 /var/lib/ejabberd/storage.db
   args:
+    executable: /usr/bin/bash
     creates: /var/lib/ejabberd/storage.db
 
 - name: Ensure the database permissions
