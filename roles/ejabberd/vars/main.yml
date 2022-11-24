@@ -5,6 +5,7 @@ packages:
   - acl
   - ejabberd
 
+
 std_cert_names:
   - conference
   - xmpp
@@ -13,3 +14,28 @@ std_cert_names:
   - vjud
   - pubsub
   - proxy
+
+
+# DNS records information
+dns_records_main:
+  - name: xmpp
+    type: '{{ external_ip_type }}'
+    value: '{{ external_ip }}'
+    create: true
+  - name: _xmpp-client._tcp
+    type: SRV
+    port: 5222
+    value: 'xmpp.{{ network.domain }}'
+    create: true
+  - name: _xmpps-server._tcp
+    type: SRV
+    port: 5269
+    value: 'xmpp.{{ network.domain }}'
+    prioriy: 10
+    create: true
+
+dns_records_backup:
+  - name: xmpp
+    type: '{{ backup_ip_type }}'
+    value: '{{ backup_ip }}'
+    create: true

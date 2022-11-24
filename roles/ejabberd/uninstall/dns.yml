@@ -1,14 +1,16 @@
 ---
 
-- name: Create the DNS entries for the main
+- name: Delete the DNS entries for the main smtp record
   vars:
     dns_records: '{{ dns_records_main | selectattr("create", "equalto", true) | list }}'
   include_role:
     name: dns-record
+    tasks_from: ../uninstall/main.yml
 
-- name: Create the DNS entries for the backup
+- name: Delete the DNS entries for the backup smtp record
   when: backup_ip is defined
   vars:
     dns_records: '{{ dns_records_backup | selectattr("create", "equalto", true) | list }}'
   include_role:
     name: dns-record
+    tasks_from: ../uninstall/main.yml

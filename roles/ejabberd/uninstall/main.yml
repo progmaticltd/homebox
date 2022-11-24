@@ -8,3 +8,6 @@
 
 - name: Remove the firewall rules
   include_tasks: uninstall/firewall.yml
+
+- name: Remove DNS records
+  include_tasks: uninstall/dns.yml

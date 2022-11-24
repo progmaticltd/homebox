@@ -18,5 +18,11 @@
 - name: Configure web access
   include_tasks: webaccess.yml
 
+- name: Configure AppArmor
+  include_tasks: apparmor.yml
+
+- name: Configure DNS records
+  include_tasks: dns.yml
+
 - name: Deply the firewall rules
   include_tasks: firewall.yml

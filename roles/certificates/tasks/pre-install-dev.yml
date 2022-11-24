@@ -9,21 +9,24 @@
     path: /etc/tinyproxy/filter
     line: acme-staging-v02.api.letsencrypt.org
 
-- name: Download the staging root CA for certificate verification
+- name: Create a directory to store the certificates
+  file:
+    path: /usr/local/share/ca-certificates/development/
+    state: directory
+
+- name: Download the staging root CAs for certificate verification
   environment:
     https_proxy: 'http://127.0.0.1:8888/'
   uri:
-    url: https://letsencrypt.org/certs/staging/letsencrypt-stg-root-x1.pem
-    dest: /tmp/acme-root.crt
+    url: https://letsencrypt.org/certs/staging/{{ cert_name }}.pem
+    dest: /usr/local/share/ca-certificates/development/{{ cert_name }}.crt
     status_code: [ 200, 304 ]
+  loop:
+    - letsencrypt-stg-root-x1
+    - letsencrypt-stg-root-x2
+  loop_control:
+    loop_var: cert_name
 
-- name: Use the temporary store for verification
+- name: Set the store for verification
   set_fact:
-    acme_root: /tmp/acme-root.crt
-
-- name: Copy the certificate on the system for the tests
-  notify: Reload certificates
-  copy:
-    src: /tmp/acme-root.crt
-    dest: /usr/local/share/ca-certificates/acme-root.crt
-    remote_src: true
+    acme_root: /usr/local/share/ca-certificates/development/letsencrypt-stg-root-x1.crt
