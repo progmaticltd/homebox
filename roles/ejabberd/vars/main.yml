@@ -4,6 +4,8 @@
 packages:
   - acl
   - ejabberd
+  - graphicsmagick
+  - graphicsmagick-imagemagick-compat
 
 
 std_cert_names:

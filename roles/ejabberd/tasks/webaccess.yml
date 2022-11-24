@@ -1,14 +1,5 @@
 ---
 
-- name: Install graphics library for thumbnails generation
-  vars:
-    pkgs:
-      - graphicsmagick
-      - graphicsmagick-imagemagick-compat
-  apt:
-    name: '{{ pkgs }}'
-    state: present
-
 - name: Create the jabber site frontend configuration file
   notify: Restart nginx
   template:
