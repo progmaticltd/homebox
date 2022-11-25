@@ -1,5 +1,9 @@
 ---
 
-- name: Remove packages not needed on first boot
+# We are using systemd-timesyncd by default
+- name: Remove NTP package
   apt:
+    name: ntp
+    state: absent
+    purge: true
     autoremove: true
