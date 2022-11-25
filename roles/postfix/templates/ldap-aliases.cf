@@ -1,6 +1,5 @@
 # Basic LDAP settings for postfix
-server_host = ldap://ldap.{{ network.domain }}/
-start_tls = yes
+server_host = ldaps://ldap.{{ network.domain }}/
 
 search_base = {{ ldap_search_base }}
 
