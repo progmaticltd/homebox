@@ -97,3 +97,11 @@ dns_records_backup:
     port: '{{ mail.postfix.submission.port }}'
     value: 'smtp2.{{ network.domain }}'
     create: '{{ mail.postfix.submission.active }}'
+
+
+# These packages are installed by default on Debian
+# They are removed when installing Postfix
+exim_packages:
+  - exim4-base
+  - exim4-config
+  - exim4-daemon-light

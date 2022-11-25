@@ -6,3 +6,8 @@
     state: absent
     purge: true
     autoremove: true
+
+- name: Reinstall exim packages
+  apt:
+    name: '{{ exim_packages }}'
+    state: present

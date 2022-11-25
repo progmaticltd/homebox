@@ -5,3 +5,9 @@
   apt:
     name: '{{ postfix_pkgs }}'
     state: present
+
+- name: Remove and purge exim packages
+  apt:
+    name: '{{ exim_packages }}'
+    state: absent
+    purge: true
