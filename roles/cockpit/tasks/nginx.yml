@@ -1,0 +1,38 @@
+---
+
+- name: Get the public external IPv4
+  delegate_to: localhost
+  become: false
+  set_fact:
+    public_ext_ip4: '{{ lookup("pipe", "curl -4 https://icanhazip.com") }}'
+
+- name: Get the public external IPv6
+  delegate_to: localhost
+  become: false
+  set_fact:
+    public_ext_ip6: '{{ lookup("pipe", "curl -6 https://icanhazip.com") }}'
+
+- name: Create the web site
+  tags: nginx
+  notify:
+    - Check nginx config
+    - Restart nginx
+  vars:
+    csp: '{{ mail.antispam.webui.csp | default(csp_default) }}'
+    fp: '{{ mail.antispam.webui.fp | default(fp_default) }}'
+  template:
+    src: nginx.conf
+    dest: '/etc/nginx/sites-available/cockpit.{{ network.domain }}.conf'
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Copy cockpit configuration
+  tags: nginx
+  notify:
+    - Check nginx config
+    - Restart nginx
+  file:
+    src: '/etc/nginx/sites-available/cockpit.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/cockpit.{{ network.domain }}.conf'
+    state: link

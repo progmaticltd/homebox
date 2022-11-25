@@ -40,6 +40,8 @@ certificates:
     create: '{{ ejabberd.install }}'
   - name: proxy
     create: '{{ ejabberd.install }}'
+  - name: cockpit
+    create: '{{ system.cockpit }}'
   - name: openpgpkey
     create: '{{ pgp | default([]) | length > 0 }}'
 

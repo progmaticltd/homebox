@@ -1,0 +1,11 @@
+---
+
+- name: Install the cockpit package
+  apt:
+    name: cockpit
+    state: present
+
+- name: Create the configuration file
+  template:
+    src: cockpit.conf
+    dest: /etc/cockpit/cockpit.conf
