@@ -1,8 +1,8 @@
 ---
 
-- name: Install the cockpit package
+- name: Install the cockpit packages
   apt:
-    name: cockpit
+    name: [ cockpit, cockpit-pcp ]
     state: present
 
 - name: Create the configuration file
