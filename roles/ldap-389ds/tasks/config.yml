@@ -1,0 +1,251 @@
+---
+
+# Changes in the database will be stored there
+- name: Create the ldap config changes folder
+  file:
+    path: /etc/dirsrv/changes
+    state: directory
+
+- name: Copy the client configuration
+  notify: Restart the ldap stack
+  template:
+    src: ldap.conf
+    dest: /etc/dirsrv/ldap.conf
+
+# - name: Allow openldap to read certificates
+#   register: openldap_user
+#   user:
+#     name: openldap
+#     groups: ssl-cert
+#     append: true
+
+# - name: Restart the ldap stack
+#   when: openldap_user.changed
+#   service:
+#     name: slapd
+#     state: restarted
+
+# - name: Configure the ldap server for SSL / TLS
+#   notify: Restart the ldap stack
+#   template:
+#     src: default-slapd.conf
+#     dest: /etc/default/slapd
+
+# - name: Copy the ldap ssl config on the server before running it
+#   notify: Restart the ldap stack
+#   register: ldap_ssl
+#   template:
+#     src: ssl-config.ldif
+#     dest: /etc/dirsrv/changes/ssl-config.ldif
+
+# - name: Modify the configuration if not already done
+#   when: ldap_ssl.changed
+#   notify: Restart the ldap stack
+#   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/dirsrv/changes/ssl-config.ldif
+
+- name: Copy deref module loading into the changes directory
+  register: deref_module
+  template:
+    src: deref-module.ldif
+    dest: /etc/dirsrv/changes/deref-module.ldif
+
+- name: Load deref module into the OLC database
+  when: deref_module.changed
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/dirsrv/changes/deref-module.ldif
+
+- name: Copy password policies module loading into the changes directory
+  register: ppolicy_module
+  template:
+    src: ppolicy-module.ldif
+    dest: /etc/dirsrv/changes/ppolicy-module.ldif
+
+- name: Load password policy module into the OLC database
+  when: ppolicy_module.changed
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/dirsrv/changes/ppolicy-module.ldif
+
+- name: Copy the password policy schema into the changes directory
+  register: ppolicy_schema
+  copy:
+    src: /etc/dirsrv/schema/ppolicy.ldif
+    dest: /etc/dirsrv/changes/ppolicy-schema.ldif
+    remote_src: true
+
+- name: Activate password policies schema
+  when: ppolicy_schema.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/dirsrv/changes/ppolicy-schema.ldif
+
+- name: Copy the overlay into the changes directory
+  register: ldap_pwd_overlay
+  template:
+    src: overlay.ldif
+    dest: /etc/dirsrv/changes/overlay.ldif
+
+- name: Load the overlay definition
+  when: ldap_pwd_overlay.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/dirsrv/changes/overlay.ldif
+
+- name: Copy password hash overlay into the changes directory
+  register: passwd_hash
+  template:
+    src: password-hash.ldif
+    dest: /etc/dirsrv/changes/password-hash.ldif
+
+- name: Load the password hash overlay
+  when: passwd_hash.changed
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/dirsrv/changes/password-hash.ldif
+
+# Create a password policy for all the users
+- name: Create the password policies parent entry
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: 'ou=pwpolicies,{{ ldap.organization.base }}'
+    objectClass:
+      - organizationalUnit
+      - top
+    attributes:
+      ou: pwpolicies
+    state: present
+
+- name: Create the default password policy
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: cn=default,ou=pwpolicies,{{ ldap.organization.base }}
+    objectClass:
+      - pwdPolicy
+      - person
+      - top
+    attributes:
+      cn: default
+      sn: default
+      pwdMaxAge: '{{ passwords.max_age }}'
+      pwdInHistory: '{{ passwords.remember }}'
+      pwdCheckQuality: '{{ passwords.quality.enforce | ternary(1,0) }}'
+      pwdLockoutDuration: 0
+      pwdGraceAuthNLimit: 0
+      pwdFailureCountInterval: 300
+      pwdMinLength: '{{ passwords.min_length }}'
+      pwdAttribute: userPassword
+      pwdMaxFailure: '{{ passwords.max_failure }}'
+      pwdExpireWarning: '{{ passwords.expire_warning }}'
+
+- name: Create the system account password policy
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: cn=system,ou=pwpolicies,{{ ldap.organization.base }}
+    objectClass:
+      - pwdPolicy
+      - person
+      - top
+    attributes:
+      cn: default
+      sn: default
+      pwdMaxAge: 0
+      pwdInHistory: 0
+      pwdCheckQuality: 0
+      pwdLockoutDuration: 0
+      pwdGraceAuthNLimit: 0
+      pwdFailureCountInterval: 300
+      pwdMinLength: 16
+      pwdAttribute: userPassword
+
+# Users and groups creation
+- name: Make sure we have a parent entry for groups
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: '{{ ldap.groups.dn }}'
+    objectClass: organizationalUnit
+    state: present
+
+# Remove all groups created before
+- name: Remove old groups if presents
+  when: clean_groups
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
+    state: absent
+  with_items:
+    - '{{ posix_groups }}'
+  loop_control:
+    loop_var: group
+
+- name: Create all the group accounts
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
+    attributes:
+      cn:  '{{ group.description }}'
+      gidNumber: '{{ group.gidNumber }}'
+    objectClass:
+      - top
+      - posixGroup
+  with_items:
+    - '{{ posix_groups }}'
+  loop_control:
+    loop_var: group
+
+- name: Make sure we have a parent entry for users
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: '{{ ldap.users.dn }}'
+    objectClass: organizationalUnit
+    state: present
+
+- name: Remove previous users
+  when: clean_users
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
+    state: absent
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Copy the local misc schema in the changes directory
+  register: misc_schema
+  copy:
+    src: /etc/dirsrv/schema/misc.ldif
+    dest: /etc/dirsrv/changes/misc.ldif
+    remote_src: true
+
+- name: Load misc schema for multiple email addresses
+  when: misc_schema.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/dirsrv/changes/misc.ldif
+
+- name: Copy the internatinal email addresses schema into the changes directory
+  register: intlmailaddr_schema
+  template:
+    src: intlmailaddr.schema
+    dest: /etc/dirsrv/changes/intlmailaddr.schema
+
+- name: Activate internatinal email addresses schema
+  when: intlmailaddr_schema.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/dirsrv/changes/intlmailaddr.schema
+
+- name: Copy the access policies on the server
+  register: access_policies
+  template:
+    src: access-policies.ldif
+    dest: /etc/dirsrv/changes/access-policies.ldif
+
+- name: Load access policies
+  when: access_policies.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/dirsrv/changes/access-policies.ldif
+
+- name: Copy index definitions on the server
+  register: index_defs
+  template:
+    src: indexes.ldif
+    dest: /etc/dirsrv/changes/indexes.ldif
+
+- name: Add indexes to the database for optimisation
+  when: index_defs.changed
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/dirsrv/changes/indexes.ldif

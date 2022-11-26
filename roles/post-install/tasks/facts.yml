@@ -1,0 +1,18 @@
+---
+
+- name: Check if postfix is active
+  register: postfix_active_cmd
+  shell: systemctl is-active postfix@-
+  failed_when: false
+  changed_when: false
+
+- name: Check if dovecot is active
+  register: dovecot_active_cmd
+  shell: systemctl is-active dovecot
+  failed_when: false
+  changed_when: false
+
+- name: Store the facts
+  set_fact:
+    postfix_active: '{{ postfix_active_cmd.stdout == "active" }}'
+    dovecot_active: '{{ dovecot_active_cmd.stdout == "active" }}'

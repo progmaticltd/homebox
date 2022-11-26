@@ -1,0 +1,7 @@
+# Basic access to parameters
+olcaccess: to dn.children="{{ ldap.users.dn }}"
+    by dn="cn=readonly account,{{ ldap.users.dn }}" read
+    by dn="cn=manager account,{{ ldap.users.dn }}" write
+    by anonymous auth
+    by self write
+    by * none

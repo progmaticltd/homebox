@@ -1,0 +1,5 @@
+dn: ou=people,{{ ldap.organization.base }}
+dc: people
+objectClass: dcObject
+objectClass: organizationalUnit
+ou: people

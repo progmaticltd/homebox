@@ -1,0 +1,6 @@
+---
+
+- name: Install xkcdpass to generate the user passwords
+  apt:
+    name: xkcdpass
+    state: present

@@ -1,5 +1,8 @@
 ---
 
+- name: Include common facts
+  include_tasks: facts.yml
+
 - name: Include common cleanup tasks
   include_tasks: cleanup-common.yml
 

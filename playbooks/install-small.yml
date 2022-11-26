@@ -2,7 +2,7 @@
 
 ## Main installation playbook
 
-- name: Install Homebox
+- name: Install Homebox (Small version)
   hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../config/system.yml'
@@ -38,8 +38,6 @@
       tags: postfix
     - role: dovecot
       tags: dovecot
-    - role: autodiscover
-      tags: autodiscover
     - role: autoconfig
       tags: autoconfig
     - role: post-install

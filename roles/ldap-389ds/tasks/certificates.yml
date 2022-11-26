@@ -1,0 +1,119 @@
+---
+
+- name: Install Python SSL package
+  apt:
+    name: python3-openssl
+    state: present
+
+- name: Create the configuration init directory
+  file:
+    path: /etc/dirsrv/certs/
+    state: directory
+    owner: dirsrv
+    group: dirsrv
+    mode: 0600
+
+- name: Copy the certificates in the debian standard directory
+  copy:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: yes
+  loop:
+    - src: /etc/lego/certificates/ldap.{{ network.domain }}.issuer.crt
+      dest: /etc/ssl/certs/ldap.{{ network.domain }}.issuer.crt
+    - src: /etc/lego/certificates/ldap.{{ network.domain }}.crt
+      dest: /etc/ssl/certs/ldap.{{ network.domain }}.crt
+  loop_control:
+    loop_var: file
+
+- name: Copy the private key in the debian standard directory
+  copy:
+    src: /etc/lego/certificates/ldap.{{ network.domain }}.key
+    dest: /etc/ssl/private/ldap.{{ network.domain }}.key
+    remote_src: yes
+    owner: root
+    group: ssl-cert
+    mode: 0640
+
+- name: Create the certificate in PKCS12 format
+  register: server_cert
+  openssl_pkcs12:
+    action: export
+    certificate_path: /etc/lego/certificates/ldap.{{ network.domain }}.crt
+    privatekey_path: /etc/lego/certificates/ldap.{{ network.domain }}.key
+    other_certificates: /etc/lego/certificates/ldap.{{ network.domain }}.issuer.crt
+    other_certificates_parse_all: true
+    friendly_name: ldap.{{ network.domain }}
+    path: /etc/dirsrv/certs/ldap.{{ network.domain }}.p12
+    state: present
+
+- name: Import the certificate in the key store
+  when: server_cert.changed
+  shell: >-
+    pk12util
+    -i /etc/dirsrv/certs/ldap.{{ network.domain }}.p12
+    -d .
+    -k pwdfile.txt
+    -W ''
+  args:
+    chdir: /etc/dirsrv/slapd-localhost
+  changed_when: true
+
+- name: Create RSA configuration for TLS
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    server_uri: ldap://127.0.0.1:389/
+    dn: cn=RSA,cn=encryption,cn=config
+    objectClass:
+      - top
+      - nsEncryptionModule
+    state: present
+
+- name: Configure RSA parameters
+  ldap_attrs:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    server_uri: ldap://127.0.0.1:389/
+    dn: cn=RSA,cn=encryption,cn=config
+    attributes:
+      cn: RSA
+      nsSSLToken: 'internal (software)'
+      nsSSLPersonalitySSL: 'ldap.{{ network.domain }}'
+      nsSSLActivation: 'on'
+    state: exact
+
+- name: Configure TLS support
+  ldap_attrs:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    server_uri: ldap://127.0.0.1:389/
+    dn: cn=config
+    attributes:
+      nsslapd-security: 'on'
+    state: exact
+
+# dsconf localhost config replace nsslapd-allow-anonymous-access=off
+- name: Disable anonymous binds
+  ldap_attrs:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    server_uri: ldap://127.0.0.1:389/
+    dn: cn=config
+    attributes:
+      nsslapd-allow-anonymous-access: 'off'
+    state: exact
+
+# dsconf localhost config replace nsslapd-securePort=636 nsslapd-security=on
+- name: Configure secure listen address
+  ldap_attrs:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    server_uri: ldap://127.0.0.1:389/
+    dn: cn=config
+    attributes:
+      nsslapd-securelistenhost: localhost
+    state: exact

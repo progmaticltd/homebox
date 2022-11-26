@@ -1,0 +1,47 @@
+---
+
+- name: Check that we are using a development system
+  assert:
+    that: system.devel
+    fail_msg: This role is a work in progress, use only for development
+
+- name: Show variables at the beginning
+  when: system.devel
+  include_tasks: debug.yml
+
+- name: Initialise or load the passwords
+  include_tasks: load-passwords.yml
+
+- name: Create the DNS record
+  include_tasks: dns.yml
+
+- name: Preinstalation tasks
+  include_tasks: pre-install.yml
+
+- name: Preconfigure and install the packages
+  include_tasks: packages.yml
+
+- name: Import the certificates
+  include_tasks: certificates.yml
+
+- name: Configure the LDAP server settings
+  include_tasks: config.yml
+
+- name: Create the user accounts
+  include_tasks: user-accounts.yml
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+    index_var: index
+
+- name: Create the special accounts
+  include_tasks: special-accounts.yml
+
+- name: Post accounts creation configuration
+  include_tasks: post-install.yml
+
+- name: Configure system authentication
+  include_tasks: system-auth.yml
+
+- name: Configure password quality
+  include_tasks: password-quality.yml
