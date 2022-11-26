@@ -3,11 +3,14 @@
 - name: List CSK/KSK/ZSK key IDs
   register: keys_list_cmd
   shell: >-
+    set -o pipefail ;
     pdnsutil list-keys
     | grep {{ network.domain }}
     | grep Act
     | grep [CKZ]SK
     | sed -E 's/\s+/:/g'
+  args:
+    executable: /usr/bin/bash
   changed_when: false
 
 - name: Store key IDs
