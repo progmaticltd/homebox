@@ -1,0 +1,31 @@
+---
+
+- name: Validate DNSSEC locally
+  register: delv_cmd
+  shell: delv {{ network.domain }}
+  failed_when: '"fully validated" not in delv_cmd.stdout'
+  changed_when: false
+
+- name: Validate DNSSEC globally
+  register: delv_cmd
+  shell: delv {{ network.domain }} @1.1.1.1
+  failed_when: '"fully validated" not in delv_cmd.stdout'
+  changed_when: false
+
+- name: Check DS records
+  register: dsrec_cmd
+  shell: dig DS +nocomment +noall +answer {{ network.domain }} @1.1.1.1
+  failed_when: dsrec_cmd.stdout_lines | length == 0
+  changed_when: false
+
+- name: Check DNSKEY records
+  register: dnskeyrec_cmd
+  shell: dig DNSKEY +nocomment +noall +answer {{ network.domain }} @1.1.1.1
+  failed_when: dnskeyrec_cmd.stdout_lines | length == 0
+  changed_when: false
+
+- name: Check RRSIG records
+  register: dnskeyrec_cmd
+  shell: dig +dnssec +nocomment +noall +answer {{ network.domain }} @1.1.1.1
+  failed_when: dnskeyrec_cmd.stdout_lines | length == 0
+  changed_when: false
