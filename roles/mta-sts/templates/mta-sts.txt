@@ -1,10 +1,10 @@
 version: STSv1
-mode:  {{ system.devel | ternary("testing", mail.mta_sts.mode) }}
+mode: {{ system.devel | ternary("testing", mail.mta_sts.mode) }}
 mx: smtp.{{ network.domain }}
 {% if backup_ip is defined and backup_ip != "" %}
 mx: smtp2.{{ network.domain }}
 {% endif %}
-{% for mxb in bind.mx_backup %}
+{% for mxb in dns.mx_backup | default([]) %}
 mx: {{ mxb.fqdn }}
 {% endfor %}
 max_age: {{ mail.mta_sts.max_age }}
