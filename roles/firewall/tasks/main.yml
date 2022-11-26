@@ -21,6 +21,9 @@
 - name: Set the remote access firewall rules for private networks
   include_tasks: private-access.yml
 
+- name: Install and configure fail2ban
+  include_tasks: fail2ban.yml
+
 - name: Ensure the nftables service is enabled
   systemd:
     name: nftables

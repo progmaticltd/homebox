@@ -18,6 +18,13 @@ define icmp6_in = {
 
 table inet filter {
 
+    chain ban {
+
+        type filter hook input priority -10
+        policy accept
+
+    }
+
     chain input {
 
         type filter hook input priority 0
