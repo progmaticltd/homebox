@@ -1,0 +1,9 @@
+---
+
+- name: Load common facts
+  include_tasks: facts.yml
+
+- name: Run DNS provider’s specific tasks
+  when: dns.provider is defined
+  include_tasks:
+    file: 'update-{{ dns.provider }}.yml'

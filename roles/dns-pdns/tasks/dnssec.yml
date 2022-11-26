@@ -1,8 +1,14 @@
 ---
 
 - name: Set-up DNSSEC
+  register: dnssec_cfg
   shell: >-
     pdnsutil secure-zone {{ network.domain }}
     && touch /etc/powerdns/secured
   args:
     creates: /etc/powerdns/secured
+
+- name: Calculates the ordername and auth fields
+  when: dnssec_cfg.changed
+  shell: >-
+    pdnsutil rectify-zone {{ network.domain }}

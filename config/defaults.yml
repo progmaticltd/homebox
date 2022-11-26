@@ -419,6 +419,10 @@ backup_default:
   locations: []               # List of backup locations
 
 
+# Default DNS settings
+dns_default:
+  provider: gandi
+
 # Credentials store to use
 creds_default:
   store: passwordstore

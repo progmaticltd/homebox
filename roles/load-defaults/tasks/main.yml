@@ -284,6 +284,23 @@
 
 
 ################################################################################
+# Merge defaults DNS settings
+- name: Combine default and user defined DNS settings
+  run_once: true
+  when: dns is defined
+  tags: defaults
+  set_fact:
+    dns: '{{ dns_default | combine(dns, recursive=True) }}'
+
+- name: Use default dns settings
+  run_once: true
+  when: dns is not defined
+  tags: defaults
+  set_fact:
+    dns: '{{ dns_default }}'
+
+
+################################################################################
 # Marking the default settings as loaded should increase the speed of the deployment
 - name: Mark the default settings as loaded
   run_once: true

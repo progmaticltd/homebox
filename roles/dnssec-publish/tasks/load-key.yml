@@ -1,0 +1,44 @@
+---
+
+- name: Split key line
+  set_fact:
+    key_fields: '{{ key_line.split(":") }}'
+
+- name: Set key algorithm
+  when: key_fields[5] == 'RSASHA256'
+  set_fact:
+    key_algorithm: 8
+
+- name: Set key algorithm
+  when: key_fields[5] == 'ECDSAP256SHA256'
+  set_fact:
+    key_algorithm: 13
+
+- name: Store key info
+  set_fact:
+    key:
+      domain: '{{ key_fields[0] }}'
+      type: '{{ key_fields[1] | lower }}'
+      active: '{{ key_fields[2] == "Act" }}'
+      public: '{{ key_fields[3] == "Pub" }}'
+      size: '{{ key_fields[4] | int }}'
+      algorithm: '{{ key_algorithm }}'
+      id: '{{ key_fields[6] | int }}'
+
+- name: Load key data
+  register: key_data_cmd
+  shell: >-
+    pdnsutil export-zone-dnskey {{ network.domain }} {{ key.id }}
+  changed_when: false
+
+- name: Store keydata
+  set_fact:
+    key_data: '{{ key_data_cmd.stdout_lines[0].split(" ") | last }}'
+
+- name: Add data to the key
+  set_fact:
+    key: '{{ key | combine({ "public_key": key_data }) }}'
+
+- name: Append key to keys list
+  set_fact:
+    keys_list: '{{ keys_list + [ key ] }}'
