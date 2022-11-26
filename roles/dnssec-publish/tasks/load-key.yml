@@ -4,15 +4,13 @@
   set_fact:
     key_fields: '{{ key_line.split(":") }}'
 
-- name: Set key algorithm
-  when: key_fields[5] == 'RSASHA256'
+- name: SLoad algo name
   set_fact:
-    key_algorithm: 8
+    algo_name: '{{ key_fields[5] }}'
 
 - name: Set key algorithm
-  when: key_fields[5] == 'ECDSAP256SHA256'
   set_fact:
-    key_algorithm: 13
+    key_algorithm: '{{ key_algorithms | selectattr("name", "equalto", algo_name) | first }}'
 
 - name: Store key info
   set_fact:
@@ -22,7 +20,7 @@
       active: '{{ key_fields[2] == "Act" }}'
       public: '{{ key_fields[3] == "Pub" }}'
       size: '{{ key_fields[4] | int }}'
-      algorithm: '{{ key_algorithm }}'
+      algorithm: '{{ key_algorithm.id }}'
       id: '{{ key_fields[6] | int }}'
 
 - name: Load key data

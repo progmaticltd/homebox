@@ -1,0 +1,26 @@
+---
+
+# See https://www.iana.org/assignments/dns-sec-alg-numbers/dns-sec-alg-numbers.xhtml
+key_algorithms:
+  - name: DSA
+    id: 3
+  - name: RSASHA1
+    id: 5
+  - name: DSA-NSEC3-SHA1
+    id: 6
+  - name: RSASHA1-NSEC3-SHA1
+    id: 7
+  - name: RSASHA256
+    id: 8
+  - name: RSASHA512
+    id: 10
+  - name: ECC-GOST
+    id: 12
+  - name: ECDSAP256SHA256
+    id: 13
+  - name: ECDSAP384SHA384
+    id: 14
+  - name: ED25519
+    id: 15
+  - name: ED448
+    id: 16
