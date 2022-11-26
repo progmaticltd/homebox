@@ -12,3 +12,12 @@
   when: dnssec_cfg.changed
   shell: >-
     pdnsutil rectify-zone {{ network.domain }}
+
+- name: Create a KSK key
+  when: dnssec_cfg.changed
+  shell: >-
+    pdnsutil add-zone-key {{ network.domain }} {{ type }}
+    active published
+  loop: [ KSK, ZSK ]
+  loop_control:
+    loop_var: type

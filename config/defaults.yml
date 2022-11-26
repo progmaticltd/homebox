@@ -422,6 +422,17 @@ backup_default:
 # Default DNS settings
 dns_default:
   provider: gandi
+  refresh: 10800              # Time secondary servers should wait before asking again primary servers for the SOA record
+  retry: 3600                 # The length of time a server should wait for asking an unresponsive primary nameserver
+  expire: 604800              # f a secondary server does not get a response from the primary server for this amount of time,
+                              # it should stop responding to queries for the zone.
+  ttl: 600                    # Default TTL
+
+  # Custom delays and retries to check DNS propagation
+  propagation:
+    check: true
+    retries: 10
+    delay: 15
 
 # Credentials store to use
 creds_default:
