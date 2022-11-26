@@ -19,15 +19,15 @@
   set_fact:
     keys_list: '{{ keys_list | selectattr("type", "in", ["ksk", "zsk"]) | list }}'
 
-# - name: Replace all the keys
-#   when: keys_list | length > 0
-#   delegate_to: localhost
-#   uri:
-#     url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/dnskeys
-#     method: PUT
-#     body_format: json
-#     body:
-#       keys: '{{ keys_list }}'
-#     headers:
-#       authorization: 'Apikey {{ api_key }}'
-#     status_code: [ 200, 202 ]
+- name: Replace all the keys
+  when: keys_list | length > 0
+  delegate_to: localhost
+  uri:
+    url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/dnskeys
+    method: PUT
+    body_format: json
+    body:
+      keys: '{{ keys_list }}'
+    headers:
+      authorization: 'Apikey {{ api_key }}'
+    status_code: [ 200, 202 ]
