@@ -1,23 +1,32 @@
 ---
 
+- name: Check if DNSSEC is already configured
+  register: zone_keys_cmd
+  shell:  pdnsutil list-keys
+  changed_when: false
+
+- name: Store the command result
+  set_fact:
+    dnssec_configured: '{{ zone_keys_cmd.stdout_lines | length > 3 }}'
+
 - name: Set-up DNSSEC
-  register: dnssec_cfg
+  when: not dnssec_configured
   shell: >-
     pdnsutil secure-zone {{ network.domain }}
-    && touch /etc/powerdns/secured
-  args:
-    creates: /etc/powerdns/secured
+  changed_when: true
 
 - name: Calculates the ordername and auth fields
-  when: dnssec_cfg.changed
+  when: not dnssec_configured
   shell: >-
     pdnsutil rectify-zone {{ network.domain }}
+  changed_when: true
 
 - name: Create a KSK key
-  when: dnssec_cfg.changed
+  when: not dnssec_configured
   shell: >-
     pdnsutil add-zone-key {{ network.domain }} {{ type }}
     active published
+  changed_when: true
   loop: [ KSK, ZSK ]
   loop_control:
     loop_var: type

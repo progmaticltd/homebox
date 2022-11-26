@@ -1,0 +1,20 @@
+---
+
+- name: Load or create the password for the admin user
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    admin_password: >-
+      {{ lookup(creds.store, network.domain + "/user/admin"
+      + creds.opts.create) }}
+
+- name: Create Administrators group
+  group:
+    name: admin
+    gid: '{{ 2000 + 999 | random }}'
+
+- name: Create the Administration user
+  user:
+    name: admin
+    groups: [ admin, sudo ]
+    password: '{{ admin_password | password_hash("sha512") }}'
+    uid: '{{ 2000 + 999 | random }}'
