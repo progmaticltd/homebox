@@ -5,6 +5,7 @@
   shell: >-
     set -o pipefail ;
     needrestart -b -k | tail -n 1 | cut -f 2 -d ' '
+  changed_when: false
   args:
     executable: /usr/bin/bash
 
