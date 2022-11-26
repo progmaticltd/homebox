@@ -20,7 +20,7 @@
       tags: pdns
     - role: certificates
       tags: cert
-    - role: ldap
+    - role: ldap-openldap
       tags: ldap
     - role: user-setup
       tags: user
