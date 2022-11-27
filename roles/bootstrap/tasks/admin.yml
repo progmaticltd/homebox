@@ -9,18 +9,18 @@
 
 - name: Set uid and gid numbers
   set_fact:
-    uid_number: '{{ admin.uid_number | default(2000+999 | random) }}'
-    gid_number: '{{ admin.gid_number | default(2000+999 | random) }}'
+    uid_number: '{{ system.admin.uid_number | default(2000+999 | random) }}'
+    gid_number: '{{ system.admin.gid_number | default(2000+999 | random) }}'
 
 - name: Create Administrators group
   group:
-    name: '{{ admin.group_name }}'
+    name: '{{ system.admin.group_name }}'
     gid: '{{ gid_number | int }}'
 
 - name: Create the Administration user
   user:
-    name: '{{ admin.name }}'
-    group: '{{ admin.group_name }}'
+    name: '{{ system.admin.name }}'
+    group: '{{ system.admin.group_name }}'
     groups: sudo
     password: '{{ admin_password | password_hash("sha512") }}'
     uid: '{{ uid_number | int }}'

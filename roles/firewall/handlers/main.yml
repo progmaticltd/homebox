@@ -10,3 +10,8 @@
   systemd:
     name: fail2ban
     state: restarted
+
+- name: Restart SSH
+  systemd:
+    name: ssh
+    state: restarted

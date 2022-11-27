@@ -16,7 +16,7 @@
   register: user_password
   no_log: '{{ not system.devel }}'
   set_fact:
-    user_password: '{{ lookup(creds.store, password_path, ", userpass="+userpass) }}'
+    user_password: '{{ lookup(creds.store, password_path, create=true, userpass=userpass) }}'
 
 - name: Create the user account and set a random password for the user
   ldap_entry:

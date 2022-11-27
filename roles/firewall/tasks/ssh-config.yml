@@ -1,7 +1,6 @@
 ---
 
-- name: Remove root password access from SSH
-  when: security.ssh_disable_root_access_with_password
+- name: Do not allow SSH from root with a password
   notify: Restart SSH
   replace:
     path: /etc/ssh/sshd_config
@@ -9,16 +8,21 @@
     replace: 'PermitRootLogin without-password'
     mode: '0600'
 
-- name: Lock root account
+- name: Lock the root account
   user:
     name: root
     password_lock: '{{ security.lock_root_password }}'
 
 - name: Remove users password access from SSH
-  when: security.ssh_disable_users_access_with_password
   notify: Restart SSH
   replace:
     path: /etc/ssh/sshd_config
     regexp: '^#?PasswordAuthentication yes.*'
     replace: 'PasswordAuthentication no'
     mode: '0600'
+
+- name: Custom SSH server setting
+  template:
+    src: ssh/sshd.conf
+    dest: /etc/ssh/sshd_config.d/homebox.conf
+    mode: 0644

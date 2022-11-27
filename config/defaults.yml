@@ -193,6 +193,14 @@ system_default:
   apt:                     # The apt sections to use,
     sections: [ main ]     # contrib and non-free not activated by default
 
+  # Administration settings
+  # the user below is automatically added to the sudo group
+  admin:
+    name: admin            # Administrator’s account name
+    group_name: admin      # Administrator’s group name
+    uid_number: 2000
+    gid_number: 2000
+
 
 ###############################################################################
 # Extra security values
