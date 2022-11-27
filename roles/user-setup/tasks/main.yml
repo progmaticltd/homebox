@@ -5,6 +5,3 @@
 
 - name: Configure pam
   include_tasks: pam.yml
-
-- name: Set-up administrator accounts
-  include_tasks: admins.yml

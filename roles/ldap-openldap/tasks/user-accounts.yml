@@ -5,18 +5,18 @@
   register: xkcd_pass_cmd
   shell: >-
     xkcdpass --min=5 --max=7 --numwords 5
+  changed_when: false
 
-- name: Use random password for the user
-  when: user.password is not defined
+- name: Set the password path in the store
+  set_fact:
+    password_path: '{{ network.domain }}/ldap/{{ user.uid }}'
+    userpass: '{{ xkcd_pass_cmd.stdout }}'
+
+- name: Load saved password from the password store
+  register: user_password
   no_log: '{{ not system.devel }}'
   set_fact:
-    user_password: '{{ xkcd_pass_cmd.stdout }}'
-
-- name: Use specified password
-  when: user.password is defined
-  no_log: '{{ not system.devel }}'
-  set_fact:
-    user_password: '{{ xkcd_pass_cmd.stdout }}'
+    user_password: '{{ lookup(creds.store, password_path, ", userpass="+userpass) }}'
 
 - name: Create the user account and set a random password for the user
   ldap_entry:
@@ -49,12 +49,3 @@
       - inetOrgPerson
       - inetLocalMailRecipient
       - mailboxRelatedObject
-
-- name: Store the password on the system
-  when: user.password is not defined
-  lineinfile:
-    path: /root/user-passwords.txt
-    line: '{{ user.uid }}: {{ user_password }}'
-    regexp: '^{{ user.uid }}:.*'
-    create: true
-    mode: 0600

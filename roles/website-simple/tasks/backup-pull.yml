@@ -4,7 +4,7 @@
   tags: sync
   synchronize:
     mode: pull
-    src: /var/www/default/*
+    src: /var/www/{{ network.domain }}/*
     dest: '{{ backup_directory }}/website-simple/'
     perms: yes
     archive: false

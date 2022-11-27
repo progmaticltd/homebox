@@ -1,0 +1,54 @@
+---
+
+## Main installation playbook
+
+- name: Install Homebox (Medium version)
+  hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../config/system.yml'
+    - '{{ playbook_dir }}/../config/defaults.yml'
+  roles:
+    - role: load-defaults
+      tags: always
+    - role: external-ip-type
+      tags: always
+    - role: bootstrap
+      tags: always
+    - role: firewall
+      tags: firewall
+    - role: dns-pdns
+      tags: dns
+    - role: dns-publish
+      tags: dns
+    - role: certificates
+      tags: cert
+    - role: ldap-openldap
+      tags: ldap
+    - role: user-setup
+      tags: user
+    - role: nginx
+      tags: nginx
+    - role: clamav
+      tags: clamav
+    - role: rspamd
+      tags: rspamd
+    - role: rspamd-web
+      tags: rspamd-web
+    - role: opendkim
+      tags: dkim
+    - role: opendmarc
+      tags: dmarc
+    - role: mta-sts
+      tags: mta-sts
+    - role: postfix
+      tags: postfix
+    - role: dovecot
+      tags: dovecot
+    - role: sogo
+      tags: sogo
+    - role: autodiscover
+      tags: autodiscover
+    - role: autoconfig
+      tags: autoconfig
+    - role: post-install
+      tags: post-install

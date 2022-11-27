@@ -25,7 +25,7 @@
 
 - name: Store the public key in DNS
   when: nsupdate_file.changed
-  shell: >-
-    nsupdate nsupdate.conf
+  shell: nsupdate nsupdate.conf
+  changed_when: true
   args:
     chdir: /etc/opendmarc

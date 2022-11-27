@@ -1,12 +1,12 @@
   # Certificates
-  /etc/letsencrypt/archive/www.{{ network.domain }}/* r,
-  /etc/letsencrypt/live/www.{{ network.domain }}/* r,
-  /etc/letsencrypt/archive/{{ network.domain }}/* r,
-  /etc/letsencrypt/live/{{ network.domain }}/* r,
+  /etc/ssl/certs/{{ network.domain }}* r,
+  /etc/ssl/private/{{ network.domain }}* r,
+  /etc/ssl/certs/www.{{ network.domain }}* r,
+  /etc/ssl/private/www.{{ network.domain }}* r,
 
   # Allow the web server to access the default content
-  /var/www/default/** r,
+  /var/www/{{ network.domain }}/** r,
 
   # Log files
-  /var/log/nginx/website-access.log rwkl,
-  /var/log/nginx/website-error.log rwkl,
+  /var/log/nginx/{{ network.domain }}-access.log rwkl,
+  /var/log/nginx/{{ network.domain }}-error.log rwkl,
