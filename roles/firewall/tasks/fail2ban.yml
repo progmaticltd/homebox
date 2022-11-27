@@ -1,17 +1,13 @@
 ---
 
-- name: Stop fail2ban
-  systemd:
-    name: fail2ban
-    state: stopped
-
 - name: Install fail2ban helper script
   copy:
-    src: fail2ban-helper.sh
-    dest: /usr/local/sbin/fail2ban-helper
+    src: fail2ban-nft-helper.sh
+    dest: /usr/local/sbin/fail2ban-nft-helper
     mode: 0700
 
 - name: Install fail2ban custom actions file
+  notify: Restart fail2ban
   template:
     src: f2b/action-nftables.conf
     dest: /etc/fail2ban/action.d/nftables-multiport.conf
