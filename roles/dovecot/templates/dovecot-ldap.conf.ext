@@ -21,7 +21,7 @@
 
 # LDAP URIs to use. You can use this instead of hosts list. Note that this
 # setting isn't supported by all LDAP libraries.
-uris = ldap://ldap.{{ network.domain }}/
+uris = ldaps://ldap.{{ network.domain }}:636/
 
 # Distinguished Name - the username used to login to the LDAP server.
 # Leave it commented out to bind anonymously (useful with auth_bind=yes).
@@ -41,10 +41,8 @@ dnpass = {{ ldap_ro_password }}
 # dn is still the logged in user. Normally you want to keep this empty.
 #sasl_authz_id =
 
-# Use TLS to connect to the LDAP server is not necessary,
-# as it is on the same server. Putting yes here also seems to require
-# additional permissions for certificates sharing by dovecot.
-tls = yes
+# We use TLS on dedicated port, not STARTTLS, the name of the option is misleading
+tls = no
 
 # TLS options, currently supported only with OpenLDAP:
 #tls_ca_cert_file =

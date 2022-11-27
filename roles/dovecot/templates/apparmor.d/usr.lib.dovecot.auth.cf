@@ -14,12 +14,16 @@
   capability dac_read_search,
   capability setuid,
 
+  # main executable
+  /usr/lib/dovecot/auth mr,
+
+  # configuration file
   /etc/my.cnf r,
   /etc/my.cnf.d/ r,
   /etc/my.cnf.d/*.cnf r,
 
   /etc/dovecot/* r,
-  /usr/lib/dovecot/auth mr,
+  /etc/gss/mech.d/ r,
 
   # kerberos replay cache
   /var/tmp/imap_* rw,

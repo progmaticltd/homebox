@@ -8,11 +8,15 @@ if [ "$action" = "start" ]; then
 
     name=$2
 
+    # Create the fail2ban filter if not existing,
+    # with a priority of -10 to run just before fitlers
+    nft 'add chain inet filter fail2ban { type filter hook input priority -10 ; }'
+
     nft add set inet filter "f2b-${name}-ipv4" '{ type ipv4_addr ; }'
     nft add set inet filter "f2b-${name}-ipv6" '{ type ipv6_addr ; }'
 
-    nft inet filter ban ip saddr "@f2b-${name}-ipv4" drop
-    nft inet filter ban ip6 saddr "@f2b-${name}-ipv6" drop
+    nft inet filter fail2ban ip saddr "@f2b-${name}-ipv4" reject
+    nft inet filter fail2ban ip6 saddr "@f2b-${name}-ipv6" reject
 
     exit
 fi
@@ -26,9 +30,9 @@ if [ "$action" = "stop" ]; then
     ipv6_handle=$(nft -a list ruleset | sed -En "s/.*@f2b-${name}-ipv6.*handle ([0-9]+)/\\1/p")
 
     if [ "$ipv4_handle" != "" ]; then
-        nft delete rule inet filter ban handle "$ipv4_handle"
+        nft delete rule inet filter fail2ban handle "$ipv4_handle"
     elif [ "$ipv6_handle" != "" ]; then
-        nft delete rule inet filter ban handle "$ipv6_handle"
+        nft delete rule inet filter fail2ban handle "$ipv6_handle"
     else
         echo "$0: rule handle not found for '$name'."
     fi
