@@ -17,7 +17,9 @@
     - role: firewall
       tags: firewall
     - role: dns-pdns
-      tags: pdns
+      tags: dns
+    - role: dns-publish
+      tags: dns
     - role: certificates
       tags: cert
     - role: ldap-openldap

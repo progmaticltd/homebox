@@ -18,7 +18,7 @@
       tags: firewall
     - role: dns-pdns
       tags: dns
-    - role: dnssec-publish
+    - role: dns-publish
       tags: dns
     - role: certificates
       tags: cert
