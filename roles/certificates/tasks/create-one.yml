@@ -48,3 +48,9 @@
     {{ certificate.pem | default(false) | ternary("--pem", " ") }}
     run
   changed_when: true
+
+- name: Create the hook directory
+  file:
+    path: /etc/lego/hooks/{{ fqdn }}/
+    state: directory
+    mode: 0700

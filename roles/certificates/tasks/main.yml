@@ -19,3 +19,6 @@
   loop: '{{ certificates | selectattr("create", "equalto", true) }}'
   loop_control:
     loop_var: certificate
+
+- name: Run the common post installation tasks
+  include_tasks: post-install-common.yml

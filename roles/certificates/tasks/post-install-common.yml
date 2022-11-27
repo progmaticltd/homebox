@@ -1,0 +1,13 @@
+---
+
+- name: Create the certificate renewal configuration file
+  template:
+    src: renew.conf
+    dest: /etc/lego/renew.conf
+    mode: 0400
+
+- name: Copy the certificate renewal script
+  copy:
+    src: cert-renew.sh
+    dest: /etc/cron.weekly/cert-renew
+    mode: 0700
