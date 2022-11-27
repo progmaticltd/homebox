@@ -15,8 +15,8 @@ if [ "$action" = "start" ]; then
     nft add set inet filter "f2b-${name}-ipv4" '{ type ipv4_addr ; }'
     nft add set inet filter "f2b-${name}-ipv6" '{ type ipv6_addr ; }'
 
-    nft inet filter fail2ban ip saddr "@f2b-${name}-ipv4" reject
-    nft inet filter fail2ban ip6 saddr "@f2b-${name}-ipv6" reject
+    nft inet filter fail2ban ip saddr "@f2b-${name}-ipv4" counter reject
+    nft inet filter fail2ban ip6 saddr "@f2b-${name}-ipv6" counter reject
 
     exit
 fi
