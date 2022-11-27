@@ -1,0 +1,16 @@
+---
+
+- name: Remove ufw directory
+  file:
+    path: /etc/ufw
+    state: absent
+
+- name: Ensure the nftables service is enabled
+  systemd:
+    name: nftables
+    daemon_reload: true
+    enabled: true
+    masked: false
+
+- name: Start the firewall now if needed
+  meta: flush_handlers

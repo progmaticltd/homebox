@@ -9,19 +9,32 @@
 
 - name: List current DNSSEC
   delegate_to: localhost
-  register: dnskeys
+  register: current_dnskeys
   uri:
     url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/dnskeys
     headers:
       authorization: 'Apikey {{ api_key }}'
 
-- name: Store the keys
+- name: Show the current DNS keys
+  debug:
+    verbosity: 2
+    var: current_dnskeys
+
+- name: Filter the keys to publish
   set_fact:
     keys_list: '{{ keys_list | selectattr("type", "in", ["ksk", "zsk"]) | list }}'
 
+- name: Store the keys in the filesystem
+  register: published_keys
+  copy:
+    content: '{{ keys_list | to_nice_yaml }}'
+    dest: /etc/powerdns/keys.yml
+
 - name: Replace all the keys
-  when: keys_list | length > 0
   delegate_to: localhost
+  when:
+    - keys_list | length > 0
+    - published_keys.changed
   uri:
     url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/dnskeys
     method: PUT

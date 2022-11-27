@@ -1,6 +1,20 @@
 ---
 
+- name: Remove ufw if installed
+  register: ufw_pkg
+  apt:
+    name: ufw
+    state: absent
+    purge: true
+    autoremove: true
+
 - name: Install the required packages
+  register: nftables_pkg
   apt:
     name: '{{ firewall_packages }}'
     state: present
+
+- name: Flush all rules
+  when: ufw_pkg.changed
+  shell: nft flush ruleset
+  changed_when: true

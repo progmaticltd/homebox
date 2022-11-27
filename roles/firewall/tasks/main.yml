@@ -1,8 +1,5 @@
 ---
 
-- name: Remove ufw and cleanup
-  include_tasks: cleanup.yml
-
 - name: Load network information
   include_tasks: facts.yml
 
@@ -24,12 +21,5 @@
 - name: Install and configure fail2ban
   include_tasks: fail2ban.yml
 
-- name: Ensure the nftables service is enabled
-  systemd:
-    name: nftables
-    daemon_reload: true
-    enabled: true
-    masked: false
-
-- name: Start the firewall now if needed
-  meta: flush_handlers
+- name: Start the firewall
+  include_tasks: start.yml
