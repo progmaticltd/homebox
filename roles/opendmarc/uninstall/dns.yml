@@ -2,6 +2,6 @@
 
 - name: Removes DNS record
   shell: >-
-    pdnsutil delete-rrset
-    {{ network.domain }} _dmarc TXT
+    pdnsutil delete-rrset {{ network.domain }}
+    _dmarc TXT
   changed_when: true

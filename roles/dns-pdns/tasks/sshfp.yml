@@ -1,0 +1,29 @@
+---
+
+- name: Get SSHFP records
+  register: sshfp_records_cmd
+  shell: >-
+    ssh-keyscan -D
+    {{ network.domain }}
+    2>/dev/null
+  changed_when: false
+
+- name: Store the SSHFP records
+  register: sshfp_records_file
+  copy:
+    content: '{{ sshfp_records_cmd.stdout }}'
+    dest: /etc/powerdns/sshfp.txt
+    mode: 0400
+
+- name: Delete the current SSHFP records
+  when: sshfp_records_file.changed
+  shell: >-
+    pdnsutil delete-rrset {{ network.domain }}
+    '@' SSHFP
+  changed_when: true
+
+- name: Create all SSHFP records
+  include_tasks: sshfp-record.yml
+  loop: '{{ sshfp_records_cmd.stdout_lines }}'
+  loop_control:
+    loop_var: sshfp_record

@@ -31,7 +31,7 @@
 - name: Create a generic DNS record if not existing
   when:
     - create_record
-    - record.type | upper not in [ 'TXT', 'SRV', 'MX' ]
+    - record.type | upper not in [ 'TXT', 'SRV', 'MX', 'SSHFP' ]
   shell: >-
     pdnsutil add-record {{ network.domain }}
     {{ record.name }} {{ record.type | upper }}
@@ -69,5 +69,17 @@
     pdnsutil add-record {{ network.domain }}
     {{ record.name }} {{ record.type | upper }}
     "{{ record.priority | default(0) }}
+     {{ record.value }}"
+  changed_when: true
+
+- name: Create the SSHFP DNS record if not existing
+  when:
+    - create_record
+    - record.type | upper == 'SSHFP'
+  shell: >-
+    pdnsutil add-record {{ network.domain }}
+    {{ record.name }} {{ record.type | upper }}
+    "{{ record.algo }}
+     {{ record.hash }}
      {{ record.value }}"
   changed_when: true

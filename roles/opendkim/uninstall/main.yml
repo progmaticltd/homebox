@@ -20,6 +20,6 @@
 
 - name: Removes DNS record
   shell: >-
-    pdnsutil delete-rrset
-    {{ network.domain }} main._domainkey TXT
+    pdnsutil delete-rrset {{ network.domain }}
+    main._domainkey TXT
   changed_when: true

@@ -12,7 +12,7 @@
 
 - name: Remove the DNS record if existing
   shell: >-
-    pdnsutil delete-rrset ldap.{{ network.domain }}
+    pdnsutil delete-rrset {{ network.domain }}
     ldap CNAME
   changed_when: true
   failed_when: false

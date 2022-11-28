@@ -9,5 +9,8 @@
 - name: Initialise the database with some content
   include_tasks: init-db.yml
 
+- name: Create SSHFP records
+  include_tasks: sshfp.yml
+
 - name: Set-up DNSSEC
   include_tasks: dnssec.yml
