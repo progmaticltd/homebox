@@ -21,7 +21,7 @@
     - backup_ip is defined
   shell: >-
     pdnsutil add-record {{ network.domain }}
-    backup {{ backup_ip_type }} {{ backup_ip }}
+    main {{ backup_ip_type }} {{ backup_ip }}
   changed_when: true
 
 - name: Add the main external IP record
@@ -53,7 +53,7 @@
     - backup_ip is defined
   shell: >-
     pdnsutil add-record {{ network.domain }}
-    @ NS backup.{{ network.domain }}
+    @ NS main.{{ network.domain }}
   changed_when: true
 
 # Wildcard record: redirect everything to the server
