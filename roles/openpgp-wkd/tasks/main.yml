@@ -1,16 +1,13 @@
 ---
 
-# - name: Register the keys
-#   include_tasks: register.yml
-
-- name: Publish the GPG public keys
-  include_tasks: publish-all.yml
-
 - name: Copy the certificates
   include_tasks: certificates.yml
 
 - name: Configure the web server
   include_tasks: nginx.yml
+
+- name: Publish the GPG public keys
+  include_tasks: publish-all.yml
 
 - name: Configure AppArmor
   include_tasks: apparmor.yml
