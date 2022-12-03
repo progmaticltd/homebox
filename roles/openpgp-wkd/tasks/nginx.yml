@@ -1,0 +1,20 @@
+---
+
+- name: Create the nginx template
+  notify: Restart nginx
+  vars:
+    csp: '{{ csp_default }}'
+    fp: '{{ fp_default }}'
+  template:
+    src: nginx.conf
+    dest: '/etc/nginx/sites-available/openpgpkey.{{ network.domain }}.conf'
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Activate openpgpkey web site
+  notify: Restart nginx
+  file:
+    src: '/etc/nginx/sites-available/openpgpkey.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/openpgpkey.{{ network.domain }}.conf'
+    state: link

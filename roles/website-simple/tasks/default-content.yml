@@ -3,7 +3,7 @@
 - name: Check if you have already uploaded a web page named 'index.html'
   register: index_page
   stat:
-    path: /var/www/{{ network.domain }}/index.html
+    path: /var/www/www.{{ network.domain }}/index.html
 
 - name: Create the website site root folder if needed
   when: not index_page.stat.exists
@@ -15,9 +15,9 @@
     group: www-data
     mode: '0750'
   loop:
-    - /var/www/{{ network.domain }}
-    - /var/www/{{ network.domain }}/css
-    - /var/www/{{ network.domain }}/js
+    - /var/www/www.{{ network.domain }}
+    - /var/www/www.{{ network.domain }}/css
+    - /var/www/www.{{ network.domain }}/js
   loop_control:
     loop_var: path
 
@@ -41,11 +41,11 @@
     mode: '0640'
   loop:
     - name: index-demo.html
-      dest: /var/www/{{ network.domain }}/index-demo.html
+      dest: /var/www/www.{{ network.domain }}/index-demo.html
     - name: demo.css
-      dest: /var/www/{{ network.domain }}/css/demo.css
+      dest: /var/www/www.{{ network.domain }}/css/demo.css
     - name: demo.js
-      dest: /var/www/{{ network.domain }}/js/demo.js
+      dest: /var/www/www.{{ network.domain }}/js/demo.js
   loop_control:
     loop_var: path
 
@@ -53,7 +53,7 @@
   when: index_page.stat.exists
   tags: website
   file:
-    path: '/var/www/{{ network.domain }}/{{ path }}'
+    path: '/var/www/www.{{ network.domain }}/{{ path }}'
     state: absent
   loop:
       - index-demo.html

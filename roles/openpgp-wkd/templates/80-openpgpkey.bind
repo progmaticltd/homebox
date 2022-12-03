@@ -1,2 +1,0 @@
-;; OpenPGP Web Key Directory advanced method sub-domain
-openpgpkey  IN       CNAME      main

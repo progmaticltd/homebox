@@ -3,8 +3,14 @@
 - name: Install the base required packages
   include_tasks: packages.yml
 
+- name: Copy the default certificates
+  include_tasks: certificates.yml
+
 - name: Configure the package
   include_tasks: config.yml
+
+- name: Copy the default content site
+  include_tasks: default-content.yml
 
 - name: Create the default DNS entries
   include_tasks: dns.yml

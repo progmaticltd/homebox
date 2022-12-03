@@ -17,7 +17,7 @@
   tags: sync
   synchronize:
     src: '{{ backup_directory }}/website-simple/'
-    dest: /var/www/{{ network.domain }}
+    dest: /var/www/www.{{ network.domain }}
     owner: no
     group: no
     perms: yes

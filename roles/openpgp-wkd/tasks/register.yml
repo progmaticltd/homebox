@@ -1,0 +1,26 @@
+---
+
+# - name: Register PGP public keys details
+#   command:
+#     cmd: gpg --no-keyring --no-options --show-keys --with-wkd-hash
+#     stdin: '{{ item.ascii_armored_public_key }}'
+#   register: pgp_details
+#   loop: "{{ pgp | list }}"
+#   loop_control:
+#     label: "{{ item.uid }}"
+
+# - name: Register usable PGP public keys information
+#   set_fact:
+#     pgp_public_keys: >-
+#       {{ pgp_public_keys
+#         | default([])
+#         | union([
+#           {
+#             'uid': item.item.uid,
+#             'wkd_hash': item.stdout | regex_search('(?<!<)([0-9a-z]{32})(?=@)',
+#                                                     Multiline=True),
+#             'ascii_armored_public_key': item.item.ascii_armored_public_key
+#           }
+#         ])
+#       }}
+#   loop: '{{ pgp_details.results | select("succeeded") | list }}'
