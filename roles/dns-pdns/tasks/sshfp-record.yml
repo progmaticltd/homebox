@@ -15,7 +15,7 @@
 - name: Create the record
   vars:
     dns_records:
-      - name: '@'
+      - name: '{{ name }}'
         type: SSHFP
         algo: '{{ sshfp_algo }}'
         hash: '{{ sshfp_hash }}'

@@ -3,8 +3,8 @@
 - name: Get SSHFP records
   register: sshfp_records_cmd
   shell: >-
-    ssh-keyscan -D
-    {{ network.domain }}
+    ssh-keygen -r
+    main.{{ network.domain }}
     2>/dev/null
   changed_when: false
 
@@ -22,7 +22,17 @@
     '@' SSHFP
   changed_when: true
 
-- name: Create all SSHFP records
+- name: Create the root SSHFP records
+  vars:
+    name: '@'
+  include_tasks: sshfp-record.yml
+  loop: '{{ sshfp_records_cmd.stdout_lines }}'
+  loop_control:
+    loop_var: sshfp_record
+
+- name: Create "main" SSHFP records
+  vars:
+    name: main
   include_tasks: sshfp-record.yml
   loop: '{{ sshfp_records_cmd.stdout_lines }}'
   loop_control:
