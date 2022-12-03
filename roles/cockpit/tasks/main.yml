@@ -3,9 +3,6 @@
 - name: Install the certificates
   include_tasks: certs.yml
 
-- name: Create the DNS record
-  include_tasks: dns.yml
-
 - name: Install and configure cockpit
   include_tasks: package.yml
 
