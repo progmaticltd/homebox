@@ -1,0 +1,13 @@
+#!/usr/sbin/nft -f
+
+table inet filter {
+
+    chain input {
+
+        # Allow ssh
+        tcp dport ssh ct state new counter accept \
+        comment "New ssh connections"
+
+    }
+
+}

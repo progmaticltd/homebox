@@ -13,6 +13,11 @@ table inet filter {
         comment "DNS queries"
 
         # Authorise web traffic from the proxy only
+		meta skuid root \
+        tcp dport whois ct state new counter accept \
+        comment "whois traffic from root"
+
+        # Authorise web traffic from the proxy only
 		meta skuid tinyproxy \
         tcp dport { http, https } ct state new counter accept \
         comment "http(s) traffic"

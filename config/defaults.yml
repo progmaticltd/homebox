@@ -213,9 +213,14 @@ security_default:
   ssh_disable_users_access_with_password: false # Force SSH authentication to use public / private key for all users
   alerts_email:
     - 'admin@{{ network.domain }}'
+
+  # Install fail2ban or not
+  fail2ban: true
+
   # various options when luks is installed
   luks:
     yubikey: false
+
   # The size of the Diffie-Hellman parameters to use for DHE ciphers.
   # Predifined values from the RFC7919 will be used wherever possible.
   # Possible values are: 2048, 4096.

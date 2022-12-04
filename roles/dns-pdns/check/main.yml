@@ -3,6 +3,7 @@
 - name: Check if PowerDNS is running
   shell:
     systemctl is-active pdns
+  changed_when: false
 
 - name: Check DNS propagation
   register: external_ip_check

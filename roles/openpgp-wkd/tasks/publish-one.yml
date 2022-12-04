@@ -20,4 +20,4 @@
 - name: Loop over wkd hashes for the direct method
   copy:
     content: '{{ key_info.public_key }}'
-    dest: '{{ well_known_dir }}/hu/{{ key_info.hash }}'
+    dest: '{{ well_known_dir }}/hu/{{ key_info.uid | zbase32encode }}'

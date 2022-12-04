@@ -20,12 +20,21 @@
 - name: Copy the main rules files
   notify: Restart nftables
   template:
-    src: rules/{{ name }}.nft
-    dest: /etc/nftables/{{ name }}.nft
+    src: rules/{{ file.name }}.nft
+    dest: /etc/nftables/{{ file.name }}.nft
     mode: 0600
-  loop: '{{ rule_files }}'
+  loop: '{{ rule_files | selectattr("include", "equalto", true) | list }}'
   loop_control:
-    loop_var: name
+    loop_var: file
+
+- name: Remove the excluded files
+  notify: Restart nftables
+  file:
+    path: /etc/nftables/{{ file.name }}.nft
+    state: absent
+  loop: '{{ rule_files | selectattr("include", "equalto", false) | list }}'
+  loop_control:
+    loop_var: file
 
 - name: Copy the nftables parent configuration file
   notify: Restart nftables

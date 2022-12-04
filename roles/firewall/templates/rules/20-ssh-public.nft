@@ -5,17 +5,31 @@
 
 table inet filter {
 
+    set trusted_ipv4 {
+        type ipv4_addr
+		elements = {
+			{{ public_ip4 }}
+		}
+    }
+
+    set trusted_ipv6 {
+        type ipv6_addr
+{% if public_ip6 != public_ip4 %}
+		elements = {
+			{{ public_ip6 }}
+		}
+{% endif %}
+    }
+
     chain input {
 
-        ip saddr {{ public_ip4 }} \
+        ip saddr @trusted_ipv4 \
         tcp dport ssh ct state new counter accept \
-        comment "Trusted ssh connections from installer IPv4"
+        comment "Trusted IPv4 ssh connections"
 
-{% if public_ip6 != public_ip4 %}
-        ip6 saddr {{ public_ip6 }} \
+        ip6 saddr @trusted_ipv6 \
         tcp dport ssh ct state new counter accept \
-        comment "Trusted ssh connections from installer IPv6"
-{% endif %}
+        comment "Trusted IPv6 ssh connections"
     }
 
 }
