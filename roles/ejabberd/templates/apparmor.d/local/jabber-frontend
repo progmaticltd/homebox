@@ -5,5 +5,6 @@
   /var/www/ejabberd/files/** r,
 
   # Certificate for https frontend
-  /etc/letsencrypt/archive/xmpp.{{ network.domain }}/* r,
-  /etc/letsencrypt/live/xmpp.{{ network.domain }}/* r,
+  /etc/ssl/certs/xmpp.{{ network.domain }}.crt r,
+  /etc/ssl/certs/xmpp.{{ network.domain }}.issuer.crt r,
+  /etc/ssl/private/xmpp.{{ network.domain }}.key r,

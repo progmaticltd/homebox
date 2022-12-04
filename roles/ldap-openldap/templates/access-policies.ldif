@@ -1,7 +1,14 @@
-# Basic access to parameters
-olcaccess: to dn.children="{{ ldap.users.dn }}"
+dn: olcDatabase={1}mdb,cn=config
+changetype: modify
+replace: olcAccess
+olcAccess: to dn.children="{{ ldap.users.dn }}"
     by dn="cn=readonly account,{{ ldap.users.dn }}" read
     by dn="cn=manager account,{{ ldap.users.dn }}" write
     by anonymous auth
     by self write
     by * none
+olcAccess: to attrs=shadowLastChange
+    by self write
+    by dn="cn=manager account,{{ ldap.users.dn }}" write
+    by * read
+olcAccess: to * by * read

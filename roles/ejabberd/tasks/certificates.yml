@@ -13,6 +13,19 @@
   loop_control:
     loop_var: cert_name
 
+- name: Copy the certificate chains in the debian standard directory
+  notify: Restart ejabberd
+  copy:
+    src: /etc/lego/certificates/{{ cert_name }}.{{ network.domain }}.issuer.crt
+    dest: /etc/ssl/certs/{{ cert_name }}.{{ network.domain }}.issuer.crt
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: yes
+  loop: '{{ std_cert_names }}'
+  loop_control:
+    loop_var: cert_name
+
 - name: Copy the default certificate in the debian standard directory
   notify: Restart ejabberd
   copy:

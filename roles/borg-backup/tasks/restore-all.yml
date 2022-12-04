@@ -23,10 +23,3 @@
   copy:
     src: sogo-restore.sh
     dest: /usr/local/sbin/sogo-restore.sh
-
-- name: Install a dovecot index update cron job
-  cron:
-    cron_file: dovecot-indexes
-    special_time: daily
-    job: "doveadm -v index -q -A '*'"
-    user: root

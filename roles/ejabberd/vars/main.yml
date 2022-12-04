@@ -26,14 +26,27 @@ dns_records_main:
     create: true
   - name: _xmpp-client._tcp
     type: SRV
+    priority: 5
     port: 5222
     value: 'xmpp.{{ network.domain }}'
     create: true
   - name: _xmpps-server._tcp
     type: SRV
+    prioriy: 5
     port: 5269
     value: 'xmpp.{{ network.domain }}'
-    prioriy: 10
+    create: true
+  - name: _turn._tcp
+    type: SRV
+    prioriy: 5
+    port: 3478
+    value: '{{ network.domain }}'
+    create: true
+  - name: _stun._tcp
+    type: SRV
+    prioriy: 5
+    port: 3478
+    value: '{{ network.domain }}'
     create: true
 
 dns_records_backup:

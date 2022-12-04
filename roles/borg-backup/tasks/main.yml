@@ -16,9 +16,9 @@
     path: '{{ path }}'
     state: directory
     mode: '0700'
-  with_items:
-      - /tmp/backup-keys-import
-      - /tmp/backup-keys-export
+  loop:
+    - /tmp/backup-keys-import
+    - /tmp/backup-keys-export
   loop_control:
     loop_var: path
 
@@ -30,7 +30,7 @@
     option: '{{ option.name }}'
     value: '{{ option.value }}'
     mode: '0600'
-  with_items:
+  loop:
     - name: from
       value: '{{ backup.alerts.from }}'
     - name: recipient
@@ -42,7 +42,7 @@
 
 - name: Configure each protocol
   include_tasks: 'install-protocol-{{ location.url | urlsplit("scheme") }}.yml'
-  with_items:
+  loop:
     - '{{ backup.locations | default([]) }}'
   loop_control:
     loop_var: location
@@ -53,7 +53,7 @@
     src: cron-backup-script.sh
     dest: '/etc/cron.{{ location.frequency | default("daily") }}/backup-{{ location.name }}'
     mode: '0700'
-  with_items:
+  loop:
     - '{{ backup.locations | default([]) }}'
   loop_control:
     loop_var: location
@@ -65,7 +65,7 @@
     src: cron-check-script.sh
     dest: '/etc/cron.{{ location.check_frequency | default("weekly") }}/backup-check-{{ location.name }}'
     mode: '0700'
-  with_items:
+  loop:
     - '{{ backup.locations | default([]) }}'
   loop_control:
     loop_var: location
@@ -97,7 +97,7 @@
   file:
     path: '{{ path }}'
     state: directory
-  with_items:
+  loop:
     -  /tmp/backup-keys-import
     -  /tmp/backup-keys-export
   loop_control:
@@ -136,7 +136,7 @@
     --config {{ location.name }}
     --import-key-path /tmp/backup-keys-import/{{ location.name }}.key
     --export-key-path /tmp/backup-keys-export/{{ location.name }}.key
-  with_items:
+  loop:
     - '{{ backup.locations | selectattr("restore", "equalto", false) | list }}'
   loop_control:
     loop_var: location
@@ -167,7 +167,7 @@
   file:
     path: '{{ path }}'
     state: absent
-  with_items:
+  loop:
     -  /tmp/backup-keys-import
     -  /tmp/backup-keys-export
   loop_control:
