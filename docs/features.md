@@ -83,13 +83,7 @@ Only the security updates are installed, new packages versions still need to be 
 
 ## Monitoring
 
-The installer can deploy a complete monitoring solution, [Zabbix](https://zabbix.com).
-
-- You can set up email or XMPP alerts, on various events.
-- You can add other servers / machines to your monitoring server.
-- You can set up SMS alerts if, for instance, your internet connection goes down.
-
-By default, the guest account is deleted, and a strong password is generated.
+Work in progress to use Prometheus and XMPP alerts.
 
 ## High profiles for SSL / HTTPS
 
@@ -223,44 +217,11 @@ synchronised when you connect with any client, and will appear in your account.
 
 Because the folders’ hierarchy will be copied as well, it is possible to migrate from another account very easily.
 
-## Roundcube Webmail
-
-There are two webmail available. RoundCube, and SOGo.
-
-RoundCube, comes with the following plugins / features activated by default:
-
-- Archive
-- Context Menu
-- Emoticons
-- Sieve Rules management, with vacation, automatic answers, etc…
-- Mark as Junk
-- New mail desktop notification
-- Password modification
-- IMAP Subscriptions management
-- Hotkeys support (Ctrl+Enter to send an email)
-- Log the real client IP address to the mail server
-
-When the master user functionality has been activated, the impersonate plugin is also installed, allowing you to inspect
-any user's emails directly from the webmail.
-
-More plugins can be activated very easily, just by specifying their name in the list of plugins.
-
 ## Automatic copy to the sent folder
 
 You do not need to configure your mail client to copy emails to the sent folder, this is done automatically for
 you. This is a lot of time saved, especially when sending big emails with attachments: You don't need to upload an email
 twice.
-
-## Email access logging
-
-Each access to the email server is logged in real time, and contains the following information:
-
-- Source IP address
-- Country
-- Channel (RoundCube, SOGo or IMAP)
-- etc…
-
-A monthly report is sent to each user, the first of each month, with a summary of access and some statistics.
 
 ## Privacy features
 
@@ -320,33 +281,6 @@ Some clients: [XMPP client software](https://xmpp.org/software/clients.html).
 
 # Other features
 
-## Bittorrent download station
-
-You can install the transmission bittorrent daemon, accessible over https on a dedicated domain.
-
-- The web interface and the RPC servers are protected with the LDAP credentials, unless you are at home.
-- Downloaded files can be accessed directly from your web browser, still using the LDAP credentials if you are not at
-  home.
-- The daemon runs in a proper AppArmor profile.
-- Easy to use form to search downloaded files in your web browser.
-- Automatic firewall configuration to allow bittorrent both input and output.
-- Blacklist support and automatic update.
-
-## Privoxy server
-
-The platform configures Privoxy with an automatic import of adblock rules from easylist, updated every day. The
-following rules are activated by default:
-
-- EasyList
-- EasyPrivacy
-- Fanboy's Annoyance List
-- Fanboy's Social Blocking List
-
-## Tor server
-
-The platform configures Tor as well, and allows you to override any option. You can also chain privoxy and tor
-together.
-
 ## Multiple IP scheme
 
 Homebox can be configured with two static IP addresses, with a mix of IPv4 and IPv6. This is useful if you are using a
@@ -357,22 +291,13 @@ servers. Digital Ocean does not allow SMTP or Submission on IPv6.
 
 ## DNSSEC Support
 
-If you need a higher level of security and a protection against DNS cache poisoning, you can activate the DNSSEC
-extensions. Once the playbook has been run, an email is sent to postmaster, with the ZSK (Zone Signing Key) and KSK (Key
-Signing Key) attached.
+DNSSEC is activated by default. The public keys are (KSK and ZSK) are automatically published on Gandi. Other providers
+can be added easily.
 
-The server installed is bind9. When activated, the server also publishes
-[SSHFP](https://en.wikipedia.org/wiki/SSHFP_record) records for extra security.
+Otherwise, an email is sent to postmaster, with the ZSK (Zone Signing Key) and KSK (Key Signing Key) attached.
 
-## Single packet port knocking
-
-SPA is essentially next generation port knocking. It is using encryption and HMAC keys, to open your firewall for an SSH
-connection.
-
-- Supports HMAC authenticated encryption for both Rijndael and GnuPG.
-- Replay attacks are detected and thwarted by SHA-256 digest comparison of valid incoming SPA packets.
-
-More details explained on the [Comprehensive Guide](spa-fwknop).
+The server installed is PowerDNS, and also publishes [SSHFP](https://en.wikipedia.org/wiki/SSHFP_record) records for
+extra security.
 
 ## Certificates management
 
@@ -383,15 +308,6 @@ workstation as well, and reused if you are deploying your server again.
 
 The system can create a skeleton for a static web site for you, with two https certificates as well. The certificates
 created, for instance for the domain example.com, will be www.example.com and example.com.
-
-You can also use [Hugo](https://gohugo.io/) and its [numerous themes](https://themes.gohugo.io/) to create your
-site. The nginx server will be configured as a reverse proxy for your site, using a systemd Hugo service.
-
-The hugo web site content need to be placed in the backup folder:
-
-`backup/\<domain-name\>/website-hugo/`
-
-The site will be synchronised on the server, and served by Hugo systemd daemon, protected by AppArmor.
 
 ## Modular components
 

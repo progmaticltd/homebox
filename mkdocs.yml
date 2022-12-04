@@ -18,13 +18,13 @@ pages:
   - Debian OS installation: preseed.md
   - Homebox Installation: installation.md
   - Email configuration: email-configuration.md
+  - Web keys directory: web-keys-directory.md
   - Sogo Groupware: groupware-sogo.md
   - Antispam configuration: antispam-rspamd.md
   - Jabber configuration: jabber-configuration.md
   - Static web site: website-static.md
   - Firewall configuration: firewall-configuration.md
   - Security configuration: security-configuration.md
-  - DNS Server configuration: bind-configuration.md
   - External accounts: external-accounts.md
   - Backup your home folders: backup-home.md
   - Backup restoration: backup-restore.md

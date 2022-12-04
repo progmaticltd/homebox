@@ -44,7 +44,7 @@ Cons:
 
 - You may not have control on the kernel installed. This is less secure than Homebox, which is by default configured to
   run on AppArmor.
-- You will not be able to use Full Disk Encryption. Although there are some security measures in places, it is still
+- You may not be able to use Full Disk Encryption. Although there are some security measures in places, it is still
   perfectly possible to extract data from your disk without your knowledge or consent.
 - You will not have the choice on when and which security updates are applied. Most hosting providers have specific time
   windows to update the kernel images they use, which may not be as soon as you need, or even appropriate to you.

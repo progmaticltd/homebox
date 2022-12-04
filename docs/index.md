@@ -26,20 +26,18 @@ This project is for you if:
 
 ## Main components
 
-- Operating System: Debian Stretch (stable)
+- Operating System: Debian Bullseye
 - Authentication: OpenLDAP
+- DNS: PowerDNS
+- Firewall: nftables
 - Mail transfer agent: Postfix
 - Mail delivery agent: Dovecot
-- Monitoring: Zabbix
 - Antispam: RSpamd
 - Antivirus: ClamAV
-- Webmail: RoundCube
-- Groupware: Sogo
+- Groupware: SOGo
 - Jabber: ejabberd
-- DNS: bind9
-- Bittorrent station: transmission
-- Proxy: Privoxy / Tor
 - Backup: Borgbackup
+- Remote administration: Cockpit
 
 ## Other projects to mention
 
