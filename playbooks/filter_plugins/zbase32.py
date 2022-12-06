@@ -2,12 +2,12 @@
 # See https://github.com/artisanofcode/python-zbase32 for a full implementation.
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-
 from __future__ import (absolute_import, division, print_function)
+
 __metaclass__ = type
 
 DOCUMENTATION = r'''
-  name: zbase32
+  name: zbase32encode
   version_added: "1.0"
   short_description: Encode a string using z-base32 scheme
   description:
@@ -21,7 +21,7 @@ DOCUMENTATION = r'''
 '''
 
 EXAMPLES = r'''
-    parts: '{{ "lovelace" | zbase32 }}'
+    parts: '{{ "lovelace" | zbase32encode }}'
     # => "ptzzc3mccftsk"
 '''
 
@@ -36,16 +36,30 @@ from ansible.errors import AnsibleFilterError
 from ansible.utils import helpers
 
 
-def zbase32(value):
+def _chunks(buffer: bytearray, size: int) -> collections.abc.Generator[bytearray, None, None]:
+    """
+    chunks.
+    :param buffer: the buffer to chunk
+    :param size: the size of each chunk
+    :return: an iterable of chunks
+    """
+    for i in range(0, len(buffer), size):
+        yield buffer[i : i + size]
+
+
+def zbase32encode(data):
 
     _ALPHABET = b"ybndrfg8ejkmcpqxot1uwisza345h769"
     _INVERSE_ALPHABET = {key: value for value, key in enumerate(_ALPHABET)}
+
+    data = str(data)
 
     assert isinstance(data, bytes)
 
     result = bytearray()
 
     for chunk in _chunks(bytearray(data), 5):
+
         buffer = bytearray(5)
 
         for index, byte in enumerate(chunk):
@@ -70,5 +84,5 @@ class FilterModule(object):
 
     def filters(self):
         return {
-            'zbase32encode': zbase32
+            'zbase32encode': zbase32encode
         }
