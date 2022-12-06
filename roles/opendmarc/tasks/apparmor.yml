@@ -2,7 +2,7 @@
 
 - name: Install opendmarc AppArmor profile
   template:
-    src: apparmor.d/usr.sbin.opendmarc.cf
+    src: apparmor.conf
     dest: /etc/apparmor.d/usr.sbin.opendmarc
     force: no
 

@@ -1,8 +1,7 @@
 ---
 
 - name: Activate AppArmor profiles
-  tags: security, apparmor
-  command: 'aa-enforce usr.sbin.nginx'
+  command: aa-enforce usr.sbin.nginx
 
 - name: Restart AppArmor service
   systemd:

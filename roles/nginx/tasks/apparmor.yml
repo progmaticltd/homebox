@@ -8,7 +8,7 @@
   template:
     src: apparmor-base.conf
     dest: /etc/apparmor.d/usr.sbin.nginx
-    force: no
+    force: yes
 
 - name: Install web site AppArmor profile
   notify:
