@@ -15,15 +15,12 @@ object list along with the user’s _uid_.
 ```
 pgp_public_keys:
   - uid: andre
-    hash: z1cybqqife1c333kqxqifnz64w9tb3xh
     public_key: |-
       -----BEGIN PGP PUBLIC KEY BLOCK-----
 
       […]
       -----END PGP PUBLIC KEY BLOCK-----
 ```
-
-At this time, the hash has to be computed locally, using Python zbase32. This will be solved in a next version.
 
 This `pgp_public_keys` list is separate from the `users` list to be able to put it at the end of the configuration file,
 the PGP public keys being a bit larger than SSH public keys.

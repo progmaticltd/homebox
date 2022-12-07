@@ -18,6 +18,15 @@
     access_time: preserve
 
 - name: Loop over wkd hashes for the direct method
+  set_fact:
+    encoded_uid: '{{ key_info.uid | wkdhash }}'
+
+- name: Loop over wkd hashes for the direct method
   copy:
     content: '{{ key_info.public_key }}'
-    dest: '{{ well_known_dir }}/hu/{{ key_info.uid | zbase32encode }}'
+    dest: '{{ well_known_dir }}/hu/{{ encoded_uid }}'
+
+- name: Display encoded value
+  debug:
+    verbosity: 2
+    msg: 'Encoded "{{ key_info.uid }}" to "{{ encoded_uid }}" using wkdhash.'

@@ -1,17 +1,24 @@
-# z-base32 encoder ansibleplugin
-# See https://github.com/artisanofcode/python-zbase32 for a full implementation.
+# WKD hash encoder ansibleplugin
+# Thanks to
+# - https://github.com/artisanofcode/python-zbase32
+# - https://www.uriports.com/blog/setting-up-openpgp-web-key-directory/
+# for the implementation
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
 
+import collections.abc
+import math
+import hashlib
+
 __metaclass__ = type
 
 DOCUMENTATION = r'''
-  name: zbase32encode
+  name: wkd_hash
   version_added: "1.0"
-  short_description: Encode a string using z-base32 scheme
+  short_description: Return a user ID encoded using GPG WKD
   description:
-    - Encode a string using z-base32 scheme
+    - Return a hashed version of a user ID for a GPG Web keys directory
   positional: _input, query
   options:
     _input:
@@ -21,14 +28,14 @@ DOCUMENTATION = r'''
 '''
 
 EXAMPLES = r'''
-    parts: '{{ "lovelace" | zbase32encode }}'
-    # => "ptzzc3mccftsk"
+    parts: '{{ "andre" | wkd_hash }}'
+    # => "z1cybqqife1c333kqxqifnz64w9tb3xh"
 '''
 
 RETURN = r'''
   _value:
     description:
-      - A z-base32 string from the input
+      - Compute a WKD hash from a user ID
     type: str
 '''
 
@@ -47,18 +54,23 @@ def _chunks(buffer: bytearray, size: int) -> collections.abc.Generator[bytearray
         yield buffer[i : i + size]
 
 
-def zbase32encode(data):
+def wkd_hash_fn(input_str):
 
     _ALPHABET = b"ybndrfg8ejkmcpqxot1uwisza345h769"
     _INVERSE_ALPHABET = {key: value for value, key in enumerate(_ALPHABET)}
 
-    data = str(data)
+    # We should use string only on imput
+    assert isinstance(input_str, str)
 
-    assert isinstance(data, bytes)
+    # Encode using sha1sum
+    hashed = hashlib.sha1(input_str.encode("utf-8"))
+
+    # Convert to a byte array
+    data = hashed.digest()
 
     result = bytearray()
 
-    for chunk in _chunks(bytearray(data), 5):
+    for chunk in _chunks(data, 5):
 
         buffer = bytearray(5)
 
@@ -78,11 +90,12 @@ def zbase32encode(data):
 
     return bytes(result[:length]).decode()
 
+
 # ---- Ansible filters ----
 class FilterModule(object):
-    ''' Z-Base32 simple filter '''
+    ''' WKD hash filter '''
 
     def filters(self):
         return {
-            'zbase32encode': zbase32encode
+            'wkd_hash': wkd_hash_fn
         }
