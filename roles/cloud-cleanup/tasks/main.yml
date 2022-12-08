@@ -1,0 +1,10 @@
+---
+
+- name: Check if the system is hosted on a cloud
+  register: vultr_conf
+  stat:
+    path: /usr/lib/sysctl.d/90-vultr.conf
+
+- name: Call vultr specific tasks
+  when: vultr_conf.stat.exists
+  include_tasks: vultr.yml
