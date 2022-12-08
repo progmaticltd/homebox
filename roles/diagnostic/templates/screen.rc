@@ -137,6 +137,7 @@ hardstatus off
 screen -t vim vi
 screen -t Shell
 screen -t logs lnav
+screen -t tinyproxy lnav /var/log/tinyproxy/tinyproxy.log
 
 # Select second screen
 select 1
