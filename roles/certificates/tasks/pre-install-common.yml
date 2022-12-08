@@ -14,10 +14,10 @@
     state: directory
     mode: 0700
 
-- name: link for compatibility
+- name: link for compatibility with lego executable
   file:
     src: /var/lib/lego/certificates
-    dest: /var/lib/lego/certificates
+    dest: /etc/lego/certificates
     state: link
 
 - name: Get the DNS api key
