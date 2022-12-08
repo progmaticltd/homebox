@@ -8,6 +8,18 @@
     owner: root
     group: root
 
+- name: Create the directory to store certificates files
+  file:
+    path: /var/lib/lego/certificates
+    state: directory
+    mode: 0700
+
+- name: link for compatibility
+  file:
+    src: /var/lib/lego/certificates
+    dest: /var/lib/lego/certificates
+    state: link
+
 - name: Get the DNS api key
   no_log: '{{ not system.devel }}'
   set_fact:

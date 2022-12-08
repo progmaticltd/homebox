@@ -10,9 +10,9 @@
     mode: 0644
     remote_src: yes
   loop:
-    - src: /etc/lego/certificates/imap.{{ network.domain }}.issuer.crt
+    - src: /var/lib/lego/certificates/imap.{{ network.domain }}.issuer.crt
       dest: /etc/ssl/certs/imap.{{ network.domain }}.issuer.crt
-    - src: /etc/lego/certificates/imap.{{ network.domain }}.crt
+    - src: /var/lib/lego/certificates/imap.{{ network.domain }}.crt
       dest: /etc/ssl/certs/imap.{{ network.domain }}.crt
   loop_control:
     loop_var: file
@@ -20,7 +20,7 @@
 - name: Copy the imap private key in the debian standard directory
   notify: Restart dovecot
   copy:
-    src: /etc/lego/certificates/imap.{{ network.domain }}.key
+    src: /var/lib/lego/certificates/imap.{{ network.domain }}.key
     dest: /etc/ssl/private/imap.{{ network.domain }}.key
     remote_src: yes
     owner: root
@@ -38,9 +38,9 @@
     mode: 0644
     remote_src: yes
   loop:
-    - src: /etc/lego/certificates/pop3.{{ network.domain }}.issuer.crt
+    - src: /var/lib/lego/certificates/pop3.{{ network.domain }}.issuer.crt
       dest: /etc/ssl/certs/pop3.{{ network.domain }}.issuer.crt
-    - src: /etc/lego/certificates/pop3.{{ network.domain }}.crt
+    - src: /var/lib/lego/certificates/pop3.{{ network.domain }}.crt
       dest: /etc/ssl/certs/pop3.{{ network.domain }}.crt
   loop_control:
     loop_var: file
@@ -49,7 +49,7 @@
   notify: Restart dovecot
   when: mail.pop3
   copy:
-    src: /etc/lego/certificates/pop3.{{ network.domain }}.key
+    src: /var/lib/lego/certificates/pop3.{{ network.domain }}.key
     dest: /etc/ssl/private/pop3.{{ network.domain }}.key
     remote_src: yes
     owner: root

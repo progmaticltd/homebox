@@ -10,9 +10,9 @@
     mode: 0644
     remote_src: yes
   loop:
-    - src: /etc/lego/certificates/{{ network.domain }}.issuer.crt
+    - src: /var/lib/lego/certificates/{{ network.domain }}.issuer.crt
       dest: /etc/ssl/certs/{{ network.domain }}.issuer.crt
-    - src: /etc/lego/certificates/{{ network.domain }}.crt
+    - src: /var/lib/lego/certificates/{{ network.domain }}.crt
       dest: /etc/ssl/certs/{{ network.domain }}.crt
   loop_control:
     loop_var: file
@@ -27,7 +27,7 @@
     group: ssl-cert
     mode: 0640
   loop:
-    - src: /etc/lego/certificates/{{ network.domain }}.key
+    - src: /var/lib/lego/certificates/{{ network.domain }}.key
       dest: /etc/ssl/private/{{ network.domain }}.key
   loop_control:
     loop_var: file

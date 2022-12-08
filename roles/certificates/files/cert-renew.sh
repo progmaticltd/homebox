@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # List all the certificates
-certs=$(find /etc/lego/certificates/ -name '*.key')
+certs=$(find /var/lib/lego/certificates/ -name '*.key')
 
 # Load DNS and common settings
 export PDNS_API_URL=$(sed -n s/^PDNS_API_URL=//p /etc/lego/renew.conf)
@@ -30,7 +30,7 @@ for cert in $certs; do
     common_options="$common_options --domains $fqdn"
 
     # Test if the pem file exists for this certificate
-    if test -f /etc/lego/certificates/$fqdn.pem; then
+    if test -f /var/lib/lego/certificates/$fqdn.pem; then
 	common_options="$common_options --pem"
     fi
 

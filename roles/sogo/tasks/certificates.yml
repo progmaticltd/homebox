@@ -10,9 +10,9 @@
     mode: 0644
     remote_src: yes
   loop:
-    - src: /etc/lego/certificates/sogo.{{ network.domain }}.issuer.crt
+    - src: /var/lib/lego/certificates/sogo.{{ network.domain }}.issuer.crt
       dest: /etc/ssl/certs/sogo.{{ network.domain }}.issuer.crt
-    - src: /etc/lego/certificates/sogo.{{ network.domain }}.crt
+    - src: /var/lib/lego/certificates/sogo.{{ network.domain }}.crt
       dest: /etc/ssl/certs/sogo.{{ network.domain }}.crt
   loop_control:
     loop_var: file
@@ -20,7 +20,7 @@
 - name: Copy the sogo private key in the debian standard directory
   notify: Restart sogo service
   copy:
-    src: /etc/lego/certificates/sogo.{{ network.domain }}.key
+    src: /var/lib/lego/certificates/sogo.{{ network.domain }}.key
     dest: /etc/ssl/private/sogo.{{ network.domain }}.key
     remote_src: yes
     owner: root

@@ -3,7 +3,7 @@
 - name: Check if the certificate exists
   register: cert_file
   stat:
-    path: /etc/lego/certificates/{{ certificate.name }}.{{ network.domain }}.crt
+    path: /var/lib/lego/certificates/{{ certificate.name }}.{{ network.domain }}.crt
 
 - name: Assert the the certificate exists
   assert:
@@ -14,15 +14,15 @@
   shell: >-
     openssl verify -verbose
     -CAfile {{ acme_root }}
-    -untrusted /etc/lego/certificates/{{ certificate.name }}.{{ network.domain }}.issuer.crt
-    /etc/lego/certificates/{{ certificate.name }}.{{ network.domain }}.crt
+    -untrusted /var/lib/lego/certificates/{{ certificate.name }}.{{ network.domain }}.issuer.crt
+    /var/lib/lego/certificates/{{ certificate.name }}.{{ network.domain }}.crt
   changed_when: false
 
 - name: Get the modulus of the certificate
   register: cert_modulus_cmd
   shell: >-
     openssl x509 -noout -modulus
-    -in /etc/lego/certificates/{{ certificate.name }}.{{ network.domain }}.crt
+    -in /var/lib/lego/certificates/{{ certificate.name }}.{{ network.domain }}.crt
     | openssl md5
   changed_when: false
 
@@ -30,7 +30,7 @@
   register: issuer_modulus_cmd
   shell: >-
     openssl x509 -noout -modulus
-    -in /etc/lego/certificates/{{ certificate.name }}.{{ network.domain }}.issuer.crt
+    -in /var/lib/lego/certificates/{{ certificate.name }}.{{ network.domain }}.issuer.crt
     | openssl md5
   changed_when: false
 
@@ -38,7 +38,7 @@
   register: key_modulus_cmd
   shell: >-
     openssl rsa -noout -modulus
-    -in /etc/lego/certificates/{{ certificate.name }}.{{ network.domain }}.key
+    -in /var/lib/lego/certificates/{{ certificate.name }}.{{ network.domain }}.key
     | openssl md5
   changed_when: false
 

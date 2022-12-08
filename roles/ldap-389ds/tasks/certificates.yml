@@ -22,16 +22,16 @@
     mode: 0644
     remote_src: yes
   loop:
-    - src: /etc/lego/certificates/ldap.{{ network.domain }}.issuer.crt
+    - src: /var/lib/lego/certificates/ldap.{{ network.domain }}.issuer.crt
       dest: /etc/ssl/certs/ldap.{{ network.domain }}.issuer.crt
-    - src: /etc/lego/certificates/ldap.{{ network.domain }}.crt
+    - src: /var/lib/lego/certificates/ldap.{{ network.domain }}.crt
       dest: /etc/ssl/certs/ldap.{{ network.domain }}.crt
   loop_control:
     loop_var: file
 
 - name: Copy the private key in the debian standard directory
   copy:
-    src: /etc/lego/certificates/ldap.{{ network.domain }}.key
+    src: /var/lib/lego/certificates/ldap.{{ network.domain }}.key
     dest: /etc/ssl/private/ldap.{{ network.domain }}.key
     remote_src: yes
     owner: root
@@ -42,9 +42,9 @@
   register: server_cert
   openssl_pkcs12:
     action: export
-    certificate_path: /etc/lego/certificates/ldap.{{ network.domain }}.crt
-    privatekey_path: /etc/lego/certificates/ldap.{{ network.domain }}.key
-    other_certificates: /etc/lego/certificates/ldap.{{ network.domain }}.issuer.crt
+    certificate_path: /var/lib/lego/certificates/ldap.{{ network.domain }}.crt
+    privatekey_path: /var/lib/lego/certificates/ldap.{{ network.domain }}.key
+    other_certificates: /var/lib/lego/certificates/ldap.{{ network.domain }}.issuer.crt
     other_certificates_parse_all: true
     friendly_name: ldap.{{ network.domain }}
     path: /etc/dirsrv/certs/ldap.{{ network.domain }}.p12

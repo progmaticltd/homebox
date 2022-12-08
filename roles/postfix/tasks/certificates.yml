@@ -10,11 +10,11 @@
     mode: '{{ file.mode | default("0644") }}'
     remote_src: yes
   loop:
-    - src: /etc/lego/certificates/smtp.{{ network.domain }}.issuer.crt
+    - src: /var/lib/lego/certificates/smtp.{{ network.domain }}.issuer.crt
       dest: /etc/ssl/certs/smtp.{{ network.domain }}.issuer.crt
-    - src: /etc/lego/certificates/smtp.{{ network.domain }}.crt
+    - src: /var/lib/lego/certificates/smtp.{{ network.domain }}.crt
       dest: /etc/ssl/certs/smtp.{{ network.domain }}.crt
-    - src: /etc/lego/certificates/smtp.{{ network.domain }}.pem
+    - src: /var/lib/lego/certificates/smtp.{{ network.domain }}.pem
       dest: /etc/postfix/smtp.{{ network.domain }}.pem
       owner: root
       group: postfix
@@ -25,7 +25,7 @@
 - name: Copy the smtp private key in the debian standard directory
   notify: Restart postfix
   copy:
-    src: /etc/lego/certificates/smtp.{{ network.domain }}.key
+    src: /var/lib/lego/certificates/smtp.{{ network.domain }}.key
     dest: /etc/ssl/private/smtp.{{ network.domain }}.key
     remote_src: yes
     owner: root

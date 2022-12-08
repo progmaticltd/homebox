@@ -13,7 +13,7 @@
 - name: Check if the certificate exists
   register: cert_file
   stat:
-    path: /etc/lego/certificates/{{ certificate.name }}.{{ network.domain }}.crt
+    path: /var/lib/lego/certificates/{{ certificate.name }}.{{ network.domain }}.crt
 
 - name: Check if the certificate exists and is valid
   when: cert_file.stat.exists
@@ -21,8 +21,8 @@
   shell: >-
     openssl verify -verbose
     -CAfile {{ acme_root }}
-    -untrusted /etc/lego/certificates/{{ fqdn }}.issuer.crt
-    /etc/lego/certificates/{{ fqdn }}.crt
+    -untrusted /var/lib/lego/certificates/{{ fqdn }}.issuer.crt
+    /var/lib/lego/certificates/{{ fqdn }}.crt
   ignore_errors: true
   changed_when: false
 

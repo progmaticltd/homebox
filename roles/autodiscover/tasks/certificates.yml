@@ -9,16 +9,16 @@
     mode: 0644
     remote_src: yes
   loop:
-    - src: /etc/lego/certificates/autodiscover.{{ network.domain }}.issuer.crt
+    - src: /var/lib/lego/certificates/autodiscover.{{ network.domain }}.issuer.crt
       dest: /etc/ssl/certs/autodiscover.{{ network.domain }}.issuer.crt
-    - src: /etc/lego/certificates/autodiscover.{{ network.domain }}.crt
+    - src: /var/lib/lego/certificates/autodiscover.{{ network.domain }}.crt
       dest: /etc/ssl/certs/autodiscover.{{ network.domain }}.crt
   loop_control:
     loop_var: file
 
 - name: Copy the autodiscover private key in the debian standard directory
   copy:
-    src: /etc/lego/certificates/autodiscover.{{ network.domain }}.key
+    src: /var/lib/lego/certificates/autodiscover.{{ network.domain }}.key
     dest: /etc/ssl/private/autodiscover.{{ network.domain }}.key
     remote_src: yes
     owner: root

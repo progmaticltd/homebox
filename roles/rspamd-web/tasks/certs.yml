@@ -9,16 +9,16 @@
     mode: 0644
     remote_src: yes
   loop:
-    - src: /etc/lego/certificates/rspamd.{{ network.domain }}.issuer.crt
+    - src: /var/lib/lego/certificates/rspamd.{{ network.domain }}.issuer.crt
       dest: /etc/ssl/certs/rspamd.{{ network.domain }}.issuer.crt
-    - src: /etc/lego/certificates/rspamd.{{ network.domain }}.crt
+    - src: /var/lib/lego/certificates/rspamd.{{ network.domain }}.crt
       dest: /etc/ssl/certs/rspamd.{{ network.domain }}.crt
   loop_control:
     loop_var: file
 
 - name: Copy the private key in the debian standard directory
   copy:
-    src: /etc/lego/certificates/rspamd.{{ network.domain }}.key
+    src: /var/lib/lego/certificates/rspamd.{{ network.domain }}.key
     dest: /etc/ssl/private/rspamd.{{ network.domain }}.key
     remote_src: yes
     owner: root
