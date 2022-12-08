@@ -1,5 +1,7 @@
 #!/bin/sh
 
+exec 1> /var/log/certs-renew.log
+
 # List all the certificates
 certs=$(find /var/lib/lego/certificates/ -name '*.key')
 
