@@ -24,3 +24,14 @@
   file:
     path: /opt/vultr
     state: absent
+
+- name: Remove cloud init log readers
+  notify: Reload systemd
+  file:
+    path: '{{ path }}'
+    state: absent
+  loop:
+    - /etc/systemd/system/cloud-init-log-reader.service
+    - /etc/systemd/system/multi-user.target.wants/cloud-init-log-reader.service
+  loop_control:
+    loop_var: path

@@ -11,3 +11,6 @@
 
 - name: Configure AppArmor
   include_tasks: apparmor.yml
+
+- name: Install postfix config
+  include_tasks: postfix.yml

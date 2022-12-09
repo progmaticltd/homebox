@@ -12,5 +12,8 @@
 - name: Set DNS entries
   include_tasks: dns.yml
 
+- name: Configure postfix
+  include_tasks: postfix.yml
+
 - name: Configure AppArmor
   include_tasks: apparmor.yml

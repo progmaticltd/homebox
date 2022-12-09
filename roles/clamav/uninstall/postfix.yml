@@ -1,0 +1,13 @@
+---
+
+- name: Remove postfix content filter
+  notify: Restart postfix
+  lineinfile:
+    path: /etc/postfix/main.cf
+    line: '{{ line }}'
+    state: absent
+  loop:
+    - '## Clamav content filter'
+    - 'content_filter = scan:127.0.0.1:{{ mail.antivirus.port + 1 }}'
+  loop_control:
+    loop_var: line

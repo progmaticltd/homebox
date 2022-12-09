@@ -7,14 +7,14 @@ table inet filter {
         # Accept any localhost traffic
         iif lo accept
 
+        # Accept traffic originated from us, and reject invalid
+		ct state vmap { established : accept, related : accept, invalid : drop }
+
         # DHCP
         udp sport 67 udp dport 68 limit rate 1/second counter accept \
         comment "IPv4 DHCP client"
         udp sport 547 udp dport 546 limit rate 1/second counter accept \
         comment "IPv6 DHCP client"
-
-        # Accept traffic originated from us, and reject invalid
-		ct state vmap { established : accept, related : accept, invalid : drop }
 
         # Accept neighbour discovery otherwise IPv6 connectivity breaks
         icmpv6 type $icmp6_in \

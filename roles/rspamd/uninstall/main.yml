@@ -12,6 +12,10 @@
     state: absent
 
 - name: Remove the apparmor config file
+  notify: Restart AppArmor service
   file:
     path: /etc/apparmor.d/usr.bin.rspamd
     state: absent
+
+- name: Remove postfix config
+  include_tasks: uninstall/postfix.yml

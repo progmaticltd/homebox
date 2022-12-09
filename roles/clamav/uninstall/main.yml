@@ -1,46 +1,19 @@
 ---
 
-- name: Uninstall clamav antivirus suite
-  apt:
-    name: '{{ packages }}'
-    state: absent
-    purge: true
-    autoremove: true
+- name: Uninstall the packages
+  include_tasks: uninstall/packages.yml
 
-- name: Remove AppArmor profiles
-  notify: Restart AppArmor service
-  file:
-    path: /etc/apparmor.d/usr.sbin.clamsmtpd
-    state: absent
+- name: Remove apparmor profiles
+  include_tasks: uninstall/apparmor.yml
 
-- name: Remove config folders
-  file:
-    path: '{{ path }}'
-    state: absent
-  loop:
-    - /etc/clamsmtp
-    - /etc/clamav
-  loop_control:
-    loop_var: path
+- name: Remove configuration
+  include_tasks: uninstall/config.yml
 
-- name: Remove logs folder
-  file:
-    path: '{{ path }}'
-    state: absent
-  loop:
-    - /var/log/clamsmtp
-    - /var/log/clamav
-  loop_control:
-    loop_var: path
+- name: Remove the proxy settings
+  include_tasks: uninstall/proxy.yml
 
-- name: Remove lib store folder
-  file:
-    path: /var/lib/clamav
-    state: absent
+- name: Remove the filter from postfix
+  include_tasks: uninstall/postfix.yml
 
-- name: Remove whitelisted domain
-  notify: Restart tinyproxy
-  lineinfile:
-    path: /etc/tinyproxy/filter
-    line: database.clamav.net
-    state: absent
+- name: Cleanup
+  include_tasks: uninstall/cleanup.yml

@@ -1,3 +1,4 @@
+---
 
 - name: Restart clamav services
   systemd:
@@ -5,7 +6,7 @@
     state: restarted
     enabled: yes
     no_block: true
-  with_items:
+  loop:
     - clamsmtp
     - clamav-daemon
   loop_control:
@@ -19,4 +20,9 @@
 - name: Restart tinyproxy
   service:
     name: tinyproxy
+    state: restarted
+
+- name: Restart postfix
+  service:
+    name: postfix
     state: restarted

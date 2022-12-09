@@ -12,3 +12,9 @@
     name: apparmor
     state: restarted
     no_block: true
+
+- name: Restart postfix
+  systemd:
+    name: postfix
+    state: restarted
+    no_block: true

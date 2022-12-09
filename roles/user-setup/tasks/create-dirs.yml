@@ -19,12 +19,3 @@
   loop: '{{ user_directories }}'
   loop_control:
     loop_var: dir
-
-- name: Create the users home folders from /etc/skel
-  command: 'mkhomedir_helper {{ user.uid }} 077 /etc/skel'
-  loop: '{{ users }}'
-  loop_control:
-    loop_var: user
-
-- name: Create the users home folders for postmaster
-  command: 'mkhomedir_helper postmaster 077 /etc/skel'

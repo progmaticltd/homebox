@@ -1,0 +1,22 @@
+---
+
+- name: Disable AppArmor profiles
+  notify: Restart AppArmor service
+  command: 'aa-disable {{ aa_config }}'
+  loop:
+    - usr.bin.freshclam
+    - usr.sbin.clamd
+    - usr.sbin.clamsmtpd
+  loop_control:
+    loop_var: aa_config
+
+- name: Install some clamav AppArmor profiles
+  file:
+    path: '/etc/apparmor.d/{{ aa_config }}'
+    state: absent
+  loop:
+    - usr.sbin.clamsmtpd
+    - usr.bin.freshclam
+    - usr.sbin.clamd
+  loop_control:
+    loop_var: aa_config

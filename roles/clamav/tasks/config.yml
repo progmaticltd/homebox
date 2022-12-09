@@ -19,14 +19,14 @@
     state: directory
     owner: clamsmtp
     group: clamsmtp
-    mode: '0700'
+    mode: 0700
 
 - name: Create the logs folder for clamsmtp
   file:
     path: /var/log/clamsmtp
     owner: clamsmtp
     group: clamsmtp
-    mode: '0700'
+    mode: 0700
     state: directory
 
 - name: Whitelist auto update domains in the proxy

@@ -1,0 +1,7 @@
+---
+
+- name: Mount the filesystem
+  meta: flush_handlers
+
+- name: Ensure quotas are used
+  shell: btrfs quota enable /home/users

@@ -1,25 +1,16 @@
 ---
 
-- name: Remove opendkim packages
-  apt:
-    name: "{{ dkim_pkgs }}"
-    state: absent
-    purge: true
-    autoremove: true
+- name: Remove packages
+  include_tasks: uninstall/packages.yml
 
-- name: Remove the configuration directory
-  file:
-    path: /etc/opendkim
-    state: absent
+- name: Remove apparmor config
+  include_tasks: uninstall/apparmor.yml
 
-- name: Remove opendkim AppArmor profile
-  notify: Restart AppArmor service
-  file:
-    path: /etc/apparmor.d/usr.sbin.opendkim
-    state: absent
+- name: Remove DNS record
+  include_tasks: uninstall/dns.yml
 
-- name: Removes DNS record
-  shell: >-
-    pdnsutil delete-rrset {{ network.domain }}
-    main._domainkey TXT
-  changed_when: true
+- name: Remove postfix config
+  include_tasks: uninstall/postfix.yml
+
+- name: Final cleanup
+  include_tasks: uninstall/cleanup.yml

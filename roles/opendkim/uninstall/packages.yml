@@ -1,0 +1,8 @@
+---
+
+- name: Remove opendkim packages
+  apt:
+    name: "{{ dkim_pkgs }}"
+    state: absent
+    purge: true
+    autoremove: true

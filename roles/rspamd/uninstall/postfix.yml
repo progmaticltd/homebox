@@ -1,0 +1,7 @@
+---
+
+- name: Remove for smtpd/non-smtpd milters
+  lineinfile:
+    path: /etc/postfix/main.cf
+    line: '    inet:localhost:{{ mail.antispam.port }}'
+    state: absent

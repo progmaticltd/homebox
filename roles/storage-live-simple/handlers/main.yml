@@ -1,0 +1,11 @@
+---
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: true
+
+- name: Mount users-home
+  systemd:
+    name: home-users.mount
+    state: restarted
+    enabled: true

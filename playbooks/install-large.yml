@@ -28,22 +28,22 @@
       tags: user
     - role: nginx
       tags: nginx
+    - role: dovecot
+      tags: dovecot
+    - role: postfix
+      tags: postfix
+    - role: opendkim
+      tags: dkim
+    - role: opendmarc
+      tags: dmarc
     - role: clamav
       tags: clamav
     - role: rspamd
       tags: rspamd
     - role: rspamd-web
       tags: rspamd-web
-    - role: opendkim
-      tags: dkim
-    - role: opendmarc
-      tags: dmarc
     - role: mta-sts
       tags: mta-sts
-    - role: postfix
-      tags: postfix
-    - role: dovecot
-      tags: dovecot
     - role: sogo
       tags: sogo
     - role: autodiscover

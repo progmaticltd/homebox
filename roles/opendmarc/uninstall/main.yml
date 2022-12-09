@@ -11,3 +11,6 @@
 
 - name: Remove the DNS record
   include_tasks: uninstall/dns.yml
+
+- name: Remove postfix config
+  include_tasks: uninstall/postfix.yml

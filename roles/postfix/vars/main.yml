@@ -75,28 +75,12 @@ dns_records_main:
     value: 'v=TLSRPTv1; rua=mailto:security@{{ network.domain }};'
     create: true
 
+
 dns_records_backup:
-  - name: smtp2
+  - name: smtp
     type: '{{ backup_ip_type }}'
     value: '{{ backup_ip }}'
     create: true
-  - name: '@'
-    type: MX
-    value: smtp2.{{ network.domain }}
-    priority: 20
-    create: true
-  - name: _submissions._tcp
-    type: SRV
-    prioriy: 30
-    port: '{{ mail.postfix.submissions.port }}'
-    value: 'smtp2.{{ network.domain }}'
-    create: true
-  - name: _submission._tcp
-    type: SRV
-    prioriy: 40
-    port: '{{ mail.postfix.submission.port }}'
-    value: 'smtp2.{{ network.domain }}'
-    create: '{{ mail.postfix.submission.active }}'
 
 
 # These packages are installed by default on Debian

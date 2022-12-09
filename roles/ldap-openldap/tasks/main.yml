@@ -40,3 +40,6 @@
 
 - name: Configure password quality
   include_tasks: password-quality.yml
+
+- name: Ensure the users are now available
+  meta: flush_handlers

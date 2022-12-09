@@ -1,0 +1,5 @@
+---
+
+- name: Create the users home folders for postmaster
+  shell: mkhomedir_helper postmaster 077 /etc/skel
+  changed_when: true

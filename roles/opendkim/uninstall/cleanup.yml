@@ -1,0 +1,6 @@
+---
+
+- name: Remove the configuration directory
+  file:
+    path: /etc/opendkim
+    state: absent

@@ -1,0 +1,5 @@
+---
+
+- name: Create the users home folders from /etc/skel
+  shell: mkhomedir_helper {{ user.uid }} 077 /etc/skel
+  changed_when: true

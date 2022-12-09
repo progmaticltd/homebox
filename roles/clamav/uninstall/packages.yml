@@ -1,0 +1,8 @@
+---
+
+- name: Uninstall clamav antivirus suite
+  apt:
+    name: '{{ packages }}'
+    state: absent
+    purge: true
+    autoremove: true

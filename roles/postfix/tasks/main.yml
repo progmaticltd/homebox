@@ -1,5 +1,8 @@
 ---
 
+- name: Pre-installation tasks
+  include_tasks: preinstall.yml
+
 - name: Install the packages
   include_tasks: packages.yml
 
@@ -8,9 +11,6 @@
 
 - name: Copy the certificates
   include_tasks: certificates.yml
-
-- name: Pre-installation tasks
-  include_tasks: preinstall.yml
 
 - name: Generic config
   include_tasks: config.yml

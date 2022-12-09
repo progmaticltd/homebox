@@ -1,0 +1,15 @@
+---
+
+- name: Filter for smtpd milters
+  notify: Restart postfix
+  lineinfile:
+    path: /etc/postfix/main.cf
+    line: '    inet:localhost:{{ dkim.milter.port }}  ## OpenDKIM - smtpd milter'
+    insertafter: '^smtpd_milters ='
+
+- name: Filter for non-smtpd milters
+  notify: Restart postfix
+  lineinfile:
+    path: /etc/postfix/main.cf
+    line: '    inet:localhost:{{ dkim.milter.port }}  ## OpenDKIM - non-smtpd milter'
+    insertafter: '^non_smtpd_milters ='

@@ -41,6 +41,16 @@
       + creds.opts.create + creds.opts.system)
       }}
 
+- name: Set default SOA
+  set_fact:
+    default_soa: >-
+      main.{{ network.domain }}.
+      hostmaster.@ 0
+      {{ dns.refresh }} {{ dns.retry }}
+      {{ dns.expire }}
+      {{ dns.ttl }}
+    cacheable: yes
+
 - name: Add custom settings
   notify: Restart PowerDNS
   template:

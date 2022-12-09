@@ -11,3 +11,8 @@
     name: apparmor
     state: restarted
     no_block: true
+
+- name: Restart postfix
+  service:
+    name: postfix
+    state: restarted

@@ -18,7 +18,7 @@
   template:
     src: '{{ file }}'
     dest: '/etc/opendkim/{{ file }}'
-  with_items:
+  loop:
     - keytable
     - signingtable
     - trusted-hosts

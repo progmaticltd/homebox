@@ -3,5 +3,14 @@
 - name: Create user directories
   include_tasks: create-dirs.yml
 
+- name: Initialise each user
+  include_tasks: init-user.yml
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Initialise postmaster account
+  include_tasks: init-postmaster.yml
+
 - name: Configure pam
   include_tasks: pam.yml

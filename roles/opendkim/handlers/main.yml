@@ -4,10 +4,17 @@
   systemd:
     name: opendkim
     state: restarted
+    enabled: true
     no_block: true
 
 - name: Restart AppArmor service
   systemd:
     name: apparmor
+    state: restarted
+    no_block: true
+
+- name: Restart postfix
+  systemd:
+    name: postfix
     state: restarted
     no_block: true

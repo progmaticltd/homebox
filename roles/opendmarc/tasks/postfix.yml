@@ -1,0 +1,13 @@
+---
+
+- name: Filter for smtpd milters
+  lineinfile:
+    path: /etc/postfix/main.cf
+    line: '    inet:localhost:{{ dmarc.milter.port }}  ## OpenDMARC - smtpd milter'
+    insertafter: '^smtpd_milters ='
+
+- name: Filter for non-smtpd milters
+  lineinfile:
+    path: /etc/postfix/main.cf
+    line: '    inet:localhost:{{ dmarc.milter.port }}  ## OpenDMARC - non-smtpd milter'
+    insertafter: '^non_smtpd_milters ='

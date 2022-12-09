@@ -9,5 +9,8 @@
 - name: Update the virus database
   include_tasks: update.yml
 
+- name: Add the filter to postfix
+  include_tasks: postfix.yml
+
 - name: Configure AppArmor
   include_tasks: apparmor.yml

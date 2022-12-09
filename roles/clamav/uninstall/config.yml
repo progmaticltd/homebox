@@ -1,0 +1,11 @@
+---
+
+- name: Remove config folders
+  file:
+    path: '{{ path }}'
+    state: absent
+  loop:
+    - /etc/clamsmtp
+    - /etc/clamav
+  loop_control:
+    loop_var: path
