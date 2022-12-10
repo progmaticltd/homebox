@@ -8,11 +8,19 @@
     owner: root
     group: root
 
+- name: Create the lego configuration directory
+  file:
+    path: /var/lib/lego
+    state: directory
+    mode: 0750
+    group: ssl-cert
+
 - name: Create the directory to store certificates files
   file:
     path: /var/lib/lego/certificates
     state: directory
-    mode: 0700
+    mode: 0750
+    group: ssl-cert
 
 - name: link for compatibility with lego executable
   file:

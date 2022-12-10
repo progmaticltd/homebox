@@ -21,11 +21,11 @@
 
 # LDAP URIs to use. You can use this instead of hosts list. Note that this
 # setting isn't supported by all LDAP libraries.
-uris = ldaps://ldap.{{ network.domain }}:636/
+uris = ldaps://ldap.{{ network.domain }}/ ldap://ldap.{{ network.domain }}/ ldaps://127.0.0.1/
 
 # Distinguished Name - the username used to login to the LDAP server.
 # Leave it commented out to bind anonymously (useful with auth_bind=yes).
-dn = cn=readonly account, ou=users, {{ ldap_org_base }}
+dn = "cn=readonly account, ou=users, {{ ldap_org_base }}"
 
 # Password for LDAP server, if dn is specified.
 dnpass = {{ ldap_ro_password }}
@@ -42,10 +42,12 @@ dnpass = {{ ldap_ro_password }}
 #sasl_authz_id =
 
 # We use TLS on dedicated port, not STARTTLS, the name of the option is misleading
-tls = no
+# tls = no
 
 # TLS options, currently supported only with OpenLDAP:
-#tls_ca_cert_file =
+{% if system.devel %}
+tls_ca_cert_file = /usr/local/share/ca-certificates/development/letsencrypt-stg-root-x1.crt
+{% endif %}
 #tls_ca_cert_dir =
 #tls_cipher_suite =
 # TLS cert/key is used only if LDAP server requires a client certificate.

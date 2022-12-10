@@ -138,6 +138,8 @@ screen -t vim vi
 screen -t Shell
 screen -t logs lnav
 screen -t tinyproxy lnav /var/log/tinyproxy/tinyproxy.log
+screen -t firewall lnav /var/log/nftables/*.log
+
 {% if security.fail2ban %}
 screen -t fail2ban lnav /var/log/fail2ban.log
 {% endif %}

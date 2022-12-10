@@ -2,13 +2,10 @@
 
 - name: Copy the imap certificates in the debian standard directory
   notify: Restart dovecot
-  copy:
+  file:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
-    owner: root
-    group: root
-    mode: 0644
-    remote_src: yes
+    state: link
   loop:
     - src: /var/lib/lego/certificates/imap.{{ network.domain }}.issuer.crt
       dest: /etc/ssl/certs/imap.{{ network.domain }}.issuer.crt
@@ -19,24 +16,18 @@
 
 - name: Copy the imap private key in the debian standard directory
   notify: Restart dovecot
-  copy:
+  file:
     src: /var/lib/lego/certificates/imap.{{ network.domain }}.key
     dest: /etc/ssl/private/imap.{{ network.domain }}.key
-    remote_src: yes
-    owner: root
-    group: ssl-cert
-    mode: 0640
+    state: link
 
 - name: Copy the pop3 certificates in the debian standard directory
   notify: Restart dovecot
   when: mail.pop3
-  copy:
+  file:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
-    owner: root
-    group: root
-    mode: 0644
-    remote_src: yes
+    state: link
   loop:
     - src: /var/lib/lego/certificates/pop3.{{ network.domain }}.issuer.crt
       dest: /etc/ssl/certs/pop3.{{ network.domain }}.issuer.crt
@@ -48,10 +39,20 @@
 - name: Copy the pop3 private key in the debian standard directory
   notify: Restart dovecot
   when: mail.pop3
-  copy:
+  file:
     src: /var/lib/lego/certificates/pop3.{{ network.domain }}.key
     dest: /etc/ssl/private/pop3.{{ network.domain }}.key
-    remote_src: yes
-    owner: root
-    group: ssl-cert
-    mode: 0640
+    state: link
+
+- name: Copy the certificate update hook for IMAP
+  copy:
+    src: renew-cert.sh
+    dest: /etc/lego/hooks/imap.{{ network.domain }}
+    mode: 0700
+
+- name: Copy the certificate update hook for POP3
+  when: mail.pop3
+  copy:
+    src: renew-cert.sh
+    dest: /etc/lego/hooks/pop3.{{ network.domain }}
+    mode: 0700

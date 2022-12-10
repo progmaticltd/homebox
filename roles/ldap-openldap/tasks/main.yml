@@ -7,9 +7,6 @@
 - name: Initialise or load the passwords
   include_tasks: load-passwords.yml
 
-- name: Create the certificate
-  include_tasks: cert.yml
-
 - name: Create the DNS record
   include_tasks: dns.yml
 
@@ -22,7 +19,10 @@
 - name: Configure the LDAP server settings
   include_tasks: config.yml
 
-- name: Create the user accounts
+- name: Create the certificate
+  include_tasks: ssl.yml
+
+- name: Create each user in the database
   include_tasks: user-accounts.yml
   loop: '{{ users }}'
   loop_control:

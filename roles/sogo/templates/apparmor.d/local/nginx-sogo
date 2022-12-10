@@ -1,9 +1,5 @@
   # Certificates
-  /etc/letsencrypt/archive/sogo.{{ network.domain }}/* r,
-  /etc/letsencrypt/live/sogo.{{ network.domain }}/* r,
-
-  # Certificate renewal
-  /var/www/sogo/.well-known/** r,
+  /var/lib/lego/certificates/sogo.{{ network.domain }}.* r,
 
   # Web content
   /usr/share/GNUstep/SOGo/WebServerResources/ r,

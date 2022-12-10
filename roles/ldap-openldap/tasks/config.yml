@@ -12,36 +12,14 @@
     src: ldap.conf
     dest: /etc/ldap/ldap.conf
 
-- name: Allow openldap to read certificates
-  register: openldap_user
-  user:
-    name: openldap
-    groups: ssl-cert
-    append: true
-
-- name: Restart the ldap stack
-  when: openldap_user.changed
-  service:
-    name: slapd
-    state: restarted
-
 - name: Configure the ldap server for SSL / TLS
   notify: Restart the ldap stack
   template:
     src: default-slapd.conf
     dest: /etc/default/slapd
 
-- name: Copy the ldap ssl config on the server before running it
-  notify: Restart the ldap stack
-  register: ldap_ssl
-  template:
-    src: ssl-config.ldif
-    dest: /etc/ldap/changes/ssl-config.ldif
 
-- name: Modify the configuration if not already done
-  when: ldap_ssl.changed
-  notify: Restart the ldap stack
-  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ssl-config.ldif
+
 
 - name: Copy deref module loading into the changes directory
   register: deref_module

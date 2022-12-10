@@ -75,7 +75,6 @@ mail_default:
         - 10.0.0.0/8
   #############################################################################
   antivirus:                # Check inbound and outbound emails for viruses
-    port: 34000             # port to use for the antivirus daemon
     active: false           # or false
     action: drop            # Action to do when a virus is found in an email: bounce or drop
                             # be careful, bouncing external emails is a way to expose clamav
@@ -215,7 +214,7 @@ security_default:
     - 'admin@{{ network.domain }}'
 
   # Install fail2ban or not
-  fail2ban: true
+  fail2ban: false
 
   # various options when luks is installed
   luks:

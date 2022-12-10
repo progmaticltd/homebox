@@ -1,14 +1,14 @@
 #!/bin/dash
 
-for fqdn in $RENEWED_DOMAINS; do
+echo "Reloading LDAP server"
 
-    # Get the subdomain
-    sub=$(expr "$fqdn" : '\([^.]*\)')
+# Stop ldap dependant services
+systemctl stop unscd
+systemctl stop nslcd
 
-    if [ "$sub" = "ldap" ]; then
-        echo "Reloading LDAP server"
-        systemctl stop nslcd
-        systemctl restart slapd
-        systemctl start nslcd
-    fi
-done
+# Restart LDAP
+systemctl restart slapd
+
+# Start ldap dependant services
+systemctl start nslcd
+systemctl start unscd

@@ -4,3 +4,8 @@
   apt:
     name: xkcdpass
     state: present
+
+- name: Create the ldap config changes folder
+  file:
+    path: /etc/ldap/changes
+    state: directory

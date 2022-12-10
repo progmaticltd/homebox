@@ -3,7 +3,7 @@
 - name: Install nginx AppArmor profile
   tags: rspamd, security, apparmor
   template:
-    src: apparmor.d/local/rspamd-web
+    src: apparmor.conf
     dest: /etc/apparmor.d/local/nginx-rspamd-web
 
 - name: Check if AppArmor nginx configuration already contains the line

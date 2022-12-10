@@ -11,8 +11,8 @@ table inet filter {
 
     chain forward {
 
-        limit rate 10/second log prefix "nft-fwd: drop " \
-        comment "Drop everything not whitelisted"
+        limit rate 10/second log prefix "nft-fwd: reject " \
+		counter reject comment "Reject everything not whitelisted"
 
     }
 

@@ -1,6 +1,7 @@
 ---
 
 - name: Remove fail2ban
+  when: security.fail2ban
   include_tasks: uninstall/fail2ban.yml
 
 - name: Install the required packages

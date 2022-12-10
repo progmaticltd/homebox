@@ -1,0 +1,13 @@
+---
+
+- name: Remove Exim
+  apt:
+    name: exim
+    state: absent
+    purge: true
+    autoremove: true
+
+- name: Install postfix
+  apt:
+    name: postfix
+    state: present

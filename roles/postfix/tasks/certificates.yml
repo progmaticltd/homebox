@@ -2,13 +2,11 @@
 
 - name: Copy the smtp certificates in the debian standard directory
   notify: Restart postfix
-  copy:
+  file:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
-    owner: '{{ file.owner | default("root") }}'
-    group: '{{ file.group | default("root") }}'
-    mode: '{{ file.mode | default("0644") }}'
-    remote_src: yes
+    state: link
+    force: yes
   loop:
     - src: /var/lib/lego/certificates/smtp.{{ network.domain }}.issuer.crt
       dest: /etc/ssl/certs/smtp.{{ network.domain }}.issuer.crt
@@ -16,18 +14,19 @@
       dest: /etc/ssl/certs/smtp.{{ network.domain }}.crt
     - src: /var/lib/lego/certificates/smtp.{{ network.domain }}.pem
       dest: /etc/postfix/smtp.{{ network.domain }}.pem
-      owner: root
-      group: postfix
-      mode: '0600'
   loop_control:
     loop_var: file
 
 - name: Copy the smtp private key in the debian standard directory
   notify: Restart postfix
-  copy:
+  file:
     src: /var/lib/lego/certificates/smtp.{{ network.domain }}.key
     dest: /etc/ssl/private/smtp.{{ network.domain }}.key
-    remote_src: yes
-    owner: root
-    group: ssl-cert
-    mode: '0640'
+    state: link
+    force: yes
+
+- name: Copy the certificate update hook for SMTP
+  copy:
+    src: renew-cert.sh
+    dest: /etc/lego/hooks/smtp.{{ network.domain }}/renew-cert.sh
+    mode: 0700
