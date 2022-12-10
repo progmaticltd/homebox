@@ -53,7 +53,6 @@
 
 - name: Restart the ldap stack
   when: ldap_ssl.changed
-  when: openldap_user.changed
   service:
     name: slapd
     state: restarted
