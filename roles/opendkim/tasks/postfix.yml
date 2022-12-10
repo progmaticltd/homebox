@@ -1,15 +1,49 @@
 ---
 
-- name: Filter for smtpd milters
-  notify: Restart postfix
-  lineinfile:
-    path: /etc/postfix/main.cf
-    line: '    inet:localhost:{{ dkim.milter.port }}  ## OpenDKIM - smtpd milter'
-    insertafter: '^smtpd_milters ='
+- name: Create the socket directory
+  file:
+    path: /var/spool/postfix/opendkim
+    state: directory
+    owner: opendkim
+    mode: 0750
 
-- name: Filter for non-smtpd milters
+- name: Add postfix to opendkim group
+  user:
+    name: postfix
+    groups: opendkim
+    append: true
+
+# The lineinfile module does not support adding the same line multiple times
+# I chose what I consider the cleanest solution to add the line twice
+
+- name: Check if opendkim is already included
+  register: dkim_line_cmd
+  shell: grep -c unix:opendkim/opendkim.sock /etc/postfix/main.cf
+  failed_when: false
+
+- name: Filter for smtpd milters
+  when: dkim_line_cmd.stdout == '0'
   notify: Restart postfix
   lineinfile:
     path: /etc/postfix/main.cf
-    line: '    inet:localhost:{{ dkim.milter.port }}  ## OpenDKIM - non-smtpd milter'
+    insertafter: '^smtpd_milters ='
+    line: '    unix:opendkim/opendkim.sock #1'
+  register: smtpd_milter
+
+- name: Filter for non-smtpd milters (e.g. submission)
+  when: dkim_line_cmd.stdout == '0'
+  notify: Restart postfix
+  lineinfile:
+    path: /etc/postfix/main.cf
     insertafter: '^non_smtpd_milters ='
+    line: '    unix:opendkim/opendkim.sock #2'
+  register: non_smtpd_milter
+
+- name: Now, remove the mark on the two lines
+  when:
+    - dkim_line_cmd.stdout == '0'
+    - smtpd_milter.changed or non_smtpd_milter.changed
+  replace:
+    path: /etc/postfix/main.cf
+    regexp: '    unix:opendkim/opendkim.sock.*'
+    replace: '    unix:opendkim/opendkim.sock'

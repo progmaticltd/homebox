@@ -1,2 +1,2 @@
 # Domain {{ network.domain }}
-*@{{ network.domain }} {{ dkim.selector }}._domainkey.{{ network.domain }}
+*@{{ network.domain }} {{ dkim_selector }}._domainkey.{{ network.domain }}

@@ -1,0 +1,9 @@
+---
+
+# See https://en.wikipedia.org/wiki/DomainKeys_Identified_Mail
+
+dkim:
+  key_size: 1024
+  note: 'main DKIM key for the domain {{ network.domain }}'
+  # Key validity set to one day by default
+  validity: 86400

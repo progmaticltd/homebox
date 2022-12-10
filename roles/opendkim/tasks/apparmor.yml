@@ -1,11 +1,14 @@
 ---
 
 - name: Install opendkim AppArmor profile
+  notify: Restart opendkim
   template:
     src: apparmor.conf
     dest: /etc/apparmor.d/usr.sbin.opendkim
     force: no
+  register: apparmor_config
 
 - name: Activate AppArmor profiles
+  when: apparmor_config.changed
   command: aa-enforce usr.sbin.opendkim
   notify: Restart AppArmor service

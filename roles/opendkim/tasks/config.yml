@@ -6,13 +6,6 @@
     src: opendkim.conf
     dest: /etc/opendkim.conf
 
-- name: Update the default configuration file for the socket
-  notify: Restart opendkim
-  replace:
-    path: /etc/default/opendkim
-    regexp: '^SOCKET.*'
-    replace: 'SOCKET="inet:{{ dkim.milter.port }}@localhost"'
-
 - name: Create the keys and signing table
   notify: Restart opendkim
   template:

@@ -9,6 +9,8 @@
     -F
     -M
     -u
+    -T
+    {{ "-v" if system.devel or system.debug else "" }}
     -o nsupdate.conf
   args:
     chdir: /etc/opendkim/keys

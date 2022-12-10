@@ -9,19 +9,24 @@
     group: opendkim
     mode: 0700
 
+- name: Use the current year for the selector
+  set_fact:
+    dkim_selector: 'main-{{ "%Y" | strftime }}'
+
 - name: Run the command to create the keys
   notify: Restart opendkim
   register: keys
   command: >-
     opendkim-genkey
     --restrict
-    -D /etc/opendkim/keys
-    -d '{{ network.domain }}'
-    -b '{{ dkim.key_size }}'
-    -s '{{ dkim.selector }}'
-    -n '{{ dkim.note }}'
+    --directory /etc/opendkim/keys
+    --domain '{{ network.domain }}'
+    --bits '{{ dkim.key_size }}'
+    --selector='{{ dkim_selector }}'
+    --note='{{ dkim.note | quote }}'
+    {{ "--testmode" if system.devel else "" }}
   args:
-    creates: '/etc/opendkim/keys/{{ dkim.selector }}.txt'
+    creates: '/etc/opendkim/keys/{{ dkim_selector }}.txt'
 
 - name: Set the default permissions
   notify: Restart opendkim
@@ -31,9 +36,9 @@
     owner: opendkim
     group: opendkim
   loop:
-    - path: '/etc/opendkim/keys/{{ dkim.selector }}.private'
+    - path: '/etc/opendkim/keys/{{ dkim_selector }}.private'
       mode: '0600'
-    - path: '/etc/opendkim/keys/{{ dkim.selector }}.txt'
+    - path: '/etc/opendkim/keys/{{ dkim_selector }}.txt'
       mode: '0640'
   loop_control:
     loop_var: file

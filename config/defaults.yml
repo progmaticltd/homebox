@@ -299,16 +299,6 @@ devel_default:
 
 
 ###############################################################################
-# DKIM keys default parameters
-dkim_default:
-  key_size: 4096
-  selector: main
-  note: 'main DKIM key for the domain {{ network.domain }}'
-  milter:
-    port: 31000
-
-
-###############################################################################
 # DMARC keys default parameters
 dmarc_default:
   domain:

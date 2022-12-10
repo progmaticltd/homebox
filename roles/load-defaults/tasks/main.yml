@@ -164,24 +164,6 @@
 
 
 ################################################################################
-# Merge defaults DKIM keys settings
-- name: Combine default and user defined dkim settings
-  run_once: true
-  when: dkim is defined
-  tags: defaults
-  set_fact:
-    dkim: '{{ dkim_default | combine(dkim, recursive=True) }}'
-
-- name: Use default dkim settings
-  run_once: true
-  when: dkim is not defined
-  tags: defaults
-  set_fact:
-    dkim: '{{ dkim_default }}'
-
-
-
-################################################################################
 # Merge defaults DMARC keys settings
 - name: Combine default and user defined dmarc settings
   run_once: true

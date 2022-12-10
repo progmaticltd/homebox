@@ -49,6 +49,7 @@
   /{var/spool/postfix/,}private/rewrite          w,
   /{var/spool/postfix/,}private/tlsmgr           w,
   /{var/spool/postfix/,}public/cleanup           w,
+  /{var/spool/postfix/,}opendkim/opendkim.sock   w,
 
   /{,var/}run/sasl2/mux                             w,
 
