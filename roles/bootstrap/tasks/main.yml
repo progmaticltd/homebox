@@ -8,6 +8,9 @@
   when: system.track_changes
   include_tasks: track-changes.yml
 
+- name: Move ansible logs to a separate file
+  include_tasks: ansible-logs.yml
+
 - name: Network related tasks
   include_tasks: network.yml
 

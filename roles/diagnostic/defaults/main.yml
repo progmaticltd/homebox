@@ -1,0 +1,29 @@
+---
+
+# Default list of development packages to install in the diagnostic role.
+# You can override it in your config/system.yml file
+
+devel:
+  packages:
+    - aptitude
+    - bash-completion
+    - curl
+    - dnsutils
+    - file
+    - htop
+    - less
+    - lnav
+    - locate
+    - man
+    - mc
+    - net-tools
+    - netcat-openbsd
+    - pfqueue
+    - swaks
+    - screen
+    - tcpdump
+    - vim
+    - whois
+    - zsh
+  root:
+    shell: /bin/zsh

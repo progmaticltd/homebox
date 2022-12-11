@@ -43,8 +43,3 @@
   include_role:
     name: dns-record
     tasks_from: uninstall/main.yml
-
-- name: Ensure AppArmor does not contains nginx profile
-  register: aa_remove
-  shell: aa-remove-unknown
-  changed_when: aa_remove.stdout != ''

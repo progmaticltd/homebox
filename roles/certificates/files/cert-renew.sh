@@ -12,8 +12,8 @@ export PDNS_API_KEY=$(sed -n s/^PDNS_API_KEY=//p /etc/lego/renew.conf)
 cert_server=$(sed -n s/^CERT_SERVER=//p /etc/lego/renew.conf)
 cert_email=$(sed -n s/^CERT_EMAIL=//p /etc/lego/renew.conf)
 
-export http_proxy='http://127.0.0.1:8888/'
-export https_proxy='http://127.0.0.1:8888/'
+export http_proxy='http://localhost:8888/'
+export https_proxy='http://localhost:8888/'
 
 for cert in $certs; do
 

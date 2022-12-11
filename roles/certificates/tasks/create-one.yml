@@ -32,10 +32,10 @@
     or cert_recreate
     or cert_check_cmd.failed
   environment:
-    PDNS_API_URL: http://127.0.0.1:8081/
+    PDNS_API_URL: http://localhost:8081/
     PDNS_API_KEY: '{{ api_key }}'
-    http_proxy: 'http://127.0.0.1:8888/'
-    https_proxy: 'http://127.0.0.1:8888/'
+    http_proxy: 'http://localhost:8888/'
+    https_proxy: 'http://localhost:8888/'
   shell: >-
     lego
     --server {{ acme_url }}

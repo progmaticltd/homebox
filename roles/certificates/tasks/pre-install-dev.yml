@@ -17,7 +17,7 @@
 
 - name: Download the staging root CAs for certificate verification
   environment:
-    https_proxy: 'http://127.0.0.1:8888/'
+    https_proxy: 'http://localhost:8888/'
   uri:
     url: https://letsencrypt.org/certs/staging/{{ cert_name }}.pem
     dest: /usr/local/share/ca-certificates/development/{{ cert_name }}.crt

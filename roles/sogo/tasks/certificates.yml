@@ -11,12 +11,7 @@
       dest: /etc/ssl/certs/sogo.{{ network.domain }}.issuer.crt
     - src: /var/lib/lego/certificates/sogo.{{ network.domain }}.crt
       dest: /etc/ssl/certs/sogo.{{ network.domain }}.crt
+    - src: /var/lib/lego/certificates/sogo.{{ network.domain }}.key
+      dest: /etc/ssl/private/sogo.{{ network.domain }}.key
   loop_control:
     loop_var: file
-
-- name: Copy the sogo private key in the debian standard directory
-  notify: Restart sogo service
-  file:
-    src: /var/lib/lego/certificates/sogo.{{ network.domain }}.key
-    dest: /etc/ssl/private/sogo.{{ network.domain }}.key
-    state: link

@@ -6,18 +6,28 @@
     state: present
 
 - name: Enforce whitelisting on tinyproxy
+  notify: Restart tinyproxy
   replace:
     path: /etc/tinyproxy/tinyproxy.conf
     regexp: '^#FilterDefaultDeny Yes'
     replace: 'FilterDefaultDeny Yes'
 
 - name: Use whitelist configuration file
+  notify: Restart tinyproxy
   replace:
     path: /etc/tinyproxy/tinyproxy.conf
     regexp: '^#Filter "/etc/tinyproxy/filter"'
     replace: 'Filter "/etc/tinyproxy/filter"'
 
 - name: Allow Debian repositories access
+  notify: Restart tinyproxy
+  lineinfile:
+    path: /etc/tinyproxy/tinyproxy.conf
+    line: 'Allow ::1'
+    insertafter: 'Allow 127.0.0.1'
+
+- name: Allow Debian repositories access
+  notify: Restart tinyproxy
   lineinfile:
     path: /etc/tinyproxy/filter
     line: '{{ host }}'
@@ -27,6 +37,7 @@
     loop_var: host
 
 - name: Allow loopback access
+  notify: Restart tinyproxy
   lineinfile:
     path: /etc/tinyproxy/filter
     line: '.{{ network.domain }}'
@@ -42,8 +53,8 @@
     path: /etc/environment
     line: '{{ line }}'
   loop:
-    - http_proxy=http://127.0.0.1:8888/
-    - https_proxy=http://127.0.0.1:8888/
+    - http_proxy=http://localhost:8888/
+    - https_proxy=http://localhost:8888/
     - no_proxy=127.0.0.1
   loop_control:
     loop_var: line
@@ -52,8 +63,8 @@
   shell: >-
     systemctl set-environment {{ line }}
   loop:
-    - http_proxy=http://127.0.0.1:8888/
-    - https_proxy=http://127.0.0.1:8888/
+    - http_proxy=http://localhost:8888/
+    - https_proxy=http://localhost:8888/
     - no_proxy=127.0.0.1
   loop_control:
     loop_var: line

@@ -1,33 +1,29 @@
 ---
 
-- name: Copy the www certificate in the debian standard directory
+- name: Link the root certificate in the debian standard directory
   notify: Restart nginx
-  copy:
+  file:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
-    owner: root
-    group: root
-    mode: 0644
-    remote_src: yes
+    state: link
   loop:
     - src: /var/lib/lego/certificates/{{ network.domain }}.issuer.crt
       dest: /etc/ssl/certs/{{ network.domain }}.issuer.crt
     - src: /var/lib/lego/certificates/{{ network.domain }}.crt
       dest: /etc/ssl/certs/{{ network.domain }}.crt
-  loop_control:
-    loop_var: file
-
-- name: Copy the default site private key in the debian standard directory
-  notify: Restart nginx
-  copy:
-    src: '{{ file.src }}'
-    dest: '{{ file.dest }}'
-    remote_src: yes
-    owner: root
-    group: ssl-cert
-    mode: 0640
-  loop:
     - src: /var/lib/lego/certificates/{{ network.domain }}.key
       dest: /etc/ssl/private/{{ network.domain }}.key
   loop_control:
     loop_var: file
+
+- name: Copy the certificate update hook for the default site
+  copy:
+    src: renew-cert.sh
+    dest: /etc/lego/hooks/{{ network.domain }}
+    mode: 0700
+
+- name: Copy the certificate update hook for www site
+  copy:
+    src: renew-cert.sh
+    dest: /etc/lego/hooks/www.{{ network.domain }}
+    mode: 0700

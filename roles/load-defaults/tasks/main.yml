@@ -147,23 +147,6 @@
 
 
 ################################################################################
-# Merge defaults development settings
-- name: Combine default and user defined devel settings
-  run_once: true
-  when: devel is defined
-  tags: defaults
-  set_fact:
-    devel: '{{ devel_default | combine(devel, recursive=True) }}'
-
-- name: Use default devel settings
-  run_once: true
-  when: devel is not defined
-  tags: defaults
-  set_fact:
-    devel: '{{ devel_default }}'
-
-
-################################################################################
 # Merge defaults DMARC keys settings
 - name: Combine default and user defined dmarc settings
   run_once: true

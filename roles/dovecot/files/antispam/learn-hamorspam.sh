@@ -3,11 +3,8 @@
 # Parameters: (spam or ham), user, date, from, to, subject
 learnType=$1
 
-# Which port the antispam is running on
-
-
 # Set the host
-host="localhost:{{ 2 + (mail.antispam.port | int) }}"
+host="unix:/run/rspamd/controller.sock"
 
 exec /usr/bin/rspamc -v -h "$host" "learn_${learnType}"
 

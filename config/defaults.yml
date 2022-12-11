@@ -266,38 +266,6 @@ website_default:
 
 
 ###############################################################################
-# Default list of development packages to install
-# You can override it in your config/system.yml file
-# they are installed when running the playbook dev-support,
-# and removed when using dev-cleanup
-
-devel_default:
-  packages:
-    - aptitude
-    - bash-completion
-    - curl
-    - dnsutils
-    - file
-    - htop
-    - less
-    - lnav
-    - locate
-    - man
-    - mc
-    - net-tools
-    - netcat-openbsd
-    - pfqueue
-    - swaks
-    - screen
-    - tcpdump
-    - vim
-    - whois
-    - zsh
-  root:
-    shell: /bin/zsh
-
-
-###############################################################################
 # DMARC keys default parameters
 dmarc_default:
   domain:

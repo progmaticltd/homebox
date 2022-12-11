@@ -1,0 +1,13 @@
+---
+
+- name: Deploy the system log configuration
+  register: rsyslog_config
+  template:
+    src: ansible-logs.conf
+    dest: /etc/rsyslog.d/ansible.conf
+
+- name: Restart rsyslog now
+  when: rsyslog_config.changed
+  systemd:
+    name: rsyslog
+    state: restarted
