@@ -48,14 +48,6 @@
     <SMTPLast>on</SMTPLast>
   </Protocol>
 {% endif %}
-{% if webmail.install %}
-  <Protocol>
-    <Type>WEB</Type>
-    <Server>webmail.{{ network.domain }}</Server>
-    <Port>443</Port>
-    <SSL>on</SSL>
-  </Protocol>
-{% endif %}
 {% if sogo.install %}
   <Protocol>
     <Type>WEB</Type>

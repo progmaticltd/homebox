@@ -5,6 +5,7 @@
     acme_url: https://acme-staging-v02.api.letsencrypt.org/directory
 
 - name: Allow LetsEncrypt web site access in the proxy
+  notify: Restart tinyproxy
   lineinfile:
     path: /etc/tinyproxy/filter
     line: acme-staging-v02.api.letsencrypt.org

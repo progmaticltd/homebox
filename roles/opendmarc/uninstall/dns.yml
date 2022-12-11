@@ -1,6 +1,6 @@
 ---
 
-- name: Removes DNS record
+- name: Remove the DNARC DNS record
   shell: >-
     pdnsutil delete-rrset {{ network.domain }}
     _dmarc TXT

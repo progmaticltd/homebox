@@ -76,11 +76,14 @@ else
 	exit  $DNS_GEN_FAILED
     fi
 
-    echo "Successfully created DNS record"
-
-    # Set the permissions
-    chmod 0600 "/etc/opendkim/keys/$selector.private"
+    # Ensure the permissions are correct
+    chown opendkim:opendkim "/etc/opendkim/keys/$selector.txt"
     chmod 0640 "/etc/opendkim/keys/$selector.txt"
+
+    chown opendkim:opendkim "/etc/opendkim/keys/$selector.private"
+    chmod 0600 "/etc/opendkim/keys/$selector.private"
+
+    echo "Successfully created DNS record"
 
 fi
 

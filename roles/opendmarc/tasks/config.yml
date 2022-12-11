@@ -1,26 +1,8 @@
 ---
 
-- name: Comment all active socket for DMARC
-  notify: Restart OpenDMARC service
-  replace:
-    path: /etc/default/opendmarc
-    regexp: '^SOCKET=(.*)'
-    replace: '#SOCKET=\1'
-
-- name: Comment all active socket for DMARC
-  notify: Restart OpenDMARC service
+- name: use socket in postfix chroot directory
   replace:
     path: /etc/opendmarc.conf
     regexp: '^Socket(.*)'
-    replace: '# Socket=\1'
-
-- name: Add tcp interface on localhost
+    replace: 'Socket local:/var/spool/postfix/opendmarc/opendmarc.sock'
   notify: Restart OpenDMARC service
-  lineinfile:
-    path: /etc/opendmarc.conf
-    line: '{{ line }}'
-  loop:
-    - 'Socket inet:{{ dmarc.milter.port }}@localhost'
-    - 'AutoRestart 1'
-  loop_control:
-    loop_var: line

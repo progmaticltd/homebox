@@ -1,0 +1,15 @@
+---
+
+- name: Get all nginx log files
+  register: nginx_logs
+  find:
+    path: /var/log/nginx
+    pattern: 'rspamd*'
+
+- name: Remove nginx log files
+  file:
+    path: '{{ file.path }}'
+    state: absent
+  loop: '{{ nginx_logs.files }}'
+  loop_control:
+    loop_var: file

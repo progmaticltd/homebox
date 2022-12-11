@@ -1,0 +1,19 @@
+---
+
+- name: Create the first partition
+  parted:
+    device: '{{ storage_live.device }}'
+    number: 1
+    label: gpt
+    state: present
+
+- name: Format the partition
+  filesystem:
+    device: '{{ storage_live.device }}1'
+    fstype: '{{ storage_live.fstype }}'
+    opts: '{{ storage_live.mkfs_opts | join(" ") }}'
+
+- name: Create the target directory if not already existing
+  file:
+    path: /home/users
+    state: directory

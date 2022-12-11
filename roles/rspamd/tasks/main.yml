@@ -3,17 +3,23 @@
 - name: Install the packages
   include_tasks: packages.yml
 
-- name: Set the facts
-  include_tasks: facts.yml
+- name: Load the passwords
+  include_tasks: passwords.yml
 
 - name: Configure the packages
   include_tasks: config.yml
 
+- name: Configure AppArmor
+  include_tasks: apparmor.yml
+
 - name: Add the filter to postfix
   include_tasks: postfix.yml
 
-- name: Configure AppArmor
-  include_tasks: apparmor.yml
+- name: Configure rspamd to use the proxy
+  include_tasks: proxy.yml
+
+- name: Configure rspamd firewall outbound rules
+  include_tasks: firewall.yml
 
 - name: Include DMARC reporting if activated
   when: dmarc.send_reports.active

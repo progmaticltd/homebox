@@ -56,9 +56,9 @@ intrusion and 0-day vulnerabilities as well.
 
 ## Fail2ban integration
 
-Fail2ban is integrated and configured, to automatically blacklist IP addresses used by spammers to attack your
-server. It makes this kind of attacks inefficient, and saves your bandwidth too. The duration of jail is customisable for
-jabber and email services.
+Fail2ban can be integrated and configured, to automatically blacklist IP addresses used by spammers to attack your
+server. It makes this kind of attacks inefficient, and saves your bandwidth too. The duration of jail is customisable
+for jabber and email services.
 
 ## LDAP Authentication
 
@@ -91,35 +91,13 @@ All HTTPS sites are configured to use [HSTS](https://en.wikipedia.org/wiki/HTTP_
 and dovecot, a 2048 Diffie-Helman parameter file is generated upon installation.  Ranked score A on
 [geekflare.com](https://tools.geekflare.com/) and A+ on [ssllabs.com](https://www.ssllabs.com).
 
-## Unusual behaviour detection
-
-This advanced feature is unique amongst both commercial and self-hosted solutions. It is actually restricted to IMAP,
-but will be extended to other services. It is working by using a “points” system, where more points generate warnings or
-even deny the connection.
-
-The following behaviours are detected:
-
-- Access from a blacklisted IP address
-- Access from an IP address recently blacklisted by fail2ban
-- Access from a different country than the one the box is hosted in
-- Access outside office hours
-
-Although the initial values should be accurate for standard usage, any of the previous checks can be tuned for a
-specific usage. For instance, it is possible to:
-
-- Whitelist / Blacklist countries, globally or per user.
-- Whitelist / Blacklist IP addresses, globally or per user.
-- Set office hours, globally only at this time.
-
-Warnings and errors are sent in real time, using XMPP and email to the user and an external email address. Two-factor
-authentication on unusual behaviour will be implemented later, perhaps using google authenticator.
-
 # Email features
 
 ## Digital signature
 
-A DKIM certificate of 4096 bits is generated during the installation, and the associated public key is published on the
-DNS server. The DKIM key purpose is to mark emails coming from your domain as authentic.
+A DKIM certificate of 1024 bits is generated during the installation, and the associated public key is published on the
+DNS server. The DKIM key purpose is to mark emails coming from your domain as authentic. The key is automatically
+rotated every year.
 
 The SPF and DMARC records are generated and published automatically as well. This will guarantee your emails being
 recognised by other email servers without any problem.

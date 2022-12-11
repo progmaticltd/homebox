@@ -1,11 +1,17 @@
 # Basic LDAP settings for postfix
 server_host = ldaps://ldap.{{ network.domain }}/
-
+server_port = 636
 search_base = {{ ldap_search_base }}
+start_tls = no
+
+# Force support for UTF8
+version = 3
 
 # Allow advanced LDAP search with the recipient delimiter
 query_filter = (|(mail=%s)(intlMailAddr=%s))
 result_attribute = mail
 
-# Force support for UTF8
-version = 3
+# The DN to bind with for normal lookups.
+bind = yes
+bind_dn = {{ ldap.readonly.dn }}
+bind_pw = {{ readonly_password }}

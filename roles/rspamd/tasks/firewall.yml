@@ -1,0 +1,12 @@
+---
+
+# rspamd is unable to access web sites through proxy
+# till a transparent proxy is in place, allow rspamd
+# direct internet access.
+# https://github.com/rspamd/rspamd/issues/3674
+
+- name: Allow rspamd direct http access
+  notify: Restart nftables
+  template:
+    src: firewall.nft
+    dest: /etc/nftables/05-rspamd.nft

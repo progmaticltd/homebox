@@ -1,0 +1,7 @@
+---
+
+- name: Remove the packages
+  apt:
+    name: '{{ rspamd_pkgs }}'
+    state: absent
+    purge: true

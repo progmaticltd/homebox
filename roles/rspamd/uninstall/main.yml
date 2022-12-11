@@ -1,21 +1,19 @@
 ---
 
 - name: Remove the packages
-  apt:
-    name: '{{ rspamd_pkgs }}'
-    state: absent
-    purge: true
+  include_tasks: uninstall/packages.yml
 
-- name: Remove the configuration directory
-  file:
-    path: /etc/rspamd
-    state: absent
+- name: Remove the configuration
+  include_tasks: uninstall/config.yml
 
-- name: Remove the apparmor config file
-  notify: Restart AppArmor service
-  file:
-    path: /etc/apparmor.d/usr.bin.rspamd
-    state: absent
+- name: Remove the apparmor config
+  include_tasks: uninstall/apparmor.yml
+
+- name: Remove rspamd proxy settings
+  include_tasks: uninstall/proxy.yml
+
+- name: Remove rspamd firewall outbound rules
+  include_tasks: uninstall/firewall.yml
 
 - name: Remove postfix config
   include_tasks: uninstall/postfix.yml

@@ -1,0 +1,12 @@
+---
+
+storage_live:
+  device: /dev/vdb
+  fstype: btrfs
+  mkfs_opts:
+    - -R quota
+    - --checksum xxhash
+    - -L users-home
+  mount_opts:
+    - noatime
+    - compress=zstd

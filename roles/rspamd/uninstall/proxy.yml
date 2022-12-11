@@ -1,0 +1,8 @@
+---
+
+- name: Remove rspamd web site URLs from the proxy
+  notify: Restart tinyproxy
+  lineinfile:
+    path: /etc/tinyproxy/filter
+    line: maps.rspamd.com
+    state: absent

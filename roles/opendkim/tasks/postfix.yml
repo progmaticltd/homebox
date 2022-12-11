@@ -5,15 +5,17 @@
     path: /var/spool/postfix/opendkim
     state: directory
     owner: opendkim
+    group: opendkim
     mode: 0750
 
 - name: Add postfix to opendkim group
+  notify: Restart postfix
   user:
     name: postfix
     groups: opendkim
     append: true
 
-- name: Filter for smtpd milters
+- name: Install the milter
   notify: Restart postfix
   replace:
     path: /etc/postfix/main.cf

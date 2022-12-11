@@ -4,11 +4,10 @@
 
 By default, the mail server is protected against spam with rspamd.
 
-The web user interface is accessible from the LAN:
+Optionally, the web user interface is accessible from the LAN:
 
 ```yaml
   antispam:                 # Check inbound and outbound emails for virusesyaml
-    port: 33000             # port to use for the antivirus daemon
     webui:                  # rspamd web interface
       active: true          # Activate or not
       allow:                # a list of IP address that can access the web interface
@@ -17,6 +16,6 @@ The web user interface is accessible from the LAN:
         - 10.0.0.0/8
 ```
 
-A strong password is generated for the administrator account. After
-the deployment, the password is stored in the deployment backup
-folder, in `rspamd/admin.pwd`.
+A strong password is generated for the administrator account.
+After the deployment, the password is stored in the credentials store,
+using `rspamd/admin.pwd`.

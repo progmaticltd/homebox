@@ -4,7 +4,6 @@
   systemd:
     name: rspamd
     state: restarted
-    no_block: true
 
 - name: Restart AppArmor service
   systemd:
@@ -16,3 +15,14 @@
   service:
     name: postfix
     state: restarted
+
+- name: Restart tinyproxy
+  systemd:
+    name: tinyproxy
+    state: restarted
+
+- name: Restart nftables
+  systemd:
+    name: nftables
+    state: restarted
+    no_block: true

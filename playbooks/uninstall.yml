@@ -33,3 +33,5 @@
   hosts: homebox
   tasks:
     - shell: apt-get clean
+      args:
+        warn: false

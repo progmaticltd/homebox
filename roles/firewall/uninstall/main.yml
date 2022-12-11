@@ -13,9 +13,16 @@
     state: absent
 
 - name: Remove the system log configuration
+  register: rsyslog_config
   file:
     path: /etc/rsyslog.d/nftables.conf
     state: absent
+
+- name: Restart rsyslog now
+  when: rsyslog_config.changed
+  systemd:
+    name: rsyslog
+    state: restarted
 
 - name: Remove the logrotate configutation
   file:

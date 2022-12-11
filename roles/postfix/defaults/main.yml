@@ -1,13 +1,10 @@
+---
+
 # Postfix blacklists to use
 # See https://en.wikipedia.org/wiki/Comparison_of_DNS_blacklists
 dns_blacklists:
   - zen.spamhaus.org
   - b.barracudacentral.org
-
-antispam:
-  milter:
-    name: rspamd
-    port: '{{ mail.antispam.port }}'
 
 master_addresses:
   - postmaster
@@ -19,3 +16,10 @@ master_addresses:
   - masteruser
   - admin
   - root
+
+# LDAP configuration
+ldap:
+  hostname: 'ldap.{{ network.domain }}'
+  readonly:
+    uid: readonly
+    dn: 'cn=readonly account, ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'

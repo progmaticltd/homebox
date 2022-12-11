@@ -6,17 +6,6 @@
     state: directory
     mode: 0700
 
-- name: Deploy the system log configuration
-  notify: Restart rsyslog
-  template:
-    src: logging/rsyslog.conf
-    dest: /etc/rsyslog.d/nftables.conf
-
-- name: Deploy the logrotate configutation
-  template:
-    src: logging/logrotate.conf
-    dest: /etc/logrotate.d/nftables
-
 - name: Create empty configuration files for tail/lnav
   file:
     path: '{{ path }}'
@@ -27,3 +16,20 @@
     - /var/log/nftables/fwd.log
   loop_control:
     loop_var: path
+
+- name: Deploy the system log configuration
+  register: rsyslog_config
+  template:
+    src: logging/rsyslog.conf
+    dest: /etc/rsyslog.d/nftables.conf
+
+- name: Restart rsyslog now
+  when: rsyslog_config.changed
+  systemd:
+    name: rsyslog
+    state: restarted
+
+- name: Deploy the logrotate configutation
+  template:
+    src: logging/logrotate.conf
+    dest: /etc/logrotate.d/nftables

@@ -15,8 +15,3 @@
   systemd:
     name: ssh
     state: restarted
-
-- name: Restart rsyslog
-  systemd:
-    name: rsyslog
-    state: restarted

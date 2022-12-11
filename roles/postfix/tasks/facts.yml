@@ -42,4 +42,10 @@
 
 - name: Set ldap search base
   set_fact:
-    ldap_search_base: 'dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+    ldap_search_base: 'ou=users,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+
+- name: Load or create the password for the read-only account
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    readonly_password: >-
+      {{ lookup(creds.store, network.domain + "/ldap/readonly") }}

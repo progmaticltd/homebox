@@ -66,7 +66,6 @@ mail_default:
   #############################################################################
   antispam:                 # Check inbound and outbound emails for viruses
     active: true            # or false
-    port: 33000             # port to use for the antivirus daemon
     webui:                  # rspamd web interface
       active: true          # Activate or not
       allow:                # a list of IP address that can access the web interface
@@ -320,13 +319,11 @@ dmarc_default:
     # The following parameters are for reports sending
     # Not activated yet until fully tested on a live system
     sending: false
-    organisation: 'rspamd / homebox'
+    organisation: 'network.domain'
   dkim_align: strict
   spf_align: relaxed
   send_reports:
     active: false
-  milter:
-    port: 32000
 
 
 ###############################################################################

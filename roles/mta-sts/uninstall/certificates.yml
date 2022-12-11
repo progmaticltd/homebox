@@ -10,3 +10,8 @@
     - /etc/ssl/private/mta-sts.{{ network.domain }}.key
   loop_control:
     loop_var: path
+
+- name: Remove the certificate update hook
+  file:
+    path: /etc/lego/hooks/mta-sts.{{ network.domain }}
+    state: absent

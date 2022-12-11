@@ -13,7 +13,7 @@ If something goes wrong, here are a few resources:
 The repository contains a few folders you should be familiar with:
 
 - config: The main Yaml configuration files for your homebox device.
-- preseed: Docker environment to create an automatic ISO image installer for Debian.
+- preseed: Environment to create an automatic ISO image installer for Debian.
 - install: Ansible scripts to install or test the whole server environment.
 - backup: A very useful folder that contains some important files like the passwords and certificates generated when
   deploying the system. This allows you to "replay" the deployment on a new server after a disaster, without losing any
@@ -92,17 +92,6 @@ transparently forward the traffic from the internet.
 - A fancy guide on Ubuntu:
   [Linux bridge with Network Manager](http://ask.xmodulo.com/configure-linux-bridge-network-manager-ubuntu.html)
 
-### DNS Setup
-
-There is a script that actually updates automatically DNS entries, if you are using Gandi.
-For development, the simplest is to add a wilcard entry in your DNS, that would point to
-your virtual machine.
-
-The initial creation of DNS records for certificate generation should take some time. So,
-it is better to do this before anything else.
-
-Otherwise, you can use the DNS server implemented with Bind.
-
 ### Create your hosts file
 
 ```sh
@@ -147,8 +136,7 @@ The file is self explanatory, and inside, you will find the following block:
 ```yaml
 
 system:
-  release: stretch
-  login: true
+  release: bullseye
   devel: true
   debug: true
 

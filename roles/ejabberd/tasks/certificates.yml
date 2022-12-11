@@ -2,59 +2,44 @@
 
 - name: Copy the certificates in the debian standard directory
   notify: Restart ejabberd
-  copy:
+  file:
     src: /var/lib/lego/certificates/{{ cert_name }}.{{ network.domain }}.crt
     dest: /etc/ssl/certs/{{ cert_name }}.{{ network.domain }}.crt
-    owner: root
-    group: root
-    mode: 0644
-    remote_src: yes
+    state: link
   loop: '{{ std_cert_names }}'
   loop_control:
     loop_var: cert_name
 
 - name: Copy the certificate chains in the debian standard directory
   notify: Restart ejabberd
-  copy:
+  file:
     src: /var/lib/lego/certificates/{{ cert_name }}.{{ network.domain }}.issuer.crt
     dest: /etc/ssl/certs/{{ cert_name }}.{{ network.domain }}.issuer.crt
-    owner: root
-    group: root
-    mode: 0644
-    remote_src: yes
+    state: link
   loop: '{{ std_cert_names }}'
   loop_control:
     loop_var: cert_name
 
 - name: Copy the default certificate in the debian standard directory
   notify: Restart ejabberd
-  copy:
+  file:
     src: /var/lib/lego/certificates/{{ network.domain }}.crt
     dest: /etc/ssl/certs/{{ network.domain }}.crt
-    owner: root
-    group: root
-    mode: 0644
-    remote_src: yes
+    state: link
 
 - name: Copy the private keys in the debian standard directory
   notify: Restart ejabberd
-  copy:
+  file:
     src: /var/lib/lego/certificates/{{ cert_name }}.{{ network.domain }}.key
     dest: /etc/ssl/private/{{ cert_name }}.{{ network.domain }}.key
-    remote_src: yes
-    owner: root
-    group: ssl-cert
-    mode: 0640
+    state: link
   loop: '{{ std_cert_names }}'
   loop_control:
     loop_var: cert_name
 
 - name: Copy the default private key in the debian standard directory
   notify: Restart ejabberd
-  copy:
+  file:
     src: /var/lib/lego/certificates/{{ network.domain }}.key
     dest: /etc/ssl/private/{{ network.domain }}.key
-    remote_src: yes
-    owner: root
-    group: ssl-cert
-    mode: 0640
+    state: link

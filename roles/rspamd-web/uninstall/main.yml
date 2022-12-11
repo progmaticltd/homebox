@@ -1,53 +1,17 @@
 ---
 
-- name: Remove nginx AppArmor profile
-  file:
-    path: /etc/apparmor.d/local/nginx-rspamd-web
-    state: absent
 
-- name: Remove rspamd AppArmor specific configuration
-  lineinfile:
-    path: /etc/apparmor.d/usr.sbin.nginx
-    line: '  #include <local/nginx-rspamd-web>'
-    state: absent
+- name: Remove AppArmor config
+  include_tasks: uninstall/apparmor.yml
 
-- name: Remove nginx configuration
-  notify:
-    - Check nginx config
-    - Restart nginx
-  file:
-    path: '{{ path }}'
-    state: absent
-  loop:
-    - '/etc/nginx/sites-available/rspamd.{{ network.domain }}.conf'
-    - '/etc/nginx/sites-enabled/rspamd.{{ network.domain }}.conf'
-  loop_control:
-    loop_var: path
+- name: Remove nginx config
+  include_tasks: uninstall/nginx.yml
 
-- name: Remove the certificates
-  file:
-    path: '{{ path }}'
-    state: absent
-  loop:
-    - /etc/ssl/certs/rspamd.{{ network.domain }}.issuer.crt
-    - /etc/ssl/certs/rspamd.{{ network.domain }}.crt
-    - /etc/ssl/private/rspamd.{{ network.domain }}.key
-  loop_control:
-    loop_var: path
+- name: Remove certificates
+  include_tasks: uninstall/certs.yml
 
 - name: Restart nginx now
   meta: flush_handlers
 
-- name: Get all nginx log files
-  register: nginx_logs
-  find:
-    path: /var/log/nginx
-    pattern: 'rspamd*'
-
 - name: Remove nginx log files
-  file:
-    path: '{{ file.path }}'
-    state: absent
-  loop: '{{ nginx_logs.files }}'
-  loop_control:
-    loop_var: file
+  include_tasks: uninstall/clean-logs.yml

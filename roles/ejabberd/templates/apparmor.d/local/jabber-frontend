@@ -1,10 +1,4 @@
 
-
   # When http file upload is activated
   /var/www/ejabberd/files/ r,
   /var/www/ejabberd/files/** r,
-
-  # Certificate for https frontend
-  /etc/ssl/certs/xmpp.{{ network.domain }}.crt r,
-  /etc/ssl/certs/xmpp.{{ network.domain }}.issuer.crt r,
-  /etc/ssl/private/xmpp.{{ network.domain }}.key r,

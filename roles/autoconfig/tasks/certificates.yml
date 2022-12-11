@@ -1,26 +1,16 @@
 ---
 
 - name: Copy the autoconfig certificates in the debian standard directory
-  copy:
+  file:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
-    owner: root
-    group: root
-    mode: 0644
-    remote_src: yes
+    state: link
   loop:
     - src: /var/lib/lego/certificates/autoconfig.{{ network.domain }}.issuer.crt
       dest: /etc/ssl/certs/autoconfig.{{ network.domain }}.issuer.crt
     - src: /var/lib/lego/certificates/autoconfig.{{ network.domain }}.crt
       dest: /etc/ssl/certs/autoconfig.{{ network.domain }}.crt
+    - src: /var/lib/lego/certificates/autoconfig.{{ network.domain }}.key
+      dest: /etc/ssl/private/autoconfig.{{ network.domain }}.key
   loop_control:
     loop_var: file
-
-- name: Copy the autoconfig private key in the debian standard directory
-  copy:
-    src: /var/lib/lego/certificates/autoconfig.{{ network.domain }}.key
-    dest: /etc/ssl/private/autoconfig.{{ network.domain }}.key
-    remote_src: yes
-    owner: root
-    group: ssl-cert
-    mode: 0640

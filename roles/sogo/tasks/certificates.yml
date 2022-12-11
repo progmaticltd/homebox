@@ -2,13 +2,10 @@
 
 - name: Copy the sogo certificates in the debian standard directory
   notify: Restart sogo service
-  copy:
+  file:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
-    owner: root
-    group: root
-    mode: 0644
-    remote_src: yes
+    state: link
   loop:
     - src: /var/lib/lego/certificates/sogo.{{ network.domain }}.issuer.crt
       dest: /etc/ssl/certs/sogo.{{ network.domain }}.issuer.crt
@@ -19,10 +16,7 @@
 
 - name: Copy the sogo private key in the debian standard directory
   notify: Restart sogo service
-  copy:
+  file:
     src: /var/lib/lego/certificates/sogo.{{ network.domain }}.key
     dest: /etc/ssl/private/sogo.{{ network.domain }}.key
-    remote_src: yes
-    owner: root
-    group: ssl-cert
-    mode: 0640
+    state: link

@@ -1,0 +1,16 @@
+---
+
+- name: Remove nginx AppArmor profile
+  notify:
+    - Restart AppArmor service
+    - Restart nginx
+  file:
+    path: /etc/apparmor.d/local/nginx-rspamd-web
+    state: absent
+
+- name: Remove rspamd AppArmor specific configuration
+  notify: Restart AppArmor service
+  lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/nginx-rspamd-web>'
+    state: absent

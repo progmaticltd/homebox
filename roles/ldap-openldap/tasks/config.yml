@@ -18,9 +18,6 @@
     src: default-slapd.conf
     dest: /etc/default/slapd
 
-
-
-
 - name: Copy deref module loading into the changes directory
   register: deref_module
   template:

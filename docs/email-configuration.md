@@ -32,7 +32,6 @@ to true, and run the Ansbible dovecot playbook.
 mail:
   ...
   antivirus:                # Check inbound and outbound emails for viruses
-    port: 34000             # port to use for the antivirus daemon
     active: true            # or false
     action: drop            # Action to do when a virus is found in an email: bounce or drop
                             # be careful, bouncing external emails is a way to expose clamav usage
@@ -104,7 +103,6 @@ users:
   first_name: André
   last_name: Rodier
   mail: andre@homebox.space
-  password: Xhlojwei$u987%
   aliases:
     - andré.rodier@homebox.space
     - andré@homebox.space

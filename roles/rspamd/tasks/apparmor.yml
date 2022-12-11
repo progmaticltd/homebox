@@ -3,9 +3,8 @@
 - name: Install rspamd AppArmor profile
   notify: Restart AppArmor service
   template:
-    src: apparmor.d/usr.bin.rspamd
+    src: apparmor.conf
     dest: /etc/apparmor.d/local/usr.bin.rspamd
 
 - name: Activate AppArmor profiles
-  notify: Restart AppArmor service
-  command: 'aa-enforce rspamd'
+  command: aa-enforce rspamd

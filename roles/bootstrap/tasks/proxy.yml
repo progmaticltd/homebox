@@ -47,3 +47,13 @@
     - no_proxy=127.0.0.1
   loop_control:
     loop_var: line
+
+- name: Set Systemd environment
+  shell: >-
+    systemctl set-environment {{ line }}
+  loop:
+    - http_proxy=http://127.0.0.1:8888/
+    - https_proxy=http://127.0.0.1:8888/
+    - no_proxy=127.0.0.1
+  loop_control:
+    loop_var: line

@@ -1,13 +1,23 @@
 ---
 
-- name: Filter for smtpd milters
-  lineinfile:
-    path: /etc/postfix/main.cf
-    line: '    inet:localhost:{{ mail.antispam.port }}'
-    insert_after: '^smtpd_milters ='
+- name: Create the socket directory
+  file:
+    path: /var/spool/postfix/rspamd
+    state: directory
+    owner: _rspamd
+    group: _rspamd
+    mode: 0750
 
-- name: Filter for non-smtpd milters
-  lineinfile:
+- name: Add postfix to rspamd group
+  notify: Restart postfix
+  user:
+    name: postfix
+    groups: _rspamd
+    append: true
+
+- name: Install the milter
+  notify: Restart postfix
+  replace:
     path: /etc/postfix/main.cf
-    line: '    inet:localhost:{{ mail.antispam.port }}'
-    insert_after: '^non_smtpd_milters ='
+    regexp: '^    # antispam:'
+    replace: '    unix:rspamd/rspamd.sock'

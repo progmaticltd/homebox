@@ -1,7 +1,8 @@
 ---
 
-- name: Remove for smtpd/non-smtpd milters
-  lineinfile:
+- name: Remove milters
+  notify: Restart postfix
+  replace:
     path: /etc/postfix/main.cf
-    line: '    inet:localhost:{{ mail.antispam.port }}'
-    state: absent
+    regexp: '    unix:rspamd/rspamd.sock'
+    replace: '    # antispam:'

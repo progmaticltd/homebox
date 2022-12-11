@@ -1,0 +1,6 @@
+---
+
+- name: Remove the configuration
+  file:
+    path: /etc/rspamd
+    state: absent

@@ -1,0 +1,14 @@
+---
+
+- name: Remove nginx configuration
+  notify:
+    - Check nginx config
+    - Restart nginx
+  file:
+    path: '{{ path }}'
+    state: absent
+  loop:
+    - '/etc/nginx/sites-available/rspamd.{{ network.domain }}.conf'
+    - '/etc/nginx/sites-enabled/rspamd.{{ network.domain }}.conf'
+  loop_control:
+    loop_var: path

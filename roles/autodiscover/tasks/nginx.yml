@@ -25,11 +25,6 @@
     group: root
     mode: 0644
 
-- name: Ensure autodiscover resolves to localhost for the reverse proxy
-  lineinfile:
-    path: /etc/hosts
-    line: 127.0.0.1    autodiscover.{{ network.domain }}
-
 - name: Enable nginx site
   file:
     src: '/etc/nginx/sites-available/autodiscover.{{ network.domain }}.conf'

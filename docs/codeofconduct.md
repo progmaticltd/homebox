@@ -16,32 +16,29 @@ should be able to manage it like any Debian server.
 Any new service should be compatible with [AppArmor](https://en.wikipedia.org/wiki/AppArmor), to secure the system and
 to protect it from any zero-day vulnerability.
 
-I am privileging stability and security over features, this is why you will not have the latest version of RoundCube and
-other components.
+I am privileging stability and security over features, this is why you will not have the latest version of any
+component.
+
+The firewall is installed from the start, with inbound, outbound and forwarding rules.
+
+External web access is blocked by default, using a whitelist proxy. Only a few sites, like debian servers, are
+accessible, even for root.
 
 ## Standard compliance
 
 It is also standard compliant. For instance, the system generates and _publish_ automatically your DKIM, SPF and DMARC
-records.
+records. DKIM certificates are automatically renewed every year.
 
-Any service that requires authentication should use LDAP. so the user doesn't have to remember another password.
+Any service that requires authentication should use LDAP, so the user doesn't have to remember another password.
+
+## Current status
+
+- Although the platform is actually stable enough to be used in production, it is not a turn-key solution for lambda
+  users, and will never be.
+
+I have more long term ideas in mind, I will document them more in details later.
 
 ## Shell scripts
 
 - When shell scripts are needed, [dash](https://en.wikipedia.org/wiki/Almquist_shell#dash) should be preferred over bash.
 - Each shell should be checked with the shellcheck binary.
-
-## Current status
-
-- Although the platform is actually stable enough to be used in production, it is not yet a turn-key solution for lambda
-  users.
-- Some functionalities - not activated by default - have not been tested in a live environment for long enough.
-
-Some components are missing, and will be added when appropriate:
-
-- A proper Debian repository for the security updates of the scripts, if this is needed.
-- A proper roadmap, with major and minor version numbers.
-- A mailing list, mostly for announces.
-- An official web site.
-
-I have more long term ideas in mind, I will document them more in details later.
