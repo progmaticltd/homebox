@@ -1,0 +1,12 @@
+---
+
+- name: Unlock /etc/hosts
+  file:
+    path: /etc/hosts
+    attributes: -i
+
+- name: Template and lock /etc/hosts
+  template:
+    src: hosts.conf
+    dest: /etc/hosts
+    attributes: +i

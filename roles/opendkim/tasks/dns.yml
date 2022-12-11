@@ -1,5 +1,10 @@
 ---
 
+- name: Create a directory for DNS updates
+  file:
+    path: /etc/opendkim/dns
+    state: directory
+
 - name: Create the zone update file
   register: nsupdate_file
   shell: >-
@@ -9,16 +14,17 @@
     -F
     -M
     -u
-    -T
+    -T {{ dkim.validity }}
     {{ "-v" if system.devel or system.debug else "" }}
-    -o nsupdate.conf
+    -o nsupdate-{{ dkim_selector }}.conf
   args:
-    chdir: /etc/opendkim/keys
-    creates: nsupdate.conf
+    chdir: /etc/opendkim/dns
+    creates: nsupdate-{{ dkim_selector }}.conf
 
 - name: Store the public key in DNS
   when: nsupdate_file.changed
   shell: >-
-    nsupdate nsupdate.conf
+    nsupdate nsupdate-{{ dkim_selector }}.conf
   args:
-    chdir: /etc/opendkim/keys
+    chdir: /etc/opendkim/dns
+  changed_when: true

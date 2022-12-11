@@ -9,10 +9,6 @@
     group: opendkim
     mode: 0700
 
-- name: Use the current year for the selector
-  set_fact:
-    dkim_selector: 'main-{{ "%Y" | strftime }}'
-
 - name: Run the command to create the keys
   notify: Restart opendkim
   register: keys

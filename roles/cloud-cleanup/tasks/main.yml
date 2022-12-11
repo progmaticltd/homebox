@@ -1,5 +1,8 @@
 ---
 
+- name: Call common tasks
+  include_tasks: common.yml
+
 - name: Check if the system is hosted on a cloud
   register: vultr_conf
   stat:

@@ -3,5 +3,5 @@
 - name: Removes DNS record
   shell: >-
     pdnsutil delete-rrset {{ network.domain }}
-    main._domainkey TXT
+    {{ dkim_selector }}._domainkey TXT
   changed_when: true

@@ -1,5 +1,8 @@
 ---
 
+- name: Load the initial facts
+  include_tasks: facts.yml
+
 - name: Install the packages
   include_tasks: packages.yml
 
@@ -11,6 +14,9 @@
 
 - name: Set DNS entries
   include_tasks: dns.yml
+
+- name: Install the renewal script
+  include_tasks: renewal.yml
 
 - name: Configure postfix
   include_tasks: postfix.yml

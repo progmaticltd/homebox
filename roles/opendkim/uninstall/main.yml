@@ -1,5 +1,8 @@
 ---
 
+- name: Load the facts
+  include_tasks: facts.yml
+
 - name: Remove packages
   include_tasks: uninstall/packages.yml
 

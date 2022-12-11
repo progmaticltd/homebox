@@ -18,7 +18,7 @@
     path: '{{ path }}'
     state: absent
   loop:
-    - /var/lib/pdns
+    - /var/lib/powerdns
     - /etc/powerdns
   loop_control:
     loop_var: path

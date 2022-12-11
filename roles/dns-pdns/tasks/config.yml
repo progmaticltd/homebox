@@ -2,7 +2,7 @@
 
 - name: Create the directory to store data
   file:
-    path: /var/lib/pdns/
+    path: /var/lib/powerdns/
     state: directory
     owner: pdns
     group: pdns
@@ -17,14 +17,14 @@
     /usr/share/pdns-backend-sqlite3/schema/schema.sqlite3.sql
     default.db
   args:
-    creates: /var/lib/pdns/default.db
-    chdir: /var/lib/pdns/
+    creates: /var/lib/powerdns/default.db
+    chdir: /var/lib/powerdns/
   changed_when: true
 
 - name: Set the right permissions
   notify: Restart PowerDNS
   file:
-    path: /var/lib/pdns/default.db
+    path: /var/lib/powerdns/default.db
     owner: pdns
     group: pdns
     mode: 0644

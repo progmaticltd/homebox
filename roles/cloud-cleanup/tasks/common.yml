@@ -1,0 +1,7 @@
+---
+
+- name: Manage /etc/hosts
+  lineinfile:
+    path: /etc/cloud/cloud.cfg
+    line: '\s+- manage_etc_hosts.*'
+    state: absent

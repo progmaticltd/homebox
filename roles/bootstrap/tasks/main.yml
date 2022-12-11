@@ -8,6 +8,9 @@
   when: system.track_changes
   include_tasks: track-changes.yml
 
+- name: Network related tasks
+  include_tasks: network.yml
+
 - name: Initialise and update the packages repository
   include_tasks: apt.yml
 

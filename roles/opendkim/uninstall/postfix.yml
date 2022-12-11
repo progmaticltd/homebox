@@ -1,7 +1,10 @@
 ---
 
-- name: Remove for smtpd/non-smtpd milters
-  lineinfile:
+
+- name: Filter for smtpd milters
+  notify: Restart postfix
+  replace:
     path: /etc/postfix/main.cf
-    line: '    unix:opendkim/opendkim.sock.*'
-    state: absent
+    regexp: '^    unix:opendkim/opendkim\.sock$'
+    replace: '    # dkim:'
+  register: smtpd_milter
