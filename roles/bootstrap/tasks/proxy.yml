@@ -43,6 +43,9 @@
     line: '.{{ network.domain }}'
     create: true
 
+- name: Restart the proxy now if needed
+  meta: flush_handlers
+
 - name: Now, ensure apt is using the system proxy
   template:
     src: proxy.conf
