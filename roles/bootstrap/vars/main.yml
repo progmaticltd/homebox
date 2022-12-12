@@ -1,15 +1,18 @@
 ---
 
 whitelisted_hosts:
+  - api.ipify.org
   - deb.debian.org
-  - security.debian.org
   - letsencrypt.org
+  - security.debian.org
 
 
 # These packages are absolutely required to run homebox
 base_packages:
   - apparmor-utils
+  - apt-transport-https
   - ca-certificates
+  - gnutls-bin
   - needrestart
   - openssl
   - ssl-cert
