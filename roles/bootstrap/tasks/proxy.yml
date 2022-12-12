@@ -59,7 +59,7 @@
   loop_control:
     loop_var: line
 
-- name: Set Systemd environment
+- name: Set Systemd environment   # noqa 303
   shell: >-
     systemctl set-environment {{ line }}
   loop:
