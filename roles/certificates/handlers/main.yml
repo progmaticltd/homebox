@@ -8,3 +8,8 @@
   systemd:
     name: tinyproxy
     state: restarted
+
+- name: Restart AppArmor
+  systemd:
+    name: apparmor
+    state: restarted

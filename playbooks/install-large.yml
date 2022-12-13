@@ -40,6 +40,7 @@
       tags: rspamd
     - role: rspamd-web
       tags: rspamd-web
+    # not working yet
     # - role: clamav
     #   tags: clamav
     - role: mta-sts

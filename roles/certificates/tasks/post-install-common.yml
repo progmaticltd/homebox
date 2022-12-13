@@ -11,3 +11,20 @@
     src: cert-renew.sh
     dest: /etc/cron.weekly/cert-renew
     mode: 0700
+
+- name: Update system certificates to add LetsEncrypt staging CAs
+  when: system.devel
+  shell: update-ca-certificates
+  changed_when: true
+
+- name: Modify SSL abstractions
+  notify: Restart AppArmor
+  lineinfile:
+    path: /etc/apparmor.d/abstractions/ssl_certs
+    line: '{{ line }}'
+    state: present
+  loop:
+    - '  # lego certificates'
+    - '  /var/lib/lego/certificates/*.crt'
+  loop_control:
+    loop_var: line

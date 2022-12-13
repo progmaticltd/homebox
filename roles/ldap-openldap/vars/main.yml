@@ -23,6 +23,7 @@ ldap_packages:
   remove:
     - nscd
 
+
 indexed_fields:
   - cn
   - displayName

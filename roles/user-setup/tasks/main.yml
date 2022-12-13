@@ -1,5 +1,11 @@
 ---
 
+- name: Activate system authentication
+  include_tasks: system-auth.yml
+
+- name: Ensure the users are now available
+  meta: flush_handlers
+
 - name: Create user directories
   include_tasks: create-dirs.yml
 

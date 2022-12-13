@@ -35,11 +35,5 @@
 - name: Post accounts creation configuration
   include_tasks: post-install.yml
 
-- name: Configure system authentication
-  include_tasks: system-auth.yml
-
 - name: Configure password quality
   include_tasks: password-quality.yml
-
-- name: Ensure the users are now available
-  meta: flush_handlers

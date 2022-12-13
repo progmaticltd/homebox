@@ -1,9 +1,19 @@
 ---
 
+# Vultr is using a systemd service, with world wide write permissions:
+# /var/lib/vultr/config/cloud-init-log-reader.service
+
 # Vultr specific cleanup tasks
 # The last wo files left are:
 # - /etc/udev/rules.d/99-vultr-fix-virtio.rules
 # - /usr/lib/sysctl.d/90-vultr.conf
+
+- name: Disable the log reader service
+  systemd:
+    service: cloud-init-log-reader
+    state: stopped
+    enabled: false
+    masked: true
 
 - name: Remove vultr packages repository
   file:
@@ -35,3 +45,9 @@
     - /etc/systemd/system/multi-user.target.wants/cloud-init-log-reader.service
   loop_control:
     loop_var: path
+
+- name: Remove cloud-init package
+  apt:
+    name: cloud-init
+    state: absent
+    purge: true

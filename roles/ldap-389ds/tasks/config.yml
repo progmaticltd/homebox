@@ -218,7 +218,10 @@
 
 - name: Load misc schema for multiple email addresses
   when: misc_schema.changed
-  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/dirsrv/changes/misc.ldif
+  command: >-
+    ldapadd -QY EXTERNAL
+    -H ldapi:///
+    -f /etc/dirsrv/changes/misc.ldif
 
 - name: Copy the internatinal email addresses schema into the changes directory
   register: intlmailaddr_schema
@@ -228,7 +231,10 @@
 
 - name: Activate internatinal email addresses schema
   when: intlmailaddr_schema.changed
-  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/dirsrv/changes/intlmailaddr.schema
+  command: >-
+    ldapadd -QY EXTERNAL
+    -H ldapi:///
+    -f /etc/dirsrv/changes/intlmailaddr.schema
 
 - name: Copy the access policies on the server
   register: access_policies
@@ -238,7 +244,10 @@
 
 - name: Load access policies
   when: access_policies.changed
-  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/dirsrv/changes/access-policies.ldif
+  command: >-
+    ldapadd -QY EXTERNAL
+    -H ldapi:///
+    -f /etc/dirsrv/changes/access-policies.ldif
 
 - name: Copy index definitions on the server
   register: index_defs
@@ -248,4 +257,7 @@
 
 - name: Add indexes to the database for optimisation
   when: index_defs.changed
-  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/dirsrv/changes/indexes.ldif
+  command: >-
+    ldapmodify -QY EXTERNAL
+    -H ldapi:///
+    -f /etc/dirsrv/changes/indexes.ldif
