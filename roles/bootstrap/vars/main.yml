@@ -16,6 +16,7 @@ base_packages:
   - needrestart
   - openssl
   - ssl-cert
+  - sslscan
   - sudo
   - systemd-timesyncd
   - unattended-upgrades

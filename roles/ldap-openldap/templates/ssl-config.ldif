@@ -7,3 +7,9 @@ olcTLSCertificateFile: /etc/ssl/certs/ldap.{{ network.domain }}.crt
 -
 add: olcTLSCertificateKeyFile
 olcTLSCertificateKeyFile: /etc/ssl/private/ldap.{{ network.domain }}.key
+-
+add: olcTLSProtocolMin
+olcTLSProtocolMin: 3.3
+-
+add: olcTLSCipherSuite
+olcTLSCipherSuite: EECDH:EDH:CAMELLIA:ECDH:RSA:!eNULL:!SSLv2:!RC4:!DES:!EXP:!SEED:!IDEA:!3DES
