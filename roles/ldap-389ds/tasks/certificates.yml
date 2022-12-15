@@ -1,10 +1,5 @@
 ---
 
-- name: Install Python SSL package
-  apt:
-    name: python3-openssl
-    state: present
-
 - name: Create the configuration init directory
   file:
     path: /etc/dirsrv/certs/
@@ -12,31 +7,6 @@
     owner: dirsrv
     group: dirsrv
     mode: 0600
-
-- name: Copy the certificates in the debian standard directory
-  copy:
-    src: '{{ file.src }}'
-    dest: '{{ file.dest }}'
-    owner: root
-    group: root
-    mode: 0644
-    remote_src: yes
-  loop:
-    - src: /var/lib/lego/certificates/ldap.{{ network.domain }}.issuer.crt
-      dest: /etc/ssl/certs/ldap.{{ network.domain }}.issuer.crt
-    - src: /var/lib/lego/certificates/ldap.{{ network.domain }}.crt
-      dest: /etc/ssl/certs/ldap.{{ network.domain }}.crt
-  loop_control:
-    loop_var: file
-
-- name: Copy the private key in the debian standard directory
-  copy:
-    src: /var/lib/lego/certificates/ldap.{{ network.domain }}.key
-    dest: /etc/ssl/private/ldap.{{ network.domain }}.key
-    remote_src: yes
-    owner: root
-    group: ssl-cert
-    mode: 0640
 
 - name: Create the certificate in PKCS12 format
   register: server_cert

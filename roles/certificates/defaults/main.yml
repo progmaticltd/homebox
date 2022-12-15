@@ -5,6 +5,8 @@ certificates:
     create: true
   - name: ldap
     create: true
+    san_list:
+      - 'main.{{ network.domain }}'
   - name: rspamd
     create: '{{ mail.antispam.webui.active }}'
   - name: smtp

@@ -1,0 +1,16 @@
+---
+
+- name: Create home directory for users on first login
+  pamd:
+    name: mkhomedir
+    type: session
+    control: optional
+    state: enabled
+
+- name: Configure password quality module
+  pamd:
+    name: pwquality
+    state: enabled
+    control: requisite
+    type: common-password
+    module_arguments: 'retry=5'

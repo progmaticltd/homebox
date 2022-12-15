@@ -1,7 +1,19 @@
 ---
 
+- name: Set the password path in the store
+  set_fact:
+    password_path: '{{ network.domain }}/ldap/{{ user.uid }}'
+
+- name: Try to load user’s password from the password store
+  register: load_user_password
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    user_password: '{{ lookup(creds.store, password_path) }}'
+  ignore_errors: true
+
 - name: Create a random password using xkcd
   no_log: '{{ not system.devel }}'
+  when: load_user_password is failed
   register: xkcd_pass_cmd
   shell: >-
     xkcdpass
@@ -10,12 +22,12 @@
   changed_when: false
 
 - name: Set the password path in the store
+  when: load_user_password is failed
   set_fact:
-    password_path: '{{ network.domain }}/ldap/{{ user.uid }}'
     userpass: '{{ xkcd_pass_cmd.stdout }}'
 
 - name: Load saved password from the password store
-  register: user_password
+  when: load_user_password is failed
   no_log: '{{ not system.devel }}'
   set_fact:
     user_password: '{{ lookup(creds.store, password_path + " create=true userpass=" + userpass) }}'

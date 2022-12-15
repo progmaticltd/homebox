@@ -147,12 +147,14 @@ passwords_default:
   min_length: 8
   max_age: 31536000        # 365 days max
   max_failure: 5
-  expire_warning: 259200   # 3 days
+  expire_warning: 604800   # one week
   require_nonalpha: true
+
   # Keep track of the passwords you have used before
   # If you do not want, set this value to 0
   # Passwords are stored using salted SHA512, safe enough
   remember: 12
+
   # Password quality module
   quality:
     enforce: true

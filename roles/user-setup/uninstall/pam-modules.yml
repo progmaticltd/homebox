@@ -1,0 +1,11 @@
+---
+
+- name: Remove automatic home directory creation
+  pamd:
+    name: mkhomedir
+    state: absent
+
+- name: Remove password quality module
+  pamd:
+    name: pwquality
+    state: absent

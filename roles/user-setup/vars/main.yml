@@ -9,3 +9,8 @@ user_directories:
   - /etc/skel/mails/import
   - /etc/skel/mails/indexes/xapian-indexes
   - /etc/skel/.config/homebox
+
+auth_pkgs:
+  - libnss-ldapd
+  - libpam-ldapd
+  - nslcd

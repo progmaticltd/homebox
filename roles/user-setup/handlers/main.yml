@@ -1,10 +1,10 @@
 ---
 
-- name: Restart the ldap service
+- name: Restart the ldap stack
   service:
     name: '{{ service.name }}'
     state: '{{ service.state }}'
-  with_items:
+  loop:
     - name: unscd
       state: stopped
     - name: nslcd

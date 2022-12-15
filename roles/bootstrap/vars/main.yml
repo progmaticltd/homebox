@@ -20,3 +20,4 @@ base_packages:
   - sudo
   - systemd-timesyncd
   - unattended-upgrades
+  - xkcdpass

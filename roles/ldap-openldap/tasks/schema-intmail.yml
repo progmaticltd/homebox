@@ -1,0 +1,11 @@
+---
+
+- name: Copy the internatinal email addresses schema into the changes directory
+  register: intlmailaddr_schema
+  template:
+    src: intlmailaddr.schema
+    dest: /etc/ldap/changes/intlmailaddr.schema
+
+- name: Activate internatinal email addresses schema
+  when: intlmailaddr_schema.changed
+  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/intlmailaddr.schema

@@ -1,13 +1,5 @@
 ---
 
-- name: Remove the manager account
-  when: clean_users
-  ldap_entry:
-    bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ admin_password }}'
-    dn: 'cn=manager account,{{ ldap.users.dn }}'
-    state: absent
-
 - name: Create the manager account
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
@@ -23,14 +15,6 @@
       - top
       - person
       - inetOrgPerson
-
-- name: Remove the readonly account
-  when: clean_users
-  ldap_entry:
-    bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ admin_password }}'
-    dn: 'cn=readonly account,{{ ldap.users.dn }}'
-    state: absent
 
 - name: Create a readonly account
   ldap_entry:
@@ -49,22 +33,14 @@
       - person
       - inetOrgPerson
 
-- name: Remove the postmaster account
-  when: clean_users
-  ldap_entry:
-    bind_dn: '{{ ldap.admin.dn }}'
-    bind_pw: '{{ admin_password }}'
-    dn: 'cn=postmaster account,{{ ldap.users.dn }}'
-    state: absent
-
 - name: Create the default postmaster aliases
   set_fact:
     postmaster_aliases: '{{ ldap.postmaster.mailAliases }}'
 
-- name: Extend the postmaster aliases when sogo is installed
-  when: sogo.install
-  set_fact:
-    postmaster_aliases: '{{ postmaster_aliases | union(["sogo@" + network.domain]) }}'
+# - name: Extend the postmaster aliases when sogo is installed
+#   when: sogo.install
+#   set_fact:
+#     postmaster_aliases: '{{ postmaster_aliases | union(["sogo@" + network.domain]) }}'
 
 - name: Create the postmaster account
   ldap_entry:

@@ -1,25 +1,10 @@
 ---
 
-- name: Remove the DNS record if not existing
-  shell: >-
-    pdnsutil delete-rrset ldap.{{ network.domain }}
-    ldap CNAME
-  changed_when: true
-  failed_when: false
+- name: Remove the packages
+  include_tasks: uninstall/packages.yml
 
-- name: Remove all the installed packages
-  apt:
-    name: '{{ ldap_packages.install }}'
-    state: absent
-    purge: true
-    autoremove: true
+- name: Remove the DNS entry
+  include_tasks: uninstall/dns.yml
 
-- name: Remove the ldap config directory
-  file:
-    path: /etc/ldap
-    state: absent
-
-- name: Remove the ldap database directory
-  file:
-    path: /var/lib/ldap
-    state: absent
+- name: Remove the configuration and database
+  include_tasks: uninstall/cleanup.yml

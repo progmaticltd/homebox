@@ -7,13 +7,6 @@
     xkcdpass --min=5 --max=7 --numwords 5
 
 - name: Use random password for the user
-  when: user.password is not defined
-  no_log: '{{ not system.devel }}'
-  set_fact:
-    user_password: '{{ xkcd_pass_cmd.stdout }}'
-
-- name: Use specified password
-  when: user.password is defined
   no_log: '{{ not system.devel }}'
   set_fact:
     user_password: '{{ xkcd_pass_cmd.stdout }}'

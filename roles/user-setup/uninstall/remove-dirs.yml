@@ -1,0 +1,9 @@
+---
+
+- name: Remove homebox mail and config folders from /etc/skeleton
+  file:
+    path: '{{ dir }}'
+    state: absent
+  loop: '{{ user_directories }}'
+  loop_control:
+    loop_var: dir

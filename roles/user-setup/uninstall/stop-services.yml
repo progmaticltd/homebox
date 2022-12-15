@@ -1,0 +1,11 @@
+---
+
+- name: Stop all the services
+  service:
+    name: '{{ service.name }}'
+    state: stopped
+  loop:
+    - name: unscd
+    - name: nslcd
+  loop_control:
+    loop_var: service

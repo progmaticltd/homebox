@@ -1,0 +1,8 @@
+---
+
+- name: Remove packages for interactive login
+  apt:
+    name: '{{ auth_pkgs }}'
+    state: absent
+    purge: true
+    autoremove: true

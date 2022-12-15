@@ -10,10 +10,18 @@
 
 - name: Disable the log reader service
   systemd:
-    service: cloud-init-log-reader
+    service: '{{ service }}'
     state: stopped
     enabled: false
     masked: true
+  loop:
+    - cloud-config
+    - cloud-final
+    - cloud-init-local
+    - cloud-init-log-reader
+    - cloud-init
+  loop_control:
+    loop_var: service
 
 - name: Remove vultr packages repository
   file:

@@ -9,6 +9,7 @@ users_defaults:
 ldap_packages:
   install:
     - 389-ds
+    - python3-openssl
   remove:
     - nscd
 

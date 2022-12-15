@@ -1,0 +1,11 @@
+---
+
+- name: Remove the DNS entry for LDAP
+  vars:
+    dns_records:
+      - name: ldap
+        value: main.{{ network.domain }}
+        type: cname
+  include_role:
+    name: dns-record
+    tasks_from: ../uninstall/main.yml

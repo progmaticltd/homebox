@@ -1,15 +1,5 @@
 ---
 
-- name: Copy the access policies on the server
-  register: access_policies
-  template:
-    src: access-policies.ldif
-    dest: /etc/ldap/changes/access-policies.ldif
-
-- name: Load access policies
-  when: access_policies.changed
-  command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/access-policies.ldif
-
 - name: Copy index definitions on the server
   register: index_defs
   template:
@@ -38,8 +28,7 @@
     name: memberUid
     values: '{{ user.uid }}'
     state: present
-  with_items:
-    - '{{ users }}'
+  loop: '{{ users }}'
   loop_control:
     loop_var: user
 
@@ -51,14 +40,25 @@
     name: memberUid
     values: '{{ uid }}'
     state: present
-  with_items:
+  loop:
     - manager
     - postmaster
   loop_control:
     loop_var: uid
 
-- name: Install the nslcd package to map LDAP users to system users
-  notify: Restart the ldap stack
-  apt:
-    name: nslcd
-    state: present
+- name: Copy the ldap ssl config on the server before running it
+  register: ldap_ssl
+  template:
+    src: ssl-config-end.ldif
+    dest: /etc/ldap/changes/ssl-config-end.ldif
+
+- name: Modify the configuration if not already done
+  when: ldap_ssl.changed
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ssl-config-end.ldif
+  changed_when: true
+
+- name: Restart the ldap stack
+  when: ldap_ssl.changed
+  service:
+    name: slapd
+    state: restarted

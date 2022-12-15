@@ -25,6 +25,6 @@
     state: present
   loop:
     - '  # lego certificates'
-    - '  /var/lib/lego/certificates/*.crt'
+    - '  /var/lib/lego/certificates/*.crt r,'
   loop_control:
     loop_var: line

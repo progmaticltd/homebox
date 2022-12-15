@@ -26,6 +26,19 @@
   ignore_errors: true
   changed_when: false
 
+- name: Set the initial domain argument
+  set_fact:
+    domains_list:
+      - "--domains '{{ fqdn }}'"
+
+- name: Build the san list
+  set_fact:
+    domains_list: >-
+      {{ domains_list + [ "--domains '" + san_domain + "'" ] }}
+  loop: '{{ certificate.san_list | default([]) }}'
+  loop_control:
+    loop_var: san_domain
+
 - name: Create the certificate
   when: >-
     not cert_file.stat.exists
@@ -44,7 +57,7 @@
     --dns pdns
     --accept-tos
     --path /etc/lego
-    --domains {{ fqdn }}
+    {{ domains_list | join(" ") }}
     {{ certificate.pem | default(false) | ternary("--pem", " ") }}
     run
   changed_when: true

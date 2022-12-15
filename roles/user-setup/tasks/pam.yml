@@ -1,6 +1,0 @@
----
-
-- name: Create home directory for users on first login
-  shell: >-
-    pam-auth-update --package --enable mkhomedir
-  changed_when: true

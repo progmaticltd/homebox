@@ -13,14 +13,12 @@
 - name: Combine default and user defined network settings
   run_once: true
   when: network is defined
-  tags: defaults
   set_fact:
     network: '{{ network_default | combine(network, recursive=True) }}'
 
 - name: Use default network settings
   run_once: true
   when: network is not defined
-  tags: defaults
   set_fact:
     network: '{{ network_default }}'
 
@@ -30,14 +28,12 @@
 - name: Combine default and user defined mail settings
   run_once: true
   when: mail is defined
-  tags: defaults
   set_fact:
     mail: '{{ mail_default | combine(mail, recursive=True) }}'
 
 - name: Use default mail settings
   run_once: true
   when: mail is not defined
-  tags: defaults
   set_fact:
     mail: '{{ mail_default }}'
 
@@ -48,7 +44,6 @@
   run_once: true
   no_log: true
   when: passwords is defined
-  tags: defaults
   set_fact:
     passwords: '{{ passwords_default | combine(passwords, recursive=True) }}'
 
@@ -56,7 +51,6 @@
   run_once: true
   no_log: true
   when: passwords is not defined
-  tags: defaults
   set_fact:
     passwords: '{{ passwords_default }}'
 
@@ -66,14 +60,12 @@
 - name: Combine default and user defined system settings
   run_once: true
   when: system is defined
-  tags: defaults
   set_fact:
     system: '{{ system_default | combine(system, recursive=True) }}'
 
 - name: Use default system settings
   run_once: true
   when: system is not defined
-  tags: defaults
   set_fact:
     system: '{{ system_default }}'
 
@@ -83,14 +75,12 @@
 - name: Combine default and user defined security settings
   run_once: true
   when: security is defined
-  tags: defaults
   set_fact:
     security: '{{ security_default | combine(security, recursive=True) }}'
 
 - name: Use default security settings
   run_once: true
   when: security is not defined
-  tags: defaults
   set_fact:
     security: '{{ security_default }}'
 
@@ -100,14 +90,12 @@
 - name: Combine default and user defined dictionaries settings
   run_once: true
   when: dictionaries is defined
-  tags: defaults
   set_fact:
     dictionaries: '{{ dictionaries_default | union(dictionaries) }}'
 
 - name: Use default dictionaries settings
   run_once: true
   when: dictionaries is not defined
-  tags: defaults
   set_fact:
     dictionaries: '{{ dictionaries_default }}'
 
@@ -117,14 +105,12 @@
 - name: Combine default and user defined website settings
   run_once: true
   when: website is defined
-  tags: defaults
   set_fact:
     website: '{{ website_default | combine(website, recursive=True) }}'
 
 - name: Use default website settings
   run_once: true
   when: website is not defined
-  tags: defaults
   set_fact:
     website: '{{ website_default }}'
 
@@ -134,14 +120,12 @@
 - name: Combine default and user defined backup settings
   run_once: true
   when: backup is defined
-  tags: defaults
   set_fact:
     backup: '{{ backup_default | combine(backup, recursive=True) }}'
 
 - name: Use default backup settings
   run_once: true
   when: backup is not defined
-  tags: defaults
   set_fact:
     backup: '{{ backup_default }}'
 
@@ -151,14 +135,12 @@
 - name: Combine default and user defined dmarc settings
   run_once: true
   when: dmarc is defined
-  tags: defaults
   set_fact:
     dmarc: '{{ dmarc_default | combine(dmarc, recursive=True) }}'
 
 - name: Use default dmarc settings
   run_once: true
   when: dmarc is not defined
-  tags: defaults
   set_fact:
     dmarc: '{{ dmarc_default }}'
 
@@ -168,14 +150,12 @@
 - name: Combine default and user defined ejabberd settings
   run_once: true
   when: ejabberd is defined
-  tags: defaults
   set_fact:
     ejabberd: '{{ ejabberd_default | combine(ejabberd, recursive=True) }}'
 
 - name: Use default ejabberd settings
   run_once: true
   when: ejabberd is not defined
-  tags: defaults
   set_fact:
     ejabberd: '{{ ejabberd_default }}'
 
@@ -185,14 +165,12 @@
 - name: Combine default and user defined posix_groups settings
   run_once: true
   when: posix_groups is defined
-  tags: defaults
   set_fact:
     posix_groups: '{{ posix_groups_default | union(posix_groups) }}'
 
 - name: Use default posix_groups settings
   run_once: true
   when: posix_groups is not defined
-  tags: defaults
   set_fact:
     posix_groups: '{{ posix_groups_default }}'
 
@@ -202,14 +180,12 @@
 - name: Combine default and user defined sogo settings
   run_once: true
   when: sogo is defined
-  tags: defaults
   set_fact:
     sogo: '{{ sogo_default | combine(sogo, recursive=True) }}'
 
 - name: Use default sogo settings
   run_once: true
   when: sogo is not defined
-  tags: defaults
   set_fact:
     sogo: '{{ sogo_default }}'
 
@@ -219,14 +195,12 @@
 - name: Combine default and user defined backup settings
   run_once: true
   when: backup is defined
-  tags: defaults
   set_fact:
     backup: '{{ backup_default | combine(backup, recursive=True) }}'
 
 - name: Use default backup settings
   run_once: true
   when: backup is not defined
-  tags: defaults
   set_fact:
     backup: '{{ backup_default }}'
 
@@ -236,14 +210,12 @@
 - name: Combine default and user defined creds settings
   run_once: true
   when: creds is defined
-  tags: defaults
   set_fact:
     creds: '{{ creds_default | combine(creds, recursive=True) }}'
 
 - name: Use default creds settings
   run_once: true
   when: creds is not defined
-  tags: defaults
   set_fact:
     creds: '{{ creds_default }}'
 
@@ -253,14 +225,12 @@
 - name: Combine default and user defined DNS settings
   run_once: true
   when: dns is defined
-  tags: defaults
   set_fact:
     dns: '{{ dns_default | combine(dns, recursive=True) }}'
 
 - name: Use default dns settings
   run_once: true
   when: dns is not defined
-  tags: defaults
   set_fact:
     dns: '{{ dns_default }}'
 
@@ -269,6 +239,5 @@
 # Marking the default settings as loaded should increase the speed of the deployment
 - name: Mark the default settings as loaded
   run_once: true
-  tags: defaults
   set_fact:
     defaults_loaded: true

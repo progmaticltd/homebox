@@ -1,0 +1,7 @@
+---
+
+- name: Reset the groups for each user
+  user:
+    name: '{{ user.uid }}'
+    groups: [ users ]
+    append: false

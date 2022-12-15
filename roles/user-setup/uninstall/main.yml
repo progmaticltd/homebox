@@ -1,23 +1,19 @@
 ---
 
-- name: Remove mkhomedir configuration
-  shell: >-
-    pam-auth-update --package --remove mkhomedir
-  changed_when: true
+- name: Stop the services
+  include_tasks: uninstall/stop-services.yml
 
-- name: Remove homebox mail and config folders from /etc/skeleton
-  file:
-    path: '{{ dir }}'
-    state: absent
-  loop: '{{ user_directories }}'
-  loop_control:
-    loop_var: dir
+- name: Remove packages for interactive login
+  include_tasks: uninstall/system-auth.yml
 
-- name: Reset the groups for each user
-  user:
-    name: '{{ user.uid }}'
-    groups: [ users ]
-    append: false
+- name: Remove skeleton directories
+  include_tasks: uninstall/remove-dirs.yml
+
+- name: Remove data for each user (not the home directory)
+  include_tasks: uninstall/remove-user.yml
   loop: '{{ users }}'
   loop_control:
     loop_var: user
+
+- name: Remove data for the  postmaster account
+  include_tasks: uninstall/remove-postmaster.yml

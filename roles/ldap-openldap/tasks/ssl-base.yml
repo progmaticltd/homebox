@@ -35,7 +35,6 @@
     state: restarted
 
 - name: Copy the ldap ssl config on the server before running it
-  notify: Restart the ldap stack
   register: ldap_ssl
   template:
     src: ssl-config.ldif

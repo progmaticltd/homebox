@@ -53,8 +53,33 @@
     name: '{{ ldap_packages.remove }}'
     state: absent
     purge: true
+    autoremove: true
 
 - name: Install the required packages
   apt:
     name: '{{ ldap_packages.install }}'
     state: present
+
+# Changes in the database will be stored there
+- name: Create the ldap config changes folder
+  file:
+    path: /etc/ldap/changes
+    state: directory
+
+- name: Copy the client configuration
+  register: ldap_conf
+  template:
+    src: ldap.conf
+    dest: /etc/ldap/ldap.conf
+
+- name: Configure the ldap server for SSL / TLS
+  register: ldap_def_conf
+  template:
+    src: default-slapd.conf
+    dest: /etc/default/slapd
+
+- name: Restart LDAP now if needed
+  when: ldap_conf.changed or ldap_def_conf.changed
+  systemd:
+    service: slapd
+    state: restarted
