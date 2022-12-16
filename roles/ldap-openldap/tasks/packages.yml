@@ -14,7 +14,7 @@
     question: '{{ conf.question }}'
     value: '{{ conf.value }}'
     vtype: '{{ conf.type }}'
-  with_items:
+  loop:
     - question: slapd/password1
       type: password
       value: '{{ admin_password }}'

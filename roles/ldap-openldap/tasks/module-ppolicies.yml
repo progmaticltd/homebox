@@ -87,14 +87,12 @@
       pwdMinLength: 16
       pwdAttribute: userPassword
 
-# ---
+- name: Copy password hash overlay into the changes directory
+  register: passwd_hash
+  template:
+    src: password-hash.ldif
+    dest: /etc/ldap/changes/password-hash.ldif
 
-# - name: Copy password hash overlay into the changes directory
-#   register: passwd_hash
-#   template:
-#     src: password-hash.ldif
-#     dest: /etc/ldap/changes/password-hash.ldif
-
-# - name: Load the password hash overlay
-#   when: passwd_hash.changed
-#   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/password-hash.ldif
+- name: Load the password hash overlay
+  when: passwd_hash.changed
+  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/password-hash.ldif

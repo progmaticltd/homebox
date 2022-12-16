@@ -1,9 +1,5 @@
 ---
 
-firewall_packages:
-  - nftables
-  - fail2ban
-
 # These rules are included in numeric order,
 # to generate the final firewall rules set.
 rule_files:

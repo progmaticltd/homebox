@@ -11,10 +11,16 @@
 - name: Install the required packages
   register: nftables_pkg
   apt:
-    name: '{{ firewall_packages }}'
+    name: nftables
     state: present
 
 - name: Flush all rules
   when: ufw_pkg.changed
   shell: nft flush ruleset
   changed_when: true
+
+- name: Restart nftables now
+  when: nft_pkg.changed
+  systemd:
+    name: nftables
+    state: restarted

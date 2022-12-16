@@ -5,18 +5,6 @@
     path: /etc/nftables
     state: directory
 
-- name: Install the nftable package
-  register: nft_pkg
-  apt:
-    name: nftables
-    state: present
-
-- name: Restart nftables now
-  when: nft_pkg.changed
-  systemd:
-    name: nftables
-    state: restarted
-
 - name: Copy the main rules files
   notify: Restart nftables
   template:

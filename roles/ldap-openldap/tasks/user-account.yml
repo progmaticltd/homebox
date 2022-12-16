@@ -13,16 +13,17 @@
 
 - name: Create a random password using xkcd
   no_log: '{{ not system.devel }}'
-  when: load_user_password is failed
+  #when: load_user_password is failed
   register: xkcd_pass_cmd
   shell: >-
     xkcdpass
     --delimiter '-'
-    --acrostic {{ user.uid }}
+    --numwords 4
+    --max 5
   changed_when: false
 
 - name: Set the password path in the store
-  when: load_user_password is failed
+  #when: load_user_password is failed
   set_fact:
     userpass: '{{ xkcd_pass_cmd.stdout }}'
 
@@ -31,6 +32,11 @@
   no_log: '{{ not system.devel }}'
   set_fact:
     user_password: '{{ lookup(creds.store, password_path + " create=true userpass=" + userpass) }}'
+
+- name: Force the new password
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    user_password: '{{ userpass }}'
 
 - name: Create the user account and set a random password for the user
   ldap_entry:
@@ -63,3 +69,4 @@
       - inetOrgPerson
       - inetLocalMailRecipient
       - mailboxRelatedObject
+    server_uri: ldaps://ldap.{{ network.domain }}/

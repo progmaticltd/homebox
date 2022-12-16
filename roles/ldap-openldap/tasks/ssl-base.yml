@@ -29,7 +29,6 @@
     append: true
 
 - name: Restart the ldap stack
-  when: openldap_user.changed
   service:
     name: slapd
     state: restarted
@@ -42,7 +41,6 @@
 
 - name: Modify the configuration if not already done
   when: ldap_ssl.changed
-  notify: Restart the ldap stack
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ssl-config.ldif
   changed_when: true
 

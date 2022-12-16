@@ -4,14 +4,8 @@
   include_tasks: load-passwords.yml
 
 - name: Check if each service is running # noqa 303
-  shell: systemctl status {{ service }}
+  shell: systemctl status slapd
   changed_when: false
-  loop:
-    - slapd
-    - nslcd
-    - unscd
-  loop_control:
-    loop_var: service
 
 - name: Check that 'ldap.{{ network.domain }}' resoves
   shell: >-
