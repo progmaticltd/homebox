@@ -3,7 +3,7 @@ add: olcTLSProtocolMin
 olcTLSProtocolMin: 3.3
 -
 add: olcTLSCipherSuite
-olcTLSCipherSuite: SECURE256:+SECURE128:-VERS-TLS-ALL:+VERS-TLS1.2:+VERS-DTLS1.2:-RSA:-DHE-DSS:-CAMELLIA-128-CBC:-CAMELLIA-256-CBC
+olcTLSCipherSuite: {{ ldap.tls.ciphers | join(":") }}
 -
 add: olcSecurity
 olcSecurity: ssf=1

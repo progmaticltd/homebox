@@ -35,3 +35,18 @@ ldap:
       - 'hostmaster@{{ network.domain }}'
       - 'admin@{{ network.domain }}'
       - 'root@{{ network.domain }}'
+
+  # Encryption parameters - See ldap.conf(5)
+  tls:
+    version: 3.2
+    request: demand
+    ciphers:
+      - 'SECURE256'
+      - '+SECURE128'
+      - '-VERS-TLS-ALL'
+      - '+VERS-TLS1.2'
+      - '+VERS-DTLS1.2'
+      - '-RSA'
+      - '-DHE-DSS'
+      - '-CAMELLIA-128-CBC'
+      - '-CAMELLIA-256-CBC'

@@ -9,6 +9,9 @@
 - name: Ensure the users are now available
   meta: flush_handlers
 
+- name: Configure pam modules
+  include_tasks: pam-modules.yml
+
 - name: Create user directories
   include_tasks: create-dirs.yml
 
@@ -20,6 +23,3 @@
 
 - name: Initialise postmaster account
   include_tasks: init-postmaster.yml
-
-- name: Configure pam modules
-  include_tasks: pam-modules.yml

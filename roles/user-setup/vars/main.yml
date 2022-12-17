@@ -13,4 +13,5 @@ user_directories:
 auth_pkgs:
   - libnss-ldapd
   - libpam-ldapd
+  - libpam-pwquality
   - nslcd

@@ -2,15 +2,15 @@
 
 - name: Create home directory for users on first login
   pamd:
-    name: mkhomedir
+    name: common-account
+    module_path: pam_mkhomedir.so
     type: session
     control: optional
-    state: enabled
 
 - name: Configure password quality module
   pamd:
-    name: pwquality
-    state: enabled
+    name: common-password
     control: requisite
-    type: common-password
+    type: password
+    module_path: pam_pwquality.so
     module_arguments: 'retry=5'
