@@ -4,7 +4,7 @@
   notify: Restart AppArmor service
   template:
     src: apparmor.conf
-    dest: /etc/apparmor.d/local/usr.bin.rspamd
+    dest: /etc/apparmor.d/usr.bin.rspamd
 
 - name: Activate AppArmor profiles
   command: aa-enforce rspamd

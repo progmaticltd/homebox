@@ -127,3 +127,23 @@ dns_records_backup:
     type: '{{ backup_ip_type }}'
     value: '{{ backup_ip }}'
     create: '{{ mail.pop3 }}'
+
+
+dovecot_binaries:
+  - /usr/lib/dovecot/anvil
+  - /usr/lib/dovecot/auth
+  - /usr/lib/dovecot/dict
+  - /usr/lib/dovecot/dovecot-lda
+  - /usr/lib/dovecot/dovecot-lda//sendmail
+  - /usr/lib/dovecot/imap
+  - /usr/lib/dovecot/imap-login
+  - /usr/lib/dovecot/log
+  - /usr/lib/dovecot/managesieve
+  - /usr/lib/dovecot/managesieve-login
+  - /usr/lib/dovecot/pop3
+  - /usr/lib/dovecot/pop3-login
+  - /usr/lib/dovecot/quota-status
+  - /usr/lib/dovecot/script
+  - /usr/lib/dovecot/ssl-params
+  - /usr/lib/dovecot/stats
+  - /usr/local/sbin/dovecot-postlogin

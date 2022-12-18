@@ -98,3 +98,11 @@ dns_records_backup:
   - name: sogo
     type: '{{ backup_ip_type }}'
     value: '{{ backup_ip }}'
+
+
+sogo_binaries:
+  - /usr/sbin/sogo-backup
+  - /usr/sbin/sogo-ealarms-notify
+  - /usr/sbin/sogo-slapd-sockd
+  - /usr/sbin/sogo-tool
+  - /usr/sbin/sogod

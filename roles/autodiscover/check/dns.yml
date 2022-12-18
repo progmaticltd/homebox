@@ -1,5 +1,6 @@
 ---
 
-- name: Check the DNS record
-  assert:
-    that: autodiscover_record_missing == false
+- name: Check the DNS entry
+  getent:
+    database: hosts
+    key: 'autodiscover.{{ network.domain }}'

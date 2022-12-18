@@ -1,0 +1,13 @@
+---
+
+- name: Run basic tests
+  include_tasks: check/base.yml
+
+- name: Check authentication
+  include_tasks: check/auth.yml
+
+- name: Run TLS checks
+  include_tasks: check/tls.yml
+
+- name: Check apparmor status
+  include_tasks: check/apparmor.yml

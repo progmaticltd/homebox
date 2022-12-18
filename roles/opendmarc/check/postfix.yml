@@ -1,0 +1,7 @@
+---
+
+- name: Check that opendmarc is present in postfix config
+  shell: >-
+    egrep '^\s+unix:opendmarc/opendmarc\.sock$'
+    /etc/postfix/main.cf
+  changed_when: false

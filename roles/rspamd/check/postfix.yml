@@ -1,0 +1,7 @@
+---
+
+- name: Check that rspamd is present in postfix config
+  shell: >-
+    egrep '^\s+unix:rspamd/rspamd\.sock$'
+    /etc/postfix/main.cf
+  changed_when: false

@@ -1,0 +1,30 @@
+---
+
+- name: Load TLS ciphers used
+  register: tls_ciphers_report
+  shell: sslscan --no-colour sogo.{{ network.domain }}:443
+  changed_when: false
+
+- name: Ensure authorised TLS cipher are used
+  assert:
+    that: >-
+      {{ tls_ciphers_report.stdout_lines
+      | select("match", tls_version)
+      | select("match", ".*enabled.*")
+      | length > 0
+      }}
+  loop: '{{ security.tls.versions }}'
+  loop_control:
+    loop_var: tls_version
+
+- name: Ensure no ‘unused’ TLS cipher is activated
+  assert:
+    that: >-
+      {{ tls_ciphers_report.stdout_lines
+      | select("match", tls_version)
+      | select("match", ".*disabled.*")
+      | length > 0
+      }}
+  loop: '{{ security.tls.unused_versions }}'
+  loop_control:
+    loop_var: tls_version

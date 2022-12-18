@@ -1,0 +1,61 @@
+---
+
+- name: Create a unique subject for testing
+  set_fact:
+    test_subject: "Test email {{ lookup( 'password', '/dev/null length=32' ) | to_uuid }}"
+
+- name: Create an email template
+  template:
+    src: check/testmsg-01.txt
+    dest: /tmp/testmsg-01.txt
+    mode: 0644
+    owner: postfix
+    group: postfix
+
+- name: Load facts
+  set_fact:
+    user0_uid: '{{ users[0].uid }}'
+    user0_password: '{{ lookup(creds.store, network.domain + "/ldap/" + users[0].uid) }}'
+
+- name: Send an email to the main email address of the other user
+  shell: >-
+    swaks
+    --from="{{ users[0].mail }}"
+    --to "{{ users[1].mail }}"
+    --h-Subject "{{ test_subject }}"
+    --tls-verify
+    --auth
+    --auth-user="{{ user0_uid }}"
+    --auth-password="{{ user0_password }}"
+    --server smtp.{{ network.domain }}
+    --header "Content-Type: text/plain; charset=UTF-8; format=flowed"
+    --protocol SSMTP
+    --body /tmp/testmsg-01.txt
+  changed_when: false
+  become: yes
+  become_method: sudo
+  become_user: '{{ users[0].uid }}'
+
+- name: Check if the email has been received
+  register: email_found
+  shell: >-
+    grep -l "Subject: {{ test_subject }}"
+    /home/users/{{ users[1].uid }}/mails/maildir/new/*
+  changed_when: false
+  until: email_found.rc == 0
+  retries: 10
+  delay: 2
+
+- name: Check if this specific email has been signed
+  shell: >-
+    set -o pipefail ;
+    cat '{{ email_found.stdout }}'
+    | grep "^DKIM-Signature:.*"
+  changed_when: false
+  args:
+    executable: /bin/bash
+
+- name: Check if the email is in the sent folder
+  shell: >-
+    grep -l "Subject: {{ test_subject }}"
+    /home/users/{{ users[0].uid }}/mails/maildir/.Sent/cur/*

@@ -1,5 +1,10 @@
 ---
 
+- name: Install the required packages
+  apt:
+    name: [ swaks, libnet-ssleay-perl ]
+    state: present
+
 - name: Check each postfix package
   shell: >-
     dpkg -s {{ pkg }}

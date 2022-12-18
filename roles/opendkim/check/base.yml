@@ -1,0 +1,27 @@
+---
+
+- name: Test opendkim key files exists and are readable
+  shell: test -f '/etc/opendkim/keys/{{ file }}'
+  become: yes
+  become_method: sudo
+  become_user: opendkim
+  loop:
+    - '{{ dkim_selector }}.private'
+    - '{{ dkim_selector }}.txt'
+  loop_control:
+    loop_var: file
+
+# This need to check if it is still working
+# the first time we deploy a domain
+- name: Test opendkim configuration
+  become: yes
+  become_method: sudo
+  become_user: opendkim
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 30
+  shell: >-
+    opendkim-testkey -vv -s {{ dkim_selector }}
+    -d {{ network.domain }}
+    -k /etc/opendkim/keys/{{ dkim_selector }}.private

@@ -8,3 +8,6 @@
 
 - name: Web server configuration
   include_tasks: check/nginx.yml
+
+- name: Check nginx encryption settings
+  include_tasks: check/grade.yml

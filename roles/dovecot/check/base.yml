@@ -1,0 +1,12 @@
+---
+
+- name: Check if dovecot has been installed
+  shell: dpkg -s '{{ pkg }}'
+  changed_when: false
+  loop: '{{ dovecot.packages }}'
+  loop_control:
+    loop_var: pkg
+
+- name: Check if the dovecot service is up and running # noqa 303
+  shell: systemctl status dovecot
+  changed_when: false

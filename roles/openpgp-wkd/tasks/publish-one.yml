@@ -19,7 +19,7 @@
 
 - name: Loop over wkd hashes for the direct method
   set_fact:
-    encoded_uid: '{{ key_info.uid | wkdhash }}'
+    encoded_uid: '{{ key_info.uid | wkd_hash }}'
 
 - name: Loop over wkd hashes for the direct method
   copy:

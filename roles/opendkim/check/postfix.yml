@@ -1,0 +1,6 @@
+---
+
+- name: Check that opendkim is present in postfix config
+  shell: >-
+    egrep '^\s+unix:opendkim/opendkim\.sock$'
+    /etc/postfix/main.cf

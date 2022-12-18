@@ -5,3 +5,21 @@
 
 - name: Install the packages
   include_tasks: check/packages.yml
+
+- name: Check all certificates
+  include_tasks: check/certificates.yml
+
+- name: Check the LDAP mapping
+  include_tasks: check/ldap-mapping.yml
+
+- name: Check simple email reception
+  include_tasks: check/simple-email.yml
+
+- name: Check email reception with UTF8 email address
+  include_tasks: check/utf8-email.yml
+
+- name: Check email reception with extension
+  include_tasks: check/extension-email.yml
+
+- name: Check TLS settings
+  include_tasks: check/tls.yml

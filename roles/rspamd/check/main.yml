@@ -1,0 +1,13 @@
+---
+
+- name: Check if rspamd has been installed
+  shell: dpkg -s rspamd
+
+- name: Check if the rspamd service is up and running # noqa 303
+  shell: systemctl status rspamd
+
+- name: Check appamor settings
+  include_tasks: check/apparmor.yml
+
+- name: Check postfix milter
+  include_tasks: check/postfix.yml

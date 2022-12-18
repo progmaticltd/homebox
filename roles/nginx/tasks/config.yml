@@ -12,3 +12,4 @@
   template:
     src: ocsp.conf
     dest: /etc/nginx/conf.d/ocsp.conf
+    validate: nginx -t

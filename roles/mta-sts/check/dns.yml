@@ -1,5 +1,6 @@
 ---
 
-- name: Check the main DNS record
-  assert:
-    that: mta_record_missing == false
+- name: Check the DNS entry
+  getent:
+    database: hosts
+    key: 'mta-sts.{{ network.domain }}'

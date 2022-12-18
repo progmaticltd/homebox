@@ -1,0 +1,12 @@
+---
+
+- name: Check that opendkim is running in enforced mode
+  register: aa_status
+  shell: >-
+    aa-status --json | jq '.profiles["{{ sogo_binary }}"]'
+  changed_when: false
+  loop: '{{ sogo_binaries }}'
+  loop_control:
+    loop_var: sogo_binary
+  failed_when: >
+    aa_status.stdout | trim('"') != "enforce"

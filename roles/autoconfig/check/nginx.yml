@@ -1,7 +1,6 @@
 ---
 
 - name: Check the autoconfig answer is valid
-  tags: systemctl, autoconfig
   vars:
     email: '{{ users[0].mail }}'
   get_url:

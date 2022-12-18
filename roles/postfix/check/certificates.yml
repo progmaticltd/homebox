@@ -1,0 +1,38 @@
+---
+
+- name: Check if the postfix service is up and running
+  shell: postfix status
+  changed_when: false
+
+- name: Check the certificate using SMTP over TLS on submissions port
+  shell: >-
+    set -o pipefail ;
+    echo QUIT | openssl s_client
+    -servername smtp.{{ network.domain }}
+    -connect smtp.{{ network.domain }}:{{ mail.postfix.submissions.port }} 2>&1
+    | grep 'Verification: OK'
+  args:
+    executable: /bin/bash
+
+- name: Check the certificate using SMTP and STARTTLS
+  shell: >-
+    set -o pipefail ;
+    echo QUIT | openssl s_client
+    -servername smtp.{{ network.domain }}
+    -connect smtp.{{ network.domain }}:25
+    -starttls smtp 2>&1
+    | grep 'Verification: OK'
+  args:
+    executable: /bin/bash
+
+- name: Check the certificate using SMTP and STARTTLS on submission port
+  when: mail.postfix.submission.active
+  shell: >-
+    set -o pipefail ;
+    echo QUIT | openssl s_client
+    -servername smtp.{{ network.domain }}
+    -connect smtp.{{ network.domain }}:{{ mail.postfix.submission.port }}
+    -starttls smtp 2>&1
+    | grep 'Verification: OK'
+  args:
+    executable: /bin/bash

@@ -45,7 +45,7 @@ certificates:
   - name: cockpit
     create: '{{ system.cockpit }}'
   - name: openpgpkey
-    create: '{{ pgp | default([]) | length > 0 }}'
+    create: '{{ pgp_public_keys | default([]) | length > 0 }}'
 
 
 # Do not recreate the certificates by default,

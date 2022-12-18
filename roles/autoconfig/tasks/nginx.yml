@@ -24,7 +24,7 @@
     dest: '/etc/nginx/sites-available/autoconfig.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: '0644'
+    mode: 0644
 
 - name: Enable nginx site
   file:
