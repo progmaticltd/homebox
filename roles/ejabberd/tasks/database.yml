@@ -11,7 +11,7 @@
     dest: /etc/ejabberd/database.sql
     owner: ejabberd
     group: ejabberd
-    mode: '0600'
+    mode: 0600
 
 - name: Create sqlite database for message storage
   shell: >-
@@ -21,10 +21,11 @@
   args:
     executable: /usr/bin/bash
     creates: /var/lib/ejabberd/storage.db
+  changed_when: true
 
 - name: Ensure the database permissions
   file:
     path: /var/lib/ejabberd/storage.db
     owner: ejabberd
     group: ejabberd
-    mode: '0600'
+    mode: 0600

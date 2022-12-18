@@ -28,3 +28,15 @@
     - '  /var/lib/lego/certificates/*.crt r,'
   loop_control:
     loop_var: line
+
+- name: Modify SSL key abstractions
+  notify: Restart AppArmor
+  lineinfile:
+    path: /etc/apparmor.d/abstractions/ssl_keys
+    line: '{{ line }}'
+    state: present
+  loop:
+    - '  # lego keys'
+    - '  /var/lib/lego/certificates/*.key r,'
+  loop_control:
+    loop_var: line

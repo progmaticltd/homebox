@@ -1,4 +1,0 @@
-
-  # When http file upload is activated
-  /var/www/ejabberd/files/ r,
-  /var/www/ejabberd/files/** r,

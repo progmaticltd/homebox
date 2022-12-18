@@ -1,0 +1,9 @@
+---
+
+- name: Check that the binary is running in enforced mode
+  register: aa_status
+  shell: >-
+    aa-status --json | jq '.profiles["/usr/sbin/ejabberdctl"]'
+  changed_when: false
+  failed_when: >
+    aa_status.stdout | trim('"') != "enforce"

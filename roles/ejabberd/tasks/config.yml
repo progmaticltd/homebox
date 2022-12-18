@@ -1,10 +1,35 @@
 ---
 
 - name: Add the ejabberd user to the SSL certificates group
+  notify: Restart ejabberd
   user:
     name: ejabberd
     groups: ssl-cert
     append: true
+
+- name: Get the first IPv4 address
+  when: external_ip_type == 'A'
+  set_fact:
+    ext_ipv4: '{{ external_ip | ipv4 }}'
+
+- name: Get the first IPv4 address
+  when:
+    - ext_ipv4 is not defined
+    - backup_ip_type == 'A'
+  set_fact:
+    ext_ipv4: '{{ backup_ip | ipv4 }}'
+
+# - name: Get the first IPv6 address
+#   when: external_ip_type == 'AAAA'
+#   set_fact:
+#     ext_ipv6: '{{ external_ip | ipv6 }}'
+
+# - name: Get the first IPv6 address
+#   when:
+#     - ext_ipv6 is not defined
+#     - backup_ip_type == 'AAAA'
+#   set_fact:
+#     ext_ipv6: '{{ backup_ip | ipv6 }}'
 
 - name: Copy ejabberd configuration
   notify: Restart ejabberd
