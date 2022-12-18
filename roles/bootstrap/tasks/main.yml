@@ -35,9 +35,6 @@
 - name: Configure the proxy
   include_tasks: proxy.yml
 
-- name: Create an administration user
-  include_tasks: admin.yml
-
 # Ensure the environment variables are cleared
 - name: Reset the SSH connection
   meta: reset_connection
