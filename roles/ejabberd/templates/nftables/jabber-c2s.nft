@@ -1,13 +1,13 @@
 #!/usr/sbin/nft -f
-# Accept imap (143) and imaps(993)
 
 table inet filter {
 
     chain input {
-
-        tcp dport xmpp-client ct state new counter accept \
+        tcp dport 5222 ct state new counter accept \
         comment "Accept XMPP connections from clients (TLS only)"
 
+        tcp dport 5223 ct state new counter accept \
+        comment "Accept XMPP connections from clients (TLS only)"
     }
 
 }

@@ -88,6 +88,8 @@ listen:
     port: 5269
     ip: '::'
     max_stanza_size: 524288
+    tls: true
+    protocol_options: TLS_OPTIONS
 
   - module: ejabberd_http
     port: 5443
@@ -131,6 +133,7 @@ ldap_servers:
   - 'ldap.{{ network.domain }}'
 ldap_encrypt: tls
 ldap_tls_verify: hard
+ldap_tls_certfile: /etc/ssl/certs/ca-certificates.crt
 ldap_port: 636
 ldap_rootdn: '{{ ldap_readonly_dn }}'
 ldap_password: '{{ ldap_ro_password }}'
