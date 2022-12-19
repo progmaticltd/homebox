@@ -11,6 +11,6 @@ table inet filter {
         meta skuid ejabberd \
         tcp dport 5269 \
 		ct state new counter accept \
-        comment "XMPP Server to server communictaion"
+        comment "XMPP Server to server communication"
     }
 }
