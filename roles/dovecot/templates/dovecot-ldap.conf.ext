@@ -21,7 +21,7 @@
 
 # LDAP URIs to use. You can use this instead of hosts list. Note that this
 # setting isn't supported by all LDAP libraries.
-uris = ldaps://ldap.{{ network.domain }}/ ldap://ldap.{{ network.domain }}/ ldaps://127.0.0.1/
+uris = ldapi:/// ldaps://ldap.{{ network.domain }}/ ldap://ldap.{{ network.domain }}/
 
 # Distinguished Name - the username used to login to the LDAP server.
 # Leave it commented out to bind anonymously (useful with auth_bind=yes).
