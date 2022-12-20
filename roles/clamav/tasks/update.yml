@@ -7,12 +7,27 @@
     state: started
     enabled: yes
 
-- name: Wait for the freshclam service
-  when: clamav_packages.changed
+- name: Wait for the daily update file
+  register: daily_update
   wait_for:
     path: /var/lib/clamav/daily.cvd
     sleep: 1
-    timeout: 300
+    timeout: 10
+    state: present
+  retries: 12
+  delay: 5
+  until: daily_update is not failed
+
+- name: Wait for the main update file
+  register: main_update
+  wait_for:
+    path: /var/lib/clamav/main.cvd
+    sleep: 1
+    timeout: 10
+    state: present
+  retries: 12
+  delay: 5
+  until: main_update is not failed
 
 - name: Start clamav service
   register: clamav_daemon

@@ -7,10 +7,11 @@
     - usr.bin.freshclam
     - usr.sbin.clamd
     - usr.sbin.clamsmtpd
+  ignore_errors: true
   loop_control:
     loop_var: aa_config
 
-- name: Install some clamav AppArmor profiles
+- name: Remove clamav AppArmor profiles
   file:
     path: '/etc/apparmor.d/{{ aa_config }}'
     state: absent

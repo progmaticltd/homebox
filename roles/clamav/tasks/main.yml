@@ -3,6 +3,9 @@
 - name: Install the packages
   include_tasks: packages.yml
 
+- name: Whitelist virus database
+  include_tasks: proxy.yml
+
 - name: Configure the packages
   include_tasks: config.yml
 

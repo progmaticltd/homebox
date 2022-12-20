@@ -28,15 +28,3 @@
     group: clamsmtp
     mode: 0700
     state: directory
-
-- name: Whitelist auto update domains in the proxy
-  register: tinyproxy_filter
-  lineinfile:
-    path: /etc/tinyproxy/filter
-    line: database.clamav.net
-
-- name: Restart tinyproxy
-  when: tinyproxy_filter.changed
-  service:
-    name: tinyproxy
-    state: restarted
