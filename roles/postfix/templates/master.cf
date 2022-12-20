@@ -71,39 +71,14 @@ scache    unix  -       -       y       -       1       scache
 #
 maildrop  unix  -       n       n       -       -       pipe
   flags=DRhu user=vmail argv=/usr/bin/maildrop -d ${recipient}
-#
-# ====================================================================
-#
-# Recent Cyrus versions can use the existing "lmtp" master.cf entry.
-#
-# Specify in cyrus.conf:
-#   lmtp    cmd="lmtpd -a" listen="localhost:lmtp" proto=tcp4
-#
-# Specify in main.cf one or more of the following:
-#  mailbox_transport = lmtp:inet:localhost
-#  virtual_transport = lmtp:inet:localhost
-#
-# ====================================================================
-#
-# Cyrus 2.1.5 (Amos Gouaux)
-# Also specify in main.cf: cyrus_destination_recipient_limit=1
-#
-#cyrus     unix  -       n       n       -       -       pipe
-#  user=cyrus argv=/cyrus/bin/deliver -e -r ${sender} -m ${extension} ${user}
-#
-# ====================================================================
-# Old example of delivery via Cyrus.
-#
-#old-cyrus unix  -       n       n       -       -       pipe
-#  flags=R user=cyrus argv=/cyrus/bin/deliver -e -m ${extension} ${user}
-#
-# ====================================================================
-#
+
+
 # See the Postfix UUCP_README file for configuration details.
 #
 uucp      unix  -       n       n       -       -       pipe
   flags=Fqhu user=uucp argv=uux -r -n -z -a$sender - $nexthop!rmail ($recipient)
-#
+
+
 # Other external delivery methods.
 #
 ifmail    unix  -       n       n       -       -       pipe
@@ -130,9 +105,8 @@ scan      unix  -       -       n       -       16      smtp
   -o smtp_generic_maps=
   -o smtp_enforce_tls=no
 
-{% if mail.antivirus.active %}
 # Antivirus scanner: Injecting mail back into postfix from the filter
-127.0.0.1:{{ mail.antivirus.port }} inet  n -       n       -       16      smtpd {{ smtpd_flags }}
+127.0.0.1:10024 inet  n -       n       -       16      smtpd {{ smtpd_flags }}
   -o content_filter=
   -o receive_override_options=no_unknown_recipient_checks,no_header_body_checks
   -o smtpd_helo_restrictions=
@@ -141,4 +115,3 @@ scan      unix  -       -       n       -       16      smtp
   -o smtpd_recipient_restrictions=permit_mynetworks,reject
   -o mynetworks_style=host
   -o smtpd_authorized_xforward_hosts=127.0.0.0/8
-{% endif %}
