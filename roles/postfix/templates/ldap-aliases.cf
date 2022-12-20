@@ -1,8 +1,6 @@
 # Basic LDAP settings for postfix
-server_host = ldaps://ldap.{{ network.domain }}/
-server_port = 636
+server_host = ldapi:/// ldaps://ldap.{{ network.domain }}/ ldap://ldap.{{ network.domain }}/
 search_base = {{ ldap_search_base }}
-start_tls = no
 
 # Force support for UTF8
 version = 3
