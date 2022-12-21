@@ -1,8 +1,8 @@
 ---
 
-- name: Ensure rsync is installed
+- name: Ensure the required packages are installed
   apt:
-    name: rsync
+    name: [ rsync, ssl-cert ]
     state: present
 
 - name: Create the lego configuration directory

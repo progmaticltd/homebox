@@ -1,6 +1,6 @@
 ---
 
-storage_live:
+storage_archive:
   device: /dev/vdc
   fstype: btrfs
   mkfs_opts:

@@ -4,4 +4,4 @@
   meta: flush_handlers
 
 - name: Ensure quotas are used for the archive partition
-  shell: btrfs quota enable /home/archive
+  shell: btrfs quota enable /home/archives

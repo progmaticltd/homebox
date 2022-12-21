@@ -3,7 +3,7 @@ Description=Users’ archive storage
 
 [Mount]
 What={{ storage_archive.device }}1
-Where=/home/users
+Where=/home/archives
 Type={{ storage_archive.fstype }}
 Options={{ storage_archive.mount_opts | join(",") }}
 

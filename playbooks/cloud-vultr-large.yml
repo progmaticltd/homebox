@@ -14,14 +14,14 @@
       tags: always
     - role: bootstrap
       tags: always
+    - role: cloud-vultr-setup
+      tags: cloud
     - role: firewall
       tags: firewall
     - role: dns-pdns
       tags: dns
     - role: dns-publish
       tags: dns
-    - role: certificates
-      tags: cert
     - role: ldap-openldap
       tags: ldap
     - role: home-users-storage

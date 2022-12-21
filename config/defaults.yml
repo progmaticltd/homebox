@@ -225,6 +225,11 @@ security_default:
   # Install fail2ban or not
   fail2ban: false
 
+  # Auto ban parameters
+  autoban:
+    rate: 1/minute
+    duration: 10m
+
   # various options when luks is installed
   luks:
     yubikey: false

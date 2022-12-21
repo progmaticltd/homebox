@@ -6,15 +6,17 @@ table inet filter {
         type ipv4_addr
         size 65535
         flags dynamic,timeout
-        timeout 5m
+        timeout {{ security.autoban.duration }}
     }
 
     chain input {
 
 		# Limit new SSH connections ala fail2ban
         ip protocol tcp ct state new,untracked tcp dport ssh \
-		limit rate over 1/minute add @ssh_denylist { ip saddr }
-        ip saddr @ssh_denylist drop
+		limit rate over {{ security.autoban.rate }} add @ssh_denylist { ip saddr }
+
+		# Rejec the traffic explicitly
+        ip saddr @ssh_denylist reject with icmp type admin-prohibited
 
         # Allow ssh
         tcp dport ssh ct state new counter accept \
