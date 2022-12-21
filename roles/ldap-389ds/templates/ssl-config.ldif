@@ -1,9 +1,0 @@
-dn: cn=config
-add: olcTLSCACertificateFile
-olcTLSCACertificateFile: /var/lib/lego/certificates/ldap.{{ network.domain }}.issuer.crt
--
-add: olcTLSCertificateFile
-olcTLSCertificateFile: /var/lib/lego/certificates/ldap.{{ network.domain }}.crt
--
-add: olcTLSCertificateKeyFile
-olcTLSCertificateKeyFile: /var/lib/lego/certificates/ldap.{{ network.domain }}.key

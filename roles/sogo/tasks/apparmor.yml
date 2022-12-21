@@ -9,7 +9,7 @@
   template:
     src: '{{ profile.src }}'
     dest: '{{ profile.dest }}'
-  with_items:
+  loop:
     - src: apparmor.d/local/nginx-sogo
       dest: '/etc/apparmor.d/local/nginx-sogo'
     - src: apparmor.d/usr.sbin.sogod

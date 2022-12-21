@@ -1,8 +1,0 @@
-dn: olcOverlay=ppolicy,olcDatabase={1}mdb,cn=config
-objectClass: olcPPolicyConfig
-objectClass: olcOverlayConfig
-olcOverlay: ppolicy
-olcPPolicyHashCleartext: TRUE
-olcPPolicyUseLockout: FALSE
-olcPPolicyForwardUpdates: FALSE
-olcPPolicyDefault: cn=default,ou=pwpolicies,{{ ldap.organization.base }}
