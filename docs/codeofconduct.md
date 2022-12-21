@@ -7,6 +7,7 @@ This one is different in the approach used, and I do not want to deviate.
 
 It is made to be unobtrusive with a standard Debian distribution, stable and highly secure.
 
+
 ## Security
 
 Security is the main concern of this solution. All the packages are coming from the __official Debian repository__ or
@@ -24,6 +25,7 @@ The firewall is installed from the start, with inbound, outbound and forwarding 
 External web access is blocked by default, using a whitelist proxy. Only a few sites, like debian servers, are
 accessible, even for root.
 
+
 ## Standard compliance
 
 It is also standard compliant. For instance, the system generates and _publish_ automatically your DKIM, SPF and DMARC
@@ -31,12 +33,29 @@ records. DKIM certificates are automatically renewed every year.
 
 Any service that requires authentication should use LDAP, so the user doesn't have to remember another password.
 
+
 ## Current status
 
 - Although the platform is actually stable enough to be used in production, it is not a turn-key solution for lambda
   users, and will never be.
 
 I have more long term ideas in mind, I will document them more in details later.
+
+
+## Ansible roles
+
+The roles should be in the ‘roles’ top level folder, and can be seen as a “feature” to install or uninstall on demand.
+Therefore, it should contains the following sub-folders:
+
+- defaults: default settings that can be overridden.
+- vars: settings that cannot be overridden.
+- files: standard files ansible folder.
+- templates: standard ansible templates folder.
+- handlers: Ansible handlers related to the role.
+- tasks: default tasks to run when installing the feature.
+- uninstall: tasks to run when uninstalling the role.
+- check: tasks to run when checking or unit testing the feature.
+
 
 ## Shell scripts
 
