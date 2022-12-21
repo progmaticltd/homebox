@@ -1,0 +1,10 @@
+---
+
+- name: Load checking facts
+  include_tasks: check/facts.yml
+
+- name: Send the running service
+  include_tasks: check/service.yml
+
+- name: Send a message with a virus
+  include_tasks: check/sendmsg.yml

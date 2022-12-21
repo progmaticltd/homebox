@@ -1,44 +1,27 @@
 ---
 
-- name: Check if postfix has been installed
-  tags: apt, clamav
-  shell: dpkg -s clamav
-
-- name: Check if the clamav services are up and running
-  tags: systemctl, clamav
-  shell: 'systemctl status {{ service }}'
-  with_items:
-    - clamav-daemon
-    - clamav-freshclam
-  loop_control:
-    loop_var: service
-
 - name: Create a unique subject and filename for testing
-  tags: clamav
   set_fact:
     test_subject: 'Test email with virus {{ 1048576 | random | to_uuid }}'
     test_filename: '{{ 1048576 | random | to_uuid }}'
 
 - name: Create an email template
-  tags: clamav
   template:
-    src: testmsg-01.txt
+    src: check/testmsg-01.txt
     dest: /tmp/testmsg-01.txt
-    mode: '0600'
+    mode: 0600
     owner: clamav
     group: clamav
 
 - name: Create an email template
-  tags: clamav
   copy:
-    src: clam.exe
+    src: check/clam.exe
     dest: /tmp/clam.exe
-    mode: '0600'
-    owner: '{{ users[0].uid }}'
+    mode: 0600
+    owner: '{{ user0_uid }}'
     group: users
 
 - name: Check if an email with a virus is rejected
-  tags: clamav
   shell: >-
     swaks
     --from="{{ users[0].mail }}"
@@ -58,7 +41,6 @@
 
 - name: Check if the email has been bounced
   when: mail.antivirus.active and mail.antivirus.action == 'bounce'
-  tags: clamav
   register: email_bounced
   shell: >-
     grep -l -e '{{ test_subject }}'

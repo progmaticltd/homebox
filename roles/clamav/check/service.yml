@@ -1,0 +1,12 @@
+---
+
+- name: Check if clamav has been installed
+  shell: dpkg -s clamav
+
+- name: Check if the clamav services are up and running
+  shell: 'systemctl status {{ service }}'
+  loop:
+    - clamav-daemon
+    - clamav-freshclam
+  loop_control:
+    loop_var: service
