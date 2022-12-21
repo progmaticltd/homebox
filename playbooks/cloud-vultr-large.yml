@@ -54,6 +54,8 @@
       tags: ejabberd
     - role: website-simple
       tags: website
+    - role: cockpit
+      tags: cockpit
     - role: autodiscover
       tags: autodiscover
     - role: autoconfig
