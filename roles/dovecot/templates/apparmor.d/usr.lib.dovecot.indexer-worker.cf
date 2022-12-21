@@ -26,6 +26,7 @@
   owner /home/users/*/mails/virtual/**/dovecot-uidlist rw,
   owner /home/users/*/mails/virtual/**/dovecot-uidlist.lock rw,
   owner /home/users/*/mails/virtual/ r,
+  owner /home/users/*/mails/virtual/*/ r,
   owner /home/users/*/mails/virtual/**/dovecot-virtual r,
 {% endif %}
 

@@ -8,23 +8,20 @@
     state: present
 
 - name: Copy decode2text script
-  tags: scripts
   copy:
     src: fts/decode2text
     dest: /usr/local/bin/decode2text
-    mode: '0755'
+    mode: 0755
 
 - name: Make sure the log file exist
-  tags: logs
   file:
     path: /var/log/decode2text.log
-    mode: '0644'
+    mode: 0644
     owner: dovecot
     group: dovecot
     state: touch
 
 - name: Copy fts mime configuration files
-  tags: config
   template:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'

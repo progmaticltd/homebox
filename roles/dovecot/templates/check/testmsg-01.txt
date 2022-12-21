@@ -9,5 +9,5 @@ All the attachments are containing nice quotes as well ;-)
 
 This email contains a {{ attachment.description }}.
 
---  
+-- 
 The tester

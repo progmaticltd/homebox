@@ -1,5 +1,8 @@
 ---
 
+- name: Load common facts
+  include_tasks: check/facts.yml
+
 - name: Run basic tests
   include_tasks: check/base.yml
 
@@ -11,3 +14,7 @@
 
 - name: Check apparmor status
   include_tasks: check/apparmor.yml
+
+- name: Run full text search checks
+  when: mail.fts.active
+  include_tasks: check/fts.yml

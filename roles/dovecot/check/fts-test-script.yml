@@ -2,7 +2,7 @@
 
 - name: Copy the attachment on the remote server
   copy:
-    src: '{{ attachment.uid }}.{{ attachment.extension }}'
+    src: 'check/{{ attachment.uid }}.{{ attachment.extension }}'
     dest: '/tmp/file.data'
 
 # Check if the parser can return the string when converting to text

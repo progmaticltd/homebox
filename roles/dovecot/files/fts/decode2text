@@ -12,10 +12,10 @@ exec 2>>/var/log/decode2text.log
 # Successes and error codes
 SUCCESS=0
 ERROR_IGNORE=0
-ERROR_EMPTY_ATTACHMENT=1
-ERROR_UNKNOWN_ATTACHMENT=2
-ERROR_TMP_FILE_CREATION=3
-ERROR_EXTRACTION=4
+ERROR_EMPTY_ATTACHMENT=10
+ERROR_UNKNOWN_ATTACHMENT=20
+ERROR_TMP_FILE_CREATION=30
+ERROR_EXTRACTION=40
 
 # When no mime type is passed, return the list of supported mime types
 if [ "$1" = "" ]; then
@@ -28,8 +28,8 @@ fi
 NOW=$(date -Iseconds)
 
 # Set locale
-LANG=en_US.UTF-8
-export LANG
+# LANG=en_US.UTF-8
+# export LANG
 
 # Logging helpers
 error() {

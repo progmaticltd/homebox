@@ -1,10 +1,5 @@
 ---
 
-- name: Load facts
-  set_fact:
-    user0_uid: '{{ users[0].uid }}'
-    user0_password: '{{ lookup(creds.store, network.domain + "/ldap/" + users[0].uid) }}'
-
 - name: Test authentication on the first user
   shell: >-
     set -o pipefail ;
