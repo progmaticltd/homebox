@@ -2,7 +2,7 @@
 
 ## Main installation playbook
 
-- name: Install Homebox (Medium version)
+- name: Install Homebox (Large version)
   hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../config/system.yml'
