@@ -1,0 +1,42 @@
+---
+
+## Call the restore tasks on a role
+
+# export the role you want to run in the ‘ROLE’ environment variable
+# and run the playbook.
+
+- name: Run the install tasks of one role
+  hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../config/system.yml'
+    - '{{ playbook_dir }}/../config/defaults.yml'
+  roles:
+    - role: load-defaults
+      tags: always
+    - role: external-ip-type
+      tags: always
+
+- name: Load the roles to run
+  hosts: homebox
+  tags: always
+  tasks:
+    - name: Load the roles to run
+      set_fact:
+        roles_list: '{{ lookup("env", "ROLE").split(",") }}'
+
+- name: Run all the roles selected
+  hosts: homebox
+  vars:
+    backup_dir: '{{ playbook_dir }}/../backup/{{ network.domain }}'
+  vars_files:
+    - '{{ playbook_dir }}/../config/system.yml'
+    - '{{ playbook_dir }}/../config/defaults.yml'
+  tasks:
+    - name: Run the role selected
+      tags: always
+      include_role:
+        name: '{{ role }}'
+        tasks_from: ../restore/main.yml
+      loop: '{{ roles_list }}'
+      loop_control:
+        loop_var: role

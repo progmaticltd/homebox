@@ -1,0 +1,11 @@
+---
+
+- name: Push the certificate on the server
+  synchronize:
+    mode: push
+    src: '{{ backup_dir }}/certificates'
+    dest: /var/lib/lego/
+    archive: true
+    owner: true
+    rsync_opts:
+      - '--chown=root:ssl-cert'

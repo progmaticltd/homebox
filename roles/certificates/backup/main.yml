@@ -1,0 +1,8 @@
+---
+
+- name: Pull certificate files locally
+  synchronize:
+    mode: pull
+    src: /var/lib/lego/certificates
+    dest: '{{ backup_dir }}/'
+    archive: true
