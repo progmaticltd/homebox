@@ -44,7 +44,6 @@ do
 		# Write the list of the main ansible files and directories
 		find \
 			roles/* \
-			tests/main.yml \
 			-maxdepth 0 -print0 \
 			> "$tmp_checklist"
 
