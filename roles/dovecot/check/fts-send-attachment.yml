@@ -54,7 +54,7 @@
 
 # Now, we do a search inside the emais using the uuid,
 # this should return one result
-- name: Search inside the emails for the uuid ({{ attachment.description }})
+- name: Search inside the emails ({{ attachment.description }})
   register: email_found
   shell: >-
     set -o pipefail ;

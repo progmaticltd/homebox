@@ -13,6 +13,7 @@ sieve:
 # List of attachments for checking role
 
 attachments:
+
   # Simplest documents
   - uid: b93a4d30-4fd7-11e8-9988-0bff21231c37
     extension: csv
@@ -42,6 +43,7 @@ attachments:
     smtp_test: false
     script_test: true
     search: cable_undead_undrilled_percent_disaster_flatfoot
+
   # Text documents
   - uid: 71feb6a0-5062-11e8-94c3-5759751031f8
     extension: txt
@@ -78,6 +80,7 @@ attachments:
     smtp_test: true
     script_test: true
     search: stoneware_raking_brownnose_dweller_sliceable_luckless
+
   # Libre Office
   - uid: 6134ab8e-4fd8-11e8-bf1d-97a8afb41480
     extension: odt
@@ -100,7 +103,8 @@ attachments:
     smtp_test: true
     script_test: true
     search: facedown_manlike_conduit_imprudent_entangled_helium
-  Open office formats
+
+  # Open office formats
   - uid: 87dbbe3e-4fd9-11e8-a6a6-833efa968b0c
     extension: sxw
     mime: application/vnd.sun.xml.writer
@@ -108,7 +112,8 @@ attachments:
     smtp_test: true
     script_test: true
     search: bloating_wrinkly_seventeen_corsage_audition_cautious
-  Microsoft office
+
+  # Microsoft office
   - uid: cba12826-4fd8-11e8-8cd3-c7ba3f147c7d
     extension: docx
     mime: application/vnd.openxmlformats-officedocument.wordprocessingml.document
@@ -144,6 +149,7 @@ attachments:
     smtp_test: true
     script_test: true
     search: showroom_strife_blade_diffusive_schilling_sequence
+
   # Other office formats
   - uid: 1d115b3a-4fda-11e8-92de-4355291f7bc3
     extension: kwd
@@ -173,25 +179,33 @@ attachments:
     smtp_test: true
     script_test: true
     search: backlight_quickstep_ravage_outdated_audible_supermom
+
   # Archives
+  # For encrypted archive, just list the file names.
+  # In this particular case, the password is
+  # “correct horse battery staple”
   - uid: 54e04f86-50ec-11e8-a48b-efe5bfd4eaa6
     extension: zip
     mime:  application/zip
     description: Encrypted zip file
     smtp_test: true
     script_test: true
+    search: violet_bootlace_latrine_padded_client_violate
   - uid: be17a3c2-502a-11e8-9723-a7bcf2ddd230
     extension: zip
     mime:  application/zip
     description: Generic zip file with a text document inside
     smtp_test: true
     script_test: true
+    search: charger_robotics_pacific_provolone_saint_rocklike
   - uid: 4901bc0e-5079-11e8-8297-2f51a5e7cc0f
     extension: tar.gz
     mime:  application/gzip
     description: Generic tgz file with a text document inside
     smtp_test: true
     script_test: true
+    search: trowel_marlin_remover_curfew_salad_dominoes
+
   # FIXME: Disabled tests
   - uid: 4554875c-4fc6-11e8-9f02-c7e6198d928a
     extension: ppt
@@ -199,6 +213,7 @@ attachments:
     description: Microsoft Powerpoint presentation
     smtp_test: false
     script_test: false
+
   # Proprietary extensions
   - uid: d27dddc0-513a-11e8-9653-e7af3c54987f
     extension: tnef

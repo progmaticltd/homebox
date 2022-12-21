@@ -1,11 +1,14 @@
 ---
 
 # Test the script only, call grep to check for the uuid
-# - name: Test parsing script ({{ attachment.description }})
-#   include_tasks: ./fts-test-script.yml
-#   loop: '{{ attachments | selectattr("script_test", "equalto", true) | list }}'
-#   loop_control:
-#     loop_var: attachment
+# These tests are sending and receiving emails
+# They need to be done on development servers only
+- name: Test parsing script ({{ attachment.description }})
+  when: system.devel
+  include_tasks: ./fts-test-script.yml
+  loop: '{{ attachments | selectattr("script_test", "equalto", true) | list }}'
+  loop_control:
+    loop_var: attachment
 
 
 # Full test by sending an email and using dovecot fts to search
