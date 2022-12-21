@@ -11,11 +11,13 @@
 - name: Initialise the database
   register: database
   shell: >-
+    set -o pipefail ;
     cat /usr/share/pdns-backend-sqlite3/schema/schema.sqlite3.sql
     | sqlite3 default.db
   args:
     creates: /var/lib/powerdns/default.db
     chdir: /var/lib/powerdns/
+    executable: /bin/bash
   changed_when: true
 
 - name: Set the right permissions
