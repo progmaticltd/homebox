@@ -1,13 +1,16 @@
 ---
 
 - name: Create the IMAP certificate
+  tags: certs
   vars:
     certificates:
       - name: imap
+        tags: certs
   include_role:
     name: certificates
 
 - name: Copy the imap certificates in the debian standard directory
+  tags: certs
   notify: Restart dovecot
   file:
     src: '{{ file.src }}'
@@ -22,6 +25,7 @@
     loop_var: file
 
 - name: Copy the imap private key in the debian standard directory
+  tags: certs
   notify: Restart dovecot
   file:
     src: /var/lib/lego/certificates/imap.{{ network.domain }}.key
@@ -29,14 +33,17 @@
     state: link
 
 - name: Create the POP3 certificate
+  tags: certs
   when: mail.pop3
   vars:
     certificates:
-      - name: imap
+      - name: pop3
+        tags: certs
   include_role:
     name: certificates
 
 - name: Copy the pop3 certificates in the debian standard directory
+  tags: certs
   notify: Restart dovecot
   when: mail.pop3
   file:
@@ -52,6 +59,7 @@
     loop_var: file
 
 - name: Copy the pop3 private key in the debian standard directory
+  tags: certs
   notify: Restart dovecot
   when: mail.pop3
   file:
@@ -60,12 +68,14 @@
     state: link
 
 - name: Copy the certificate update hook for IMAP
+  tags: certs
   copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/imap.{{ network.domain }}
     mode: 0700
 
 - name: Copy the certificate update hook for POP3
+  tags: certs
   when: mail.pop3
   copy:
     src: renew-cert.sh

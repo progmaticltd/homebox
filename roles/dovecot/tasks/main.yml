@@ -3,41 +3,41 @@
 - name: Set facts
   include_tasks: facts.yml
 
-# - name: Install the required packages
-#   include_tasks: packages.yml
+- name: Install the required packages
+  include_tasks: packages.yml
 
-# - name: Configure firewall
-#   include_tasks: firewall.yml
+- name: Configure firewall
+  include_tasks: firewall.yml
 
-# - name: Configure all DNS records
-#   include_tasks: dns.yml
+- name: Configure all DNS records
+  include_tasks: dns.yml
 
-# - name: Configure certificates
-#   include_tasks: certificates.yml
+- name: Configure certificates
+  include_tasks: certificates.yml
 
-# - name: Set some configuration files
-#   include_tasks: config.yml
+- name: Set some configuration files
+  include_tasks: config.yml
 
-# - name: Configure sieve scripts
-#   include_tasks: sieve.yml
+- name: Configure sieve scripts
+  include_tasks: sieve.yml
 
-# - name: Configure antispam
-#   include_tasks: antispam.yml
+- name: Configure antispam
+  include_tasks: antispam.yml
 
-# - name: Import imersonate tasks
-#   when: mail.impersonate.active
-#   include_tasks: impersonate.yml
+- name: Import imersonate tasks
+  when: mail.impersonate.active
+  include_tasks: impersonate.yml
 
 - name: AppArmor tasks
   include_tasks: apparmor.yml
 
-# - name: Backup configuration tasks
-#   include_tasks: backup.yml
+- name: Backup configuration tasks
+  include_tasks: backup.yml
 
 - name: Include full text search tasks
   when: mail.fts.active
   include_tasks: fts.yml
 
-# - name: Include virtual mailboxes tasks
-#   when: mail.virtual_folders.active
-#   include_tasks: virtual.yml
+- name: Include virtual mailboxes tasks
+  when: mail.virtual_folders.active
+  include_tasks: virtual.yml
