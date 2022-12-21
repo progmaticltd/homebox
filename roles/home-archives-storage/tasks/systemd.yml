@@ -1,0 +1,9 @@
+---
+
+- name: Copy the systemd mount file
+  notify:
+    - Reload systemd
+    - Mount home-archives
+  template:
+    src: home-archives.mount
+    dest: /etc/systemd/system/home-archives.mount

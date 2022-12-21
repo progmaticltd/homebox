@@ -6,7 +6,7 @@ storage_live:
   mkfs_opts:
     - -R quota
     - --checksum xxhash
-    - -L users-home
+    - -L home-users
   mount_opts:
     - noatime
-    - compress=zstd
+    - compress=lzo

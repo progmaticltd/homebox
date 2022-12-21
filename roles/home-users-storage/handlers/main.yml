@@ -4,7 +4,7 @@
   systemd:
     daemon_reload: true
 
-- name: Mount users-home
+- name: Mount home-users
   systemd:
     name: home-users.mount
     state: restarted

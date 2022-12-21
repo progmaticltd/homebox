@@ -4,8 +4,8 @@
   systemd:
     daemon_reload: true
 
-- name: Mount users-home
+- name: Mount home-archives
   systemd:
-    name: home-users.mount
+    name: home-archives.mount
     state: restarted
     enabled: true

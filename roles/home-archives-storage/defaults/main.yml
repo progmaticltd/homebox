@@ -1,12 +1,12 @@
 ---
 
 storage_live:
-  device: /dev/vdb
+  device: /dev/vdc
   fstype: btrfs
   mkfs_opts:
     - -R quota
     - --checksum xxhash
-    - -L users-home
+    - -L home-archives
   mount_opts:
     - noatime
     - compress=zstd
