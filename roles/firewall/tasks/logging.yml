@@ -11,7 +11,7 @@
   tags: logging
   file:
     path: '{{ path }}'
-    state: file
+    state: touch
   loop:
     - /var/log/nftables/in.log
     - /var/log/nftables/out.log
@@ -31,7 +31,6 @@
   when: rsyslog_config.changed
   systemd:
     name: rsyslog
-    tags: logging
     state: restarted
 
 - name: Deploy the logrotate configutation

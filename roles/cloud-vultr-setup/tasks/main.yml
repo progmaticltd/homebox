@@ -22,6 +22,7 @@
     - cloud-init
   loop_control:
     loop_var: service
+  ignore_errors: true
 
 - name: Remove vultr packages repository
   file:

@@ -10,12 +10,9 @@
 
 - name: Initialise the database
   register: database
-  become: true
-  become_user: pdns
   shell: >-
-    sqlite3 -init
-    /usr/share/pdns-backend-sqlite3/schema/schema.sqlite3.sql
-    default.db
+    cat /usr/share/pdns-backend-sqlite3/schema/schema.sqlite3.sql
+    | sqlite3 default.db
   args:
     creates: /var/lib/powerdns/default.db
     chdir: /var/lib/powerdns/

@@ -33,7 +33,7 @@
   when: repositories.changed
   register: packages_cache
   apt:
-    update_cache: yes
+    update_cache: true
 
 - name: Disable recommended and suggested packages
   template:
@@ -43,4 +43,4 @@
 - name: Upgrade the distribution
   when: packages_cache.changed
   apt:
-    upgrade: yes
+    upgrade: safe
