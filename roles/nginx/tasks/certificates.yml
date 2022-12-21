@@ -1,5 +1,13 @@
 ---
 
+- name: Create the certificates
+  vars:
+    certificates:
+      - name: default
+      - name: www
+  include_role:
+    name: certificates
+
 - name: Link the root certificate in the debian standard directory
   notify: Restart nginx
   file:

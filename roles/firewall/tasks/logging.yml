@@ -1,15 +1,17 @@
 ---
 
 - name: Create logging directory
+  tags: logging
   file:
     path: /var/log/nftables
     state: directory
     mode: 0700
 
 - name: Create empty configuration files for tail/lnav
+  tags: logging
   file:
     path: '{{ path }}'
-    state: touch
+    state: file
   loop:
     - /var/log/nftables/in.log
     - /var/log/nftables/out.log
@@ -18,18 +20,22 @@
     loop_var: path
 
 - name: Deploy the system log configuration
+  tags: logging
   register: rsyslog_config
   template:
     src: logging/rsyslog.conf
     dest: /etc/rsyslog.d/nftables.conf
 
 - name: Restart rsyslog now
+  tags: logging
   when: rsyslog_config.changed
   systemd:
     name: rsyslog
+    tags: logging
     state: restarted
 
 - name: Deploy the logrotate configutation
+  tags: logging
   template:
     src: logging/logrotate.conf
     dest: /etc/logrotate.d/nftables

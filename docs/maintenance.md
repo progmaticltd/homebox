@@ -28,7 +28,6 @@ configuration file:
   first_name: Mike
   last_name: Dear
   mail: mike.dear@example.com
-  password: 'n~wI*rhf873'
   aliases:
     - mike@homebox.space
     - mikael@homebox.space

@@ -1,12 +1,41 @@
 ---
 
 - name: Unlock /etc/hosts
+  tags: network
   file:
     path: /etc/hosts
     attributes: -i
 
 - name: Template and lock /etc/hosts
+  tags: network
   template:
     src: hosts.conf
     dest: /etc/hosts
+    attributes: +i
+
+- name: Check if /etc/resolv.conf is a real file
+  tags: network
+  register: resolv_conf
+  stat:
+    path: /etc/resolv.conf
+
+- name: Remove the symbolic link
+  when: resolv_conf.stat.exists and resolv_conf.stat.islnk
+  tags: network
+  file:
+    path: /etc/resolv.conf
+    state: absent
+
+- name: Unlock /etc/resolv.conf
+  when: resolv_conf.stat.exists and resolv_conf.stat.isreg
+  tags: network
+  file:
+    path: /etc/resolv.conf
+    attributes: -i
+
+- name: Template and lock /etc/resolv.conf
+  tags: network
+  template:
+    src: resolv.conf
+    dest: /etc/resolv.conf
     attributes: +i

@@ -12,6 +12,7 @@
   include_tasks: ansible-logs.yml
 
 - name: Network related tasks
+  tags: network
   include_tasks: network.yml
 
 - name: Initialise and update the packages repository

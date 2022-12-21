@@ -1,5 +1,18 @@
 ---
 
+- name: Create the certificates
+  vars:
+    certificates:
+      - name: conference
+      - name: xmpp
+      - name: files
+      - name: upload
+      - name: vjud
+      - name: pubsub
+      - name: proxy
+  include_role:
+    name: certificates
+
 - name: Copy the certificates in the debian standard directory
   notify: Restart ejabberd
   file:

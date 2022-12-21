@@ -16,7 +16,7 @@
 
 - name: Create all the certificates
   include_tasks: create-one.yml
-  loop: '{{ certificates | selectattr("create", "equalto", true) }}'
+  loop: '{{ certificates }}'
   loop_control:
     loop_var: certificate
 

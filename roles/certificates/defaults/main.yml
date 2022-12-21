@@ -1,52 +1,6 @@
 ---
 
-certificates:
-  - name: default
-    create: true
-  - name: ldap
-    create: true
-    san_list:
-      - 'main.{{ network.domain }}'
-  - name: rspamd
-    create: '{{ mail.antispam.webui.active }}'
-  - name: smtp
-    create: true
-    type: rsa2048
-    pem: true
-  - name: pop3
-    create: '{{ mail.pop3 }}'
-  - name: imap
-    create: true
-  - name: mta-sts
-    create: true
-  - name: sogo
-    create: '{{ sogo.install }}'
-  - name: www
-    create: '{{ website.install }}'
-  - name: autoconfig
-    create: '{{ mail.autoconfig }}'
-  - name: autodiscover
-    create: '{{ mail.autodiscover }}'
-  # Jabber
-  - name: conference
-    create: '{{ ejabberd.install }}'
-  - name: xmpp
-    create: '{{ ejabberd.install }}'
-  - name: files
-    create: '{{ ejabberd.install }}'
-  - name: upload
-    create: '{{ ejabberd.install }}'
-  - name: vjud
-    create: '{{ ejabberd.install }}'
-  - name: pubsub
-    create: '{{ ejabberd.install }}'
-  - name: proxy
-    create: '{{ ejabberd.install }}'
-  - name: cockpit
-    create: '{{ system.cockpit }}'
-  - name: openpgpkey
-    create: '{{ pgp_public_keys | default([]) | length > 0 }}'
-
+certificates: [ ]
 
 # Do not recreate the certificates by default,
 # unless they are not valid

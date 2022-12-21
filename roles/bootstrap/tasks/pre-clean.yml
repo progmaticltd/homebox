@@ -1,9 +1,8 @@
 ---
 
-# We are using systemd-timesyncd by default
-- name: Remove NTP package
+- name: Remove unwanted packages
   apt:
-    name: ntp
+    name: '{{ unwanted_packages }}'
     state: absent
     purge: true
     autoremove: true

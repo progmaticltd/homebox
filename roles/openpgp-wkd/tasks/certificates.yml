@@ -1,5 +1,12 @@
 ---
 
+- name: Create the certificate
+  vars:
+    certificates:
+      - name: openpgpkey
+  include_role:
+    name: certificates
+
 - name: Copy the certificates in the debian standard directory
   copy:
     src: '{{ file.src }}'

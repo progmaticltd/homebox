@@ -12,10 +12,13 @@
     - '{{ playbook_dir }}/../config/defaults.yml'
   roles:
     - role: load-defaults
+      tags: always
     - role: external-ip-type
+      tags: always
 
 - name: Load the roles to run
   hosts: homebox
+  tags: always
   tasks:
     - name: Load the roles to run
       set_fact:
@@ -28,6 +31,7 @@
     - '{{ playbook_dir }}/../config/defaults.yml'
   tasks:
     - name: Run the role selected
+      tags: always
       include_role:
         name: '{{ role }}'
       loop: '{{ roles_list }}'

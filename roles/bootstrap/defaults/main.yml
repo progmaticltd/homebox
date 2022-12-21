@@ -1,0 +1,22 @@
+---
+
+# Packages to remove before the installation
+unwanted_packages:
+  - ntp
+  - resolvconf
+
+
+# These packages are absolutely required to run homebox
+base_packages:
+  - apparmor-utils
+  - apt-transport-https
+  - ca-certificates
+  - gnutls-bin
+  - needrestart
+  - openssl
+  - ssl-cert
+  - sslscan
+  - sudo
+  - systemd-timesyncd
+  - unattended-upgrades
+  - xkcdpass

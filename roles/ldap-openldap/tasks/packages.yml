@@ -22,10 +22,10 @@
       type: password
       value: '{{ admin_password }}'
     - question: slapd/purge_database
-      value: false
+      value: 'False'
       type: boolean
     - question: slapd/invalid_config
-      value: false
+      value: 'False'
       type: boolean
     - question: shared/organization
       value: '{{ ldap.organization.domain }}'
@@ -37,13 +37,13 @@
       value: 'MDB'
       type: select
     - question: slapd/move_old_database
-      value: true
+      value: 'True'
       type: boolean
     - question: slapd/unsafe_selfwrite_acl
-      value: false
+      value: 'False'
       type: boolean
     - question: slapd/password_mismatch
-      value: false
+      value: 'False'
       type: boolean
   loop_control:
     loop_var: conf

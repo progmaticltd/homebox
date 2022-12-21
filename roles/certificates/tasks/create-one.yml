@@ -45,7 +45,7 @@
     or cert_recreate
     or cert_check_cmd.failed
   environment:
-    PDNS_API_URL: http://localhost:8081/
+    PDNS_API_URL: http://127.0.0.1:8081/
     PDNS_API_KEY: '{{ api_key }}'
     http_proxy: 'http://localhost:8888/'
     https_proxy: 'http://localhost:8888/'
@@ -55,6 +55,7 @@
     --key-type {{ certificate.type | default("rsa2048") }}
     --email security@{{ network.domain }}
     --dns pdns
+    --dns.disable-cp
     --accept-tos
     --path /etc/lego
     {{ domains_list | join(" ") }}
@@ -64,26 +65,26 @@
 
 - name: Set the certificate permissions
   file:
-    path: '/var/lib/lego/certificates/{{ fqdn }}.crt'
+    path: /var/lib/lego/certificates/{{ fqdn }}.crt
     group: ssl-cert
     mode: 0644
 
 - name: Set the certificate issuer permissions
   file:
-    path: '/var/lib/lego/certificates/{{ fqdn }}.issuer.crt'
+    path: /var/lib/lego/certificates/{{ fqdn }}.issuer.crt
     group: ssl-cert
     mode: 0644
 
 - name: Set the pem file permissions
   when: certificate.pem | default(false)
   file:
-    path: '/var/lib/lego/certificates/{{ fqdn }}.pem'
+    path: /var/lib/lego/certificates/{{ fqdn }}.pem
     group: ssl-cert
     mode: 0640
 
 - name: Set the private keys permissions
   file:
-    path: '/var/lib/lego/certificates/{{ fqdn }}.key'
+    path: /var/lib/lego/certificates/{{ fqdn }}.key
     group: ssl-cert
     mode: 0640
 
