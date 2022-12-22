@@ -43,7 +43,7 @@
   set_fact:
     renew_cert: >-
       {{ cert_recreate
-      or cert_file.stat.exists == false
+      or not cert_file.stat.exists
       or cert_check_cmd.failed }}
 
 - name: Create the certificate
