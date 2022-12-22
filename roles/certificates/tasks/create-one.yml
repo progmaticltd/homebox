@@ -93,3 +93,25 @@
     path: /etc/lego/hooks/{{ fqdn }}/
     state: directory
     mode: 0700
+
+- name: Create the symbolic links in the debian standard directory
+  file:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+    state: link
+  loop:
+    - src: /var/lib/lego/certificates/{{ fqdn }}.issuer.crt
+      dest: /etc/ssl/certs/{{ fqdn }}.issuer.crt
+    - src: /var/lib/lego/certificates/{{ fqdn }}.crt
+      dest: /etc/ssl/certs/{{ fqdn }}.crt
+    - src: /var/lib/lego/certificates/{{ fqdn }}.key
+      dest: /etc/ssl/private/{{ fqdn }}.key
+  loop_control:
+    loop_var: file
+
+- name: Create the symbolic link for the pem file in the debian standard directory
+  when: certificate.pem | default(false)
+  file:
+    src: /var/lib/lego/certificates/{{ fqdn }}.pem
+    dest: /etc/ssl/private/{{ fqdn }}.pem
+    state: link

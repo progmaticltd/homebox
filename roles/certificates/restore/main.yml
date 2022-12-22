@@ -2,22 +2,13 @@
 
 - name: Ensure the required packages are installed
   apt:
-    name: [ rsync, ssl-cert ]
+    name: [ rsync ]
     state: present
 
-- name: Create the lego configuration directory
-  file:
-    path: /var/lib/lego
-    state: directory
-    mode: 0750
-    group: ssl-cert
-
-- name: Create the directory to store certificates files
+- name: Create the certificates cache directory
   file:
     path: /var/lib/lego/certificates
     state: directory
-    mode: 0750
-    group: ssl-cert
 
 - name: Push the certificate on the server
   synchronize:
@@ -27,4 +18,4 @@
     archive: true
     owner: true
     rsync_opts:
-      - '--chown=root:ssl-cert'
+      - '--chown=root:root'

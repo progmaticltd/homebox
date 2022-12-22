@@ -1,0 +1,31 @@
+---
+
+- name: Build the certificate FQDN
+  when: certificate.name != 'default'
+  set_fact:
+    fqdn: '{{ certificate.name }}.{{ network.domain }}'
+
+- name: Build the certificate FQDN
+  when: certificate.name == 'default'
+  set_fact:
+    fqdn: '{{ network.domain }}'
+
+- name: Remove all the symbolic links
+  file:
+    path:
+    state: absent
+  loop:
+    - /etc/ssl/certs/{{ fqdn }}.crt
+    - /etc/ssl/certs/{{ fqdn }}.issuer.crt
+    - /etc/ssl/private/{{ fqdn }}.key
+    - /etc/ssl/private/{{ fqdn }}.pem
+  loop_control:
+    loop_var: ext
+
+- name: Remove all the certificate files
+  file:
+    path: /var/lib/lego/certificates/{{ fqdn }}.{{ ext }}
+    state: absent
+  loop: [ 'crt', 'issuer.crt', 'pem', 'key' ]
+  loop_control:
+    loop_var: ext

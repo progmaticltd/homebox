@@ -6,22 +6,3 @@
       - name: rspamd
   include_role:
     name: certificates
-
-- name: Copy the certificates in the debian standard directory
-  file:
-    src: '{{ file.src }}'
-    dest: '{{ file.dest }}'
-    state: link
-  loop:
-    - src: /var/lib/lego/certificates/rspamd.{{ network.domain }}.issuer.crt
-      dest: /etc/ssl/certs/rspamd.{{ network.domain }}.issuer.crt
-    - src: /var/lib/lego/certificates/rspamd.{{ network.domain }}.crt
-      dest: /etc/ssl/certs/rspamd.{{ network.domain }}.crt
-  loop_control:
-    loop_var: file
-
-- name: Copy the private key in the debian standard directory
-  file:
-    src: /var/lib/lego/certificates/rspamd.{{ network.domain }}.key
-    dest: /etc/ssl/private/rspamd.{{ network.domain }}.key
-    state: link

@@ -9,21 +9,6 @@
   include_role:
     name: certificates
 
-- name: Copy the certificates in the debian standard directory
-  file:
-    src: '{{ file.src }}'
-    dest: '{{ file.dest }}'
-    state: link
-  loop:
-    - src: /var/lib/lego/certificates/ldap.{{ network.domain }}.issuer.crt
-      dest: /etc/ssl/certs/ldap.{{ network.domain }}.issuer.crt
-    - src: /var/lib/lego/certificates/ldap.{{ network.domain }}.crt
-      dest: /etc/ssl/certs/ldap.{{ network.domain }}.crt
-    - src: /var/lib/lego/certificates/ldap.{{ network.domain }}.key
-      dest: /etc/ssl/private/ldap.{{ network.domain }}.key
-  loop_control:
-    loop_var: file
-
 - name: Copy the certificate update hook for LDAP
   copy:
     src: renew-cert.sh
@@ -38,6 +23,7 @@
     append: true
 
 - name: Restart the ldap stack
+  when: openldap_user.changed
   service:
     name: slapd
     state: restarted

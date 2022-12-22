@@ -7,7 +7,8 @@
 # Detect if IPv6 is used
 ################################################################################
 
-# First IP address, mandatory
+# First IP address, mandatory. Remove the extra zeros,
+# to ensure the IP is correctly compared with IPv6 filters
 - name: Store the extenal IP address specified manually
   set_fact:
     external_ip: '{{ network.external_ip | regex_replace("(\.|:)0+", "\1") }}'
@@ -37,3 +38,16 @@
     ( backup_ip_type is defined and backup_ip_type == "AAAA" )
   set_fact:
     ipv6_used: true
+
+- name: Initialise the array that will contains all the IPs
+  when: network.backup_ip == None or network.backup_ip | length == 0
+  set_fact:
+    external_ip_addresses:
+      - '{{ external_ip }}'
+
+- name: Initialise the array that will contains all the IPs
+  when: network.backup_ip != None and (network.backup_ip | length > 0)
+  set_fact:
+    external_ip_addresses:
+      - '{{ external_ip }}'
+      - '{{ backup_ip }}'
