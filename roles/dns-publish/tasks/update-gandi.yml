@@ -7,6 +7,32 @@
   set_fact:
     api_key: '{{ lookup(creds.store, network.domain + "/gandi/api-key") }}'
 
+- name: Update the DNS servers
+  delegate_to: localhost
+  uri:
+    url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/nameservers
+    method: PUT
+    body_format: json
+    body:
+      nameservers:
+        - main.{{ network.domain }}
+    headers:
+      authorization: 'Apikey {{ api_key }}'
+    status_code: [ 200, 202 ]
+  ignore_errors: true
+
+- name: Update the glue records
+  delegate_to: localhost
+  uri:
+    url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/hosts/main
+    method: PUT
+    body_format: json
+    body:
+      ips: '{{ external_ip_addresses }}'
+    headers:
+      authorization: 'Apikey {{ api_key }}'
+    status_code: [ 200, 202 ]
+
 - name: List current DNSSEC
   delegate_to: localhost
   register: current_dnskeys
