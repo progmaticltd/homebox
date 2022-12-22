@@ -9,6 +9,13 @@
   include_role:
     name: certificates
 
+- name: Check for updated certificates
+  notify: Restart the ldap stack
+  debug:
+    verbosity: 1
+    var: updated_certs
+  changed_when: updated_certs | length > 0
+
 - name: Copy the certificate update hook for LDAP
   copy:
     src: renew-cert.sh

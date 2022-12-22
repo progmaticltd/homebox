@@ -1,5 +1,9 @@
 #!/bin/dash
 
-echo "Reloading nginx server"
+# Restart nginx at midnight
 
-systemctl reload nginx
+if ! cat /var/spool/cron/atjobs/* | grep -c 'systemctl restart nginx'; then
+
+    echo 'systemctl restart nginx' | at midnight
+
+fi

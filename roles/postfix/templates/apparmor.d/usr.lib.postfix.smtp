@@ -36,7 +36,6 @@
   /{var/spool/postfix/,}public/flush                    w,
   /{var/spool/postfix/,}pid/unix.smtp            rw,
   /{var/spool/postfix/,}pid/unix.relay           rw,
-  /etc/postfix/{ssl/,}*.pem                   r,
   /etc/postfix/prng_exch                      rw,
   /usr/share/ssl/certs/ca-bundle.crt          r,
   /etc/postfix/virtual.db                     r,

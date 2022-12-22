@@ -1,5 +1,15 @@
 ---
 
+- name: Check nginx config
+  shell: nginx -t
+  changed_when: false
+
+- name: Restart nginx
+  systemd:
+    name: nginx
+    state: restarted
+    no_block: true
+
 - name: Restart ejabberd
   systemd:
     name: ejabberd
@@ -11,11 +21,6 @@
     name: apparmor
     state: restarted
     no_block: true
-
-- name: Restart nginx
-  systemd:
-    name: nginx
-    state: restarted
 
 - name: Restart nftables
   systemd:

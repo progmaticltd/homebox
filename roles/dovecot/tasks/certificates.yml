@@ -9,6 +9,12 @@
   include_role:
     name: certificates
 
+- name: Check if the certificate has been updated
+  notify: Restart dovecot
+  debug:
+    var: updated_certs
+  changed_when: updated_certs | length > 0
+
 - name: Create the POP3 certificate
   tags: certs
   when: mail.pop3
@@ -19,11 +25,17 @@
   include_role:
     name: certificates
 
+- name: Check if the certificate has been updated
+  notify: Restart dovecot
+  debug:
+    var: updated_certs
+  changed_when: updated_certs | length > 0
+
 - name: Copy the certificate update hook for IMAP
   tags: certs
   copy:
     src: renew-cert.sh
-    dest: /etc/lego/hooks/imap.{{ network.domain }}
+    dest: /etc/lego/hooks/imap.{{ network.domain }}/renew-cert.sh
     mode: 0700
 
 - name: Copy the certificate update hook for POP3
@@ -31,5 +43,5 @@
   when: mail.pop3
   copy:
     src: renew-cert.sh
-    dest: /etc/lego/hooks/pop3.{{ network.domain }}
+    dest: /etc/lego/hooks/pop3.{{ network.domain }}/renew-cert.sh
     mode: 0700

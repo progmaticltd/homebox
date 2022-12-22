@@ -9,13 +9,11 @@
   include_role:
     name: certificates
 
-- name: Copy the smtp certificates in the debian standard directory
+- name: Check if the certificate has been updated
   notify: Restart postfix
-  file:
-    src: /var/lib/lego/certificates/smtp.{{ network.domain }}.pem
-    dest: /etc/postfix/smtp.{{ network.domain }}.pem
-    state: link
-    force: yes
+  debug:
+    var: updated_certs
+  changed_when: updated_certs | length > 0
 
 - name: Copy the certificate update hook for SMTP
   copy:

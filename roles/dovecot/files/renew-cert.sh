@@ -1,5 +1,9 @@
 #!/bin/dash
 
-echo "Reloading Dovecot server"
+# Restart dovecot at midnight
 
-systemctl reload dovecot
+if ! cat /var/spool/cron/atjobs/* | grep -c 'systemctl restart dovecot'; then
+
+    echo 'systemctl restart dovecot' | at midnight
+
+fi

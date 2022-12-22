@@ -10,6 +10,7 @@ unwanted_packages:
 base_packages:
   - apparmor-utils
   - apt-transport-https
+  - at
   - ca-certificates
   - gnutls-bin
   - needrestart

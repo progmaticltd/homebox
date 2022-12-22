@@ -1,5 +1,9 @@
 #!/bin/dash
 
-echo "Reloading Postfix server"
+# Restart postfix at midnight
 
-systemctl reload postfix
+if ! cat /var/spool/cron/atjobs/* | grep -c 'systemctl restart postfix'; then
+
+    echo 'systemctl restart postfix' | at midnight
+
+fi

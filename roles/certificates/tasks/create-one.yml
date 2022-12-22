@@ -39,11 +39,15 @@
   loop_control:
     loop_var: san_domain
 
+- name: Store the certificate renewal decision
+  set_fact:
+    renew_cert: >-
+      {{ cert_recreate
+      or cert_file.stat.exists == false
+      or cert_check_cmd.failed }}
+
 - name: Create the certificate
-  when: >-
-    not cert_file.stat.exists
-    or cert_recreate
-    or cert_check_cmd.failed
+  when: renew_cert
   environment:
     PDNS_API_URL: http://127.0.0.1:8081/
     PDNS_API_KEY: '{{ api_key }}'
@@ -62,6 +66,11 @@
     {{ certificate.pem | default(false) | ternary("--pem", " ") }}
     run
   changed_when: true
+
+- name: Add the certificate to the list of generated ones
+  when: renew_cert
+  set_fact:
+    updated_certs: "{{ updated_certs | default([]) + [ fqdn ] }}"
 
 - name: Set the certificate permissions
   file:

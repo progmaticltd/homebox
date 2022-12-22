@@ -3,8 +3,8 @@
 - name: Install the certificates
   include_tasks: certs.yml
 
-- name: Install and configure cockpit
-  include_tasks: package.yml
+- name: Install the packages
+  include_tasks: packages.yml
 
 - name: Configure nginx
   include_tasks: nginx.yml

@@ -14,6 +14,10 @@
   when: not system.devel
   include_tasks: pre-install-live.yml
 
+- name: Initialise the array of updated certs
+  set_fact:
+    updated_certs: [ ]
+
 - name: Create all the certificates
   include_tasks: create-one.yml
   loop: '{{ certificates }}'

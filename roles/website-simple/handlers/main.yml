@@ -6,6 +6,10 @@
     state: restarted
     no_block: true
 
+- name: Check nginx config
+  shell: nginx -t
+  changed_when: false
+
 - name: Restart nginx
   systemd:
     name: nginx

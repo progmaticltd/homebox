@@ -10,12 +10,12 @@ packages:
 
 std_cert_names:
   - conference
-  - xmpp
   - files
+  - proxy
+  - pubsub
   - upload
   - vjud
-  - pubsub
-  - proxy
+  - xmpp
 
 
 # DNS records information
