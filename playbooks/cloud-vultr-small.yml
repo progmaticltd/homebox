@@ -2,7 +2,7 @@
 
 ## Main installation playbook
 
-- name: Install Homebox (Mini version)
+- name: Install Homebox (Small version)
   hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../config/system.yml'
@@ -14,30 +14,44 @@
       tags: always
     - role: bootstrap
       tags: always
+    - role: cloud-vultr-setup
+      tags: cloud
     - role: firewall
       tags: firewall
     - role: dns-pdns
       tags: dns
     - role: dns-publish
       tags: dns
-    - role: certificates
-      tags: cert
     - role: ldap-openldap
       tags: ldap
+    - role: home-users-storage
+      tags: storage
+    - role: home-archives-storage
+      tags: storage
     - role: user-setup
       tags: user
     - role: nginx
       tags: nginx
+    - role: dovecot
+      tags: dovecot
+    - role: postfix
+      tags: postfix
     - role: opendkim
       tags: dkim
     - role: opendmarc
       tags: dmarc
+    - role: rspamd
+      tags: rspamd
     - role: mta-sts
       tags: mta-sts
-    - role: postfix
-      tags: postfix
-    - role: dovecot
-      tags: dovecot
+    - role: sogo
+      tags: sogo
+    - role: ejabberd
+      tags: ejabberd
+    - role: website-simple
+      tags: website
+    - role: autodiscover
+      tags: autodiscover
     - role: autoconfig
       tags: autoconfig
     - role: post-install
