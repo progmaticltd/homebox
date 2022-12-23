@@ -71,4 +71,3 @@
       - inetOrgPerson
       - inetLocalMailRecipient
       - mailboxRelatedObject
-    server_uri: ldaps://ldap.{{ network.domain }}/

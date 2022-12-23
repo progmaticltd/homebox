@@ -37,11 +37,6 @@
   set_fact:
     postmaster_aliases: '{{ ldap.postmaster.mailAliases }}'
 
-# - name: Extend the postmaster aliases when sogo is installed
-#   when: sogo.install
-#   set_fact:
-#     postmaster_aliases: '{{ postmaster_aliases | union(["sogo@" + network.domain]) }}'
-
 - name: Create the postmaster account
   ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
@@ -50,11 +45,11 @@
     state: present
     attributes:
       uid: postmaster
-      givenName: 'Postmaster'
-      sn: 'Account'
+      givenName: Postmaster
+      sn: Account
       userPassword: '{{ postmaster_password }}'
       pwdPolicySubentry: 'cn=system,ou=pwpolicies,{{ ldap.organization.base }}'
-      homeDirectory: '/home/users/postmaster'
+      homeDirectory: /home/users/postmaster
       loginShell: '{{ users_defaults.shell }}'
       uidNumber: '{{ users_defaults.uid_start + 999 }}'
       gidNumber: '{{ users_defaults.gid_start }}'
