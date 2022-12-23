@@ -35,8 +35,8 @@
 
 - name: Deploy the hooks for each certificate update
   copy:
-    src: '{{ hook.src }}.sh'
-    dest: '/etc/lego/hooks/{{ hook.sub }}.{{ network.domain }}/{{ hook.src }}'
+    src: '{{ hook.script }}.sh'
+    dest: '/etc/lego/hooks/{{ hook.sub }}.{{ network.domain }}/{{ hook.script }}'
     mode: 0700
   loop:
     - sub: conference

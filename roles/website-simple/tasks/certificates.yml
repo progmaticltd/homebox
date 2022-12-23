@@ -18,5 +18,5 @@
 - name: Copy the certificate update hook for SMTP
   copy:
     src: renew-cert.sh
-    dest: /etc/lego/hooks/sogo.{{ network.domain }}/renew-cert.sh
+    dest: /etc/lego/hooks/www.{{ network.domain }}/renew-cert.sh
     mode: 0700

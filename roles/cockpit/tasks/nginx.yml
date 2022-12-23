@@ -22,10 +22,10 @@
     fp: '{{ mail.antispam.webui.fp | default(fp_default) }}'
   template:
     src: nginx.conf
-    dest: '/etc/nginx/sites-available/cockpit.{{ network.domain }}.conf'
+    dest: /etc/nginx/sites-available/cockpit.{{ network.domain }}.conf
     owner: root
     group: root
-    mode: '0644'
+    mode: 0644
 
 - name: Copy cockpit configuration
   tags: nginx
@@ -33,6 +33,6 @@
     - Check nginx config
     - Restart nginx
   file:
-    src: '/etc/nginx/sites-available/cockpit.{{ network.domain }}.conf'
-    dest: '/etc/nginx/sites-enabled/cockpit.{{ network.domain }}.conf'
+    src: /etc/nginx/sites-available/cockpit.{{ network.domain }}.conf
+    dest: /etc/nginx/sites-enabled/cockpit.{{ network.domain }}.conf
     state: link

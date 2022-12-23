@@ -42,8 +42,6 @@
       tags: dmarc
     - role: mta-sts
       tags: mta-sts
-    - role: website-simple
-      tags: website
     - role: autoconfig
       tags: autoconfig
     - role: post-install

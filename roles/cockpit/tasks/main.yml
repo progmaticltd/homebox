@@ -8,6 +8,3 @@
 
 - name: Configure nginx
   include_tasks: nginx.yml
-
-- name: Configure AppArmor
-  include_tasks: apparmor.yml
