@@ -8,7 +8,7 @@ A set of Ansible scripts to setup a secure email and personal files server. This
 
 ## Official documentation and user's guide
 
-- [Stable branch](http://homebox.readthedocs.io/en/latest/)
+- [Stable branch](http://homebox.readthedocs.io/en/main/)
 - [Development branch](http://homebox.readthedocs.io/en/dev/)
 
 
