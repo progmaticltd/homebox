@@ -1,5 +1,6 @@
 # Installation steps
 
+
 ## Step 1: Locate your system
 
 Whatever you chose to host your system at home, or with a VPS, you need to specify its location to Ansible.
@@ -23,6 +24,8 @@ all:
 
 Using root during the installation process is a requirement. However, the system can be configured to use sudo once
 installed. See the security section, [Defining administrators](/security-configuration/#defining-administrators).
+
+
 
 ## Step 2: Describe your system
 
@@ -57,7 +60,10 @@ Once you have modified the file, you are ready to start the installation.
 !!! Warning
     You need to be careful with the indentation in your Yaml file, the number of spaces is significant.
 
+
+
 ## Step 3: Configure your system
+
 
 ### Domain name and host name
 
@@ -74,6 +80,8 @@ network:
 
 The hostname is important, use the real one. If you used the preseed configuration, it should be just mail and your
 network domain.
+
+
 
 ### External IP addresses
 
@@ -92,6 +100,8 @@ network:
 
 !!! Tip
     If you do not have a backup IP address, use "~", which means "None" or Null in yaml.
+
+
 
 ### Users list
 
@@ -122,6 +132,7 @@ You do not have to set the passwords for each user. A random password will be ge
 _pass_, in the ldap sub directory.
 
 
+
 ### Email options
 
 This is the second most important settings. Here is an example of the email options you can override:
@@ -138,6 +149,7 @@ mail:
 Advanced options are detailed on the [email configuration](email-configuration.md) page.
 
 
+
 ### Security options
 
 Security options are detailed on the [security page](security-configuration.md).
@@ -150,6 +162,65 @@ The default settings are:
 
 Other options are possible, see the security page for details.
 
+
+### Default password store
+
+By default, homebox is using [pass](https://www.passwordstore.org/), with these settings:
+
+
+```yaml
+creds_default:
+  store: passwordstore
+  prefix: '{{ network.domain }}/'
+  opts:
+    create: ' create=True'
+    # Used for system, should be safe without quoting, but long enough to be secure
+    system: ' length=16 nosymbols=true'
+```
+
+However, you can use any of the Ansible password lookup plugin. If you want to use plain text password files, see the
+[password lookup](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/password_lookup.html):
+
+```yml
+creds:
+  store: password
+  prefix: '/home/alice/homebox/backup/mydomain.io/'
+  opts:
+    # Used for system, should be safe without quoting, but long enough to be secure
+    system: ' length=16 chars=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+```
+
+In the example above, passwords will be stored in the _backup_ folder in homebox, using the domain name
+“mydomain.io”. __This folder is automatically exclude from git__.
+
+
+
+### Publish DNS information
+
+Although HomeBox has a DNS server included, it is still needed to register information online. The following need to be
+registered:
+
+- The main DNS server for your domain
+- The DNSSEC keys (KSK and ZSK)
+- Your glue records
+
+
+#### Using Gandi
+
+If you are using [Gandi](https://www.gandi.net/) DNS provider, HomeBox automatically publish the information above,
+using Gandi’s API. The only information you need to fill is your Gandi API key, in your password store.
+
+The information is looked at this path:
+
+```
+{{ lookup(creds.store, network.domain + "/gandi/api-key") }}
+```
+
+For instance, for the domain `example.net`, the API key need to be stored into pass or the credential store of your
+choice, using the following path: `example.net/gandi/api-key`.
+
+
+
 ## Step 4: Start the installation
 
 You can choose a flavour to install, using a different playbook. Four playbooks are included by default: mini, small,
@@ -158,9 +229,9 @@ medium and large. Depending on the features and the capacity of your server.
 For instance, the mini server:
 
 ```sh
-cd install
+cd playbooks
 ansible-playbook -i ../config/hosts.yml install-mini.yml
 ```
 
-!!! Note
-    The large version, including clamAV, requires at least 2GB of ram.
+Depending the “flavour you chose”, the installation takes between 20 and 25 minutes, with a reasonable fast laptop and
+internet connection.
