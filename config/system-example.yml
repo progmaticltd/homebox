@@ -1,7 +1,8 @@
 # HomeBox configuration example.
-# Copy this file into config.yml, and edit it with the values that suits you
-# For a more comprehensive list of settings, you can see the default file in
 #
+# Copy this file into system.yml, and edit it with the values that suits you
+# For a more comprehensive list of settings, see the defaults.yml file.
+
 
 ###############################################################################
 # Domain and hostname information
@@ -18,66 +19,15 @@ users:
   first_name: John
   last_name: Doe
   mail: john.doe@example.com
-  password: 'xIlm*uu7'
   aliases:
     - john@homebox.space
-  external_accounts:
-    - name: outlook
-      type: live.com
-      user: john.doe@live.co.uk
-      password: ebsipmfwuqsopxsg
-      get_junk: true
-      get_trash: true
-  # This user will be part of the sudo group
-  sudo: true
-  # Allow remote access using SSH
-  ssh_key:
-    type: ecdsa-sha2-nistp384
-    comment: john@homebox
-    data: >-
-      AAAAE2VjZHNhLXNoYTItbmlzdHAzODQAAAAIbmlzdHAzODQAAABhBE+E0hiYkPywn43g2J5s5t8mGq
-      muUwObvFN05lCYpEQYv002lMeZEcD9rN80ZBGXJ49J0pfHmuRYScHIt3SjP7Eau3UrGebHvXSBzqPI
-      xcLmuv8NO2siwhqWmZfvrXEWlQ==
-  # Allow access to backup
-  backup_ssh_key:
-    type: ssh-rsa
-    comment: jdoe-backup-key
-    data: >-
-      AAAAB3NzaC1yc2EAAAADAQOSPAABAQDLQ/Odv+oOWbNdaBwegtwBryh/NsRkM6NNRd30kgoza39+
-      TtOIXNcLsnProh6ynJxNBdxxx6wa6/dkA/3opbdprovU676WfWEFOpjNzABGtrgU6uIzihc51nm49/
-      SsP7rNLXfh0ZfQlCjhR6oL+oe3ggnnrPwtEpsZSDjR8Qx4gYCxZ+2H4C5QcvotZ6i/9pc7uv9Gh2Rd
-      iDAoQDIeedZFygruhpFK5VEQnXf2KB8z4MCT1Nwk5/7VUE1xTB0AHoUBMLF4RMmkPrfhfPfGbXL97e
-      BaxeEVdIurdEoYi7EPc3ZT/NI2Rh136mMZLUb7QupinA0yfTc1FEhkDCvE9L/5
 - uid: jane
   cn: Jane Doe
   first_name: Jane
   last_name: Doe
   mail: jane.doe@example.com
-  password: 'Tlwril!8'
   aliases:
     - jane@homebox.space
-  external_accounts:
-    - name: work
-      type: imap
-      host: imap.company.com
-      user: jane
-      password: '0lih*(&nTrom'
-      max_messages: 10
-    - name: gmail
-      type: gmail
-      user: jane.doe@gmail.com
-      password: yjkytvofwbqlcmry
-      get_important: false
-      get_junk: true
-      get_trash: true
-      max_messages: 10
-    - name: yahoo
-      type: ymail
-      user: jane.doe@ymail.com
-      password: zakxizvqpkxzibnn
-      get_junk: true
-      get_trash: true
-      max_messages: 10
 
 ###############################################################################
 # Email related default options
@@ -92,7 +42,7 @@ users:
 #                             # The default timerange is 1h
 #   #############################################################################
 #   antivirus:                # Check inbound and outbound emails for viruses
-#     active: true            # or false
+#     active: false           # or false. Be careful, you need at least 2GB of memory
 #     action: drop            # Action to do when a virus is found in an email: bounce or drop
 #                             # be careful, bouncing external emails is a way to expose clamav usage
 #     send_warnings: false    # Send a warning email to - internal - users who are sending viruses
@@ -102,11 +52,6 @@ users:
 #     active: false           # https://wiki2.dovecot.org/Authentication/MasterUsers
 #     master: master          # master user name
 #     separator: '*'          # Separation char between master user / real user name.
-#   #############################################################################
-#   import:                   # If you have users with "import" email active scripts, set this flag to true
-#     username: import        # The name of the user that import emails
-#     active: false           # A master user, with reduced rights will be created, to append miported emails
-#                             # in user's mailboxes.
 #   #############################################################################
 #   # Dovecot / solr FTS (Full Text search)
 #   fts:
@@ -137,35 +82,9 @@ users:
 #   debug: true
 
 ###############################################################################
-# Gandi automatic DNS update
-# Your Gandi Key should be 24 characters long, e.g. zaNGbUVIvi1KbYb6PPMdiQLh
-# dns:
-#   update: false         # Automatic update of your DNS server
-#   test: true            # test mode: does not activate the DNS zone straight
-#   add_wildcard: false   # Create a wildcard entry to redirect all traffic to your box
-#   gandi:
-#     handle: JD123-GANDI
-#     key: zaNGbUVIvi1KbYb6PPMdiQLh
-
-###############################################################################
-# Once the system is in place, it is possible to use 'limit' for the rule, instead of any.
-# It is also possible to use fail2ban, which is installed anyway
-# firewall:
-#   ssh:
-#     from: any
-#     rule: allow
-
-###############################################################################
-# Install a webmail, or not...
-# webmail:
-#   install: true
-#   type: roundcube
-
-###############################################################################
 # Extra security values
 # security:
 #   auto_update: true
-#   app_armor: true
 
 ###############################################################################
 # Backup configuration
@@ -232,79 +151,5 @@ users:
 # ejabberd:
 #   install: true
 
-##############################################################################
-#  Transmission installation
-# transmission:
-#   install: false
-
-###############################################################################
-#  Bind server defaults
-# bind:
-#   install: true
-#   # Default servers to forward queries
-#   forward:
-#     - 2001:4860:4860::8888
-#     - 2001:4860:4860::8844
-#   # Timing configuration (see https://www.ripe.net/publications/docs/ripe-203)
-#   refresh: 86400          # 24 hours
-#   retry: 7200             # 2 hours
-#   expire: 3600000         # 10000 hours
-#   neg_cache_ttl: 172800   # 2 days
-#   ttl: 3600               # 1 hour
-#   # General configuration
-#   mx_priority: 10
-#   # List of backup MX records, if the server is unreachable
-#   # The default is an empty list
-#   mx_backup:
-#     - fqdn: spool.mail.gandi.net
-#       priority: 20
-#     - fqdn: fb.mail.gandi.net
-#       priority: 50
-#   # List of trusted servers to accept cache / recursive queries
-#   trusted:
-#     - src: localhost
-#     - src: localnets
-#       comment: Local networks
-#   # DNSSEC options
-#   dnssec:
-#     active: true
-#     algo: RSASHA256
-#   # Aditional extrernal records to be generated
-#   extra_records:
-#     - name: store
-#       ip: 12.56.14.144
-#       type: A
-
-# Optional packages
-# tor:
-#   install: false
-
-# Use privoxy
-# privoxy:
-#   install: false
-#   tor_forward: true
-#   accept_from:
-#     - 0.0.0.0/0
-
-# zabbix:
-#   install: false
-#   allow:
-#     - 12.34.56.78/32
-
 # sogo:
 #   install: true
-
-############################################################################
-#  Log access times and IP addresses in the users directory
-# access_check:
-#   active: true
-#   alert_address: andre@example.com
-#   countries:
-#     trust: [ FR, GB ]
-#     trust_home: true
-
-############################################################################
-# Additional certificates to generate
-extra_certs:
-  - type: openpgpkey
-    redirect: true
