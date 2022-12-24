@@ -33,56 +33,6 @@ By default, automatic security updates are installed, using the
 
 The changes are sent to the postmaster by default, using the recipient(s) defined in alerts_email variable.
 
-## Defining administrators
-
-This is done by setting a flag `sudo: true` for the users you want to grant administrator's rights, for instance:
-
-``` yaml hl_lines="9"
-# list of users
-users:
-- uid: john
-  cn: John Doe
-  first_name: John
-  last_name: Doe
-  mail: john.doe@example.com
-  password: 'xIlm*uu7'
-  sudo: true
-```
-
-## Grant some users remote access
-
-This is done by adding a public key to the user definition, for instance:
-
-``` yaml hl_lines="10"
-# list of users
-users:
-- uid: john
-  cn: John Doe
-  first_name: John
-  last_name: Doe
-  mail: john.doe@example.com
-  password: 'xIlm*uu7'
-  # Allow remote access using SSH
-  ssh_key:
-    type: ecdsa-sha2-nistp384
-    comment: john@homebox
-    data: >-
-      AAAAE2VjZHNhLXNoYTItbmlzdHAzODQAAAAIbmlzdHAzODQAAABhBE+E0hiYkPywn43g2J5s5t8mGq
-      muUwObvFN05lCYpEQYv002lMeZEcD9rN80ZBGXJ49J0pfHmuRYScHIt3SjP7Eau3UrGebHvXSBzqPI
-      xcLmuv8NO2siwhqWmZfvrXEWlQ==
-```
-
-When the remote access is granted, SSH user access with password is also
-allowed by default. If you want to restrict SSH user access to private key
-authentication only, you can use the following parameter:
-
-```yaml
-# Security settings
-security:
-  …
-  ssh_disable_users_access_with_password: true
-```
-
 ## Locking root access
 
 The root account is locked by default, which means only SSH access is possible. However, if you have defined
@@ -96,37 +46,3 @@ security:
   ssh_disable_root_access: true
   lock_root_password: true
 ```
-
-## Using a Yubikey to boot
-
-If your system is encrypted with LUKS, you can use a [Yubikey](https://en.wikipedia.org/wiki/YubiKey) to decrypt the
-main disk. This will be the simplest and safest option to decrypt your main drive.
-
-```yaml
-# Security settings
-security:
-  …
-  luks:
-    yubikey: true
-```
-
-Once the system is installed, run the provided script to "enroll" your key:
-
-``` sh
-root@osaka:~ # yubikey-enroll.sh
-This script will Register your Yubikey to decrypt the main drive.
-Plug your Yubikey that will be used to decrypt the hard drive. Continue (y/n) ?
-y
-Partition: /dev/sda5
-Key Slot 0: ENABLED
-Key Slot 1: DISABLED
-Key Slot 2: DISABLED
-Key Slot 3: DISABLED
-Key Slot 4: DISABLED
-Key Slot 5: DISABLED
-Key Slot 6: DISABLED
-Key Slot 7: ENABLED
-The key will be registered in the slot 1
-```
-
-The script will automatically choose a free slot.

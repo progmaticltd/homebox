@@ -33,13 +33,13 @@ Starting in May 2019, the approach will be to use gitflow, from the dev branch.
 
 ## Test machine
 
-You can start to develop using a virtual machine on your workstation, for instance using
-KVM or VirtualBox. The environment runs on Debian Stable. You can install it using a
-minimalistic ISO image, called [netinst](https://www.debian.org/CD/netinst/).
+You can start to develop using a virtual machine on your workstation, for instance using KVM or VirtualBox. The
+environment runs on Debian Stable. You can install it using a minimalistic ISO image, called
+[netinst](https://www.debian.org/CD/netinst/).
 
-I suggest you to use a virtual machine to test, especially with snapshots capabilities.
-By using snapshots, you can rollback to any stage and run the Ansible scripts again. On
-Linux, KVM/libvirt is the best choice, and VirtualBox might be acceptable.
+I suggest you to use a virtual machine to test, especially with snapshots capabilities.  By using snapshots, you can
+rollback to any stage and run the Ansible scripts again. On Linux, KVM/libvirt is the best choice, and VirtualBox might
+be acceptable.
 
 For instance:
 
@@ -47,35 +47,32 @@ For instance:
 
 ## Preseed
 
-There is a preseed folder that creates an an ISO image for automatic installation.  It is
-using Docker, and builds an automatic installer from a YAML configuration file.
-The [preseed page](preseed.md) give more details about this feature.
+There is a preseed folder that creates an an ISO image for automatic installation.  It is using Docker, and builds an
+automatic installer from a YAML configuration file.  The [preseed page](preseed.md) give more details about this
+feature.
 
 !!! Note
     This installer installs Debian only, it does not deploy the platform.
 
 ## Router configuration
 
-Unless your IP address changes too often or your port 25 is blocked, you do not need to
-have a fixed IP address.
+Unless your IP address changes too often or your port 25 is blocked, you do not need to have a fixed IP address.
 
 However, the more you want to test, the more your router need to be configured:
 
-- TCP/80 (HTTP): Used to query letsencrypt for the certificates. Open it at least to
-  obtain the SSL using LetsEncrypt. You can then close the port once you have the
-  certificates.
-- TCP/25: SMTP, to receive and transfer emails from and to other SMTP servers on the
-  internet. You need this one only to test the reception and transmission of external
-  emails.
+- TCP/80 (HTTP): Used to query letsencrypt for the certificates. Open it at least to obtain the SSL using
+  LetsEncrypt. You can then close the port once you have the certificates.
+- TCP/25: SMTP, to receive and transfer emails from and to other SMTP servers on the internet. You need this one only to
+  test the reception and transmission of external emails.
 
-Now, all the rest can be done internally, without exposing your test machine. These ports
-don't need to be forwarded by your router during the development time:
+Now, all the rest can be done internally, without exposing your test machine. These ports don't need to be forwarded by
+your router during the development time:
 
 - TCP/143 and TCP/993: IMAP and IMAPS
 - TCP/110 and TCP/995: POP3 and POP3S
 - TCP/587: [Submission](https://en.wikipedia.org/wiki/Opportunistic_TLS).
-- TCP/465: [SMTPS](https://en.wikipedia.org/wiki/SMTPS) (this one is kept for
-  compatibility with some old devices, but perhaps will be removed soon)
+- TCP/465: [SMTPS](https://en.wikipedia.org/wiki/SMTPS) (this one is kept for compatibility with some old devices, but
+  perhaps will be removed soon)
 - TCP/4190: ManageSieve. Used to remotely access your mail filters, for instance with
   [thunderbird sieve plugin](https://addons.mozilla.org/en-US/thunderbird/addon/sieve/).
 - TCP/443: HTTPS access for the webmail and also Outlook autodiscover feature.
@@ -116,13 +113,12 @@ all:
 
 ```
 
-I have actually tested with the Ansible remote user as root. However, it should be
-possible to run as an admin user and use sudo with little modifications.
+I have actually tested with the Ansible remote user as root. However, it should be possible to run as an admin user and
+use sudo with little modifications.
 
 ## System configuration
 
-First, as you would do for a live environment, copy the sample configuration to create
-your own:
+First, as you would do for a live environment, copy the sample configuration to create your own:
 
 ```sh
 
@@ -148,6 +144,7 @@ Setting the debug flag to true will activate a lot of debug options in Dovecot, 
 filter in the console, using for instance `journalctl -u postfix -u dovecot*` to view postfix and dovecot logs
 respectively.
 
+
 ### The "devel" flag
 
 When you set this flag to true, various settings are changed in the development.
@@ -157,128 +154,7 @@ By default:
 - The certificates deployed are staging certificates only, which allows you to request more to LetsEncrypt.
 - The certificates are backed up on your local machine, allowing you to redeploy without asking again the same
   certificates, which is also faster.
-- If you want to test your system from a local computer, you will need to add the staging version of the root
-  certificate authority. It can be downloaded on the on the [LetsEncrypt staging environment
-  page](https://letsencrypt.org/docs/staging-environment/).
 
-
-As an option, without Letsencrypt:
-
-- The certificates can be deployed from a local ACME server using [Pebble](https://github.com/letsencrypt/pebble).
-- The expected server is provided as a container by a `docker-compose` file in the `devel` directory.
-- The server is for testing only and has some usage constraints which are further described in the next section.
-
-### The devel environment
-
-To be able to develop and test locally, the `devel` directory provides a
-`docker-compose` file with definitions for the following containers:
-
-- A `pebble` server to act as a testing ACME server to replace Letsencrypt.
-- A `challtestsrv` to act as a manageable DNS server for the ACME server.
-- An `apt-cacher` server.
-
-```sh
-$ cd devel/
-$ docker-compose up
-Starting devel_pebble_1         ... done
-Recreating devel_challtestsrv_1 ... done
-Starting devel_apt-cacher_1     ... done
-Attaching to devel_apt-cacher_1, devel_pebble_1, devel_challtestsrv_1
-[…]
-```
-
-These containers are connected to a bridge and addressed in the subnet
-10.30.50.0/24. The playbooks assume the predefined static IP addresses for the
-pebble and the apt-cacher servers. The server's `external_ip` will be used to
-resolve any DNS request made by the pebble server.
-
-The use of the pebble server in the playbooks is configured with:
-
-```yaml
-system:
-[…]
-  devel: true
-[…]
-
-devel:
-  acme_server: pebble
-```
-
-The Pebble ACME server is designed to create temporary CAs and certificates
-that can only be used for testing. A new temporary CA is created every time the
-server is started, and it is destroyed when it stops. The `certificates` role
-in the playbooks will install the current CA whenever they are run.
-
-Everytime the Pebble server is started, to have a coherent system, the
-certificates might need to be generated again. It can be done by running the
-playbooks or with the help of the `certificates` tag:
-
-```sh
-$ cd install/
-$ ansible-playbook -i ../config/hosts.yml playbooks/main.yml -t certificates
-```
-
-When developing or testing locally, most probably with a local domain name like
-`example.local`, there is no need for the DNS propagation checks during
-installation and testing:
-
-```yaml
-bind:
-[…]
-  propagation:
-    check: false
-[…]
-```
-
-It also disables one of the opendmarc test which requires an external validating resolver.
-
-The `apt-cacher` server can be used to speed up package updates on reinstalls by configuring:
-
-```yaml
-system:
-[…]
-  apt_cacher: 10.30.50.4
-```
-
-Finally, to allow the use of these service the firewall should be configured with:
-
-```yaml
-firewall:
-  output:
-    policy: deny
-    rules:
-      - dest: any
-        port: 80,443
-        comment: 'Allow web access'
-      - dest: any
-        proto: udp
-        port: 53
-        comment: 'Allow DNS requests'
-      - dest: any
-        proto: udp
-        port: 123
-        comment: 'Allow NTP requests'
-      - dest: any
-        proto: udp
-        from_port: 68
-        port: 67
-        comment: 'Allow DHCP requests'
-      - dest: any
-        port: 25
-        comment: 'Allow SMTP connections to other servers'
-      - dest: any
-        port: 110,995,143,993
-        comment: 'Allow the retrieval of emails from other servers (POP/IMAP)'
-      - dest: 10.30.50.2
-        port: 14000,15000
-        comment: 'Allow access to the Pebble ACME server'
-      - dest: 10.30.50.3
-        port: 8055
-        comment: 'Allow access to the Pebble challenge Test server'
-      - dest: 10.30.50.4
-        port: 3142
-        comment: 'Allow APT cacher access'
-```
 
 ### Setting up ansible-lint before commit
 
@@ -293,6 +169,7 @@ To ensure the hook is executed before each commit, run this on your local machin
 ```sh
 git config --local core.hooksPath git-hooks
 ```
+
 
 ## Development playbook
 
@@ -322,15 +199,18 @@ For instance, these packages are installed:
 - The script also configures a basic bashrc / zshrc.
 - It is also adding the LetsEncrypt staging root certificate authority to the system.
 
+
 ## Installation playbooks
 
 The main playbook 'main.yml' and includes all other playbooks, with some of them conditional, as some components are
 optional.
 
+
 ## Automatic backup
 
 Once the script has been run, the backup folder contains important files, like certificates, passwords, etc. See (see
 the [deployment backup](./deployment-backup.md) page for details).
+
 
 ## Development cleanup
 
@@ -338,6 +218,7 @@ This playbook do the opposite of dev-support, by uninstalling the packages used 
 bashrc to its default state. You probably want to run this script before putting your server in production.
 
 It is also removing the LetsEncrypt staging root certificate authority from the system.
+
 
 ## Tests / Diagnostic playbooks.
 
@@ -369,6 +250,7 @@ The following roles are run:
 - Antivirus tests, for instance check that an email with a virus is bounced.
 - Full text search inside attachments
 - DNS records when the DNS server is installed.
+
 
 ## Profiling the playbook
 

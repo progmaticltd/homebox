@@ -36,7 +36,6 @@ This project is for you if:
 - Antivirus: ClamAV
 - Groupware: SOGo
 - Jabber: ejabberd
-- Backup: Borgbackup
 - Remote administration: Cockpit
 
 ## Other projects to mention

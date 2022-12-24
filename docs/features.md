@@ -21,14 +21,6 @@ backups are encrypted and managed by the excellent _borgbackup_ package. A [summ
 sent at the end of the backup process. If you have opted for the Jabber installation, a short message is sent as well,
 notifying you of the job completion.
 
-## Disaster recovery
-
-When you are deploying the system for the first time, all the information generated is saved on the deployment
-workstation. This gives you a way to re-install your system from scratch, without loosing any information.
-
-If you have specified an external backup location, for instance on a remote server through SSH or on Amazon S3, all your
-emails, address books and calendars will be automatically restored from the backup location of your choice.
-
 # Security
 
 ## Full disk encryption
@@ -60,6 +52,8 @@ Fail2ban can be integrated and configured, to automatically blacklist IP address
 server. It makes this kind of attacks inefficient, and saves your bandwidth too. The duration of jail is customisable
 for jabber and email services.
 
+By default, nftables dynamic set is used to ban SSH bots automatically.
+
 ## LDAP Authentication
 
 One password per user, for all the services. All the user accounts are saved in the LDAP database, using the OpenLDAP
@@ -80,10 +74,6 @@ anything. This is set using the [Debian unattended upgrades](https://wiki.debian
 you prefer to install security updates yourself, you can disable this behaviour in your system.yml file.
 
 Only the security updates are installed, new packages versions still need to be installed manually.
-
-## Monitoring
-
-Work in progress to use Prometheus and XMPP alerts.
 
 ## High profiles for SSL / HTTPS
 
@@ -187,13 +177,6 @@ The antispam integrated with the system is very easy to use. The automatic learn
 in the Junk email folder.
 
 It is powered by rspamd, a pioneer application in terms of junk email detection.
-
-## External accounts import
-
-You can add other email accounts (Yahoo, GMail, Outlook.com, etc.). The emails will be automatically downloaded and
-synchronised when you connect with any client, and will appear in your account.
-
-Because the folders’ hierarchy will be copied as well, it is possible to migrate from another account very easily.
 
 ## Automatic copy to the sent folder
 
@@ -319,9 +302,7 @@ running self diagnostic tasks on your server, and tests the following:
 - Postfix configuration
 - IMAP access (dovecot)
 - Autoconfig and Autodiscover
-- DNS records and DNSSEC when the DNS server is installed
-- Privoxy and Tor configuration
-- Zabbix
+- DNS records and DNSSEC
 
 ## Development support
 

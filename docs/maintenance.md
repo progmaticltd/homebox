@@ -17,25 +17,6 @@ passwd john
 
 You might have to respect the password policies in place, like minimal length and complexity.
 
-### Add or remove email aliases
-
-Updating the email aliases for a user is very easy. First, modify the aliases section for the user, in the system.yml
-configuration file:
-
-```yaml hl_lines="7 8 9"
-- uid: mike
-  cn: Mike Dear
-  first_name: Mike
-  last_name: Dear
-  mail: mike.dear@example.com
-  aliases:
-    - mike@homebox.space
-    - mikael@homebox.space
-```
-
-Then, run the Ansible playbook called __ldap-refresh.yml__. This playbook refreshes the email aliases only, and does not
-touch anything else. It will also remove any email alias previously added if it is not in the list.
-
 ### Adding a user account
 
 The best way is to modify the users section of your system.yml configuration file and to run an Ansible script again.
@@ -88,46 +69,33 @@ This can be done through SSH, like you are doing on any Debian server.
 
 ## Adding or removing components
 
-If you have not modified the system configuration files too much, you should be able to add components just by updating
-your system.yml configuration file, and running the Ansible scripts again.
+Most components can be added or removed individually, using the unit ansible playbook, for instance:
 
-Removing components entirely is not so easy, and is not entirely supported for now. However, you should be able to
-remove them using the standard Debian packaging system, i.e. __dpkg__.
+```sh
+ROLE=diagnostic ansible-playbook -l homebox -v install.yml
+```
+
+or
+
+```sh
+ROLE=diagnostic ansible-playbook -l homebox -v uninstall.yml
+```
+
 
 ### Removing ClamAV
 
-Because postfix is configured to filter emails through ClamAV, you will have to re-run the
-Ansible scripts to install Postfix again.
+Removing ClamAV can be done using the following command:
 
-1. Remove the Clamav packages
-2. Update your system.yml file
-3. Run the Ansible main.yml script again
+```sh
+ROLE=clamav ansible-playbook -l homebox -v uninstall.yml
+```
 
 ### Removing rspamd
 
-Because postfix is configured to filter emails through Rspamd, you will have to re-run the
-Ansible scripts to install Postfix again.
-
-1. Remove the rspamd packages
-2. Update your system.yml file
-3. Run the Ansible main.yml script again
-
-### Automatic configuration sites
-
-The easiest way is probably to remove the site from the enabled one, and restart nginx:
-
-For _Mozilla Thunderbird_ Autoconfig
+Removing Respamd can be done using the following command:
 
 ```sh
-rm -f /etc/nginx/sites-enabled/autoconfig.<your domain>
-systemctl restart nginx
-```
-
-For _Microsoft Outlook_ Autodiscover
-
-```sh
-rm -f /etc/nginx/sites-enabled/autodiscover.<your domain>
-systemctl restart nginx
+ROLE=clamav ansible-playbook -l homebox -v uninstall.yml
 ```
 
 ## Restarting the system
@@ -138,10 +106,6 @@ locally or remotely
 ### With physical access
 
 Plug a screen and a keyboard, and type your passphrase when the system boot.
-
-### With physical access and a Yubikey
-
-If you chose to decrypt your drive with a Yubikey, just insert the Yubikey, and press enter.
 
 ### Remotely over SSH
 

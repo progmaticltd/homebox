@@ -60,9 +60,11 @@ Once you have modified the file, you are ready to start the installation.
 
 ## Step 3: Start the installation
 
+You can choose a flavour to install, using a different playbook.
+
 ```sh
 cd install
-ansible-playbook -i ../config/hosts.yml main.yml
+ansible-playbook -i ../config/hosts.yml install-mini.yml
 ```
 
 # Most important sections
@@ -115,7 +117,6 @@ users:
   first_name: John
   last_name: Doe
   mail: john.doe@example.com
-  password: 'xIlm*uu7'
   aliases:
     - john@homebox.space
     - johny@homebox.space
@@ -138,9 +139,8 @@ You can also add more advanced features, like:
 - [Grant remote access to certain users](security-configuration.md#grant-some-users-remote-access)
 
 !!! Note
-    You do not have to set the passwords for each user if you don't want to. In this case, a random password will be
-    generated, and saved in the deployment backup directory, in the ldap folder. In this case, there will be one file
-    called 'jane.pwd'. Otherwise, you can specify the password in clear text. For complex passwords, use quotes.
+    You do not have to set the passwords for each user. A random password will be generated, usinx XKCD, and saved into
+    _pass_, in the ldap sub directory.
 
 ## Email options
 
@@ -157,15 +157,6 @@ mail:
 
 All options are detailed on the [email configuration](email-configuration.md) page.
 
-## Firewall configuration
-
-The firewall is configured by default to deny everything except what is permitted, both in input and output. The backend
-used is "ufw". If you have specific requirements, you can define the initial rules yourself.
-See the [firewall configuration](/firewall-configuration/) page for details.
-
-By default, a firewall rule is automatically added to allow SSH connections from the IP address used for the
-installation. This should prevent being locked out of your system. You can remove this rule at the end of the playbook,
-especially if you are [using fwknop](/firewall-configuration/#single-packet-authorization) to access your system.
 
 ## Security options
 
@@ -179,18 +170,6 @@ The default settings are:
 
 Other options are possible, see the security page for details.
 
-## Webmail
-
-By default, the installation script installs Roundcube, but you can disable it if you want. For instance, SOGo is
-available as well, with calendars and address books.
-
-```yaml
-webmail:
-  install: true
-  type: roundcube
-```
-
-More details on the [webmail roundcube](webmail-roundcube.md) page.
 
 ## Backup configuration
 
@@ -200,41 +179,6 @@ methods.
 By default, the whole home partition is backed up, but you can add or exclude more folders. The detailed instructions
 are on the [backup documentation](/backup-home/) page.
 
-## DNS server configuration
-
-The recommended way is to use the internal DNS server, with a minimal configuration like this:
-
-```yaml
-bind:
-  install: true
-  forward:
-    - 8.8.8.8
-    - 8.8.4.4
-    - 2001:4860:4860::8888
-    - 2001:4860:4860::8844
-```
-
 You can also use [OpenDNS servers](https://en.wikipedia.org/wiki/OpenDNS#Name_server_IP_addresses) for forward.
 
 Once your DNS set up is complete, you can monitor the [world wide propagation](/dns-propagation/).
-
-## Extra certificates
-
-It is possible to generate more SSL certificates, for instance if you want to deploy other services and want
-the certificates to be generated and renewed automatically.
-
-You only have to add one variable `extra-certs` in your configuration file, for instance:
-
-```yaml
-extra_certs:
-  - type: gitlab
-  - type: packages
-    redirect: false
-```
-
-By adding these lines, certificates will be automatically generated for the subdomains “gitlab” and “packages”, using
-LetsEncrypt.
-
-!!! Tip
-    By default, all requests will be redirected from http to https, except those needed to validate the certificate
-    generation. The flag “redirect” set to false allow to also serve the domain via plain http.

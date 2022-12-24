@@ -70,27 +70,10 @@ The password is automatically generated, and saved in the backup folder, in the 
     Every time the _master account_ feature is used, a notice is sent to the original user, both by email and with
     Jabber when installed.
 
-# Import external accounts
-
-There are two ways of importing other emails. The easiest way is to use SOGo web interface. In this case, you will see
-your other account emails in the web interface.
-
-The other option is to use the yaml configuration file. The advantage is once this set up, external emails will be
-automatically imported in your main account, regardless of the client you are using.
-
-This is detailed in the section [External accounts](external-accounts.md).
-
-!!! Note
-    One important thing to know is that this feature automatically creates a Dovecot _master user_, that will be used to
-    import the emails into the folders. However, this master user can only log in from the system itself, so there is no
-    danger of using the import user to access someone's emails. If someone tried the use the import account, the
-    connection would be refused, and an email alert will be sent to the postmaster.
-
 # Advanced features
 
-When this flag is set to true, some advanced features will be
-available, and a more recent version of Dovecot will be installed,
-from the Debian backports repository.
+When this flag is set to true, some advanced features will be available, and a more recent version of Dovecot will be
+installed, from the Debian backports repository.
 
 ## International email addresses
 
@@ -158,7 +141,7 @@ The example below allows you to send email via an extra IPv4, an extra IPv6 and 
 mail:
   ...
   extra_senders:
-  #   - 'ip4:212.27.32.5'
-  #   - 'ip6:fe80::2e0:70ff:fe63:f069/64'
-  #   - 'include:_spf.google.com'
+    - 'ip4:212.27.32.5'
+    - 'ip6:fe80::2e0:70ff:fe63:f069/64'
+    - 'include:_spf.google.com'
 ```

@@ -1,4 +1,3 @@
-
 # Introduction
 
 This section will explain all the necessary steps _before_ the installation really starts, like the DNS records or your
@@ -48,7 +47,7 @@ Cons:
   perfectly possible to extract data from your disk without your knowledge or consent.
 - You will not have the choice on when and which security updates are applied. Most hosting providers have specific time
   windows to update the kernel images they use, which may not be as soon as you need, or even appropriate to you.
-- Might be expensive, especially if you have a lot of data.
+
 
 # Pre-installation steps
 

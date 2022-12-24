@@ -5,10 +5,12 @@ A set of Ansible scripts to setup a secure email and personal files server. This
 - You want a low maintenance box that keep itself updated automatically.
 - You trust the _Debian community_ to publish security updates.
 
+
 ## Official documentation and user's guide
 
 - [Stable branch](http://homebox.readthedocs.io/en/latest/)
 - [Development branch](http://homebox.readthedocs.io/en/dev/)
+
 
 ## Mailing lists
 
@@ -18,33 +20,35 @@ suggestions and support, and another one dedicated for development.
 - General questions: https://framalistes.org/sympa/info/homebox-general
 - Development: https://framalistes.org/sympa/info/homebox-dev
 
+
 ## Current project status
 
-## Current status and supported features
-
-For a complete list of features, see the [features page](http://homebox.readthedocs.io/en/latest/features/) in the
-official documentation.
 
 ### System installation and features
 
 - Custom Debian installer generation with full disk encryption and fully automatic installation.
 - Unlock the system upon boot by entering the passphrase through SSH or with a Yubikey.
-- Install packages only from Debian stable (Stretch) or officially maintained repositories (rspamd).
-- Automatic SSL Certificates generation with [letsencrypt](https://letsencrypt.org).
+- Install packages only from Debian stable (Bullseye).
+- Automatic [letsencrypt](https://letsencrypt.org) certificates generation using DNS challenge.
 - Automatic security updates (optional).
 - Centralised authentication with an LDAP users database, SSL certificate, password policies, PAM integration.
-- AppArmor activated by default, profiles for all daemons.
-- Automatic backup of the deployment data to replay the installation with the same data.
+- AppArmor activated by default, with a profile for all daemons.
+- Random passwords generated and saved into pass by default.
 - Can be used at home, on a dedicated or virtual server hosted online.
-- Flexible IP address support: IPv4, IPv6, IPv4+IPv4, IPv4+IPv6.
+- Flexible IP address support: IPv4 only, IPv6 only, and IPv4+IPv4 or IPv4+IPv6.
 - Embedded DNS server, with CAA, DNSSEC and SSHFP (SSH fingerprint) support.
 - Grade A https sites, HSTS implemented by default.
+- Automatic configuration of OpenPGP Web Key Directory.
+- Automatic firewall rules for inbound, outbound and forwarding traffic, using nftables.
+- Restricted outbound traffic to the minimum.
+- Automatic update of DNS servers and glue records on Gandi.
+
 
 ### Emails
 
 - Postfix configuration and installation, with LDAP lookups, internationalised email aliases,
   fully SSL compliant.
-- Generate DKIM keys, SPF and DMARC DNS records.
+- Generate DKIM keys, SPF and DMARC DNS records. The DKIM keys are generated every year.
 - Automatic copy of sent emails into the sent folder.
 - Automatic creation of the postmaster account and special email addresses using
   [RFC 2142](https://tools.ietf.org/html/rfc2142) specifications.
@@ -56,17 +60,13 @@ official documentation.
 - Optional master user creation, e.g. for families with children or moderated communities.
 - Server side full text search inside emails, attached documents and files and
   compressed archives, with better results than GMail.
-- Detailed weekly, monthly and yearly access report per country, ISP, IP addresses, etc.
-- Optional Roundcube webmail with sieve filters management, password change form, automatic identity
-  creation, master account access, etc.
-- Optional SOGo webmail with sieve filters management, password change form, Calendar and Address book management, GUI
+- SOGo webmail with sieve filters management, password change form, Calendar and Address book management, GUI
   to import other account emails.
-- Automatic import emails from Google Mail, Yahoo, Outlook.com or any other standard IMAP account.
 - Powerful and light antispam system with [rspamd](https://rspamd.com/) and optional access to the web interface.
 - Antivirus for inbound _and_ outbound emails with [clamav](https://www.clamav.net/).
 - Automatic configuration for Thunderbird and Outlook using published XML and other clients with
   special DNS records ([RFC 6186](https://tools.ietf.org/html/rfc6186)).
-- Automatic detection of unusual behaviour, with real time warning using XMPP and email to external address.
+
 
 ### Calendar and Address book
 
@@ -75,27 +75,19 @@ official documentation.
 - Recurring events, email alerts, shared address books and calendars.
 - Mobile devices compatibility: Android, Apple iOS, BlackBerry 10 and Windows mobile through Microsoft ActiveSync.
 
+
 ### Other optional features
 
 - Incremental backups, encrypted, on multiple destination (SFTP, S3, Samba share or USB drive), with email and Jabber
   reporting.
 - Jabber server, using [ejabberd](https://www.ejabberd.im/), with LDAP authentication, direct or offline file transfer
   and optional server to server communication.
-- [Tor](https://www.torproject.org/) installation out of the box with possible customisation.
-- [Privoxy](https://www.privoxy.org/) easy installation, with adblock rules daily synchronisation, and optional tor
-  chaining.
 - Static web site skeleton configuration, with https certificates and A+ security grade by default.
-- Personal backup server for each user, using borgbackup.
-- [Transmission daemon](https://transmissionbt.com/), accessible over https, public or private over your LAN. Files can
-  be downloaded directly with a web browser, using LDAP credentials for authentication or whitelisted IP addresses
-  (e.g. LAN).
-- Monitoring with [Zabbix](https://www.zabbix.com/), with email and Jabber alerts.
-- Hide the SSH server with Single Packet Authorization, using [fwknop](http://www.cipherdyne.org/fwknop/).
+
 
 ### Development
 
 - YAML files validation on each commit, using [travis-ci](https://travis-ci.org/progmaticltd/homebox).
-- Continuous Integration using [Jenkins](https://jenkins.homebox.space).
 - End to end integration tests for the majority of components.
 - Playbooks to facilitate the installation or removal of development packages.
 - Global debug flag to activate the debug mode of all components.

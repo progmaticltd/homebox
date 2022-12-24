@@ -3,9 +3,10 @@
 There is already a lot of excellent projects on the internet to help emails self-hosting, and I am providing links in
 the [index page](index.md).
 
-This one is different in the approach used, and I do not want to deviate.
+This one is different in the approach used. It is made to be unobtrusive with a standard Debian distribution, stable and
+highly secure.
 
-It is made to be unobtrusive with a standard Debian distribution, stable and highly secure.
+Documentation file are written using markdown, 120 characters wide.
 
 
 ## Security
