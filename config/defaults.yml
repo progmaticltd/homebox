@@ -10,10 +10,16 @@ network_default:
   external_ip: ~
   backup_ip: ~
   dns:
+    # if You are using IPv4 only, you can use these DNS servers:
     servers:
       - 1.1.1.1
       - 8.8.8.8
       - 208.67.222.222
+    # if You are using IPv6 only, you can use these DNS servers:
+    # servers:
+    #   - 2606:4700:4700::1111
+    #   - 2001:4860:4860::8888
+    #   - 2620:0:ccc::2
     options:
       - debug
       - timeout:2
