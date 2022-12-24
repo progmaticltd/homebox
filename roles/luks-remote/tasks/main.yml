@@ -7,4 +7,4 @@
 
 - name: Set up dropbear
   when: crypttab.stat.exists and crypttab.stat.size > 0
-  include_tasks: set-dropbear.yml
+  include_tasks: dropbear.yml

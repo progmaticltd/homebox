@@ -1,7 +1,0 @@
----
-
-packages:
-  - busybox
-  - dropbear
-  - dropbear-bin
-  - dropbear-initramfs

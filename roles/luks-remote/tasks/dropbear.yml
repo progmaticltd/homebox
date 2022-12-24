@@ -12,7 +12,7 @@
     state: directory
     owner: root
     group: root
-    mode: '0700'
+    mode: 0700
 
 - name: Create dropbear log folder
   file:
@@ -26,7 +26,7 @@
     dest: /etc/dropbear-initramfs/authorized_keys
     remote_src: yes
 
-# NOTE: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=955384
+# NOTE: https://bugs.debian.org/955384
 - name: List OpenSSH keys
   register: keys_list
   find:
