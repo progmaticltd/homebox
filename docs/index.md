@@ -1,5 +1,5 @@
-This is the home documentation for "Homebox", a set of Ansible scripts to deploy
-a fully functional _and_ secure mail server at home or online.
+This is the home documentation for "Homebox", a set of Ansible scripts to deploy a fully functional _and_ secure mail
+server at home or online.
 
 The source code is on [GitHub](https://github.com/progmaticltd/homebox).
 
@@ -14,15 +14,15 @@ This project is for you if:
 ## Philosophy
 
 - You should be able to upgrade anything installed via the apt command. No git clone / wget / curl here, ever.
-- If you are using your own hardware, the disk will be fully encrypted using
-  [LUKS](https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup). Nobody will be able to steal your hardware _and_ your
-  information.
+- If you are using your own hardware, the disk can be fully encrypted using
+  [LUKS](https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup).
+  Nobody will be able to steal your hardware _and_ your information.
 - AppArmor is activated on the first boot, and all the services are configured to support it. This makes your server
   very safe against remote intrusion, even when using 0-day vulnerabilities.
 - You can set up multiple backup destination, local and remote, all encrypted.
 - A lot of default choices made towards simplicity, [KISS principle](https://en.wikipedia.org/wiki/KISS_principle),
   and safety.
-- Attention to details, keep focused on the nitty-gritty features of self hosting, like full IPv6 support.
+- Attention to details, keep focused on the nitty-gritty features of self hosting, like full IPv6 support and DNSSEC.
 
 ## Main components
 
@@ -36,7 +36,6 @@ This project is for you if:
 - Antivirus: ClamAV
 - Groupware: SOGo
 - Jabber: ejabberd
-- Remote administration: Cockpit
 
 ## Other projects to mention
 

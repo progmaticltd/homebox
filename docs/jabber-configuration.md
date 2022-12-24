@@ -2,10 +2,10 @@
 
 The default configuration for the Jabber server comes with the following options:
 
-- Installed by default
-- Server to server communication active and public by default
-- Socks proxy to transfer files
-- HTTP upload for offline file transfer
+- Installed by default.
+- Server to server communication active and public by default.
+- Socks proxy to transfer files.
+- HTTPs upload for offline file transfer.
 
 Default options for the Jabber server:
 
@@ -41,11 +41,11 @@ ejabberd:
 
 Two certificates are created to ensure proper communication with clients and other servers.
 
-| Record      | Type   | Purpose                                | Example                  |
-| ----------- | ------ | ---------                              | ---------                |
-| @           | A      | Default certificate used by the server | homebox.space            |
-| xmpp        | A      | Handle file transfer over https        | xmpp.homebox.space       |
-| conference  | A      | S2S conference public URL              | conference.homebox.space |
+| Record     | Type | Purpose                                | Example                  |
+|------------|------|----------------------------------------|--------------------------|
+| @          | A    | Default certificate used by the server | homebox.space            |
+| xmpp       | A    | Handle file transfer over https        | xmpp.homebox.space       |
+| conference | A    | S2S conference public URL              | conference.homebox.space |
 
 ## Fine tuning
 

@@ -9,6 +9,7 @@ knowledge to achieve the above.
 You still need some basic understanding though, like what is an IP address or a port, how to run Ansible in a console,
 how to edit Yaml files, etc.
 
+
 ## Hosting emails at home
 
 If you want to seriously host your emails at home, you will need the following:
@@ -25,69 +26,39 @@ Pros:
 Cons:
 
 - Your internet connection and electric providers need to be stable.
-- Might be cumbersome when you are moving
+- Might be cumbersome when you are moving.
+- This is not _digital worker_ friendly.
+
 
 ## Hosting emails online
 
 Any serious hosting platform can provide a server, virtual or physical, with an externally accessible IP address. Some
 providers, however, are blocking the port 25 (e.g. Google cloud).
 
-Be careful, using a VPS (Virtual Private Server) is no more secure than hosting at your home.
-
 Pros:
 
-- Does not rely on the reliability of your internet connection or your electricity provider
-- You can move to another address easily.
+- Does not rely on the reliability of your internet connection or your electricity provider.
+- Easier to manage remotely, especially for _digital workers_.
 
 Cons:
 
-- You may not have control on the kernel installed. This is less secure than Homebox, which is by default configured to
-  run on AppArmor.
+- You may not have control on the kernel installed or the options available.
 - You may not be able to use Full Disk Encryption. Although there are some security measures in places, it is still
   perfectly possible to extract data from your disk without your knowledge or consent.
-- You will not have the choice on when and which security updates are applied. Most hosting providers have specific time
-  windows to update the kernel images they use, which may not be as soon as you need, or even appropriate to you.
 
 
 # Pre-installation steps
 
 ## Set up your domain name
 
-The first thing you need is a domain name and a DNS provider, there are many available. For instance, here is a
-[list of other DNS providers](https://github.com/AnalogJ/lexicon#providers) you can use.
+If you are not familiar with DNS, I recommend to use Gandi and to create an API key. The playbook will handle the DNS
+settings itself.
 
-The screenshots and examples in this tutorial are specific to [Gandi](https://www.gandi.net/), but the principles are
-the same.
+Otherwise, here is a [list of other DNS providers](https://github.com/AnalogJ/lexicon#providers) you can use.
 
-Once you have chosen the domain name, it is necessary to configure the associated DNS servers, and the _glue records_.
+In this case, it is necessary to configure the associated DNS servers, and the _glue records_.
 
-For instance, on Gandi, you will have to set up the glue records first and then the DNS servers used for your domain:
-
-### Glue records
-
-Create at least one record that points to your static IP address.
-
-![Glue records](img/dns-setup/glue-records.png)
-
-### DNS servers
-
-Add the DNS servers accordingly
-
-![DNS servers](img/dns-setup/dns-servers.png)
-
-## Choose the hardware
-
-An old laptop should be enough to start, with the main advantage of being somewhat resilient to power failures. I also
-suggest you to have a look on this Debian page: [Cheap Serverbox Hardware](https://wiki.debian.org/FreedomBox/Hardware)
-of the project freedombox, another excellent project.
-
-The preseed configuration (see next step) provides an option to use software RAID, so you can use this as well if you
-prefer.
-
-!!! Warning
-    You still need to regularly back up your data, even if you are using RAID.
-
-## Set-up your home network
+## Home based: set-up your home network
 
 This is necessary only if you choose to use a home device to host your emails. If you are using an online server, you
 can skip this section.
@@ -99,12 +70,11 @@ functionality if there is one. The other option is to redirect only the ports yo
 
 Initially, the following TCP ports are required:
 
-- To obtain your certificates from LetsEncrypt, the port 80 need to be exposed.
+- To obtain your certificates from LetsEncrypt, the port 53 in UDP and TCP mode.
 - To test sending and receiving emails, your system should be accessible on the port 25 as well.
-- To retrieve emails, your system should be accessible on ports 143, 993, 110, 995.
+- To retrieve emails, your system should be accessible on ports 993 and 995 if you are using POP3.
 - To send emails, your system should be accessible on ports 587 and/or 465.
-- For Thunderbird automatic configuration, your system should be accessible on port 80.
-- Once installed, SOGo and the webmail are accessible through https (port 443).
+- Once installed, SOGo is accessible through https (port 443).
 
 The next step is to link your domain name (e.g homebox.me) to your static IP address that has been assigned to you by
 your ISP.
@@ -119,9 +89,6 @@ on Debian or Ubuntu:
 $ sudo apt install ansible rsync
 ```
 
-Another package to install is `python-netaddr`, which is part of Debian too. It is required to guess your public IP
-address during the installation phase. Once the playbook has been run, you can uninstall it.
-
-If you already have a Debian server (Stretch) installed, and you prefer to use it, it's fine, you can skip the next
+If you already have a Debian server (Bullseye) installed, and you prefer to use it, it's fine, you can skip the next
 section and start the [installation](installation.md) directly. Otherwise, click on next to read the OS installation
 page.

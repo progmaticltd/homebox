@@ -39,7 +39,7 @@ The file is self-explanatory. A content example is shown below:
 ``` yaml
 system:
   hostname: mail
-  passphrase: Correct horse battery stapple
+  passphrase: Correct horse battery staple
   preseed: luks
   version: 11.1
   arch: amd64
@@ -82,9 +82,6 @@ root:
 debug: true
 ```
 
-!!! Tip
-    If you do not have physical access to your box, don't worry, you will be able to enter the passphrase remotely over
-    SSH.
 
 ## 3. Set up remote access
 

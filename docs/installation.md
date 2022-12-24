@@ -7,7 +7,7 @@ Whatever you chose to host your system at home, or with a VPS, you need to speci
 ```sh
 cd install/config
 cp hosts-example.yml hosts.yml
-nano hosts.yml
+vi hosts.yml
 ```
 
 Here is an example on your LAN:
@@ -41,8 +41,7 @@ The system configuration file is a complete YAML configuration file containing a
 - User and group details, like email addresses and aliases.
 - Email parameters, like maximum attachment size, antivirus options, etc.
 - Some password policies, like minimum length and complexity.
-- Webmail settings (roundcube or SOGo).
-- Low level system settings, mainly used during the development phase.
+- SOGo settings if you want to install it.
 - Firewall policies, especially SSH access.
 - Security settings.
 - Backup strategies.
@@ -58,18 +57,7 @@ Once you have modified the file, you are ready to start the installation.
 !!! Warning
     You need to be careful with the indentation in your Yaml file, the number of spaces is significant.
 
-## Step 3: Start the installation
-
-You can choose a flavour to install, using a different playbook.
-
-```sh
-cd install
-ansible-playbook -i ../config/hosts.yml install-mini.yml
-```
-
-# Most important sections
-
-## Network configuration
+## Step 3: Configure your system
 
 ### Domain name and host name
 
@@ -105,7 +93,7 @@ network:
 !!! Tip
     If you do not have a backup IP address, use "~", which means "None" or Null in yaml.
 
-## Users list
+### Users list
 
 The file format should be self-explanatory. The other piece of information you need to fill first is the user list. In
 its simplest form, you will have something like this:
@@ -130,19 +118,11 @@ users:
     - jane@homebox.space
 ```
 
-The email aliases are the other email addresses that belong to the same user.
+You do not have to set the passwords for each user. A random password will be generated, using XKCD, and saved into
+_pass_, in the ldap sub directory.
 
-You can also add more advanced features, like:
 
-- [Import emails from other accounts](external-accounts.md).
-- [Define some users as administrators](security-configuration.md#defining-administrators)
-- [Grant remote access to certain users](security-configuration.md#grant-some-users-remote-access)
-
-!!! Note
-    You do not have to set the passwords for each user. A random password will be generated, usinx XKCD, and saved into
-    _pass_, in the ldap sub directory.
-
-## Email options
+### Email options
 
 This is the second most important settings. Here is an example of the email options you can override:
 
@@ -155,10 +135,10 @@ mail:
     default: 1G             # Maximum allowed mailbox size for your users.
 ```
 
-All options are detailed on the [email configuration](email-configuration.md) page.
+Advanced options are detailed on the [email configuration](email-configuration.md) page.
 
 
-## Security options
+### Security options
 
 Security options are detailed on the [security page](security-configuration.md).
 The default settings are:
@@ -170,15 +150,17 @@ The default settings are:
 
 Other options are possible, see the security page for details.
 
+## Step 4: Start the installation
 
-## Backup configuration
+You can choose a flavour to install, using a different playbook. Four playbooks are included by default: mini, small,
+medium and large. Depending on the features and the capacity of your server.
 
-It is possible to regularly backup your emails, for instance locally on a NAS drive, or on the internet, using various
-methods.
+For instance, the mini server:
 
-By default, the whole home partition is backed up, but you can add or exclude more folders. The detailed instructions
-are on the [backup documentation](/backup-home/) page.
+```sh
+cd install
+ansible-playbook -i ../config/hosts.yml install-mini.yml
+```
 
-You can also use [OpenDNS servers](https://en.wikipedia.org/wiki/OpenDNS#Name_server_IP_addresses) for forward.
-
-Once your DNS set up is complete, you can monitor the [world wide propagation](/dns-propagation/).
+!!! Note
+    The large version, including clamAV, requires at least 2GB of ram.

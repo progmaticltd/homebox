@@ -41,7 +41,8 @@ Then, run the dedicated playbook to update users:
 
 ```sh
 cd install
-ansible-playbook -v -i ../config/hosts.yml playbooks/update-users.yml
+export ROLE=ldap-openldap,user-setup
+ansible-playbook -v -i ../config/hosts.yml playbooks/install.yml
 ```
 
 The home playbook creates the home directories for this user.
@@ -69,54 +70,57 @@ This can be done through SSH, like you are doing on any Debian server.
 
 ## Adding or removing components
 
-Most components can be added or removed individually, using the unit ansible playbook, for instance:
+Most components can be added or removed individually, using the unit playbook, for instance:
 
 ```sh
-ROLE=diagnostic ansible-playbook -l homebox -v install.yml
+ROLE=ejabberd ansible-playbook -l homebox install.yml
 ```
+
+This will install the ejabberd XMPP server.
 
 or
 
 ```sh
-ROLE=diagnostic ansible-playbook -l homebox -v uninstall.yml
+ROLE=ejabberd ansible-playbook -l homebox uninstall.yml
 ```
 
+This will delete the ejabberd XMPP server.
 
 ### Removing ClamAV
 
-Removing ClamAV can be done using the following command:
+Adding or removing ClamAV can be done using the following command:
 
 ```sh
-ROLE=clamav ansible-playbook -l homebox -v uninstall.yml
+ROLE=clamav ansible-playbook -l homebox install.yml
 ```
 
-### Removing rspamd
-
-Removing Respamd can be done using the following command:
+Or to be removed:
 
 ```sh
-ROLE=clamav ansible-playbook -l homebox -v uninstall.yml
+ROLE=clamav ansible-playbook -l homebox uninstall.yml
 ```
 
-## Restarting the system
+
+## Restarting the system when the drive is encrypted
 
 If you have installed the system with the main drive encrypted using LUKS, you need to keep a way to decrypt your drive,
-locally or remotely
+locally or remotely.
 
-### With physical access
+There is a role you can run, to install _dropbear_. When the system starts, a small SSH server is started, to allowing
+you to decrypt the drive remotely.
 
-Plug a screen and a keyboard, and type your passphrase when the system boot.
+Here how to install it:
 
-### Remotely over SSH
+```sh
+ROLE=luks-remote ansible-playbook -l homebox install.yml
+```
 
-When the system starts, a small SSH server is started, which allows you to decrypt the drive remotely.
 Here is an example using a command line SSH client:
 
 ```sh
-andre@london:~ $ ssh root@rodier.me
+andre@london:~ $ ssh root@example.net
 
 To unlock root partition, and maybe others like swap, run `cryptroot-unlock`
-
 
 BusyBox v1.22.1 (Debian 1:1.22.0-19+b3) built-in shell (ash)
 Enter 'help' for a list of built-in commands.
