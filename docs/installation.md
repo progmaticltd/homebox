@@ -181,7 +181,7 @@ creds_default:
 However, you can use any of the Ansible password lookup plugin. If you want to use plain text password files, see the
 [password lookup](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/password_lookup.html):
 
-```yml
+```yaml
 creds:
   store: password
   prefix: '/home/alice/homebox/backup/'
