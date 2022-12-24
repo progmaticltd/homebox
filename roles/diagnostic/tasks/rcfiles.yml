@@ -1,0 +1,10 @@
+---
+
+- name: Set basic rc files for root
+  template:
+    src: '{{ rcfile }}.rc'
+    dest: '/root/.{{ rcfile }}rc'
+    mode: '0600'
+  loop: '{{ rc_files }}'
+  loop_control:
+    loop_var: rcfile

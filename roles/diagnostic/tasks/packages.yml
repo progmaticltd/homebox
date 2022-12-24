@@ -1,0 +1,7 @@
+---
+
+- name: Install Development support packages
+  apt:
+    name: '{{ devel.packages }}'
+    state: present
+    install_recommends: no

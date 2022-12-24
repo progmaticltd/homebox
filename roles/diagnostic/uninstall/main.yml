@@ -1,0 +1,10 @@
+---
+
+- name: Set default root shell
+  include_tasks: uninstall/shell.yml
+
+- name: Reset the rcfiles
+  include_tasks: uninstall/rcfiles.yml
+
+- name: Remove the packages
+  include_tasks: uninstall/packages.yml

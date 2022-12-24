@@ -1,0 +1,8 @@
+---
+
+- name: Remove Development support packages
+  apt:
+    name: '{{ devel.packages }}'
+    state: absent
+    purge: true
+    autoremove: true

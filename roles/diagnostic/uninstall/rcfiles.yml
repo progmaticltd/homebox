@@ -1,0 +1,15 @@
+---
+
+- name: Remove basic rc files for root
+  file:
+    path: /root/.{{ rcfile }}rc
+    state: absent
+  loop: '{{ rc_files }}'
+  loop_control:
+    loop_var: rcfile
+
+- name: Restore the bashrc default for root
+  copy:
+    src: /etc/skel/.bashrc
+    dest: /root/.bashrc
+    remote_src: true

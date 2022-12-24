@@ -1,0 +1,6 @@
+---
+
+- name: Set the default shell for the root user
+  user:
+    name: root
+    shell: /bin/bash

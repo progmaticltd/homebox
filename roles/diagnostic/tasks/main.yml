@@ -1,27 +1,10 @@
 ---
 
-- name: Install Development support packages
-  apt:
-    name: '{{ devel.packages }}'
-    state: present
-    install_recommends: no
+- name: Install the packages
+  include_tasks: packages.yml
 
-- name: Install etckeeper to follow the changes
-  apt:
-    name: etckeeper
-    state: present
-    install_recommends: no
+- name: Install the rcfiles
+  include_tasks: rcfiles.yml
 
-- name: Set basic rc files for root
-  template:
-    src: '{{ rcfile }}.rc'
-    dest: '/root/.{{ rcfile }}rc'
-    mode: '0600'
-  loop: '{{ rc_files }}'
-  loop_control:
-    loop_var: rcfile
-
-- name: Set the default shell for the root user
-  user:
-    name: root
-    shell: '{{ devel.root.shell }}'
+- name: Configure root shell
+  include_tasks: shell.yml
