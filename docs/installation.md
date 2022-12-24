@@ -184,10 +184,11 @@ However, you can use any of the Ansible password lookup plugin. If you want to u
 ```yml
 creds:
   store: password
-  prefix: '/home/alice/homebox/backup/mydomain.io/'
+  prefix: '/home/alice/homebox/backup/'
   opts:
     # Used for system, should be safe without quoting, but long enough to be secure
     system: ' length=16 chars=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+	create: ''
 ```
 
 In the example above, passwords will be stored in the _backup_ folder in homebox, using the domain name
