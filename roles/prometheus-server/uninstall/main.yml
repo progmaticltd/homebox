@@ -1,0 +1,13 @@
+---
+
+- name: Uninstall the packages
+  include_tasks: uninstall/packages.yml
+
+- name: Remove AppArmor config files
+  include_tasks: uninstall/apparmor.yml
+
+- name: Remove the certificates
+  include_tasks: uninstall/certificates.yml
+
+- name: Delete the DNS records
+  include_tasks: uninstall/dns.yml

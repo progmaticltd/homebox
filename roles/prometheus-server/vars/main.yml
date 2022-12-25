@@ -1,0 +1,18 @@
+---
+
+# Packages to install
+packages:
+  - prometheus
+
+# DNS records information
+dns_records_main:
+  - name: prometheus
+    type: '{{ external_ip_type }}'
+    value: '{{ external_ip }}'
+    create: true
+
+dns_records_backup:
+  - name: prometheus
+    type: '{{ backup_ip_type }}'
+    value: '{{ backup_ip }}'
+    create: true
