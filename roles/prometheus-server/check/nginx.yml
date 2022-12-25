@@ -1,0 +1,8 @@
+---
+
+- name: Load prometheus home page
+  delegate_to: localhost
+  become: false
+  uri:
+    url: https://prometheus.{{ network.domain }}/
+    return_content: true

@@ -1,0 +1,6 @@
+---
+
+- name: Check the DNS entry
+  getent:
+    database: hosts
+    key: 'prometheus.{{ network.domain }}'
