@@ -12,7 +12,7 @@
 
 - name: Remove all the symbolic links
   file:
-    path:
+    path: '{{ path }}'
     state: absent
   loop:
     - /etc/ssl/certs/{{ fqdn }}.crt
@@ -20,12 +20,12 @@
     - /etc/ssl/private/{{ fqdn }}.key
     - /etc/ssl/private/{{ fqdn }}.pem
   loop_control:
-    loop_var: ext
+    loop_var: path
 
 - name: Remove all the certificate files
   file:
     path: /var/lib/lego/certificates/{{ fqdn }}.{{ ext }}
     state: absent
-  loop: [ 'crt', 'issuer.crt', 'pem', 'key' ]
+  loop: [ 'crt', 'issuer.crt', 'pem', 'key', 'json' ]
   loop_control:
     loop_var: ext

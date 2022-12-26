@@ -5,7 +5,7 @@
 # export the role you want to run in the ‘ROLE’ environment variable
 # and run the playbook.
 
-- name: Run the install tasks of one role
+- name: Run the backup tasks of one role
   hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../config/system.yml'
