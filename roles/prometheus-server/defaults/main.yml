@@ -32,7 +32,6 @@ csp_default:
     - id: object-src
     - id: connect-src
 
-
 ### Features policy
 # See https://github.com/w3c/webappsec-feature-policy
 # Set to 'none' by default

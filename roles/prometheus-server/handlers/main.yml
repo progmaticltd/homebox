@@ -9,3 +9,15 @@
     name: nginx
     state: restarted
     no_block: true
+
+- name: Restart Prometheus
+  systemd:
+    name: prometheus
+    state: restarted
+    no_block: true
+
+- name: Restart Prometheus node exporter
+  systemd:
+    name: prometheus-node-exporter
+    state: restarted
+    no_block: true

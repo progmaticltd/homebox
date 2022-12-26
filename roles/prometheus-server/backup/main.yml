@@ -1,0 +1,28 @@
+---
+
+- name: Stop the prometheus services
+  systemd:
+    name: '{{ service }}'
+    state: stopped
+  loop:
+    - prometheus
+    - prometheus-node-exporter
+  loop_control:
+    loop_var: service
+
+- name: Pull prometheus database
+  synchronize:
+    mode: pull
+    src: /var/lib/prometheus
+    dest: '{{ backup_dir }}/'
+    archive: true
+
+- name: Start the prometheus services
+  systemd:
+    name: '{{ service }}'
+    state: stopped
+  loop:
+    - prometheus
+    - prometheus-node-exporter
+  loop_control:
+    loop_var: service

@@ -3,9 +3,6 @@
 - name: Install the required packages
   include_tasks: packages.yml
 
-- name: Configure AppArmor
-  include_tasks: apparmor.yml
-
 - name: Copy the certificates
   include_tasks: certificates.yml
 

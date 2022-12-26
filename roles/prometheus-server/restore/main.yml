@@ -1,0 +1,48 @@
+---
+
+- name: Ensure the required packages are installed
+  apt:
+    name: [ rsync ]
+    state: present
+
+- name: Stop the prometheus services
+  systemd:
+    name: '{{ service }}'
+    state: stopped
+  loop:
+    - prometheus
+    - prometheus-node-exporter
+  loop_control:
+    loop_var: service
+
+- name: Push the metrics
+  synchronize:
+    mode: push
+    src: '{{ backup_dir }}/prometheus/metrics2'
+    dest: /var/lib/prometheus/metrics2
+    archive: true
+    owner: true
+    rsync_opts:
+      - '--chown=prometheus:prometheus'
+      - '--delete'
+
+- name: Push the node exporter folder
+  synchronize:
+    mode: push
+    src: '{{ backup_dir }}/prometheus/node-exporter'
+    dest: /var/lib/prometheus/node-exporter
+    archive: true
+    owner: true
+    rsync_opts:
+      - '--chown=root:root'
+      - '--delete'
+
+- name: Start the prometheus services
+  systemd:
+    name: '{{ service }}'
+    state: stopped
+  loop:
+    - prometheus
+    - prometheus-node-exporter
+  loop_control:
+    loop_var: service
