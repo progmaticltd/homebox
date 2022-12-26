@@ -1,0 +1,7 @@
+---
+
+
+- name: Call the prometheus API
+  uri:
+    url: http://127.0.0.1:9090/api/v1/labels
+    return_content: true

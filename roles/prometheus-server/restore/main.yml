@@ -1,5 +1,7 @@
 ---
 
+# FIXME: backup/restore not working yet
+
 - name: Ensure the required packages are installed
   apt:
     name: [ rsync ]

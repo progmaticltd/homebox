@@ -1,5 +1,12 @@
 ---
 
+# FIXME: Not working yet
+# - name: Create a snapshot using the API
+#   uri:
+#     url: http://127.0.0.1:9090/api/v2/admin/tsdb/snapshot
+#     method: POST
+#     use_proxy: false
+
 - name: Stop the prometheus services
   systemd:
     name: '{{ service }}'

@@ -3,6 +3,9 @@
 - name: Set DNS records
   include_tasks: check/dns.yml
 
+- name: Call the API
+  include_tasks: check/api.yml
+
 - name: Web server configuration
   include_tasks: check/nginx.yml
 

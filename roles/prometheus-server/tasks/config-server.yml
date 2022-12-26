@@ -1,0 +1,38 @@
+---
+
+- name: Set the default log level
+  set_fact:
+    log_level: warn
+
+- name: Set the default log level when debugging
+  when: system.debug
+  set_fact:
+    log_level: debug
+
+- name: Set the default log level when debugging
+  when: system.devel
+  set_fact:
+    log_level: debug
+
+- name: Initialise default settings
+  set_fact:
+    default_settings_args:
+      - --web.listen-address='127.0.0.1:9090'
+      - --web.enable-admin-api
+      - --log.level='{{ log_level }}'
+      - --web.external-url='prometheus.{{ network.domain }}'
+      - --web.cors.origin='prometheus\.{{ network.domain | regex_escape }}'
+
+- name: Push the default parameters
+  notify: Restart Prometheus
+  template:
+    src: defaults.conf
+    dest: /etc/default/prometheus
+    mode: 0644
+
+- name: Push the standard configuration
+  notify: Restart Prometheus
+  template:
+    src: prometheus.yml
+    dest: /etc/prometheus/prometheus.yml
+    mode: 0644

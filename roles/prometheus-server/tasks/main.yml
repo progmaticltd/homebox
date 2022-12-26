@@ -3,8 +3,14 @@
 - name: Install the required packages
   include_tasks: packages.yml
 
-- name: Copy the certificates
-  include_tasks: certificates.yml
+- name: Install the server configuration
+  include_tasks: config-server.yml
 
-- name: Configure nginx
-  include_tasks: nginx.yml
+- name: Install the exporter configuration
+  include_tasks: config-exporter.yml
+
+# - name: Copy the certificates
+#   include_tasks: certificates.yml
+
+# - name: Configure nginx
+#   include_tasks: nginx.yml
