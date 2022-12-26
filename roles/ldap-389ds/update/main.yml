@@ -1,0 +1,69 @@
+---
+
+- name: Update all account email addresses
+  ldap_attr:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn={{ user.1.cn }},{{ ldap.users.dn }}'
+    name: intlMailAddr
+    values: '{{ user.1.aliases | default([]) }}'
+    state: exact
+  with_indexed_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Update all account email addresses
+  ldap_attr:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn={{ user.1.cn }},{{ ldap.users.dn }}'
+    name: mail
+    values: '{{ user.1.mail }}'
+    state: exact
+  with_indexed_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Add users to users groups
+  tags: groups
+  ldap_attr:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn=mail_users,{{ ldap.groups.dn }}'
+    name: memberUid
+    values: '{{ user.uid }}'
+    state: present
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Add administrators to administrators groups
+  tags: groups
+  ldap_attr:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn=administrators,{{ ldap.groups.dn }}'
+    name: memberUid
+    values: '{{ uid }}'
+    state: present
+  with_items:
+    - manager
+    - postmaster
+  loop_control:
+    loop_var: uid
+
+- name: Update all account email addresses
+  ldap_attr:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
+    name: intlMailAddr
+    values: '{{ user.aliases | default([]) }}'
+    state: exact
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user

@@ -1,0 +1,44 @@
+---
+
+- name: Update the indexes
+  when: index_defs.changed
+  become: true
+  become_user: openldap
+  become_method: sudo
+  command: 'slapindex -n 1 -v {{ field }}'
+  with_items: '{{ indexed_fields }}'
+  loop_control:
+    loop_var: field
+
+- name: Add local accounts to users groups
+  ldap_attr:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: 'cn=mail_users,{{ ldap.groups.dn }}'
+    name: memberUid
+    values: '{{ user.uid }}'
+    state: present
+  with_items:
+    - '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Add system accounts to administrators groups
+  ldap_attr:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: 'cn=administrators,{{ ldap.groups.dn }}'
+    name: memberUid
+    values: '{{ uid }}'
+    state: present
+  with_items:
+    - manager
+    - postmaster
+  loop_control:
+    loop_var: uid
+
+- name: Install the nslcd package to map LDAP users to system users
+  notify: Restart the ldap stack
+  apt:
+    name: nslcd
+    state: present

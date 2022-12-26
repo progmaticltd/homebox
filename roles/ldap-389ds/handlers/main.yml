@@ -1,0 +1,6 @@
+---
+
+- name: Restart the ldap server
+  service:
+    name: dirsrv
+    state: restarted

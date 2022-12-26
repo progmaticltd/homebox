@@ -1,0 +1,28 @@
+---
+
+users_defaults:
+  uid_start: 1001
+  gid_start: 1001
+  shell: /bin/dash
+
+
+ldap_packages:
+  install:
+    - 389-ds
+    - python3-openssl
+  remove:
+    - nscd
+
+indexed_fields:
+  - cn
+  - displayName
+  - gidNumber
+  - givenName
+  - intlMailAddr
+  - mail
+  - member
+  - memberUid
+  - sn
+  - telephoneNumber
+  - uid
+  - uidNumber

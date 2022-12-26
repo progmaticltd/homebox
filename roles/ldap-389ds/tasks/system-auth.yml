@@ -1,0 +1,36 @@
+---
+
+- name: Configure libnss to use passwords and groups
+  debconf:
+    name: libnss-ldap
+    question: 'libnss-ldapd/nsswitch'
+    value: 'passwd, group, shadow'
+    vtype: multiselect
+
+- name: Install the required packages for interactive login
+  vars:
+    pkgs:
+      - libnss-ldapd
+      - libpam-ldapd
+  apt:
+    name: '{{ pkgs }}'
+    state: present
+
+- name: Update the ldap configuration file
+  notify: Restart the ldap stack
+  template:
+    src: nslcd.conf
+    dest: /etc/nslcd.conf
+    mode: '0600'
+
+- name: Ensure nsswithch is configured correctly
+  replace:
+    path: /etc/nsswitch.conf
+    regexp: '{{ entry }}'
+    replace: '\1 ldap'
+  loop:
+    - '^(passwd:\s+files systemd)$'
+    - '^(group:\s+files systemd)$'
+    - '^(shadow:\s+files)$'
+  loop_control:
+    loop_var: entry

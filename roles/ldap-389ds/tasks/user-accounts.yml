@@ -1,0 +1,54 @@
+---
+
+- name: Create a random password using xkcd
+  no_log: '{{ not system.devel }}'
+  register: xkcd_pass_cmd
+  shell: >-
+    xkcdpass --min=5 --max=7 --numwords 5
+
+- name: Use random password for the user
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    user_password: '{{ xkcd_pass_cmd.stdout }}'
+
+- name: Create the user account and set a random password for the user
+  ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    server_uri: ldap://127.0.0.1:389/
+    dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
+    state: present
+    attributes:
+      uid: '{{ user.uid }}'
+      givenName: '{{ user.first_name }}'
+      sn: '{{ user.last_name }}'
+      userPassword: "{{ user_password }}"
+      # pwdPolicySubentry: 'cn=default,ou=pwpolicies,{{ ldap.organization.base }}'
+      homeDirectory: '/home/users/{{ user.uid }}'
+      loginShell: '{{ user.shell | default(users_defaults.shell) }}'
+      uidNumber: '{{ users_defaults.uid_start + index }}'
+      gidNumber: '{{ users_defaults.gid_start }}'
+      mail: '{{ user.mail }}'
+      # intlMailAddr: '{{ user.aliases | default([]) }}'
+      shadowMin: 0
+      shadowMax: 999999
+      shadowWarning: 7
+      shadowInactive: -1
+      shadowFlag: 0
+    objectClass:
+      - top
+      - person
+      - posixAccount
+      - shadowAccount
+      - inetOrgPerson
+      # - inetLocalMailRecipient
+      # - mailboxRelatedObject
+
+- name: Store the password on the system
+  when: user.password is not defined
+  lineinfile:
+    path: /root/user-passwords.txt
+    line: '{{ user.uid }}: {{ user_password }}'
+    regexp: '^{{ user.uid }}:.*'
+    create: true
+    mode: 0600
