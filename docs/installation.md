@@ -6,7 +6,7 @@
 Whatever you chose to host your system at home, or with a VPS, you need to specify its location to Ansible.
 
 ```sh
-cd install/config
+cd config
 cp hosts-example.yml hosts.yml
 vi hosts.yml
 ```
