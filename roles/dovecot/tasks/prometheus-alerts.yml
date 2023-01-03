@@ -1,0 +1,6 @@
+---
+
+- name: Deploy prometheus alerts
+  template:
+    src: prometheus/alerts.yml
+    dest: /etc/prometheus/alerts/dovecot-rules.yml

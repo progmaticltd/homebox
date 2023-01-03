@@ -1,0 +1,13 @@
+---
+
+groups:
+  - name: dovecot
+    rules:
+      - alert: dovecot service down
+        expr: up{job="dovecot"} == 0
+        for: 1m
+        labels:
+          severity: page
+        annotations:
+          title: The dovecot mail server on {{ $labels.instance }} is down
+          description: The mail server on {{ $labels.instance }} is down since at least one minute

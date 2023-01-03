@@ -15,6 +15,9 @@
 - name: Create the default DNS entries
   include_tasks: dns.yml
 
+- name: Add Prometheus alerts
+  include_tasks: prometheus-alerts.yml
+
 - name: Create the firewall rules
   include_tasks: nftables.yml
 

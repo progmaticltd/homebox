@@ -1,0 +1,13 @@
+---
+
+groups:
+  - name: nginx
+    rules:
+      - alert: nginx service down
+        expr: up{job="nginx"} == 0
+        for: 1m
+        labels:
+          severity: page
+        annotations:
+          title: The nginx server on {{ $labels.instance }} is down
+          description: The nginx server on {{ $labels.instance }} is down since at least one minute
