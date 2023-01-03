@@ -1,0 +1,7 @@
+---
+
+- name: Check prometheus config
+  shell: >-
+    promtool check config
+    /etc/prometheus/prometheus.yml
+  changed_when: false

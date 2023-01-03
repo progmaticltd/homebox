@@ -9,20 +9,15 @@
   set_fact:
     log_level: debug
 
-- name: Set the default log level when debugging
-  when: system.devel
-  set_fact:
-    log_level: debug
-
 - name: Initialise default settings
   set_fact:
-    default_settings_args:
+    default_exporter_settings_args:
       - --web.listen-address='127.0.0.1:9100'
       - --log.level='{{ log_level }}'
 
 - name: Push the default parameters
   notify: Restart Prometheus node exporter
   template:
-    src: defaults.conf
+    src: defaults-node-exporter.conf
     dest: /etc/default/prometheus-node-exporter
     mode: 0644

@@ -1,22 +1,25 @@
 ---
 
-- name: Set the default log level
+- name: Push the default parameters
+  file:
+    path: /etc/prometheus/alerts
+    state: directory
+    mode: 0755
+
+- name: Set the default settings
   set_fact:
     log_level: warn
+    scrape_interval: 60
 
-- name: Set the default log level when debugging
-  when: system.debug
-  set_fact:
-    log_level: debug
-
-- name: Set the default log level when debugging
+- name: Set default settings when debugging or during development
   when: system.devel
   set_fact:
     log_level: debug
+    scrape_interval: 5
 
 - name: Initialise default settings
   set_fact:
-    default_settings_args:
+    default_server_settings_args:
       - --web.listen-address='127.0.0.1:9090'
       - --web.enable-admin-api
       - --log.level='{{ log_level }}'
@@ -26,7 +29,7 @@
 - name: Push the default parameters
   notify: Restart Prometheus
   template:
-    src: defaults.conf
+    src: defaults-server.conf
     dest: /etc/default/prometheus
     mode: 0644
 

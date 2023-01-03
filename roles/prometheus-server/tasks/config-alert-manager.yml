@@ -1,0 +1,31 @@
+---
+
+- name: Set the default log level
+  set_fact:
+    log_level: warn
+
+- name: Set the default log level when debugging
+  when: system.debug
+  set_fact:
+    log_level: debug
+
+- name: Initialise default settings
+  set_fact:
+    default_alert_settings_args:
+      - --web.listen-address='127.0.0.1:9093'
+      - --cluster.listen-address='127.0.0.1:9094'
+      - --log.level='{{ log_level }}'
+
+- name: Deploy alert manager defaults
+  notify: Restart Prometheus alert manager
+  template:
+    src: defaults-alert-manager.conf
+    dest: /etc/default/prometheus-alertmanager
+    mode: 0644
+
+- name: Deploy alert manager config
+  notify: Restart Prometheus alert manager
+  template:
+    src: alertmanager.yml
+    dest: /etc/prometheus/alertmanager.yml
+    mode: 0644

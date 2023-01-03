@@ -6,6 +6,9 @@
 - name: Call the API
   include_tasks: check/api.yml
 
+- name: Check config
+  include_tasks: check/config.yml
+
 - name: Web server configuration
   include_tasks: check/nginx.yml
 

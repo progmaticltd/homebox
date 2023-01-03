@@ -21,3 +21,9 @@
     name: prometheus-node-exporter
     state: restarted
     no_block: true
+
+- name: Restart Prometheus alert manager
+  systemd:
+    name: prometheus-alertmanager
+    state: restarted
+    no_block: true

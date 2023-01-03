@@ -1,0 +1,55 @@
+# Alert manager configuration deployed using Homebox - role {{ role_name }}.
+# See https://prometheus.io/docs/alerting/configuration/ for documentation.
+
+global:
+  # The smarthost and SMTP sender used for mail notifications.
+  smtp_smarthost: '127.0.0.1:587'
+  smtp_from: 'root@{{ network.domain }}'
+
+
+# The directory from which notification templates are read.
+templates:
+  - '/etc/prometheus/alertmanager_templates/*.tmpl'
+
+
+# The root route on which each incoming alert enters.
+route:
+  # The labels by which incoming alerts are grouped together. For example,
+  # multiple alerts coming in for cluster=A and alertname=LatencyHigh would
+  # be batched into a single group.
+  group_by: [ 'alertname', 'cluster', 'service' ]
+
+  # When a new group of alerts is created by an incoming alert, wait at
+  # least 'group_wait' to send the initial notification.
+  # This way ensures that you get multiple alerts for the same group that start
+  # firing shortly after another are batched together on the first
+  # notification.
+  group_wait: 30s
+
+  # When the first notification was sent, wait 'group_interval' to send a batch
+  # of new alerts that started firing for that group.
+  group_interval: 5m
+
+  # If an alert has successfully been sent, wait 'repeat_interval' to
+  # resend them.
+  repeat_interval: 3h
+
+  # A default receiver
+  receiver: hostmaster
+
+
+# Inhibition rules allow to mute a set of alerts given that another alert is firing.
+# We use this to mute any warning-level notifications if the same alert is already critical.
+# Apply inhibition if the alertname is the same.
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: [ 'alertname', 'cluster', 'service' ]
+
+
+receivers:
+  - name: 'hostmaster'
+    email_configs:
+      - to: 'hostmaster@{{ network.domain }}'

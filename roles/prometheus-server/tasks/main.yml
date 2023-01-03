@@ -9,8 +9,11 @@
 - name: Install the exporter configuration
   include_tasks: config-exporter.yml
 
-# - name: Copy the certificates
-#   include_tasks: certificates.yml
+- name: Set the alert manager
+  include_tasks: config-alert-manager.yml
 
-# - name: Configure nginx
-#   include_tasks: nginx.yml
+- name: Copy the certificates
+  include_tasks: certificates.yml
+
+- name: Configure nginx
+  include_tasks: nginx.yml
