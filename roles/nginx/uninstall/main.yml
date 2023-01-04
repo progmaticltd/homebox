@@ -43,3 +43,6 @@
   include_role:
     name: dns-record
     tasks_from: uninstall/main.yml
+
+- name: Call prometheus specific tasks
+  include_tasks: uninstall/prometheus.yml

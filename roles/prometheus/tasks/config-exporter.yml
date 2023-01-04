@@ -14,6 +14,10 @@
     default_exporter_settings_args:
       - --web.listen-address='127.0.0.1:9100'
       - --log.level='{{ log_level }}'
+      - --collector.systemd
+      - --collector.systemd.enable-restarts-metrics
+      - --collector.systemd.enable-start-time-metrics
+      - --collector.systemd.enable-task-metrics
 
 - name: Push the default parameters
   notify: Restart Prometheus node exporter
