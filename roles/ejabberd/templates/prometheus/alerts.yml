@@ -1,0 +1,13 @@
+---
+
+groups:
+  - name: ejabberd
+    rules:
+      - alert: ejabberd service down
+        expr: up{job="ejabberd"} == 0
+        for: 1m
+        labels:
+          severity: page
+        annotations:
+          title: The ejabberd XMPP server on {{ $labels.instance }} is down
+          description: The XMPP server on {{ $labels.instance }} is down since at least one minute

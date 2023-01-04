@@ -1,0 +1,11 @@
+---
+
+- name: Install prometheus postfix exporter
+  apt:
+    name: prometheus-postfix-exporter
+    state: present
+
+- name: Deploy prometheus alerts
+  template:
+    src: prometheus/alerts.yml
+    dest: /etc/prometheus/alerts/postfix-rules.yml

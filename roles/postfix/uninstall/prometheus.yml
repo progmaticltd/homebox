@@ -1,0 +1,13 @@
+---
+
+- name: Remove prometheus postfix exporter
+  apt:
+    name: prometheus-postfix-exporter
+    state: absent
+    autoremove: true
+    purge: true
+
+- name: Remove prometheus alerts
+  file:
+    path: /etc/prometheus/alerts/postfix-rules.yml
+    state: absent

@@ -9,5 +9,8 @@
 - name: Remove the firewall rules
   include_tasks: uninstall/firewall.yml
 
+- name: Remove Prometheus alerts
+  include_tasks: uninstall/prometheus.yml
+
 - name: Remove DNS records
   include_tasks: uninstall/dns.yml

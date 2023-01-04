@@ -24,5 +24,8 @@
 - name: Configure DNS records
   include_tasks: dns.yml
 
+- name: Add Prometheus alerts
+  include_tasks: prometheus.yml
+
 - name: Deply the firewall rules
   include_tasks: firewall.yml

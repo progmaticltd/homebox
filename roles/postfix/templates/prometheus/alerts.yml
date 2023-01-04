@@ -1,0 +1,13 @@
+---
+
+groups:
+  - name: postfix
+    rules:
+      - alert: postfix-exporter-down
+        expr: postfix_up == 0
+        for: 3m
+        labels:
+          severity: page
+        annotations:
+          title: The postfix mail server on {{ $labels.instance }} is down
+          description: The mail server on {{ $labels.instance }} is down since at least three minutes

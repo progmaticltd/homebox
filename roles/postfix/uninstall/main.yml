@@ -6,17 +6,20 @@
 - name: DNS configuration
   include_tasks: uninstall/dns.yml
 
-# - name: Uninstall the packages
-#   include_tasks: uninstall/packages.yml
+- name: Uninstall the packages
+  include_tasks: uninstall/packages.yml
 
-# - name: Remove config
-#   include_tasks: uninstall/config.yml
+- name: Remove config
+  include_tasks: uninstall/config.yml
 
-# - name: Remove AppArmor configuration
-#   include_tasks: uninstall/apparmor.yml
+- name: Remove AppArmor configuration
+  include_tasks: uninstall/apparmor.yml
 
-# - name: Remove Fail2ban configuration
-#   include_tasks: uninstall/fail2ban.yml
+- name: Remove Fail2ban configuration
+  include_tasks: uninstall/fail2ban.yml
 
-# - name: Remove log files
-#   include_tasks: uninstall/cleanup.yml
+- name: Remove Prometheus alerts
+  include_tasks: uninstall/prometheus.yml
+
+- name: Remove log files
+  include_tasks: uninstall/cleanup.yml
