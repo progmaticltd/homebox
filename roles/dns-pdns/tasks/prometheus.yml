@@ -1,0 +1,6 @@
+---
+
+- name: Deploy target configuration
+  template:
+    src: prometheus/target.yml
+    dest: /etc/prometheus/targets/pdns.yml

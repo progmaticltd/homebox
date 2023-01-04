@@ -5,6 +5,11 @@
     name: prometheus-postfix-exporter
     state: present
 
+- name: Deploy target configuration
+  template:
+    src: prometheus/target.yml
+    dest: /etc/prometheus/targets/postfix.yml
+
 - name: Deploy prometheus alerts
   template:
     src: prometheus/alerts.yml

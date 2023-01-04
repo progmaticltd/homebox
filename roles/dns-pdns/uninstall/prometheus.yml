@@ -1,0 +1,6 @@
+---
+
+- name: Remove prometheus target configuration
+  file:
+    path: /etc/prometheus/targets/pdns.yml
+    state: absent

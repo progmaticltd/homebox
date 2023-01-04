@@ -7,6 +7,11 @@
     autoremove: true
     purge: true
 
+- name: Remove target configuration
+  file:
+    path: /etc/prometheus/targets/postfix.yml
+    state: absent
+
 - name: Remove prometheus alerts
   file:
     path: /etc/prometheus/alerts/postfix-rules.yml

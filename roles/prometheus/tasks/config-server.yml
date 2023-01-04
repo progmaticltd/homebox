@@ -1,8 +1,14 @@
 ---
 
-- name: Push the default parameters
+- name: Create the alerts directory
   file:
     path: /etc/prometheus/alerts
+    state: directory
+    mode: 0755
+
+- name: Crate the targets directory
+  file:
+    path: /etc/prometheus/targets
     state: directory
     mode: 0755
 

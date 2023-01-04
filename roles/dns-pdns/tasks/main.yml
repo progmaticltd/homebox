@@ -14,3 +14,6 @@
 
 - name: Set-up DNSSEC
   include_tasks: dnssec.yml
+
+- name: Set-up Prometheus config
+  include_tasks: prometheus.yml

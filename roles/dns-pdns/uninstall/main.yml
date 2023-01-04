@@ -22,3 +22,6 @@
     - /etc/powerdns
   loop_control:
     loop_var: path
+
+- name: Remove Prometheus config
+  include_tasks: uninstall/prometheus.yml
