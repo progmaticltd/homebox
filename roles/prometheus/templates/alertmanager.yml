@@ -3,8 +3,9 @@
 
 global:
   # The smarthost and SMTP sender used for mail notifications.
-  smtp_smarthost: 'smtp.{{ network.domain }}:587'
+  smtp_smarthost: '127.0.0.1:587'
   smtp_from: 'root@{{ network.domain }}'
+  smtp_require_tls: false
 
 
 # The directory from which notification templates are read.
