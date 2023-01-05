@@ -1,3 +1,5 @@
+---
+
 # Alert manager configuration deployed using Homebox - role {{ role_name }}.
 # See https://prometheus.io/docs/alerting/configuration/ for documentation.
 
@@ -43,13 +45,14 @@ route:
 # Apply inhibition if the alertname is the same.
 inhibit_rules:
   - source_match:
-      severity: 'critical'
+      severity: critical
     target_match:
-      severity: 'warning'
+      severity: warning
     equal: [ 'alertname', 'cluster', 'service' ]
 
 
 receivers:
-  - name: 'hostmaster'
+  - name: hostmaster
     email_configs:
-      - to: 'hostmaster@{{ network.domain }}'
+      - to: hostmaster@{{ network.domain }}
+        send_resolved: true

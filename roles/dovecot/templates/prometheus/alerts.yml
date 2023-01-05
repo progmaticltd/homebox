@@ -4,7 +4,7 @@ groups:
   - name: dovecot
     rules:
       - alert: dovecot service down
-        expr: up{job="dovecot"} == 0
+        expr: 'node_systemd_unit_state{job="node",name="dovecot.service",state="active"} == 0'
         for: 1m
         labels:
           severity: page

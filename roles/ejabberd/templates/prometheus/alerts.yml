@@ -4,10 +4,10 @@ groups:
   - name: ejabberd
     rules:
       - alert: ejabberd XMPP service is down
-        expr:  'node_systemd_unit_state{job="node",name="ejabberd.service",state="active"} == 0'
+        expr: 'node_systemd_unit_state{job="node",name="ejabberd.service",state="active"} == 0'
         for: 1m
         labels:
-          severity: page
+          severity: critical
         annotations:
           title: The ejabberd XMPP server on {{ $labels.instance }} is down
           description: The XMPP server on {{ $labels.instance }} is down since at least one minute
