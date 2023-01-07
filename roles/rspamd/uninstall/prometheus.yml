@@ -3,5 +3,5 @@
 - name: Remove prometheus alerts
   tags: prometheus
   file:
-    path: /etc/prometheus/alerts/ejabberd-rules.yml
+    path: /etc/prometheus/alerts/postfix-rules.yml
     state: absent

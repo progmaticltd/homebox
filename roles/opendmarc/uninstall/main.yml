@@ -12,5 +12,8 @@
 - name: Remove the DNS record
   include_tasks: uninstall/dns.yml
 
+- name: Remove Prometheus config
+  include_tasks: uninstall/prometheus.yml
+
 - name: Remove postfix config
   include_tasks: uninstall/postfix.yml

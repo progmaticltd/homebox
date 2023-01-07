@@ -15,5 +15,8 @@
 - name: Remove rspamd firewall outbound rules
   include_tasks: uninstall/firewall.yml
 
+- name: Remove prometheus config
+  include_tasks: uninstall/prometheus.yml
+
 - name: Remove postfix config
   include_tasks: uninstall/postfix.yml

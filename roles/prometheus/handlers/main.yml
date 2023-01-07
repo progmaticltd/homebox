@@ -27,3 +27,9 @@
     name: prometheus-alertmanager
     state: restarted
     no_block: true
+
+- name: Restart Prometheus XMPP alerts
+  systemd:
+    name: prometheus-xmpp-alerts
+    state: restarted
+    no_block: true

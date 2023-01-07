@@ -5,4 +5,4 @@ packages:
   - prometheus
   - prometheus-node-exporter
   - prometheus-alertmanager
-  # - prometheus-xmpp-alerts
+  - prometheus-xmpp-alerts

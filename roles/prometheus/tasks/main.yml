@@ -1,19 +1,36 @@
 ---
 
 - name: Install the required packages
+  tags: apt
   include_tasks: packages.yml
 
+- name: Install the notification templates
+  tags: template
+  include_tasks:
+    file: templates.yml
+    apply:
+      tags: template
+
 - name: Install the server configuration
+  tags: config
   include_tasks: config-server.yml
 
 - name: Install the exporter configuration
+  tags: config
   include_tasks: config-exporter.yml
 
 - name: Set the alert manager
+  tags: config
   include_tasks: config-alert-manager.yml
 
+- name: Set the XMPP alerts
+  tags: xmpp
+  include_tasks: config-xmpp.yml
+
 - name: Copy the certificates
+  tags: certs
   include_tasks: certificates.yml
 
 - name: Configure nginx
+  tags: nginx
   include_tasks: nginx.yml

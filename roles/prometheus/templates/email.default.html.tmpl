@@ -1,0 +1,37 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Prometheus alerting email</title>
+</head>
+
+<body itemscope="" itemtype="http://schema.org/EmailMessage">
+
+    <h2>You have one or more alert {{ .Status }}</h2>
+
+    {{ range .Alerts }}
+
+    <h3>{{ .Annotations.summary }} is {{ .Status }}</h3>
+
+    <div>
+        <p>{{ .Annotations.description }}</p>
+    </div>
+
+    <details>
+        <summary>Alert details</summary>
+        <p><table>
+            {{ range .Labels.SortedPairs }}
+            <tr><td><strong>{{ .Name | title }}:</strong></td><td>{{ .Value }}</td></tr>
+            {{ end }}
+        </table></p>
+    </details>
+
+    {{ end }}
+
+    <footer>
+        <p><em>Sent by Prometheus alert manager on
+            <a href="https://prometheus.[[ network.domain ]]/">[[ network.domain ]]</a>.
+        </em></p>
+    </footer>
+
+</body>

@@ -25,6 +25,7 @@
   include_tasks: dns.yml
 
 - name: Add Prometheus alerts
+  tags: prometheus
   include_tasks: prometheus.yml
 
 - name: Deply the firewall rules

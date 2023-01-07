@@ -1,0 +1,6 @@
+---
+
+- name: Remove nginx logs
+  file:
+    path: /var/log/nginx
+    state: absent

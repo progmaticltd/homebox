@@ -12,5 +12,8 @@
 - name: Configure AppArmor
   include_tasks: apparmor.yml
 
+- name: Configure Prometheus
+  include_tasks: prometheus.yml
+
 - name: Install postfix config
   include_tasks: postfix.yml

@@ -10,6 +10,7 @@
   include_tasks: uninstall/firewall.yml
 
 - name: Remove Prometheus alerts
+  tags: prometheus
   include_tasks: uninstall/prometheus.yml
 
 - name: Remove DNS records

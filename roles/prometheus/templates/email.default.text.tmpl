@@ -1,0 +1,19 @@
+You have one or more alert {{ .Status }}:
+
+{{ range .Alerts }}
+
+{{ .Annotations.summary }} is {{ .Status }}.
+
+{{ .Annotations.description }}.
+
+
+Details:
+
+{{ range .Labels.SortedPairs }}
+ • {{ .Name }}: {{ .Value }}
+{{ end }}
+
+{{ end }}
+
+-- 
+Sent by Prometheus alert manager at https://prometheus.[[ network.domain ]]/

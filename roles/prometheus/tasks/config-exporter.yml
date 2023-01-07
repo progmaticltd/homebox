@@ -2,12 +2,8 @@
 
 - name: Set the default log level
   set_fact:
-    log_level: warn
-
-- name: Set the default log level when debugging
-  when: system.debug
-  set_fact:
-    log_level: debug
+    log_level: '{{ system.debug | ternary("debug", "warn") }}'
+  tags: config
 
 - name: Initialise default settings
   set_fact:
@@ -18,6 +14,7 @@
       - --collector.systemd.enable-restarts-metrics
       - --collector.systemd.enable-start-time-metrics
       - --collector.systemd.enable-task-metrics
+  tags: config
 
 - name: Push the default parameters
   notify: Restart Prometheus node exporter
@@ -25,3 +22,4 @@
     src: defaults-node-exporter.conf
     dest: /etc/default/prometheus-node-exporter
     mode: 0644
+  tags: config

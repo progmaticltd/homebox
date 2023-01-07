@@ -1,0 +1,6 @@
+---
+
+- name: Remove prometheus alerts
+  file:
+    path: /etc/prometheus/alerts/opendmarc-rules.yml
+    state: absent

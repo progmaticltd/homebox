@@ -5,23 +5,20 @@
     path: /etc/prometheus/alerts
     state: directory
     mode: 0755
+  tags: config
 
 - name: Crate the targets directory
   file:
     path: /etc/prometheus/targets
     state: directory
     mode: 0755
+  tags: config
 
 - name: Set the default settings
   set_fact:
-    log_level: warn
-    scrape_interval: 60
-
-- name: Set default settings when debugging or during development
-  when: system.devel
-  set_fact:
-    log_level: debug
-    scrape_interval: 5
+    log_level: '{{ system.debug | ternary("debug", "warn") }}'
+    scrape_interval: '{{ system.devel | ternary("5", "60")}}'
+  tags: config
 
 - name: Initialise default settings
   set_fact:
@@ -29,8 +26,8 @@
       - --web.listen-address='127.0.0.1:9090'
       - --web.enable-admin-api
       - --log.level='{{ log_level }}'
-      - --web.external-url='prometheus.{{ network.domain }}'
       - --web.cors.origin='prometheus\.{{ network.domain | regex_escape }}'
+  tags: config
 
 - name: Push the default parameters
   notify: Restart Prometheus
@@ -38,6 +35,7 @@
     src: defaults-server.conf
     dest: /etc/default/prometheus
     mode: 0644
+  tags: config
 
 - name: Push the standard configuration
   notify: Restart Prometheus
@@ -45,3 +43,4 @@
     src: prometheus.yml
     dest: /etc/prometheus/prometheus.yml
     mode: 0644
+  tags: config

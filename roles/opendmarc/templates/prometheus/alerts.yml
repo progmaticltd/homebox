@@ -1,0 +1,13 @@
+---
+
+groups:
+  - name: opendmarc
+    rules:
+      - alert: opendmarc service down
+        expr: up{job="opendmarc"} == 0
+        for: 1m
+        labels:
+          severity: page
+        annotations:
+          title: The opendmarc server on {{ network.domain }} is down
+          description: The opendmarc server on {{ network.domain }} is down since at least one minute
