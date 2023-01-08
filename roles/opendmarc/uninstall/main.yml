@@ -13,6 +13,7 @@
   include_tasks: uninstall/dns.yml
 
 - name: Remove Prometheus config
+  tags: prometheus
   include_tasks: uninstall/prometheus.yml
 
 - name: Remove postfix config

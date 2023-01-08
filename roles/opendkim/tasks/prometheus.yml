@@ -4,4 +4,4 @@
   tags: prometheus
   template:
     src: prometheus/alerts.yml
-    dest: /etc/prometheus/alerts/nginx-rules.yml
+    dest: /etc/prometheus/alerts/opendkim-rules.yml

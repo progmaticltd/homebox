@@ -4,10 +4,16 @@ groups:
   - name: nginx
     rules:
       - alert: nginx service down
-        expr: up{job="nginx"} == 0
+        expr: >-
+          node_systemd_unit_state{
+          job="node",
+          name="nginx.service",
+          state="active"}
+          == 0
         for: 1m
         labels:
           severity: page
         annotations:
-          title: The nginx server on {{ $labels.instance }} is down
-          description: The nginx server on {{ $labels.instance }} is down since at least one minute
+          summary: nginx web server
+          description: >-
+            The nginx server is down since at least one minute.

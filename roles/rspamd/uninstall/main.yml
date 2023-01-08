@@ -16,6 +16,7 @@
   include_tasks: uninstall/firewall.yml
 
 - name: Remove prometheus config
+  tags: prometheus
   include_tasks: uninstall/prometheus.yml
 
 - name: Remove postfix config

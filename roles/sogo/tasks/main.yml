@@ -24,6 +24,10 @@
 - name: Create DNS records
   include_tasks: dns.yml
 
+- name: Add Prometheus alerts
+  tags: prometheus
+  include_tasks: prometheus.yml
+
 - name: Configure
   include_tasks: config.yml
 

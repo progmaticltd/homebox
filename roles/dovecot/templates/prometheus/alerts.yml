@@ -3,12 +3,17 @@
 groups:
   - name: dovecot
     rules:
-      - alert: dovecot service down
+      - alert: dovecot mail server
         expr: >-
-          node_systemd_unit_state{job="node",name="dovecot.service",state="active"} == 0
+          node_systemd_unit_state{
+          job="node",
+          name="dovecot.service",
+          state="active"}
+          == 0
         for: 1m
         labels:
           severity: page
         annotations:
-          title: The dovecot mail server on {{ $labels.instance }} is down
-          description: The mail server on {{ $labels.instance }} is down since at least one minute
+          summary: dovecot mail server
+          description: >-
+            The dovocot mail server down since at least one minute.

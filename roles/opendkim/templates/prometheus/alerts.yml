@@ -1,20 +1,20 @@
 ---
 
 groups:
-  - name: opendmarc
+  - name: opendkim
     rules:
-      - alert: opendmarc service
+      - alert: opendkim service down
         expr: >-
           node_systemd_unit_state{
           job="node",
-          name="opendmarc.service",
+          name="opendkim.service",
           state="active"}
           == 0
         for: 2m
         labels:
           severity: page
         annotations:
-          summary: opendmarc systemd service
+          summary: opendkim systemd service
           description: >-
-            The opendmarc systemd service is down
-            since at least two minutes.
+            The opendkim systemd service is down
+            since at least two minutes

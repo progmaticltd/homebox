@@ -3,11 +3,18 @@
 groups:
   - name: postfix
     rules:
-      - alert: postfix-exporter-down
-        expr: 'node_systemd_unit_state{job="node",name="postfix@-.service",state="active"} == 0'
-        for: 3m
+      - alert: postfix mail server
+        expr: >-
+          node_systemd_unit_state{
+          job="node",
+          name="postfix@-.service",
+          state="active"}
+          == 0
+        for: 2m
         labels:
           severity: page
         annotations:
-          title: The postfix mail server on {{ $labels.instance }} is down
-          description: The mail server on {{ $labels.instance }} is down since at least three minutes
+          summary: postfix mail server
+          description: >-
+            The postfix mail server is down
+            since at least two minutes.

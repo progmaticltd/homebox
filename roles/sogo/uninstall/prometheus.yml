@@ -3,5 +3,5 @@
 - name: Remove prometheus alerts
   tags: prometheus
   file:
-    path: /etc/prometheus/alerts/dovecot-rules.yml
+    path: /etc/prometheus/alerts/sogo-rules.yml
     state: absent
