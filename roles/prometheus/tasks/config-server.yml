@@ -17,7 +17,7 @@
 - name: Set the default settings
   set_fact:
     log_level: '{{ system.debug | ternary("debug", "warn") }}'
-    scrape_interval: '{{ system.devel | ternary("5", "60")}}'
+    scrape_interval: '{{ system.devel | ternary("5", "60") }}'
   tags: config
 
 - name: Initialise default settings
