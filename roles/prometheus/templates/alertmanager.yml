@@ -70,8 +70,7 @@ receivers:
           x-prometheus-alertname: '{{ .CommonLabels.alertname | toLower }}'
           x-prometheus-status: '{{ .Status | toLower }}'
           subject: >-
-            {{ .CommonLabels.alertname }} on [[ network.domain ]]
-            is {{ .Status }}
+            [[ network.domain ]]: {{ .CommonLabels.alertname }} is {{ .Status }}
 
   - name: xmpp
     webhook_configs:

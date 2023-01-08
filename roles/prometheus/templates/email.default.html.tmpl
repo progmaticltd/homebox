@@ -3,34 +3,72 @@
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Prometheus alerting email</title>
-</head>
+    <style>
+        details summary {
+            font-size: larger;
+        }
 
+        @media (prefers-color-scheme: dark) {
+
+            body {
+                background:  #222;
+                color: #ddd;
+            }
+
+            h2.alert-firing span { color: IndianRed }
+            h2.alert-resolved span { color: LawnGreen }
+
+            footer p { color: DarkSlateGrey }
+        }
+
+        @media (prefers-color-scheme: light) {
+
+            body {
+                background: #fff;
+                color: #222;
+            }
+
+            h2.alert-firing span { color: DarkRed }
+            h2.alert-resolved span { color: DarkGreen }
+
+            footer p { color: LightSlateGrey }
+        }
+    </style>
+</head>
 <body itemscope="" itemtype="http://schema.org/EmailMessage">
 
-    <h2>You have one or more alert {{ .Status }}</h2>
+    <h2 class="alert alert-{{ .Status | toLower }}">
+        <span>●</span> Alert {{ .Status | toLower }}
+    </h2>
 
     {{ range .Alerts }}
 
-    <h3>{{ .Annotations.summary }} is {{ .Status }}</h3>
+    <h3>{{ .Annotations.summary }}</h3>
 
-    <div>
-        <p>{{ .Annotations.description }}</p>
-    </div>
+    <p class="alert-desc">{{ .Annotations.description }}</p>
 
     <details>
         <summary>Alert details</summary>
-        <p><table>
-            {{ range .Labels.SortedPairs }}
-            <tr><td><strong>{{ .Name | title }}:</strong></td><td>{{ .Value }}</td></tr>
-            {{ end }}
-        </table></p>
+        <div class="alert-labels">
+            <h4>Alert labels</h4>
+            <table>
+                {{ range .Labels.SortedPairs }}
+                <tr>
+                    <td><strong>{{ .Name | title }}:</strong></td>
+                    <td>{{ .Value }}</td>
+                </tr>
+                {{ end }}
+            </table>
+        </div>
     </details>
+
+    <p class="source"><a href="{{ .GeneratorURL }}">Alert source</a>.</p>
 
     {{ end }}
 
     <footer>
-        <p><em>Sent by Prometheus alert manager on
-            <a href="https://prometheus.[[ network.domain ]]/">[[ network.domain ]]</a>.
+        <p><em>Sent by on <a href="https://prometheus.[[ network.domain ]]/">
+                    Prometheus alert manager</a> at [[ network.domain ]].
         </em></p>
     </footer>
 
