@@ -64,13 +64,13 @@ receivers:
 
   - name: email
     email_configs:
-      - to: hostmaster@[[ network.domain ]]
+      - to: '[[ prometheus.mail.recipient | default(users[0].mail) ]]'
         html: '{{ template "email.default.html.tmpl" . }}'
         text: '{{ template "email.default.text.tmpl" . }}'
         send_resolved: true
         headers:
-          x-prometheus-alertname: '{{ .CommonLabels.alertname | toLower }}'
-          x-prometheus-status: '{{ .Status | toLower }}'
+          x-prometheus-alert-name: '{{ .CommonLabels.alertname | toLower }}'
+          x-prometheus-alert-status: '{{ .Status | toLower }}'
           subject: >-
             [[ network.domain ]]: {{ .CommonLabels.alertname }} {{ .Status }}
 
