@@ -43,7 +43,9 @@ route:
     - receiver: email
       continue: true
 
+[% if ejabberd.install %]
     - receiver: xmpp
+[% endif %]
 
 
 [% if not system.devel %]
@@ -73,7 +75,8 @@ receivers:
           x-prometheus-alert-status: '{{ .Status | toLower }}'
           subject: >-
             [[ network.domain ]]: {{ .CommonLabels.alertname }} {{ .Status }}
-
+[% if ejabberd.install %]
   - name: xmpp
     webhook_configs:
       - url: http://127.0.0.1:9199/alert
+[% endif %]

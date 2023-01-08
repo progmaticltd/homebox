@@ -1,0 +1,6 @@
+---
+
+- name: create directory structure
+  file:
+    path: /etc/prometheus/alerts/
+    state: directory

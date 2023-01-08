@@ -24,6 +24,7 @@
   include_tasks: config-alert-manager.yml
 
 - name: Set the XMPP alerts
+  when: ejabberd.install
   tags: xmpp
   include_tasks: config-xmpp.yml
 

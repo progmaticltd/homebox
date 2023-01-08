@@ -36,6 +36,9 @@
 - name: Configure the proxy
   include_tasks: proxy.yml
 
+- name: Create prometheus directory structure
+  include_tasks: prometheus.yml
+
 # Ensure the environment variables are cleared
 - name: Reset the SSH connection
   meta: reset_connection

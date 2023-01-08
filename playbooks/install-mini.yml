@@ -40,5 +40,7 @@
       tags: dovecot
     - role: autoconfig
       tags: autoconfig
+    - role: promteheus
+      tags: promteheus
     - role: post-install
       tags: post-install
