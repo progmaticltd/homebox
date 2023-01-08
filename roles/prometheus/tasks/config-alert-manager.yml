@@ -11,6 +11,7 @@
       - --web.listen-address='127.0.0.1:9093'
       - --cluster.listen-address='127.0.0.1:9094'
       - --log.level='{{ log_level }}'
+      - --web.external-url='https://prometheus.{{ network.domain }}/alertmanager/'
   tags: config
 
 - name: Deploy alert manager defaults

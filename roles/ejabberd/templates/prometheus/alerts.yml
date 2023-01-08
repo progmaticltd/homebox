@@ -16,4 +16,5 @@ groups:
         annotations:
           summary: ejabberd XMPP service
           description: >-
-            The ejabberd XMPP server down since at least two minutes.
+            This alert check the status of the ejabberd XMPP server.
+            It is normally raised after one minute.

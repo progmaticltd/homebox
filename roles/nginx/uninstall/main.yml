@@ -22,4 +22,5 @@
   include_tasks: uninstall/dns.yml
 
 - name: Remove prometheus settings
+  tags: prometheus
   include_tasks: uninstall/prometheus.yml

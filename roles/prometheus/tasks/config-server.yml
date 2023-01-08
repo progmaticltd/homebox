@@ -7,7 +7,7 @@
     mode: 0755
   tags: config
 
-- name: Crate the targets directory
+- name: Create the targets directory
   file:
     path: /etc/prometheus/targets
     state: directory
@@ -27,6 +27,7 @@
       - --web.enable-admin-api
       - --log.level='{{ log_level }}'
       - --web.cors.origin='prometheus\.{{ network.domain | regex_escape }}'
+      - --web.external-url='https://prometheus.{{ network.domain }}/'
   tags: config
 
 - name: Push the default parameters

@@ -15,7 +15,8 @@ global:
 # Alertmanager configuration
 alerting:
   alertmanagers:
-    - static_configs:
+    - path_prefix: /alertmanager/
+      static_configs:
         - targets: [ '127.0.0.1:9093' ]
 
 
@@ -27,6 +28,7 @@ rule_files:
 scrape_configs:
   # Alert manager
   - job_name: prometheus
+    metrics_path: /alertmanager/metrics
     scrape_interval: '{{ scrape_interval }}s'
     scrape_timeout: '{{ scrape_interval }}s'
     static_configs:

@@ -19,6 +19,7 @@
   include_tasks: uninstall/fail2ban.yml
 
 - name: Remove Prometheus alerts
+  tags: prometheus
   include_tasks: uninstall/prometheus.yml
 
 - name: Remove log files

@@ -16,5 +16,5 @@ groups:
         annotations:
           summary: rspamd antispam service
           description: >-
-            The status of rspamd systemd service
-            is down since at least two minutes.
+            This alert check the status of the rspamd antispam service.
+            It is normally raised after two minutes.

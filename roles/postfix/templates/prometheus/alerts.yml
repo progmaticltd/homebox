@@ -16,5 +16,5 @@ groups:
         annotations:
           summary: postfix mail server
           description: >-
-            The postfix mail server is down
-            since at least two minutes.
+            This alert check the status of the postfix mail server.
+            It is normally raised after two minutes.

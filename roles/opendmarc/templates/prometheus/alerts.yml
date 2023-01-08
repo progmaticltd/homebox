@@ -16,5 +16,5 @@ groups:
         annotations:
           summary: opendmarc systemd service
           description: >-
-            The opendmarc systemd service is down
-            since at least two minutes.
+            This alert check the status of the OpenDMARC server.
+            It is normally raised after two minutes.

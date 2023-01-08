@@ -1,9 +1,9 @@
 ---
 
 groups:
-  - name: opendmarc
+  - name: sogo
     rules:
-      - alert: opendmarc service down
+      - alert: sogo collab service
         expr: >-
           node_systemd_unit_state{
           job="node",
@@ -16,5 +16,5 @@ groups:
         annotations:
           summary: SOGo collaboration service
           description: >-
-            The SOGo collaboration service is down
-            since at least two minutes
+            This alert is related to the SOGo collaboration service.
+            The alert is normally raised after two minute downtime.

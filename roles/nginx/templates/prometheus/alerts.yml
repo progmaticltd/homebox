@@ -3,7 +3,7 @@
 groups:
   - name: nginx
     rules:
-      - alert: nginx service down
+      - alert: nginx service
         expr: >-
           node_systemd_unit_state{
           job="node",
@@ -16,4 +16,5 @@ groups:
         annotations:
           summary: nginx web server
           description: >-
-            The nginx server is down since at least one minute.
+            This alert check the status of the nginx web server.
+            It is normally raised after one minute.

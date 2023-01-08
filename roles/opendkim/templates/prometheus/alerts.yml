@@ -3,7 +3,7 @@
 groups:
   - name: opendkim
     rules:
-      - alert: opendkim service down
+      - alert: opendkim service
         expr: >-
           node_systemd_unit_state{
           job="node",
@@ -16,5 +16,5 @@ groups:
         annotations:
           summary: opendkim systemd service
           description: >-
-            The opendkim systemd service is down
-            since at least two minutes
+            This alert check the status of the OpenDKIM server.
+            It is normally raised after two minutes.
