@@ -10,10 +10,11 @@ groups:
           name="rspamd.service",
           state="active"}
           == 0
-        for: 30s
+        for: 2m
         labels:
           severity: page
         annotations:
-          summary: Status of rspamd systemd service
+          summary: rspamd antispam service
           description: >-
-            Check the status of rspamd systemd service on {{ network.domain }}.
+            The status of rspamd systemd service
+            is down since at least two minutes.

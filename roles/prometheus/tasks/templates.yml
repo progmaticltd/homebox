@@ -1,6 +1,7 @@
 ---
 
 - name: Deploy the email template
+  notify: Restart Prometheus alert manager
   template:
     src: email.default.{{ format }}.tmpl
     dest: /etc/prometheus/alertmanager_templates/email.default.{{ format }}.tmpl
