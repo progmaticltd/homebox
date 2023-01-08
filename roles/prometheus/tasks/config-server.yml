@@ -45,3 +45,11 @@
     dest: /etc/prometheus/prometheus.yml
     mode: 0644
   tags: config
+
+- name: Push the standard amtool configuration
+  notify: Restart Prometheus
+  template:
+    src: amtool.yml
+    dest: /etc/prometheus/amtool.yml
+    mode: 0644
+  tags: config
