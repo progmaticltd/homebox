@@ -17,7 +17,7 @@
     - Restart Prometheus node exporter
   template:
     src: disk-rules.yml
-    dest: /etc/prometheus/alerts/disk-rules-{{ mp.name }}.yml
+    dest: /etc/prometheus/alerts/partition-{{ mp.name }}-rules.yml
     block_start_string: '[%'
     block_end_string: '%]'
     variable_start_string: '[['
