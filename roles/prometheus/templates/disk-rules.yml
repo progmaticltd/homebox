@@ -14,7 +14,7 @@ groups:
   - name: '[[ mp.name ]]_space_alerting_rules'
     rules:
       - alert: '[[ mp.name ]] partition disk space'
-        expr: node_exporter:[[ mp.name ]]_space:used >= {{ mp.threshold | default(80) }}
+        expr: node_exporter:[[ mp.name ]]_space:used >= [[ mp.threshold | default(80) ]]
         for: '[[ mp.for | default("5m") ]]'
         labels:
           severity: '[[ mp.severity | default("page") ]]'
@@ -23,7 +23,7 @@ groups:
           description: >-
             This alert monitors the available disk space on the [[ mp.name ]] partition
             ([[ mp.path ]]) and raise an alert if the disk space is above
-            {{ mp.threshold | default(80) }}% for five minutes.
+            [[ mp.threshold | default(80) ]]% for five minutes.
             The current disk space usage is {{ $value | printf "%.1f" }}%.
 
   # inodes monitoring
@@ -39,7 +39,7 @@ groups:
   - name: '[[ mp.name ]]_inodes_alerting_rules'
     rules:
       - alert: '[[ mp.name ]] partition inodes'
-        expr: node_exporter:[[ mp.name ]]_inodes:used >= {{ mp.threshold | default(80) }}
+        expr: node_exporter:[[ mp.name ]]_inodes:used >= [[ mp.threshold | default(80) ]]
         for: '[[ mp.for | default("5m") ]]'
         labels:
           severity: '[[ mp.severity | default("page") ]]'
@@ -48,5 +48,5 @@ groups:
           description: >-
             This alert monitors the available inodes on the [[ mp.name ]] partition
             ([[ mp.path ]]) and raise an alert if the disk space is above
-            {{ mp.threshold | default(80) }}% for five minutes.
+            [[ mp.threshold | default(80) ]]% for five minutes.
             The current disk space usage is {{ $value | printf "%.1f" }}%.
