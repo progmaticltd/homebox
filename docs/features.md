@@ -135,7 +135,7 @@ attached archives (zip, rar, etc). The following attachments types are actually 
 - Other office documents: csv, rtf, gnumeric and abiword files
 - E-Books (epub)
 - Attached emails (eml)
-- Archives: (zip, tar, rar, gzip)
+- Archives: (zip, tar, gzip)
 - Old microsoft archive format: tnef (aka winmail.dat)
 
 Archives are opened recursively, until finding documents to parse.
@@ -259,6 +259,11 @@ Otherwise, an email is sent to postmaster, with the ZSK (Zone Signing Key) and K
 
 The server installed is PowerDNS, and also publishes [SSHFP](https://en.wikipedia.org/wiki/SSHFP_record) records for
 extra security.
+
+## Prometheus monitoring
+
+Prometheus can be used for monitoring, although it is not yet activated by default.
+Alerts are sent by email, then using Jabber / XMPP when the jabber server is installed.
 
 ## Certificates management
 

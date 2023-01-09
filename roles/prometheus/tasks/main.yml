@@ -11,6 +11,10 @@
     apply:
       tags: template
 
+- name: Configure system alerts
+  tags: config
+  include_tasks: system-alerts.yml
+
 - name: Install the server configuration
   tags: config
   include_tasks: config-server.yml
@@ -22,6 +26,10 @@
 - name: Set the alert manager
   tags: config
   include_tasks: config-alert-manager.yml
+
+- name: Deploy system alerts
+  tags: system
+  include_tasks: system-disk-alerts.yml
 
 - name: Set the XMPP alerts
   when: ejabberd.install

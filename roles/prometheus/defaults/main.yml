@@ -51,3 +51,27 @@ fp_default:
     - id: vibrate
     - id: fullscreen
     - id: payment
+
+
+# Mountpoints for monitoring
+# Each of these entries will create alerting rule
+# if the corresponding mountpoint exists
+mountpoints:
+  - name: system
+    path: /
+    threshold: 80
+  - name: home
+    path: /home
+    threshold: 80
+  - name: tmp
+    path: /tmp
+    threshold: 80
+    interval: 20s
+    for: 2m
+    severity: warning
+  - name: var
+    path: /var
+    threshold: 80
+  - name: logs
+    path: /var/log
+    threshold: 80

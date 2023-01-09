@@ -425,6 +425,7 @@ dns_default:
 
 # Default Prometheus settings
 prometheus_default:
+  install: false
   global:
     xmpp:
       recipient: '{{ users[0].mail }}'
