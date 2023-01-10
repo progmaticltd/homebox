@@ -19,12 +19,19 @@ groups:
         labels:
           severity: '[[ mp.severity | default("page") ]]'
         annotations:
-          summary: '[[ mp.name ]] file system disk space monitoring'
+          summary: >-
+            [[ mp.name ]] partition disk space usage
           description: >-
             This alert monitors the available disk space on the [[ mp.name ]] partition
             ([[ mp.path ]]) and raise an alert if the disk space is above
             [[ mp.threshold | default(80) ]]% for five minutes.
-            The current disk space usage is {{ $value | printf "%.1f" }}%.
+          firing: >-
+            The current disk space usage on the [[ mp.name ]] partition is
+            {{ $value | printf "%.1f" }}%, and the threshold is set to
+            [[ mp.threshold | default(80) ]]%
+          resolved: >-
+            The alert above is now resolved
+
 
   # inodes monitoring
   - name: '[[ mp.name ]]_inodes_recording'
@@ -44,9 +51,15 @@ groups:
         labels:
           severity: '[[ mp.severity | default("page") ]]'
         annotations:
-          summary: '[[ mp.name ]] file system inodes monitoring'
+          summary: >-
+            [[ mp.name ]] partition inodes usage
           description: >-
             This alert monitors the available inodes on the [[ mp.name ]] partition
             ([[ mp.path ]]) and raise an alert if the disk space is above
             [[ mp.threshold | default(80) ]]% for five minutes.
-            The current disk space usage is {{ $value | printf "%.1f" }}%.
+          firing: >-
+            The current disk inode usage on the [[ mp.name ]] partition is
+            {{ $value | printf "%.1f" }}%, and the threshold is set to
+            [[ mp.threshold | default(80) ]]%
+          resolved: >-
+            The alert above is now resolved

@@ -1,21 +1,21 @@
-You have one or more alert {{ .Status }}:
-
+{{ .GroupLabels.SortedPairs.Values | join " " | title }} {{ .Status | toLower }}.
 {{ range .Alerts }}
-
-{{ .Annotations.summary }} is {{ .Status }}.
-
-{{ .Annotations.description }}.
-
-
-Details:
-
-{{ range .Labels.SortedPairs }}
- • {{ .Name }}: {{ .Value }}
+{{ if eq .Status "resolved" }}
+{{- .Annotations.resolved }}
+{{ else if eq .Status "firing" }}
+{{- .Annotations.firing }}
 {{ end }}
-
 Source: {{ .GeneratorURL }}
 
+---
+Details:
+{{ range .Labels.SortedPairs }}
+• {{ printf "%-12s %s" (print .Name ":") .Value -}}
 {{ end }}
 
--- 
+{{ .Annotations.description }}
+
+{{ end -}}
+
+[[ sign_separator ]]
 Sent by Prometheus alert manager at https://prometheus.[[ network.domain ]]/alertmanager/

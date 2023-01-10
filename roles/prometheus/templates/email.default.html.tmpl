@@ -37,37 +37,50 @@
 </head>
 <body itemscope="" itemtype="http://schema.org/EmailMessage">
 
+
     <h2 class="alert alert-{{ .Status | toLower }}">
-        <span>●</span> Alert {{ .Status | toLower }}
+        <span>●</span>
+        {{ .GroupLabels.SortedPairs.Values | join " " }} {{ .Status | toLower }}
     </h2>
 
     {{ range .Alerts }}
 
-    <h3>{{ .Annotations.summary }}</h3>
+    {{ if eq .Status "resolved" }}
+    <p class="alert alert-resolved">
+        {{ .Annotations.resolved }}
+    </p>
+    {{ end }}
 
-    <p class="alert-desc">{{ .Annotations.description }}</p>
+    {{ if eq .Status "firing" }}
+    <p class="alert alert-firing">
+        {{ .Annotations.firing }}
+    </p>
+    {{ end }}
+
+
+    <p class="source"><a href="{{ .GeneratorURL }}">Alert source</a>.</p>
 
     <details>
         <summary>Alert details</summary>
         <div class="alert-labels">
-            <h4>Alert labels</h4>
             <table>
                 {{ range .Labels.SortedPairs }}
                 <tr>
-                    <td><strong>{{ .Name | title }}:</strong></td>
+                    <td><strong>{{ .Name | title }}: </strong></td>
                     <td>{{ .Value }}</td>
                 </tr>
                 {{ end }}
             </table>
         </div>
-    </details>
 
-    <p class="source"><a href="{{ .GeneratorURL }}">Alert source</a>.</p>
+        <p class="alert-desc">{{ .Annotations.description }}</p>
+
+    </details>
 
     {{ end }}
 
     <footer>
-        <p><em>Sent by on <a href="https://prometheus.[[ network.domain ]]/">
+        <p><em>Sent by on <a href="https://prometheus.[[ network.domain ]]/alertmanager/">
                     Prometheus alert manager</a> at [[ network.domain ]].
         </em></p>
     </footer>

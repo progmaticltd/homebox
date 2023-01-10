@@ -60,15 +60,17 @@ mountpoints:
   - name: system
     path: /
     threshold: 80
-  - name: home
-    path: /home
-    threshold: 80
+    interval: 20s
+    for: 1m
   - name: tmp
     path: /tmp
     threshold: 80
     interval: 20s
     for: 2m
     severity: warning
+  - name: home
+    path: /home
+    threshold: 80
   - name: var
     path: /var
     threshold: 80

@@ -13,7 +13,7 @@
 
 - name: Configure system alerts
   tags: config
-  include_tasks: system-alerts.yml
+  include_tasks: system-disk-alerts.yml
 
 - name: Install the server configuration
   tags: config
