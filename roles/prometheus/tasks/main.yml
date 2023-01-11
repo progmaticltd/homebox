@@ -27,9 +27,13 @@
   tags: config
   include_tasks: config-alert-manager.yml
 
-- name: Deploy system alerts
+- name: Deploy system disk alerts
   tags: system
   include_tasks: system-disk-alerts.yml
+
+- name: Deploy system memory alerts
+  tags: system
+  include_tasks: system-memory-alerts.yml
 
 - name: Set the XMPP alerts
   when: ejabberd.install

@@ -1,0 +1,32 @@
+---
+
+groups:
+  - name: memory_usage_recording
+    interval: 15s
+    rules:
+      - record: node_exporter:memory:used
+        expr: >-
+          100 - 100 * node_memory_MemFree_bytes / node_memory_MemTotal_bytes
+
+  - name: memory_alerting_rules
+    rules:
+      - alert: memory usage
+        expr: node_exporter:memory:used >= [[ prometheus.memory.alert ]]
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: >-
+            memory usage
+          description: >-
+            This alert monitors the memory usage on the system,
+            and raise an alert if the memory usage is above
+            [[ prometheus.memory.alert ]]% for five minutes.
+          firing: >-
+            The memory usage on the system has been above
+            [[ prometheus.memory.alert ]]% for five minutes.
+            Check the detailed memory usage to see which application
+            is using most of the system memory.
+          resolved: >-
+            The memory usage is now below
+            [[ prometheus.memory.alert ]]%.

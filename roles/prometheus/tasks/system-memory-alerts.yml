@@ -1,0 +1,15 @@
+---
+
+- name: Deploy the memory monitoring file
+  tags: system
+  notify:
+    - Restart Prometheus
+    - Restart Prometheus alert manager
+    - Restart Prometheus node exporter
+  template:
+    src: memory-rules.yml
+    dest: /etc/prometheus/alerts/memory-rules.yml
+    block_start_string: '[%'
+    block_end_string: '%]'
+    variable_start_string: '[['
+    variable_end_string: ']]'
