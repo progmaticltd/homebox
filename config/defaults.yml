@@ -428,6 +428,8 @@ prometheus_default:
   install: false
   memory:
     alert: 80
+  swap:
+    alert: 80
   global:
     xmpp:
       recipient: '{{ users[0].mail }}'

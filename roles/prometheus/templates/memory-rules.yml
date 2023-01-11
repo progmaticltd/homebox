@@ -30,3 +30,31 @@ groups:
           resolved: >-
             The memory usage is now below
             [[ prometheus.memory.alert ]]%.
+
+  - name: swap_usage_recording
+    interval: 15s
+    rules:
+      - record: node_exporter:swap:used
+        expr: >-
+          100 - 100 * node_memory_SwapFree_bytes / node_memory_SwapTotal_bytes
+
+  - name: swap_alerting_rules
+    rules:
+      - alert: swap usage
+        expr: node_exporter:swap:used >= [[ prometheus.swap.alert ]]
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: >-
+            swap usage
+          description: >-
+            This alert monitors the swap usage on the system,
+            and raise an alert if the swap usage is above
+            [[ prometheus.swap.alert ]]% for five minutes.
+          firing: >-
+            The swap usage on the system has been above
+            [[ prometheus.swap.alert ]]% for five minutes.
+          resolved: >-
+            The swap usage is now below
+            [[ prometheus.swap.alert ]]%.
