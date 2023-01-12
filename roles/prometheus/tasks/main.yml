@@ -35,6 +35,10 @@
   tags: system
   include_tasks: system-memory-alerts.yml
 
+- name: Deploy system load alerts
+  tags: system
+  include_tasks: system-load-alerts.yml
+
 - name: Set the XMPP alerts
   when: ejabberd.install
   tags: xmpp
