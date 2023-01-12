@@ -1,5 +1,7 @@
 ---
 
+# See https://github.com/prometheus/node_exporter/blob/master/example-rules.yml
+
 groups:
   - name: system-load-records
     rules:
