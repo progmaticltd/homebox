@@ -18,8 +18,8 @@ groups:
       # CPU in use ratio.
       - record: instance:node_cpu_utilization:ratio
         expr: >-
-          sum(instance_mode:node_cpu_seconds:rate5m{mode!="idle"})
-          without (mode) / instance:node_cpus:count
+          100 * (sum(instance_mode:node_cpu_seconds:rate5m{mode!="idle"})
+          without (mode) / instance:node_cpus:count)
 
   - name: system-load-rules
     rules:
