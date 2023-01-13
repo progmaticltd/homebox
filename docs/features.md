@@ -263,7 +263,9 @@ extra security.
 ## Prometheus monitoring
 
 Prometheus can be used for monitoring, although it is not yet activated by default.
-Alerts are sent by email, then using Jabber / XMPP when the jabber server is installed.
+Alerts are first sent by email, then using XMPP when the ejabberd server is installed.
+Prometheus and prometheus alert manager are served using nginx as a reverse proxy.
+Grafana installation and configuration is in progress in the dev branch.
 
 ## Certificates management
 
