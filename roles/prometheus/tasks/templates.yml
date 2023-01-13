@@ -1,0 +1,16 @@
+---
+
+- name: Deploy the email template
+  notify: Restart Prometheus alert manager
+  vars:
+    sign_separator: '-- '
+  template:
+    src: email.default.{{ format }}.tmpl
+    dest: /etc/prometheus/alertmanager_templates/email.default.{{ format }}.tmpl
+    block_start_string: '[%'
+    block_end_string: '%]'
+    variable_start_string: '[['
+    variable_end_string: ']]'
+  loop: [ html, text ]
+  loop_control:
+    loop_var: format

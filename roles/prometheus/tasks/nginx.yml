@@ -1,0 +1,38 @@
+---
+
+- name: Get the public external IPv4
+  tags: nginx
+  delegate_to: localhost
+  become: false
+  set_fact:
+    public_ext_ip4: '{{ lookup("pipe", "curl -s -4 https://icanhazip.com") }}'
+
+- name: Get the public external IPv6
+  tags: nginx
+  delegate_to: localhost
+  become: false
+  set_fact:
+    public_ext_ip6: '{{ lookup("pipe", "curl -s -6 https://icanhazip.com") }}'
+
+- name: Copy nginx configuration
+  tags: nginx
+  notify:
+    - Test nginx config
+    - Restart nginx
+  vars:
+    csp: '{{ prometheus.csp | default(csp_default) }}'
+    fp: '{{ prometheus.fp | default(fp_default) }}'
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/sites-available/prometheus.{{ network.domain }}.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Activate prometheus web site
+  tags: nginx
+  notify: Restart nginx
+  file:
+    src: /etc/nginx/sites-available/prometheus.{{ network.domain }}.conf
+    dest: /etc/nginx/sites-enabled/prometheus.{{ network.domain }}.conf
+    state: link

@@ -1,0 +1,47 @@
+# Prometheus configuration
+# Deployed using Ansible - role {{ role_name }}
+
+global:
+  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+                           # The scrape_timeout value is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: homebox
+
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - path_prefix: /alertmanager/
+      static_configs:
+        - targets: [ '127.0.0.1:9093' ]
+
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - "alerts/*-rules.yml"
+
+
+scrape_configs:
+  # Alert manager
+  - job_name: prometheus
+    metrics_path: /alertmanager/metrics
+    scrape_interval: '{{ scrape_interval }}s'
+    scrape_timeout: '{{ scrape_interval }}s'
+    static_configs:
+      - targets: [ '127.0.0.1:9093' ]
+
+  # Node exporter metrics
+  - job_name: node
+    scrape_interval: '{{ scrape_interval }}s'
+    static_configs:
+      - targets: [ '127.0.0.1:9100' ]
+
+  # Dynamic loaded SD files
+  - job_name: sd-files
+    file_sd_configs:
+      - files:
+          - '/etc/prometheus/targets/*.yml'

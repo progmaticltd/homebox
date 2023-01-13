@@ -20,8 +20,9 @@ logs/*
 README.html
 .markdown-preview.html
 
-# Sandbox folder for user tests
+# Sandbox folder for user tests and for each role
 sandbox/*
+roles/*/sandbox/*
 !sandbox/readme.md
 
 # Backup folder for deployment files

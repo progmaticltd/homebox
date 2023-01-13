@@ -1,0 +1,79 @@
+---
+
+# nginx security headers mta-sts
+nginx_sec_headers:
+  - id: Strict-Transport-Security
+    value: max-age=31536000
+  - id: X-Content-Type-Options
+    value: nosniff
+  - id: Referrer-Policy
+    value: same-origin
+  - id: X-Frame-Options
+    value: sameorigin
+
+csp_default:
+  default: "'self'"
+  list:
+    - id: default-src
+      value: "https: 'self'"
+    - id: script-src
+      value: "https: 'self' 'unsafe-inline'"
+    - id: img-src
+      value: "https: 'self' 'unsafe-inline'"
+    - id: style-src
+      value: "https: 'self' 'unsafe-inline'"
+    - id: media-src
+      value: "https: 'self'"
+    - id: font-src
+      value: "https: 'self'"
+    - id: base-uri
+      value: "https: 'self'"
+    - id: frame-src
+    - id: object-src
+    - id: connect-src
+
+### Features policy
+# See https://github.com/w3c/webappsec-feature-policy
+# Set to 'none' by default
+fp_default:
+  default: "'none'"
+  list:
+    - id: geolocation
+    - id: midi
+    - id: notifications
+    - id: push
+    - id: sync-xhr
+    - id: microphone
+    - id: camera
+    - id: magnetometer
+    - id: gyroscope
+    - id: speaker
+    - id: vibrate
+    - id: fullscreen
+    - id: payment
+
+
+# Mountpoints for monitoring
+# Each of these entries will create alerting rule
+# if the corresponding mountpoint exists
+mountpoints:
+  - name: system
+    path: /
+    threshold: 80
+    interval: 20s
+    for: 1m
+  - name: tmp
+    path: /tmp
+    threshold: 80
+    interval: 20s
+    for: 2m
+    severity: warning
+  - name: home
+    path: /home
+    threshold: 80
+  - name: var
+    path: /var
+    threshold: 80
+  - name: logs
+    path: /var/log
+    threshold: 80

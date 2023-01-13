@@ -1,0 +1,20 @@
+---
+
+groups:
+  - name: nginx
+    rules:
+      - alert: nginx service
+        expr: >-
+          node_systemd_unit_state{
+          job="node",
+          name="nginx.service",
+          state="active"}
+          == 0
+        for: 1m
+        labels:
+          severity: page
+        annotations:
+          summary: nginx web server
+          description: >-
+            This alert check the status of the nginx web server.
+            It is normally raised after one minute.

@@ -21,6 +21,11 @@
 - name: Configure rspamd firewall outbound rules
   include_tasks: firewall.yml
 
+- name: Add Prometheus alerts
+  when: prometheus.install
+  tags: prometheus
+  include_tasks: prometheus.yml
+
 - name: Include DMARC reporting if activated
   when: dmarc.send_reports.active
   include_tasks: dmarc-reporting.yml

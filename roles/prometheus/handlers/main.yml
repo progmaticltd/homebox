@@ -1,0 +1,35 @@
+---
+
+- name: Test nginx config
+  shell: nginx -t
+  changed_when: false
+
+- name: Restart nginx
+  systemd:
+    name: nginx
+    state: restarted
+    no_block: true
+
+- name: Restart Prometheus
+  systemd:
+    name: prometheus
+    state: restarted
+    no_block: true
+
+- name: Restart Prometheus node exporter
+  systemd:
+    name: prometheus-node-exporter
+    state: restarted
+    no_block: true
+
+- name: Restart Prometheus alert manager
+  systemd:
+    name: prometheus-alertmanager
+    state: restarted
+    no_block: true
+
+- name: Restart Prometheus XMPP alerts
+  systemd:
+    name: prometheus-xmpp-alerts
+    state: restarted
+    no_block: true

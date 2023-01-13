@@ -22,5 +22,9 @@
 - name: Configure backup locations
   include_tasks: uninstall/backup.yml
 
+- name: Remove Prometheus alerts
+  tags: prometheus
+  include_tasks: uninstall/prometheus.yml
+
 - name: Final cleanup
   include_tasks: uninstall/cleanup.yml

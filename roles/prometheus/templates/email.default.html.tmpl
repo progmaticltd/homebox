@@ -1,0 +1,88 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Prometheus alerting email</title>
+    <style>
+        details summary {
+            font-size: larger;
+        }
+
+        @media (prefers-color-scheme: dark) {
+
+            body {
+                background: #222;
+                color: #ddd;
+            }
+
+            h2.alert-firing span { color: IndianRed }
+            h2.alert-resolved span { color: LawnGreen }
+
+            footer p { color: DarkSlateGrey }
+        }
+
+        @media (prefers-color-scheme: light) {
+
+            body {
+                background: #fff;
+                color: #222;
+            }
+
+            h2.alert-firing span { color: DarkRed }
+            h2.alert-resolved span { color: DarkGreen }
+
+            footer p { color: LightSlateGrey }
+        }
+    </style>
+</head>
+<body itemscope="" itemtype="http://schema.org/EmailMessage">
+
+
+    <h2 class="alert alert-{{ .Status | toLower }}">
+        <span>●</span>
+        {{ .GroupLabels.SortedPairs.Values | join " " }} {{ .Status | toLower }}
+    </h2>
+
+    {{ range .Alerts }}
+
+    {{ if eq .Status "resolved" }}
+    <p class="alert alert-resolved">
+        {{ .Annotations.resolved }}
+    </p>
+    {{ end }}
+
+    {{ if eq .Status "firing" }}
+    <p class="alert alert-firing">
+        {{ .Annotations.firing }}
+    </p>
+    {{ end }}
+
+
+    <p class="source"><a href="{{ .GeneratorURL }}">Alert source</a>.</p>
+
+    <details>
+        <summary>Alert details</summary>
+        <div class="alert-labels">
+            <table>
+                {{ range .Labels.SortedPairs }}
+                <tr>
+                    <td><strong>{{ .Name | title }}: </strong></td>
+                    <td>{{ .Value }}</td>
+                </tr>
+                {{ end }}
+            </table>
+        </div>
+
+        <p class="alert-desc">{{ .Annotations.description }}</p>
+
+    </details>
+
+    {{ end }}
+
+    <footer>
+        <p><em>Sent by on <a href="https://prometheus.[[ network.domain ]]/alertmanager/">
+                    Prometheus alert manager</a> at [[ network.domain ]].
+        </em></p>
+    </footer>
+
+</body>

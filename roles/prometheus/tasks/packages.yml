@@ -1,0 +1,9 @@
+---
+
+- name: Install the required packages
+  notify:
+    - Restart Prometheus
+    - Restart Prometheus node exporter
+  apt:
+    name: '{{ packages }}'
+    state: present

@@ -1,0 +1,8 @@
+---
+
+- name: Remove nginx
+  apt:
+    name: '{{ packages }}'
+    state: absent
+    purge: true
+    autoremove: true

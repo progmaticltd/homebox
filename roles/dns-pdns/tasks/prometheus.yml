@@ -1,0 +1,13 @@
+---
+
+- name: Deploy target configuration
+  tags: prometheus
+  template:
+    src: prometheus/target.yml
+    dest: /etc/prometheus/targets/pdns.yml
+
+- name: Deploy prometheus alerts
+  tags: prometheus
+  template:
+    src: prometheus/alerts.yml
+    dest: /etc/prometheus/alerts/pdns-rules.yml

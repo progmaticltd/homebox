@@ -1,0 +1,16 @@
+---
+
+- name: Set DNS records
+  include_tasks: check/dns.yml
+
+- name: Call the API
+  include_tasks: check/api.yml
+
+- name: Check config
+  include_tasks: check/config.yml
+
+- name: Web server configuration
+  include_tasks: check/nginx.yml
+
+- name: Web server encryption settings
+  include_tasks: check/grade.yml

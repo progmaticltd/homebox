@@ -56,9 +56,9 @@
     path: /etc/environment
     line: '{{ line }}'
   loop:
-    - http_proxy=http://localhost:8888/
-    - https_proxy=http://localhost:8888/
-    - no_proxy=127.0.0.1
+    - http_proxy=http://127.0.0.1:8888/
+    - https_proxy=http://127.0.0.1:8888/
+    - no_proxy=127.0.0.1,localhost,.{{ network.domain }},{{ network.domain }}
   loop_control:
     loop_var: line
 
@@ -66,8 +66,8 @@
   shell: >-
     systemctl set-environment {{ line }}
   loop:
-    - http_proxy=http://localhost:8888/
-    - https_proxy=http://localhost:8888/
-    - no_proxy=127.0.0.1
+    - http_proxy=http://127.0.0.1:8888/
+    - https_proxy=http://127.0.0.1:8888/
+    - no_proxy=127.0.0.1,localhost,.{{ network.domain }},{{ network.domain }}
   loop_control:
     loop_var: line

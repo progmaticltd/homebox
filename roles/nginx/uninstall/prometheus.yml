@@ -1,0 +1,7 @@
+---
+
+- name: Remove prometheus alerts
+  tags: prometheus
+  file:
+    path: /etc/prometheus/alerts/nginx-rules.yml
+    state: absent

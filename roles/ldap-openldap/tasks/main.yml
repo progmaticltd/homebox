@@ -33,5 +33,10 @@
 - name: Set access policies
   include_tasks: access-policies.yml
 
+- name: Add prometheus alerts
+  when: prometheus.install
+  tags: prometheus
+  include_tasks: prometheus.yml
+
 - name: Post accounts creation configuration
   include_tasks: post-install.yml

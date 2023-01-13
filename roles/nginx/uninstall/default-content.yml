@@ -1,0 +1,6 @@
+---
+
+- name: Remove nginx default site
+  file:
+    path: /var/www/html
+    state: absent

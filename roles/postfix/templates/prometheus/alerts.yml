@@ -1,0 +1,20 @@
+---
+
+groups:
+  - name: postfix
+    rules:
+      - alert: postfix mail server
+        expr: >-
+          node_systemd_unit_state{
+          job="node",
+          name="postfix@-.service",
+          state="active"}
+          == 0
+        for: 2m
+        labels:
+          severity: page
+        annotations:
+          summary: postfix mail server
+          description: >-
+            This alert check the status of the postfix mail server.
+            It is normally raised after two minutes.

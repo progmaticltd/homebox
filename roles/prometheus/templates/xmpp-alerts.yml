@@ -1,0 +1,8 @@
+---
+
+jid: 'postmaster@{{ network.domain }}'
+password: '{{ postmaster_password }}'
+to_jid: '{{ prometheus.global.xmpp.recipient }}'
+listen_address: 127.0.0.1
+listen_port: 9199
+format: '{{ prometheus.global.xmpp.format | default("full") }}'

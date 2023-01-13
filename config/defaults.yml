@@ -422,6 +422,23 @@ dns_default:
     retries: 10
     delay: 15
 
+
+# Default Prometheus settings
+prometheus_default:
+  install: false
+  memory:
+    alert: 80
+  swap:
+    alert: 80
+  system_load:
+    alert: 80
+  global:
+    xmpp:
+      recipient: '{{ users[0].mail }}'
+    mail:
+      recipient: '{{ users[0].mail }}'
+
+
 # Credentials store to use
 creds_default:
   store: passwordstore

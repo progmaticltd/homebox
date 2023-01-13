@@ -1,0 +1,13 @@
+---
+
+- name: Uninstall the packages
+  include_tasks: uninstall/packages.yml
+
+- name: Remove the certificates
+  include_tasks: uninstall/certificates.yml
+
+- name: Delete the nginx configuration
+  include_tasks: uninstall/nginx.yml
+
+- name: Purge data
+  include_tasks: uninstall/purge.yml

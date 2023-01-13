@@ -1,0 +1,20 @@
+---
+
+groups:
+  - name: opendmarc
+    rules:
+      - alert: opendmarc service
+        expr: >-
+          node_systemd_unit_state{
+          job="node",
+          name="opendmarc.service",
+          state="active"}
+          == 0
+        for: 2m
+        labels:
+          severity: page
+        annotations:
+          summary: opendmarc systemd service
+          description: >-
+            This alert check the status of the OpenDMARC server.
+            It is normally raised after two minutes.

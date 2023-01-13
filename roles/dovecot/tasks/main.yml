@@ -34,6 +34,11 @@
 - name: Backup configuration tasks
   include_tasks: backup.yml
 
+- name: Add Prometheus alerts
+  when: prometheus.install
+  tags: prometheus
+  include_tasks: prometheus.yml
+
 - name: Include full text search tasks
   when: mail.fts.active
   include_tasks: fts.yml

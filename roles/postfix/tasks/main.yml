@@ -21,5 +21,10 @@
 - name: AppArmor configuration
   include_tasks: apparmor.yml
 
+- name: Add Prometheus alerts
+  when: prometheus.install
+  tags: prometheus
+  include_tasks: prometheus.yml
+
 - name: DNS configuration
   include_tasks: dns.yml

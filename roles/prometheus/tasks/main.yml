@@ -1,0 +1,53 @@
+---
+
+- name: Install the required packages
+  tags: apt
+  include_tasks: packages.yml
+
+- name: Install the notification templates
+  tags: template
+  include_tasks:
+    file: templates.yml
+    apply:
+      tags: template
+
+- name: Configure system alerts
+  tags: config
+  include_tasks: system-disk-alerts.yml
+
+- name: Install the server configuration
+  tags: config
+  include_tasks: config-server.yml
+
+- name: Install the exporter configuration
+  tags: config
+  include_tasks: config-exporter.yml
+
+- name: Set the alert manager
+  tags: config
+  include_tasks: config-alert-manager.yml
+
+- name: Deploy system disk alerts
+  tags: system
+  include_tasks: system-disk-alerts.yml
+
+- name: Deploy system memory alerts
+  tags: system
+  include_tasks: system-memory-alerts.yml
+
+- name: Deploy system load alerts
+  tags: system
+  include_tasks: system-load-alerts.yml
+
+- name: Set the XMPP alerts
+  when: ejabberd.install
+  tags: xmpp
+  include_tasks: config-xmpp.yml
+
+- name: Copy the certificates
+  tags: certs
+  include_tasks: certificates.yml
+
+- name: Configure nginx
+  tags: nginx
+  include_tasks: nginx.yml

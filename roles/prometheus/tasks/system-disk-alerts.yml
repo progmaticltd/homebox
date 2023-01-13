@@ -1,0 +1,29 @@
+---
+
+- name: Check if the mountpoint exists
+  register: mp_check_cmd
+  shell: mountpoint {{ mp.path }}
+  ignore_errors: true
+  loop: '{{ mountpoints }}'
+  loop_control:
+    loop_var: mp
+  tags: system
+
+- name: Deploy the mountpoint monitoring file
+  when: mp_check_cmd.results[index].rc == 0
+  notify:
+    - Restart Prometheus
+    - Restart Prometheus alert manager
+    - Restart Prometheus node exporter
+  template:
+    src: disk-rules.yml
+    dest: /etc/prometheus/alerts/partition-{{ mp.name }}-rules.yml
+    block_start_string: '[%'
+    block_end_string: '%]'
+    variable_start_string: '[['
+    variable_end_string: ']]'
+  loop: '{{ mountpoints }}'
+  loop_control:
+    loop_var: mp
+    index_var: index
+  tags: system

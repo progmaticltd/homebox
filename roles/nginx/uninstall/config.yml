@@ -1,0 +1,6 @@
+---
+
+- name: Remove nginx secure configuration
+  file:
+    path: /etc/nginx
+    state: absent

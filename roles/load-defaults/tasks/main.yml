@@ -266,6 +266,23 @@
 
 
 ################################################################################
+# Merge defaults Prometheus settings
+- name: Combine default and user defined Prometheus settings
+  run_once: true
+  when: prometheus is defined
+  set_fact:
+    prometheus: '{{ prometheus_default | combine(prometheus, recursive=True) }}'
+    cacheable: true
+
+- name: Use default prometheus settings
+  run_once: true
+  when: prometheus is not defined
+  set_fact:
+    prometheus: '{{ prometheus_default }}'
+    cacheable: true
+
+
+################################################################################
 # Marking the default settings as loaded should increase the speed of the deployment
 - name: Mark the default settings as loaded
   run_once: true
