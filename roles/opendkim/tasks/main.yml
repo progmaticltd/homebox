@@ -22,6 +22,7 @@
   include_tasks: postfix.yml
 
 - name: Configure Prometheus
+  when: prometheus.install
   tags: prometheus
   include_tasks: prometheus.yml
 

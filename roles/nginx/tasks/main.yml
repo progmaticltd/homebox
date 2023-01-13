@@ -16,6 +16,7 @@
   include_tasks: dns.yml
 
 - name: Add Prometheus alerts
+  when: prometheus.install
   tags: prometheus
   include_tasks: prometheus.yml
 
