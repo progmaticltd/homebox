@@ -1,0 +1,24 @@
+---
+
+- name: Copy nginx configuration
+  tags: nginx
+  notify:
+    - Test nginx config
+    - Restart nginx
+  vars:
+    csp: '{{ grafana.csp | default(csp_default) }}'
+    fp: '{{ grafana.fp | default(fp_default) }}'
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/sites-available/grafana.{{ network.domain }}.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Activate grafana web site
+  tags: nginx
+  notify: Restart nginx
+  file:
+    src: /etc/nginx/sites-available/grafana.{{ network.domain }}.conf
+    dest: /etc/nginx/sites-enabled/grafana.{{ network.domain }}.conf
+    state: link

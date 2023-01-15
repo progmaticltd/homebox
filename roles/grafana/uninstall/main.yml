@@ -1,0 +1,19 @@
+---
+
+- name: Remove the nginx sites and log files
+  include_tasks: uninstall/nginx.yml
+
+- name: Remove the certificate files
+  include_tasks: uninstall/certificates.yml
+
+- name: Remove the base packages
+  include_tasks: uninstall/packages.yml
+
+- name: Remove the proxy exception to access grafana site
+  include_tasks: uninstall/proxy.yml
+
+- name: Purge the database
+  include_tasks: uninstall/database.yml
+
+- name: Remove extra files
+  include_tasks: uninstall/cleanup.yml

@@ -1,0 +1,22 @@
+---
+
+- name: Create the certificate
+  vars:
+    certificates:
+      - name: grafana
+  include_role:
+    name: certificates
+
+- name: Check if the certificate has been updated
+  tags: certs
+  notify: Restart nginx
+  debug:
+    var: updated_certs
+  changed_when: updated_certs | length > 0
+
+- name: Copy the certificate update hook for grafana
+  tags: certs
+  copy:
+    src: renew-cert.sh
+    dest: /etc/lego/hooks/grafana.{{ network.domain }}/renew-cert.sh
+    mode: 0700

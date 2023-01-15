@@ -1,0 +1,38 @@
+---
+
+- name: Add Grafana GPG key
+  apt_key:
+    url: https://apt.grafana.com/gpg.key
+    state: present
+
+- name: Add Grafana repository
+  apt_repository:
+    repo: >-
+      deb https://apt.grafana.com stable main
+    filename: grafana
+
+- name: Install grafana
+  register: package_status
+  apt:
+    name: grafana
+    state: present
+
+- name: Restart Grafana server
+  when: package_status.changed
+  systemd:
+    name: grafana-server
+    state: started
+    enabled: true
+
+# See https://github.com/grafana/grafana/issues/12638
+- name: Create the required symbolic links
+  file:
+    src: /var/lib/grafana
+    dest: /usr/share/grafana/data
+    state: link
+
+- name: Create the required symbolic links
+  file:
+    src: /var/log/grafana
+    dest: /usr/share/grafana/data/logs
+    state: link

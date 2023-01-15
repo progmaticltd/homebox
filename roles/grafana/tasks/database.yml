@@ -1,0 +1,43 @@
+---
+
+- name: Add psychopg package
+  tags: postgres
+  apt:
+    name: python3-psycopg2
+    state: present
+
+- name: Create the database user
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_user:
+    name: grafana
+    password: '{{ grafana_db_password }}'
+    role_attr_flags: LOGIN
+
+- name: Create the database
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_db:
+    encoding: utf8
+    name: grafana
+    owner: grafana
+
+- name: Initialise grants
+  tags: postgres
+  become: true
+  become_user: postgres
+  postgresql_privs:
+    db: grafana
+    objs: ALL_IN_SCHEMA
+    privs: ALL
+    role: grafana
+
+- name: Remove psychopg package
+  tags: postgres
+  apt:
+    name: python3-psycopg2
+    state: absent
+    autoremove: true
+    purge: true

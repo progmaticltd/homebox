@@ -1,0 +1,26 @@
+---
+
+- name: Stop the grafana server
+  systemd:
+    name: grafana-server
+    state: stopped
+  ignore_errors: true
+
+- name: Remove grafana package
+  apt:
+    name: grafana
+    state: absent
+    purge: true
+    autoremove: true
+
+- name: Remove Grafana GPG key
+  apt_key:
+    id: 0E22EB88E39E12277A7760AE9E439B102CF3C0C6
+    state: absent
+
+- name: Remove Grafana repository
+  apt_repository:
+    repo: >-
+      deb https://apt.grafana.com stable main
+    filename: grafana
+    state: absent

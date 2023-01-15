@@ -1,0 +1,14 @@
+---
+
+- name: Allow grafana web site access in the proxy
+  register: proxy_conf
+  notify: Restart tinyproxy
+  lineinfile:
+    path: /etc/tinyproxy/filter
+    line: apt.grafana.com
+
+- name: Reload the proxy now if needed
+  when: proxy_conf.changed
+  systemd:
+    name: tinyproxy
+    state: restarted

@@ -1,0 +1,8 @@
+---
+
+- name: Remove grafana site access in the proxy
+  notify: Restart tinyproxy
+  lineinfile:
+    path: /etc/tinyproxy/filter
+    line: apt.grafana.com
+    state: absent

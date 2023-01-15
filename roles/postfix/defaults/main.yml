@@ -20,6 +20,7 @@ master_addresses:
 # LDAP configuration
 ldap:
   hostname: 'ldap.{{ network.domain }}'
+  suffix: 'ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
   readonly:
     uid: readonly
     dn: 'cn=readonly account, ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'

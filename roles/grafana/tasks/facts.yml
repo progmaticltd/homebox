@@ -1,0 +1,35 @@
+---
+
+- name: Generate or load the password for grafana
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    grafana_db_password: >-
+      {{ lookup(creds.store,
+      creds.prefix + "postgres/grafana"
+      + creds.opts.create + creds.opts.system) }}
+  tags: facts
+
+- name: Load the password for the read-only LDAP account
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    readonly_password: >-
+      {{ lookup(creds.store, network.domain + "/ldap/readonly") }}
+  tags: facts
+
+- name: Load or crate the password for the admin account
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    grafana_admin_password: >-
+      {{ lookup(creds.store, network.domain + "/grafana/admin"
+      + creds.opts.create) }}
+  tags: facts
+
+- name: Get the public external IPv4
+  tags: facts
+  set_fact:
+    public_ext_ip4: '{{ lookup("pipe", "curl -s -4 https://icanhazip.com") }}'
+
+- name: Get the public external IPv6
+  tags: facts
+  set_fact:
+    public_ext_ip6: '{{ lookup("pipe", "curl -s -6 https://icanhazip.com") }}'

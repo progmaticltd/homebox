@@ -1,0 +1,76 @@
+---
+
+- name: Create plugins directory to avoid startup error
+  notify: Restart Grafana server
+  file:
+    path: /var/lib/grafana/plugins
+    state: directory
+    mode: 0700
+    owner: grafana
+    group: grafana
+  tags: config
+
+- name: Deploy Grafana main config file
+  notify: Restart Grafana server
+  template:
+    src: grafana.ini
+    dest: /etc/grafana/grafana.ini
+    mode: 0640
+    owner: root
+    group: grafana
+  tags: config
+
+- name: Deploy Grafana LDAP config file
+  notify: Restart Grafana server
+  template:
+    src: ldap.toml
+    dest: /etc/grafana/ldap.toml
+    mode: 0640
+    owner: root
+    group: grafana
+  tags: config
+
+- name: Restart Grafana now if needed
+  meta: flush_handlers
+
+# See https://github.com/grafana/grafana/issues/12638
+# - name: Set the default admin password
+#   no_log: '{{ not system.devel }}'
+#   shell: >-
+#     grafana-cli
+#     --homepath /usr/share/grafana/
+#     admin reset-admin-password
+#     {{ grafana_admin_password | quote }}
+#   args:
+#     chdir: /usr/share/grafana
+#   changed_when: true
+#   tags: config
+
+- name: Update the password during the API
+  when: package_status.changed | default(false)
+  register: password_api
+  uri:
+    url: http://127.0.0.1:3000/api/user/password
+    body:
+      oldPassword: 'admin'
+      newPassword: '{{ grafana_admin_password }}'
+      confirmNew: '{{ grafana_admin_password }}'
+    method: PUT
+    body_format: json
+    force_basic_auth: true
+    url_username: admin
+    url_password: admin
+  failed_when: >-
+    password_api.content.message != "User password changed"
+  tags: config
+
+- name: Create datasource
+  grafana_datasource:
+    grafana_user: admin
+    grafana_password: '{{ grafana_admin_password }}'
+    grafana_url: http://127.0.0.1:3000/
+    name: prometheus
+    ds_type: prometheus
+    ds_url: http://127.0.0.1:9090
+    access: proxy
+  tags: config

@@ -9,14 +9,14 @@
   become: true
   become_user: postgres
   postgresql_db:
-    name: sogo
+    name: grafana
     state: absent
 
 - name: Remove the database user
   become: true
   become_user: postgres
   postgresql_user:
-    name: sogo
+    name: grafana
     state: absent
 
 - name: Remove the python / psycopg2 package

@@ -1,0 +1,39 @@
+# To troubleshoot and get more log info enable ldap debug logging in grafana.ini
+# [log]
+# filters = ldap:debug
+
+[[servers]]
+host = "ldap.{{ network.domain }}"
+port = 636
+use_ssl = true
+start_tls = false
+ssl_skip_verify = false
+
+# Search user bind dn
+bind_dn = "{{ ldap.readonly.dn }}"
+bind_password = "{{ readonly_password }}"
+timeout = 10
+search_filter = "(cn=%s)"
+search_base_dns = ["{{ ldap.search.base }}"]
+
+# Specify names of the ldap attributes your ldap uses
+[servers.attributes]
+name = "givenName"
+surname = "sn"
+username = "cn"
+member_of = "memberOf"
+email =  "email"
+
+# Map ldap groups to grafana org roles
+[[servers.group_mappings]]
+group_dn = "cn=administrators,ou=groups,{{ ldap.search.base }}"
+org_role = "Admin"
+
+[[servers.group_mappings]]
+group_dn = "ou=mail_users,{{ ldap.search.base }}"
+org_role = "Editor"
+
+[[servers.group_mappings]]
+# If you want to match all (or no ldap groups) then you can use wildcard
+group_dn = "*"
+org_role = "Viewer"
