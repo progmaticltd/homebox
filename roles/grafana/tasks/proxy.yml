@@ -5,10 +5,17 @@
   notify: Restart tinyproxy
   lineinfile:
     path: /etc/tinyproxy/filter
-    line: apt.grafana.com
+    line: '{{ domain }}'
+  loop:
+    - grafana.com
+    - apt.grafana.com
+  loop_control:
+    loop_var: domain
+  tags: proxy
 
 - name: Reload the proxy now if needed
   when: proxy_conf.changed
   systemd:
     name: tinyproxy
     state: restarted
+  tags: proxy

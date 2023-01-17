@@ -24,7 +24,7 @@
       set_fact:
         roles_list: '{{ lookup("env", "ROLE").split(",") }}'
 
-- name: Run all the roles selected
+- name: Run the install tasks for each role
   hosts: homebox
   vars_files:
     - '{{ playbook_dir }}/../config/system.yml'

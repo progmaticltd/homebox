@@ -14,3 +14,4 @@
   loop: [ html, text ]
   loop_control:
     loop_var: format
+  tags: templates

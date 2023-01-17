@@ -7,9 +7,11 @@
   include_tasks: uninstall/certificates.yml
 
 - name: Remove the base packages
+  tags: apt
   include_tasks: uninstall/packages.yml
 
 - name: Remove the proxy exception to access grafana site
+  tags: proxy
   include_tasks: uninstall/proxy.yml
 
 - name: Purge the database

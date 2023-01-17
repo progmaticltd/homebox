@@ -1,12 +1,14 @@
 ---
 
 - name: Stop the grafana server
+  tags: apt
   systemd:
     name: grafana-server
     state: stopped
   ignore_errors: true
 
 - name: Remove grafana package
+  tags: apt
   apt:
     name: grafana
     state: absent
@@ -14,13 +16,13 @@
     autoremove: true
 
 - name: Remove Grafana GPG key
+  tags: apt
   apt_key:
     id: 0E22EB88E39E12277A7760AE9E439B102CF3C0C6
     state: absent
 
 - name: Remove Grafana repository
-  apt_repository:
-    repo: >-
-      deb https://apt.grafana.com stable main
-    filename: grafana
+  tags: apt
+  file:
+    path: /etc/apt/sources.list.d/grafana.list
     state: absent

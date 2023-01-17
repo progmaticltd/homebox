@@ -1,6 +1,7 @@
 ---
 
 - name: Configure the proxy to access grafana site
+  tags: proxy
   include_tasks: proxy.yml
 
 - name: Load the common facts
@@ -17,6 +18,10 @@
 - name: Configure the base packages
   tags: config
   include_tasks: config.yml
+
+- name: Create the dashboards
+  tags: dashboards
+  include_tasks: dashboards.yml
 
 - name: Create the certificates
   tags: certs

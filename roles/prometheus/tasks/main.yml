@@ -5,11 +5,12 @@
   include_tasks: packages.yml
 
 - name: Install the notification templates
-  tags: template
-  include_tasks:
-    file: templates.yml
-    apply:
-      tags: template
+  tags: templates
+  include_tasks: templates.yml
+
+- name: Configure apparmor
+  tags: apparmor
+  include_tasks: apparmor.yml
 
 - name: Configure system alerts
   tags: config

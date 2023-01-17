@@ -15,6 +15,11 @@
     path: /var/log/grafana
     state: absent
 
+- name: Remove shared files
+  file:
+    path: /usr/share/grafana
+    state: absent
+
 - name: Remove init.d files
   file:
     path: '{{ path }}'

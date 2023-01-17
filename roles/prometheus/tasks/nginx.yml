@@ -1,19 +1,5 @@
 ---
 
-- name: Get the public external IPv4
-  tags: nginx
-  delegate_to: localhost
-  become: false
-  set_fact:
-    public_ext_ip4: '{{ lookup("pipe", "curl -s -4 https://icanhazip.com") }}'
-
-- name: Get the public external IPv6
-  tags: nginx
-  delegate_to: localhost
-  become: false
-  set_fact:
-    public_ext_ip6: '{{ lookup("pipe", "curl -s -6 https://icanhazip.com") }}'
-
 - name: Copy nginx configuration
   tags: nginx
   notify:
@@ -28,6 +14,13 @@
     owner: root
     group: root
     mode: 0644
+
+- name: Deploy pam nginx configuration
+  tags: nginx
+  notify: Restart nginx
+  template:
+    src: pam-nginx.conf
+    dest: /etc/pam.d/nginx
 
 - name: Activate prometheus web site
   tags: nginx

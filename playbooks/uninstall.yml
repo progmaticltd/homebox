@@ -12,10 +12,13 @@
     - '{{ playbook_dir }}/../config/defaults.yml'
   roles:
     - role: load-defaults
+      tags: always
     - role: external-ip-type
+      tags: always
 
-- name: Run the tasks
+- name: Run the uninstall tasks for each role
   hosts: homebox
+  tags: always
   vars_files:
     - '{{ playbook_dir }}/../config/system.yml'
     - '{{ playbook_dir }}/../config/defaults.yml'
@@ -26,11 +29,13 @@
 
 - name: Remove AppArmor unknown profiles
   hosts: homebox
+  tags: always
   tasks:
     - shell: aa-remove-unknown
 
 - name: Clean packages cache
   hosts: homebox
+  tags: always
   tasks:
     - shell: apt-get clean
       args:

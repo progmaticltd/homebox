@@ -308,7 +308,7 @@ dmarc_default:
     # The following parameters are for reports sending
     # Not activated yet until fully tested on a live system
     sending: false
-    organisation: 'network.domain'
+    organisation: '{{ network.domain }}'
   dkim_align: strict
   spf_align: relaxed
   send_reports:

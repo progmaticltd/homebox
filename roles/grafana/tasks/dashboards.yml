@@ -1,0 +1,11 @@
+---
+
+- name: Import the postfix dashboards
+  tags: dashboards
+  grafana_dashboard:
+    grafana_url: http://127.0.0.1:3000/
+    url_username: admin
+    url_password: '{{ grafana_admin_password }}'
+    # path: /tmp/postfix.json
+    dashboard_id: 10013
+    folder: General
