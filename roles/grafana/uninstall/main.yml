@@ -5,17 +5,15 @@
 
 - name: Remove the certificate files
   include_tasks: uninstall/certificates.yml
+  tags: certs
 
 - name: Remove the base packages
-  tags: apt
   include_tasks: uninstall/packages.yml
+  tags: apt
 
 - name: Remove the proxy exception to access grafana site
   tags: proxy
   include_tasks: uninstall/proxy.yml
-
-- name: Purge the database
-  include_tasks: uninstall/database.yml
 
 - name: Remove extra files
   include_tasks: uninstall/cleanup.yml

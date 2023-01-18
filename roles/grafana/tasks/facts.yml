@@ -1,6 +1,6 @@
 ---
 
-- name: Generate or load the password for grafana
+- name: Generate or load the password for grafana database access
   no_log: '{{ not system.devel }}'
   set_fact:
     grafana_db_password: >-
@@ -24,12 +24,26 @@
       + creds.opts.create) }}
   tags: facts
 
-- name: Get the public external IPv4
+- name: Load or crate the password for the organisation manager account
+  no_log: '{{ not system.devel }}'
+  set_fact:
+    grafana_manager_password: >-
+      {{ lookup(creds.store, network.domain + "/grafana/manager"
+      + creds.opts.create) }}
   tags: facts
+
+- name: Get the public external IPv4
   set_fact:
     public_ext_ip4: '{{ lookup("pipe", "curl -s -4 https://icanhazip.com") }}'
+  tags: facts
 
 - name: Get the public external IPv6
-  tags: facts
   set_fact:
     public_ext_ip6: '{{ lookup("pipe", "curl -s -6 https://icanhazip.com") }}'
+  tags: facts
+
+- name: Load api key if already defined
+  set_fact:
+    api_key: '{{ lookup(creds.store, network.domain + "/grafana/api-key") }}'
+  ignore_errors: true
+  tags: facts

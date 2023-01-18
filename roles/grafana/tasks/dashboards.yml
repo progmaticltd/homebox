@@ -1,11 +1,22 @@
 ---
 
-- name: Import the postfix dashboards
+- name: Create the datasource
+  community.grafana.grafana_datasource:
+    grafana_url: http://127.0.0.1:3000/
+    grafana_api_key: '{{ api_key }}'
+    name: Prometheus
+    ds_type: prometheus
+    ds_url: http://127.0.0.1:9090
+    access: proxy
+    is_default: true
   tags: dashboards
+
+- name: Import the postfix dashboards
   grafana_dashboard:
     grafana_url: http://127.0.0.1:3000/
-    url_username: admin
-    url_password: '{{ grafana_admin_password }}'
-    # path: /tmp/postfix.json
+    grafana_api_key: '{{ api_key }}'
+    overwrite: true
     dashboard_id: 10013
     folder: General
+    overwrite: true
+  tags: dashboards

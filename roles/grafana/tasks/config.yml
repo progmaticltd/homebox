@@ -34,44 +34,51 @@
   meta: flush_handlers
 
 # See https://github.com/grafana/grafana/issues/12638
-# - name: Set the default admin password
-#   no_log: '{{ not system.devel }}'
-#   shell: >-
-#     grafana-cli
-#     --homepath /usr/share/grafana/
-#     admin reset-admin-password
-#     {{ grafana_admin_password | quote }}
-#   args:
-#     chdir: /usr/share/grafana
-#   changed_when: true
-#   tags: config
-
-- name: Update the password during the API
+- name: Set the admin password using the API
   when: package_status.changed | default(false)
-  register: password_api
-  uri:
-    url: http://127.0.0.1:3000/api/user/password
-    body:
-      oldPassword: 'admin'
-      newPassword: '{{ grafana_admin_password }}'
-      confirmNew: '{{ grafana_admin_password }}'
-    method: PUT
-    body_format: json
-    force_basic_auth: true
-    url_username: admin
-    url_password: admin
-  failed_when: >-
-    password_api.content.message != "User password changed"
+  block:
+    - name: Call the API
+      register: password_api
+      uri:
+        url: http://127.0.0.1:3000/api/user/password
+        body:
+          oldPassword: admin
+          newPassword: '{{ grafana_admin_password }}'
+          confirmNew: '{{ grafana_admin_password }}'
+        method: PUT
+        body_format: json
+        force_basic_auth: true
+        url_username: admin
+        url_password: admin
+    - name: Display the output
+      debug:
+        var: password_api
+        verbosity: 1
   tags: config
 
-- name: Create datasource
-  grafana_datasource:
-    grafana_user: admin
-    grafana_password: '{{ grafana_admin_password }}'
-    grafana_url: http://127.0.0.1:3000
-    name: Prometheus
-    ds_type: prometheus
-    ds_url: http://127.0.0.1:9090
-    access: proxy
-    is_default: true
+- name: Create and store the api key
+  when: package_status.changed | default(false)
+  block:
+    - name: Call the api to create the admin key
+      register: api_key_create_call
+      uri:
+        url: http://127.0.0.1:3000/api/auth/keys
+        method: POST
+        url_username: admin
+        url_password: '{{ grafana_admin_password }}'
+        body:
+          name: admin
+          role: Admin
+        body_format: json
+        force_basic_auth: yes
+    - name: Store the api key
+      set_fact:
+        api_key: >-
+          {{ lookup(creds.store,
+          network.domain + "/grafana/api-key"
+          + creds.opts.create
+          + creds.opts.overwrite
+          + " userpass=" + api_key_create_call.json.key
+          )}}
+        cacheable: true
   tags: config
