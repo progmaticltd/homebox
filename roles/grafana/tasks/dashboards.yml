@@ -15,7 +15,6 @@
   grafana_dashboard:
     grafana_url: http://127.0.0.1:3000/
     grafana_api_key: '{{ api_key }}'
-    overwrite: true
     dashboard_id: 10013
     folder: General
     overwrite: true
