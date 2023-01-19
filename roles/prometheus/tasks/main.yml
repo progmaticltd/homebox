@@ -8,10 +8,6 @@
   tags: templates
   include_tasks: templates.yml
 
-- name: Configure apparmor
-  tags: apparmor
-  include_tasks: apparmor.yml
-
 - name: Configure system alerts
   tags: config
   include_tasks: system-disk-alerts.yml

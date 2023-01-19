@@ -13,11 +13,12 @@ ssl_skip_verify = false
 bind_dn = "{{ ldap.readonly.dn }}"
 bind_password = "{{ readonly_password }}"
 timeout = 10
-search_filter = "(cn=%s)"
+search_filter = "(uid=%s)"
 search_base_dns = ["{{ ldap.search.base }}"]
 
 # Specify names of the ldap attributes your ldap uses
 [servers.attributes]
+uid = "uid"
 name = "givenName"
 surname = "sn"
 username = "cn"

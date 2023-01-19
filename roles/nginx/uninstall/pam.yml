@@ -1,0 +1,8 @@
+---
+
+- name: Remove pam nginx configuration
+  tags: nginx
+  notify: Restart nginx
+  file:
+    path: /etc/pam.d/nginx
+    state: absent

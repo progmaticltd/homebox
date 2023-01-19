@@ -5,8 +5,11 @@
     certificates:
       - name: default
       - name: www
+      - name: _
   include_role:
     name: certificates
+    apply: { tags: always }
+  tags: certs
 
 - name: Check for updated certificates
   notify:
@@ -15,16 +18,26 @@
   debug:
     verbosity: 1
     var: updated_certs
-  changed_when: updated_certs | length > 0
+  changed_when: updated_certs | default([]) | length > 0
+  tags: certs
 
 - name: Copy the certificate update hook for the default site
   copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/{{ network.domain }}/renew-cert.sh
     mode: 0700
+  tags: certs
 
 - name: Copy the certificate update hook for www site
   copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/www.{{ network.domain }}/renew-cert.sh
     mode: 0700
+  tags: certs
+
+- name: Copy the certificate update hook for wildcard site
+  copy:
+    src: renew-cert.sh
+    dest: /etc/lego/hooks/_.{{ network.domain }}/renew-cert.sh
+    mode: 0700
+  tags: certs

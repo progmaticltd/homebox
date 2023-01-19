@@ -4,16 +4,24 @@
   when: certificate.name != 'default'
   set_fact:
     fqdn: '{{ certificate.name }}.{{ network.domain }}'
+    filename: '{{ certificate.name }}.{{ network.domain }}'
 
-- name: Build the certificate FQDN
+- name: Build the certificate FQDN for the default site
   when: certificate.name == 'default'
   set_fact:
     fqdn: '{{ network.domain }}'
+    filename: '{{ network.domain }}'
+
+- name: Build the certificate FQDN for a wildcard
+  when: certificate.name == '_'
+  set_fact:
+    fqdn: '*.{{ network.domain }}'
+    filename: '_.{{ network.domain }}'
 
 - name: Check if the certificate exists
   register: cert_file
   stat:
-    path: /var/lib/lego/certificates/{{ certificate.name }}.{{ network.domain }}.crt
+    path: /var/lib/lego/certificates/{{ filename }}.crt
 
 - name: Check if the certificate exists and is valid
   when: cert_file.stat.exists
@@ -21,8 +29,8 @@
   shell: >-
     openssl verify -verbose
     -CAfile {{ acme_root }}
-    -untrusted /var/lib/lego/certificates/{{ fqdn }}.issuer.crt
-    /var/lib/lego/certificates/{{ fqdn }}.crt
+    -untrusted /var/lib/lego/certificates/{{ filename }}.issuer.crt
+    /var/lib/lego/certificates/{{ filename }}.crt
   ignore_errors: true
   changed_when: false
 
@@ -74,32 +82,32 @@
 
 - name: Set the certificate permissions
   file:
-    path: /var/lib/lego/certificates/{{ fqdn }}.crt
+    path: /var/lib/lego/certificates/{{ filename }}.crt
     group: ssl-cert
     mode: 0644
 
 - name: Set the certificate issuer permissions
   file:
-    path: /var/lib/lego/certificates/{{ fqdn }}.issuer.crt
+    path: /var/lib/lego/certificates/{{ filename }}.issuer.crt
     group: ssl-cert
     mode: 0644
 
 - name: Set the pem file permissions
   when: certificate.pem | default(false)
   file:
-    path: /var/lib/lego/certificates/{{ fqdn }}.pem
+    path: /var/lib/lego/certificates/{{ filename }}.pem
     group: ssl-cert
     mode: 0640
 
 - name: Set the private keys permissions
   file:
-    path: /var/lib/lego/certificates/{{ fqdn }}.key
+    path: /var/lib/lego/certificates/{{ filename }}.key
     group: ssl-cert
     mode: 0640
 
 - name: Create the hook directory
   file:
-    path: /etc/lego/hooks/{{ fqdn }}/
+    path: /etc/lego/hooks/{{ filename }}/
     state: directory
     mode: 0700
 
@@ -109,18 +117,18 @@
     dest: '{{ file.dest }}'
     state: link
   loop:
-    - src: /var/lib/lego/certificates/{{ fqdn }}.issuer.crt
-      dest: /etc/ssl/certs/{{ fqdn }}.issuer.crt
-    - src: /var/lib/lego/certificates/{{ fqdn }}.crt
-      dest: /etc/ssl/certs/{{ fqdn }}.crt
-    - src: /var/lib/lego/certificates/{{ fqdn }}.key
-      dest: /etc/ssl/private/{{ fqdn }}.key
+    - src: /var/lib/lego/certificates/{{ filename }}.issuer.crt
+      dest: /etc/ssl/certs/{{ filename }}.issuer.crt
+    - src: /var/lib/lego/certificates/{{ filename }}.crt
+      dest: /etc/ssl/certs/{{ filename }}.crt
+    - src: /var/lib/lego/certificates/{{ filename }}.key
+      dest: /etc/ssl/private/{{ filename }}.key
   loop_control:
     loop_var: file
 
 - name: Create the symbolic link for the pem file in the debian standard directory
   when: certificate.pem | default(false)
   file:
-    src: /var/lib/lego/certificates/{{ fqdn }}.pem
-    dest: /etc/ssl/private/{{ fqdn }}.pem
+    src: /var/lib/lego/certificates/{{ filename }}.pem
+    dest: /etc/ssl/private/{{ filename }}.pem
     state: link

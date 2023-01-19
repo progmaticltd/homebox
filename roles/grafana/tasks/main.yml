@@ -1,12 +1,12 @@
 ---
 
-- name: Configure the proxy to access grafana site
-  tags: proxy
-  include_tasks: proxy.yml
-
 - name: Load the common facts
   tags: facts
   include_tasks: facts.yml
+
+- name: Configure the proxy to access grafana site
+  tags: proxy
+  include_tasks: proxy.yml
 
 - name: Install the base packages
   include_tasks: packages.yml

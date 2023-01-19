@@ -15,13 +15,6 @@
     group: root
     mode: 0644
 
-- name: Deploy pam nginx configuration
-  tags: nginx
-  notify: Restart nginx
-  template:
-    src: pam-nginx.conf
-    dest: /etc/pam.d/nginx
-
 - name: Activate prometheus web site
   tags: nginx
   notify: Restart nginx

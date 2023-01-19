@@ -21,8 +21,10 @@
     src: dnt-policy.txt
     dest: /var/www/defaut/.well-known/dnt-policy.txt
 
-- name: Create the website configuration file
-  notify: Restart nginx
+- name: Create the root website configuration file
+  notify:
+    - Check nginx config
+    - Restart nginx
   vars:
     csp: '{{ website.csp | default(csp_default) }}'
     fp: '{{ website.fp | default(fp_default) }}'
@@ -32,10 +34,45 @@
     owner: root
     group: root
     mode: 0644
+  tags: config
 
-- name: Enable nginx site
-  notify: Restart nginx
+- name: Enable root web site
+  notify:
+    - Check nginx config
+    - Restart nginx
   file:
     src: /etc/nginx/sites-available/{{ network.domain }}.conf
     dest: /etc/nginx/sites-enabled/{{ network.domain }}.conf
     state: link
+  tags: config
+
+# The following tasks creates a "catchall" site, protected by
+# basic authentication, on top of ldap.
+# This allows deploying other authenticated services without
+# revealing their presence.
+# It is for instance used by prometheus and grafana roles.
+
+- name: Create the wildcard / catchall website configuration file
+  notify:
+    - Check nginx config
+    - Restart nginx
+  vars:
+    csp: '{{ website.csp | default(csp_default) }}'
+    fp: '{{ website.fp | default(fp_default) }}'
+  template:
+    src: catchall-site.conf
+    dest: /etc/nginx/sites-available/catchall.{{ network.domain }}.conf
+    owner: root
+    group: root
+    mode: 0644
+  tags: config
+
+- name: Enable the wildcard / catchall website
+  notify:
+    - Check nginx config
+    - Restart nginx
+  file:
+    src: /etc/nginx/sites-available/catchall.{{ network.domain }}.conf
+    dest: /etc/nginx/sites-enabled/catchall.{{ network.domain }}.conf
+    state: link
+  tags: config

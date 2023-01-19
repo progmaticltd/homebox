@@ -1,3 +1,10 @@
 ---
 
-# Variables
+# LDAP configuration
+ldap:
+  hostname: 'ldap.{{ network.domain }}'
+  search:
+    base: 'dc={{ network.domain | regex_replace("\.", ",dc=") }}'
+  readonly:
+    uid: readonly
+    dn: 'cn=readonly account, ou=users, dc={{ network.domain | regex_replace("\.", ",dc=") }}'
