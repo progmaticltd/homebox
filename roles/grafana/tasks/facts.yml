@@ -1,5 +1,17 @@
 ---
 
+- name: Combine default and user defined Grafana settings
+  when: grafana is defined
+  set_fact:
+    grafana: '{{ grafana_default | combine(grafana, recursive=True) }}'
+  tags: facts
+
+- name: Use default grafana settings
+  when: grafana is not defined
+  set_fact:
+    grafana: '{{ grafana_default }}'
+  tags: facts
+
 - name: Generate or load the password for grafana database access
   no_log: '{{ not system.devel }}'
   set_fact:
@@ -44,6 +56,6 @@
 
 - name: Load api key if already defined
   set_fact:
-    api_key: '{{ lookup(creds.store, network.domain + "/grafana/api-key") }}'
+    grafana_api_key: '{{ lookup(creds.store, network.domain + "/grafana/api-key") }}'
   ignore_errors: true
   tags: facts

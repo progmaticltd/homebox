@@ -1,5 +1,20 @@
 ---
 
+# See https://github.com/grafana/grafana/issues/12638
+- name: Create the required symbolic links
+  file:
+    src: /var/lib/grafana
+    dest: /usr/share/grafana/data
+    state: link
+  tags: config
+
+- name: Create the required symbolic links
+  file:
+    src: /var/log/grafana
+    dest: /usr/share/grafana/data/logs
+    state: link
+  tags: config
+
 - name: Create plugins directory to avoid startup error
   notify: Restart Grafana server
   file:
@@ -37,7 +52,7 @@
 - name: Set the admin password using the API
   when: package_status.changed | default(false)
   block:
-    - name: Call the API
+    - name: Set the admin password using the API
       register: password_api
       uri:
         url: http://127.0.0.1:3000/api/user/password
@@ -71,14 +86,13 @@
           role: Admin
         body_format: json
         force_basic_auth: yes
-    - name: Store the api key
+    - name: Store the api key into the password store
       set_fact:
-        api_key: >-
+        grafana_api_key: >-
           {{ lookup(creds.store,
           network.domain + "/grafana/api-key"
           + creds.opts.create
           + creds.opts.overwrite
           + " userpass=" + api_key_create_call.json.key
           )}}
-        cacheable: true
   tags: config

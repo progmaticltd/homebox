@@ -1,21 +1,84 @@
 ---
 
-- name: Create the datasource
-  community.grafana.grafana_datasource:
-    grafana_url: http://127.0.0.1:3000/
-    grafana_api_key: '{{ api_key }}'
-    name: Prometheus
-    ds_type: prometheus
-    ds_url: http://127.0.0.1:9090
-    access: proxy
-    is_default: true
+- name: Create a directory to save the dashboards
+  file:
+    path: /etc/grafana/dashboards/
+    state: directory
   tags: dashboards
 
-- name: Import the postfix dashboards
+- name: Get the datasource info using the API
+  register: ds_info
+  uri:
+    url: http://127.0.0.1:3000/api/datasources/name/prometheus
+    return_content: true
+    headers:
+      Accept: application/json
+      Content-Type: application/json
+      Authorization: Bearer {{ grafana_api_key }}
+  ignore_errors: true
+  tags: dashboards
+
+- name: Store the datasource UID
+  when: ds_info is not failed
+  set_fact:
+    prometheus_ds: '{{ ds_info.content }}'
+  tags: dashboards
+
+- name: Create the data source and store the ID
+  when: ds_info is failed
+  block:
+    - name: Create the datasource
+      register: ds_create
+      community.grafana.grafana_datasource:
+        grafana_url: http://127.0.0.1:3000
+        grafana_api_key: '{{ grafana_api_key }}'
+        name: prometheus
+        ds_type: prometheus
+        ds_url: http://127.0.0.1:9090
+        access: proxy
+        is_default: true
+        use_proxy: false
+    - name: Store the ID
+      set_fact:
+        prometheus_ds: '{{ ds_create.datasource }}'
+  tags: dashboards
+
+- name: Upload the system load dashboard
+  register: dashboard_file
+  template:
+    src: dashboards/system-load.json
+    dest: /etc/grafana/dashboards/system-load.json
+    variable_start_string: '[['
+    variable_end_string: ']]'
+  tags: dashboards
+
+- name: Import the system load dashboard
+  when: dashboard_file.changed
   grafana_dashboard:
-    grafana_url: http://127.0.0.1:3000/
-    grafana_api_key: '{{ api_key }}'
-    dashboard_id: 10013
+    grafana_url: http://127.0.0.1:3000
+    grafana_api_key: '{{ grafana_api_key }}'
+    path: /etc/grafana/dashboards/system-load.json
     folder: General
     overwrite: true
+    use_proxy: false
+  tags: dashboards
+
+- name: Upload the postfix dashboard
+  register: dashboard_file
+  template:
+    src: dashboards/postfix.json
+    dest: /etc/grafana/dashboards/postfix.json
+    variable_start_string: '[['
+    variable_end_string: ']]'
+  tags: dashboards
+
+- name: Import the postfix dashboard
+  when: dashboard_file.changed
+  grafana_dashboard:
+    grafana_url: http://127.0.0.1:3000
+    grafana_api_key: '{{ grafana_api_key }}'
+    path: /etc/grafana/dashboards/postfix.json
+    folder: General
+    overwrite: true
+    use_proxy: false
   tags: dashboards

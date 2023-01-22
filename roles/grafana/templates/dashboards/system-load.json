@@ -31,7 +31,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Bup91eh4z"
+        "uid": "[[ prometheus_ds.uid ]]"
       },
       "fieldConfig": {
         "defaults": {
@@ -108,7 +108,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Bup91eh4z"
+            "uid": "[[ prometheus_ds.uid ]]"
           },
           "editorMode": "builder",
           "expr": "node_load1{instance=\"127.0.0.1:9100\"}",
@@ -119,7 +119,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Bup91eh4z"
+            "uid": "[[ prometheus_ds.uid ]]"
           },
           "editorMode": "builder",
           "expr": "node_load5{instance=\"127.0.0.1:9100\"}",
@@ -131,7 +131,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Bup91eh4z"
+            "uid": "[[ prometheus_ds.uid ]]"
           },
           "editorMode": "builder",
           "expr": "node_load15{instance=\"127.0.0.1:9100\"}",
@@ -147,7 +147,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Bup91eh4z"
+        "uid": "[[ prometheus_ds.uid ]]"
       },
       "fieldConfig": {
         "defaults": {
@@ -224,7 +224,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Bup91eh4z"
+            "uid": "[[ prometheus_ds.uid ]]"
           },
           "editorMode": "builder",
           "expr": "node_exporter:memory:used{instance=\"127.0.0.1:9100\"}",
@@ -237,7 +237,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Bup91eh4z"
+            "uid": "[[ prometheus_ds.uid ]]"
           },
           "editorMode": "builder",
           "expr": "node_exporter:swap:used{instance=\"127.0.0.1:9100\"}",
@@ -254,7 +254,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Bup91eh4z"
+        "uid": "[[ prometheus_ds.uid ]]"
       },
       "fieldConfig": {
         "defaults": {
@@ -331,7 +331,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Bup91eh4z"
+            "uid": "[[ prometheus_ds.uid ]]"
           },
           "editorMode": "builder",
           "expr": "rate(node_netstat_IpExt_InOctets{instance=\"127.0.0.1:9100\"}[5m])",
@@ -342,7 +342,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Bup91eh4z"
+            "uid": "[[ prometheus_ds.uid ]]"
           },
           "editorMode": "builder",
           "expr": "rate(node_netstat_IpExt_OutOctets{instance=\"127.0.0.1:9100\"}[5m])",
@@ -354,7 +354,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Bup91eh4z"
+            "uid": "[[ prometheus_ds.uid ]]"
           },
           "editorMode": "builder",
           "expr": "rate(node_netstat_Tcp_RetransSegs[5m])",
@@ -370,7 +370,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Bup91eh4z"
+        "uid": "[[ prometheus_ds.uid ]]"
       },
       "fieldConfig": {
         "defaults": {
@@ -447,7 +447,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Bup91eh4z"
+            "uid": "[[ prometheus_ds.uid ]]"
           },
           "editorMode": "builder",
           "expr": "rate(node_netstat_Ip6_InOctets{instance=\"127.0.0.1:9100\"}[5m])",
@@ -458,7 +458,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Bup91eh4z"
+            "uid": "[[ prometheus_ds.uid ]]"
           },
           "editorMode": "builder",
           "expr": "rate(node_netstat_Ip6_OutOctets{instance=\"127.0.0.1:9100\"}[5m])",
@@ -474,7 +474,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Bup91eh4z"
+        "uid": "[[ prometheus_ds.uid ]]"
       },
       "description": "",
       "fieldConfig": {
@@ -527,7 +527,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Bup91eh4z"
+            "uid": "[[ prometheus_ds.uid ]]"
           },
           "editorMode": "code",
           "expr": "100 - 100 * node_filesystem_avail_bytes{instance=\"127.0.0.1:9100\"}/node_filesystem_size_bytes{instance=\"127.0.0.1:9100\"}",
@@ -543,7 +543,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Bup91eh4z"
+        "uid": "[[ prometheus_ds.uid ]]"
       },
       "description": "",
       "fieldConfig": {
@@ -596,7 +596,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Bup91eh4z"
+            "uid": "[[ prometheus_ds.uid ]]"
           },
           "editorMode": "code",
           "expr": "100 - 100 * node_filesystem_files_free / node_filesystem_files",
@@ -612,7 +612,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Bup91eh4z"
+        "uid": "[[ prometheus_ds.uid ]]"
       },
       "fieldConfig": {
         "defaults": {
@@ -659,7 +659,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Bup91eh4z"
+            "uid": "[[ prometheus_ds.uid ]]"
           },
           "editorMode": "builder",
           "expr": "alertmanager_alerts{instance=\"127.0.0.1:9093\"}",
