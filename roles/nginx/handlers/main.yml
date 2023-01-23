@@ -24,3 +24,10 @@
     name: nftables
     state: restarted
     no_block: true
+
+- name: Restart Prometheus nginx exporter
+  systemd:
+    name: prometheus-nginx-exporter.service
+    state: restarted
+    masked: false
+    enabled: true

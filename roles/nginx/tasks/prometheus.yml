@@ -1,7 +1,43 @@
 ---
 
-- name: Deploy prometheus alerts
+- name: Install prometheus nginx exporter
+  apt:
+    name: prometheus-nginx-exporter
+    state: present
   tags: prometheus
+
+- name: Deploy prometheus alerts
   template:
     src: prometheus/alerts.yml
     dest: /etc/prometheus/alerts/nginx-rules.yml
+  tags: prometheus
+
+- name: Deploy nginx metrics site
+  template:
+    src: metrics-site.conf
+    dest: /etc/nginx/sites-available/metrics.conf
+  tags: prometheus
+
+- name: Deploy prometheus exporter config
+  notify: Restart Prometheus nginx exporter
+  template:
+    src: prometheus/default-nginx-exporter.conf
+    dest: /etc/default/prometheus-nginx-exporter
+  tags: prometheus
+
+- name: Enable metrics site
+  notify:
+    - Check nginx config
+    - Restart nginx
+    - Restart Prometheus nginx exporter
+  file:
+    src: /etc/nginx/sites-available/metrics.conf
+    dest: /etc/nginx/sites-enabled/metrics.conf
+    state: link
+  tags: prometheus
+
+- name: Deploy target configuration
+  template:
+    src: prometheus/targets.yml
+    dest: /etc/prometheus/targets/nginx.yml
+  tags: prometheus
