@@ -36,7 +36,7 @@
       + creds.opts.create) }}
   tags: facts
 
-- name: Load or crate the password for the organisation manager account
+- name: Load or create the password for the organisation manager account
   no_log: '{{ not system.devel }}'
   set_fact:
     grafana_manager_password: >-
