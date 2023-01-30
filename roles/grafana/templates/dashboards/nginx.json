@@ -25,7 +25,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 5,
+  "id": 10,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -34,22 +34,33 @@
         "type": "prometheus",
         "uid": "[[ prometheus_ds.uid ]]"
       },
-      "description": "",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
           "thresholds": {
-            "mode": "absolute",
+            "mode": "percentage",
             "steps": [
               {
                 "color": "green",
                 "value": null
               }
             ]
-          },
-          "unit": "dtdhms"
+          }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Uptime (days)"
+            },
+            "properties": [
+              {
+                "id": "max",
+                "value": 90
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -57,20 +68,18 @@
         "x": 0,
         "y": 0
       },
-      "id": 6,
+      "id": 12,
       "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "/^UP time$/",
+          "fields": "",
           "values": false
         },
-        "textMode": "value"
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
       },
       "pluginVersion": "9.3.2",
       "targets": [
@@ -80,15 +89,62 @@
             "uid": "[[ prometheus_ds.uid ]]"
           },
           "editorMode": "code",
-          "expr": "time()-node_systemd_unit_start_time_seconds{name=\"nginx.service\"}",
-          "interval": "",
-          "legendFormat": "UP time",
+          "expr": "nginx_connections_active",
+          "legendFormat": "Active",
           "range": true,
-          "refId": "A"
+          "refId": "con_active"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "nginx_connections_reading",
+          "hide": false,
+          "legendFormat": "Reading",
+          "range": true,
+          "refId": "con_reading"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "nginx_connections_waiting",
+          "hide": false,
+          "legendFormat": "Waiting",
+          "range": true,
+          "refId": "con_waiting"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "nginx_connections_writing",
+          "hide": false,
+          "legendFormat": "Writing",
+          "range": true,
+          "refId": "con_writing"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "floor((time()-node_systemd_unit_start_time_seconds{name=\"nginx.service\"})/86400)",
+          "hide": false,
+          "legendFormat": "Uptime (days)",
+          "range": true,
+          "refId": "uptime"
         }
       ],
-      "title": "Uptime",
-      "type": "stat"
+      "title": "Connections",
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -337,7 +393,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": false,
+  "refresh": "30s",
   "schemaVersion": 37,
   "style": "dark",
   "tags": [],
@@ -345,13 +401,13 @@
     "list": []
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Nginx",
   "uid": "yVyXUbTVk",
-  "version": 4,
+  "version": 3,
   "weekStart": ""
 }

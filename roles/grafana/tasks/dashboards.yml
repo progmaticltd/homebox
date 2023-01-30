@@ -43,62 +43,9 @@
         prometheus_ds: '{{ ds_create.datasource }}'
   tags: dashboards
 
-- name: Upload the system load dashboard
-  register: dashboard_file
-  template:
-    src: dashboards/system-load.json
-    dest: /etc/grafana/dashboards/system-load.json
-    variable_start_string: '[['
-    variable_end_string: ']]'
-  tags: dashboards
-
-- name: Import the system load dashboard
-  when: dashboard_file.changed
-  grafana_dashboard:
-    grafana_url: http://127.0.0.1:3000
-    grafana_api_key: '{{ grafana_api_key }}'
-    path: /etc/grafana/dashboards/system-load.json
-    folder: General
-    overwrite: true
-    use_proxy: false
-  tags: dashboards
-
-- name: Upload the postfix dashboard
-  register: dashboard_file
-  template:
-    src: dashboards/postfix.json
-    dest: /etc/grafana/dashboards/postfix.json
-    variable_start_string: '[['
-    variable_end_string: ']]'
-  tags: dashboards
-
-- name: Import the postfix dashboard
-  when: dashboard_file.changed
-  grafana_dashboard:
-    grafana_url: http://127.0.0.1:3000
-    grafana_api_key: '{{ grafana_api_key }}'
-    path: /etc/grafana/dashboards/postfix.json
-    folder: General
-    overwrite: true
-    use_proxy: false
-  tags: dashboards
-
-- name: Upload the nginx dashboard
-  register: dashboard_file
-  template:
-    src: dashboards/nginx.json
-    dest: /etc/grafana/dashboards/nginx.json
-    variable_start_string: '[['
-    variable_end_string: ']]'
-  tags: dashboards
-
-- name: Import the nginx dashboard
-  when: dashboard_file.changed
-  grafana_dashboard:
-    grafana_url: http://127.0.0.1:3000
-    grafana_api_key: '{{ grafana_api_key }}'
-    path: /etc/grafana/dashboards/nginx.json
-    folder: General
-    overwrite: true
-    use_proxy: false
+- name: Create or update all the dashboards
+  include_tasks: dashboard-import.yml
+  loop: '{{ grafana.dashboards.list }}'
+  loop_control:
+    loop_var: dashboard
   tags: dashboards
