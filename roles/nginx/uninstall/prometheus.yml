@@ -5,3 +5,10 @@
   file:
     path: /etc/prometheus/alerts/nginx-rules.yml
     state: absent
+
+- name: Remove prometheus nginx exporter
+  apt:
+    name: nginx-prometheus-exporter
+    state: absent
+    purge: true
+    autoremove: true

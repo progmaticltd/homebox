@@ -1,0 +1,491 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 7,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "[[ prometheus_ds.uid ]]"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "rate(pdns_auth_udp_queries[$__rate_interval])",
+          "hide": false,
+          "legendFormat": "Queries (UDP)",
+          "range": true,
+          "refId": "queries_udp"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "rate(pdns_auth_udp_answers[$__rate_interval])",
+          "hide": false,
+          "legendFormat": "Answers (UDP)",
+          "range": true,
+          "refId": "answers_udp"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "rate(pdns_auth_tcp_queries[$__rate_interval])",
+          "hide": false,
+          "legendFormat": "Queries (TCP)",
+          "range": true,
+          "refId": "queries_tcp"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "rate(pdns_auth_tcp_answers[$__rate_interval])",
+          "hide": false,
+          "legendFormat": "Answers (TCP)",
+          "range": true,
+          "refId": "answers_tcp"
+        }
+      ],
+      "title": "Queries",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "[[ prometheus_ds.uid ]]"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "rate(pdns_auth_query_cache_hit[$__rate_interval])",
+          "hide": false,
+          "legendFormat": "Cache hit",
+          "range": true,
+          "refId": "query_cache_hit"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "rate(pdns_auth_query_cache_miss[$__rate_interval])",
+          "hide": false,
+          "legendFormat": "Cache miss",
+          "range": true,
+          "refId": "query_cache_miss"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "rate(pdns_auth_backend_queries[$__rate_interval])",
+          "hide": false,
+          "legendFormat": "Backend",
+          "range": true,
+          "refId": "query_backend"
+        }
+      ],
+      "title": "Cache",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "[[ prometheus_ds.uid ]]"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Memory usage"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decbytes"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-GrYlRd"
+                }
+              },
+              {
+                "id": "max",
+                "value": 496345088
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Latency"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "µs"
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 100000
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-GrYlRd"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Queries cached"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Uptime"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dtdhms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Uptime (days)"
+            },
+            "properties": [
+              {
+                "id": "max",
+                "value": 365
+              },
+              {
+                "id": "min",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 7,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "pdns_auth_latency",
+          "hide": false,
+          "legendFormat": "Latency",
+          "range": true,
+          "refId": "pdns_latency"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "pdns_auth_real_memory_usage",
+          "hide": false,
+          "legendFormat": "Memory usage",
+          "range": true,
+          "refId": "pdns_real_memory_usage"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "pdns_auth_query_cache_size",
+          "hide": false,
+          "legendFormat": "Queries cached",
+          "range": true,
+          "refId": "pdns_query_cache_size"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "pdns_auth_signature_cache_size",
+          "hide": false,
+          "legendFormat": "Signatures cache",
+          "range": true,
+          "refId": "sign_cache"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "floor(pdns_auth_uptime/86400)",
+          "hide": false,
+          "legendFormat": "Uptime (days)",
+          "range": true,
+          "refId": "uptime"
+        }
+      ],
+      "title": "Performances and resources",
+      "type": "gauge"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "PowerDNS",
+  "uid": "g3ytsqo4k",
+  "version": 5,
+  "weekStart": ""
+}

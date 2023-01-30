@@ -1,0 +1,21 @@
+---
+
+- name: Restart tinyproxy
+  systemd:
+    name: tinyproxy
+    state: restarted
+
+- name: Restart Grafana server
+  systemd:
+    name: grafana-server
+    state: restarted
+
+- name: Test nginx config
+  shell: nginx -t
+  changed_when: false
+
+- name: Restart nginx
+  systemd:
+    name: nginx
+    state: restarted
+    no_block: true

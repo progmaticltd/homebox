@@ -1,5 +1,14 @@
 ---
 
+- name: Activate AppArmor profile
+  command: 'aa-enforce usr.sbin.nginx'
+
+- name: Restart AppArmor service
+  systemd:
+    name: apparmor
+    state: restarted
+    no_block: true
+
 - name: Test nginx config
   shell: nginx -t
   changed_when: false

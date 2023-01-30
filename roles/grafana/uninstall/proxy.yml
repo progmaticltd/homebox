@@ -1,0 +1,14 @@
+---
+
+- name: Remove grafana site access in the proxy
+  notify: Restart tinyproxy
+  lineinfile:
+    path: /etc/tinyproxy/filter
+    line: '{{ domain }}'
+    state: absent
+  loop:
+    - grafana.com
+    - apt.grafana.com
+  loop_control:
+    loop_var: domain
+  tags: proxy

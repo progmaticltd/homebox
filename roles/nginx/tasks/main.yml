@@ -5,20 +5,26 @@
 
 - name: Copy the default certificates
   include_tasks: certificates.yml
+  tags: certs
 
 - name: Configure the package
   include_tasks: config.yml
+  tags: config
 
 - name: Copy the default content site
   include_tasks: default-content.yml
+  tags: site, config
 
 - name: Create the default DNS entries
   include_tasks: dns.yml
 
 - name: Add Prometheus alerts
   when: prometheus.install
-  tags: prometheus
   include_tasks: prometheus.yml
+  tags: prometheus
+
+- name: Add pam authentication module
+  include_tasks: pam.yml
 
 - name: Create the firewall rules
   include_tasks: nftables.yml

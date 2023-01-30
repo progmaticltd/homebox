@@ -5,10 +5,11 @@
   file:
     path: /etc/nginx/sites-enabled/default
     state: absent
-    force: yes
+  tags: config
 
 - name: Install nginx secure configuration
   notify: Restart nginx
   template:
     src: ocsp.conf
     dest: /etc/nginx/conf.d/ocsp.conf
+  tags: config

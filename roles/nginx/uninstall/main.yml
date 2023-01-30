@@ -21,6 +21,9 @@
 - name: Remove the dns entry
   include_tasks: uninstall/dns.yml
 
+- name: Remove pam config
+  include_tasks: uninstall/pam.yml
+
 - name: Remove prometheus settings
   tags: prometheus
   include_tasks: uninstall/prometheus.yml

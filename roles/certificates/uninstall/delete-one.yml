@@ -4,27 +4,35 @@
   when: certificate.name != 'default'
   set_fact:
     fqdn: '{{ certificate.name }}.{{ network.domain }}'
+    filename: '{{ certificate.name }}.{{ network.domain }}'
 
-- name: Build the certificate FQDN
+- name: Build the certificate FQDN for the default site
   when: certificate.name == 'default'
   set_fact:
     fqdn: '{{ network.domain }}'
+    filename: '{{ network.domain }}'
+
+- name: Build the certificate FQDN for a wildcard
+  when: certificate.name == '_'
+  set_fact:
+    fqdn: '*.{{ network.domain }}'
+    filename: '_.{{ network.domain }}'
 
 - name: Remove all the symbolic links
   file:
     path: '{{ path }}'
     state: absent
   loop:
-    - /etc/ssl/certs/{{ fqdn }}.crt
-    - /etc/ssl/certs/{{ fqdn }}.issuer.crt
-    - /etc/ssl/private/{{ fqdn }}.key
-    - /etc/ssl/private/{{ fqdn }}.pem
+    - /etc/ssl/certs/{{ filename }}.crt
+    - /etc/ssl/certs/{{ filename }}.issuer.crt
+    - /etc/ssl/private/{{ filename }}.key
+    - /etc/ssl/private/{{ filename }}.pem
   loop_control:
     loop_var: path
 
 - name: Remove all the certificate files
   file:
-    path: /var/lib/lego/certificates/{{ fqdn }}.{{ ext }}
+    path: /var/lib/lego/certificates/{{ filename }}.{{ ext }}
     state: absent
   loop: [ 'crt', 'issuer.crt', 'pem', 'key', 'json' ]
   loop_control:

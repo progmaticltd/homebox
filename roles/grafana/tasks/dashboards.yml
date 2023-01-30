@@ -1,0 +1,51 @@
+---
+
+- name: Create a directory to save the dashboards
+  file:
+    path: /etc/grafana/dashboards/
+    state: directory
+  tags: dashboards
+
+- name: Get the datasource info using the API
+  register: ds_info
+  uri:
+    url: http://127.0.0.1:3000/api/datasources/name/prometheus
+    return_content: true
+    headers:
+      Accept: application/json
+      Content-Type: application/json
+      Authorization: Bearer {{ grafana_api_key }}
+  ignore_errors: true
+  tags: dashboards
+
+- name: Store the datasource UID
+  when: ds_info is not failed
+  set_fact:
+    prometheus_ds: '{{ ds_info.content }}'
+  tags: dashboards
+
+- name: Create the data source and store the ID
+  when: ds_info is failed
+  block:
+    - name: Create the datasource
+      register: ds_create
+      community.grafana.grafana_datasource:
+        grafana_url: http://127.0.0.1:3000
+        grafana_api_key: '{{ grafana_api_key }}'
+        name: prometheus
+        ds_type: prometheus
+        ds_url: http://127.0.0.1:9090
+        access: proxy
+        is_default: true
+        use_proxy: false
+    - name: Store the ID
+      set_fact:
+        prometheus_ds: '{{ ds_create.datasource }}'
+  tags: dashboards
+
+- name: Create or update all the dashboards
+  include_tasks: dashboard-import.yml
+  loop: '{{ grafana.dashboards.list }}'
+  loop_control:
+    loop_var: dashboard
+  tags: dashboards

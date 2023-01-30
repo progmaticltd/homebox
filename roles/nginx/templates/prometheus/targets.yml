@@ -1,0 +1,6 @@
+---
+
+- targets:
+    - '127.0.0.1:9113'
+  labels:
+    service: nginx

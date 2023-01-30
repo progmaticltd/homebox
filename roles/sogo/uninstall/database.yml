@@ -22,4 +22,4 @@
 - name: Remove the python / psycopg2 package
   apt:
     name: python3-psycopg2
-    state: present
+    state: absent

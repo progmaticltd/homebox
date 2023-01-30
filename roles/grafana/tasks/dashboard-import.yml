@@ -1,0 +1,20 @@
+---
+
+- name: Upload the dashboard source
+  register: dashboard_file
+  template:
+    src: dashboards/{{ dashboard.name }}.json
+    dest: /etc/grafana/dashboards/{{ dashboard.name }}.json
+    variable_start_string: '[['
+    variable_end_string: ']]'
+  tags: dashboards
+
+- name: Import the dashboard
+  grafana_dashboard:
+    grafana_url: http://127.0.0.1:3000
+    grafana_api_key: '{{ grafana_api_key }}'
+    path: /etc/grafana/dashboards/{{ dashboard.name }}.json
+    folder: General
+    overwrite: '{{ grafana.dashboards.overwrite }}'
+    use_proxy: false
+  tags: dashboards

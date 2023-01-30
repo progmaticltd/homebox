@@ -1,0 +1,14 @@
+---
+
+# Default grafana settings
+grafana_default:
+  dashboards:
+    overwrite: false
+    list:
+      - name: system-load
+      - name: nginx
+      - name: postfix
+      - name: pdns
+  whitelist:
+    - 12.34.56.78
+    - 12.34.56.79
