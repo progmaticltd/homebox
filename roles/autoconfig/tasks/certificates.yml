@@ -4,6 +4,7 @@
   vars:
     certificates:
       - name: autoconfig
+        type: ec384
   include_role:
     name: certificates
 

@@ -5,6 +5,7 @@
   vars:
     certificates:
       - name: cockpit
+        type: ec384
   include_role:
     name: certificates
 

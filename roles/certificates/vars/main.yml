@@ -2,5 +2,6 @@
 
 cert_packages:
   - ca-certificates
+  - jq
   - lego
   - ssl-cert

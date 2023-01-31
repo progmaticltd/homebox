@@ -4,6 +4,7 @@
   vars:
     certificates:
       - name: autodiscover
+        type: ec384
   include_role:
     name: certificates
 
