@@ -3,17 +3,17 @@
 flush ruleset
 
 define icmp6_out = {
-	nd-neighbor-solicit,
-	nd-neighbor-advert,
+    nd-neighbor-solicit,
+    nd-neighbor-advert,
     nd-router-advert,
-	nd-router-solicit,
-	mld-listener-report
+    nd-router-solicit,
+    mld-listener-report
 }
 
 define icmp6_in = {
-	nd-neighbor-solicit,
-	nd-router-advert,
-	nd-neighbor-advert
+    nd-neighbor-solicit,
+    nd-router-advert,
+    nd-neighbor-advert
 }
 
 table inet filter {
