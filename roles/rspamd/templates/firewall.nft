@@ -5,7 +5,7 @@ table inet filter {
     chain output {
 
         # Authorise web traffic from rspamd
-		meta skuid _rspamd \
+        meta skuid _rspamd \
         tcp dport { http, https } ct state new counter accept \
         comment "http(s) traffic for rspamd"
 
