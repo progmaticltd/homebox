@@ -1,6 +1,7 @@
 ---
 
 packages:
+  - libnginx-mod-http-auth-pam
   - nginx
   - nginx-common
   - nginx-core

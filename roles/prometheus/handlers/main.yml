@@ -31,6 +31,12 @@
     state: restarted
     no_block: true
 
+- name: Restart Prometheus blackbox exporter
+  systemd:
+    name: prometheus-blackbox-exporter
+    state: restarted
+    no_block: true
+
 - name: Restart Prometheus alert manager
   systemd:
     name: prometheus-alertmanager

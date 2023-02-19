@@ -3,7 +3,7 @@
 # Packages to install
 packages:
   - prometheus
+  - prometheus-blackbox-exporter
   - prometheus-node-exporter
   - prometheus-alertmanager
   - prometheus-xmpp-alerts
-  - libnginx-mod-http-auth-pam

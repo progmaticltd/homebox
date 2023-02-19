@@ -132,3 +132,13 @@
     src: /var/lib/lego/certificates/{{ filename }}.pem
     dest: /etc/ssl/private/{{ filename }}.pem
     state: link
+
+- name: Add monitor settings for prometheus blackbox exporter
+  when:
+    - certificate.monitor is defined
+    - prometheus.install
+  lineinfile:
+    path: /etc/lego/monitor.list
+    line: '{{ certificate.monitor }}'
+    create: true
+    mode: 0600

@@ -9,6 +9,7 @@ grafana_default:
       - name: nginx
       - name: postfix
       - name: pdns
-  whitelist:
-    - 12.34.56.78
-    - 12.34.56.79
+      - name: certificates
+      - name: sites
+  # List of IPs that don't require authentication
+  whitelist: [ ]

@@ -20,6 +20,9 @@
   tags: config
   include_tasks: config-exporter.yml
 
+- name: Install the blackbox exporter
+  include_tasks: blackbox-exporter.yml
+
 - name: Set the alert manager
   tags: config
   include_tasks: config-alert-manager.yml

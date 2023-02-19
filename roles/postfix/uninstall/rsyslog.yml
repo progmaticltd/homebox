@@ -1,0 +1,6 @@
+---
+
+- name: Remove homebox specific logging settings
+  notify: Restart rsyslog
+  file:
+    path: /etc/rsyslog.d/postfix-homebox.conf

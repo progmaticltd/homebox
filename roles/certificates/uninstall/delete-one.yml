@@ -37,3 +37,12 @@
   loop: [ 'crt', 'issuer.crt', 'pem', 'key', 'json' ]
   loop_control:
     loop_var: ext
+
+- name: Remove monitor settings for prometheus blackbox exporter
+  when:
+    - certificate.monitor is defined
+    - prometheus.install
+  lineinfile:
+    path: /etc/lego/monitor.list
+    line: '{{ certificate.monitor }}'
+    state: absent

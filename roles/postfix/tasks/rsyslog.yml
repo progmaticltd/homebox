@@ -1,0 +1,8 @@
+---
+
+- name: Logging specific config for syslog
+  notify: Restart rsyslog
+  template:
+    src: rsyslog.conf
+    dest: /etc/rsyslog.d/postfix-homebox.conf
+    mode: 0644
