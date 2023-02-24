@@ -21,8 +21,11 @@
 
 - name: Create self-signed CA certificate from CSR
   community.crypto.x509_certificate:
-    path: /etc/ssl/private/tempca.pem
+    path: /etc/ssl/certs/tempca.pem
     csr_content: "{{ ca_csr.csr }}"
     privatekey_path: /etc/ssl/private/tempca.key
     provider: selfsigned
+    owner: root
+    group: ssl-cert
+    mode: 0644
   tags: certs

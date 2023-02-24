@@ -1,6 +1,10 @@
 ---
 
-certificates: [ ]
+# The default value for a certificate to create
+# when no certificates are specified.
+# This is useful for testing the role
+certificates:
+  - name: main
 
 # Do not recreate the certificates by default,
 # unless they are not valid

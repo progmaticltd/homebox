@@ -21,6 +21,13 @@
     filename: '_.{{ network.domain }}'
   tags: certs
 
+- name: Create the hook directory
+  file:
+    path: /etc/lego/hooks/{{ filename }}/
+    state: directory
+    mode: 0700
+  tags: certs
+
 - name: Check if the certificate exists
   register: cert_file
   stat:
@@ -117,13 +124,6 @@
     path: /var/lib/lego/certificates/{{ filename }}.key
     group: ssl-cert
     mode: 0640
-  tags: certs
-
-- name: Create the hook directory
-  file:
-    path: /etc/lego/hooks/{{ filename }}/
-    state: directory
-    mode: 0700
   tags: certs
 
 - name: Create the symbolic links in the debian standard directory

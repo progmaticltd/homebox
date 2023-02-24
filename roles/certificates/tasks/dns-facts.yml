@@ -1,21 +1,21 @@
 ---
 
 - name: Chheck if the DNS server is resolving correctly
-  register: host_main
+  register: host_test
   getent:
     database: hosts
-    key: main.{{ network.domain }}
+    key: test.{{ network.domain }}
   tags: dns
   ignore_errors: true
 
 - name: Store the fact when the DNS server is live
-  when: host_main is not failed
+  when: host_test is not failed
   set_fact:
     dns_is_live: true
   tags: dns
 
 - name: Store the fact when the DNS server is not live
-  when: host_main is failed
+  when: host_test is failed
   set_fact:
     dns_is_live: false
   tags: dns
