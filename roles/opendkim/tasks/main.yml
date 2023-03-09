@@ -2,6 +2,7 @@
 
 - name: Load the initial facts
   include_tasks: facts.yml
+  tags: facts
 
 - name: Install the packages
   include_tasks: packages.yml
@@ -14,6 +15,7 @@
 
 - name: Set DNS entries
   include_tasks: dns.yml
+  tags: dns
 
 - name: Install the renewal script
   include_tasks: renewal.yml

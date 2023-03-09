@@ -3,3 +3,4 @@
 - name: Use the current year for the selector
   set_fact:
     dkim_selector: 'main-{{ "%Y" | strftime }}'
+  tags: facts

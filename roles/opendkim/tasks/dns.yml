@@ -4,6 +4,7 @@
   file:
     path: /etc/opendkim/dns
     state: directory
+  tags: dns
 
 - name: Create the zone update file
   register: nsupdate_file
@@ -20,6 +21,7 @@
   args:
     chdir: /etc/opendkim/dns
     creates: nsupdate-{{ dkim_selector }}.conf
+  tags: dns
 
 - name: Store the public key in DNS
   when: nsupdate_file.changed
@@ -28,3 +30,4 @@
   args:
     chdir: /etc/opendkim/dns
   changed_when: true
+  tags: dns
