@@ -6,6 +6,10 @@
     path: /etc/hosts
     attributes: -i
 
+- name: Set the hostname
+  hostname:
+    name: '{{ network.hostname }}'
+
 - name: Template and lock /etc/hosts
   tags: network
   template:
