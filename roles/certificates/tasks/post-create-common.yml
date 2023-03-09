@@ -1,0 +1,54 @@
+---
+
+- name: Create the symbolic links in the debian standard directory
+  file:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+    state: link
+  loop:
+    - src: /var/lib/lego/certificates/{{ filename }}.issuer.crt
+      dest: /etc/ssl/certs/{{ filename }}.issuer.crt
+    - src: /var/lib/lego/certificates/{{ filename }}.crt
+      dest: /etc/ssl/certs/{{ filename }}.crt
+    - src: /var/lib/lego/certificates/{{ filename }}.key
+      dest: /etc/ssl/private/{{ filename }}.key
+  loop_control:
+    loop_var: file
+  tags: certs
+
+- name: Create the symbolic link for the pem file in the debian standard directory
+  when: certificate.pem | default(false)
+  file:
+    src: /var/lib/lego/certificates/{{ filename }}.pem
+    dest: /etc/ssl/private/{{ filename }}.pem
+    state: link
+  tags: certs
+
+- name: Set the certificate permissions
+  file:
+    path: /var/lib/lego/certificates/{{ filename }}.crt
+    group: ssl-cert
+    mode: 0644
+  tags: certs
+
+- name: Set the certificate issuer permissions
+  file:
+    path: /var/lib/lego/certificates/{{ filename }}.issuer.crt
+    group: ssl-cert
+    mode: 0644
+  tags: certs
+
+- name: Set the pem file permissions
+  when: certificate.pem | default(false)
+  file:
+    path: /var/lib/lego/certificates/{{ filename }}.pem
+    group: ssl-cert
+    mode: 0640
+  tags: certs
+
+- name: Set the private keys permissions
+  file:
+    path: /var/lib/lego/certificates/{{ filename }}.key
+    group: ssl-cert
+    mode: 0640
+  tags: certs

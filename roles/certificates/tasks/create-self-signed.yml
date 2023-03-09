@@ -112,11 +112,3 @@
     /var/lib/lego/certificates/{{ filename }}.crt
     >/var/lib/lego/certificates/{{ filename }}.issuer.crt
   tags: certs
-
-- name: Ensure the issuer file permissions are correct
-  file:
-    path: /var/lib/lego/certificates/{{ filename }}.issuer.crt
-    owner: root
-    group: ssl-cert
-    mode: 0644
-  tags: certs

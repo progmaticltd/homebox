@@ -47,6 +47,13 @@
     loop_var: certificate
   tags: certs
 
+- name: Call common post creation tasks
+  include_tasks: post-create-common.yml
+  loop: '{{ certificates }}'
+  loop_control:
+    loop_var: certificate
+  tags: certs
+
 - name: Run the common post installation tasks
   include_tasks: post-install-common.yml
   tags: postinstall
