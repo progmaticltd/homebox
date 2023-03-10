@@ -18,4 +18,3 @@
   systemd:
     name: nginx
     state: restarted
-    no_block: true

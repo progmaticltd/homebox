@@ -52,5 +52,7 @@
       tags: autoconfig
     - role: promteheus
       tags: promteheus
+    - role: grafana
+      tags: grafana
     - role: post-install
       tags: post-install
