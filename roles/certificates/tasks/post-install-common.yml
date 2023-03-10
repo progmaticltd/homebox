@@ -14,6 +14,13 @@
     mode: 0700
   tags: postinstall
 
+- name: Copy the certificate status script
+  copy:
+    src: cert-status.sh
+    dest: /etc/cron.weekly/cert-status
+    mode: 0755
+  tags: postinstall
+
 - name: Update system certificates to add LetsEncrypt staging CAs
   when: system.devel
   shell: update-ca-certificates
