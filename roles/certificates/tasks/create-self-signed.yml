@@ -97,7 +97,7 @@
     provider: ownca
     ownca_path: /etc/ssl/certs/homebox-temp-ca.pem
     ownca_privatekey_path: /etc/ssl/private/homebox-temp-ca.key
-    ownca_not_after: +1w
+    ownca_not_after: '{{ tmp_duration }}'
     force: '{{ renew_cert }}'
     owner: root
     group: ssl-cert
