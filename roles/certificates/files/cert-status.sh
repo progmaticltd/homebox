@@ -1,16 +1,25 @@
 #!/bin/sh
 
-# List all certificate files
+# Start from the certificates directory
 cd /etc/lego/certificates
-cert_files=$(ls -1 *.crt | grep -v issuer)
+
+# List all certificate files by time
+cert_files=$(ls -1tr *.crt | grep -v issuer)
 
 for cert_file in $cert_files; do
 
-    fqdn=$(openssl x509 -in $cert_file -noout -subject | sed -E 's/.* = ([^\.]+)/\1/')
+    issuer=$(openssl x509 -in $cert_file -noout -issuer | sed 's/.*= //')
+    fqdn=$(openssl x509 -in $cert_file -noout -subject | sed -E 's/.* = ([\*a-z]+).*/\1/')
     from=$(openssl x509 -in $cert_file -noout -dates | sed -En 's/notBefore=(.*)/\1/p')
     till=$(openssl x509 -in $cert_file -noout -dates | sed -En 's/notAfter=(.*)/\1/p')
-    sans=$(openssl x509 -in $cert_file -noout -text | grep -A 1 'Subject Alternative Name' | grep -v 'X509' | sed -E 's/^ +//' | tr '\n' ',')
+    sans=$(openssl x509 -in $cert_file -noout -ext subjectAltName | tail -n +2 | sed 's/ //g' | tr '\n' ',')
 
-    printf "%-30s: %-30s %-30s %s\n" "$fqdn" "$from" "$till" "$sans"
+    line=$(printf "%-16s: %-30s %-30s %-30s %s" "$fqdn" "$from" "$till" "$issuer" "$sans")
+
+    if openssl verify $cert_file >/dev/null 2>&1; then
+        echo "$line"
+    else
+        echo "$line" | colorize Red
+    fi
 
 done

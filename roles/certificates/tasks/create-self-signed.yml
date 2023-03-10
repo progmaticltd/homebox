@@ -95,8 +95,8 @@
     csr_content: "{{ ca_csr.csr }}"
     privatekey_path: /var/lib/lego/certificates/{{ filename }}.key
     provider: ownca
-    ownca_path: /etc/ssl/certs/tempca.pem
-    ownca_privatekey_path: /etc/ssl/private/tempca.key
+    ownca_path: /etc/ssl/certs/homebox-temp-ca.pem
+    ownca_privatekey_path: /etc/ssl/private/homebox-temp-ca.key
     ownca_not_after: +1w
     force: '{{ renew_cert }}'
     owner: root
@@ -108,7 +108,7 @@
   when: cert_file.changed
   shell: >-
     cat
-    /etc/ssl/certs/tempca.pem
+    /etc/ssl/certs/homebox-temp-ca.pem
     /var/lib/lego/certificates/{{ filename }}.crt
     >/var/lib/lego/certificates/{{ filename }}.issuer.crt
   tags: certs
