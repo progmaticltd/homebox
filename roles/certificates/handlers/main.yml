@@ -2,10 +2,7 @@
 
 - name: Reload certificates
   register: ca_cert_update
-  shell: update-ca-certificates
-  changed_when: >-
-    ca_cert_update.stdout | match("[1-9]+ added")
-    or ca_cert_update.stdout | match("[1-9]+ removed")
+  shell: update-ca-certificates --verbose
 
 - name: Restart tinyproxy
   systemd:
