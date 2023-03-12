@@ -1,0 +1,20 @@
+---
+
+- name: Remove cloud-init package
+  apt:
+    name: cloud-init
+    state: absent
+    purge: true
+  tags: apt
+
+- name: Remove vultr packages repository
+  file:
+    path: /etc/apt/sources.list.d/vultr-apprepo.list
+    state: absent
+  tags: apt
+
+- name: Remove Vultr apt key
+  apt_key:
+    id: 6EE69664B872D21326564A2ED4B17DEB5ECDB253
+    state: absent
+  tags: apt

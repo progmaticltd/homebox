@@ -1,0 +1,8 @@
+---
+
+cleanup_files:
+  - /etc/systemd/system/cloud-init-log-reader.service
+  - /etc/systemd/system/multi-user.target.wants/cloud-init-log-reader.service
+  - /etc/udev/rules.d/99-vultr-fix-virtio.rules
+  - /usr/lib/sysctl.d/90-vultr.conf
+  - /usr/src/cloud-init/build/lib/cloudinit/sources/helpers/vultr.py

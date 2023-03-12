@@ -1,0 +1,16 @@
+---
+
+- name: Stop the cloud-init related services
+  systemd:
+    service: '{{ service }}'
+    state: stopped
+  loop:
+    - cloud-config
+    - cloud-final
+    - cloud-init-local
+    - cloud-init-log-reader
+    - cloud-init
+  loop_control:
+    loop_var: service
+  failed_when: false
+  tags: systemd
