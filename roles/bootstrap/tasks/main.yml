@@ -4,16 +4,16 @@
 - name: Remove packages not required
   include_tasks: pre-clean.yml
 
-- name: Track changes in the system
-  when: system.track_changes
-  include_tasks: track-changes.yml
-
 - name: Move ansible logs to a separate file
   include_tasks: ansible-logs.yml
 
 - name: Network related tasks
   tags: network
   include_tasks: network.yml
+
+- name: Track changes in the system
+  when: system.track_changes
+  include_tasks: track-changes.yml
 
 - name: Initialise and update the packages repository
   include_tasks: apt.yml

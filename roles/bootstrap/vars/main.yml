@@ -2,6 +2,7 @@
 
 whitelisted_hosts:
   - api.ipify.org
+  - api64.ipify.org
   - deb.debian.org
   - letsencrypt.org
   - security.debian.org

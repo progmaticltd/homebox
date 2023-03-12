@@ -13,6 +13,7 @@
       file:
         path: '{{ cleanup_path }}'
         attr: -i
+        force: yes
     - name: Remove cloud init log readers
       notify: Reload systemd
       file:

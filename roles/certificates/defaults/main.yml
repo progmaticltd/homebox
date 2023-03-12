@@ -11,4 +11,4 @@ certificates:
 cert_recreate: false
 
 # The default duration for temporary certificates generated on first install
-tmp_duration: 1w
+tmp_duration: +2w
