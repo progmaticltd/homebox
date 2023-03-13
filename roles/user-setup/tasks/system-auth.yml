@@ -20,6 +20,7 @@
     mode: 0600
 
 - name: Ensure nsswithch is configured correctly
+  notify: Restart the ldap stack
   replace:
     path: /etc/nsswitch.conf
     regexp: '{{ entry }}'

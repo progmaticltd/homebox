@@ -10,6 +10,7 @@
     - cloud-init-local
     - cloud-init-log-reader
     - cloud-init
+    - systemd-resolved
   loop_control:
     loop_var: service
   failed_when: false
