@@ -1,6 +1,6 @@
 A set of Ansible scripts to setup a secure email and personal files server. This project is for you if:
 
-- You are interested to host your emails yourself, for privacy, security or any other reason.
+- You are interested in hosting your emails yourself, for privacy, security or any other reason.
 - You want your server to be secure against both physical and remote intrusion.
 - You want a low maintenance box that keep itself updated automatically.
 - You trust the _Debian community_ to publish security updates.
