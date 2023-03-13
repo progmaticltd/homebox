@@ -2,8 +2,9 @@
 
 # The default value for a certificate to create
 # when no certificates are specified.
-# This is useful for testing the role
+# This is also useful for testing the role
 certificates:
+  - name: default
   - name: main
 
 # Do not recreate the certificates by default,
