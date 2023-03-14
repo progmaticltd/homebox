@@ -18,8 +18,6 @@
       tags: firewall
     - role: dns-pdns
       tags: dns
-    - role: dns-publish
-      tags: dns
     - role: certificates
       tags: cert
     - role: ldap-openldap
@@ -50,8 +48,8 @@
       tags: autodiscover
     - role: autoconfig
       tags: autoconfig
-    - role: promteheus
-      tags: promteheus
+    - role: prometheus
+      tags: prometheus
     - role: grafana
       tags: grafana
     - role: post-install

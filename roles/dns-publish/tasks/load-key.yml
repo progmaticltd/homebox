@@ -4,7 +4,7 @@
   set_fact:
     key_fields: '{{ key_line.split(":") }}'
 
-- name: SLoad algo name
+- name: Load algo name
   set_fact:
     algo_name: '{{ key_fields[5] }}'
 
@@ -23,7 +23,7 @@
       algorithm: '{{ key_algorithm.id }}'
       id: '{{ key_fields[6] | int }}'
 
-- name: Load key data
+dns-publish/tasks/- name: Load key data
   register: key_data_cmd
   shell: >-
     pdnsutil export-zone-dnskey {{ network.domain }} {{ key.id }}

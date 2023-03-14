@@ -1,0 +1,17 @@
+---
+
+# This playbook will publish the DNS information
+# and start the renewal of all the certificates.
+
+- name: Run all the tasks to make the system live
+  hosts: homebox
+  vars_files:
+    - '{{ playbook_dir }}/../config/system.yml'
+    - '{{ playbook_dir }}/../config/defaults.yml'
+  roles:
+    - role: load-defaults
+      tags: always
+    - role: external-ip-type
+      tags: always
+    - role: dns-publish
+      tags: dns
