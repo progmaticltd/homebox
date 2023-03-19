@@ -19,7 +19,7 @@
 - name: Create the default DNT policy
   copy:
     src: dnt-policy.txt
-    dest: /var/www/defaut/.well-known/dnt-policy.txt
+    dest: /var/www/default/.well-known/dnt-policy.txt
 
 - name: Create the root website configuration file
   notify:
