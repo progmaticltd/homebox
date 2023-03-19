@@ -34,6 +34,9 @@
 - name: Backup configuration tasks
   include_tasks: backup.yml
 
+- name: Deploy specific logging settings
+  include_tasks: rsyslog.yml
+
 - name: Add Prometheus alerts
   when: prometheus.install
   tags: prometheus

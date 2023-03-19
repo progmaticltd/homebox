@@ -8,7 +8,7 @@ table inet filter {
         iif lo accept
 
         # Accept traffic originated from us, and reject invalid
-		ct state vmap { established : accept, related : accept, invalid : drop }
+        ct state vmap { established : accept, related : accept, invalid : drop }
 
         # DHCP
         udp sport 67 udp dport 68 limit rate 1/second counter accept \

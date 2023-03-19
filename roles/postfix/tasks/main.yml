@@ -21,6 +21,9 @@
 - name: AppArmor configuration
   include_tasks: apparmor.yml
 
+- name: Logging configuration
+  include_tasks: rsyslog.yml
+
 - name: Add Prometheus alerts
   when: prometheus.install
   tags: prometheus

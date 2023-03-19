@@ -3,12 +3,15 @@
 - name: Use the live Acme url
   set_fact:
     acme_url: https://acme-v02.api.letsencrypt.org/directory
+  tags: preinstall
 
 - name: Allow LetsEncrypt web site access in the proxy
   lineinfile:
     path: /etc/tinyproxy/filter
     line: acme-v02.api.letsencrypt.org
+  tags: preinstall
 
 - name: Use the system store for verification
   set_fact:
     acme_root: /etc/ssl/certs/ca-certificates.crt
+  tags: preinstall

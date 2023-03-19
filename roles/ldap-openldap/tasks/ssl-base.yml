@@ -5,7 +5,7 @@
     certificates:
       - name: ldap
         san_list:
-          - 'main.{{ network.domain }}'
+          - 'DNS:main.{{ network.domain }}'
   include_role:
     name: certificates
 

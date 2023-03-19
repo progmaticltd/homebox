@@ -1,0 +1,42 @@
+---
+
+- name: Create temporary self-signed certificate
+  openssl_privatekey:
+    path: /etc/ssl/private/homebox-temp-ca.key
+  tags: certs
+
+- name: Create certificate signing request (CSR) for CA certificate
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: /etc/ssl/private/homebox-temp-ca.key
+    common_name: Temporary CA for {{ network.domain }}
+    use_common_name_for_san: false
+    basic_constraints:
+      - 'CA:TRUE'
+    basic_constraints_critical: true
+    key_usage:
+      - keyCertSign
+    key_usage_critical: true
+  register: ca_csr
+  tags: certs
+
+- name: Create self-signed CA certificate from CSR
+  community.crypto.x509_certificate:
+    path: /etc/ssl/certs/homebox-temp-ca.pem
+    csr_content: "{{ ca_csr.csr }}"
+    privatekey_path: /etc/ssl/private/homebox-temp-ca.key
+    provider: selfsigned
+    owner: root
+    group: ssl-cert
+    mode: 0644
+  tags: certs
+
+- name: Register the certificate authority
+  notify: Reload certificates
+  copy:
+    src: /etc/ssl/certs/homebox-temp-ca.pem
+    dest: /usr/local/share/ca-certificates/homebox-temp-ca.crt
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: true
+  tags: certs

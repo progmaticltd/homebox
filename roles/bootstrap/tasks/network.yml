@@ -6,6 +6,10 @@
     path: /etc/hosts
     attributes: -i
 
+- name: Set the hostname
+  hostname:
+    name: '{{ network.hostname }}'
+
 - name: Template and lock /etc/hosts
   tags: network
   template:
@@ -32,6 +36,16 @@
   file:
     path: /etc/resolv.conf
     attributes: -i
+
+- name: Filter by IP address for IPv6
+  when: external_ip_type == 'AAAA'
+  set_fact:
+    dns_servers: '{{ network.dns.servers | ipv6 }}'
+
+- name: Filter by IP address for IPv4
+  when: external_ip_type == 'A'
+  set_fact:
+    dns_servers: '{{ network.dns.servers | ipv4 }}'
 
 - name: Template and lock /etc/resolv.conf
   tags: network

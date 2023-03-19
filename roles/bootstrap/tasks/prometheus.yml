@@ -1,6 +1,13 @@
 ---
 
-- name: create directory structure
+- name: Create the prometheus alerts directory
   file:
-    path: /etc/prometheus/alerts/
+    path: /etc/prometheus/alerts
     state: directory
+  tags: prometheus
+
+- name: Create the prometheus targets directory
+  file:
+    path: /etc/prometheus/targets
+    state: directory
+  tags: prometheus

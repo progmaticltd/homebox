@@ -1,3 +1,4 @@
+---
 
 - name: Restart postfix
   tags: postfix
@@ -26,5 +27,11 @@
 - name: Restart firewall
   systemd:
     name: nftables
+    state: restarted
+    no_block: true
+
+- name: Restart rsyslog
+  systemd:
+    name: rsyslog
     state: restarted
     no_block: true

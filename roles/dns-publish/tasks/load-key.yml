@@ -4,7 +4,7 @@
   set_fact:
     key_fields: '{{ key_line.split(":") }}'
 
-- name: SLoad algo name
+- name: Load algo name
   set_fact:
     algo_name: '{{ key_fields[5] }}'
 

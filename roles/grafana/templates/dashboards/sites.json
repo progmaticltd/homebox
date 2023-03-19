@@ -1,0 +1,413 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 14,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "[[ prometheus_ds.uid ]]"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SSL"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "color": "red",
+                        "index": 0,
+                        "text": "No"
+                      },
+                      "1": {
+                        "color": "green",
+                        "index": 1,
+                        "text": "Yes"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 17,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "range"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "instance"
+          }
+        ]
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "probe_http_ssl{instance=~\"https://.*\"}",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "ssl"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "probe_http_redirects{instance=~\"https://.*\"}",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "nb_redirects"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "probe_http_version{instance=~\"https://.*\"}",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "http_version"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "probe_http_status_code{instance=~\"https://.*\"}",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "http_status"
+        }
+      ],
+      "title": "Sites status",
+      "transformations": [
+        {
+          "id": "joinByLabels",
+          "options": {
+            "join": [
+              "instance"
+            ],
+            "value": "__name__"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "instance": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "job": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              },
+              "probe_http_redirects": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "probe_http_ssl": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "probe_http_status_code": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "probe_http_version": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "probe_tls_version_info": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "version": {
+                "aggregations": []
+              }
+            }
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "probe_http_ssl.*",
+            "renamePattern": "SSL"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "probe_http_redirects.*",
+            "renamePattern": "Redirect"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "probe_http_version.*",
+            "renamePattern": "HTTP version"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "probe_http_status_code.*",
+            "renamePattern": "Response"
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "[[ prometheus_ds.uid ]]"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 7,
+        "x": 17,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "range"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "instance"
+          }
+        ]
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "[[ prometheus_ds.uid ]]"
+          },
+          "editorMode": "code",
+          "expr": "probe_tls_version_info{version=\"TLS 1.3\"}",
+          "legendFormat": "tls13",
+          "range": true,
+          "refId": "tls_13"
+        }
+      ],
+      "title": "TLS 1.3",
+      "transformations": [
+        {
+          "id": "joinByLabels",
+          "options": {
+            "join": [
+              "instance"
+            ],
+            "value": "version"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "TLS 1.0": {
+                "aggregations": [],
+                "operation": "aggregate"
+              },
+              "TLS 1.3": {
+                "aggregations": [
+                  "last"
+                ]
+              },
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              },
+              "instance": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "job": {
+                "aggregations": [
+                  "lastNotNull"
+                ]
+              },
+              "probe_http_redirects": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "probe_http_ssl": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "probe_http_status_code": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "probe_http_version": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "probe_tls_version_info": {
+                "aggregations": [
+                  "last"
+                ],
+                "operation": "aggregate"
+              },
+              "version": {
+                "aggregations": []
+              }
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Sites",
+  "uid": "2ais3yJVz",
+  "version": 4,
+  "weekStart": ""
+}

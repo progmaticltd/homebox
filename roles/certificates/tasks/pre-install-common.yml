@@ -7,6 +7,7 @@
     mode: 0755
     owner: root
     group: root
+  tags: preinstall
 
 - name: Create the lego configuration directory
   file:
@@ -14,6 +15,7 @@
     state: directory
     mode: 0750
     group: ssl-cert
+  tags: preinstall
 
 - name: Create the directory to store certificates files
   file:
@@ -21,17 +23,20 @@
     state: directory
     mode: 0750
     group: ssl-cert
+  tags: preinstall
 
 - name: link for compatibility with lego executable
   file:
     src: /var/lib/lego/certificates
     dest: /etc/lego/certificates
     state: link
+  tags: preinstall
 
 - name: Get the DNS api key
   no_log: '{{ not system.devel }}'
   set_fact:
     api_key: '{{ lookup(creds.store, creds.prefix + "dns/api-key") }}'
+  tags: preinstall
 
 - name: Store the API key for certificate renewal
   copy:
@@ -40,3 +45,4 @@
     mode: 0600
     owner: root
     group: root
+  tags: preinstall

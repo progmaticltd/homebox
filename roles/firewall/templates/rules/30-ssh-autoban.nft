@@ -18,14 +18,14 @@ table inet filter {
 
     chain input {
 
-		# Limit new SSH connections ala fail2ban
+        # Limit new SSH connections ala fail2ban
         meta nfproto ipv4 tcp dport ssh ct state new,untracked \
-		limit rate over {{ security.autoban.rate }} add @banned_ipv4 { ip saddr }
+        limit rate over {{ security.autoban.rate }} add @banned_ipv4 { ip saddr }
 
         meta nfproto ipv6 tcp dport ssh ct state new,untracked \
-		limit rate over {{ security.autoban.rate }} add @banned_ipv6 { ip6 saddr }
+        limit rate over {{ security.autoban.rate }} add @banned_ipv6 { ip6 saddr }
 
-		# Reject the traffic explicitly
+        # Reject the traffic explicitly
         ip saddr @banned_ipv4 reject with icmp type admin-prohibited
         ip6 saddr @banned_ipv6 reject with icmpv6 type admin-prohibited
 

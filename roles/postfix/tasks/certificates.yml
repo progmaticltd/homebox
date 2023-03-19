@@ -5,7 +5,6 @@
     certificates:
       - name: smtp
         type: rsa2048
-        pem: true
   include_role:
     name: certificates
 

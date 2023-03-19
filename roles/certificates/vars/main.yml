@@ -2,5 +2,7 @@
 
 cert_packages:
   - ca-certificates
+  - colorize
+  - jq
   - lego
   - ssl-cert

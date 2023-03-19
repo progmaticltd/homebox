@@ -1,9 +1,0 @@
----
-
-- name: Copy the systemd mount file
-  notify:
-    - Reload systemd
-    - Mount home-users
-  template:
-    src: home-users.mount
-    dest: /etc/systemd/system/home-users.mount

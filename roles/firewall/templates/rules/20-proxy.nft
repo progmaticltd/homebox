@@ -1,0 +1,17 @@
+#!/usr/sbin/nft -f
+
+# Transparent proxy rule
+
+table ip nat {
+    chain prerouting {
+        type nat hook prerouting priority filter; policy accept;
+
+        iif "{{ ext_iface }}" tcp dport 80 redirect to :8888
+        iif "{{ ext_iface }}" tcp dport 443 redirect to :8888
+    }
+
+    chain postrouting {
+        type nat hook postrouting priority srcnat; policy accept;
+        oif "{{ ext_iface }}" masquerade
+    }
+}

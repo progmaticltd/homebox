@@ -18,9 +18,6 @@
 - name: Configure rspamd to use the proxy
   include_tasks: proxy.yml
 
-- name: Configure rspamd firewall outbound rules
-  include_tasks: firewall.yml
-
 - name: Add Prometheus alerts
   when: prometheus.install
   tags: prometheus

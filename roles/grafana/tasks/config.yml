@@ -52,6 +52,11 @@
 - name: Set the admin password using the API
   when: package_status.changed | default(false)
   block:
+    - name: Wait for Grafana API to be available
+      wait_for:
+        host: 127.0.0.1
+        port: 3000
+        delay: 10
     - name: Set the admin password using the API
       register: password_api
       uri:

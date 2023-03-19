@@ -1,7 +1,15 @@
 ---
 
-certificates: [ ]
+# The default value for a certificate to create
+# when no certificates are specified.
+# This is also useful for testing the role
+certificates:
+  - name: default
+  - name: main
 
 # Do not recreate the certificates by default,
 # unless they are not valid
 cert_recreate: false
+
+# The default duration for temporary certificates generated on first install
+tmp_duration: +2w

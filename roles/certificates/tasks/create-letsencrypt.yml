@@ -5,23 +5,34 @@
   set_fact:
     fqdn: '{{ certificate.name }}.{{ network.domain }}'
     filename: '{{ certificate.name }}.{{ network.domain }}'
+  tags: certs
 
 - name: Build the certificate FQDN for the default site
   when: certificate.name == 'default'
   set_fact:
     fqdn: '{{ network.domain }}'
     filename: '{{ network.domain }}'
+  tags: certs
 
 - name: Build the certificate FQDN for a wildcard
   when: certificate.name == '_'
   set_fact:
     fqdn: '*.{{ network.domain }}'
     filename: '_.{{ network.domain }}'
+  tags: certs
+
+- name: Create the hook directory
+  file:
+    path: /etc/lego/hooks/{{ filename }}/
+    state: directory
+    mode: 0700
+  tags: certs
 
 - name: Check if the certificate exists
   register: cert_file
   stat:
     path: /var/lib/lego/certificates/{{ filename }}.crt
+  tags: certs
 
 - name: Check if the certificate exists and is valid
   when: cert_file.stat.exists
@@ -33,11 +44,13 @@
     /var/lib/lego/certificates/{{ filename }}.crt
   ignore_errors: true
   changed_when: false
+  tags: certs
 
 - name: Set the initial domain argument
   set_fact:
     domains_list:
       - "--domains '{{ fqdn }}'"
+  tags: certs
 
 - name: Build the san list
   set_fact:
@@ -46,6 +59,7 @@
   loop: '{{ certificate.san_list | default([]) }}'
   loop_control:
     loop_var: san_domain
+  tags: certs
 
 - name: Store the certificate renewal decision
   set_fact:
@@ -53,6 +67,7 @@
       {{ cert_recreate
       or not cert_file.stat.exists
       or cert_check_cmd.failed }}
+  tags: certs
 
 - name: Create the certificate
   when: renew_cert
@@ -74,61 +89,21 @@
     {{ certificate.pem | default(false) | ternary("--pem", " ") }}
     run
   changed_when: true
+  tags: certs
 
 - name: Add the certificate to the list of generated ones
   when: renew_cert
   set_fact:
     updated_certs: "{{ updated_certs | default([]) + [ fqdn ] }}"
+  tags: certs
 
-- name: Set the certificate permissions
-  file:
-    path: /var/lib/lego/certificates/{{ filename }}.crt
-    group: ssl-cert
-    mode: 0644
-
-- name: Set the certificate issuer permissions
-  file:
-    path: /var/lib/lego/certificates/{{ filename }}.issuer.crt
-    group: ssl-cert
-    mode: 0644
-
-- name: Set the pem file permissions
-  when: certificate.pem | default(false)
-  file:
-    path: /var/lib/lego/certificates/{{ filename }}.pem
-    group: ssl-cert
-    mode: 0640
-
-- name: Set the private keys permissions
-  file:
-    path: /var/lib/lego/certificates/{{ filename }}.key
-    group: ssl-cert
-    mode: 0640
-
-- name: Create the hook directory
-  file:
-    path: /etc/lego/hooks/{{ filename }}/
-    state: directory
-    mode: 0700
-
-- name: Create the symbolic links in the debian standard directory
-  file:
-    src: '{{ file.src }}'
-    dest: '{{ file.dest }}'
-    state: link
-  loop:
-    - src: /var/lib/lego/certificates/{{ filename }}.issuer.crt
-      dest: /etc/ssl/certs/{{ filename }}.issuer.crt
-    - src: /var/lib/lego/certificates/{{ filename }}.crt
-      dest: /etc/ssl/certs/{{ filename }}.crt
-    - src: /var/lib/lego/certificates/{{ filename }}.key
-      dest: /etc/ssl/private/{{ filename }}.key
-  loop_control:
-    loop_var: file
-
-- name: Create the symbolic link for the pem file in the debian standard directory
-  when: certificate.pem | default(false)
-  file:
-    src: /var/lib/lego/certificates/{{ filename }}.pem
-    dest: /etc/ssl/private/{{ filename }}.pem
-    state: link
+- name: Add monitor settings for prometheus blackbox exporter
+  when:
+    - certificate.monitor is defined
+    - prometheus.install
+  lineinfile:
+    path: /etc/lego/monitor.list
+    line: '{{ certificate.monitor }}'
+    create: true
+    mode: 0600
+  tags: certs

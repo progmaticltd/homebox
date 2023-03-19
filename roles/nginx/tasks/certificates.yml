@@ -4,8 +4,11 @@
   vars:
     certificates:
       - name: default
+        type: ec384
       - name: www
+        type: ec384
       - name: _
+        type: ec384
   include_role:
     name: certificates
     apply: { tags: always }

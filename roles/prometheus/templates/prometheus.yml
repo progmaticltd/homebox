@@ -45,3 +45,97 @@ scrape_configs:
     file_sd_configs:
       - files:
           - '/etc/prometheus/targets/*.yml'
+
+  # Alert manager
+  - job_name: blackbox
+    metrics_path: /metrics
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - 127.0.0.1:9115
+
+  - job_name: blackbox-http
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - https://[[ network.domain ]]/
+        - https://www.[[ network.domain ]]/
+        - https://autoconfig.[[ network.domain ]]/
+        - https://autodiscover.[[ network.domain ]]/
+        - https://grafana.[[ network.domain ]]/
+        - https://mta-sts.[[ network.domain ]]/
+        - https://openpgpkey.[[ network.domain ]]/
+        - https://prometheus.[[ network.domain ]]/
+        - https://rspamd.[[ network.domain ]]/
+        - https://sogo.[[ network.domain ]]/
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115
+
+  - job_name: blackbox-imap
+    metrics_path: /probe
+    params:
+      module: [imap]
+    static_configs:
+      - targets:
+        - imap.[[ network.domain ]]:993
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115
+
+  - job_name: blackbox-imap-startls
+    metrics_path: /probe
+    params:
+      module: [imap_starttls]
+    static_configs:
+      - targets:
+        - imap.[[ network.domain ]]:143
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115
+
+  - job_name: blackbox-smtp
+    metrics_path: /probe
+    params:
+      module: [smtp]
+    static_configs:
+      - targets:
+        - smtp.[[ network.domain ]]:465
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115
+
+  - job_name: blackbox-smtp-startls
+    metrics_path: /probe
+    params:
+      module: [smtp_starttls]
+    static_configs:
+      - targets:
+        - smtp.[[ network.domain ]]:25
+        - smtp.[[ network.domain ]]:587
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115

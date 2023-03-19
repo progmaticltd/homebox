@@ -1,9 +1,11 @@
 ---
 
 # Packages to remove before the installation
+# The systemd-resolved package isn't yet in main bullseye repository
 unwanted_packages:
   - ntp
   - resolvconf
+  - systemd-resolved
 
 
 # These packages are absolutely required to run homebox

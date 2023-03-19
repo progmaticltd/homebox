@@ -5,17 +5,27 @@
     src: renew.conf
     dest: /etc/lego/renew.conf
     mode: 0400
+  tags: postinstall
 
 - name: Copy the certificate renewal script
   copy:
     src: cert-renew.sh
     dest: /etc/cron.weekly/cert-renew
     mode: 0700
+  tags: postinstall
+
+- name: Copy the certificate status script
+  copy:
+    src: cert-status.sh
+    dest: /etc/cron.weekly/cert-status
+    mode: 0755
+  tags: postinstall
 
 - name: Update system certificates to add LetsEncrypt staging CAs
   when: system.devel
   shell: update-ca-certificates
   changed_when: true
+  tags: postinstall
 
 - name: Modify SSL abstractions
   notify: Restart AppArmor
@@ -28,6 +38,7 @@
     - '  /var/lib/lego/certificates/*.crt r,'
   loop_control:
     loop_var: line
+  tags: postinstall
 
 - name: Modify SSL key abstractions
   notify: Restart AppArmor
@@ -40,3 +51,4 @@
     - '  /var/lib/lego/certificates/*.key r,'
   loop_control:
     loop_var: line
+  tags: postinstall

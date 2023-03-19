@@ -3,3 +3,4 @@
 - name: Install the required packages
   apt:
     name: '{{ cert_packages }}'
+  tags: apt

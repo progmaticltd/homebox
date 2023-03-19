@@ -1,28 +1,59 @@
 ---
 
+- name: Common facts
+  include_tasks: facts.yml
+  tags: facts
+
 - name: Install the packages needed
   include_tasks: packages.yml
+  tags: apt
 
 - name: Run the common pre installation tasks
   include_tasks: pre-install-common.yml
+  tags: preinstall
+
+- name: Check if the DNS server is live
+  include_tasks: dns-facts.yml
+  tags: dns
+
+- name: Create temporary CA for self signing
+  when: not dns_is_live
+  include_tasks: self-signed-init.yml
+  tags: certs
 
 - name: Run the development pre installation tasks
   when: system.devel
   include_tasks: pre-install-dev.yml
+  tags: preinstall
 
 - name: Run the live pre installation tasks
   when: not system.devel
   include_tasks: pre-install-live.yml
+  tags: preinstall
 
-- name: Initialise the array of updated certs
-  set_fact:
-    updated_certs: [ ]
-
-- name: Create all the certificates
-  include_tasks: create-one.yml
+- name: Create temporary self-signed certificates
+  when: not dns_is_live
+  include_tasks: create-self-signed.yml
   loop: '{{ certificates }}'
   loop_control:
     loop_var: certificate
+  tags: certs
+
+- name: Create the certificates using Letsencrypt
+  when: dns_is_live
+  include_tasks: create-letsencrypt.yml
+  loop: '{{ certificates }}'
+  loop_control:
+    loop_var: certificate
+  tags: certs
+
+- name: Call common post creation tasks
+  include_tasks: post-create-common.yml
+  loop: '{{ certificates }}'
+  loop_control:
+    loop_var: certificate
+  tags: certs
 
 - name: Run the common post installation tasks
   include_tasks: post-install-common.yml
+  tags: postinstall
