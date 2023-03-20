@@ -13,7 +13,7 @@
 # See RFC 8615
 - name: Create the well known directory for the services
   file:
-    path: /var/www/defaut/.well-known/
+    path: /var/www/default/.well-known/
     state: directory
 
 - name: Create the default DNT policy
