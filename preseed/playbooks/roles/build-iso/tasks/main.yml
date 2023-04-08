@@ -92,6 +92,6 @@
   when: cdimage.destination
   shell: >-
     mv '{{ build_dir }}/images/debian-11-amd64-CD-1.iso'
-    {{ cdimage.destination }}/homebox-{{ system.hostname }}-installer.iso
+    {{ cdimage.destination }}/homebox-{{ system.hostname }}-{{ system.preseed }}-installer.iso
   args:
     warn: false
