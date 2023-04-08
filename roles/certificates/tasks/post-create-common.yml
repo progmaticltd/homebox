@@ -1,5 +1,26 @@
 ---
 
+- name: Build the certificate FQDN
+  when: certificate.name != 'default'
+  set_fact:
+    fqdn: '{{ certificate.name }}.{{ network.domain }}'
+    filename: '{{ certificate.name }}.{{ network.domain }}'
+  tags: certs
+
+- name: Build the certificate FQDN for the default site
+  when: certificate.name == 'default'
+  set_fact:
+    fqdn: '{{ network.domain }}'
+    filename: '{{ network.domain }}'
+  tags: certs
+
+- name: Build the certificate FQDN for a wildcard
+  when: certificate.name == '_'
+  set_fact:
+    fqdn: '*.{{ network.domain }}'
+    filename: '_.{{ network.domain }}'
+  tags: certs
+
 - name: Create the symbolic links in the debian standard directory
   file:
     src: '{{ file.src }}'
