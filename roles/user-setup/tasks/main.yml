@@ -20,6 +20,8 @@
   loop: '{{ users }}'
   loop_control:
     loop_var: user
+  tags: storage
 
 - name: Initialise postmaster account
   include_tasks: init-postmaster.yml
+  tags: storage

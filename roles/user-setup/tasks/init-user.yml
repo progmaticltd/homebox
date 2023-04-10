@@ -3,3 +3,33 @@
 - name: Create the users home folders from /etc/skel
   shell: mkhomedir_helper {{ user.uid }} 077 /etc/skel
   changed_when: true
+  args:
+    creates: /home/users/.config/homebox
+  tags: storage
+
+- name: Create the emails archive folder
+  file:
+    path: /home/archives/{{ user.uid }}
+    state: directory
+    owner: '{{ user.uid }}'
+    group: Mail users
+    mode: 0700
+  tags: storage
+
+- name: Create the emails archive folder
+  file:
+    path: /home/archives/{{ user.uid }}/mails
+    state: directory
+    owner: '{{ user.uid }}'
+    group: Mail users
+    mode: 0755
+  tags: storage
+
+- name: Create the emails archive folder
+  file:
+    path: /home/archives/{{ user.uid }}/mails/maildir
+    state: directory
+    owner: '{{ user.uid }}'
+    group: Mail users
+    mode: 0755
+  tags: storage

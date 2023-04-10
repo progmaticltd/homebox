@@ -3,3 +3,31 @@
 - name: Create the users home folders for postmaster
   shell: mkhomedir_helper postmaster 077 /etc/skel
   changed_when: true
+  tags: storage
+
+- name: Create the emails archive folder
+  file:
+    path: /home/archives/postmaster
+    state: directory
+    owner: postmaster
+    group: Mail users
+    mode: 0700
+  tags: storage
+
+- name: Create the emails archive folder
+  file:
+    path: /home/archives/postmaster/mails
+    state: directory
+    owner: postmaster
+    group: Mail users
+    mode: 0755
+  tags: storage
+
+- name: Create the emails archive folder
+  file:
+    path: /home/archives/postmaster/mails/maildir
+    state: directory
+    owner: postmaster
+    group: Mail users
+    mode: 0755
+  tags: storage
