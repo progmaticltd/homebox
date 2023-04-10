@@ -20,7 +20,7 @@
     state: directory
     owner: postmaster
     group: Mail users
-    mode: 0755
+    mode: 0700
   tags: storage
 
 - name: Create the emails archive folder
@@ -29,5 +29,14 @@
     state: directory
     owner: postmaster
     group: Mail users
-    mode: 0755
+    mode: 0700
+  tags: storage
+
+- name: Create the emails archive index folder
+  file:
+    path: /home/archives/postmaster/mails/indexes
+    state: directory
+    owner: postmaster
+    group: Mail users
+    mode: 0700
   tags: storage
