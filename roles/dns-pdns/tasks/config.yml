@@ -7,6 +7,7 @@
     owner: pdns
     group: pdns
     mode: 0700
+  tags: config
 
 - name: Initialise the database
   register: database
@@ -19,6 +20,7 @@
     chdir: /var/lib/powerdns/
     executable: /bin/bash
   changed_when: true
+  tags: config
 
 - name: Set the right permissions
   notify: Restart PowerDNS
@@ -27,11 +29,13 @@
     owner: pdns
     group: pdns
     mode: 0644
+  tags: config
 
 - name: Create configuration subdir
   file:
     path: /etc/powerdns/pdns.d
     state: directory
+  tags: config
 
 - name: Create a custom api key
   set_fact:
@@ -39,6 +43,7 @@
       {{ lookup(creds.store, creds.prefix + "dns/api-key"
       + creds.opts.create + creds.opts.system)
       }}
+  tags: config
 
 - name: Set default SOA
   set_fact:
@@ -49,6 +54,7 @@
       {{ dns.expire }}
       {{ dns.ttl }}
     cacheable: yes
+  tags: config
 
 - name: Add custom settings
   notify: Restart PowerDNS
@@ -58,3 +64,4 @@
     owner: root
     group: pdns
     mode: 0640
+  tags: config

@@ -5,6 +5,7 @@
 
 - name: Run the configuration tasks
   include_tasks: config.yml
+  tags: config
 
 - name: Initialise the database with some content
   include_tasks: init-db.yml
@@ -14,6 +15,10 @@
 
 - name: Set-up DNSSEC
   include_tasks: dnssec.yml
+
+- name: Configure domain forwarding
+  include_tasks: forward.yml
+  tags: forward
 
 - name: Set-up Prometheus config
   include_tasks: prometheus.yml

@@ -1,0 +1,9 @@
+---
+
+- name: Configure unbound to forward queries
+  notify: Restart unbound
+  template:
+    src: unbound-forward.conf
+    dest: /etc/unbound/unbound.conf.d/10-forward-internal.conf
+    mode: 0644
+  tags: forward

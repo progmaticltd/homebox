@@ -4,3 +4,8 @@
   systemd:
     name: pdns
     state: restarted
+
+- name: Restart unbound
+  service:
+    name: unbound
+    state: restarted
