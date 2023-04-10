@@ -1,55 +1,74 @@
 ---
 
 - name: Unlock /etc/hosts
-  tags: network
   file:
     path: /etc/hosts
     attributes: -i
+  tags: network
 
 - name: Set the hostname
   hostname:
     name: '{{ network.hostname }}'
+  tags: network
 
 - name: Template and lock /etc/hosts
-  tags: network
   template:
     src: hosts.conf
     dest: /etc/hosts
     attributes: +i
+  tags: network
 
 - name: Check if /etc/resolv.conf is a real file
-  tags: network
   register: resolv_conf
   stat:
     path: /etc/resolv.conf
+  tags: network
 
 - name: Remove the symbolic link
   when: resolv_conf.stat.exists and resolv_conf.stat.islnk
-  tags: network
   file:
     path: /etc/resolv.conf
     state: absent
+  tags: network
 
 - name: Unlock /etc/resolv.conf
   when: resolv_conf.stat.exists and resolv_conf.stat.isreg
-  tags: network
   file:
     path: /etc/resolv.conf
     attributes: -i
+  tags: network
 
 - name: Filter by IP address for IPv6
   when: external_ip_type == 'AAAA'
   set_fact:
     dns_servers: '{{ network.dns.servers | ipv6 }}'
+  tags: network
 
 - name: Filter by IP address for IPv4
   when: external_ip_type == 'A'
   set_fact:
     dns_servers: '{{ network.dns.servers | ipv4 }}'
+  tags: network
+
+- name: Deploy unbound common config
+  notify: Restart unbound
+  template:
+    src: 00-unbound.conf
+    dest: /etc/unbound/unbound.conf.d/00-common.conf
+    mode: 0644
+  tags: network
+
+- name: Deploy unbound default forward config
+  notify: Restart unbound
+  template:
+    src: 90-unbound.conf
+    dest: /etc/unbound/unbound.conf.d/90-forward-default.conf
+    mode: 0644
+  tags: network
 
 - name: Template and lock /etc/resolv.conf
-  tags: network
   template:
     src: resolv.conf
     dest: /etc/resolv.conf
     attributes: +i
+  tags: network

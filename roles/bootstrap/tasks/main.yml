@@ -8,8 +8,8 @@
   include_tasks: ansible-logs.yml
 
 - name: Network related tasks
-  tags: network
   include_tasks: network.yml
+  tags: network
 
 - name: Track changes in the system
   when: system.track_changes

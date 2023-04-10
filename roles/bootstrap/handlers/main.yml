@@ -4,3 +4,8 @@
   service:
     name: tinyproxy
     state: restarted
+
+- name: Restart unbound
+  service:
+    name: unbound
+    state: restarted
