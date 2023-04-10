@@ -45,7 +45,7 @@
 
 - name: Create the emails current uear archive folder
   file:
-    path: /home/archives/{{ user.uid }}/mails/maildir/.{{ ansible_date_time.year }}
+    path: /home/archives/{{ user.uid }}/mails/maildir/.{{ now(fmt="%Y") }}
     state: directory
     owner: '{{ user.uid }}'
     group: Mail users
