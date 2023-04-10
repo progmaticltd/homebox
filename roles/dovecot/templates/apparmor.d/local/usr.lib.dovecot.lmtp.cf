@@ -1,11 +1,11 @@
   # Local docecot LMTP configuration
-  owner /home/users/*/mails/maildir/ rwkl,
-  owner /home/users/*/mails/maildir/** rwkl,
-  owner /home/users/*/mails/maildir/** ra,
+  owner /home/{users,archives}/*/mails/maildir/ rwkl,
+  owner /home/{users,archives}/*/mails/maildir/** rwkl,
+  owner /home/{users,archives}/*/mails/maildir/** ra,
 
   # User sieve scripts
-  owner /home/users/*/mails/sieve/** rwkl,
-  owner /home/users/*/.dovecot.lda-dupes* rwk,
+  owner /home/{users,archives}/*/mails/sieve/** rwkl,
+  owner /home/{users,archives}/*/.dovecot.lda-dupes* rwk,
 
   # Allow the LMTP server to send emails through sendmail
   /usr/sbin/sendmail rPx,
@@ -17,9 +17,9 @@
   /var/lib/dovecot/sieve/* rw,
 
   # When storing indexes outside maildir
-  owner /home/users/*/mails/indexes/**/dovecot.index.log rak,
-  owner /home/users/*/mails/indexes/**/dovecot.index.log rwk,
-  owner /home/users/*/mails/indexes/ rak,
-  owner /home/users/*/mails/indexes/ rwkl,
-  owner /home/users/*/mails/indexes/** rak,
-  owner /home/users/*/mails/indexes/** rwkl,
+  owner /home/{users,archives}/*/mails/indexes/**/dovecot.index.log rak,
+  owner /home/{users,archives}/*/mails/indexes/**/dovecot.index.log rwk,
+  owner /home/{users,archives}/*/mails/indexes/ rak,
+  owner /home/{users,archives}/*/mails/indexes/ rwkl,
+  owner /home/{users,archives}/*/mails/indexes/** rak,
+  owner /home/{users,archives}/*/mails/indexes/** rwkl,

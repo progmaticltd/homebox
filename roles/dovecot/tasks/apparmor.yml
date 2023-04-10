@@ -8,12 +8,14 @@
   loop: '{{ apparmor.profiles }}'
   loop_control:
     loop_var: aa_config
+  tags: apparmor
 
 - name: Get the list of dovecot AppArmor profiles
   register: dovecot_apparmor_profiles
   find:
     paths: /etc/apparmor.d/
     patterns: '*dovecot*'
+  tags: apparmor
 
 - name: Activate AppArmor profiles
   when: aa_templates.changed
@@ -23,6 +25,7 @@
   loop: '{{ dovecot_apparmor_profiles.files }}'
   loop_control:
     loop_var: file
+  tags: apparmor
 
 - name: Install dovecot indexer AppArmor profile
   when: mail.fts.active
@@ -36,6 +39,7 @@
     - usr.local.bin.decode2text
   loop_control:
     loop_var: aa_config
+  tags: apparmor
 
 - name: Activate AppArmor profiles
   when: mail.fts.active and aa_templates.changed
@@ -47,3 +51,4 @@
     - usr.local.bin.decode2text
   loop_control:
     loop_var: aa_config
+  tags: apparmor

@@ -3,14 +3,14 @@
   capability dac_read_search,
 
   # Access maildirs
-  owner /home/users/*/mails/maildir/ rwk,
-  owner /home/users/*/mails/maildir/maildirsize* rwk,
-  owner /home/users/*/mails/maildir/** r,
+  owner /home/{users,archives}/*/mails/maildir/ rwk,
+  owner /home/{users,archives}/*/mails/maildir/maildirsize* rwk,
+  owner /home/{users,archives}/*/mails/maildir/** r,
 
   # Index quotas
-  owner /home/users/*/mails/maildir/dovecot* rwkl,
-  owner /home/users/*/mails/maildir/.vsize.* rwkl,
-  owner /home/users/*/mails/indexes/dovecot* rwkl,
+  owner /home/{users,archives}/*/mails/maildir/dovecot* rwkl,
+  owner /home/{users,archives}/*/mails/maildir/.vsize.* rwkl,
+  owner /home/{users,archives}/*/mails/indexes/dovecot* rwkl,
 
   # Get users and groups list
   /etc/passwd r,

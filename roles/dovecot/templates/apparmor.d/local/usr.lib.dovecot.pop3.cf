@@ -1,14 +1,14 @@
 
   # Basic maildir hierarchy
-  owner /home/users/*/mails/maildir/ r,
-  owner /home/users/*/mails/maildir/** rwkl,
+  owner /home/{users,archives}/*/mails/maildir/ r,
+  owner /home/{users,archives}/*/mails/maildir/** rwkl,
 
   # Access indexes
-  owner /home/users/*/mails/indexes/** rwkl,
+  owner /home/{users,archives}/*/mails/indexes/** rwkl,
 
   # Mail dir size access
-  owner /home/users/*/mails/maildir/maildirsize rw,
-  owner /home/users/*/mails/maildir/maildirsize ra,
+  owner /home/{users,archives}/*/mails/maildir/maildirsize rw,
+  owner /home/{users,archives}/*/mails/maildir/maildirsize ra,
 
   # Allow the imap process to run the global sieve scripts
   /etc/dovecot/sieve/* r,

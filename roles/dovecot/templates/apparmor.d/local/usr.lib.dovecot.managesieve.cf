@@ -1,10 +1,10 @@
   # Mails directory
-  owner /home/users/*/mails/maildir/ r,
-  owner /home/users/*/mails/maildir/dovecot.index rw,
-  owner /home/users/*/mails/maildir/dovecot.index.log rw,
-  owner /home/users/*/mails/maildir/maildirsize rw,
-  owner /home/users/*/mails/sieve/ rw,
-  owner /home/users/*/mails/sieve/** rw,
+  owner /home/{users,archives}/*/mails/maildir/ r,
+  owner /home/{users,archives}/*/mails/maildir/dovecot.index rw,
+  owner /home/{users,archives}/*/mails/maildir/dovecot.index.log rw,
+  owner /home/{users,archives}/*/mails/maildir/maildirsize rw,
+  owner /home/{users,archives}/*/mails/sieve/ rw,
+  owner /home/{users,archives}/*/mails/sieve/** rw,
 
   /usr/bin/doveconf rix,
   /usr/lib/dovecot/managesieve mrix,
@@ -19,13 +19,13 @@
   /etc/passwd r,
 
   # When storing indexes outside maildir
-  owner /home/users/*/mails/indexes/**/dovecot.index.log rak,
-  owner /home/users/*/mails/indexes/**/dovecot.index.log rwk,
-  owner /home/users/*/mails/indexes/ rak,
-  owner /home/users/*/mails/indexes/ rwkl,
-  owner /home/users/*/mails/indexes/** rak,
-  owner /home/users/*/mails/indexes/** rwkl,
-  owner /home/users/*/mails/maildir/dovecot-uidlist rw,
+  owner /home/{users,archives}/*/mails/indexes/**/dovecot.index.log rak,
+  owner /home/{users,archives}/*/mails/indexes/**/dovecot.index.log rwk,
+  owner /home/{users,archives}/*/mails/indexes/ rak,
+  owner /home/{users,archives}/*/mails/indexes/ rwkl,
+  owner /home/{users,archives}/*/mails/indexes/** rak,
+  owner /home/{users,archives}/*/mails/indexes/** rwkl,
+  owner /home/{users,archives}/*/mails/maildir/dovecot-uidlist rw,
 
   # Let managesieve to lock indexes
-  owner /home/users/*/mails/maildir/dovecot.* rwkl,
+  owner /home/{users,archives}/*/mails/maildir/dovecot.* rwkl,

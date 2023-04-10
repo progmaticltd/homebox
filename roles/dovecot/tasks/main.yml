@@ -2,6 +2,7 @@
 
 - name: Set facts
   include_tasks: facts.yml
+  tags: facts
 
 - name: Install the required packages
   include_tasks: packages.yml
@@ -17,6 +18,7 @@
 
 - name: Set some configuration files
   include_tasks: config.yml
+  tags: config
 
 - name: Configure sieve scripts
   include_tasks: sieve.yml
@@ -30,6 +32,7 @@
 
 - name: AppArmor tasks
   include_tasks: apparmor.yml
+  tags: apparmor
 
 - name: Backup configuration tasks
   include_tasks: backup.yml

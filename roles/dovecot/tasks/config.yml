@@ -6,10 +6,10 @@
     path: /etc/dovecot/dovecot.conf
     regexp: '^#?\s?login_trusted_networks.*'
     replace: 'login_trusted_networks = 127.0.0.1 ::1'
+  tags: config
 
 # Activate SSL on the imap server
 - name: Activate SSL configuration
-  tags: ssl, config
   notify: Restart dovecot
   template:
     src: 'conf.d/{{ file }}'
@@ -18,9 +18,9 @@
     - 10-ssl.conf
   loop_control:
     loop_var: file
+  tags: ssl, config
 
 - name: Create dovecot global configuration files
-  tags: config
   notify: Restart dovecot
   template:
     src: '{{ file }}'
@@ -30,26 +30,26 @@
     - dovecot-ldap.conf.ext
   loop_control:
     loop_var: file
+  tags: config
 
 - name: Create the initial list of mail_plugins
-  tags: config
   set_fact:
     mail_plugins: $mail_plugins quota
+  tags: config
 
 - name: Add fts to the list of mail plugins
-  tags: config
   when: mail.fts.active
   set_fact:
     mail_plugins: "{{ mail_plugins }} fts fts_xapian"
+  tags: config
 
 - name: Add virtual mailboxes to the list of mail plugins
-  tags: config
   when: mail.virtual_folders.active
   set_fact:
     mail_plugins: "{{ mail_plugins }} virtual"
+  tags: config
 
 - name: Create dovecot conf.d configuration files
-  tags: config
   notify: Restart dovecot
   template:
     src: 'conf.d/{{ file }}'
@@ -69,14 +69,15 @@
     - 90-quota.conf
   loop_control:
     loop_var: file
+  tags: config
 
 - name: Activate core dumps or not
-  tags: debug
   notify: Restart dovecot
   replace:
     path: /etc/default/dovecot
     regexp: '^#?ALLOW_COREDUMPS=[01]'
     replace: 'ALLOW_COREDUMPS={{ system.debug | ternary(1,0) }}'
+  tags: debug, config
 
 - name: Install a dovecot index update cron job
   cron:
@@ -84,3 +85,4 @@
     special_time: daily
     job: "doveadm -v index -q -A '*'"
     user: root
+  tags: config

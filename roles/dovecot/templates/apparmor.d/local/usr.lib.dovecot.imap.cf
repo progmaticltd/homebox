@@ -1,17 +1,17 @@
 
   # Basic maildir hierarchy
-  owner /home/users/*/mails/maildir/ r,
-  owner /home/users/*/mails/maildir/** rwkl,
+  owner /home/{users,archives}/*/mails/maildir/ r,
+  owner /home/{users,archives}/*/mails/maildir/** rwkl,
 
 {% if mail.virtual_folders.active %}
   # Virtual mailboxes hierarchy
-  owner /home/users/*/mails/virtual/ r,
-  owner /home/users/*/mails/virtual/** rwkl,
+  owner /home/{users,archives}/*/mails/virtual/ r,
+  owner /home/{users,archives}/*/mails/virtual/** rwkl,
 {% endif %}
 
   # Mail dir size access
-  owner /home/users/*/mails/maildir/maildirsize rw,
-  owner /home/users/*/mails/maildir/maildirsize ra,
+  owner /home/{users,archives}/*/mails/maildir/maildirsize rw,
+  owner /home/{users,archives}/*/mails/maildir/maildirsize ra,
 
   # Allow the imap process to run the global sieve scripts
   /etc/dovecot/sieve/* r,
@@ -22,17 +22,18 @@
   /var/lib/dovecot/sieve/* rw,
 
   # Duplicate lock and logs
-  owner /home/users/*/.dovecot.lda-dupes rwkl,
-  owner /home/users/*/.dovecot.lda-dupes.lock rwkl,
-  owner /home/users/*/mails/sieve/logs/* rwk,
+  owner /home/{users,archives}/*/.dovecot.lda-dupes rwkl,
+  owner /home/{users,archives}/*/.dovecot.lda-dupes.lock rwkl,
+  owner /home/{users,archives}/*/mails/sieve/logs/* rwk,
 
   # When storing indexes outside maildir
-  owner /home/users/*/mails/indexes/**/dovecot.index.log rak,
-  owner /home/users/*/mails/indexes/**/dovecot.index.log rwk,
-  owner /home/users/*/mails/indexes/ rak,
-  owner /home/users/*/mails/indexes/ rwkl,
-  owner /home/users/*/mails/indexes/** rak,
-  owner /home/users/*/mails/indexes/** rwkl,
+  owner /home/{users,archives}/*/mails/indexes/**/dovecot.index.log* rak,
+  owner /home/{users,archives}/*/mails/indexes/**/dovecot.index.log* rwk,
+  owner /home/{users,archives}/*/mails/indexes/ rak,
+  owner /home/{users,archives}/*/mails/indexes/ rwkl,
+  owner /home/{users,archives}/*/mails/indexes/** rak,
+  owner /home/{users,archives}/*/mails/indexes/** rwkl,
 
-  # The imap daemon wants to read this folder
-  owner /home/users/*/ r,
+  # The imap daemon wants to read these folders
+  owner /home/{users,archives}/*/ r,
+  owner /home/{users,archives}/*/mails/ r,
