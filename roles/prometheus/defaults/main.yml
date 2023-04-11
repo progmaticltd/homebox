@@ -15,19 +15,19 @@ csp_default:
   default: "'self'"
   list:
     - id: default-src
-      value: "https: 'self'"
+      value: "https: data: 'self'"
     - id: script-src
-      value: "https: 'self' 'unsafe-inline'"
+      value: "https: data: 'self' 'unsafe-inline'"
     - id: img-src
-      value: "https: 'self' 'unsafe-inline'"
+      value: "https: data: 'self' 'unsafe-inline'"
     - id: style-src
-      value: "https: 'self' 'unsafe-inline'"
+      value: "https: data: 'self' 'unsafe-inline'"
     - id: media-src
-      value: "https: 'self'"
+      value: "https: data: 'self'"
     - id: font-src
-      value: "https: 'self'"
+      value: "https: data: 'self'"
     - id: base-uri
-      value: "https: 'self'"
+      value: "https: data: 'self'"
     - id: frame-src
     - id: object-src
     - id: connect-src
