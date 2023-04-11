@@ -1,12 +1,25 @@
 ---
 
+- name: Filter by IP address for IPv6
+  when: external_ip_type == 'AAAA'
+  set_fact:
+    dns_servers: '{{ network.dns.servers | ipv6 }}'
+  tags: dns
+
+- name: Filter by IP address for IPv4
+  when: external_ip_type == 'A'
+  set_fact:
+    dns_servers: '{{ network.dns.servers | ipv4 }}'
+  tags: dns
+
 - name: Chheck if the DNS server is resolving correctly
   register: host_test
-  getent:
-    database: hosts
-    key: test.{{ network.domain }}
-  tags: dns
+  shell: >-
+    host test.{{ network.domain }}
+    {{ dns_servers[0] }}
   ignore_errors: true
+  changed_when: false
+  tags: dns
 
 - name: Store the fact when the DNS server is live
   when: host_test is not failed
