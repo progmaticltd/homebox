@@ -106,14 +106,9 @@ mail_default:
                             # This user can only log-in internally (ip 127.0.0.1),
                             # any external login with this account will fail and be logged
   #############################################################################
-  # Dovecot / solr FTS (Full Text search)
+  # Dovecot FTS (Full Text search using Xapian)
   fts:
-    active: false
-    langs:
-      - id: fr
-        name: French
-      - id: en
-        name: English
+    active: true
   #############################################################################
   # Virtual folders
   virtual_folders:          # Create virtual IMAP folders, like flagged,
