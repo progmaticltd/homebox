@@ -78,11 +78,3 @@
     regexp: '^#?ALLOW_COREDUMPS=[01]'
     replace: 'ALLOW_COREDUMPS={{ system.debug | ternary(1,0) }}'
   tags: debug, config
-
-- name: Install a dovecot index update cron job
-  cron:
-    cron_file: dovecot-indexes
-    special_time: daily
-    job: "doveadm -v index -q -A '*'"
-    user: root
-  tags: config
