@@ -42,12 +42,13 @@
 
 - name: Add Prometheus alerts
   when: prometheus.install
-  tags: prometheus
   include_tasks: prometheus.yml
+  tags: prometheus
 
 - name: Include full text search tasks
   when: mail.fts.active
   include_tasks: fts.yml
+  tags: fts
 
 - name: Include virtual mailboxes tasks
   when: mail.virtual_folders.active

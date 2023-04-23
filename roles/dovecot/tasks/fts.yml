@@ -6,12 +6,14 @@
     cache_valid_time: 86400
     name: '{{ dovecot.fts_packages }}'
     state: present
+  tags: fts
 
 - name: Copy decode2text script
   copy:
     src: fts/decode2text
     dest: /usr/local/bin/decode2text
     mode: 0755
+  tags: fts
 
 - name: Make sure the log file exist
   file:
@@ -20,6 +22,7 @@
     owner: dovecot
     group: dovecot
     state: touch
+  tags: fts
 
 - name: Copy fts mime configuration files
   template:
@@ -30,3 +33,4 @@
       dest: /etc/dovecot/fts-mime-types.conf
   loop_control:
     loop_var: file
+  tags: fts
