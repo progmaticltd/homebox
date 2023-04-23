@@ -32,15 +32,14 @@ groups:
           resolved: >-
             The alert above is now resolved
 
-
-  # inodes monitoring
+  # inodes monitoring for ext4 filesystems
   - name: '[[ mp.name ]]_inodes_recording'
     interval: '[[ mp.interval | default("60s") ]]'
     rules:
       - record: node_exporter:[[ mp.name ]]_inodes:used
         expr: >-
           100 -
-          100 * (node_filesystem_files_free{mountpoint="[[ mp.path ]]"}
+          100 * (node_filesystem_files_free{mountpoint="[[ mp.path ]]",fstype="ext4"}
           / node_filesystem_files{mountpoint="[[ mp.path ]]"})
 
   - name: '[[ mp.name ]]_inodes_alerting_rules'
