@@ -11,6 +11,7 @@
 
 - name: Configure the basic encryption
   include_tasks: ssl-base.yml
+  tags: certs
 
 - name: Configure the deref module
   include_tasks: module-deref.yml

@@ -6,8 +6,11 @@
       - name: ldap
         san_list:
           - 'DNS:main.{{ network.domain }}'
+          - 'DNS:ldap.{{ network.domain }}'
+          - 'DNS:{{ network.hostname }}.{{ network.domain }}'
   include_role:
     name: certificates
+  tags: certs
 
 - name: Check for updated certificates
   notify: Restart the ldap stack
@@ -15,12 +18,14 @@
     verbosity: 1
     var: updated_certs
   changed_when: updated_certs | length > 0
+  tags: certs
 
 - name: Copy the certificate update hook for LDAP
   copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/ldap.{{ network.domain }}/renew-cert.sh
     mode: 0700
+  tags: certs
 
 - name: Allow openldap to read certificates
   register: openldap_user
@@ -28,26 +33,31 @@
     name: openldap
     groups: ssl-cert
     append: true
+  tags: certs
 
 - name: Restart the ldap stack
   when: openldap_user.changed
   service:
     name: slapd
     state: restarted
+  tags: certs
 
 - name: Copy the ldap ssl config on the server before running it
   register: ldap_ssl
   template:
     src: ssl-config.ldif
     dest: /etc/ldap/changes/ssl-config.ldif
+  tags: certs
 
 - name: Modify the configuration if not already done
   when: ldap_ssl.changed
   command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ssl-config.ldif
   changed_when: true
+  tags: certs
 
 - name: Restart the ldap stack
   when: ldap_ssl.changed
   service:
     name: slapd
     state: restarted
+  tags: certs
