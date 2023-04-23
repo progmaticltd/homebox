@@ -12,3 +12,6 @@
   template:
     src: nftables/pop3-access.nft
     dest: /etc/nftables/70-pop3-access.nft
+
+- name: Restart the firewall now if needed
+  meta: flush_handlers
