@@ -40,6 +40,10 @@ log() {
     echo "$NOW: Notice: $1" >&2
 }
 
+warning() {
+    echo "$NOW: Warning: $1" >&2
+}
+
 debug() {
     echo "$NOW: Debug: $1" >&2
 }
@@ -62,8 +66,8 @@ fi
 
 # Check if the attachment is empty
 if [ ! -s $attach ]; then
-   error "Empty attachment passed ($1)"
-   exit $ERROR_EMPTY_ATTACHMENT
+   wrning "Empty attachment passed ($1)"
+   exit $ERROR_IGNORE
 fi
 
 # Try to guess the mime type automatically
