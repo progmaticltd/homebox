@@ -54,6 +54,11 @@
     loop_var: certificate
   tags: certs
 
+- name: Post installation tasks for self-signed certificates
+  when: not dns_is_live
+  include_tasks: post-install-self-signed.yml
+  tags: certs
+
 - name: Run the common post installation tasks
   include_tasks: post-install-common.yml
   tags: postinstall
