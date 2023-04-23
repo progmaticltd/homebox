@@ -1,5 +1,11 @@
 ---
 
+- name: Install unbound
+  apt:
+    name: unbound
+    state: present
+  tags: network
+
 - name: Unlock /etc/hosts
   file:
     path: /etc/hosts
