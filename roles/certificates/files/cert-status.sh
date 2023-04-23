@@ -12,7 +12,7 @@ for cert_file in $cert_files; do
     fqdn=$(openssl x509 -in $cert_file -noout -subject | sed -E 's/.* = ([\*a-z]+).*/\1/')
     from=$(openssl x509 -in $cert_file -noout -dates | sed -En 's/notBefore=(.*)/\1/p')
     till=$(openssl x509 -in $cert_file -noout -dates | sed -En 's/notAfter=(.*)/\1/p')
-    sans=$(openssl x509 -in $cert_file -noout -ext subjectAltName | tail -n +2 | sed 's/ //g' | tr '\n' ',')
+    sans=$(openssl x509 -in $cert_file -noout -ext subjectAltName | tail -n +2 | sed 's/ //g' | tr '\n' ',' | sed 's/,$//')
 
     line=$(printf "%-16s: %-30s %-30s %-30s %s" "$fqdn" "$from" "$till" "$issuer" "$sans")
 
