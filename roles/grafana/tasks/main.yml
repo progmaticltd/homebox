@@ -1,29 +1,29 @@
 ---
 
 - name: Load the common facts
-  tags: facts
   include_tasks: facts.yml
+  tags: facts
 
 - name: Configure the proxy to access grafana site
-  tags: proxy
   include_tasks: proxy.yml
+  tags: proxy
 
 - name: Install the base packages
-  tags: apt
   include_tasks: packages.yml
+  tags: apt
 
 - name: Configure the base packages
-  tags: config
   include_tasks: config.yml
+  tags: config
 
 - name: Create the certificates
-  tags: certs
   include_tasks: certificates.yml
+  tags: certs
 
 - name: Create the nginx site
-  tags: nginx
   include_tasks: nginx.yml
+  tags: nginx
 
 - name: Create the dashboards
-  tags: dashboards
   include_tasks: dashboards.yml
+  tags: dashboards

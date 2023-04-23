@@ -1,7 +1,6 @@
 ---
 
 - name: Copy nginx configuration
-  tags: nginx
   notify:
     - Test nginx config
     - Restart nginx
@@ -14,11 +13,12 @@
     owner: root
     group: root
     mode: 0644
+  tags: nginx
 
 - name: Activate grafana web site
-  tags: nginx
   notify: Restart nginx
   file:
     src: /etc/nginx/sites-available/grafana.{{ network.domain }}.conf
     dest: /etc/nginx/sites-enabled/grafana.{{ network.domain }}.conf
     state: link
+  tags: nginx
