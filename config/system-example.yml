@@ -82,9 +82,19 @@ users:
 #   debug: true
 
 ###############################################################################
-# Extra security values
-# security:
-#   auto_update: true
+# Additional certificates and DNS records
+#
+# extra_certs:
+#   - type: files
+#     redirect: false
+#   - type: openpgpkey
+#     redirect: false
+
+# extra_records:
+#   - name: backup
+#     type: CNAME
+#     ttl: 3600
+#     value: '{{ network.hostname }}.{{ network.domain }}.'
 
 ###############################################################################
 # Backup configuration

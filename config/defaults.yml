@@ -416,6 +416,9 @@ dns_default:
     retries: 10
     delay: 15
 
+  # Additional DNS records to create
+  extra_records: [ ]
+
 
 # Default Prometheus settings
 prometheus_default:
@@ -432,6 +435,10 @@ prometheus_default:
     mail:
       recipient: '{{ users[0].mail }}'
 
+###############################################################################
+# Additional certificates and DNS records
+#
+extra_certs: [ ]
 
 # Credentials store to use
 creds_default:
