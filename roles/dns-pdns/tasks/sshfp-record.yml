@@ -3,6 +3,7 @@
 - name: Get record fields
   set_fact:
     record_fields: '{{ sshfp_record.split(" ") }}'
+  tags: sshfp
 
 - name: Set record named fields
   set_fact:
@@ -10,6 +11,7 @@
     sshfp_algo: '{{ record_fields[3] }}'
     sshfp_hash: '{{ record_fields[4] }}'
     sshfp_data: '{{ record_fields[5] }}'
+  tags: sshfp
 
 # SSHFP records: https://en.wikipedia.org/wiki/SSHFP_record
 - name: Create the record
@@ -23,3 +25,4 @@
         search: '{{ sshfp_data[0:40] | upper }}'
   include_role:
     name: dns-record
+  tags: sshfp

@@ -12,7 +12,7 @@
   when: zone_create_cmd.changed
   shell: >-
     pdnsutil add-record {{ network.domain }}
-    main {{ external_ip_type }} {{ external_ip }}
+    {{ network.hostname }} {{ external_ip_type }} {{ external_ip }}
   changed_when: true
 
 - name: Add the backup external IP record
@@ -21,7 +21,7 @@
     - backup_ip is defined
   shell: >-
     pdnsutil add-record {{ network.domain }}
-    main {{ backup_ip_type }} {{ backup_ip }}
+    {{ network.hostname }} {{ backup_ip_type }} {{ backup_ip }}
   changed_when: true
 
 - name: Add the main external IP record
@@ -44,16 +44,7 @@
   when: zone_create_cmd.changed
   shell: >-
     pdnsutil add-record {{ network.domain }}
-    @ NS main.{{ network.domain }}
-  changed_when: true
-
-- name: Add the backup external record
-  when:
-    - zone_create_cmd.changed
-    - backup_ip is defined
-  shell: >-
-    pdnsutil add-record {{ network.domain }}
-    @ NS main.{{ network.domain }}
+    @ NS {{ network.hostname }}.{{ network.domain }}
   changed_when: true
 
 # Wildcard record: redirect everything to the server

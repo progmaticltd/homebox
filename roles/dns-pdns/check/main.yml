@@ -1,25 +1,11 @@
 ---
 
-- name: Check if PowerDNS is running
-  shell:
-    systemctl is-active pdns
-  changed_when: false
+- name: Check basic settings
+  include_tasks: check/basic.yml
+
+- name: Check DNSSEC local signature
+  include_tasks: check/dnssec.yml
+  tags: dnssec
 
 - name: Check DNS propagation
-  register: external_ip_check
-  shell: >-
-    host -t {{ external_ip_type }} main.{{ network.domain }}
-    1.1.1.1
-  retries: '{{ dns.propagation.retries | default(10) }}'
-  delay: '{{ dns.propagation.delay | default(60) }}'
-  until: external_ip_check.rc == 0
-
-- name: Check DNS propagation for backup IP address
-  register: backup_ip_check
-  when: backup_ip is defined
-  shell: >-
-    host -t {{ backup_ip_type }} main.{{ network.domain }}
-    1.1.1.1
-  retries: '{{ dns.propagation.retries | default(10) }}'
-  delay: '{{ dns.propagation.delay | default(60) }}'
-  until: backup_ip_check.rc == 0
+  include_tasks: check/propagation.yml

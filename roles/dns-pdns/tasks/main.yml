@@ -12,6 +12,11 @@
 
 - name: Create SSHFP records
   include_tasks: sshfp.yml
+  tags: sshfp
+
+- name: Create extra records
+  include_tasks: extra-records.yml
+  tags: extra
 
 - name: Set-up DNSSEC
   include_tasks: dnssec.yml

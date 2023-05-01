@@ -48,29 +48,12 @@
 - name: Set default SOA
   set_fact:
     default_soa: >-
-      main.{{ network.domain }}.
+      {{ network.hostname }}.{{ network.domain }}.
       hostmaster.@ 0
       {{ dns.refresh }} {{ dns.retry }}
       {{ dns.expire }}
       {{ dns.ttl }}
     cacheable: yes
-  tags: config
-
-- name: Initialise the IP addresses to listen
-  when: backup_ip is not defined
-  set_fact:
-    listen_addresses:
-      - '127.0.0.53:53'
-      - '{{ external_ip }}'
-  tags: config
-
-- name: Initialise the IP addresses to listen
-  when: backup_ip is defined
-  set_fact:
-    listen_addresses:
-      - '127.0.0.53:53'
-      - '{{ external_ip }}'
-      - '{{ backup_ip }}'
   tags: config
 
 - name: Add custom settings

@@ -4,11 +4,13 @@
   when: record.name != '@'
   set_fact:
     query: '{{ record.name }}.{{ network.domain }}'
+  tags: dns
 
 - name: Set the record to search when empty
   when: record.name == '@'
   set_fact:
     query: '{{ network.domain }}'
+  tags: dns
 
 - name: Check if the record exists with dig
   register: check_record
@@ -17,16 +19,18 @@
     dig +nocomments +noall +answer
     -q {{ query }}
     -t {{ record.type | upper }}
-    @127.0.0.53
+    @{{ pdns.ip }}
     | grep -c '{{ record.search | default(record.value) | regex_escape }}'
   args:
     executable: /usr/bin/bash
   changed_when: false
   failed_when: false
+  tags: dns
 
 - name: Store the fact to create the record or not
   set_fact:
     create_record: '{{ check_record.stdout == "0" }}'
+  tags: dns
 
 - name: Create a generic DNS record if not existing
   when:
@@ -37,6 +41,7 @@
     {{ record.name }} {{ record.type | upper }}
     {{ record.value }}
   changed_when: true
+  tags: dns
 
 - name: Create the TXT DNS record if not existing
   when:
@@ -47,6 +52,7 @@
     {{ record.name }} {{ record.type | upper }}
     '"{{ record.value }}"'
   changed_when: true
+  tags: dns
 
 - name: Create the SRV DNS record if not existing
   when:
@@ -60,6 +66,7 @@
      {{ record.port }}
      {{ record.value }}"
   changed_when: true
+  tags: dns
 
 - name: Create the MX DNS record if not existing
   when:
@@ -71,6 +78,7 @@
     "{{ record.priority | default(0) }}
      {{ record.value }}"
   changed_when: true
+  tags: dns
 
 - name: Create the SSHFP DNS record if not existing
   when:
@@ -83,3 +91,4 @@
      {{ record.hash }}
      {{ record.value }}"
   changed_when: true
+  tags: dns

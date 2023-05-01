@@ -10,3 +10,4 @@
 
 - name: Restart the server now if needed
   meta: flush_handlers
+  tags: forward

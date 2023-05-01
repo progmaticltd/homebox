@@ -5,3 +5,4 @@
   loop: '{{ dns_records }}'
   loop_control:
     loop_var: record
+  tags: dns
