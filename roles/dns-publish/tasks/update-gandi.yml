@@ -100,8 +100,19 @@
   set_fact:
     keys_list: '{{ keys_list | selectattr("type", "in", ["ksk", "zsk"]) | list }}'
 
+- name: Create the list of missing keys
+  set_fact:
+    missing_keys: >-
+      {{ keys_list | rejectattr("public_key", "in", current_dns_keys) | list }}
+
+- name: Check if we should override all the keys at once
+  set_fact:
+    overwrite_keys: >-
+      current_dns_keys == [ ]
+      or (current_dns_keys|length + missing_keys|length) > 4
+
 - name: Create all the keys at once
-  when: current_dns_keys == [ ]
+  when: overwrite_keys
   delegate_to: localhost
   uri:
     url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/dnskeys
@@ -112,13 +123,10 @@
     headers:
       authorization: 'Apikey {{ api_key }}'
     status_code: [ 200, 202 ]
-
-- name: Create the list of missing keys
-  set_fact:
-    missing_keys: >-
-      {{ keys_list | rejectattr("public_key", "in", current_dns_keys) | list }}
+  changed_when: true
 
 - name: Create the missing DNS keys
+  when: not overwrite_keys
   delegate_to: localhost
   uri:
     url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/dnskeys
@@ -131,3 +139,4 @@
   loop: '{{ missing_keys }}'
   loop_control:
     loop_var: missing_key
+  changed_when: true
