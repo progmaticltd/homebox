@@ -72,6 +72,9 @@
     mode: 0644
   tags: network
 
+- name: Restart unbound now if needed
+  meta: flush_handlers
+
 - name: Template and lock /etc/resolv.conf
   template:
     src: resolv.conf

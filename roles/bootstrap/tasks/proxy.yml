@@ -4,27 +4,14 @@
   apt:
     name: tinyproxy
     state: present
+  tags: proxy
 
-- name: Enforce whitelisting on tinyproxy
+- name: Deploy tinyproxy safe config
   notify: Restart tinyproxy
-  replace:
-    path: /etc/tinyproxy/tinyproxy.conf
-    regexp: '^#FilterDefaultDeny Yes'
-    replace: 'FilterDefaultDeny Yes'
-
-- name: Use whitelist configuration file
-  notify: Restart tinyproxy
-  replace:
-    path: /etc/tinyproxy/tinyproxy.conf
-    regexp: '^#Filter "/etc/tinyproxy/filter"'
-    replace: 'Filter "/etc/tinyproxy/filter"'
-
-- name: Allow Debian repositories access
-  notify: Restart tinyproxy
-  lineinfile:
-    path: /etc/tinyproxy/tinyproxy.conf
-    line: 'Allow ::1'
-    insertafter: 'Allow 127.0.0.1'
+  template:
+    src: tinyproxy.conf
+    dest: /etc/tinyproxy/tinyproxy.conf
+  tags: proxy
 
 - name: Allow Debian repositories access
   notify: Restart tinyproxy
@@ -35,6 +22,7 @@
   loop: '{{ whitelisted_hosts }}'
   loop_control:
     loop_var: host
+  tags: proxy
 
 - name: Allow loopback access
   notify: Restart tinyproxy
@@ -42,14 +30,17 @@
     path: /etc/tinyproxy/filter
     line: '.{{ network.domain }}'
     create: true
+  tags: proxy
 
 - name: Restart the proxy now if needed
   meta: flush_handlers
+  tags: proxy
 
 - name: Now, ensure apt is using the system proxy
   template:
     src: proxy.conf
     dest: /etc/apt/apt.conf.d/00proxy
+  tags: proxy
 
 - name: Advertise the proxy as environment variables
   lineinfile:
@@ -61,6 +52,7 @@
     - no_proxy=127.0.0.1,localhost,.{{ network.domain }},{{ network.domain }}
   loop_control:
     loop_var: line
+  tags: proxy
 
 - name: Set Systemd environment   # noqa 303
   shell: >-
@@ -71,3 +63,4 @@
     - no_proxy=127.0.0.1,localhost,.{{ network.domain }},{{ network.domain }}
   loop_control:
     loop_var: line
+  tags: proxy

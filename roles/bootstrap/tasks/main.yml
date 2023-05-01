@@ -35,6 +35,7 @@
 
 - name: Configure the proxy
   include_tasks: proxy.yml
+  tags: proxy
 
 - name: Create prometheus directory structure
   when: prometheus.install
