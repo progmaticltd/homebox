@@ -2,6 +2,7 @@
 
 - name: Initialise or load the passwords
   include_tasks: load-passwords.yml
+  tags: facts
 
 - name: Create the DNS record
   include_tasks: dns.yml
