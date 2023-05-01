@@ -8,7 +8,7 @@
 - name: Create certificate signing request (CSR) for CA certificate
   community.crypto.openssl_csr_pipe:
     privatekey_path: /etc/ssl/private/homebox-temp-ca.key
-    common_name: Temporary CA for {{ network.domain }}
+    common_name: Temporary CA
     use_common_name_for_san: false
     basic_constraints:
       - 'CA:TRUE'
