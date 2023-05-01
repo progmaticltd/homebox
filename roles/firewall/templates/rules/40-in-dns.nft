@@ -5,10 +5,10 @@ table inet filter {
     chain input {
 
         udp dport domain ct state new counter accept \
-        comment "DNS queries in UDP"
+        comment "Inbound DNS queries in UDP"
 
         tcp dport domain ct state new counter accept \
-        comment "DNS queries in TCP"
+        comment "Inbound DNS queries in TCP"
 
     }
 }
