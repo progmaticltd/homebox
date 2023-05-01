@@ -5,6 +5,7 @@
     src: key-renew.sh
     dest: /usr/local/sbin/opendkim-key-renew
     mode: 0700
+  tags: renewal
 
 # The key generation is planned for a whole week,
 # Just in case the server is turned off,
@@ -20,3 +21,4 @@
     user: root
     name: opendkim-key-renew
     job: /usr/local/sbin/opendkim-key-renew
+  tags: renewal

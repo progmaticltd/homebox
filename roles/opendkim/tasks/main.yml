@@ -19,6 +19,7 @@
 
 - name: Install the renewal script
   include_tasks: renewal.yml
+  tags: renewal
 
 - name: Configure postfix
   include_tasks: postfix.yml

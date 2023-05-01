@@ -10,6 +10,7 @@
     - '{{ dkim_selector }}.txt'
   loop_control:
     loop_var: file
+  changed_when: false
 
 # This need to check if it is still working
 # the first time we deploy a domain
@@ -25,3 +26,4 @@
     opendkim-testkey -vv -s {{ dkim_selector }}
     -d {{ network.domain }}
     -k /etc/opendkim/keys/{{ dkim_selector }}.private
+  changed_when: false

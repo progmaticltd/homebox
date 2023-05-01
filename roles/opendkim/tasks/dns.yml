@@ -12,6 +12,7 @@
     opendkim-genzone
     -d {{ network.domain }}
     -C hostmaster@{{ network.domain }}
+    -N {{ pdns.ip }}
     -F
     -M
     -u
@@ -23,8 +24,18 @@
     creates: nsupdate-{{ dkim_selector }}.conf
   tags: dns
 
+- name: Check if the key is already existing in the DNS server
+  register: dns_entry_exists
+  shell: >-
+    dig TXT {{ dkim_selector }}._domainkey.{{ network.domain }}
+    +noall +answer @{{ pdns.ip }}
+  changed_when: false
+  failed_when: dns_entry_exists.stdout == ''
+  ignore_errors: true
+  tags: dns
+
 - name: Store the public key in DNS
-  when: nsupdate_file.changed
+  when: dns_entry_exists is failed
   shell: >-
     nsupdate nsupdate-{{ dkim_selector }}.conf
   args:

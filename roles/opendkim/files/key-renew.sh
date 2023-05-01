@@ -21,8 +21,11 @@ dns_record_name="$selector._domainkey"
 
 echo "Looking for key $dns_record_name in DNS records"
 
+# Get the IP address of the DNS server
+dns_ip=$(sed -En 's/^local-address=([^,]+).*/\1/p' /etc/powerdns/pdns.d/homebox.conf)
+
 # Check if the record already exists
-cur_dns_record=$(dig -t TXT "$selector._domainkey.$domain" +nocomment +noall +answer @127.0.0.1)
+cur_dns_record=$(dig -t TXT "$selector._domainkey.$domain" +nocomment +noall +answer "@$dns_ip")
 
 # If the record already exists, just exit
 if [ "$cur_dns_record" != "" ]; then
@@ -46,7 +49,7 @@ else
     gen_args="$gen_args --domain '$domain'"
     gen_args="$gen_args --bits 1024"
     gen_args="$gen_args --selector=$selector"
-    gen_args="$gen_args --note='main DKIM key for the domain $domain'"
+    gen_args="$gen_args --note='DKIM key for $hostname on $domain'"
 
     if ! opendkim-genkey $gen_args; then
 	echo "Key creation for year $year failed, exiting"

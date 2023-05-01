@@ -2,5 +2,5 @@
 
 - name: Use the current year for the selector
   set_fact:
-    dkim_selector: 'main-{{ "%Y" | strftime }}'
+    dkim_selector: '{{ network.hostname }}-{{ "%Y" | strftime }}'
   tags: facts
