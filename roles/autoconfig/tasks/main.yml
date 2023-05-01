@@ -14,3 +14,4 @@
 
 - name: Set the DNS records
   include_tasks: dns.yml
+  tags: dns

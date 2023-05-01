@@ -2,9 +2,11 @@
 
 - name: Load the common facts
   include_tasks: facts.yml
+  tags: facts
 
 - name: Set DNS records
   include_tasks: dns.yml
+  tags: dns
 
 - name: Copy the certificates
   include_tasks: certificates.yml

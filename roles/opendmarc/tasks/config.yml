@@ -1,5 +1,11 @@
 ---
 
+- name: Create the directory
+  file:
+    path: /etc/opendmarc
+    state: directory
+    mode: 0700
+
 - name: use socket in postfix chroot directory
   replace:
     path: /etc/opendmarc.conf

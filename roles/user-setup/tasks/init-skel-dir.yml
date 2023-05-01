@@ -1,6 +1,6 @@
 ---
 
-- name: Create the home folders
+- name: Create the home and archive folders
   file:
     path: /home/{{ dir }}
     owner: root

@@ -17,7 +17,7 @@
 - name: Copy the certificate status script
   copy:
     src: cert-status.sh
-    dest: /etc/cron.weekly/cert-status
+    dest: /usr/local/sbin/cert-status
     mode: 0755
   tags: postinstall
 

@@ -12,51 +12,11 @@
   include_tasks: pre-install-common.yml
   tags: preinstall
 
-- name: Check if the DNS server is live
-  include_tasks: dns-facts.yml
-  tags: dns
-
-- name: Create temporary CA for self signing
-  when: not dns_is_live
-  include_tasks: self-signed-init.yml
-  tags: certs
-
-- name: Run the development pre installation tasks
-  when: system.devel
-  include_tasks: pre-install-dev.yml
-  tags: preinstall
-
-- name: Run the live pre installation tasks
-  when: not system.devel
-  include_tasks: pre-install-live.yml
-  tags: preinstall
-
-- name: Create temporary self-signed certificates
-  when: not dns_is_live
-  include_tasks: create-self-signed.yml
+- name: Verify and create each certificate if needed
+  include_tasks: check-and-create.yml
   loop: '{{ certificates }}'
   loop_control:
     loop_var: certificate
-  tags: certs
-
-- name: Create the certificates using Letsencrypt
-  when: dns_is_live
-  include_tasks: create-letsencrypt.yml
-  loop: '{{ certificates }}'
-  loop_control:
-    loop_var: certificate
-  tags: certs
-
-- name: Call common post creation tasks
-  include_tasks: post-create-common.yml
-  loop: '{{ certificates }}'
-  loop_control:
-    loop_var: certificate
-  tags: certs
-
-- name: Post installation tasks for self-signed certificates
-  when: not dns_is_live
-  include_tasks: post-install-self-signed.yml
   tags: certs
 
 - name: Run the common post installation tasks

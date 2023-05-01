@@ -1,5 +1,8 @@
 ---
 
+- name: Remove pam modules
+  include_tasks: uninstall/pam-modules.yml
+
 - name: Stop the services
   include_tasks: uninstall/stop-services.yml
 

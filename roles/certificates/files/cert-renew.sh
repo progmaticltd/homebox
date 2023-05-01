@@ -33,7 +33,7 @@ for cert in $certs; do
 
     # Test if the pem file exists for this certificate
     if test -f /var/lib/lego/certificates/$fqdn.pem; then
-	common_options="$common_options --pem"
+        common_options="$common_options --pem"
     fi
 
     renew_options="--reuse-key"

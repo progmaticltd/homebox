@@ -6,3 +6,4 @@
     src: rsyslog.conf
     dest: /etc/rsyslog.d/postfix-homebox.conf
     mode: 0644
+  tags: syslog

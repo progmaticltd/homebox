@@ -5,6 +5,7 @@
 
 - name: Create the DNS record
   include_tasks: dns.yml
+  tags: dns
 
 - name: Preconfigure and install the packages
   include_tasks: packages.yml

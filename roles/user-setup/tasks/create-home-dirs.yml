@@ -1,24 +1,19 @@
 ---
 
-- name: Create the users home folders for postmaster
-  shell: mkhomedir_helper postmaster 077 /etc/skel
-  changed_when: true
-  tags: storage
-
-- name: Create the emails archive folder
+- name: Create the home folder
   file:
-    path: /home/users/postmaster
+    path: /home/users/{{ user.uid }}
     state: directory
-    owner: postmaster
+    owner: '{{ user.uid }}'
     group: Mail users
     mode: 0700
   tags: storage
 
 - name: Create the emails folder
   file:
-    path: /home/users/postmaster/mails
+    path: /home/users/{{ user.uid }}/mails
     state: directory
-    owner: postmaster
+    owner: '{{ user.uid }}'
     group: Mail users
     mode: 0700
   tags: storage
@@ -32,20 +27,20 @@
     mode: 0700
   tags: storage
 
-- name: Create the emails archive folder
+- name: Create the maildir folder
   file:
-    path: /home/users/postmaster/mails/maildir
+    path: /home/users/{{ user.uid }}/mails/maildir
     state: directory
-    owner: postmaster
+    owner: '{{ user.uid }}'
     group: Mail users
     mode: 0700
   tags: storage
 
-- name: Create the emails archive index folder
+- name: Create the emails index folder
   file:
-    path: /home/users/postmaster/mails/indexes
+    path: /home/users/{{ user.uid }}/mails/indexes
     state: directory
-    owner: postmaster
+    owner: '{{ user.uid }}'
     group: Mail users
     mode: 0700
   tags: storage

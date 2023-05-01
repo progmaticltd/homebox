@@ -5,6 +5,7 @@
     dns_records:
       - name: autodiscover
         type: CNAME
-        value: 'main.{{ network.domain }}'
+        value: '{{ network.hostname }}.{{ network.domain }}'
   include_role:
     name: dns-record
+  tags: dns

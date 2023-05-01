@@ -17,6 +17,7 @@
 
 - name: Create the default DNS entries
   include_tasks: dns.yml
+  tags: dns
 
 - name: Add Prometheus alerts
   when: prometheus.install

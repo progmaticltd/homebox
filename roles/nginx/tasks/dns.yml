@@ -4,7 +4,8 @@
   vars:
     dns_records:
       - name: www
-        value: main.{{ network.domain }}
+        value: '{{ network.hostname }}.{{ network.domain }}'
         type: cname
   include_role:
     name: dns-record
+  tags: dns

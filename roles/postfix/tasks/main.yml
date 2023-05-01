@@ -8,6 +8,7 @@
 
 - name: Set the initial facts
   include_tasks: facts.yml
+  tags: facts
 
 - name: Copy the certificates
   include_tasks: certificates.yml
@@ -23,6 +24,7 @@
 
 - name: Logging configuration
   include_tasks: rsyslog.yml
+  tags: syslog
 
 - name: Add Prometheus alerts
   when: prometheus.install
@@ -31,3 +33,4 @@
 
 - name: DNS configuration
   include_tasks: dns.yml
+  tags: dns

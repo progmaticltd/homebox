@@ -12,6 +12,7 @@
 
 - name: Configure all DNS records
   include_tasks: dns.yml
+  tags: dns
 
 - name: Configure certificates
   include_tasks: certificates.yml

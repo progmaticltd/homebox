@@ -5,6 +5,6 @@
     dns_records:
       - name: www
         type: CNAME
-        value: main.{{ network.domain }}.
+        value: '{{ network.hostname }}.{{ network.domain }}.'
   include_role:
     name: dns-record

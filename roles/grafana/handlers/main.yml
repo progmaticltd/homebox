@@ -4,6 +4,7 @@
   systemd:
     name: tinyproxy
     state: restarted
+    no_block: true
 
 - name: Restart Grafana server
   systemd:

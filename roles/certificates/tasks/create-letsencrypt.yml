@@ -46,6 +46,17 @@
   changed_when: false
   tags: certs
 
+- name: Check if the issuer is letsencrypt
+  when: cert_file.stat.exists
+  register: cert_check_issuer
+  shell: >-
+    openssl x509
+    -in /var/lib/lego/certificates/{{ filename }}.crt
+    -noout -issuer | grep 'letsencrypt'
+  ignore_errors: true
+  changed_when: false
+  tags: certs
+
 - name: Set the initial domain argument
   set_fact:
     domains_list:
@@ -66,13 +77,14 @@
     renew_cert: >-
       {{ cert_recreate
       or not cert_file.stat.exists
-      or cert_check_cmd.failed }}
+      or cert_check_cmd.failed
+      or cert_check_issuer.failed }}
   tags: certs
 
 - name: Create the certificate
   when: renew_cert
   environment:
-    PDNS_API_URL: http://127.0.0.1:8081/
+    PDNS_API_URL: http://{{ pdns_api.address }}:{{ pdns_api.port }}/
     PDNS_API_KEY: '{{ api_key }}'
     http_proxy: 'http://localhost:8888/'
     https_proxy: 'http://localhost:8888/'

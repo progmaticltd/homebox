@@ -1,11 +1,5 @@
 ---
 
-- name: Create the directory
-  file:
-    path: /etc/opendmarc
-    state: directory
-    mode: 0700
-
 - name: Initialise the dmarc record
   set_fact:
     dmarc_record: >-
@@ -16,12 +10,14 @@
       "rf={{ dmarc.reporting.format }}; pct={{ dmarc.reporting.percent }};"
       "ri={{ dmarc.reporting.interval }}"
     cacheable: false
+  tags: dns
 
 - name: Create the dns record template
   register: nsupdate_file
   template:
     src: nsupdate.conf
     dest: /etc/opendmarc/nsupdate.conf
+  tags: dns
 
 - name: Store the public key in DNS
   when: nsupdate_file.changed
@@ -29,3 +25,4 @@
   changed_when: true
   args:
     chdir: /etc/opendmarc
+  tags: dns

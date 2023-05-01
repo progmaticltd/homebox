@@ -8,17 +8,21 @@
     _mta-sts.{{ network.domain }} @127.0.0.1
   changed_when: false
   failed_when: false
+  tags: facts
 
 - name: Store the fact for the DNS record
   set_fact:
     mta_record_missing: '{{ mta_record_cmd.stdout | length == 0 }}'
+  tags: facts
 
 - name: Create a new ID for mta-sts DNS record
   when: mta_record_missing
   set_fact:
     mta_sts_uid: "{{ lookup('password', '/dev/null length=16 chars=ascii_letters,digits') }}"
+  tags: facts
 
 - name: Reuse the current ID DNS record
   when: not mta_record_missing
   set_fact:
     mta_sts_uid: '{{ mta_record_cmd.stdout | regex_replace(".*id=([^;]+);.*", "\1") }}'
+  tags: facts

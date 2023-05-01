@@ -4,10 +4,7 @@
   vars:
     certificates:
       - name: ldap
-        san_list:
-          - 'DNS:main.{{ network.domain }}'
-          - 'DNS:ldap.{{ network.domain }}'
-          - 'DNS:{{ network.hostname }}.{{ network.domain }}'
+        san_list: [ '{{ network.hostname }}.{{ network.domain }}' ]
   include_role:
     name: certificates
   tags: certs

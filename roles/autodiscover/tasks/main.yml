@@ -5,6 +5,7 @@
 
 - name: Load basic facts
   include_tasks: facts.yml
+  tags: facts
 
 - name: Deploy nginx config
   include_tasks: nginx.yml
@@ -17,3 +18,4 @@
 
 - name: Set the DNS records
   include_tasks: dns.yml
+  tags: dns

@@ -11,5 +11,5 @@
   when: dns_entry.failed
   shell: >-
     pdnsutil add-record {{ network.domain }}
-    rspamd CNAME main.{{ network.domain }}
+    rspamd CNAME {{ network.hostname }}.{{ network.domain }}
   changed_when: true

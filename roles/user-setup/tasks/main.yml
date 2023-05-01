@@ -12,8 +12,22 @@
 - name: Configure pam modules
   include_tasks: pam-modules.yml
 
-- name: Create user directories
-  include_tasks: create-dirs.yml
+- name: Create skeleton directories
+  include_tasks: init-skel-dir.yml
+
+- name: Create home directories
+  include_tasks: create-home-dirs.yml
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+  tags: storage
+
+- name: Create archive directories
+  include_tasks: create-archive-dirs.yml
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+  tags: storage
 
 - name: Initialise each user
   include_tasks: init-user.yml

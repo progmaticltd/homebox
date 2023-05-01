@@ -6,3 +6,8 @@ cert_packages:
   - jq
   - lego
   - ssl-cert
+
+# The IP address to reach pdns api
+pdns_api:
+  address: 127.1.1.53
+  port: 8081

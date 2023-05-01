@@ -8,7 +8,9 @@
     autodiscover.{{ network.domain }} @127.0.0.1
   changed_when: false
   failed_when: false
+  tags: facts
 
 - name: Store the fact for the DNS record
   set_fact:
     autodiscover_record_missing: '{{ autodiscover_record_cmd.stdout | length == 0 }}'
+  tags: facts

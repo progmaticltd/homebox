@@ -21,8 +21,8 @@
     path: /var/www/ejabberd/files
     state: directory
     owner: root
-    group: root
-    mode: 0755
+    group: ejabberd
+    mode: 0775
 
 - name: Allow the jabber server to write in the folder
   acl:

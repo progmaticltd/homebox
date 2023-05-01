@@ -1,11 +1,9 @@
 ---
 
-- name: Remove automatic home directory creation
-  pamd:
-    name: mkhomedir
-    state: absent
-
 - name: Remove password quality module
   pamd:
     name: pwquality
     state: absent
+    type: password
+    module_path: pam_pwquality.so
+    control: requisite
