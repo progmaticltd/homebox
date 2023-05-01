@@ -1,14 +1,30 @@
 ---
 
 user_directories:
-  - /etc/skel/mails/maildir
-  - /etc/skel/mails/sieve
-  - /etc/skel/mails/sieve/logs
-  - /etc/skel/mails/indexes
-  - /etc/skel/mails/encryption
-  - /etc/skel/mails/import
-  - /etc/skel/mails/indexes/xapian-indexes
-  - /etc/skel/.config/homebox
+  - path: mails/maildir
+    mode: '0700'
+    parent: [ home, archive ]
+  - path: mails/sieve
+    mode: '0700'
+    parent: [ home, archive ]
+  - path: mails/sieve/logs
+    mode: '0700'
+    parent: [ home, archive ]
+  - path: mails/indexes
+    mode: '0700'
+    parent: [ home, archive ]
+  - path: mails/encryption
+    mode: '0700'
+    parent: [ home, archive ]
+  - path: mails/import
+    mode: '0700'
+    parent: [ home, archive ]
+  - path: mails/indexes/xapian-indexes
+    mode: '0700'
+    parent: [ home, archive ]
+  - path: .config/homebox
+    mode: '0700'
+    parent: [ home ]
 
 auth_pkgs:
   - libnss-ldapd

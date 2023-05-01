@@ -13,12 +13,12 @@
 
 - name: Add homebox mail and config folders to the skeleton
   file:
-    path: '{{ dir }}'
+    path: '/etc/skel/{{ dir.path }}'
     owner: root
     group: root
     state: directory
-    mode: 0700
+    mode: '{{ dir.mode }}'
     recurse: true
-  loop: '{{ user_directories }}'
+  loop: '{{ user_directories | selectattr("parent", "contains", "home") }}'
   loop_control:
     loop_var: dir

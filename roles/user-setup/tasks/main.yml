@@ -1,7 +1,8 @@
 ---
 
 - name: Initialise or load the passwords
-  include_tasks: load-passwords.yml
+  include_tasks: facts.yml
+  tags: facts
 
 - name: Activate system authentication
   include_tasks: system-auth.yml
@@ -12,30 +13,19 @@
 - name: Configure pam modules
   include_tasks: pam-modules.yml
 
-- name: Create skeleton directories
-  include_tasks: init-skel-dir.yml
+- name: Create top level directories and skeleton
+  include_tasks: init-common.yml
 
 - name: Create home directories
   include_tasks: create-home-dirs.yml
-  loop: '{{ users }}'
+  loop: '{{ init_users }}'
   loop_control:
     loop_var: user
   tags: storage
 
 - name: Create archive directories
   include_tasks: create-archive-dirs.yml
-  loop: '{{ users }}'
+  loop: '{{ init_users }}'
   loop_control:
     loop_var: user
-  tags: storage
-
-- name: Initialise each user
-  include_tasks: init-user.yml
-  loop: '{{ users }}'
-  loop_control:
-    loop_var: user
-  tags: storage
-
-- name: Initialise postmaster account
-  include_tasks: init-postmaster.yml
   tags: storage

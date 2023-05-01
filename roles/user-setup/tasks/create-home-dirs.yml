@@ -9,38 +9,14 @@
     mode: 0700
   tags: storage
 
-- name: Create the emails folder
+- name: Create all the other folders
   file:
-    path: /home/users/{{ user.uid }}/mails
+    path: /home/users/{{ user.uid }}/{{ folder.path }}
     state: directory
     owner: '{{ user.uid }}'
     group: Mail users
-    mode: 0700
-  tags: storage
-
-- name: Create the emails filters folder
-  file:
-    path: /home/users/{{ user.uid }}/mails/sieve
-    state: directory
-    owner: '{{ user.uid }}'
-    group: Mail users
-    mode: 0700
-  tags: storage
-
-- name: Create the maildir folder
-  file:
-    path: /home/users/{{ user.uid }}/mails/maildir
-    state: directory
-    owner: '{{ user.uid }}'
-    group: Mail users
-    mode: 0700
-  tags: storage
-
-- name: Create the emails index folder
-  file:
-    path: /home/users/{{ user.uid }}/mails/indexes
-    state: directory
-    owner: '{{ user.uid }}'
-    group: Mail users
-    mode: 0700
+    mode: '{{ folder.mode }}'
+  loop: '{{ user_directories | selectattr("parent", "contains", "home") }}'
+  loop_control:
+    loop_var: folder
   tags: storage
