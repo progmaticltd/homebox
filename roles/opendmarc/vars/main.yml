@@ -1,0 +1,5 @@
+---
+
+# The ip address where powerdns is listening
+pdns:
+  ip: 127.1.1.53
