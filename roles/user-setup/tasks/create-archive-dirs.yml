@@ -11,7 +11,7 @@
 
 - name: Create all the other folders
   file:
-    path: /home/users/{{ user.uid }}/{{ folder.path }}
+    path: /home/archives/{{ user.uid }}/{{ folder.path }}
     state: directory
     owner: '{{ user.uid }}'
     group: Mail users
