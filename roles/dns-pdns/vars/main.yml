@@ -6,3 +6,7 @@ pdns_packages:
   - pdns-tools
   - pdns-backend-sqlite3
   - sqlite3
+
+# The ip address where powerdns is listening
+pdns:
+  ip: 127.1.1.53
