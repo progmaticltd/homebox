@@ -52,7 +52,7 @@
   shell: >-
     openssl x509
     -in /var/lib/lego/certificates/{{ filename }}.crt
-    -noout -issuer | grep 'letsencrypt'
+    -noout -issuer | grep "Let's Encrypt"
   ignore_errors: true
   changed_when: false
   tags: certs
