@@ -30,7 +30,7 @@
     dig TXT {{ dkim_selector }}._domainkey.{{ network.domain }}
     +noall +answer @{{ pdns.ip }}
   changed_when: false
-  failed_when: dns_entry_exists.stdout == ''
+  failed_when: dns_entry_exists.stdout | length == 0
   ignore_errors: true
   tags: dns
 
