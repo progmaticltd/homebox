@@ -1,10 +1,15 @@
 ---
 
+- name: Load facts
+  include_tasks: facts.yml
+  tags: facts
+
 - name: Install the certificates
   include_tasks: certs.yml
 
 - name: Configure nginx
   include_tasks: nginx.yml
+  tags: nginx
 
 - name: Configure AppArmor
   include_tasks: apparmor.yml
