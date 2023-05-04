@@ -12,6 +12,12 @@
   set_fact:
     public_ext_ip6: '{{ lookup("pipe", "curl -6 https://icanhazip.com") }}'
 
+- name: Add nginx user to rspamd group
+  user:
+    name: www-data
+    groups: _rspamd
+    append: true
+
 - name: Create the web site
   tags: nginx
   notify:

@@ -26,16 +26,16 @@
       tags: user
     - role: nginx
       tags: nginx
+    - role: mta-sts
+      tags: mta-sts
+    - role: postfix
+      tags: postfix
     - role: rspamd
       tags: rspamd
     - role: opendkim
       tags: dkim
     - role: opendmarc
       tags: dmarc
-    - role: mta-sts
-      tags: mta-sts
-    - role: postfix
-      tags: postfix
     - role: dovecot
       tags: dovecot
     - role: autodiscover

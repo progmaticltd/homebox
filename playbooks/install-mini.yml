@@ -26,14 +26,14 @@
       tags: user
     - role: nginx
       tags: nginx
-    - role: opendkim
-      tags: dkim
-    - role: opendmarc
-      tags: dmarc
     - role: mta-sts
       tags: mta-sts
     - role: postfix
       tags: postfix
+    - role: opendkim
+      tags: dkim
+    - role: opendmarc
+      tags: dmarc
     - role: dovecot
       tags: dovecot
     - role: autoconfig
