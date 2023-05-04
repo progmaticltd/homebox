@@ -31,6 +31,17 @@
   tags: certs
 
 - name: Chheck if the DNS server is resolving correctly
+  when: certificate.name == '_'
+  register: host_test
+  shell: >-
+    host {{ lookup('random_string') }}.{{ network.domain }}
+    {{ dns_servers[0] }} | grep {{ fqdn | regex_escape }}
+  ignore_errors: true
+  changed_when: false
+  tags: dns
+
+- name: Chheck if the DNS server is resolving correctly
+  when: certificate.name != '_'
   register: host_test
   shell: >-
     host {{ certificate.name }}.{{ network.domain }}

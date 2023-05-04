@@ -6,6 +6,7 @@
 certificates:
   - name: default
   - name: main
+  - name: _
 
 # Do not recreate the certificates by default,
 # unless they are not valid
