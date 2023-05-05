@@ -3,7 +3,7 @@
 - name: Create local configuration files
   notify: Restart rspamd
   template:
-    src: '{{ file }}'
+    src: 'conf/{{ file }}'
     dest: '/etc/rspamd/local.d/{{ file }}'
   loop:
     - classifier-bayes.conf
