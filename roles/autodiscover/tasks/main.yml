@@ -9,6 +9,7 @@
 
 - name: Deploy nginx config
   include_tasks: nginx.yml
+  tags: nginx
 
 - name: Configure AppArmor
   include_tasks: apparmor.yml

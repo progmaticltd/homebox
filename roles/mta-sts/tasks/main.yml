@@ -13,6 +13,7 @@
 
 - name: Web server configuration
   include_tasks: nginx.yml
+  tags: nginx
 
 - name: AppArmor configuration
   include_tasks: apparmor.yml

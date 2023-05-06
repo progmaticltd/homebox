@@ -11,7 +11,8 @@
     dest: '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: '0644'
+    mode: 0644
+  tags: nginx
 
 - name: Activate sogo web site
   tags: nginx
@@ -20,3 +21,4 @@
     src: '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'
     dest: '/etc/nginx/sites-enabled/sogo.{{ network.domain }}.conf'
     state: link
+  tags: nginx

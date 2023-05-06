@@ -9,6 +9,10 @@
 - name: Configure the packages
   include_tasks: config.yml
 
+- name: Install the firewall rules
+  include_tasks: firewall.yml
+  tags: nft
+
 - name: Configure AppArmor
   include_tasks: apparmor.yml
 

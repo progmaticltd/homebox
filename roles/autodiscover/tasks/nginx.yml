@@ -4,6 +4,7 @@
   file:
     path: /var/www/autodiscover/autodiscover/
     state: directory
+  tags: nginx
 
 - name: Copy XML template
   template:
@@ -12,6 +13,7 @@
     owner: root
     group: root
     mode: 0644
+  tags: nginx
 
 - name: Create the autodiscover site
   notify: Restart nginx
@@ -24,9 +26,11 @@
     owner: root
     group: root
     mode: 0644
+  tags: nginx
 
 - name: Enable nginx site
   file:
     src: '/etc/nginx/sites-available/autodiscover.{{ network.domain }}.conf'
     dest: '/etc/nginx/sites-enabled/autodiscover.{{ network.domain }}.conf'
     state: link
+  tags: nginx

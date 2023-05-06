@@ -10,7 +10,8 @@
     dest: '/etc/nginx/sites-available/openpgpkey.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: '0644'
+    mode: 0644
+  tags: nginx
 
 - name: Activate openpgpkey web site
   notify: Restart nginx
@@ -18,3 +19,4 @@
     src: '/etc/nginx/sites-available/openpgpkey.{{ network.domain }}.conf'
     dest: '/etc/nginx/sites-enabled/openpgpkey.{{ network.domain }}.conf'
     state: link
+  tags: nginx

@@ -11,6 +11,7 @@
 
 - name: Configure nginx
   include_tasks: nginx.yml
+  tags: nginx
 
 - name: Configure the database
   include_tasks: database.yml

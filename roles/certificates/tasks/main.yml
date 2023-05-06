@@ -22,3 +22,7 @@
 - name: Run the common post installation tasks
   include_tasks: post-install-common.yml
   tags: postinstall
+
+- name: Update proxy settings
+  include_tasks: proxy.yml
+  tags: proxy

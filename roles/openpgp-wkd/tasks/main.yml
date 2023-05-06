@@ -5,6 +5,7 @@
 
 - name: Configure the web server
   include_tasks: nginx.yml
+  tags: nginx
 
 - name: Publish the GPG public keys
   include_tasks: publish-all.yml

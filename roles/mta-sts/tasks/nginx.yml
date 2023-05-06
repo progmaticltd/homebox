@@ -4,6 +4,7 @@
   file:
     path: /var/www/mta-sts/.well-known
     state: directory
+  tags: nginx
 
 - name: Add the site content files
   template:
@@ -15,6 +16,7 @@
       folder: .well-known/
   loop_control:
     loop_var: file
+  tags: nginx
 
 - name: Create the nginx template
   notify: Restart nginx
@@ -26,7 +28,8 @@
     dest: '/etc/nginx/sites-available/mta-sts.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: '0644'
+    mode: 0644
+  tags: nginx
 
 - name: Activate mta-sts web site
   notify: Restart nginx
@@ -34,3 +37,4 @@
     src: '/etc/nginx/sites-available/mta-sts.{{ network.domain }}.conf'
     dest: '/etc/nginx/sites-enabled/mta-sts.{{ network.domain }}.conf'
     state: link
+  tags: nginx

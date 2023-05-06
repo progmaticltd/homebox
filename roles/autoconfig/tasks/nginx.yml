@@ -4,6 +4,7 @@
   file:
     path: /var/www/autoconfig/mail/
     state: directory
+  tags: nginx
 
 - name: Copy autoconfig XML template
   template:
@@ -11,10 +12,10 @@
     dest: /var/www/autoconfig/mail/config-v1.1.xml
     owner: root
     group: root
-    mode: '0644'
+    mode: 0644
+  tags: nginx
 
 - name: Create the autoconfig site
-  tags: autoconfig
   notify: Restart nginx server
   vars:
     csp: '{{ csp_default }}'
@@ -25,9 +26,11 @@
     owner: root
     group: root
     mode: 0644
+  tags: nginx
 
 - name: Enable nginx site
   file:
     src: '/etc/nginx/sites-available/autoconfig.{{ network.domain }}.conf'
     dest: '/etc/nginx/sites-enabled/autoconfig.{{ network.domain }}.conf'
     state: link
+  tags: nginx
