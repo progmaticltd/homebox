@@ -1,7 +1,6 @@
 ---
 
 - name: Copy nginx configuration
-  tags: nginx
   notify:
     - Test nginx config
     - Restart nginx
@@ -17,7 +16,6 @@
   tags: nginx
 
 - name: Activate prometheus web site
-  tags: nginx
   notify: Restart nginx
   file:
     src: /etc/nginx/sites-available/prometheus.{{ network.domain }}.conf

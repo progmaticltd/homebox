@@ -1,7 +1,6 @@
 ---
 
 - name: Create the website configuration file
-  tags: nginx
   notify: Restart nginx
   vars:
     csp: '{{ website.csp | default(csp_default) }}'
@@ -15,7 +14,6 @@
   tags: nginx
 
 - name: Enable nginx site
-  tags: nginx
   notify: Restart nginx
   file:
     src: /etc/nginx/sites-available/www.{{ network.domain }}.conf
