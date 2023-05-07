@@ -4,22 +4,26 @@
   file:
     path: /var/www/default
     state: directory
+  tags: config
 
 - name: Create the empty default page
   template:
     src: index-default.html
     dest: /var/www/default/index-default.html
+  tags: config
 
 # See RFC 8615
 - name: Create the well known directory for the services
   file:
     path: /var/www/default/.well-known/
     state: directory
+  tags: config
 
 - name: Create the default DNT policy
   copy:
     src: dnt-policy.txt
     dest: /var/www/default/.well-known/dnt-policy.txt
+  tags: config
 
 - name: Create the root website configuration file
   notify:

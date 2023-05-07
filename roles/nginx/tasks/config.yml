@@ -13,3 +13,10 @@
     src: ocsp.conf
     dest: /etc/nginx/conf.d/ocsp.conf
   tags: config
+
+- name: Deploy the logging restrictions
+  notify: Restart nginx
+  template:
+    src: logging.conf
+    dest: /etc/nginx/conf.d/logging.conf
+  tags: config

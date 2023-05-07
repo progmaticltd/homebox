@@ -3,14 +3,14 @@
 - name: Set the default log level
   set_fact:
     log_level: '{{ system.debug | ternary("debug", "warn") }}'
-  tags: config
+  tags: blackbox, config
 
 - name: Initialise default blackbox exporter settings
   set_fact:
     node_alert_settings_args:
       - --web.listen-address='127.0.0.1:9115'
       - --log.level='{{ log_level }}'
-  tags: config
+  tags: blackbox, config
 
 - name: Deploy blackbox exporter config
   notify: Restart Prometheus blackbox exporter
@@ -22,4 +22,4 @@
     variable_end_string: ']]'
     block_start_string: '[%'
     block_end_string: '%]'
-  tags: config
+  tags: blackbox, config

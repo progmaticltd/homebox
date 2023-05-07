@@ -1,7 +1,6 @@
 ---
 
 - name: Copy nginx configuration
-  tags: nginx
   notify: Restart nginx
   vars:
     csp: '{{ sogo.csp | default(csp_default) }}'
@@ -15,7 +14,6 @@
   tags: nginx
 
 - name: Activate sogo web site
-  tags: nginx
   notify: Restart nginx
   file:
     src: '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'
