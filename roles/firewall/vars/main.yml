@@ -9,6 +9,8 @@ rule_files:
     include: true
   - name: 10-outbound
     include: true
+  - name: 20-proxy
+    include: true
   - name: 30-ssh-open
     include: '{{ security.fail2ban }}'
   - name: 30-ssh-autoban

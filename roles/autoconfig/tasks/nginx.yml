@@ -6,6 +6,12 @@
     state: directory
   tags: nginx
 
+- name: Create an empty index file to avoid errors
+  copy:
+    content: ''
+    dest: /var/www/autoconfig/index.html
+  tags: nginx
+
 - name: Copy autoconfig XML template
   template:
     src: config-v1.1.xml

@@ -2,6 +2,7 @@
 
 - name: Load network information
   include_tasks: facts.yml
+  tags: facts
 
 - name: Install the required packages
   include_tasks: packages.yml
@@ -12,12 +13,15 @@
 
 - name: Set the generic firewall rules
   include_tasks: generic-rules.yml
+  tags: rules
 
 - name: Set the remote access firewall rules for public networks
   include_tasks: public-access.yml
+  tags: rules
 
 - name: Set the remote access firewall rules for private networks
   include_tasks: private-access.yml
+  tags: rules
 
 - name: Install and configure fail2ban
   when: security.fail2ban

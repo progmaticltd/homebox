@@ -6,10 +6,12 @@
   uri:
     url: https://api.ipify.org/
     return_content: true
+  tags: rules
 
 - name: Store the public IP
   set_fact:
     public_ip4: '{{ ext_ip_api_response.content }}'
+  tags: rules
 
 # If IPv6 is disabled on the local machine,
 # this task will fail, and we will just skip
@@ -20,13 +22,16 @@
   uri:
     url: https://api64.ipify.org/
     return_content: true
+  tags: rules
 
 - name: Store the public IP
   set_fact:
     public_ip6: '{{ ext_ip6_api_response.content }}'
+  tags: rules
 
 - name: Deploy the SSH public access file
   notify: Restart nftables
   template:
     src: rules/20-ssh-public.nft
     dest: /etc/nftables/20-ssh-public.nft
+  tags: rules

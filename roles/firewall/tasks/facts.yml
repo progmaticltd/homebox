@@ -4,12 +4,15 @@
 - name: Store the remote IP address (IPv4)
   set_fact:
     remote_ip: '{{ hostvars[inventory_hostname]["ansible_default_ipv4"]["address"] | default(None) }}'
+  tags: facts
 
 - name: Store the remote IP address (IPv6)
   when: remote_ip | length == 0
   set_fact:
     remote_ip: '{{ hostvars[inventory_hostname]["ansible_default_ipv6"]["address"] | default(None) }}'
+  tags: facts
 
 - name: Check the type of IP address for the remote host
   set_fact:
     remote_ip_private: '{{ (remote_ip | ipaddr("private")) != None }}'
+  tags: facts

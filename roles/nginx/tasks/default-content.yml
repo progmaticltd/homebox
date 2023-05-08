@@ -65,7 +65,7 @@
     fp: '{{ website.fp | default(fp_default) }}'
   template:
     src: catchall-site.conf
-    dest: /etc/nginx/sites-available/catchall.{{ network.domain }}.conf
+    dest: /etc/nginx/sites-available/_catchall.{{ network.domain }}.conf
     owner: root
     group: root
     mode: 0644
@@ -76,7 +76,7 @@
     - Check nginx config
     - Restart nginx
   file:
-    src: /etc/nginx/sites-available/catchall.{{ network.domain }}.conf
-    dest: /etc/nginx/sites-enabled/catchall.{{ network.domain }}.conf
+    src: /etc/nginx/sites-available/_catchall.{{ network.domain }}.conf
+    dest: /etc/nginx/sites-enabled/_catchall.{{ network.domain }}.conf
     state: link
   tags: config

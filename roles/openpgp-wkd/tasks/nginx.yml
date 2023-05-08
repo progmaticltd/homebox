@@ -1,5 +1,11 @@
 ---
 
+- name: Create an empty index file to avoid errors
+  copy:
+    content: ''
+    dest: /var/www/openpgpkey/index.html
+  tags: nginx
+
 - name: Create the nginx template
   notify: Restart nginx
   vars:

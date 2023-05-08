@@ -28,7 +28,7 @@
   notify: Restart tinyproxy
   lineinfile:
     path: /etc/tinyproxy/filter
-    line: '.{{ network.domain }}'
+    line: '^.*\.{{ network.domain }}$'
     create: true
   tags: proxy
 

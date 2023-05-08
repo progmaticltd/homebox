@@ -1,17 +1,28 @@
 #!/usr/sbin/nft -f
 
-# Transparent proxy rule
+# Transparent proxy rule for http only
+# https requires squid
+
+table inet filter {
+
+    chain output {
+        tcp dport 8888 ip daddr 127.0.0.1 counter accept comment "traffic to local proxy"
+        tcp dport 8888 ip6 daddr ::1 counter accept comment "traffic to local proxy"
+    }
+}
 
 table ip nat {
-    chain prerouting {
-        type nat hook prerouting priority filter; policy accept;
 
-        iif "{{ ext_iface }}" tcp dport 80 redirect to :8888
-        iif "{{ ext_iface }}" tcp dport 443 redirect to :8888
+    chain output {
+        type nat hook output priority 0; policy accept;
+        tcp dport 80 counter meta skuid != "tinyproxy" dnat to 127.0.0.1:8888
     }
+}
 
-    chain postrouting {
-        type nat hook postrouting priority srcnat; policy accept;
-        oif "{{ ext_iface }}" masquerade
+table ip6 nat {
+
+    chain output {
+        type nat hook output priority 0; policy accept;
+        tcp dport 80 counter meta skuid != "tinyproxy" dnat to [::1]:8888
     }
 }
