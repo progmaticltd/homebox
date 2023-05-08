@@ -23,6 +23,10 @@
   include_tasks: post-install-common.yml
   tags: postinstall
 
+- name: Deploy the custom scripts
+  include_tasks: scripts.yml
+  tags: scripts
+
 - name: Update proxy settings
   include_tasks: proxy.yml
   tags: proxy

@@ -9,7 +9,7 @@ cert_files=$(ls -1tr *.crt | grep -v issuer)
 for cert_file in $cert_files; do
 
     issuer=$(openssl x509 -in $cert_file -noout -issuer | sed 's/.*= //')
-    fqdn=$(openssl x509 -in $cert_file -noout -subject | sed -E 's/.* = ([\*a-z]+).*/\1/')
+    fqdn=$(openssl x509 -in $cert_file -noout -subject | sed -E 's/.* = (DNS:)?([\*a-z]+).*/\2/')
     from=$(openssl x509 -in $cert_file -noout -dates | sed -En 's/notBefore=(.*)/\1/p')
     till=$(openssl x509 -in $cert_file -noout -dates | sed -En 's/notAfter=(.*)/\1/p')
     sans=$(openssl x509 -in $cert_file -noout -ext subjectAltName | tail -n +2 | sed 's/ //g' | tr '\n' ',' | sed 's/,$//')
