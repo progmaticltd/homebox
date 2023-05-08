@@ -44,7 +44,8 @@
     - name: Check if the DNS server is resolving correctly
       register: host_test
       shell: >-
-        host {{ rnd_domain }} {{ dns_servers[0] }} | grep ^{{ rnd_domain | regex_escape }}
+        host {{ rnd_domain }} {{ dns_servers[0] }}
+        | grep {{ external_ip_addresses[0] | regex_escape }}
       ignore_errors: true
       changed_when: false
     - name: Set the DNS live fact
@@ -57,12 +58,11 @@
     - name: Check if the DNS is live
       register: host_test
       shell: >-
-        host {{ certificate.name }}.{{ network.domain }}
-        {{ dns_servers[0] }} | grep '^{{ fqdn | regex_escape }}'
+        host {{ certificate.name }}.{{ network.domain }} {{ dns_servers[0] }}
+        | grep {{ external_ip_addresses[0] | regex_escape }}
       ignore_errors: true
       changed_when: false
       tags: dns
     - name: Store the fact when the DNS server is live
       set_fact:
         dns_is_live: '{{ host_test is not failed }}'
-      tags: dns

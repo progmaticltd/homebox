@@ -48,14 +48,12 @@
 
 - name: Set the initial domain argument
   set_fact:
-    domains_list:
-      - "--domains '{{ fqdn }}'"
+    domains_list: [ 'DNS:{{ fqdn }}' ]
   tags: certs
 
-- name: Build the san list
+- name: Build the san list for the command line
   set_fact:
-    domains_list: >-
-      {{ domains_list + [ "--domains '" + san_domain + "'" ] }}
+    domains_list: '{{ domains_list + [ "DNS:"+san_domain] }}'
   loop: '{{ certificate.san_list | default([]) }}'
   loop_control:
     loop_var: san_domain
@@ -82,8 +80,8 @@
   when: renew_cert
   community.crypto.openssl_csr_pipe:
     privatekey_path: /var/lib/lego/certificates/{{ filename }}.key
-    common_name: '{{ fqdn }}'
-    subject_alt_name: '{{ certificate.san_list | default([]) }}'
+    common_name: 'DNS:{{ fqdn }}'
+    subject_alt_name: '{{ domains_list }}'
   register: ca_csr
   tags: certs
 
