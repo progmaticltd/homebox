@@ -39,7 +39,7 @@
   register: cert_check_cmd
   shell: >-
     openssl verify -verbose
-    -CAfile {{ acme_root }}
+    -CAfile /etc/ssl/certs/homebox-temp-ca.pem
     -untrusted /var/lib/lego/certificates/{{ filename }}.issuer.crt
     /var/lib/lego/certificates/{{ filename }}.crt
   ignore_errors: true

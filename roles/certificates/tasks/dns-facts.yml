@@ -4,18 +4,21 @@
   when: external_ip_type == 'AAAA'
   set_fact:
     dns_servers: '{{ network.dns.servers | ipv6 }}'
+    dns_is_live: false
   tags: dns
 
 - name: Filter by IP address for IPv4
   when: external_ip_type == 'A'
   set_fact:
     dns_servers: '{{ network.dns.servers | ipv4 }}'
+    dns_is_live: false
   tags: dns
 
 - name: Build the certificate FQDN
   when: certificate.name != 'default'
   set_fact:
     fqdn: '{{ certificate.name }}.{{ network.domain }}'
+    dns_is_live: false
   tags: certs
 
 - name: Build the certificate FQDN for the default site
@@ -30,34 +33,36 @@
     fqdn: '*.{{ network.domain }}'
   tags: certs
 
-- name: Chheck if the DNS server is resolving correctly
+- name: Generate a random dns entry and check if it is intercepted
   when: certificate.name == '_'
-  register: host_test
-  shell: >-
-    host {{ lookup('random_string') }}.{{ network.domain }}
-    {{ dns_servers[0] }} | grep {{ fqdn | regex_escape }}
-  ignore_errors: true
-  changed_when: false
-  tags: dns
+  block:
+    - name: Generate random sub domain
+      set_fact:
+        rnd_domain: >-
+          {{ lookup("password",
+          "/dev/null chars=ascii_letters length=8") | lower }}.{{ network.domain }}
+    - name: Check if the DNS server is resolving correctly
+      register: host_test
+      shell: >-
+        host {{ rnd_domain }} {{ dns_servers[0] }} | grep ^{{ rnd_domain | regex_escape }}
+      ignore_errors: true
+      changed_when: false
+    - name: Set the DNS live fact
+      set_fact:
+        dns_is_live: '{{ host_test is not failed }}'
 
-- name: Chheck if the DNS server is resolving correctly
+- name: Check if the DNS server is live for a standard domain
   when: certificate.name != '_'
-  register: host_test
-  shell: >-
-    host {{ certificate.name }}.{{ network.domain }}
-    {{ dns_servers[0] }} | grep {{ fqdn | regex_escape }}
-  ignore_errors: true
-  changed_when: false
-  tags: dns
-
-- name: Store the fact when the DNS server is live
-  when: host_test is not failed
-  set_fact:
-    dns_is_live: true
-  tags: dns
-
-- name: Store the fact when the DNS server is not live
-  when: host_test is failed
-  set_fact:
-    dns_is_live: false
-  tags: dns
+  block:
+    - name: Check if the DNS is live
+      register: host_test
+      shell: >-
+        host {{ certificate.name }}.{{ network.domain }}
+        {{ dns_servers[0] }} | grep '^{{ fqdn | regex_escape }}'
+      ignore_errors: true
+      changed_when: false
+      tags: dns
+    - name: Store the fact when the DNS server is live
+      set_fact:
+        dns_is_live: '{{ host_test is not failed }}'
+      tags: dns
