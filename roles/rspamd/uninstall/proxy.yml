@@ -4,5 +4,6 @@
   notify: Restart tinyproxy
   lineinfile:
     path: /etc/tinyproxy/filter
-    line: maps.rspamd.com
+    line: '^maps\.rspamd\.com$'
     state: absent
+  tags: proxy

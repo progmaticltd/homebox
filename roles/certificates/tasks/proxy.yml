@@ -3,5 +3,5 @@
 - name: Certificates OCSP check with LE
   lineinfile:
     path: /etc/tinyproxy/filter
-    line: r3.o.lencr.org
+    line: '^r3\.o\.lencr\.org$'
   tags: proxy

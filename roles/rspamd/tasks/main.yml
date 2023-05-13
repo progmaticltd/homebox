@@ -21,6 +21,7 @@
 
 - name: Configure rspamd to use the proxy
   include_tasks: proxy.yml
+  tags: proxy
 
 - name: Add Prometheus alerts
   when: prometheus.install

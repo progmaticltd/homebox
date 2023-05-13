@@ -15,7 +15,6 @@
   tags: postinstall
 
 - name: Update system certificates to add LetsEncrypt staging CAs
-  when: system.devel
   shell: update-ca-certificates
   changed_when: true
   tags: postinstall

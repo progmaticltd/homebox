@@ -3,5 +3,5 @@
 - name: Create local configuration files
   notify: Restart rspamd
   template:
-    src: dmarc.conf
+    src: conf/dmarc.conf
     dest: /etc/rspamd/local.d/dmarc.conf

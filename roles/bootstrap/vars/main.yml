@@ -6,5 +6,3 @@ whitelisted_hosts:
   - deb.debian.org
   - letsencrypt.org
   - security.debian.org
-  - unbound
-  - unbound-anchor

@@ -4,7 +4,7 @@
   register: tinyproxy_filter
   lineinfile:
     path: /etc/tinyproxy/filter
-    line: database.clamav.net
+    line: '^database\.clamav\.net$'
 
 - name: Restart tinyproxy
   when: tinyproxy_filter.changed

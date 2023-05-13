@@ -13,11 +13,11 @@
     dest: /etc/tinyproxy/tinyproxy.conf
   tags: proxy
 
-- name: Allow Debian repositories access
+- name: Allow safe web sites access access
   notify: Restart tinyproxy
   lineinfile:
     path: /etc/tinyproxy/filter
-    line: '{{ host }}'
+    line: '^{{ host | regex_escape }}$'
     create: true
   loop: '{{ whitelisted_hosts }}'
   loop_control:

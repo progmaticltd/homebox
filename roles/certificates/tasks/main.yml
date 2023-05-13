@@ -10,7 +10,7 @@
 
 - name: Run the common pre installation tasks
   include_tasks: pre-install-common.yml
-  tags: preinstall
+  tags: preinstall, proxy
 
 - name: Verify and create each certificate if needed
   include_tasks: check-and-create.yml

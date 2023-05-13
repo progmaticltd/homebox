@@ -7,8 +7,8 @@
     line: '{{ domain }}'
     state: absent
   loop:
-    - grafana.com
-    - apt.grafana.com
+    - '^grafana\.com$'
+    - '^apt\.grafana\.com$'
   loop_control:
     loop_var: domain
   tags: proxy

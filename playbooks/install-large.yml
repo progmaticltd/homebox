@@ -44,6 +44,8 @@
       tags: mta-sts
     - role: sogo
       tags: sogo
+    - role: ejabberd
+      tags: ejabberd
     - role: autodiscover
       tags: autodiscover
     - role: autoconfig

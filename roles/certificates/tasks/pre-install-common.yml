@@ -46,3 +46,11 @@
     owner: root
     group: root
   tags: preinstall
+
+# LetsEncrypt will need to be accessed once the DNS server is live.
+- name: Allow LetsEncrypt web site access in the proxy
+  notify: Restart tinyproxy
+  lineinfile:
+    path: /etc/tinyproxy/filter
+    line: '^acme-v02\.api\.letsencrypt\.org$'
+  tags: preinstall, proxy
