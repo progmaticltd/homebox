@@ -10,7 +10,7 @@
   tags: dashboards
 
 - name: Import the dashboard
-  when: dashboard_file.changed
+  when: repair | default(false) | bool or dashboard_file.changed
   grafana_dashboard:
     grafana_url: http://127.0.0.1:3000
     grafana_api_key: '{{ grafana_api_key }}'
