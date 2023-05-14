@@ -1,11 +1,16 @@
 ---
 
 - name: Restart tinyproxy
-  service:
+  systemd:
     name: tinyproxy
     state: restarted
 
 - name: Restart unbound
-  service:
+  systemd:
     name: unbound
+    state: restarted
+
+- name: Restart unattended-upgrades
+  systemd:
+    name: unattended-upgrades
     state: restarted

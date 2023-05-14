@@ -11,6 +11,7 @@ unwanted_packages:
 # These packages are absolutely required to run homebox
 base_packages:
   - apparmor-utils
+  - apt-listchanges
   - apt-transport-https
   - at
   - ca-certificates

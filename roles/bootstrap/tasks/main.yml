@@ -41,6 +41,10 @@
   when: prometheus.install
   include_tasks: prometheus.yml
 
+- name: Configure automatic upgrades
+  include_tasks: unattended-upgrades.yml
+  tags: autoupdate
+
 # Ensure the environment variables are cleared
 - name: Reset the SSH connection
   meta: reset_connection

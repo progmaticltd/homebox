@@ -221,6 +221,11 @@ security_default:
   alerts_email:
     - 'admin@{{ network.domain }}'
 
+  # Automatically reboot the system when needed after an upgrade
+  auto_reboot:
+    active: true
+    time: 00:00
+
   # Install fail2ban or not
   fail2ban: false
 

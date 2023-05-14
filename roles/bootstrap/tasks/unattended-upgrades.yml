@@ -1,0 +1,27 @@
+---
+
+# We are going to install the "unattended-upgrades" package, and to
+# configure it to install security updates automatically.
+- name: Configure the automatic security updates
+  debconf:
+    name: unattended-upgrades
+    question: '{{ conf.question }}'
+    value: '{{ conf.value }}'
+    vtype: '{{ conf.type }}'
+  loop:
+    - question: unattended-upgrades/origins_pattern
+      value: 'origin=Debian,codename=${distro_codename},label=Debian-Security'
+      type: string
+    - question: unattended-upgrades/enable_auto_updates
+      value: '{{ security.auto_update | ternary("true", "false") }}'
+      type: boolean
+  loop_control:
+    loop_var: conf
+  tags: autoupdate
+
+- name: Deploy custom configuraiton for unattended upgrades
+  notify: Restart unattended-upgrades
+  template:
+    src: unattended-upgrades.conf
+    dest: /etc/apt/apt.conf.d/50unattended-upgrades
+  tags: autoupdate
