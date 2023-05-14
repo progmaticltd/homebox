@@ -6,6 +6,7 @@
   template:
     src: apparmor.conf
     dest: /etc/apparmor.d/usr.sbin.clamsmtpd
+  tags: apparmor
 
 - name: Activate AppArmor profiles
   when: aa_templates.changed
@@ -16,3 +17,4 @@
     - usr.sbin.clamd
   loop_control:
     loop_var: aa_config
+  tags: apparmor

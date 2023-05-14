@@ -1,5 +1,11 @@
 ---
 
+- name: Install swaks to send package
+  register: swaks_pkg
+  apt:
+    name: swaks
+    state: present
+
 - name: Create a unique subject and filename for testing
   set_fact:
     test_subject: 'Test email with virus {{ 1048576 | random | to_uuid }}'
@@ -22,6 +28,7 @@
     group: users
 
 - name: Check if an email with a virus is rejected
+  # no_log: not system.devel
   shell: >-
     swaks
     --from="{{ users[0].mail }}"
@@ -40,7 +47,7 @@
   become_user: '{{ users[0].uid }}'
 
 - name: Check if the email has been bounced
-  when: mail.antivirus.active and mail.antivirus.action == 'bounce'
+  when: mail.antivirus.action == 'bounce'
   register: email_bounced
   shell: >-
     grep -l -e '{{ test_subject }}'
@@ -49,3 +56,10 @@
   until: email_bounced.rc == 0
   retries: 30
   delay: 2
+
+- name: Remove swaks package
+  apt:
+    name: swaks
+    state: absent
+    purge: true
+    autoremove: true

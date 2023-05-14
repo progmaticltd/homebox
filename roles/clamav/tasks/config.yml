@@ -12,6 +12,7 @@
       dest: /etc/clamav/freshclam.conf
   loop_control:
     loop_var: file
+  tags: config
 
 - name: Create the clamsmtp templates directory
   file:
@@ -20,6 +21,7 @@
     owner: clamsmtp
     group: clamsmtp
     mode: 0700
+  tags: config
 
 - name: Create the logs folder for clamsmtp
   file:
@@ -28,3 +30,4 @@
     group: clamsmtp
     mode: 0700
     state: directory
+  tags: config

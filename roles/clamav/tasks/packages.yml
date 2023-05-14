@@ -5,3 +5,4 @@
   apt:
     name: '{{ packages }}'
     state: present
+  tags: apt

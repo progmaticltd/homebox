@@ -11,3 +11,4 @@
     - 'content_filter = scan:127.0.0.1:10025'
   loop_control:
     loop_var: line
+  tags: postfix
