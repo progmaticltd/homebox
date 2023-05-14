@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 3,
+  "id": 1,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -522,7 +522,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "9.5.1",
       "targets": [
         {
           "datasource": {
@@ -552,7 +552,19 @@
             "mode": "thresholds"
           },
           "decimals": 0,
-          "mappings": [],
+          "mappings": [
+            {
+              "options": {
+                "match": "nan",
+                "result": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "0%"
+                }
+              },
+              "type": "special"
+            }
+          ],
           "max": 100,
           "min": 0,
           "thresholds": {
@@ -591,7 +603,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "9.5.1",
       "targets": [
         {
           "datasource": {
@@ -607,6 +619,7 @@
         }
       ],
       "title": "Filesystem inodes usage",
+      "transformations": [],
       "type": "gauge"
     },
     {
@@ -654,7 +667,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "9.5.1",
       "targets": [
         {
           "datasource": {
@@ -674,20 +687,21 @@
       "type": "gauge"
     }
   ],
-  "schemaVersion": 37,
+  "refresh": "",
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": []
   },
   "time": {
-    "from": "now-2d",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "System load",
   "uid": "1GT4xeh4k",
-  "version": 6,
+  "version": 2,
   "weekStart": ""
 }
