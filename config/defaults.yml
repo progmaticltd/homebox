@@ -92,7 +92,6 @@ mail_default:
                             # be careful, bouncing external emails is a way to expose clamav
                             # usage
     quarantine: yes         # Place emails with a virus in quarantine, for further analysis
-    use_proxy: false        # use tor / privoxy to dowload updates
   #############################################################################
   impersonate:              # Activate dovecot "master" user feature, ideal for families and
                             # communities
