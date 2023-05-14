@@ -28,7 +28,7 @@
     group: users
 
 - name: Check if an email with a virus is rejected
-  # no_log: not system.devel
+  no_log: not system.devel
   shell: >-
     swaks
     --from="{{ users[0].mail }}"
