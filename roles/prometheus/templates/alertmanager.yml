@@ -73,6 +73,9 @@ receivers:
         headers:
           x-prometheus-alert-name: '{{ .CommonLabels.alertname | toLower }}'
           x-prometheus-alert-status: '{{ .Status | toLower }}'
+          x-prometheus-alert-starts: '{{ range .Alerts }}{{ .StartsAt }}{{ end }}'
+          x-prometheus-alert-ends: '{{ range .Alerts }}{{ .EndsAt }}{{ end }}'
+          references: '{{ range .Alerts }}{{ .Fingerprint }}{{ end }}'
           subject: >-
             {{ .CommonLabels.alertname }} {{ .Status | toLower }}
             {{ if eq .Status "firing" }}🔥{{ else }}😌{{ end }}

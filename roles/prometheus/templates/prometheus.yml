@@ -61,16 +61,16 @@ scrape_configs:
       module: [http_2xx]
     static_configs:
       - targets:
-        - https://{{ network.domain }}/
-        - https://www.{{ network.domain }}/
-        - https://autoconfig.{{ network.domain }}/
-        - https://autodiscover.{{ network.domain }}/
-        - https://grafana.{{ network.domain }}/
-        - https://mta-sts.{{ network.domain }}/
-        - https://openpgpkey.{{ network.domain }}/
-        - https://prometheus.{{ network.domain }}/
-        - https://rspamd.{{ network.domain }}/
-        - https://sogo.{{ network.domain }}/
+        - https://[[ network.domain ]]/
+        - https://www.[[ network.domain ]]/
+        - https://autoconfig.[[ network.domain ]]/
+        - https://autodiscover.[[ network.domain ]]/
+        - https://grafana.[[ network.domain ]]/
+        - https://mta-sts.[[ network.domain ]]/
+        - https://openpgpkey.[[ network.domain ]]/
+        - https://prometheus.[[ network.domain ]]/
+        - https://rspamd.[[ network.domain ]]/
+        - https://sogo.[[ network.domain ]]/
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
