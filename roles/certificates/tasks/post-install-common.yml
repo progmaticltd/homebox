@@ -9,8 +9,8 @@
 
 - name: Copy the certificate renewal script
   copy:
-    src: cert-renew.sh
-    dest: /etc/cron.weekly/cert-renew
+    src: cert-renew.cron
+    dest: /etc/cron.d/cert-renew
     mode: 0700
   tags: postinstall
 

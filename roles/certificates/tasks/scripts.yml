@@ -6,3 +6,10 @@
     dest: /usr/local/sbin/cert-status
     mode: 0755
   tags: scripts
+
+- name: Copy the certificate renewal script
+  copy:
+    src: cert-renew.sh
+    dest: /usr/local/sbin/cert-renew
+    mode: 0700
+  tags: scripts

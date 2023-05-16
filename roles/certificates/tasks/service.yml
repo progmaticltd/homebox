@@ -1,0 +1,15 @@
+---
+
+- name: Copy the certificate renewal service
+  notify: Restart cert-renew service
+  template:
+    src: cert-renew.service
+    dest: /etc/systemd/system/cert-renew.service
+  tags: service
+
+- name: Copy the certificate renewal timer
+  notify: Restart cert-renew timer
+  template:
+    src: cert-renew.timer
+    dest: /etc/systemd/system/cert-renew.timer
+  tags: service

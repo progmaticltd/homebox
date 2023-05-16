@@ -13,3 +13,16 @@
   systemd:
     name: apparmor
     state: restarted
+
+- name: Restart cert-renew timer
+  systemd:
+    name: cert-renew.timer
+    state: restarted
+    enabled: true
+    daemon_reload: true
+
+- name: Restart cert-renew service
+  systemd:
+    name: cert-renew.timer
+    enabled: true
+    daemon_reload: true

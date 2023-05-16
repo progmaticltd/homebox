@@ -1,0 +1,12 @@
+[Unit]
+Description=Certificate renewal service
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/cert-renew
+RemainAfterExit=false
+StandardOutput=journal
+
+[Install]
+WantedBy=timers.target

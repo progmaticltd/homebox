@@ -27,6 +27,10 @@
   include_tasks: scripts.yml
   tags: scripts
 
+- name: Deploy the systemd service and timer
+  include_tasks: service.yml
+  tags: service
+
 - name: Update proxy settings
   include_tasks: proxy.yml
   tags: proxy

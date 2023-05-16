@@ -1,0 +1,9 @@
+[Unit]
+Description=Certificate renewal timer
+
+[Timer]
+OnCalendar=weekly
+Persistent=true
+
+[Install]
+WantedBy=timers.target

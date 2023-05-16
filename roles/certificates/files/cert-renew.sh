@@ -1,6 +1,21 @@
 #!/bin/sh
 
-exec 1> /var/log/certs-renew.log
+# Get fqdn
+domain=$(hostname -d)
+fqdn="smtp.$domain"
+
+# Get external IP address signature from local dns server
+private_dns=$(dig "$fqdn" @127.0.1.53 +noall +answer | md5sum | cut -f 1 -d ' ')
+
+# Get external IP address signature from public dns servers
+public_dns4=$(dig "$fqdn" @1.1.1.1 +noall +answer | md5sum | cut -f 1 -d ' ')
+public_dns6=$(dig "$fqdn" @2606:4700:4700::64 +noall +answer | md5sum | cut -f 1 -d ' ')
+
+# Check if the DNS server is live
+if [ "$private_dns" != "$public_dns4" ] && [ "$private_dns" != "$public_dns6" ]; then
+    echo "DNS server is not live yet."
+    exit
+fi
 
 # List all the certificates
 certs=$(find /var/lib/lego/certificates/ -name '*.key')
