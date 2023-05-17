@@ -26,18 +26,23 @@ for cert_file in $cert_files; do
     till=$(openssl x509 -in $cert_file -noout -dates | sed -En 's/notAfter=(.*)/\1/p')
     sans=$(openssl x509 -in $cert_file -noout -ext subjectAltName | tail -n +2 | sed 's/ //g' | tr '\n' ',' | sed 's/,$//')
 
+    # Compute dates
+    from_days=$(date +%s -d "$from")
+    till_days=$(date +%s -d "$till")
+    valid_days=$(((till_days - from_days) / 86400))
+
     if openssl verify -untrusted $cafile $cert_file >/dev/null 2>&1; then
-        printf "%s|%s|%s|%s|%s|OK\n" "$fqdn" "$from" "$till" "$issuer" "$sans" >>$temp_file
+        printf "%s|%s|%s|%s|%s|%s|OK\n" "$fqdn" "$from" "$till" "$valid_days" "$issuer" "$sans" >>$temp_file
     else
         error=$(openssl verify -CAfile $cafile $cert_file 2>&1 | sed -En 's/.*: //p')
         error=$(echo "$error" | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
-        printf "%s|%s|%s|%s|%s|$error\n" "$fqdn" "$from" "$till" "$issuer" "$sans" >>$temp_file
+        printf "%s|%s|%s|%s|%s|%s|$error\n" "$fqdn" "$from" "$till" "$valid_days" "$issuer" "$sans" >>$temp_file
     fi
 
 done
 
 # Display the output table formatted
-columns='Domain,Valid from,Valid until,Issuer,Full domains list,Status'
+columns='Domain,Valid from,Valid until,Days left,Issuer,Full domains list,Status'
 column -t -s '|' -o '  | ' -N "$columns" -W Status $temp_file
 
 # Remove temporary files
