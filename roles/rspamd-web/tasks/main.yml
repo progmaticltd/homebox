@@ -1,9 +1,5 @@
 ---
 
-- name: Load facts
-  include_tasks: facts.yml
-  tags: facts
-
 - name: Install the certificates
   include_tasks: certs.yml
 

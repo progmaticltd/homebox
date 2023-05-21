@@ -1,0 +1,10 @@
+---
+
+- name: Load and merge user and default settings
+  include_tasks: load-defaults.yml
+
+- name: Parse external IP address types
+  include_tasks: external-ips.yml
+
+- name: Detect public local IP addresses
+  include_tasks: local-ips.yml

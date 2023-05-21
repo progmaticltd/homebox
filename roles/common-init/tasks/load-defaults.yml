@@ -7,7 +7,6 @@
 # about new version changes.
 
 
-
 ################################################################################
 # Merge user options with default options
 - name: Combine default and user defined network settings
@@ -283,7 +282,7 @@
 
 
 ################################################################################
-# Marking the default settings as loaded should increase the speed of the deployment
+# Mark the default settings as loaded to speed-up the deployment process.
 - name: Mark the default settings as loaded
   run_once: true
   set_fact:

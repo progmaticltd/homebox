@@ -108,8 +108,8 @@
 - name: Check if we should override all the keys at once
   set_fact:
     overwrite_keys: >-
-      current_dns_keys == [ ]
-      or (current_dns_keys|length + missing_keys|length) > 4
+      {{ (current_dns_keys|length == 0)
+      or (missing_keys|length >= 3) }}
 
 - name: Create all the keys at once
   when: overwrite_keys
@@ -126,7 +126,7 @@
   changed_when: true
 
 - name: Create the missing DNS keys
-  when: not overwrite_keys
+  # when: not overwrite_keys
   delegate_to: localhost
   uri:
     url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/dnskeys

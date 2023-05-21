@@ -7,13 +7,6 @@
     mode: 0400
   tags: postinstall
 
-- name: Copy the certificate renewal script
-  copy:
-    src: cert-renew.cron
-    dest: /etc/cron.d/cert-renew
-    mode: 0700
-  tags: postinstall
-
 - name: Update system certificates to add LetsEncrypt staging CAs
   shell: update-ca-certificates
   changed_when: true

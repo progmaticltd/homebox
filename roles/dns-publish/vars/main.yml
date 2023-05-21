@@ -24,3 +24,10 @@ key_algorithms:
     id: 15
   - name: ED448
     id: 16
+
+# Required domains for monitor
+required_domains:
+  - pypi.org
+  - pythonhosted.org
+  - files.pythonhosted.org
+  - www.codesam.co.uk

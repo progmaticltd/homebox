@@ -2,8 +2,14 @@
 
 - name: Load common facts
   include_tasks: facts.yml
+  tags: facts
 
 - name: Run DNS provider’s specific tasks
   when: dns.provider is defined
   include_tasks:
     file: 'update-{{ dns.provider }}.yml'
+  tags: publish
+
+- name: Install the DNS monitoring tasks
+  include_tasks: dns-monitor.yml
+  tags: monitor

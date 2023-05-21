@@ -19,9 +19,7 @@
     - '{{ playbook_dir }}/../config/system.yml'
     - '{{ playbook_dir }}/../config/defaults.yml'
   roles:
-    - role: load-defaults
-      tags: always
-    - role: external-ip-type
+    - role: common-init
       tags: always
 
 - name: Run all the roles selected

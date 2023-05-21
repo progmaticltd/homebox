@@ -7,15 +7,20 @@
         type: rsa2048
   include_role:
     name: certificates
+    apply:
+      tags: certs
+  tags: certs
 
 - name: Check if the certificate has been updated
   notify: Restart postfix
   debug:
     var: updated_certs
   changed_when: updated_certs | length > 0
+  tags: certs
 
 - name: Copy the certificate update hook for SMTP
   copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/smtp.{{ network.domain }}/renew-cert.sh
     mode: 0700
+  tags: certs
