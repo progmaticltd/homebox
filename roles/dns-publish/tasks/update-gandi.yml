@@ -126,7 +126,7 @@
   changed_when: true
 
 - name: Create the missing DNS keys
-  # when: not overwrite_keys
+  when: not overwrite_keys
   delegate_to: localhost
   uri:
     url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/dnskeys
