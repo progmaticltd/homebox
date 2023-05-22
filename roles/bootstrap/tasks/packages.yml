@@ -1,6 +1,6 @@
 ---
 
 - name: Install the packages absolutely required
-  apt:
+  ansible.builtin.apt:
     name: '{{ base_packages }}'
     state: present

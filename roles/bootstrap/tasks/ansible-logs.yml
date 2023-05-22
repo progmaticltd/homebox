@@ -2,7 +2,7 @@
 
 - name: Deploy the system log configuration
   register: rsyslog_config
-  template:
+  ansible.builtin.template:
     src: ansible-logs.conf
     dest: /etc/rsyslog.d/ansible.conf
 

@@ -1,6 +1,6 @@
 ---
 
 - name: Install etckeeper
-  apt:
+  ansible.builtin.apt:
     name: etckeeper
     state: present

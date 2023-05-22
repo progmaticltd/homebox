@@ -1,19 +1,19 @@
 ---
 
 - name: Remove the locales-all package
-  apt:
+  ansible.builtin.apt:
     name: locales-all
     state: absent
     purge: true
     autoremove: true
 
 - name: Get the locale value on the current machine
-  set_fact:
+  ansible.builtin.set_fact:
     locale: "{{ lookup('env','LANG') }}"
 
 - name: Configure locales
   register: debconf_locales
-  debconf:
+  ansible.builtin.debconf:
     name: locales
     question: '{{ conf.question }}'
     value: '{{ conf.value }}'
@@ -31,22 +31,22 @@
     loop_var: conf
 
 - name: Update /etc/locales
-  replace:
+  ansible.builtin.replace:
     path: /etc/locale.gen
     regexp: '^# {{ locale | regex_escape }}'
     replace: '{{ locale }}'
 
 - name: Generate the locales
   when: debconf_locales.changed
-  shell: locale-gen
+  ansible.builtin.shell: locale-gen
   changed_when: true
 
 - name: Update /etc/default/locales
-  shell: >-
+  ansible.builtin.shell: >-
     update-locale LANG={{ locale }}
   changed_when: true
 
 - name: Configure locales
   environment:
     DEBIAN_FRONTEND: noninteractive
-  shell: dpkg-reconfigure -phigh locales
+  ansible.builtin.shell: dpkg-reconfigure -phigh locales

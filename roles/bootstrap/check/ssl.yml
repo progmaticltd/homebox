@@ -1,7 +1,7 @@
 ---
 
 - name: Check if RFC7919 Diffie-Hellman parameters files exists
-  shell: >-
+  ansible.builtin.shell: >-
     test -f /etc/ssl/{{ file }}
   loop:
     - ffdhe2048.pem

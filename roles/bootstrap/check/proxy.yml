@@ -4,21 +4,21 @@
   register: internet_direct_access
   environment:
     https_proxy: ~
-  uri:
+  ansible.builtin.uri:
     use_proxy: true
     url: https://deb.debian.org/
     return_content: true
   ignore_errors: true
 
 - name: Ensure the access failed
-  assert:
+  ansible.builtin.assert:
     that: internet_direct_access.failed
 
 - name: Check that internet with proxy access is allowed
   register: internet_direct_access
   environment:
     https_proxy: http://127.0.0.1:8888/
-  uri:
+  ansible.builtin.uri:
     use_proxy: true
     url: https://deb.debian.org/
     return_content: true

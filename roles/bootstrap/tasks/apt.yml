@@ -3,23 +3,23 @@
 # Initialise the packages repository to a standard,
 # including backports, contrib and non-free software
 - name: Store the sections list
-  set_fact:
+  ansible.builtin.set_fact:
     sections: '{{ system.apt.sections | join(" ") }}'
 
 - name: Initialise default repositories
   register: repositories
-  template:
+  ansible.builtin.template:
     src: sources.list
     dest: /etc/apt/sources.list
 
 - name: Find all third party repositories
   register: tp_repositories_found
-  find:
+  ansible.builtin.find:
     path: /etc/apt/sources.list.d
 
 - name: Comment out third party repositories
   register: tp_repositories
-  replace:
+  ansible.builtin.replace:
     path: '{{ file.path }}'
     regexp: '^deb (.*)'
     replace: '# deb \1'
@@ -32,15 +32,15 @@
 - name: Force the packages cache update on the first installation
   when: repositories.changed
   register: packages_cache
-  apt:
+  ansible.builtin.apt:
     update_cache: true
 
 - name: Disable recommended and suggested packages
-  template:
+  ansible.builtin.template:
     src: extra-packages.conf
     dest: /etc/apt/90extra
 
 - name: Upgrade the distribution
   when: packages_cache.changed
-  apt:
+  ansible.builtin.apt:
     upgrade: safe

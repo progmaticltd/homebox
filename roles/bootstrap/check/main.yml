@@ -1,19 +1,19 @@
 ---
 
 - name: Initialise and update the packages repository
-  include_tasks: check/apt.yml
+  ansible.builtin.include_tasks: check/apt.yml
 
 - name: Install the base required packages
-  include_tasks: check/packages.yml
+  ansible.builtin.include_tasks: check/packages.yml
 
 - name: Configure the locales
-  include_tasks: check/locales.yml
+  ansible.builtin.include_tasks: check/locales.yml
 
 - name: Configure the basic SSL settings
-  include_tasks: check/ssl.yml
+  ansible.builtin.include_tasks: check/ssl.yml
 
 - name: Configure the packages repository
-  include_tasks: check/apticron.yml
+  ansible.builtin.include_tasks: check/apticron.yml
 
 - name: Configure the proxy
-  include_tasks: check/proxy.yml
+  ansible.builtin.include_tasks: check/proxy.yml

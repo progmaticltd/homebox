@@ -1,13 +1,13 @@
 ---
 
 - name: Remove Exim
-  apt:
+  ansible.builtin.apt:
     name: exim
     state: absent
     purge: true
     autoremove: true
 
 - name: Install postfix
-  apt:
+  ansible.builtin.apt:
     name: postfix
     state: present

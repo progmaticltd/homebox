@@ -2,49 +2,49 @@
 
 # This seems to be required on first boot on cloud servers
 - name: Remove packages not required
-  include_tasks: pre-clean.yml
+  ansible.builtin.include_tasks: pre-clean.yml
 
 - name: Move ansible logs to a separate file
-  include_tasks: ansible-logs.yml
+  ansible.builtin.include_tasks: ansible-logs.yml
 
 - name: Network related tasks
-  include_tasks: network.yml
+  ansible.builtin.include_tasks: network.yml
   tags: network
 
 - name: Track changes in the system
   when: system.track_changes
-  include_tasks: track-changes.yml
+  ansible.builtin.include_tasks: track-changes.yml
 
 - name: Initialise and update the packages repository
-  include_tasks: apt.yml
+  ansible.builtin.include_tasks: apt.yml
 
 - name: Install the base required packages
-  include_tasks: packages.yml
+  ansible.builtin.include_tasks: packages.yml
 
 - name: Remove exim and install postfix
-  include_tasks: postfix.yml
+  ansible.builtin.include_tasks: postfix.yml
 
 - name: Configure the locales
-  include_tasks: locales.yml
+  ansible.builtin.include_tasks: locales.yml
 
 - name: Configure the basic SSL settings
-  include_tasks: ssl.yml
+  ansible.builtin.include_tasks: ssl.yml
 
 - name: Configure the packages repository
-  include_tasks: apticron.yml
+  ansible.builtin.include_tasks: apticron.yml
 
 - name: Configure the proxy
-  include_tasks: proxy.yml
+  ansible.builtin.include_tasks: proxy.yml
   tags: proxy
 
 - name: Create prometheus directory structure
   when: prometheus.install
-  include_tasks: prometheus.yml
+  ansible.builtin.include_tasks: prometheus.yml
 
 - name: Configure automatic upgrades
-  include_tasks: unattended-upgrades.yml
+  ansible.builtin.include_tasks: unattended-upgrades.yml
   tags: autoupdate
 
 # Ensure the environment variables are cleared
 - name: Reset the SSH connection
-  meta: reset_connection
+  ansible.builtin.meta: reset_connection

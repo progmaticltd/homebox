@@ -1,7 +1,7 @@
 ---
 
 - name: Remove unwanted packages
-  apt:
+  ansible.builtin.apt:
     name: '{{ unwanted_packages }}'
     state: absent
     purge: true

@@ -3,7 +3,7 @@
 # We are going to install the "unattended-upgrades" package, and to
 # configure it to install security updates automatically.
 - name: Configure the automatic security updates
-  debconf:
+  ansible.builtin.debconf:
     name: unattended-upgrades
     question: '{{ conf.question }}'
     value: '{{ conf.value }}'
@@ -21,7 +21,7 @@
 
 - name: Deploy custom configuraiton for unattended upgrades
   notify: Restart unattended-upgrades
-  template:
+  ansible.builtin.template:
     src: unattended-upgrades.conf
     dest: /etc/apt/apt.conf.d/50unattended-upgrades
   tags: autoupdate

@@ -1,13 +1,13 @@
 ---
 
 - name: Create the prometheus alerts directory
-  file:
+  ansible.builtin.file:
     path: /etc/prometheus/alerts
     state: directory
   tags: prometheus
 
 - name: Create the prometheus targets directory
-  file:
+  ansible.builtin.file:
     path: /etc/prometheus/targets
     state: directory
   tags: prometheus
