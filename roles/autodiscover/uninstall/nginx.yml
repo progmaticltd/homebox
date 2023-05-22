@@ -2,17 +2,17 @@
 
 - name: Remove the autodiscover site
   notify: Restart nginx
-  file:
+  ansible.builtin.file:
     path: /etc/nginx/sites-available/autodiscover.{{ network.domain }}.conf
     state: absent
 
 - name: Removed enabled nginx site
   notify: Restart nginx
-  file:
+  ansible.builtin.file:
     path: '/etc/nginx/sites-enabled/autodiscover.{{ network.domain }}.conf'
     state: absent
 
 - name: Remove the autoconfiguration directory
-  file:
+  ansible.builtin.file:
     path: /var/www/autodiscover/
     state: absent

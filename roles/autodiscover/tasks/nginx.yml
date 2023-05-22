@@ -1,19 +1,19 @@
 ---
 
 - name: Create the autoconfiguration directories
-  file:
+  ansible.builtin.file:
     path: /var/www/autodiscover/autodiscover/
     state: directory
   tags: nginx
 
 - name: Create an empty index file to avoid errors
-  copy:
+  ansible.builtin.copy:
     content: ''
     dest: /var/www/autodiscover/index.html
   tags: nginx
 
 - name: Copy XML template
-  template:
+  ansible.builtin.template:
     src: autodiscover.xml
     dest: /var/www/autodiscover/autodiscover/autodiscover.xml
     owner: root
@@ -26,7 +26,7 @@
   vars:
     csp: '{{ csp_default }}'
     fp: '{{ fp_default }}'
-  template:
+  ansible.builtin.template:
     src: nginx.conf
     dest: /etc/nginx/sites-available/autodiscover.{{ network.domain }}.conf
     owner: root
@@ -35,7 +35,7 @@
   tags: nginx
 
 - name: Enable nginx site
-  file:
+  ansible.builtin.file:
     src: '/etc/nginx/sites-available/autodiscover.{{ network.domain }}.conf'
     dest: '/etc/nginx/sites-enabled/autodiscover.{{ network.domain }}.conf'
     state: link

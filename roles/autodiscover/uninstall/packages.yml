@@ -1,7 +1,7 @@
 ---
 
 - name: Remove the packages installed
-  apt:
+  ansible.builtin.apt:
     name: '{{ autodiscover_packages }}'
     state: absent
     purge: true

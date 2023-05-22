@@ -6,6 +6,6 @@
       - name: autodiscover
         type: CNAME
         value: '{{ network.hostname }}.{{ network.domain }}'
-  include_role:
+  ansible.builtin.include_role:
     name: dns-record
   tags: dns

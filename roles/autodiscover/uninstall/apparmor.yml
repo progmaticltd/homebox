@@ -4,7 +4,7 @@
   notify:
     - Restart AppArmor service
     - Restart nginx
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
     line: '  #include <local/nginx-autodiscover>'
     state: absent
@@ -13,6 +13,6 @@
   notify:
     - Restart AppArmor service
     - Restart nginx
-  file:
+  ansible.builtin.file:
     path: /etc/apparmor.d/local/nginx-autodiscover
     state: absent

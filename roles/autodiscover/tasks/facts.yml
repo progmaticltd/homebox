@@ -2,7 +2,7 @@
 
 - name: Check if the CNAME record exists
   register: autodiscover_record_cmd
-  shell: >-
+  ansible.builtin.shell: >-
     dig -t CNAME
     +nocomments +noall +answer
     autodiscover.{{ network.domain }} @127.0.0.1
@@ -11,6 +11,6 @@
   tags: facts
 
 - name: Store the fact for the DNS record
-  set_fact:
+  ansible.builtin.set_fact:
     autodiscover_record_missing: '{{ autodiscover_record_cmd.stdout | length == 0 }}'
   tags: facts

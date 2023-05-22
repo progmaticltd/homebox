@@ -5,7 +5,7 @@
     certificates:
       - name: autodiscover
         type: ec384
-  include_role:
+  ansible.builtin.include_role:
     name: certificates
     apply:
       tags: always
@@ -15,7 +15,7 @@
   when: updated_certs | length > 0
   block:
     - name: Check nginx config
-      shell: nginx -t
+      ansible.builtin.shell: nginx -t
     - name: Restart nginx
       systemd:
         name: nginx
@@ -24,7 +24,7 @@
   tags: certs
 
 - name: Copy the certificate update hook
-  copy:
+  ansible.builtin.copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/autodiscover.{{ network.domain }}/renew-cert.sh
     mode: 0700

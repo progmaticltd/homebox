@@ -4,7 +4,7 @@
   tags: systemctl, autodiscover
   vars:
     email: 'postmaster@{{ network.domain }}'
-  uri:
+  ansible.builtin.uri:
     url: 'https://autodiscover.{{ network.domain }}/autodiscover/autodiscover.xml'
     method: POST
     body: ''
@@ -13,11 +13,11 @@
 
 - name: Check the autodiscover answer is valid
   tags: systemctl, autodiscover
-  shell: xmllint /tmp/autodiscover.xml
+  ansible.builtin.shell: xmllint /tmp/autodiscover.xml
   changed_when: false
 
 - name: Remove the downloaded file
   tags: systemctl, autodiscover
-  file:
+  ansible.builtin.file:
     path: /tmp/autodiscover.xml
     state: absent

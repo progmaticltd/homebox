@@ -13,4 +13,5 @@
     no_block: true
 
 - name: Activate AppArmor profile
-  command: 'aa-enforce usr.sbin.nginx'
+  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
+  ansible.builtin.command: 'aa-enforce usr.sbin.nginx'
