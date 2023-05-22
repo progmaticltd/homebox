@@ -3,16 +3,16 @@
 - name: Check the autoconfig answer is valid
   vars:
     email: '{{ users[0].mail }}'
-  get_url:
+  ansible.builtin.get_url:
     url: 'https://autoconfig.{{ network.domain }}/mail/config-v1.1.xml?emailaddress={{ email }}'
     dest: /tmp/autoconfig.xml
     force: yes
 
 - name: Check the autoconfig answer is valid
-  shell: xmllint /tmp/autoconfig.xml
+  ansible.builtin.shell: xmllint /tmp/autoconfig.xml
   changed_when: false
 
 - name: Remove the downloaded file
-  file:
+  ansible.builtin.file:
     path: /tmp/autoconfig.xml
     state: absent

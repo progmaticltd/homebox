@@ -5,6 +5,6 @@
     dns_records:
       - name: autoconfig
         type: CNAME
-  include_role:
+  ansible.builtin.include_role:
     name: dns-record
     tasks_from: ../uninstall/main.yml

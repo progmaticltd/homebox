@@ -1,7 +1,7 @@
 ---
 
 - name: Remove all the certificate files
-  file:
+  ansible.builtin.file:
     path: '{{ file }}'
     state: absent
   loop:

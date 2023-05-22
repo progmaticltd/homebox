@@ -1,12 +1,12 @@
 ---
 
 - name: Remove nginx AppArmor profile
-  file:
+  ansible.builtin.file:
     path: /etc/apparmor.d/local/nginx-autoconfig
     state: absent
 
 - name: Remove autoconfig AppAromor specific configuration
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
     line: '  #include <local/nginx-autoconfig>'
     state: absent

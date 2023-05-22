@@ -1,6 +1,7 @@
 ---
 
 - name: Install the required packages
-  apt:
+  ansible.builtin.apt:
     name: '{{ autoconfig_packages }}'
     state: present
+  tags: apt

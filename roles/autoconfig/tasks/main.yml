@@ -1,19 +1,21 @@
 ---
 
 - name: Install the required packages
-  include_tasks: packages.yml
+  ansible.builtin.include_tasks: packages.yml
+  tags: apt
 
 - name: Deploy nginx config
-  include_tasks: nginx.yml
+  ansible.builtin.include_tasks: nginx.yml
   tags: nginx
 
 - name: Configure AppArmor
-  include_tasks: apparmor.yml
+  ansible.builtin.include_tasks: apparmor.yml
+  tags: apparmor
 
 - name: Copy the certificates
-  include_tasks: certificates.yml
+  ansible.builtin.include_tasks: certificates.yml
   tags: certs
 
 - name: Set the DNS records
-  include_tasks: dns.yml
+  ansible.builtin.include_tasks: dns.yml
   tags: dns
