@@ -1,7 +1,7 @@
 ---
 
 - name: Create the certificate renewal configuration file
-  template:
+  ansible.builtin.template:
     src: renew.conf
     dest: /etc/lego/renew.conf
     mode: 0400
@@ -9,14 +9,14 @@
 
 - name: Update system certificates to add LetsEncrypt staging CAs
   register: update_cmd
-  shell: update-ca-certificates
+  ansible.builtin.shell: update-ca-certificates
   changed_when: >-
     "0 added, 0 removed" not in update_cmd.stdout
   tags: postinstall
 
 - name: Modify SSL abstractions
   notify: Restart AppArmor
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/apparmor.d/abstractions/ssl_certs
     line: '{{ line }}'
     state: present
@@ -29,7 +29,7 @@
 
 - name: Modify SSL key abstractions
   notify: Restart AppArmor
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/apparmor.d/abstractions/ssl_keys
     line: '{{ line }}'
     state: present

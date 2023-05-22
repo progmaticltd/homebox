@@ -2,27 +2,27 @@
 
 - name: Build the certificate FQDN
   when: certificate.name != 'default'
-  set_fact:
+  ansible.builtin.set_fact:
     fqdn: '{{ certificate.name }}.{{ network.domain }}'
     filename: '{{ certificate.name }}.{{ network.domain }}'
   tags: certs
 
 - name: Build the certificate FQDN for the default site
   when: certificate.name == 'default'
-  set_fact:
+  ansible.builtin.set_fact:
     fqdn: '{{ network.domain }}'
     filename: '{{ network.domain }}'
   tags: certs
 
 - name: Build the certificate FQDN for a wildcard
   when: certificate.name == '_'
-  set_fact:
+  ansible.builtin.set_fact:
     fqdn: '*.{{ network.domain }}'
     filename: '_.{{ network.domain }}'
   tags: certs
 
 - name: Create the hook directory
-  file:
+  ansible.builtin.file:
     path: /etc/lego/hooks/{{ filename }}/
     state: directory
     mode: 0700
@@ -30,14 +30,14 @@
 
 - name: Check if the certificate exists
   register: cert_file
-  stat:
+  ansible.builtin.stat:
     path: /var/lib/lego/certificates/{{ filename }}.crt
   tags: certs
 
 - name: Check if the certificate exists and is valid
   when: cert_file.stat.exists
   register: cert_check_cmd
-  shell: >-
+  ansible.builtin.shell: >-
     openssl verify -verbose
     -CAfile {{ acme_root }}
     -untrusted /var/lib/lego/certificates/{{ filename }}.issuer.crt
@@ -49,7 +49,7 @@
 - name: Check if the issuer is letsencrypt
   when: cert_file.stat.exists
   register: cert_check_issuer
-  shell: >-
+  ansible.builtin.shell: >-
     openssl x509
     -in /var/lib/lego/certificates/{{ filename }}.crt
     -noout -issuer
@@ -61,13 +61,13 @@
   tags: certs
 
 - name: Set the initial domain argument
-  set_fact:
+  ansible.builtin.set_fact:
     domains_list:
       - "--domains '{{ fqdn }}'"
   tags: certs
 
 - name: Build the san list
-  set_fact:
+  ansible.builtin.set_fact:
     domains_list: >-
       {{ domains_list + [ "--domains '" + san_domain + "'" ] }}
   loop: '{{ certificate.san_list | default([]) }}'
@@ -76,7 +76,7 @@
   tags: certs
 
 - name: Store the certificate renewal decision
-  set_fact:
+  ansible.builtin.set_fact:
     renew_cert: >-
       {{ cert_recreate
       or not cert_file.stat.exists
@@ -92,7 +92,7 @@
     PDNS_API_KEY: '{{ api_key }}'
     http_proxy: 'http://localhost:8888/'
     https_proxy: 'http://localhost:8888/'
-  shell: >-
+  ansible.builtin.shell: >-
     lego
     --server {{ acme_url }}
     --key-type {{ certificate.type | default("rsa2048") }}
@@ -112,7 +112,7 @@
 
 - name: Add the certificate to the list of generated ones
   when: renew_cert
-  set_fact:
+  ansible.builtin.set_fact:
     updated_certs: "{{ updated_certs | default([]) + [ fqdn ] }}"
   tags: certs
 
@@ -120,7 +120,7 @@
   when:
     - certificate.monitor is defined
     - prometheus.install
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/lego/monitor.list
     line: '{{ certificate.monitor }}'
     create: true

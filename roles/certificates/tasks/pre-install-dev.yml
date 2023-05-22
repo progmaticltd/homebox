@@ -1,19 +1,19 @@
 ---
 
 - name: Use the staging Acme url
-  set_fact:
+  ansible.builtin.set_fact:
     acme_url: https://acme-staging-v02.api.letsencrypt.org/directory
   tags: preinstall
 
 - name: Allow LetsEncrypt web site access in the proxy
   notify: Restart tinyproxy
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/tinyproxy/filter
     line: acme-staging-v02.api.letsencrypt.org
   tags: preinstall
 
 - name: Create a directory to store the certificates
-  file:
+  ansible.builtin.file:
     path: /usr/local/share/ca-certificates/development/
     state: directory
   tags: preinstall
@@ -21,7 +21,7 @@
 - name: Download the staging root CAs for certificate verification
   environment:
     https_proxy: 'http://localhost:8888/'
-  uri:
+  ansible.builtin.uri:
     url: https://letsencrypt.org/certs/staging/{{ cert_name }}.pem
     dest: /usr/local/share/ca-certificates/development/{{ cert_name }}.crt
     status_code: [ 200, 304 ]
@@ -33,6 +33,6 @@
   tags: preinstall
 
 - name: Set the store for verification
-  set_fact:
+  ansible.builtin.set_fact:
     acme_root: /usr/local/share/ca-certificates/development/letsencrypt-stg-root-x1.crt
   tags: preinstall

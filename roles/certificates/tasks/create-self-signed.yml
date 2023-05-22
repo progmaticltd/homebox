@@ -2,27 +2,27 @@
 
 - name: Build the certificate FQDN
   when: certificate.name != 'default'
-  set_fact:
+  ansible.builtin.set_fact:
     fqdn: '{{ certificate.name }}.{{ network.domain }}'
     filename: '{{ certificate.name }}.{{ network.domain }}'
   tags: certs
 
 - name: Build the certificate FQDN for the default site
   when: certificate.name == 'default'
-  set_fact:
+  ansible.builtin.set_fact:
     fqdn: '{{ network.domain }}'
     filename: '{{ network.domain }}'
   tags: certs
 
 - name: Build the certificate FQDN for a wildcard
   when: certificate.name == '_'
-  set_fact:
+  ansible.builtin.set_fact:
     fqdn: '*.{{ network.domain }}'
     filename: '_.{{ network.domain }}'
   tags: certs
 
 - name: Create the hook directory
-  file:
+  ansible.builtin.file:
     path: /etc/lego/hooks/{{ filename }}/
     state: directory
     mode: 0700
@@ -30,14 +30,14 @@
 
 - name: Check if the certificate exists
   register: cert_file
-  stat:
+  ansible.builtin.stat:
     path: /var/lib/lego/certificates/{{ filename }}.crt
   tags: certs
 
 - name: Check if the certificate exists and is valid
   when: cert_file.stat.exists
   register: cert_check_cmd
-  shell: >-
+  ansible.builtin.shell: >-
     openssl verify -verbose
     -CAfile /etc/ssl/certs/homebox-temp-ca.pem
     -untrusted /var/lib/lego/certificates/{{ filename }}.issuer.crt
@@ -47,12 +47,12 @@
   tags: certs
 
 - name: Set the initial domain argument
-  set_fact:
+  ansible.builtin.set_fact:
     domains_list: [ 'DNS:{{ fqdn }}' ]
   tags: certs
 
 - name: Build the san list for the command line
-  set_fact:
+  ansible.builtin.set_fact:
     domains_list: '{{ domains_list + [ "DNS:"+san_domain] }}'
   loop: '{{ certificate.san_list | default([]) }}'
   loop_control:
@@ -60,7 +60,7 @@
   tags: certs
 
 - name: Store the certificate renewal decision
-  set_fact:
+  ansible.builtin.set_fact:
     renew_cert: >-
       {{ cert_recreate
       or not cert_file.stat.exists
@@ -68,7 +68,7 @@
   tags: certs
 
 - name: Create temporary self-signed certificate
-  openssl_privatekey:
+  community.crypto.openssl_privatekey:
     path: /var/lib/lego/certificates/{{ filename }}.key
     force: '{{ renew_cert }}'
     owner: root
@@ -104,7 +104,7 @@
 
 - name: Create the issuer file
   when: cert_file.changed
-  shell: >-
+  ansible.builtin.shell: >-
     cat
     /etc/ssl/certs/homebox-temp-ca.pem
     /var/lib/lego/certificates/{{ filename }}.crt

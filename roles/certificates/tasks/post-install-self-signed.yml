@@ -1,7 +1,7 @@
 ---
 
 - name: Retrieve the temporary CA on the local system
-  fetch:
+  ansible.builtin.fetch:
     src: /usr/local/share/ca-certificates/homebox-temp-ca.crt
     dest: /tmp/homebox-temp-ca.crt
     mode: 0644

@@ -1,7 +1,7 @@
 ---
 
 - name: Remove the certificates
-  include_tasks: uninstall/delete-one.yml
+  ansible.builtin.include_tasks: uninstall/delete-one.yml
   loop: '{{ certificates }}'
   loop_control:
     loop_var: certificate

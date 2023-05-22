@@ -2,24 +2,24 @@
 
 - name: Build the certificate FQDN
   when: certificate.name != 'default'
-  set_fact:
+  ansible.builtin.set_fact:
     fqdn: '{{ certificate.name }}.{{ network.domain }}'
     filename: '{{ certificate.name }}.{{ network.domain }}'
 
 - name: Build the certificate FQDN for the default site
   when: certificate.name == 'default'
-  set_fact:
+  ansible.builtin.set_fact:
     fqdn: '{{ network.domain }}'
     filename: '{{ network.domain }}'
 
 - name: Build the certificate FQDN for a wildcard
   when: certificate.name == '_'
-  set_fact:
+  ansible.builtin.set_fact:
     fqdn: '*.{{ network.domain }}'
     filename: '_.{{ network.domain }}'
 
 - name: Remove all the symbolic links
-  file:
+  ansible.builtin.file:
     path: '{{ path }}'
     state: absent
   loop:
@@ -31,7 +31,7 @@
     loop_var: path
 
 - name: Remove all the certificate files
-  file:
+  ansible.builtin.file:
     path: /var/lib/lego/certificates/{{ filename }}.{{ ext }}
     state: absent
   loop: [ 'crt', 'issuer.crt', 'pem', 'key', 'json' ]
@@ -42,7 +42,7 @@
   when:
     - certificate.monitor is defined
     - prometheus.install
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/lego/monitor.list
     line: '{{ certificate.monitor }}'
     state: absent

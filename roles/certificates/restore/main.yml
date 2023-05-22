@@ -1,17 +1,17 @@
 ---
 
 - name: Ensure the required packages are installed
-  apt:
+  ansible.builtin.apt:
     name: [ rsync ]
     state: present
 
 - name: Create the certificates cache directory
-  file:
+  ansible.builtin.file:
     path: /var/lib/lego/certificates
     state: directory
 
 - name: Push the certificate on the server
-  synchronize:
+  ansible.posix.synchronize:
     mode: push
     src: '{{ backup_dir }}/certificates'
     dest: /var/lib/lego/

@@ -1,7 +1,7 @@
 ---
 
 - name: Create the lego directory to store the certificates
-  file:
+  ansible.builtin.file:
     path: /etc/lego
     state: directory
     mode: 0755
@@ -10,7 +10,7 @@
   tags: preinstall
 
 - name: Create the lego configuration directory
-  file:
+  ansible.builtin.file:
     path: /var/lib/lego
     state: directory
     mode: 0750
@@ -18,7 +18,7 @@
   tags: preinstall
 
 - name: Create the directory to store certificates files
-  file:
+  ansible.builtin.file:
     path: /var/lib/lego/certificates
     state: directory
     mode: 0750
@@ -26,7 +26,7 @@
   tags: preinstall
 
 - name: link for compatibility with lego executable
-  file:
+  ansible.builtin.file:
     src: /var/lib/lego/certificates
     dest: /etc/lego/certificates
     state: link
@@ -34,14 +34,14 @@
 
 - name: Get the DNS api key
   no_log: '{{ not system.devel }}'
-  set_fact:
+  ansible.builtin.set_fact:
     api_key: '{{ lookup(creds.store, creds.prefix + "dns/api-key") }}'
   tags: preinstall
 
 # LetsEncrypt will need to be accessed once the DNS server is live.
 - name: Allow LetsEncrypt web site access in the proxy
   notify: Restart tinyproxy
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/tinyproxy/filter
     line: '^acme-v02\.api\.letsencrypt\.org$'
   tags: preinstall, proxy

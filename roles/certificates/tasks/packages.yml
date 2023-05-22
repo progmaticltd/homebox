@@ -1,6 +1,6 @@
 ---
 
 - name: Install the required packages
-  apt:
+  ansible.builtin.apt:
     name: '{{ cert_packages }}'
   tags: apt

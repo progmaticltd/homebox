@@ -2,7 +2,7 @@
 
 - name: Reload certificates
   register: ca_cert_update
-  shell: update-ca-certificates --verbose
+  ansible.builtin.shell: update-ca-certificates --verbose
 
 - name: Restart tinyproxy
   systemd:

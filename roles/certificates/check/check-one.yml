@@ -2,16 +2,16 @@
 
 - name: Check if the certificate exists
   register: cert_file
-  stat:
+  ansible.builtin.stat:
     path: /var/lib/lego/certificates/{{ certificate.name }}.{{ network.domain }}.crt
 
 - name: Assert the the certificate exists
-  assert:
+  ansible.builtin.assert:
     that: cert_file.stat.exists
 
 - name: Check if the certificate exists and is valid
   register: cert_check_cmd
-  shell: >-
+  ansible.builtin.shell: >-
     openssl verify -verbose
     -CAfile {{ acme_root }}
     -untrusted /var/lib/lego/certificates/{{ certificate.name }}.{{ network.domain }}.issuer.crt
@@ -20,7 +20,7 @@
 
 - name: Get the modulus of the certificate
   register: cert_modulus_cmd
-  shell: >-
+  ansible.builtin.shell: >-
     openssl x509 -noout -modulus
     -in /var/lib/lego/certificates/{{ certificate.name }}.{{ network.domain }}.crt
     | openssl md5
@@ -28,7 +28,7 @@
 
 - name: Get the modulus of the combine certificate
   register: issuer_modulus_cmd
-  shell: >-
+  ansible.builtin.shell: >-
     openssl x509 -noout -modulus
     -in /var/lib/lego/certificates/{{ certificate.name }}.{{ network.domain }}.issuer.crt
     | openssl md5
@@ -36,17 +36,17 @@
 
 - name: Get the modulus of the key
   register: key_modulus_cmd
-  shell: >-
+  ansible.builtin.shell: >-
     openssl rsa -noout -modulus
     -in /var/lib/lego/certificates/{{ certificate.name }}.{{ network.domain }}.key
     | openssl md5
   changed_when: false
 
 - name: Store the modulus
-  set_fact:
+  ansible.builtin.set_fact:
     cert_modulus: '{{ cert_modulus_cmd.stdout }}'
     key_modulus: '{{ key_modulus_cmd.stdout }}'
 
 - name: Assert the modulus are the same
-  assert:
+  ansible.builtin.assert:
     that: cert_modulus == key_modulus

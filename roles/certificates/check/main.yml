@@ -2,14 +2,14 @@
 
 - name: Run the development pre installation tasks
   when: system.devel
-  include_tasks: pre-install-dev.yml
+  ansible.builtin.include_tasks: pre-install-dev.yml
 
 - name: Run the live pre installation tasks
   when: not system.devel
-  include_tasks: pre-install-live.yml
+  ansible.builtin.include_tasks: pre-install-live.yml
 
 - name: Check all the certificates
-  include_tasks: check/check-one.yml
+  ansible.builtin.include_tasks: check/check-one.yml
   loop: '{{ certificates | selectattr("create", "equalto", true) }}'
   loop_control:
     loop_var: certificate
