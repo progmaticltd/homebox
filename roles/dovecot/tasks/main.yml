@@ -16,6 +16,7 @@
 
 - name: Configure certificates
   include_tasks: certificates.yml
+  tags: certs
 
 - name: Set some configuration files
   include_tasks: config.yml

@@ -11,12 +11,16 @@
       - name: proxy
   include_role:
     name: certificates
+    apply:
+      tags: always
+  tags: certs
 
 - name: Check if one of the certificate has been updated
   notify: Restart ejabberd
   debug:
     var: updated_certs
   changed_when: updated_certs | length > 0
+  tags: certs
 
 - name: Create the nginx certificate
   vars:
@@ -24,6 +28,9 @@
       - name: xmpp
   include_role:
     name: certificates
+    apply:
+      tags: always
+  tags: certs
 
 - name: Check if one of the certificate has been updated
   notify:
@@ -32,6 +39,7 @@
   debug:
     var: updated_certs
   changed_when: updated_certs | length > 0
+  tags: certs
 
 - name: Deploy the hooks for each certificate update
   copy:
@@ -55,3 +63,4 @@
       script: renew-nginx-cert
   loop_control:
     loop_var: hook
+  tags: certs

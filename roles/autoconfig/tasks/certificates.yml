@@ -7,6 +7,9 @@
         type: ec384
   include_role:
     name: certificates
+    apply:
+      tags: always
+  tags: certs
 
 - name: Check nginx config and restart it
   when: updated_certs | length > 0
@@ -18,9 +21,11 @@
         name: nginx
         state: restarted
         no_block: true
+  tags: certs
 
 - name: Copy the certificate update hook
   copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/autoconfig.{{ network.domain }}/renew-cert.sh
     mode: 0700
+  tags: certs

@@ -38,15 +38,6 @@
     api_key: '{{ lookup(creds.store, creds.prefix + "dns/api-key") }}'
   tags: preinstall
 
-- name: Store the API key for certificate renewal
-  copy:
-    content: '{{ api_key }}'
-    dest: /etc/lego/dns-api-key
-    mode: 0600
-    owner: root
-    group: root
-  tags: preinstall
-
 # LetsEncrypt will need to be accessed once the DNS server is live.
 - name: Allow LetsEncrypt web site access in the proxy
   notify: Restart tinyproxy

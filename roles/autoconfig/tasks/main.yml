@@ -12,6 +12,7 @@
 
 - name: Copy the certificates
   include_tasks: certificates.yml
+  tags: certs
 
 - name: Set the DNS records
   include_tasks: dns.yml

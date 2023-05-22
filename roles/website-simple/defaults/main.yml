@@ -23,7 +23,7 @@ csp_default:
     - id: img-src
       value: "https: 'self'"
     - id: style-src
-      value: "https: 'self'"
+      value: "https: 'self' data:"
     - id: media-src
       value: "https: 'self'"
     - id: font-src

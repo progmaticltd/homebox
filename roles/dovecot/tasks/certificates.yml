@@ -1,22 +1,24 @@
 ---
 
 - name: Create the IMAP certificate
-  tags: certs
   vars:
     certificates:
       - name: imap
         tags: certs
   include_role:
     name: certificates
+    apply:
+      tags: always
+  tags: certs
 
 - name: Check if the certificate has been updated
   notify: Restart dovecot
   debug:
     var: updated_certs
   changed_when: updated_certs | length > 0
+  tags: certs
 
 - name: Create the POP3 certificate
-  tags: certs
   when: mail.pop3
   vars:
     certificates:
@@ -24,24 +26,28 @@
         tags: certs
   include_role:
     name: certificates
+    apply:
+      tags: always
+  tags: certs
 
 - name: Check if the certificate has been updated
   notify: Restart dovecot
   debug:
     var: updated_certs
   changed_when: updated_certs | length > 0
+  tags: certs
 
 - name: Copy the certificate update hook for IMAP
-  tags: certs
   copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/imap.{{ network.domain }}/renew-cert.sh
     mode: 0700
+  tags: certs
 
 - name: Copy the certificate update hook for POP3
-  tags: certs
   when: mail.pop3
   copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/pop3.{{ network.domain }}/renew-cert.sh
     mode: 0700
+  tags: certs

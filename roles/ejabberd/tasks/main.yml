@@ -11,6 +11,7 @@
 
 - name: Deploy the certificates
   include_tasks: certificates.yml
+  tags: certs
 
 - name: Push the configuration
   include_tasks: config.yml

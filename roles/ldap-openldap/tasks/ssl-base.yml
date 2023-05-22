@@ -4,9 +4,11 @@
   vars:
     certificates:
       - name: ldap
-        san_list: [ '{{ network.hostname }}.{{ network.domain }}' ]
+        san_list: ['{{ network.hostname }}.{{ network.domain }}']
   include_role:
     name: certificates
+    apply:
+      tags: always
   tags: certs
 
 - name: Check for updated certificates
@@ -48,7 +50,10 @@
 
 - name: Modify the configuration if not already done
   when: ldap_ssl.changed
-  command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ssl-config.ldif
+  command: >
+    ldapmodify -QY EXTERNAL
+    -H ldapi:///
+    -f /etc/ldap/changes/ssl-config.ldif
   changed_when: true
   tags: certs
 

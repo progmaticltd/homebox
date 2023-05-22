@@ -11,7 +11,8 @@
         type: ec384
   include_role:
     name: certificates
-    apply: { tags: always }
+    apply:
+      tags: always
   tags: certs
 
 - name: Check for updated certificates

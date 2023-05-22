@@ -52,9 +52,12 @@
   shell: >-
     openssl x509
     -in /var/lib/lego/certificates/{{ filename }}.crt
-    -noout -issuer | grep "Let's Encrypt"
+    -noout -issuer
   ignore_errors: true
   changed_when: false
+  failed_when: >-
+    "Let's Encrypt"
+    not in cert_check_issuer.stdout
   tags: certs
 
 - name: Set the initial domain argument
@@ -82,6 +85,7 @@
   tags: certs
 
 - name: Create the certificate
+  register: create_cert
   when: renew_cert
   environment:
     PDNS_API_URL: http://{{ pdns_api.address }}:{{ pdns_api.port }}/
@@ -100,6 +104,9 @@
     {{ domains_list | join(" ") }}
     {{ certificate.pem | default(false) | ternary("--pem", " ") }}
     run
+  until: create_cert is not failed
+  retries: 10
+  delay: 2
   changed_when: true
   tags: certs
 

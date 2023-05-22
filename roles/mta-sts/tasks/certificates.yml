@@ -6,6 +6,9 @@
       - name: mta-sts
   include_role:
     name: certificates
+    apply:
+      tags: always
+  tags: certs
 
 - name: Check for updated certificates
   notify:
@@ -15,9 +18,11 @@
     verbosity: 1
     var: updated_certs
   changed_when: updated_certs | length > 0
+  tags: certs
 
 - name: Copy the certificate update hook
   copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/mta-sts.{{ network.domain }}/renew-cert.sh
     mode: 0700
+  tags: certs

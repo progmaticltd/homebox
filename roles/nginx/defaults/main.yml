@@ -17,17 +17,17 @@ csp_default:
   default: "'self'"
   list:
     - id: default-src
-      value: "https: 'self'"
+      value: "https: 'self' 'unsafe-inline'"
     - id: script-src
-      value: "https: 'self'"
+      value: "https: 'self' 'unsafe-inline'"
     - id: img-src
-      value: "https: 'self'"
+      value: "https: 'self' 'unsafe-inline'"
     - id: style-src
-      value: "https: 'self'"
+      value: "https: 'self' 'unsafe-inline' data:"
     - id: media-src
-      value: "https: 'self'"
+      value: "https: 'self' 'unsafe-inline'"
     - id: font-src
-      value: "https: 'self'"
+      value: "https: 'self' 'unsafe-inline'"
     - id: base-uri
       value: "https: 'self'"
     - id: frame-src

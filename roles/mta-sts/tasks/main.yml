@@ -10,6 +10,7 @@
 
 - name: Copy the certificates
   include_tasks: certificates.yml
+  tags: certs
 
 - name: Web server configuration
   include_tasks: nginx.yml

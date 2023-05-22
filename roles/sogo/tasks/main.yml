@@ -8,6 +8,7 @@
 
 - name: Configure the certificates
   include_tasks: certificates.yml
+  tags: certs
 
 - name: Configure nginx
   include_tasks: nginx.yml
