@@ -1,0 +1,7 @@
+---
+
+- name: Install the packages required
+  ansible.builtin.apt:
+    name: '{{ pdns_packages }}'
+    install_recommends: false
+    state: present

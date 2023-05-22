@@ -1,0 +1,10 @@
+---
+
+- name: Install the packages
+  ansible.builtin.include_tasks: install/packages.yml
+
+- name: Install the rcfiles
+  ansible.builtin.include_tasks: install/rcfiles.yml
+
+- name: Configure root shell
+  ansible.builtin.include_tasks: install/shell.yml

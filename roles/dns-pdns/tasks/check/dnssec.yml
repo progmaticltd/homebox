@@ -1,0 +1,18 @@
+---
+
+- name: Check DNSSEC from main external IP
+  ansible.builtin.shell: >-
+    delv -t {{ external_ip_type }}
+    {{ network.hostname }}.{{ network.domain }}
+    @{{ external_ip }}
+  changed_when: false
+  tags: dnssec
+
+- name: Check DNSSEC from backup external IP
+  when: backup_ip is defined
+  ansible.builtin.shell: >-
+    delv -t {{ backup_ip_type }}
+    {{ network.hostname }}.{{ network.domain }}
+    @{{ backup_ip }}
+  changed_when: false
+  tags: dnssec

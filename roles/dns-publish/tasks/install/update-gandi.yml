@@ -1,0 +1,142 @@
+---
+
+# Use Gandi’s API to publish DNSSEC records
+
+- name: Load gandi’s api key
+  no_log: '{{ not system.devel }}'
+  ansible.builtin.set_fact:
+    api_key: '{{ lookup(creds.store, network.domain + "/gandi/api-key") }}'
+
+- name: Get the glue rectord for this host
+  register: existing_records
+  delegate_to: localhost
+  ansible.builtin.uri:
+    url: 'https://api.gandi.net/v5/domain/domains/{{ network.domain }}/hosts/{{ network.hostname }}'
+    method: GET
+    headers:
+      authorization: 'Apikey {{ api_key }}'
+    status_code: [ 200, 202 ]
+  ignore_errors: true
+
+- name: Set the verb to use if the glue record is not found
+  when: existing_records is failed
+  delegate_to: localhost
+  ansible.builtin.uri:
+    url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/hosts
+    method: POST
+    body_format: json
+    body:
+      name: '{{ network.hostname }}'
+      ips: '{{ external_ip_addresses }}'
+    headers:
+      authorization: 'Apikey {{ api_key }}'
+    status_code: [ 200, 202 ]
+  ignore_errors: false
+
+- name: Show the existing record
+  when: existing_records is not failed
+  ansible.builtin.set_fact:
+    current_ips: '{{ existing_records.json.ips }}'
+
+- name: Set the verb to use if the record exists but is different
+  when:
+    - existing_records is not failed
+    - current_ips != external_ip_addresses
+  delegate_to: localhost
+  ansible.builtin.uri:
+    url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/hosts/{{ network.hostname }}
+    method: PUT
+    body_format: json
+    body:
+      ips: '{{ external_ip_addresses }}'
+    headers:
+      authorization: 'Apikey {{ api_key }}'
+    status_code: [ 200, 202 ]
+  ignore_errors: false
+
+- name: Get the current name servers
+  delegate_to: localhost
+  register: current_dns_servers
+  ansible.builtin.uri:
+    url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/nameservers
+    method: GET
+    headers:
+      authorization: 'Apikey {{ api_key }}'
+    status_code: [ 200, 202 ]
+  ignore_errors: true
+
+- name: Set the fqdn host name
+  ansible.builtin.set_fact:
+    host_fqdn: '{{ network.hostname }}.{{ network.domain }}'
+
+- name: Update the DNS servers
+  when: host_fqdn not in current_dns_servers.json
+  delegate_to: localhost
+  ansible.builtin.uri:
+    url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/nameservers
+    method: PUT
+    body_format: json
+    body:
+      nameservers:
+        - '{{ network.hostname }}.{{ network.domain }}'
+    headers:
+      authorization: 'Apikey {{ api_key }}'
+    status_code: [ 200, 202 ]
+  ignore_errors: true
+
+- name: List current DNSSEC
+  delegate_to: localhost
+  register: current_dnskeys_query
+  ansible.builtin.uri:
+    url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/dnskeys
+    headers:
+      authorization: 'Apikey {{ api_key }}'
+
+- name: Store the current DNS keys
+  ansible.builtin.set_fact:
+    current_dns_keys: '{{ current_dnskeys_query.json | map(attribute="public_key") }}'
+
+- name: Filter the keys to publish
+  ansible.builtin.set_fact:
+    keys_list: '{{ keys_list | selectattr("type", "in", ["ksk", "zsk"]) | list }}'
+
+- name: Create the list of missing keys
+  ansible.builtin.set_fact:
+    missing_keys: >-
+      {{ keys_list | rejectattr("public_key", "in", current_dns_keys) | list }}
+
+- name: Check if we should override all the keys at once
+  ansible.builtin.set_fact:
+    overwrite_keys: >-
+      {{ (current_dns_keys|length == 0)
+      or (missing_keys|length >= 3) }}
+
+- name: Create all the keys at once
+  when: overwrite_keys
+  delegate_to: localhost
+  ansible.builtin.uri:
+    url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/dnskeys
+    method: PUT
+    body_format: json
+    body:
+      keys: '{{ keys_list }}'
+    headers:
+      authorization: 'Apikey {{ api_key }}'
+    status_code: [ 200, 202 ]
+  changed_when: true
+
+- name: Create the missing DNS keys
+  when: not overwrite_keys
+  delegate_to: localhost
+  ansible.builtin.uri:
+    url: https://api.gandi.net/v5/domain/domains/{{ network.domain }}/dnskeys
+    method: POST
+    body_format: json
+    body: '{{ missing_key }}'
+    headers:
+      authorization: 'Apikey {{ api_key }}'
+    status_code: [ 200, 202 ]
+  loop: '{{ missing_keys }}'
+  loop_control:
+    loop_var: missing_key
+  changed_when: true

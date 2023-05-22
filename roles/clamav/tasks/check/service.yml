@@ -1,0 +1,10 @@
+---
+
+- name: Check if clamav has been installed
+  ansible.builtin.shell: dpkg -s clamav
+  changed_when: false
+
+- name: Check if the clamav service is up and running
+  register: service_facts
+  ansible.builtin.shell: 'systemctl status clamav-daemon'
+  changed_when: false

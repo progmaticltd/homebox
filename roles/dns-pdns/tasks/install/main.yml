@@ -1,0 +1,30 @@
+---
+
+- name: Install the required packages
+  ansible.builtin.include_tasks: install/packages.yml
+
+- name: Run the configuration tasks
+  ansible.builtin.include_tasks: install/config.yml
+  tags: config
+
+- name: Initialise the database with some content
+  ansible.builtin.include_tasks: install/init-db.yml
+
+- name: Create SSHFP records
+  ansible.builtin.include_tasks: install/sshfp.yml
+  tags: sshfp
+
+- name: Create extra records
+  ansible.builtin.include_tasks: install/extra-records.yml
+  tags: extra
+
+- name: Set-up DNSSEC
+  ansible.builtin.include_tasks: install/dnssec.yml
+
+- name: Configure domain forwarding
+  ansible.builtin.include_tasks: install/forward.yml
+  tags: forward
+
+- name: Set-up Prometheus config
+  ansible.builtin.include_tasks: install/prometheus.yml
+  tags: prometheus

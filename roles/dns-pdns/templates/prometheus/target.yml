@@ -3,4 +3,4 @@
 - targets:
     - '{{ pdns.ip }}:8081'
   labels:
-    service: pdns
+    ansible.builtin.service: pdns

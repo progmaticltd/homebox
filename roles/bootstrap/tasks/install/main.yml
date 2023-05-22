@@ -1,0 +1,50 @@
+---
+
+# This seems to be required on first boot on cloud servers
+- name: Remove packages not required
+  ansible.builtin.include_tasks: install/pre-clean.yml
+
+- name: Move ansible logs to a separate file
+  ansible.builtin.include_tasks: install/ansible-logs.yml
+
+- name: Network related tasks
+  ansible.builtin.include_tasks: install/network.yml
+  tags: network
+
+- name: Track changes in the system
+  when: system.track_changes
+  ansible.builtin.include_tasks: install/track-changes.yml
+
+- name: Initialise and update the packages repository
+  ansible.builtin.include_tasks: install/apt.yml
+
+- name: Install the base required packages
+  ansible.builtin.include_tasks: install/packages.yml
+
+- name: Remove exim and install postfix
+  ansible.builtin.include_tasks: install/postfix.yml
+
+- name: Configure the locales
+  ansible.builtin.include_tasks: install/locales.yml
+
+- name: Configure the basic SSL settings
+  ansible.builtin.include_tasks: install/ssl.yml
+
+- name: Configure the packages repository
+  ansible.builtin.include_tasks: install/apticron.yml
+
+- name: Configure the proxy
+  ansible.builtin.include_tasks: install/proxy.yml
+  tags: proxy
+
+- name: Create prometheus directory structure
+  when: prometheus.install
+  ansible.builtin.include_tasks: install/prometheus.yml
+
+- name: Configure automatic upgrades
+  ansible.builtin.include_tasks: install/unattended-upgrades.yml
+  tags: autoupdate
+
+# Ensure the environment variables are cleared
+- name: Reset the SSH connection
+  ansible.builtin.meta: reset_connection

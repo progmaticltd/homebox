@@ -1,0 +1,6 @@
+---
+
+- name: Check if PowerDNS is running
+  ansible.builtin.shell:
+    systemctl is-active pdns
+  changed_when: false

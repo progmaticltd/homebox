@@ -1,0 +1,11 @@
+---
+
+- name: Check basic settings
+  ansible.builtin.include_tasks: check/basic.yml
+
+- name: Check DNSSEC local signature
+  ansible.builtin.include_tasks: check/dnssec.yml
+  tags: dnssec
+
+- name: Check DNS propagation
+  ansible.builtin.include_tasks: check/propagation.yml

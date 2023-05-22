@@ -1,0 +1,42 @@
+---
+
+- name: Split key line
+  ansible.builtin.set_fact:
+    key_fields: '{{ key_line.split(":") }}'
+
+- name: Load algo name
+  ansible.builtin.set_fact:
+    algo_name: '{{ key_fields[5] }}'
+
+- name: Set key algorithm
+  ansible.builtin.set_fact:
+    key_algorithm: '{{ key_algorithms | selectattr("name", "equalto", algo_name) | first }}'
+
+- name: Store key info
+  ansible.builtin.set_fact:
+    key:
+      domain: '{{ key_fields[0] }}'
+      type: '{{ key_fields[1] | lower }}'
+      active: '{{ key_fields[2] == "Act" }}'
+      public: '{{ key_fields[3] == "Pub" }}'
+      size: '{{ key_fields[4] | int }}'
+      algorithm: '{{ key_algorithm.id }}'
+      id: '{{ key_fields[6] | int }}'
+
+- name: Load key data
+  register: key_data_cmd
+  ansible.builtin.shell: >-
+    pdnsutil export-zone-dnskey {{ network.domain }} {{ key.id }}
+  changed_when: false
+
+- name: Store keydata
+  ansible.builtin.set_fact:
+    key_data: '{{ key_data_cmd.stdout_lines[0].split(" ") | last }}'
+
+- name: Add data to the key
+  ansible.builtin.set_fact:
+    key: '{{ key | combine({ "public_key": key_data }) }}'
+
+- name: Append key to keys list
+  ansible.builtin.set_fact:
+    keys_list: '{{ keys_list + [ key ] }}'

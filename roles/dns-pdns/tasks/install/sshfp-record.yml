@@ -1,0 +1,28 @@
+---
+
+- name: Get record fields
+  ansible.builtin.set_fact:
+    record_fields: '{{ sshfp_record.split(" ") }}'
+  tags: sshfp
+
+- name: Set record named fields
+  ansible.builtin.set_fact:
+    sshfp_name: '{{ record_fields[0] }}'
+    sshfp_algo: '{{ record_fields[3] }}'
+    sshfp_hash: '{{ record_fields[4] }}'
+    sshfp_data: '{{ record_fields[5] }}'
+  tags: sshfp
+
+# SSHFP records: https://en.wikipedia.org/wiki/SSHFP_record
+- name: Create the record
+  vars:
+    dns_records:
+      - name: '{{ name }}'
+        type: SSHFP
+        algo: '{{ sshfp_algo }}'
+        hash: '{{ sshfp_hash }}'
+        value: '{{ sshfp_data }}'
+        search: '{{ sshfp_data[0:40] | upper }}'
+  ansible.builtin.include_role:
+    name: dns-record
+  tags: sshfp

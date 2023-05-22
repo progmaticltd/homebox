@@ -1,0 +1,7 @@
+---
+
+- name: Install Development support packages
+  ansible.builtin.apt:
+    name: '{{ devel.packages }}'
+    state: present
+    install_recommends: no

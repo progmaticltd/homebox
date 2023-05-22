@@ -1,0 +1,36 @@
+---
+
+- name: Common facts
+  ansible.builtin.include_tasks: install/facts.yml
+  tags: facts
+
+- name: Install the packages needed
+  ansible.builtin.include_tasks: install/packages.yml
+  tags: apt
+
+- name: Run the common pre installation tasks
+  ansible.builtin.include_tasks: install/pre-install-common.yml
+  tags: preinstall, proxy
+
+- name: Verify and create each certificate if needed
+  ansible.builtin.include_tasks: install/check-and-create.yml
+  loop: '{{ certificates }}'
+  loop_control:
+    loop_var: certificate
+  tags: certs
+
+- name: Run the common post installation tasks
+  ansible.builtin.include_tasks: install/post-install-common.yml
+  tags: postinstall
+
+- name: Deploy the custom scripts
+  ansible.builtin.include_tasks: install/scripts.yml
+  tags: scripts
+
+- name: Deploy the systemd service and timer
+  ansible.builtin.include_tasks: install/service.yml
+  tags: service
+
+- name: Update proxy settings
+  ansible.builtin.include_tasks: install/proxy.yml
+  tags: proxy

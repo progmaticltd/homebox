@@ -1,0 +1,29 @@
+---
+
+- name: List CSK/KSK/ZSK key IDs
+  register: keys_list_cmd
+  ansible.builtin.shell: >-
+    set -o pipefail ;
+    pdnsutil list-keys
+    | grep {{ network.domain }}
+    | grep Act
+    | grep [CKZ]SK
+    | sed -E 's/\s+/:/g'
+  args:
+    executable: /usr/bin/bash
+  changed_when: false
+
+- name: Store key IDs
+  ansible.builtin.set_fact:
+    key_ids: '{{ keys_list_cmd.stdout_lines }}'
+
+- name: Initialise keys list
+  ansible.builtin.set_fact:
+    keys_list: [ ]
+
+- name: Load each key
+  ansible.builtin.include_tasks:
+    file: load-key.yml
+  loop: '{{ key_ids }}'
+  loop_control:
+    loop_var: key_line

@@ -1,0 +1,13 @@
+---
+
+- name: Remove prometheus target configuration
+  tags: prometheus
+  ansible.builtin.file:
+    path: /etc/prometheus/targets/pdns.yml
+    state: absent
+
+- name: Remove prometheus alerts
+  tags: prometheus
+  ansible.builtin.file:
+    path: /etc/prometheus/alerts/pdns-rules.yml
+    state: absent

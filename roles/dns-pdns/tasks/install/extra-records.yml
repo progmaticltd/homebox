@@ -1,0 +1,8 @@
+---
+
+- name: Create the extra records
+  vars:
+    dns_records: '{{ dns.extra_records | default([]) }}'
+  ansible.builtin.include_role:
+    name: dns-record
+  tags: extra

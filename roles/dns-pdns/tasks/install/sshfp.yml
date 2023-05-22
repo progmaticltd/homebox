@@ -1,0 +1,35 @@
+---
+
+- name: Get SSHFP records
+  register: sshfp_records_cmd
+  ansible.builtin.shell: >-
+    ssh-keygen -r
+    {{ network.hostname }}.{{ network.domain }}
+    2>/dev/null
+  changed_when: false
+  tags: sshfp
+
+- name: Store the SSHFP records
+  register: sshfp_records_file
+  ansible.builtin.copy:
+    content: '{{ sshfp_records_cmd.stdout }}'
+    dest: /etc/powerdns/sshfp.txt
+    mode: 0400
+  tags: sshfp
+
+- name: Delete the current SSHFP records
+  when: sshfp_records_file.changed
+  ansible.builtin.shell: >-
+    pdnsutil delete-rrset {{ network.domain }}
+    '@' SSHFP
+  changed_when: true
+  tags: sshfp
+
+- name: Create the main SSHFP records
+  vars:
+    name: '{{ network.hostname }}'
+  ansible.builtin.include_tasks: sshfp-record.yml
+  loop: '{{ sshfp_records_cmd.stdout_lines }}'
+  loop_control:
+    loop_var: sshfp_record
+  tags: sshfp

@@ -23,7 +23,7 @@
   tasks:
     - include_role:
         name: '{{ lookup("env", "ROLE") }}'
-        tasks_from: ../uninstall/main.yml
+        tasks_from: uninstall/main.yml
 
 - name: Remove AppArmor unknown profiles
   hosts: homebox

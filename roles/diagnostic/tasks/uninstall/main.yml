@@ -1,0 +1,10 @@
+---
+
+- name: Set default root shell
+  ansible.builtin.include_tasks: uninstall/shell.yml
+
+- name: Reset the rcfiles
+  ansible.builtin.include_tasks: uninstall/rcfiles.yml
+
+- name: Remove the packages
+  ansible.builtin.include_tasks: uninstall/packages.yml

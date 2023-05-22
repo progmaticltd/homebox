@@ -1,0 +1,20 @@
+---
+
+- name: Get the locale value on the workstation
+  ansible.builtin.set_fact:
+    ws_locale: "{{ lookup('env','LANG') }}"
+
+- name: Get the locale value on the server
+  register: remote_locale_cmd
+  ansible.builtin.command:
+    cmd: echo $LANG
+  changed_when: false
+
+- name: Store the remote locale
+  register: remote_locale_cmd
+  ansible.builtin.set_fact:
+    remote_locale: "{{ remote_locale_cmd.stdout }}"
+
+- name: Check if the locale is configured
+  ansible.builtin.assert:
+    that: '{{ ws_locale == remote_locale }}'

@@ -1,0 +1,5 @@
+---
+
+- name: Run the certyificate status script
+  ansible.builtin.shell: cert-status
+  changed_when: false

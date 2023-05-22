@@ -1,0 +1,14 @@
+---
+
+- name: Load checking facts
+  ansible.builtin.include_tasks: check/facts.yml
+
+- name: Send the running service
+  ansible.builtin.include_tasks: check/service.yml
+
+- name: Check if the antivirus engine is working
+  ansible.builtin.include_tasks: check/engine.yml
+
+- name: Check if the databases are up to date
+  ansible.builtin.include_tasks: check/database.yml
+  tags: database

@@ -1,0 +1,26 @@
+---
+
+- name: Create a unique subject and filename for testing
+  ansible.builtin.set_fact:
+    test_filename: '{{ 1048576 | random | to_uuid }}'
+
+- name: Copy the infected file
+  ansible.builtin.copy:
+    src: check/clam.exe
+    dest: /tmp/{{ test_filename }}
+    mode: 0600
+
+- name: Check if the antivirus is working
+  register: clamscan_cmd
+  ansible.builtin.shell: >-
+    clamscan -v /tmp/{{ test_filename }}
+  changed_when: false
+  failed_when: >-
+    "Infected files: 1"
+    not in clamscan_cmd.stdout
+
+- name: Delete the infected file
+  ansible.builtin.copy:
+    src: check/clam.exe
+    dest: /tmp/{{ test_filename }}
+    mode: 0600

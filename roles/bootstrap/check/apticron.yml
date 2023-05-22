@@ -1,4 +1,0 @@
----
-
-- name: Check if apticron is installed
-  ansible.builtin.shell: dpkg -s apticron

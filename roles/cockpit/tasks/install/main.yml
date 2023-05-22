@@ -1,0 +1,10 @@
+---
+
+- name: Install the certificates
+  ansible.builtin.include_tasks: install/certs.yml
+
+- name: Install the packages
+  ansible.builtin.include_tasks: install/packages.yml
+
+- name: Configure nginx
+  ansible.builtin.include_tasks: install/nginx.yml

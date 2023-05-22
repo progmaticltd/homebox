@@ -1,0 +1,14 @@
+---
+
+- name: Load common facts
+  ansible.builtin.include_tasks: install/facts.yml
+  tags: facts
+
+- name: Run DNS provider’s specific tasks
+  when: dns.provider is defined
+  ansible.builtin.include_tasks: 'install/update-{{ dns.provider }}.yml'
+  tags: publish
+
+- name: Install the DNS monitoring tasks
+  ansible.builtin.include_tasks: install/dns-monitor.yml
+  tags: monitor

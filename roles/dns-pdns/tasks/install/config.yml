@@ -1,0 +1,67 @@
+---
+
+- name: Create the directory to store data
+  ansible.builtin.file:
+    path: /var/lib/powerdns/
+    state: directory
+    owner: pdns
+    group: pdns
+    mode: 0700
+  tags: config
+
+- name: Initialise the database
+  register: database
+  ansible.builtin.shell: >-
+    set -o pipefail ;
+    cat /usr/share/pdns-backend-sqlite3/schema/schema.sqlite3.sql
+    | sqlite3 default.db
+  args:
+    creates: /var/lib/powerdns/default.db
+    chdir: /var/lib/powerdns/
+    executable: /bin/bash
+  changed_when: true
+  tags: config
+
+- name: Set the right permissions
+  notify: Restart PowerDNS
+  ansible.builtin.file:
+    path: /var/lib/powerdns/default.db
+    owner: pdns
+    group: pdns
+    mode: 0644
+  tags: config
+
+- name: Create configuration subdir
+  ansible.builtin.file:
+    path: /etc/powerdns/pdns.d
+    state: directory
+  tags: config
+
+- name: Create a custom api key
+  ansible.builtin.set_fact:
+    api_key: >-
+      {{ lookup(creds.store, creds.prefix + "dns/api-key"
+      + creds.opts.create + creds.opts.system)
+      }}
+  tags: config
+
+- name: Set default SOA
+  ansible.builtin.set_fact:
+    default_soa: >-
+      {{ network.hostname }}.{{ network.domain }}.
+      hostmaster.@ 0
+      {{ dns.refresh }} {{ dns.retry }}
+      {{ dns.expire }}
+      {{ dns.ttl }}
+    cacheable: yes
+  tags: config
+
+- name: Add custom settings
+  notify: Restart PowerDNS
+  ansible.builtin.template:
+    src: pdns.conf
+    dest: /etc/powerdns/pdns.d/homebox.conf
+    owner: root
+    group: pdns
+    mode: 0640
+  tags: config

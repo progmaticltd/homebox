@@ -1,0 +1,24 @@
+---
+
+- name: Install the packages
+  ansible.builtin.include_tasks: install/packages.yml
+  tags: apt
+
+- name: Whitelist virus database
+  ansible.builtin.include_tasks: install/proxy.yml
+  tags: proxy
+
+- name: Configure the packages
+  ansible.builtin.include_tasks: install/config.yml
+  tags: config
+
+- name: Update the virus database
+  ansible.builtin.include_tasks: install/update.yml
+
+- name: Add the filter to postfix
+  ansible.builtin.include_tasks: install/postfix.yml
+  tags: postfix
+
+- name: Configure AppArmor
+  ansible.builtin.include_tasks: install/apparmor.yml
+  tags: apparmor

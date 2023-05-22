@@ -32,6 +32,7 @@
       tags: always
       include_role:
         name: '{{ role }}'
+        tasks_from: install/main.yml
       loop: '{{ roles_list }}'
       loop_control:
         loop_var: role

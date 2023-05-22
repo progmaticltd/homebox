@@ -1,8 +1,0 @@
----
-
-- name: Check that all packages are installed
-  ansible.builtin.shell: >-
-    dpkg -s '{{ pkg }}'
-  loop: '{{ base_packages }}'
-  loop_control:
-    loop_var: pkg

@@ -1,5 +1,0 @@
----
-
-- name: Check if we can run apt update without error
-  ansible.builtin.apt:
-    update_cache: yes

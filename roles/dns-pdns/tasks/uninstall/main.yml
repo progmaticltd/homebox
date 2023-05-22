@@ -1,0 +1,27 @@
+---
+
+- name: Stop PowerDNS
+  systemd:
+    name: pdns
+    state: stopped
+  ignore_errors: true
+
+- name: Remove the installed packages
+  ansible.builtin.apt:
+    name: '{{ pdns_packages }}'
+    state: absent
+    purge: true
+    autoremove: true
+
+- name: Remove the sqlite for the database
+  ansible.builtin.file:
+    path: '{{ path }}'
+    state: absent
+  loop:
+    - /var/lib/powerdns
+    - /etc/powerdns
+  loop_control:
+    loop_var: path
+
+- name: Remove Prometheus config
+  ansible.builtin.include_tasks: uninstall/prometheus.yml

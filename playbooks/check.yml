@@ -11,9 +11,7 @@
     - '{{ playbook_dir }}/../config/system.yml'
     - '{{ playbook_dir }}/../config/defaults.yml'
   roles:
-    - role: load-defaults
-      tags: always
-    - role: external-ip-type
+    - role: common-init
       tags: always
 
 - name: Load the roles to run
@@ -36,7 +34,7 @@
     - name: Run the roles selected
       include_role:
         name: '{{ role }}'
-        tasks_from: ../check/main.yml
+        tasks_from: check/main.yml
       loop: '{{ roles_list }}'
       loop_control:
         loop_var: role

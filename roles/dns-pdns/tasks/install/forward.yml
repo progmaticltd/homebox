@@ -1,0 +1,13 @@
+---
+
+- name: Configure unbound to forward queries
+  notify: Restart unbound
+  ansible.builtin.template:
+    src: unbound-forward.conf
+    dest: /etc/unbound/unbound.conf.d/10-forward-internal.conf
+    mode: 0644
+  tags: forward
+
+- name: Restart the server now if needed
+  ansible.builtin.meta: flush_handlers
+  tags: forward
