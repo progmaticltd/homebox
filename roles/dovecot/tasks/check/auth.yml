@@ -1,0 +1,31 @@
+---
+
+- name: Test authentication on the first user
+  ansible.builtin.shell: >-
+    set -o pipefail ;
+    doveadm auth login -- '{{ user0_uid }}' '{{ user0_password }}'
+  changed_when: false
+  args:
+    executable: /bin/bash
+
+- name: Check the LDAP mapping from email address to uid
+  ansible.builtin.shell: >-
+    set -o pipefail ;
+    doveadm -v user '{{ user.mail }}' | grep -E '^user\s+{{ user.uid }}$'
+  changed_when: false
+  args:
+    executable: /bin/bash
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Check the LDAP mapping from uid to email address
+  ansible.builtin.shell: >-
+    set -o pipefail ;
+    doveadm -v user '{{ user.uid }}' | grep -E '^mail\s+{{ user.mail }}$'
+  changed_when: false
+  args:
+    executable: /bin/bash
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user

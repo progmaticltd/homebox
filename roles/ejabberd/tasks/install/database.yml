@@ -1,0 +1,31 @@
+---
+
+- name: Install sqlite for ejabberd
+  ansible.builtin.apt:
+    name: sqlite3
+    state: present
+
+- name: Copy the database initialisation schema
+  ansible.builtin.copy:
+    src: database.sql
+    dest: /etc/ejabberd/database.sql
+    owner: ejabberd
+    group: ejabberd
+    mode: 0600
+
+- name: Create sqlite database for message storage
+  ansible.builtin.shell: >-
+    set -o pipefail ;
+    cat /etc/ejabberd/database.sql
+    | sqlite3 /var/lib/ejabberd/storage.db
+  args:
+    executable: /usr/bin/bash
+    creates: /var/lib/ejabberd/storage.db
+  changed_when: true
+
+- name: Ensure the database permissions
+  ansible.builtin.file:
+    path: /var/lib/ejabberd/storage.db
+    owner: ejabberd
+    group: ejabberd
+    mode: 0600

@@ -1,0 +1,70 @@
+---
+
+- name: Create the manager account
+  community.general.ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: 'cn=manager account,{{ ldap.users.dn }}'
+    state: present
+    attributes:
+      uid: '{{ ldap.manager.uid }}'
+      userPassword: '{{ manager_password }}'
+      givenName: Manager
+      sn: Account
+    objectClass:
+      - top
+      - person
+      - inetOrgPerson
+
+- name: Create a readonly account
+  community.general.ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: 'cn=readonly account,{{ ldap.users.dn }}'
+    state: present
+    attributes:
+      uid: 'readonly'
+      userPassword: '{{ readonly_password }}'
+      pwdPolicySubentry: 'cn=system,ou=pwpolicies,{{ ldap.organization.base }}'
+      givenName: Readonly
+      sn: Account
+    objectClass:
+      - top
+      - person
+      - inetOrgPerson
+
+- name: Create the default postmaster aliases
+  ansible.builtin.set_fact:
+    postmaster_aliases: '{{ ldap.postmaster.mailAliases }}'
+
+- name: Create the postmaster account
+  community.general.ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: '{{ ldap.postmaster.dn }}'
+    state: present
+    attributes:
+      uid: postmaster
+      givenName: Postmaster
+      sn: Account
+      userPassword: '{{ postmaster_password }}'
+      pwdPolicySubentry: 'cn=system,ou=pwpolicies,{{ ldap.organization.base }}'
+      homeDirectory: /home/users/postmaster
+      loginShell: '{{ users_defaults.shell }}'
+      uidNumber: '{{ users_defaults.uid_start + 999 }}'
+      gidNumber: '{{ users_defaults.gid_start }}'
+      mail: 'postmaster@{{ network.domain }}'
+      intlMailAddr: '{{ postmaster_aliases }}'
+      shadowMin: 0
+      shadowMax: 999999
+      shadowWarning: 7
+      shadowInactive: -1
+      shadowFlag: 0
+    objectClass:
+      - top
+      - person
+      - posixAccount
+      - shadowAccount
+      - inetOrgPerson
+      - inetLocalMailRecipient
+      - mailboxRelatedObject

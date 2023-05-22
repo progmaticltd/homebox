@@ -1,0 +1,33 @@
+---
+
+- name: Load the initial facts
+  include_tasks: install/facts.yml
+  tags: facts
+
+- name: Install the packages
+  include_tasks: install/packages.yml
+
+- name: Create the keys
+  include_tasks: install/keys.yml
+
+- name: Configure the packages
+  include_tasks: install/config.yml
+
+- name: Set DNS entries
+  include_tasks: install/dns.yml
+  tags: dns
+
+- name: Install the renewal script
+  include_tasks: install/renewal.yml
+  tags: renewal
+
+- name: Configure postfix
+  include_tasks: install/postfix.yml
+
+- name: Configure Prometheus
+  when: prometheus.install
+  include_tasks: install/prometheus.yml
+  tags: prometheus
+
+- name: Configure AppArmor
+  include_tasks: install/apparmor.yml

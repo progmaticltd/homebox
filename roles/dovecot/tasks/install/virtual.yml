@@ -1,0 +1,151 @@
+---
+
+- name: Add virtual folders for each 'all' emails
+  tags: virtual
+  notify: Restart dovecot
+  ansible.builtin.file:
+    path: '/home/users/{{ user.uid }}/mails/virtual/All'
+    owner: '{{ user.uid }}'
+    group: users
+    state: directory
+    mode: '0700'
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Create virtual folder file for 'all' emails
+  tags: virtual
+  notify: Restart dovecot
+  ansible.builtin.template:
+    src: virtual/all
+    dest: '/home/users/{{ user.uid }}/mails/virtual/All/dovecot-virtual'
+    owner: '{{ user.uid }}'
+    group: users
+    mode: '0644'
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Add virtual folders for each 'flagged' emails
+  tags: virtual
+  notify: Restart dovecot
+  ansible.builtin.file:
+    path: '/home/users/{{ user.uid }}/mails/virtual/Flagged'
+    owner: '{{ user.uid }}'
+    group: users
+    state: directory
+    mode: '0700'
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Create virtual folder file for 'flagged' emails
+  tags: virtual
+  notify: Restart dovecot
+  ansible.builtin.template:
+    src: virtual/flagged
+    dest: '/home/users/{{ user.uid }}/mails/virtual/Flagged/dovecot-virtual'
+    owner: '{{ user.uid }}'
+    group: users
+    mode: '0644'
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Add virtual folders for each 'conversations' emails
+  tags: virtual
+  notify: Restart dovecot
+  ansible.builtin.file:
+    path: '/home/users/{{ user.uid }}/mails/virtual/Conversations'
+    owner: '{{ user.uid }}'
+    group: users
+    state: directory
+    mode: '0700'
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Create virtual folder file for 'conversations' emails
+  tags: virtual
+  notify: Restart dovecot
+  ansible.builtin.template:
+    src: virtual/conversations
+    dest: '/home/users/{{ user.uid }}/mails/virtual/Conversations/dovecot-virtual'
+    owner: '{{ user.uid }}'
+    group: users
+    mode: '0644'
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Add virtual folders for each 'unread' emails
+  tags: virtual
+  notify: Restart dovecot
+  ansible.builtin.file:
+    path: '/home/users/{{ user.uid }}/mails/virtual/Unread'
+    owner: '{{ user.uid }}'
+    group: users
+    state: directory
+    mode: '0700'
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Create virtual folder file for 'unread' emails
+  tags: virtual
+  notify: Restart dovecot
+  ansible.builtin.template:
+    src: virtual/unread
+    dest: '/home/users/{{ user.uid }}/mails/virtual/Unread/dovecot-virtual'
+    owner: '{{ user.uid }}'
+    group: users
+    mode: '0644'
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Add virtual folders for each 'important' emails
+  tags: virtual
+  notify: Restart dovecot
+  ansible.builtin.file:
+    path: '/home/users/{{ user.uid }}/mails/virtual/Important'
+    owner: '{{ user.uid }}'
+    group: users
+    state: directory
+    mode: '0700'
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user
+
+- name: Create virtual folder file for 'important' emails
+  tags: virtual
+  notify: Restart dovecot
+  ansible.builtin.template:
+    src: virtual/important
+    dest: '/home/users/{{ user.uid }}/mails/virtual/Important/dovecot-virtual'
+    owner: '{{ user.uid }}'
+    group: users
+    mode: '0644'
+  with_items:
+    - '{{ users }}'
+    - uid: postmaster
+  loop_control:
+    loop_var: user

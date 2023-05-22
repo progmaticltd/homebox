@@ -1,0 +1,23 @@
+---
+
+- name: Install some dovecot AppArmor profile
+  notify: Restart AppArmor service
+  ansible.builtin.file:
+    path: /etc/apparmor.d/{{ aa_config }}
+    state: absent
+  loop: '{{ apparmor.profiles }}'
+  loop_control:
+    loop_var: aa_config
+
+- name: Install dovecot indexer AppArmor profile
+  notify: Restart AppArmor service
+  when: mail.fts.active
+  ansible.builtin.file:
+    path: /etc/apparmor.d/{{ aa_config }}
+    state: absent
+  loop:
+    - usr.lib.dovecot.indexer
+    - usr.lib.dovecot.indexer-worker
+    - usr.local.bin.decode2text
+  loop_control:
+    loop_var: aa_config

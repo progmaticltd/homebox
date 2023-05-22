@@ -1,0 +1,73 @@
+---
+
+- name: Create a unique subject for testing
+  ansible.builtin.set_fact:
+    test_subject: Testing with attachment ({{ attachment.description }})
+
+- name: Create an email template
+  ansible.builtin.template:
+    src: check/testmsg-01.txt
+    dest: /tmp/testmsg-01.txt
+    mode: 0600
+    owner: postfix
+    group: postfix
+
+- name: Copy the attachment on the remote server
+  ansible.builtin.copy:
+    src: 'check/{{ attachment.uid }}.{{ attachment.extension }}'
+    dest: /tmp/file.{{ attachment.extension }}
+
+- name: Send an email with attachment ({{ attachment.description }})
+  ansible.builtin.shell: >-
+    swaks
+    --from="{{ users[0].mail }}"
+    --to "{{ users[1].mail }}"
+    --h-Subject '{{ test_subject }}'
+    --attach-type '{{ attachment.mime }}'
+    --attach-name 'file.{{ attachment.extension }}'
+    --attach '/tmp/file.{{ attachment.extension }}'
+    -tls --tls-verify
+    --auth
+    --auth-user="{{ user0_uid }}"
+    --auth-password="{{ user0_password }}"
+    --server smtp.{{ network.domain }}
+    --body /tmp/testmsg-01.txt
+  become: yes
+  become_method: sudo
+  become_user: postfix
+
+- name: Cleanup, delete the attachment and the email template
+  ansible.builtin.file:
+    path: '{{ file }}'
+    state: absent
+  loop:
+    - /tmp/file.{{ attachment.extension }}
+    - /tmp/testmsg-01.txt
+  loop_control:
+    loop_var: file
+
+# Search using doveadm and validate the search functionality
+- name: Clear and rebuid the fts index for user {{ users[1].uid }}
+  ansible.builtin.shell: >-
+    doveadm fts rescan -u "{{ users[1].uid }}" &&
+    doveadm index -u "{{ users[1].uid }}" 'INBOX'
+
+# Now, we do a search inside the emais using the uuid,
+# this should return one result
+- name: Search inside the emails ({{ attachment.description }})
+  register: email_found
+  ansible.builtin.shell: >-
+    set -o pipefail ;
+    doveadm search -u "{{ users[1].uid }}" text "{{ attachment.search | default(attachment.uid) }}"
+    | grep -E '[a-f0-9-]+\s[0-9]'
+  args:
+    executable: /bin/bash
+  until: email_found.rc == 0
+  retries: 12
+  delay: 5
+
+# Now, remove the mail to ensure next tests are valid
+- name: Remove the email
+  ansible.builtin.shell: >-
+    doveadm expunge -u "{{ users[1].uid }}"
+    mailbox 'inbox' all

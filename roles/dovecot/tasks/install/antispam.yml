@@ -1,0 +1,10 @@
+---
+
+- name: Copy custom script to classify emails
+  when: mail.antispam.active
+  tags: sieve, scripts
+  notify: Restart dovecot
+  ansible.builtin.copy:
+    src: antispam/learn-hamorspam.sh
+    dest: /etc/dovecot/sieve/learn-hamorspam.sh
+    mode: 0755

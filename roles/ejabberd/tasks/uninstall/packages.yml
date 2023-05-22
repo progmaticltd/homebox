@@ -1,0 +1,8 @@
+---
+
+- name: Install the packages
+  ansible.builtin.apt:
+    name: '{{ packages }}'
+    state: absent
+    purge: true
+    autoremove: true

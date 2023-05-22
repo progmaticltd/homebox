@@ -1,0 +1,27 @@
+---
+
+- name: Install fail2ban helper script
+  ansible.builtin.copy:
+    src: fail2ban-nft-helper.sh
+    dest: /usr/local/sbin/fail2ban-nft-helper
+    mode: 0700
+
+- name: Install fail2ban custom actions file
+  notify: Restart fail2ban
+  ansible.builtin.template:
+    src: f2b/action-nftables.conf
+    dest: /etc/fail2ban/action.d/nftables-multiport.conf
+
+- name: Configure fail2ban to use nftables actions
+  notify: Restart fail2ban
+  ansible.builtin.replace:
+    path: /etc/fail2ban/jail.conf
+    regexp: '^banaction =.*'
+    replace: 'banaction = nftables-multiport'
+
+- name: Configure fail2ban to use nftables actions
+  notify: Restart fail2ban
+  ansible.builtin.replace:
+    path: /etc/fail2ban/jail.conf
+    regexp: '^banaction_allports =.*'
+    replace: 'banaction_allports = nftables-multiport'

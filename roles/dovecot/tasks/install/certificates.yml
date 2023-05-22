@@ -1,0 +1,53 @@
+---
+
+- name: Create the IMAP certificate
+  vars:
+    certificates:
+      - name: imap
+        tags: certs
+  ansible.builtin.include_role:
+    name: certificates
+    apply:
+      tags: always
+  tags: certs
+
+- name: Check if the certificate has been updated
+  notify: Restart dovecot
+  ansible.builtin.debug:
+    var: updated_certs
+  changed_when: updated_certs | length > 0
+  tags: certs
+
+- name: Create the POP3 certificate
+  when: mail.pop3
+  vars:
+    certificates:
+      - name: pop3
+        tags: certs
+  ansible.builtin.include_role:
+    name: certificates
+    apply:
+      tags: always
+  tags: certs
+
+- name: Check if the certificate has been updated
+  notify: Restart dovecot
+  ansible.builtin.debug:
+    var: updated_certs
+  changed_when: updated_certs | length > 0
+  tags: certs
+
+- name: Copy the certificate update hook for IMAP
+  ansible.builtin.copy:
+    src: renew-cert.sh
+    dest: /etc/lego/hooks/imap.{{ network.domain }}/renew-cert.sh
+    mode: 0700
+  tags: certs
+
+- name: Copy the certificate update hook for POP3
+  when: mail.pop3
+  ansible.builtin.copy:
+    src: renew-cert.sh
+    dest: /etc/lego/hooks/pop3.{{ network.domain }}/renew-cert.sh
+    mode: 0700
+  tags: certs

@@ -1,0 +1,28 @@
+---
+
+- name: Load some facts
+  ansible.builtin.include_tasks: facts.yml
+
+- name: Install the packages
+  ansible.builtin.include_tasks: check/packages.yml
+
+- name: Configure the database
+  ansible.builtin.include_tasks: check/database.yml
+
+- name: Deploy the certificates
+  ansible.builtin.include_tasks: check/certificates.yml
+
+- name: Push the configuration
+  ansible.builtin.include_tasks: check/config.yml
+
+- name: Configure web access
+  ansible.builtin.include_tasks: check/webaccess.yml
+
+- name: Configure AppArmor
+  ansible.builtin.include_tasks: check/apparmor.yml
+
+- name: Configure DNS records
+  ansible.builtin.include_tasks: check/dns.yml
+
+- name: Deply the firewall rules
+  ansible.builtin.include_tasks: check/firewall.yml

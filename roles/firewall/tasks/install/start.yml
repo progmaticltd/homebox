@@ -1,0 +1,17 @@
+---
+
+- name: Remove ufw directory
+  ansible.builtin.file:
+    path: /etc/ufw
+    state: absent
+
+- name: Ensure the nftables service is enabled
+  systemd:
+    name: nftables
+    daemon_reload: true
+    enabled: true
+    masked: false
+    no_block: true
+
+- name: Start the firewall now if needed
+  ansible.builtin.meta: flush_handlers

@@ -1,0 +1,17 @@
+---
+
+- name: Uninstall the packages
+  ansible.builtin.include_tasks: uninstall/packages.yml
+
+- name: Remove the database
+  ansible.builtin.include_tasks: uninstall/database.yml
+
+- name: Remove the firewall rules
+  ansible.builtin.include_tasks: uninstall/firewall.yml
+
+- name: Remove Prometheus alerts
+  tags: prometheus
+  ansible.builtin.include_tasks: uninstall/prometheus.yml
+
+- name: Remove DNS records
+  ansible.builtin.include_tasks: uninstall/dns.yml

@@ -1,0 +1,85 @@
+---
+
+- name: Check if the OpenLDAP server is already installed
+  register: slapd_stats
+  ansible.builtin.stat:
+    path: /usr/sbin/slapd
+
+# Pre-configure the LDAP sever before instaling
+- name: Configure the LDAP administration account
+  when: not slapd_stats.stat.exists
+  no_log: '{{ not system.devel }}'
+  ansible.builtin.debconf:
+    name: slapd
+    question: '{{ conf.question }}'
+    value: '{{ conf.value }}'
+    vtype: '{{ conf.type }}'
+  loop:
+    - question: slapd/password1
+      type: password
+      value: '{{ admin_password }}'
+    - question: slapd/password2
+      type: password
+      value: '{{ admin_password }}'
+    - question: slapd/purge_database
+      value: 'False'
+      type: boolean
+    - question: slapd/invalid_config
+      value: 'False'
+      type: boolean
+    - question: shared/organization
+      value: '{{ ldap.organization.domain }}'
+      type: string
+    - question: slapd/domain
+      value: '{{ ldap.organization.domain }}'
+      type: string
+    - question: slapd/backend
+      value: 'MDB'
+      type: select
+    - question: slapd/move_old_database
+      value: 'True'
+      type: boolean
+    - question: slapd/unsafe_selfwrite_acl
+      value: 'False'
+      type: boolean
+    - question: slapd/password_mismatch
+      value: 'False'
+      type: boolean
+  loop_control:
+    loop_var: conf
+
+- name: Remove conflicting packages first
+  ansible.builtin.apt:
+    name: '{{ ldap_packages.remove }}'
+    state: absent
+    purge: true
+    autoremove: true
+
+- name: Install the required packages
+  ansible.builtin.apt:
+    name: '{{ ldap_packages.install }}'
+    state: present
+
+# Changes in the database will be stored there
+- name: Create the ldap config changes folder
+  ansible.builtin.file:
+    path: /etc/ldap/changes
+    state: directory
+
+- name: Copy the client configuration
+  register: ldap_conf
+  ansible.builtin.template:
+    src: ldap.conf
+    dest: /etc/ldap/ldap.conf
+
+- name: Configure the ldap server for SSL / TLS
+  register: ldap_def_conf
+  ansible.builtin.template:
+    src: default-slapd.conf
+    dest: /etc/default/slapd
+
+- name: Restart LDAP now if needed
+  when: ldap_conf.changed or ldap_def_conf.changed
+  systemd:
+    service: slapd
+    state: restarted

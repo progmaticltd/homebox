@@ -1,0 +1,7 @@
+---
+
+- name: Deploy prometheus alerts
+  tags: prometheus
+  ansible.builtin.template:
+    src: prometheus/alerts.yml
+    dest: /etc/prometheus/alerts/dovecot-rules.yml

@@ -1,0 +1,20 @@
+---
+
+- name: Check the firewall rules
+  ansible.builtin.shell: nft -c -f /etc/nftables.conf
+  changed_when: false
+
+- name: Ensure there are some rules
+  register: nft_rules
+  ansible.builtin.shell: nft list ruleset
+  failed_when: nft_rules.stdout == ''
+
+- name: List the rule files
+  register: rule_files
+  ansible.builtin.find:
+    path: /etc/nftables
+    pattern: '*.nft'
+
+- name: Check that the number of copied files
+  ansible.builtin.assert:
+    that: rule_files.files | length >= 7

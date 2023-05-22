@@ -1,0 +1,6 @@
+---
+
+- name: Create user information from the first user
+  ansible.builtin.set_fact:
+    user0_uid: '{{ users[0].uid }}'
+    user0_password: '{{ lookup(creds.store, network.domain + "/ldap/" + users[0].uid) }}'

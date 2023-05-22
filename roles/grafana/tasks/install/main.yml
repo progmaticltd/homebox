@@ -1,0 +1,29 @@
+---
+
+- name: Load the common facts
+  ansible.builtin.include_tasks: install/facts.yml
+  tags: facts
+
+- name: Configure the proxy to access grafana site
+  ansible.builtin.include_tasks: install/proxy.yml
+  tags: proxy
+
+- name: Install the base packages
+  ansible.builtin.include_tasks: install/packages.yml
+  tags: apt
+
+- name: Configure the base packages
+  ansible.builtin.include_tasks: install/config.yml
+  tags: config
+
+- name: Create the certificates
+  ansible.builtin.include_tasks: install/certificates.yml
+  tags: certs
+
+- name: Create the nginx site
+  ansible.builtin.include_tasks: install/nginx.yml
+  tags: nginx
+
+- name: Create the dashboards
+  ansible.builtin.include_tasks: install/dashboards.yml
+  tags: dashboards

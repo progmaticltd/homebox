@@ -1,0 +1,7 @@
+---
+
+- name: Remove prometheus alerts
+  tags: prometheus
+  ansible.builtin.file:
+    path: /etc/prometheus/alerts/slapd-rules.yml
+    state: absent

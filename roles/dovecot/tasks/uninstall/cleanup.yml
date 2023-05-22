@@ -1,0 +1,16 @@
+---
+
+- name: Remove dovecot folder
+  ansible.builtin.file:
+    path: /etc/dovecot
+    state: absent
+
+- name: Remove dovecot default settings
+  ansible.builtin.file:
+    path: /etc/default/dovecot
+    state: absent
+
+- name: Remove dovecot var files
+  ansible.builtin.file:
+    path: /var/lib/dovecot
+    state: absent

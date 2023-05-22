@@ -1,0 +1,11 @@
+---
+
+- name: Install the certificates
+  include_tasks: install/certs.yml
+
+- name: Configure nginx
+  include_tasks: install/nginx.yml
+  tags: nginx
+
+- name: Configure AppArmor
+  include_tasks: install/apparmor.yml

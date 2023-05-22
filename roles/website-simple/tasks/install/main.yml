@@ -1,0 +1,23 @@
+---
+
+- name: Push the web site if it already exists
+  include_tasks: install/backup-push.yml
+
+- name: Create default web site
+  include_tasks: install/default-content.yml
+
+- name: Create the DNS record
+  include_tasks: install/dns.yml
+
+- name: Copy the certificate
+  include_tasks: install/certificates.yml
+
+- name: Configure nginx
+  include_tasks: install/nginx.yml
+  tags: nginx
+
+- name: Configure apparmor
+  include_tasks: install/apparmor.yml
+
+- name: Pull the web site content
+  include_tasks: install/backup-pull.yml

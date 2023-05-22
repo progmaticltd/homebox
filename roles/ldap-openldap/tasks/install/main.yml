@@ -1,0 +1,45 @@
+---
+
+- name: Initialise or load the passwords
+  ansible.builtin.include_tasks: install/load-passwords.yml
+  tags: facts
+
+- name: Create the DNS record
+  ansible.builtin.include_tasks: install/dns.yml
+  tags: dns
+
+- name: Preconfigure and install the packages
+  ansible.builtin.include_tasks: install/packages.yml
+
+- name: Configure the basic encryption
+  ansible.builtin.include_tasks: install/ssl-base.yml
+  tags: certs
+
+- name: Configure the deref module
+  ansible.builtin.include_tasks: install/module-deref.yml
+
+- name: Configure the password policies
+  ansible.builtin.include_tasks: install/module-ppolicies.yml
+
+- name: Load misc schema
+  ansible.builtin.include_tasks: install/schema-misc.yml
+
+- name: Load internatioanl email address schema
+  ansible.builtin.include_tasks: install/schema-intmail.yml
+
+- name: Configure the LDAP server settings
+  ansible.builtin.include_tasks: install/db-accounts.yml
+
+- name: Create the special accounts
+  ansible.builtin.include_tasks: install/special-accounts.yml
+
+- name: Set access policies
+  ansible.builtin.include_tasks: install/access-policies.yml
+
+- name: Add prometheus alerts
+  when: prometheus.install
+  tags: prometheus
+  ansible.builtin.include_tasks: install/prometheus.yml
+
+- name: Post accounts creation configuration
+  ansible.builtin.include_tasks: install/post-install.yml

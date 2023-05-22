@@ -1,0 +1,93 @@
+---
+
+- name: Load the passwords
+  ansible.builtin.include_tasks: load-passwords.yml
+
+- name: Check if each service is running # noqa 303
+  ansible.builtin.shell: systemctl status slapd
+  changed_when: false
+
+- name: Check that 'ldap.{{ network.domain }}' resoves
+  ansible.builtin.shell: >-
+    set -o pipefail ;
+    ping -c 1 ldap.{{ network.domain }}
+  changed_when: false
+  args:
+    executable: /bin/bash
+
+- name: Check that I can bind as readonly and get all uids
+  no_log: '{{ not system.devel }}'
+  ansible.builtin.shell: >-
+    ldapsearch
+    -H ldapi:///
+    -D '{{ ldap.readonly.dn }}'
+    -w{{ readonly_password }}
+    'uid'
+  changed_when: false
+
+- name: Check that I can bind as manager and get my details
+  no_log: '{{ not system.devel }}'
+  ansible.builtin.shell: >-
+    ldapsearch
+    -H ldapi:///
+    -D '{{ ldap.manager.dn }}'
+    -w{{ manager_password }}
+    '(uid=manager)'
+  changed_when: false
+
+- name: Check that I can bind as admin and get all uids
+  no_log: '{{ not system.devel }}'
+  ansible.builtin.shell: >-
+    ldapsearch
+    -H ldapi:///
+    -D '{{ ldap.admin.dn }}'
+    -w{{ admin_password }}
+    'uid'
+  changed_when: false
+
+- name: Check that every user is in the database
+  no_log: '{{ not system.devel }}'
+  ansible.builtin.shell: >-
+    set -o pipefail ;
+    ldapsearch
+    -H ldapi:///
+    -D '{{ ldap.readonly.dn }}'
+    -w{{ readonly_password }}
+    '(uid={{ user.uid }})'
+    | grep 'numEntries: 1'
+  changed_when: false
+  args:
+    executable: /bin/bash
+  with_items: '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Check that I can bind using SSL
+  no_log: '{{ not system.devel }}'
+  ansible.builtin.shell: >-
+    ldapsearch
+    -H ldaps://ldap.{{ network.domain }}/
+    -D '{{ ldap.readonly.dn }}'
+    -w{{ readonly_password }}
+    'uid'
+  changed_when: false
+
+- name: Check that I can update the indexes
+  become: true
+  become_user: openldap
+  become_method: sudo
+  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
+  ansible.builtin.command: 'slapindex -n 1 -v {{ field }}'
+  changed_when: false
+  loop:
+    - uid
+    - cn
+    - sn
+    - givenName
+    - mail
+    - memberUid
+    - uidNumber
+    - gidNumber
+    - intlMailAddr
+  loop_control:
+    loop_var: field

@@ -1,0 +1,19 @@
+---
+
+- name: Remove the nginx sites and log files
+  ansible.builtin.include_tasks: uninstall/nginx.yml
+
+- name: Remove the certificate files
+  ansible.builtin.include_tasks: uninstall/certificates.yml
+  tags: certs
+
+- name: Remove the base packages
+  ansible.builtin.include_tasks: uninstall/packages.yml
+  tags: apt
+
+- name: Remove the proxy exception to access grafana site
+  tags: proxy
+  ansible.builtin.include_tasks: uninstall/proxy.yml
+
+- name: Remove extra files
+  ansible.builtin.include_tasks: uninstall/cleanup.yml

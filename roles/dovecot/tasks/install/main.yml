@@ -1,0 +1,57 @@
+---
+
+- name: Set facts
+  ansible.builtin.include_tasks: install/facts.yml
+  tags: facts
+
+- name: Install the required packages
+  ansible.builtin.include_tasks: install/packages.yml
+
+- name: Configure firewall
+  ansible.builtin.include_tasks: install/firewall.yml
+
+- name: Configure all DNS records
+  ansible.builtin.include_tasks: install/dns.yml
+  tags: dns
+
+- name: Configure certificates
+  ansible.builtin.include_tasks: install/certificates.yml
+  tags: certs
+
+- name: Set some configuration files
+  ansible.builtin.include_tasks: install/config.yml
+  tags: config
+
+- name: Configure sieve scripts
+  ansible.builtin.include_tasks: install/sieve.yml
+
+- name: Configure antispam
+  ansible.builtin.include_tasks: install/antispam.yml
+
+- name: Import imersonate tasks
+  when: mail.impersonate.active
+  ansible.builtin.include_tasks: install/impersonate.yml
+
+- name: AppArmor tasks
+  ansible.builtin.include_tasks: install/apparmor.yml
+  tags: apparmor
+
+- name: Backup configuration tasks
+  ansible.builtin.include_tasks: install/backup.yml
+
+- name: Deploy specific logging settings
+  ansible.builtin.include_tasks: install/rsyslog.yml
+
+- name: Add Prometheus alerts
+  when: prometheus.install
+  ansible.builtin.include_tasks: install/prometheus.yml
+  tags: prometheus
+
+- name: Include full text search tasks
+  when: mail.fts.active
+  ansible.builtin.include_tasks: install/fts.yml
+  tags: fts
+
+- name: Include virtual mailboxes tasks
+  when: mail.virtual_folders.active
+  ansible.builtin.include_tasks: install/virtual.yml

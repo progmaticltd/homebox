@@ -1,0 +1,36 @@
+---
+
+- name: Install packages needed for dovecot fts
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 86400
+    name: '{{ dovecot.fts_packages }}'
+    state: present
+  tags: fts
+
+- name: Copy decode2text script
+  ansible.builtin.copy:
+    src: fts/decode2text
+    dest: /usr/local/bin/decode2text
+    mode: 0755
+  tags: fts
+
+- name: Make sure the log file exist
+  ansible.builtin.file:
+    path: /var/log/decode2text.log
+    mode: 0644
+    owner: dovecot
+    group: dovecot
+    state: touch
+  tags: fts
+
+- name: Copy fts mime configuration files
+  ansible.builtin.template:
+    src: '{{ file.src }}'
+    dest: '{{ file.dest }}'
+  loop:
+    - src: fts/mime-supported.conf
+      dest: /etc/dovecot/fts-mime-types.conf
+  loop_control:
+    loop_var: file
+  tags: fts

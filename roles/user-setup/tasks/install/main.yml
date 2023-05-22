@@ -1,0 +1,31 @@
+---
+
+- name: Initialise or load the passwords
+  include_tasks: install/facts.yml
+  tags: facts
+
+- name: Activate system authentication
+  include_tasks: install/system-auth.yml
+
+- name: Ensure the users are now available
+  meta: flush_handlers
+
+- name: Configure pam modules
+  include_tasks: install/pam-modules.yml
+
+- name: Create top level directories and skeleton
+  include_tasks: install/init-common.yml
+
+- name: Create home directories
+  include_tasks: install/create-home-dirs.yml
+  loop: '{{ init_users }}'
+  loop_control:
+    loop_var: user
+  tags: storage
+
+- name: Create archive directories
+  include_tasks: install/create-archive-dirs.yml
+  loop: '{{ init_users }}'
+  loop_control:
+    loop_var: user
+  tags: storage

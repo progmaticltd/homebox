@@ -1,0 +1,12 @@
+---
+
+- name: Check that all dovecot binaries are running in enforced mode
+  register: aa_status
+  ansible.builtin.shell: >-
+    aa-status --json | jq '.profiles["{{ dovecot_binary }}"]'
+  changed_when: false
+  loop: '{{ dovecot_binaries }}'
+  loop_control:
+    loop_var: dovecot_binary
+  failed_when: >
+    aa_status.stdout | trim('"') != "enforce"

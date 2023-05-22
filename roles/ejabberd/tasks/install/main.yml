@@ -1,0 +1,34 @@
+---
+
+- name: Load some facts
+  ansible.builtin.include_tasks: install/facts.yml
+
+- name: Install the packages
+  ansible.builtin.include_tasks: install/packages.yml
+
+- name: Configure the database
+  ansible.builtin.include_tasks: install/database.yml
+
+- name: Deploy the certificates
+  ansible.builtin.include_tasks: install/certificates.yml
+  tags: certs
+
+- name: Push the configuration
+  ansible.builtin.include_tasks: install/config.yml
+
+- name: Configure web access
+  ansible.builtin.include_tasks: install/webaccess.yml
+
+- name: Configure AppArmor
+  ansible.builtin.include_tasks: install/apparmor.yml
+
+- name: Configure DNS records
+  ansible.builtin.include_tasks: install/dns.yml
+
+- name: Add Prometheus alerts
+  when: prometheus.install
+  tags: prometheus
+  ansible.builtin.include_tasks: install/prometheus.yml
+
+- name: Deply the firewall rules
+  ansible.builtin.include_tasks: install/firewall.yml

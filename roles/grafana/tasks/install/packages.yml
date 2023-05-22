@@ -1,0 +1,29 @@
+---
+
+- name: Add Grafana GPG key
+  ansible.builtin.apt_key:
+    url: https://apt.grafana.com/gpg.key
+    state: present
+  tags: apt
+
+- name: Add Grafana repository
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb https://apt.grafana.com stable main
+    filename: grafana
+  tags: apt
+
+- name: Install grafana
+  register: package_status
+  ansible.builtin.apt:
+    name: grafana
+    state: present
+  tags: apt
+
+- name: Restart Grafana server
+  when: package_status.changed
+  systemd:
+    name: grafana-server
+    state: started
+    enabled: true
+  tags: apt

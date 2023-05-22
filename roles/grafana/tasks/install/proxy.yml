@@ -1,0 +1,21 @@
+---
+
+- name: Allow grafana web site access in the proxy
+  register: proxy_conf
+  notify: Restart tinyproxy
+  ansible.builtin.lineinfile:
+    path: /etc/tinyproxy/filter
+    line: '{{ domain }}'
+  loop:
+    - '^grafana\.com$'
+    - '^apt\.grafana\.com$'
+  loop_control:
+    loop_var: domain
+  tags: proxy
+
+- name: Reload the proxy now if needed
+  when: proxy_conf.changed
+  systemd:
+    name: tinyproxy
+    state: restarted
+  tags: proxy

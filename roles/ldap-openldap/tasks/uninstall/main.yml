@@ -1,0 +1,10 @@
+---
+
+- name: Remove the packages
+  ansible.builtin.include_tasks: uninstall/packages.yml
+
+- name: Remove the DNS entry
+  ansible.builtin.include_tasks: uninstall/dns.yml
+
+- name: Remove the configuration and database
+  ansible.builtin.include_tasks: uninstall/cleanup.yml

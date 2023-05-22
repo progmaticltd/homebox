@@ -1,0 +1,34 @@
+---
+
+- name: Load network information
+  ansible.builtin.include_tasks: install/facts.yml
+  tags: facts
+
+- name: Install the required packages
+  ansible.builtin.include_tasks: install/packages.yml
+
+- name: Prepare logging settings
+  tags: logging
+  ansible.builtin.include_tasks: install/logging.yml
+
+- name: Set the generic firewall rules
+  ansible.builtin.include_tasks: install/generic-rules.yml
+  tags: rules
+
+- name: Set the remote access firewall rules for public networks
+  ansible.builtin.include_tasks: install/public-access.yml
+  tags: rules
+
+- name: Set the remote access firewall rules for private networks
+  ansible.builtin.include_tasks: install/private-access.yml
+  tags: rules
+
+- name: Install and configure fail2ban
+  when: security.fail2ban
+  ansible.builtin.include_tasks: install/fail2ban.yml
+
+- name: Configure SSH
+  ansible.builtin.include_tasks: install/ssh-config.yml
+
+- name: Start the firewall
+  ansible.builtin.include_tasks: install/start.yml

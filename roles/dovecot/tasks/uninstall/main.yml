@@ -1,0 +1,33 @@
+---
+
+- name: Remove fail2ban
+  when: security.fail2ban
+  ansible.builtin.include_tasks: uninstall/fail2ban.yml
+
+- name: Install the required packages
+  ansible.builtin.include_tasks: uninstall/packages.yml
+
+- name: Remove firewall rules
+  ansible.builtin.include_tasks: uninstall/firewall.yml
+
+- name: Configure certificates
+  ansible.builtin.include_tasks: uninstall/certificates.yml
+
+- name: AppArmor tasks
+  ansible.builtin.include_tasks: uninstall/apparmor.yml
+
+- name: Delete DNS records
+  ansible.builtin.include_tasks: uninstall/dns.yml
+
+- name: Configure backup locations
+  ansible.builtin.include_tasks: uninstall/backup.yml
+
+- name: Remove logging settings
+  ansible.builtin.include_tasks: uninstall/rsyslog.yml
+
+- name: Remove Prometheus alerts
+  tags: prometheus
+  ansible.builtin.include_tasks: uninstall/prometheus.yml
+
+- name: Final cleanup
+  ansible.builtin.include_tasks: uninstall/cleanup.yml

@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Working on git
+if [ "$GIT_FORCE_PUSH" = "True" ]; then
+    exit
+fi
+
 set -e
 
 # Manually added options to skip to the command line.

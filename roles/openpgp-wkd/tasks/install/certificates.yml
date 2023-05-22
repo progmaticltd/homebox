@@ -1,0 +1,29 @@
+---
+
+- name: Create the certificate
+  vars:
+    certificates:
+      - name: openpgpkey
+  include_role:
+    name: certificates
+
+- name: Check for updated certificates
+  notify:
+    - Check nginx config
+    - Restart nginx
+  debug:
+    verbosity: 1
+    var: updated_certs
+  changed_when: updated_certs | length > 0
+
+- name: Create the hook directory
+  file:
+    dest: /etc/lego/hooks/openpgpkey.{{ network.domain }}
+    state: directory
+    mode: 0700
+
+- name: Copy the certificate update hook
+  copy:
+    src: renew-cert.sh
+    dest: /etc/lego/hooks/openpgpkey.{{ network.domain }}/renew-cert.sh
+    mode: 0700

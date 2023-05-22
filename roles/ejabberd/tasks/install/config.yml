@@ -1,0 +1,48 @@
+---
+
+- name: Add the ejabberd user to the SSL certificates group
+  notify: Restart ejabberd
+  # possible ambiguous replacement: user : ansible.builtin.user | awx.awx.user | inspur.ispim.user | inspur.sm.user | lowlydba.sqlserver.user | sensu.sensu_go.user | theforeman.foreman.user | vultr.cloud.user
+  ansible.builtin.user:
+    name: ejabberd
+    groups: ssl-cert
+    append: true
+
+- name: Get the first IPv4 address
+  when:
+    - external_ip_type is defined
+    - external_ip_type == 'A'
+  ansible.builtin.set_fact:
+    ext_ipv4: '{{ external_ip | ipv4 }}'
+
+- name: Get the first IPv4 address
+  when:
+    - ext_ipv4 is not defined
+    - backup_ip_type is defined
+    - backup_ip_type == 'A'
+  ansible.builtin.set_fact:
+    ext_ipv4: '{{ backup_ip | ipv4 }}'
+
+- name: Get the first IPv6 address
+  when:
+    - external_ip_type is defined
+    - external_ip_type == 'AAAA'
+  ansible.builtin.set_fact:
+    ext_ipv6: '{{ external_ip | ipv6 }}'
+
+- name: Get the first IPv6 address
+  when:
+    - ext_ipv6 is not defined
+    - backup_ip_type is defined
+    - backup_ip_type == 'AAAA'
+  ansible.builtin.set_fact:
+    ext_ipv6: '{{ backup_ip | ipv6 }}'
+
+- name: Copy ejabberd configuration
+  notify: Restart ejabberd
+  ansible.builtin.template:
+    src: conf/ejabberd.yml
+    dest: /etc/ejabberd/ejabberd.yml
+    mode: 0600
+    owner: ejabberd
+    group: ejabberd

@@ -1,7 +1,0 @@
----
-
-- name: Remove prometheus alerts
-  tags: prometheus
-  file:
-    path: /etc/prometheus/alerts/dovecot-rules.yml
-    state: absent

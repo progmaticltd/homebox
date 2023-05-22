@@ -1,0 +1,33 @@
+---
+
+- name: Install the packages
+  include_tasks: install/packages.yml
+
+- name: Load the passwords
+  include_tasks: install/passwords.yml
+
+- name: Configure the packages
+  include_tasks: install/config.yml
+
+- name: Install the firewall rules
+  include_tasks: install/firewall.yml
+  tags: nft
+
+- name: Configure AppArmor
+  include_tasks: install/apparmor.yml
+
+- name: Add the filter to postfix
+  include_tasks: install/postfix.yml
+
+- name: Configure rspamd to use the proxy
+  include_tasks: install/proxy.yml
+  tags: proxy
+
+- name: Add Prometheus alerts
+  when: prometheus.install
+  include_tasks: install/prometheus.yml
+  tags: prometheus
+
+- name: Include DMARC reporting if activated
+  when: dmarc.send_reports.active
+  include_tasks: install/dmarc-reporting.yml

@@ -1,0 +1,20 @@
+---
+
+- name: Load common facts
+  ansible.builtin.include_tasks: check/facts.yml
+
+- name: Run basic tests
+  ansible.builtin.include_tasks: check/base.yml
+
+- name: Check authentication
+  ansible.builtin.include_tasks: check/auth.yml
+
+- name: Run TLS checks
+  ansible.builtin.include_tasks: check/tls.yml
+
+- name: Check apparmor status
+  ansible.builtin.include_tasks: check/apparmor.yml
+
+- name: Run full text search checks
+  when: mail.fts.active
+  ansible.builtin.include_tasks: check/fts.yml

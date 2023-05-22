@@ -1,0 +1,12 @@
+---
+
+- name: Copy deref module loading into the changes directory
+  register: deref_module
+  ansible.builtin.template:
+    src: deref-module.ldif
+    dest: /etc/ldap/changes/deref-module.ldif
+
+- name: Load deref module into the OLC database
+  when: deref_module.changed
+  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
+  ansible.builtin.command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/deref-module.ldif

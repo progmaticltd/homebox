@@ -1,0 +1,38 @@
+---
+
+- name: Set the facts
+  include_tasks: install/facts.yml
+
+- name: Install the packages
+  include_tasks: install/packages.yml
+
+- name: Configure the certificates
+  include_tasks: install/certificates.yml
+  tags: certs
+
+- name: Configure nginx
+  include_tasks: install/nginx.yml
+  tags: nginx
+
+- name: Configure the database
+  include_tasks: install/database.yml
+
+- name: Configure the sieve filters
+  include_tasks: install/sieve.yml
+
+- name: Configure AppArmor
+  include_tasks: install/apparmor.yml
+
+- name: Create DNS records
+  include_tasks: install/dns.yml
+
+- name: Add Prometheus alerts
+  when: prometheus.install
+  include_tasks: install/prometheus.yml
+  tags: prometheus
+
+- name: Configure
+  include_tasks: install/config.yml
+
+- name: Cleanup after the installation
+  include_tasks: install/cleanup.yml

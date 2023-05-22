@@ -1,0 +1,22 @@
+---
+
+- name: Install the packages
+  include_tasks: install/packages.yml
+
+- name: Configure the packages
+  include_tasks: install/config.yml
+
+- name: Add the DNS record
+  include_tasks: install/dns.yml
+  tags: dns
+
+- name: Configure AppArmor
+  include_tasks: install/apparmor.yml
+
+- name: Configure Prometheus
+  when: prometheus.install
+  include_tasks: install/prometheus.yml
+  tags: prometheus
+
+- name: Install postfix config
+  include_tasks: install/postfix.yml

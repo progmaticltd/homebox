@@ -1,0 +1,51 @@
+---
+
+- name: Combine default and user defined Grafana settings
+  when: grafana is defined
+  ansible.builtin.set_fact:
+    grafana: '{{ grafana_default | combine(grafana, recursive=True) }}'
+  tags: facts
+
+- name: Use default grafana settings
+  when: grafana is not defined
+  ansible.builtin.set_fact:
+    grafana: '{{ grafana_default }}'
+  tags: facts
+
+- name: Generate or load the password for grafana database access
+  no_log: '{{ not system.devel }}'
+  ansible.builtin.set_fact:
+    grafana_db_password: >
+      {{ lookup(creds.store,
+      creds.prefix + "postgres/grafana"
+      + creds.opts.create + creds.opts.system) }}
+  tags: facts
+
+- name: Load the password for the read-only LDAP account
+  no_log: '{{ not system.devel }}'
+  ansible.builtin.set_fact:
+    readonly_password: >-
+      {{ lookup(creds.store, network.domain + "/ldap/readonly") }}
+  tags: facts
+
+- name: Load or crate the password for the admin account
+  no_log: '{{ not system.devel }}'
+  ansible.builtin.set_fact:
+    grafana_admin_password: >-
+      {{ lookup(creds.store, network.domain + "/grafana/admin"
+      + creds.opts.create) }}
+  tags: facts
+
+- name: Load or create the password for the organisation manager account
+  no_log: '{{ not system.devel }}'
+  ansible.builtin.set_fact:
+    grafana_manager_password: >-
+      {{ lookup(creds.store, network.domain + "/grafana/manager"
+      + creds.opts.create) }}
+  tags: facts
+
+- name: Load api key if already defined
+  ansible.builtin.set_fact:
+    grafana_api_key: '{{ lookup(creds.store, network.domain + "/grafana/api-key") }}'
+  ignore_errors: true
+  tags: facts

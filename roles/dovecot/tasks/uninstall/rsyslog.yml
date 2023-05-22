@@ -1,0 +1,6 @@
+---
+
+- name: Remove logging settings
+  notify: Restart rsyslog
+  ansible.builtin.file:
+    path: /etc/rsyslog.d/dovecot-homebox.conf

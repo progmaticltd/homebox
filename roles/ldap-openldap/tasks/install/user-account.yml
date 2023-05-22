@@ -1,0 +1,73 @@
+---
+
+- name: Set the password path in the store
+  ansible.builtin.set_fact:
+    password_path: '{{ network.domain }}/ldap/{{ user.uid }}'
+
+- name: Try to load user’s password from the password store
+  register: load_user_password
+  no_log: '{{ not system.devel }}'
+  ansible.builtin.set_fact:
+    user_password: '{{ lookup(creds.store, password_path) }}'
+  ignore_errors: true
+
+- name: Generate a new password
+  when: load_user_password is failed
+  block:
+    - name: Use an acrostic for the new password
+      register: acrostic_cmd
+      ansible.builtin.shell: >-
+        egrep '^[a-z]{4,6}$' /usr/share/dict/words
+        | sort -R | head -n 1
+      changed_when: false
+
+    - name: Create a random password using xkcd
+      no_log: '{{ not system.devel }}'
+      register: xkcd_pass_cmd
+      ansible.builtin.shell: >-
+        xkcdpass
+        --delimiter '-'
+        --acrostic {{ acrostic_cmd.stdout }}
+        --max 5
+      changed_when: false
+
+    - name: Set the password path in the store
+      ansible.builtin.set_fact:
+        userpass: '{{ xkcd_pass_cmd.stdout }}'
+
+    - name: Load saved password from the password store
+      no_log: '{{ not system.devel }}'
+      ansible.builtin.set_fact:
+        user_password: '{{ lookup(creds.store, password_path + " create=true userpass=" + userpass) }}'
+
+- name: Create the user account and set a random password for the user
+  community.general.ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
+    state: present
+    attributes:
+      uid: '{{ user.uid }}'
+      givenName: '{{ user.first_name }}'
+      sn: '{{ user.last_name }}'
+      userPassword: "{{ user_password }}"
+      pwdPolicySubentry: 'cn=default,ou=pwpolicies,{{ ldap.organization.base }}'
+      homeDirectory: '/home/users/{{ user.uid }}'
+      loginShell: '{{ user.shell | default(users_defaults.shell) }}'
+      uidNumber: '{{ users_defaults.uid_start + index }}'
+      gidNumber: '{{ users_defaults.gid_start }}'
+      mail: '{{ user.mail }}'
+      intlMailAddr: '{{ user.aliases | default([]) }}'
+      shadowMin: 0
+      shadowMax: 999999
+      shadowWarning: 7
+      shadowInactive: -1
+      shadowFlag: 0
+    objectClass:
+      - top
+      - person
+      - posixAccount
+      - shadowAccount
+      - inetOrgPerson
+      - inetLocalMailRecipient
+      - mailboxRelatedObject

@@ -1,0 +1,12 @@
+---
+
+- name: Install dovecot packages
+  ansible.builtin.apt:
+    name: '{{ dovecot.packages }}'
+    state: present
+
+- name: Install dovecot packages for full text search
+  when: mail.fts.active
+  ansible.builtin.apt:
+    name: '{{ dovecot.fts_packages }}'
+    state: present

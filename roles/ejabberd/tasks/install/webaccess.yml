@@ -1,0 +1,42 @@
+---
+
+- name: Create the jabber site frontend configuration file
+  notify: Restart nginx
+  ansible.builtin.template:
+    src: nginx.conf
+    dest: /etc/nginx/sites-available/xmpp.{{ network.domain }}.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable nginx site
+  notify: Restart nginx
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/xmpp.{{ network.domain }}.conf
+    dest: /etc/nginx/sites-enabled/xmpp.{{ network.domain }}.conf
+    state: link
+
+- name: Create the http upload directory
+  ansible.builtin.file:
+    path: /var/www/ejabberd/files
+    state: directory
+    owner: root
+    group: ejabberd
+    mode: 0775
+
+- name: Allow the jabber server to write in the folder
+  ansible.posix.acl:
+    path: /var/www/ejabberd/files
+    entity: ejabberd
+    etype: user
+    permissions: rwx
+    state: present
+    default: yes
+
+- name: Create the http upload jabber site
+  ansible.builtin.template:
+    src: upload-home.html
+    dest: /var/www/ejabberd/files/index.html
+    owner: root
+    group: root
+    mode: 0644

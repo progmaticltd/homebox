@@ -1,0 +1,8 @@
+---
+
+- name: Remove all the installed packages
+  ansible.builtin.apt:
+    name: '{{ ldap_packages.install }}'
+    state: absent
+    purge: true
+    autoremove: true

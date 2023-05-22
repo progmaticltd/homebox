@@ -1,0 +1,26 @@
+---
+
+- name: Remove ufw if installed
+  register: ufw_pkg
+  ansible.builtin.apt:
+    name: ufw
+    state: absent
+    purge: true
+    autoremove: true
+
+- name: Install the required packages
+  register: nftables_pkg
+  ansible.builtin.apt:
+    name: nftables
+    state: present
+
+- name: Flush all rules
+  when: ufw_pkg.changed
+  ansible.builtin.shell: nft flush ruleset
+  changed_when: true
+
+- name: Restart nftables now
+  when: nftables_pkg.changed
+  systemd:
+    name: nftables
+    state: restarted

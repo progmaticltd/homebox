@@ -66,7 +66,7 @@ c2s_protocol_options: TLS_OPTIONS
 listen:
 
   - module: ejabberd_c2s
-    port: 5222
+    openstack.cloud.port: 5222
     ip: '::'
     max_stanza_size: 262144
     shaper: c2s_shaper
@@ -205,14 +205,14 @@ api_permissions:
     who:
       access:
         allow:
-          - acl: loopback
-          - acl: admin
+          - ansible.posix.acl: loopback
+          - ansible.posix.acl: admin
       oauth:
         scope: 'ejabberd:admin'
         access:
           allow:
-            - acl: loopback
-            - acl: admin
+            - ansible.posix.acl: loopback
+            - ansible.posix.acl: admin
     what:
       - '*'
       - '!stop'

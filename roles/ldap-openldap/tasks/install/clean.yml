@@ -1,0 +1,50 @@
+---
+
+# Remove all groups created before
+- name: Remove old groups if presents
+  when: clean_groups
+  community.general.ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
+    state: absent
+    start_tls: true
+  loop: '{{ posix_groups }}'
+  loop_control:
+    loop_var: group
+
+- name: Remove previous users
+  when: clean_users
+  community.general.ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: 'cn={{ user.cn }},{{ ldap.users.dn }}'
+    state: absent
+    start_tls: true
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Remove the readonly account
+  when: clean_users
+  community.general.ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: 'cn=readonly account,{{ ldap.users.dn }}'
+    state: absent
+
+- name: Remove the postmaster account
+  when: clean_users
+  community.general.ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: 'cn=postmaster account,{{ ldap.users.dn }}'
+    state: absent
+
+- name: Remove the manager account
+  when: clean_users
+  community.general.ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: 'cn=manager account,{{ ldap.users.dn }}'
+    state: absent

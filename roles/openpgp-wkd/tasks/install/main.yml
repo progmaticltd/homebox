@@ -1,0 +1,14 @@
+---
+
+- name: Copy the certificates
+  include_tasks: install/certificates.yml
+
+- name: Configure the web server
+  include_tasks: install/nginx.yml
+  tags: nginx
+
+- name: Publish the GPG public keys
+  include_tasks: install/publish-all.yml
+
+- name: Configure AppArmor
+  include_tasks: install/apparmor.yml

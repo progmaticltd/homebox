@@ -1,0 +1,13 @@
+---
+
+- name: Copy the local misc schema in the changes directory
+  register: misc_schema
+  ansible.builtin.copy:
+    src: /etc/ldap/schema/misc.ldif
+    dest: /etc/ldap/changes/misc.ldif
+    remote_src: true
+
+- name: Load misc schema for multiple email addresses
+  when: misc_schema.changed
+  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
+  ansible.builtin.command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/misc.ldif

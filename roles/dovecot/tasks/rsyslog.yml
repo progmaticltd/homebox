@@ -1,8 +1,0 @@
----
-
-- name: Logging specific config for syslog
-  notify: Restart rsyslog
-  template:
-    src: rsyslog.conf
-    dest: /etc/rsyslog.d/dovecot-homebox.conf
-    mode: 0644

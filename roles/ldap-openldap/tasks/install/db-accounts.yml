@@ -1,0 +1,40 @@
+---
+
+# Users and groups creation
+- name: Make sure we have a parent entry for groups
+  community.general.ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: '{{ ldap.groups.dn }}'
+    objectClass: organizationalUnit
+    state: present
+
+- name: Create all the group accounts
+  community.general.ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
+    attributes:
+      cn:  '{{ group.description }}'
+      gidNumber: '{{ group.gidNumber }}'
+    objectClass:
+      - top
+      - posixGroup
+  loop: '{{ posix_groups }}'
+  loop_control:
+    loop_var: group
+
+- name: Make sure we have a parent entry for users
+  community.general.ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: '{{ ldap.users.dn }}'
+    objectClass: organizationalUnit
+    state: present
+
+- name: Create each user in the database
+  ansible.builtin.include_tasks: user-account.yml
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+    index_var: index

@@ -1,0 +1,11 @@
+---
+
+- name: Create a DNS entry for LDAP
+  vars:
+    dns_records:
+      - name: ldap
+        value: '{{ network.hostname }}.{{ network.domain }}'
+        type: cname
+  ansible.builtin.include_role:
+    name: dns-record
+  tags: dns

@@ -1,0 +1,34 @@
+---
+
+- name: Create the www directory
+  file:
+    dest: /var/www/openpgpkey
+    state: directory
+    mode: 0700
+
+- name: Create an empty index file to avoid errors
+  copy:
+    content: ''
+    dest: /var/www/openpgpkey/index.html
+  tags: nginx
+
+- name: Create the nginx template
+  notify: Restart nginx
+  vars:
+    csp: '{{ csp_default }}'
+    fp: '{{ fp_default }}'
+  template:
+    src: nginx.conf
+    dest: '/etc/nginx/sites-available/openpgpkey.{{ network.domain }}.conf'
+    owner: root
+    group: root
+    mode: 0644
+  tags: nginx
+
+- name: Activate openpgpkey web site
+  notify: Restart nginx
+  file:
+    src: '/etc/nginx/sites-available/openpgpkey.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/openpgpkey.{{ network.domain }}.conf'
+    state: link
+  tags: nginx

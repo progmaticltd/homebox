@@ -1,0 +1,30 @@
+---
+
+- name: Remove nftables package
+  ansible.builtin.apt:
+    name: '{{ firewall_packages }}'
+    state: absent
+    purge: true
+    autoremove: true
+
+- name: Remove nftables directory
+  ansible.builtin.file:
+    path: /etc/nftables
+    state: absent
+
+- name: Remove the system log configuration
+  register: rsyslog_config
+  ansible.builtin.file:
+    path: /etc/rsyslog.d/nftables.conf
+    state: absent
+
+- name: Restart rsyslog now
+  when: rsyslog_config.changed
+  systemd:
+    name: rsyslog
+    state: restarted
+
+- name: Remove the logrotate configutation
+  ansible.builtin.file:
+    path: /etc/logrotate.d/nftables
+    state: absent
