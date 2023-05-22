@@ -1,7 +1,7 @@
 ---
 
 - name: Test opendkim key files exists and are readable
-  shell: test -f '/etc/opendkim/keys/{{ file }}'
+  ansible.builtin.shell: test -f '/etc/opendkim/keys/{{ file }}'
   become: yes
   become_method: sudo
   become_user: opendkim
@@ -22,7 +22,7 @@
   until: result is not failed
   retries: 10
   delay: 30
-  shell: >-
+  ansible.builtin.shell: >-
     opendkim-testkey -vv -s {{ dkim_selector }}
     -d {{ network.domain }}
     -k /etc/opendkim/keys/{{ dkim_selector }}.private

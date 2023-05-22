@@ -2,7 +2,7 @@
 
 - name: Remove prometheus postfix exporter
   tags: prometheus
-  apt:
+  ansible.builtin.apt:
     name: prometheus-postfix-exporter
     state: absent
     autoremove: true
@@ -10,12 +10,12 @@
 
 - name: Remove target configuration
   tags: prometheus
-  file:
+  ansible.builtin.file:
     path: /etc/prometheus/targets/postfix.yml
     state: absent
 
 - name: Remove prometheus alerts
   tags: prometheus
-  file:
+  ansible.builtin.file:
     path: /etc/prometheus/alerts/postfix-rules.yml
     state: absent

@@ -1,25 +1,25 @@
 ---
 
 - name: Install the python / psycopg2 package
-  apt:
+  ansible.builtin.apt:
     name: python3-psycopg2
     state: present
 
 - name: Remove the database
   become: true
   become_user: postgres
-  postgresql_db:
+  community.postgresql.postgresql_db:
     name: sogo
     state: absent
 
 - name: Remove the database user
   become: true
   become_user: postgres
-  postgresql_user:
+  community.postgresql.postgresql_user:
     name: sogo
     state: absent
 
 - name: Remove the python / psycopg2 package
-  apt:
+  ansible.builtin.apt:
     name: python3-psycopg2
     state: absent

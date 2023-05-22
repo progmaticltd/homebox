@@ -2,12 +2,12 @@
 
 - name: Get all nginx log files
   register: nginx_logs
-  find:
+  ansible.builtin.find:
     path: /var/log/nginx
     pattern: 'rspamd*'
 
 - name: Remove nginx log files
-  file:
+  ansible.builtin.file:
     path: '{{ file.path }}'
     state: absent
   loop: '{{ nginx_logs.files }}'

@@ -2,7 +2,7 @@
 
 - name: Restart the system if needed
   register: reboot_needed_cmd
-  shell: >-
+  ansible.builtin.shell: >-
     set -o pipefail ;
     needrestart -b -k | tail -n 1 | cut -f 2 -d ' '
   changed_when: false
@@ -11,10 +11,10 @@
 
 # See /usr/share/doc/needrestart/README.batch.md
 - name: Store the value
-  set_fact:
+  ansible.builtin.set_fact:
     reboot_needed: '{{ reboot_needed_cmd.stdout | int >= 2 }}'
 
 - name: Reboot the system if needed
   when: reboot_needed
-  reboot:
+  ansible.builtin.reboot:
     reboot_timeout: '{{ system.reboot_timeout }}'

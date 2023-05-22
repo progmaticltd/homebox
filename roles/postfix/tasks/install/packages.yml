@@ -2,12 +2,12 @@
 
 - name: Install postfix packages
   notify: Restart postfix
-  apt:
+  ansible.builtin.apt:
     name: '{{ postfix_pkgs }}'
     state: present
 
 - name: Remove and purge exim packages
-  apt:
+  ansible.builtin.apt:
     name: '{{ exim_packages }}'
     state: absent
     purge: true

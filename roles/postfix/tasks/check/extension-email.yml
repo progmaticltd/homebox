@@ -1,11 +1,11 @@
 ---
 
 - name: Create a unique subject for testing
-  set_fact:
+  ansible.builtin.set_fact:
     test_subject: "Test email {{ lookup( 'password', '/dev/null length=32' ) | to_uuid }}"
 
 - name: Create an email template
-  template:
+  ansible.builtin.template:
     src: check/testmsg-01.txt
     dest: /tmp/testmsg-01.txt
     mode: 0600
@@ -13,7 +13,7 @@
     group: postfix
 
 - name: Send an email with an extension
-  shell: >-
+  ansible.builtin.shell: >-
     swaks
     --from="{{ users[0].mail }}"
     --to "{{ users[1].mail | regex_replace('@', '+lists@') }}"
@@ -31,7 +31,7 @@
 
 - name: Check if the email has been received
   register: email_found
-  shell: >-
+  ansible.builtin.shell: >-
     grep -l "Subject: {{ test_subject }}"
     /home/users/{{ users[1].uid }}/mails/maildir/new/*
   changed_when: false

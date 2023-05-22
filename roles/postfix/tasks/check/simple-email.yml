@@ -1,11 +1,11 @@
 ---
 
 - name: Create a unique subject for testing
-  set_fact:
+  ansible.builtin.set_fact:
     test_subject: "Test email {{ lookup( 'password', '/dev/null length=32' ) | to_uuid }}"
 
 - name: Create an email template
-  template:
+  ansible.builtin.template:
     src: check/testmsg-01.txt
     dest: /tmp/testmsg-01.txt
     mode: 0644
@@ -13,12 +13,12 @@
     group: postfix
 
 - name: Load facts
-  set_fact:
+  ansible.builtin.set_fact:
     user0_uid: '{{ users[0].uid }}'
     user0_password: '{{ lookup(creds.store, network.domain + "/ldap/" + users[0].uid) }}'
 
 - name: Send an email to the main email address of the other user
-  shell: >-
+  ansible.builtin.shell: >-
     swaks
     --from="{{ users[0].mail }}"
     --to "{{ users[1].mail }}"
@@ -38,7 +38,7 @@
 
 - name: Check if the email has been received
   register: email_found
-  shell: >-
+  ansible.builtin.shell: >-
     grep -l "Subject: {{ test_subject }}"
     /home/users/{{ users[1].uid }}/mails/maildir/new/*
   changed_when: false
@@ -47,7 +47,7 @@
   delay: 2
 
 - name: Check if this specific email has been signed
-  shell: >-
+  ansible.builtin.shell: >-
     set -o pipefail ;
     cat '{{ email_found.stdout }}'
     | grep "^DKIM-Signature:.*"
@@ -56,6 +56,6 @@
     executable: /bin/bash
 
 - name: Check if the email is in the sent folder
-  shell: >-
+  ansible.builtin.shell: >-
     grep -l "Subject: {{ test_subject }}"
     /home/users/{{ users[0].uid }}/mails/maildir/.Sent/cur/*

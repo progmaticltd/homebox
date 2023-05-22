@@ -1,14 +1,14 @@
 ---
 
 - name: Create home directory for users on first login
-  pamd:
+  community.general.pamd:
     name: common-account
     module_path: pam_mkhomedir.so
     type: session
     control: optional
 
 - name: Configure password quality module
-  pamd:
+  community.general.pamd:
     name: common-password
     control: requisite
     type: password

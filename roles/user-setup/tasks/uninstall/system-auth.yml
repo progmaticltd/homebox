@@ -1,7 +1,7 @@
 ---
 
 - name: Remove packages for interactive login
-  apt:
+  ansible.builtin.apt:
     name: '{{ auth_pkgs }}'
     state: absent
     purge: true

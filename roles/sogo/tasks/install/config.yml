@@ -3,7 +3,7 @@
 - name: Copy sogo configuration
   tags: config
   notify: Restart sogo service
-  template:
+  ansible.builtin.template:
     src: sogo.conf
     dest: '/etc/sogo/sogo.conf'
     owner: root
@@ -12,13 +12,13 @@
 
 - name: Copy sogo cron table
   tags: config
-  template:
+  ansible.builtin.template:
     src: sogo.cron
     dest: '/etc/cron.d/sogo'
 
 - name: Add SOGo backups directory
   tags: backup
-  file:
+  ansible.builtin.file:
     path: /var/backups/backups
     state: directory
     owner: sogo

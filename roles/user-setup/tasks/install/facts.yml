@@ -1,14 +1,14 @@
 ---
 
 - name: Set the list of users to initialise
-  set_fact:
+  ansible.builtin.set_fact:
     init_users: >-
       {{ users + [{"uid": "postmaster"}] }}
   tags: facts
 
 - name: Load or create the password for the read-only account
   no_log: '{{ not system.devel }}'
-  set_fact:
+  ansible.builtin.set_fact:
     readonly_password: >-
       {{ lookup(creds.store, network.domain + "/ldap/readonly"
       + creds.opts.create + creds.opts.system) }}
@@ -16,7 +16,7 @@
 
 - name: Load or create the passwords for the manager account
   no_log: '{{ not system.devel }}'
-  set_fact:
+  ansible.builtin.set_fact:
     manager_password: >-
       {{ lookup(creds.store, network.domain + "/ldap/manager"
       + creds.opts.create + creds.opts.system) }}
@@ -24,7 +24,7 @@
 
 - name: Load or create the passwords for the admin account
   no_log: '{{ not system.devel }}'
-  set_fact:
+  ansible.builtin.set_fact:
     admin_password: >-
       {{ lookup(creds.store, network.domain + "/ldap/admin"
       + creds.opts.create + creds.opts.system) }}
@@ -32,7 +32,7 @@
 
 - name: Create a normal password for the postmaster
   no_log: '{{ not system.devel }}'
-  set_fact:
+  ansible.builtin.set_fact:
     postmaster_password: >-
       {{ lookup(creds.store, network.domain + "/ldap/postmaster"
       + creds.opts.create) }}

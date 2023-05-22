@@ -1,6 +1,6 @@
 ---
 
 - name: Remove configuration folder
-  file:
+  ansible.builtin.file:
     path: /etc/postfix/
     state: absent

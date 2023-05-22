@@ -2,21 +2,21 @@
 
 - name: Disable nginx default site
   notify: Restart nginx
-  file:
+  ansible.builtin.file:
     path: /etc/nginx/sites-enabled/default
     state: absent
   tags: config
 
 - name: Install nginx secure configuration
   notify: Restart nginx
-  template:
+  ansible.builtin.template:
     src: ocsp.conf
     dest: /etc/nginx/conf.d/ocsp.conf
   tags: config
 
 - name: Deploy the logging restrictions
   notify: Restart nginx
-  template:
+  ansible.builtin.template:
     src: logging.conf
     dest: /etc/nginx/conf.d/logging.conf
   tags: config

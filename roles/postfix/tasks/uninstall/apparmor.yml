@@ -2,7 +2,7 @@
 
 - name: Install some postfix AppArmor profile
   notify: Restart AppArmor service
-  file:
+  ansible.builtin.file:
     path: '/etc/apparmor.d/{{ aa_config }}'
     state: absent
   loop: '{{ postfix_apparmor_profiles }}'

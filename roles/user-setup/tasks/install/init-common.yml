@@ -1,7 +1,7 @@
 ---
 
 - name: Create the home and archive folders
-  file:
+  ansible.builtin.file:
     path: /home/{{ dir }}
     owner: root
     group: users
@@ -12,7 +12,7 @@
     loop_var: dir
 
 - name: Add homebox mail and config folders to the skeleton
-  file:
+  ansible.builtin.file:
     path: '/etc/skel/{{ dir.path }}'
     owner: root
     group: root

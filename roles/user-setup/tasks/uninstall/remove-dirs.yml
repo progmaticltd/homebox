@@ -1,7 +1,7 @@
 ---
 
 - name: Remove homebox mail and config folders from /etc/skeleton
-  file:
+  ansible.builtin.file:
     path: '{{ dir }}'
     state: absent
   loop: '{{ user_directories }}'

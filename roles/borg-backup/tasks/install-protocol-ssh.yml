@@ -2,7 +2,7 @@
 
 - name: Extract backup location details
   tags: backup, facts
-  set_fact:
+  ansible.builtin.set_fact:
     protocol: '{{ location.url | urlsplit("scheme") }}'
     location_host: '{{ location.url | urlsplit("hostname") }}'
     location_user: '{{ location.url | urlsplit("username") | default("backup") }}'
@@ -11,7 +11,7 @@
 
 - name: Create the backup config into /etc/homebox
   tags: config
-  ini_file:
+  community.general.ini_file:
     path: '/etc/homebox/backup.ini'
     section: '{{ location.name }}'
     option: '{{ option.name }}'
@@ -35,13 +35,13 @@
 
 - name: Create a directory to store all the ssh configuration segments
   tags: backup
-  file:
+  ansible.builtin.file:
     path: /root/.ssh/config.d/
     state: directory
 
 - name: Allow external SSH connections
   tags: ufw
-  ufw:
+  community.general.ufw:
     direction: out
     proto: tcp
     port: 22
@@ -51,7 +51,7 @@
 
 - name: Include the generated configutations in the main file
   tags: ssh
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /root/.ssh/config
     line: '{{ line }}'
     create: true
@@ -63,18 +63,18 @@
 
 - name: Configure the backup location
   tags: ssh
-  template:
+  ansible.builtin.template:
     src: 'ssh-config'
     dest: '/root/.ssh/config.d/backup-{{ location.name }}'
 
 - name: Get backup server signature
   tags: ssh
-  shell: 'ssh-keyscan -H {{ location_host }}'
+  ansible.builtin.shell: 'ssh-keyscan -H {{ location_host }}'
   register: keyscan
 
 - name: Add the backup server to known_hosts, once for all
   tags: ssh
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /root/.ssh/known_hosts
     line: '{{ line }}'
     create: yes

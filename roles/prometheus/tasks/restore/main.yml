@@ -3,7 +3,7 @@
 # FIXME: backup/restore not working yet
 
 - name: Ensure the required packages are installed
-  apt:
+  ansible.builtin.apt:
     name: [ rsync ]
     state: present
 
@@ -18,7 +18,7 @@
     loop_var: service
 
 - name: Push the metrics
-  synchronize:
+  ansible.posix.synchronize:
     mode: push
     src: '{{ backup_dir }}/prometheus/metrics2'
     dest: /var/lib/prometheus/metrics2
@@ -29,7 +29,7 @@
       - '--delete'
 
 - name: Push the node exporter folder
-  synchronize:
+  ansible.posix.synchronize:
     mode: push
     src: '{{ backup_dir }}/prometheus/node-exporter'
     dest: /var/lib/prometheus/node-exporter

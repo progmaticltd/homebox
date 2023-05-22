@@ -1,25 +1,25 @@
 ---
 
 - name: Set the initial facts
-  include_tasks: facts.yml
+  ansible.builtin.include_tasks: facts.yml
 
 - name: Install the packages
-  include_tasks: check/packages.yml
+  ansible.builtin.include_tasks: check/packages.yml
 
 - name: Check all certificates
-  include_tasks: check/certificates.yml
+  ansible.builtin.include_tasks: check/certificates.yml
 
 - name: Check the LDAP mapping
-  include_tasks: check/ldap-mapping.yml
+  ansible.builtin.include_tasks: check/ldap-mapping.yml
 
 - name: Check simple email reception
-  include_tasks: check/simple-email.yml
+  ansible.builtin.include_tasks: check/simple-email.yml
 
 - name: Check email reception with UTF8 email address
-  include_tasks: check/utf8-email.yml
+  ansible.builtin.include_tasks: check/utf8-email.yml
 
 - name: Check email reception with extension
-  include_tasks: check/extension-email.yml
+  ansible.builtin.include_tasks: check/extension-email.yml
 
 - name: Check TLS settings
-  include_tasks: check/tls.yml
+  ansible.builtin.include_tasks: check/tls.yml

@@ -1,12 +1,12 @@
 ---
 
 - name: Set the default log level
-  set_fact:
+  ansible.builtin.set_fact:
     log_level: '{{ system.debug | ternary("debug", "warn") }}'
   tags: blackbox, config
 
 - name: Initialise default blackbox exporter settings
-  set_fact:
+  ansible.builtin.set_fact:
     node_alert_settings_args:
       - --web.listen-address='127.0.0.1:9115'
       - --log.level='{{ log_level }}'
@@ -14,7 +14,7 @@
 
 - name: Deploy blackbox exporter config
   notify: Restart Prometheus blackbox exporter
-  template:
+  ansible.builtin.template:
     src: defaults-blackbox-exporter.yml
     dest: /etc/prometheus/prometheus-blackbox-exporter.yml
     mode: 0644

@@ -1,14 +1,16 @@
 ---
 
 - name: Copy the certificates
-  include_tasks: install/certificates.yml
+  ansible.builtin.include_tasks: install/certificates.yml
+  tags: certs
 
 - name: Configure the web server
-  include_tasks: install/nginx.yml
+  ansible.builtin.include_tasks: install/nginx.yml
   tags: nginx
 
 - name: Publish the GPG public keys
-  include_tasks: install/publish-all.yml
+  ansible.builtin.include_tasks: install/publish-all.yml
+  tags: publish
 
 - name: Configure AppArmor
-  include_tasks: install/apparmor.yml
+  ansible.builtin.include_tasks: install/apparmor.yml

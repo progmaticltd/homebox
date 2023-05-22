@@ -1,6 +1,6 @@
 ---
 
 - name: Remove the configuration
-  file:
+  ansible.builtin.file:
     path: /etc/rspamd
     state: absent

@@ -1,14 +1,14 @@
 ---
 
 - name: Set URLs to test
-  set_fact:
+  ansible.builtin.set_fact:
     test_urls:
       - www.{{ network.domain }}/
       - www.{{ network.domain }}//test/this?sub#url
 
 - name: Check the that the root site returns 302 in http mode
   register: http_access
-  uri:
+  ansible.builtin.uri:
     url: 'http://{{ url }}'
     follow_redirects: none
     method: GET
@@ -20,6 +20,6 @@
     loop_var: url
 
 - name: Check the that I can access the website
-  uri:
+  ansible.builtin.uri:
     url: 'https://www.{{ network.domain }}/'
     return_content: true

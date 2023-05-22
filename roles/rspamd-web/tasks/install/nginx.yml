@@ -1,7 +1,8 @@
 ---
 
 - name: Add nginx user to rspamd group
-  user:
+  # possible ambiguous replacement: user : ansible.builtin.user | awx.awx.user | inspur.ispim.user | inspur.sm.user | lowlydba.sqlserver.user | sensu.sensu_go.user | theforeman.foreman.user | vultr.cloud.user
+  ansible.builtin.user:
     name: www-data
     groups: _rspamd
     append: true
@@ -14,7 +15,7 @@
   vars:
     csp: '{{ mail.antispam.webui.csp | default(csp_default) }}'
     fp: '{{ mail.antispam.webui.fp | default(fp_default) }}'
-  template:
+  ansible.builtin.template:
     src: nginx.conf
     dest: '/etc/nginx/sites-available/rspamd.{{ network.domain }}.conf'
     owner: root
@@ -26,7 +27,7 @@
   notify:
     - Check nginx config
     - Restart nginx
-  file:
+  ansible.builtin.file:
     src: '/etc/nginx/sites-available/rspamd.{{ network.domain }}.conf'
     dest: '/etc/nginx/sites-enabled/rspamd.{{ network.domain }}.conf'
     state: link

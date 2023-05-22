@@ -4,16 +4,18 @@
   vars:
     public_keys: '{{ pgp_public_keys }}'
     well_known_dir: '/var/www/openpgpkey/.well-known/openpgpkey/{{ network.domain }}'
-  include_tasks: publish-one.yml
+  ansible.builtin.include_tasks: publish-one.yml
   loop: '{{ pgp_public_keys | default([]) }}'
   loop_control:
     loop_var: key_info
+  tags: publish
 
 - name: Publish the public keys for the direct method
   vars:
     public_keys: '{{ pgp_public_keys }}'
     well_known_dir:  /var/www/default/.well-known/openpgpkey
-  include_tasks: publish-one.yml
+  ansible.builtin.include_tasks: publish-one.yml
   loop: '{{ pgp_public_keys | default([]) }}'
   loop_control:
     loop_var: key_info
+  tags: publish

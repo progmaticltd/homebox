@@ -2,7 +2,7 @@
 
 - name: Allow rspamd web site access in the proxy
   notify: Restart tinyproxy
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/tinyproxy/filter
     line: '^maps\.rspamd\.com$'
   tags: proxy

@@ -1,16 +1,16 @@
 ---
 
 - name: Load the common facts
-  include_tasks: facts.yml
+  ansible.builtin.include_tasks: facts.yml
 
 - name: Remove DNS records
-  include_tasks: uninstall/dns.yml
+  ansible.builtin.include_tasks: uninstall/dns.yml
 
 - name: Remove nginx config
-  include_tasks: uninstall/nginx.yml
+  ansible.builtin.include_tasks: uninstall/nginx.yml
 
 - name: Remove the certificates
-  include_tasks: uninstall/certificates.yml
+  ansible.builtin.include_tasks: uninstall/certificates.yml
 
 - name: Remove apparmor config
-  include_tasks: uninstall/apparmor.yml
+  ansible.builtin.include_tasks: uninstall/apparmor.yml

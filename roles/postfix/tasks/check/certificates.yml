@@ -1,11 +1,11 @@
 ---
 
 - name: Check if the postfix service is up and running
-  shell: postfix status
+  ansible.builtin.shell: postfix status
   changed_when: false
 
 - name: Check the certificate using SMTP over TLS on submissions port
-  shell: >-
+  ansible.builtin.shell: >-
     set -o pipefail ;
     echo QUIT | openssl s_client
     -servername smtp.{{ network.domain }}
@@ -15,7 +15,7 @@
     executable: /bin/bash
 
 - name: Check the certificate using SMTP and STARTTLS
-  shell: >-
+  ansible.builtin.shell: >-
     set -o pipefail ;
     echo QUIT | openssl s_client
     -servername smtp.{{ network.domain }}
@@ -27,7 +27,7 @@
 
 - name: Check the certificate using SMTP and STARTTLS on submission port
   when: mail.postfix.submission.active
-  shell: >-
+  ansible.builtin.shell: >-
     set -o pipefail ;
     echo QUIT | openssl s_client
     -servername smtp.{{ network.domain }}

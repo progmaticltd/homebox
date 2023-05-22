@@ -1,23 +1,23 @@
 ---
 
 - name: Remove the packages
-  include_tasks: uninstall/packages.yml
+  ansible.builtin.include_tasks: uninstall/packages.yml
 
 - name: Remove the configuration
-  include_tasks: uninstall/config.yml
+  ansible.builtin.include_tasks: uninstall/config.yml
 
 - name: Remove the apparmor config
-  include_tasks: uninstall/apparmor.yml
+  ansible.builtin.include_tasks: uninstall/apparmor.yml
 
 - name: Remove rspamd proxy settings
-  include_tasks: uninstall/proxy.yml
+  ansible.builtin.include_tasks: uninstall/proxy.yml
 
 - name: Remove rspamd firewall outbound rules
-  include_tasks: uninstall/firewall.yml
+  ansible.builtin.include_tasks: uninstall/firewall.yml
 
 - name: Remove prometheus config
   tags: prometheus
-  include_tasks: uninstall/prometheus.yml
+  ansible.builtin.include_tasks: uninstall/prometheus.yml
 
 - name: Remove postfix config
-  include_tasks: uninstall/postfix.yml
+  ansible.builtin.include_tasks: uninstall/postfix.yml

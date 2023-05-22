@@ -1,7 +1,7 @@
 ---
 
 - name: Check prometheus config
-  shell: >-
+  ansible.builtin.shell: >-
     promtool check config
     /etc/prometheus/prometheus.yml
   changed_when: false

@@ -1,14 +1,14 @@
 ---
 
 - name: Create a directory for DNS updates
-  file:
+  ansible.builtin.file:
     path: /etc/opendkim/dns
     state: directory
   tags: dns
 
 - name: Create the zone update file
   register: nsupdate_file
-  shell: >-
+  ansible.builtin.shell: >-
     opendkim-genzone
     -d {{ network.domain }}
     -C hostmaster@{{ network.domain }}
@@ -26,7 +26,7 @@
 
 - name: Check if the key is already existing in the DNS server
   register: dns_entry_exists
-  shell: >-
+  ansible.builtin.shell: >-
     dig TXT {{ dkim_selector }}._domainkey.{{ network.domain }}
     +noall +answer @{{ pdns.ip }}
   changed_when: false
@@ -36,7 +36,7 @@
 
 - name: Store the public key in DNS
   when: dns_entry_exists is failed
-  shell: >-
+  ansible.builtin.shell: >-
     nsupdate nsupdate-{{ dkim_selector }}.conf
   args:
     chdir: /etc/opendkim/dns

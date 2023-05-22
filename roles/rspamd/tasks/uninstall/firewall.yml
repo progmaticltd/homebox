@@ -7,6 +7,6 @@
 
 - name: Remove rspamd direct http access
   notify: Restart nftables
-  file:
+  ansible.builtin.file:
     path: /etc/nftables/05-rspamd.nft
     state: absent

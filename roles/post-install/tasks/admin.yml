@@ -2,23 +2,25 @@
 
 - name: Load or create the password for the admin user
   no_log: '{{ not system.devel }}'
-  set_fact:
+  ansible.builtin.set_fact:
     admin_password: >-
       {{ lookup(creds.store, network.domain + "/user/admin"
       + creds.opts.create) }}
 
 - name: use a random uid and gid numbers
-  set_fact:
+  ansible.builtin.set_fact:
     uid_number: '{{ 2000 + (999 | random) }}'
     gid_number: '{{ 2000 + (999 | random) }}'
 
 - name: Create Administrators group
-  group:
+  # possible ambiguous replacement: group : ansible.builtin.group | awx.awx.group
+  ansible.builtin.group:
     name: '{{ system.admin.group_name | lower }}'
     gid: '{{ gid_number | int }}'
 
 - name: Create the Administration user
-  user:
+  # possible ambiguous replacement: user : ansible.builtin.user | awx.awx.user | inspur.ispim.user | inspur.sm.user | lowlydba.sqlserver.user | sensu.sensu_go.user | theforeman.foreman.user | vultr.cloud.user
+  ansible.builtin.user:
     name: '{{ system.admin.name }}'
     group: '{{ system.admin.group_name }}'
     groups: sudo

@@ -1,12 +1,12 @@
 ---
 
 - name: Install the required packages
-  apt:
+  ansible.builtin.apt:
     name: [ swaks, libnet-ssleay-perl ]
     state: present
 
 - name: Check each postfix package
-  shell: >-
+  ansible.builtin.shell: >-
     dpkg -s {{ pkg }}
   loop: '{{ postfix_pkgs }}'
   loop_control:

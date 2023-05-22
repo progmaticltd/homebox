@@ -1,7 +1,7 @@
 ---
 
 - name: Remove the DNS records
-  shell: >-
+  ansible.builtin.shell: >-
     pdnsutil delete-rrset {{ network.domain }}
     {{ record.name }} {{ record.type }}
   loop: '{{ dns_records }}'

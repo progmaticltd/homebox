@@ -1,20 +1,20 @@
 ---
 
 - name: Remove AppArmor config
-  include_tasks: uninstall/apparmor.yml
+  ansible.builtin.include_tasks: uninstall/apparmor.yml
 
 - name: Remove the packages
-  include_tasks: uninstall/packages.yml
+  ansible.builtin.include_tasks: uninstall/packages.yml
 
 - name: Remove the config
-  include_tasks: uninstall/config.yml
+  ansible.builtin.include_tasks: uninstall/config.yml
 
 - name: Remove the DNS record
-  include_tasks: uninstall/dns.yml
+  ansible.builtin.include_tasks: uninstall/dns.yml
 
 - name: Remove Prometheus config
   tags: prometheus
-  include_tasks: uninstall/prometheus.yml
+  ansible.builtin.include_tasks: uninstall/prometheus.yml
 
 - name: Remove postfix config
-  include_tasks: uninstall/postfix.yml
+  ansible.builtin.include_tasks: uninstall/postfix.yml

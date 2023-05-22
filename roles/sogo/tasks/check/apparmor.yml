@@ -2,7 +2,7 @@
 
 - name: Check that all sogo binaries are running in enforced mode
   register: aa_status
-  shell: >-
+  ansible.builtin.shell: >-
     aa-status --json | jq '.profiles["{{ sogo_binary }}"]'
   changed_when: false
   loop: '{{ sogo_binaries }}'

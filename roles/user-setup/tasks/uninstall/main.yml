@@ -1,22 +1,22 @@
 ---
 
 - name: Remove pam modules
-  include_tasks: uninstall/pam-modules.yml
+  ansible.builtin.include_tasks: uninstall/pam-modules.yml
 
 - name: Stop the services
-  include_tasks: uninstall/stop-services.yml
+  ansible.builtin.include_tasks: uninstall/stop-services.yml
 
 - name: Remove packages for interactive login
-  include_tasks: uninstall/system-auth.yml
+  ansible.builtin.include_tasks: uninstall/system-auth.yml
 
 - name: Remove skeleton directories
-  include_tasks: uninstall/remove-dirs.yml
+  ansible.builtin.include_tasks: uninstall/remove-dirs.yml
 
 - name: Remove data for each user (not the home directory)
-  include_tasks: uninstall/remove-user.yml
+  ansible.builtin.include_tasks: uninstall/remove-user.yml
   loop: '{{ users }}'
   loop_control:
     loop_var: user
 
 - name: Remove data for the  postmaster account
-  include_tasks: uninstall/remove-postmaster.yml
+  ansible.builtin.include_tasks: uninstall/remove-postmaster.yml

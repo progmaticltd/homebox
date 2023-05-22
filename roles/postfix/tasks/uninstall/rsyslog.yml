@@ -2,5 +2,5 @@
 
 - name: Remove homebox specific logging settings
   notify: Restart rsyslog
-  file:
+  ansible.builtin.file:
     path: /etc/rsyslog.d/postfix-homebox.conf

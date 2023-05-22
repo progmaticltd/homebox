@@ -6,27 +6,32 @@
 #                  uid and wkd_hash
 
 - name: Create the directories for the openpgp keys
-  file:
+  ansible.builtin.file:
     path: '{{ well_known_dir }}/hu'
     state: directory
+  tags: publish
 
 - name: Create an empty policy file as required
-  file:
+  ansible.builtin.file:
     path: '{{ well_known_dir }}/policy'
     state: touch
     modification_time: preserve
     access_time: preserve
+  tags: publish
 
 - name: Loop over wkd hashes for the direct method
-  set_fact:
+  ansible.builtin.set_fact:
     encoded_uid: '{{ key_info.uid | wkd_hash }}'
+  tags: publish
 
 - name: Loop over wkd hashes for the direct method
-  copy:
+  ansible.builtin.copy:
     content: '{{ key_info.public_key }}'
     dest: '{{ well_known_dir }}/hu/{{ encoded_uid }}'
+  tags: publish
 
 - name: Display encoded value
-  debug:
+  ansible.builtin.debug:
     verbosity: 2
     msg: 'Encoded "{{ key_info.uid }}" to "{{ encoded_uid }}" using wkdhash.'
+  tags: publish

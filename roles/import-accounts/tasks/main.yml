@@ -1,22 +1,22 @@
 ---
 
 - name: Install isync package
-  apt:
+  ansible.builtin.apt:
     name: '{{ mail_import_pkgs }}'
     state: present
 
 # Get the import master account password
 - name: Initialise the import user password parameters
-  set_fact:
+  ansible.builtin.set_fact:
     import_password_params: "{{ backup_directory }}/ldap/import.pwd {{ policies.system.password }}"
 
 - name: Create the import master user account password
   no_log: true
-  set_fact:
+  ansible.builtin.set_fact:
     import_password: '{{ lookup("password", import_password_params) }}'
 
 - name: Build a template for each account and each user, and encrypt it using the system key
-  include_tasks: setup-user.yml
+  ansible.builtin.include_tasks: setup-user.yml
   with_items:
     - '{{ users | selectattr("external_accounts", "defined") | list }}'
   loop_control:
@@ -25,7 +25,7 @@
 - name: Copy the postlogin scripts to start emails import on each user login
   notify: Restart dovecot
   tags: scripts
-  copy:
+  ansible.builtin.copy:
     src: import-emails
     dest: /etc/dovecot/login-scripts/500-import-emails
     mode: '0755'

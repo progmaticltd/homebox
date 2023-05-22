@@ -2,7 +2,7 @@
 
 - name: Extract backup location details
   tags: backup, facts
-  set_fact:
+  ansible.builtin.set_fact:
     protocol: '{{ location.url | urlsplit("scheme") }}'
     location_host: '{{ location.url | urlsplit("hostname") }}'
     location_user: '{{ location.url | urlsplit("username") | default("backup") }}'
@@ -11,7 +11,7 @@
 
 - name: Create the backup config into /etc/homebox
   tags: config
-  ini_file:
+  community.general.ini_file:
     path: '/etc/homebox/backup.ini'
     section: '{{ location.name }}'
     option: '{{ option.name }}'
@@ -36,7 +36,7 @@
 # Exclude the destination from backup, i.e. don't backup the backup
 - name: Exclude backup directory from backup
   tags: config
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/homebox/backup-exclude
     line: '{{ line }}'
   with_items:

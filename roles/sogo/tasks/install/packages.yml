@@ -2,6 +2,6 @@
 
 - name: Start by installing the required packages
   tags: apt
-  apt:
+  ansible.builtin.apt:
     name: '{{ sogo_pkgs }}'
     state: present

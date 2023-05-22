@@ -1,7 +1,7 @@
 ---
 
 - name: Create the socket directory
-  file:
+  ansible.builtin.file:
     path: /var/spool/postfix/opendmarc
     state: directory
     owner: opendmarc
@@ -10,14 +10,15 @@
 
 - name: Add postfix to opendmarc group
   notify: Restart postfix
-  user:
+  # possible ambiguous replacement: user : ansible.builtin.user | awx.awx.user | inspur.ispim.user | inspur.sm.user | lowlydba.sqlserver.user | sensu.sensu_go.user | theforeman.foreman.user | vultr.cloud.user
+  ansible.builtin.user:
     name: postfix
     groups: opendmarc
     append: true
 
 - name: Install the milter
   notify: Restart postfix
-  replace:
+  ansible.builtin.replace:
     path: /etc/postfix/main.cf
     regexp: '^    # dmarc:'
     replace: '    unix:opendmarc/opendmarc.sock'

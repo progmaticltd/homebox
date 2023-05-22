@@ -4,57 +4,57 @@
 # So the value is max_attachment_size * 1.33 * 1024 * 1024, i.e. max_attachment_size * 1394606
 # Adding 1Kb for the message text, because we are generous (sic)
 - name: Compute max message size from max attachment size
-  set_fact:
+  ansible.builtin.set_fact:
     message_size_limit: '{{ 1024 + mail.max_attachment_size * 1394606 | int }}'
   tags: facts
 
 # It is also possible to use -D, with a debugger and gdb
 # See http://www.postfix.org/DEBUG_README.html
 - name: Set SMTP flag for debugging or development
-  set_fact:
+  ansible.builtin.set_fact:
     smtpd_flags: '{{ (system.debug or system.devel) | ternary("-v", "") }}'
   tags: facts
 
 # Use IP addresses as SPF mechanisms for the server itself
 - name: Add the external IP address as SPF sender
-  set_fact:
+  ansible.builtin.set_fact:
     spf_senders: '{{ "ip6:" + external_ip if external_ip | ipv6 else "ip4:" + external_ip }}'
   tags: facts
 
 - name: Add the backup IP address as SPF sender
   when: backup_ip is defined
-  set_fact:
+  ansible.builtin.set_fact:
     spf_senders: '{{ spf_senders }} {{ "ip6:" + backup_ip if backup_ip | ipv6 else "ip4:" + backup_ip }}'
   tags: facts
 
 - name: Add the user configured extra senders to the SPF record
   when: mail.extra_senders
-  set_fact:
+  ansible.builtin.set_fact:
     spf_senders: '{{ spf_senders }} {{ mail.extra_senders | join(" ") }}'
   tags: facts
 
 # Use "soft fail" in development mode
 - name: Set the SPF qualifier as "soft fail"
   when: system.devel or system.debug
-  set_fact:
+  ansible.builtin.set_fact:
     spf_qualifier: '~'
   tags: facts
 
 # Use "fail" (strict) otherwise
 - name: Set the SPF qualifier as strict
   when: not system.devel and not system.debug
-  set_fact:
+  ansible.builtin.set_fact:
     spf_qualifier: '-'
   tags: facts
 
 - name: Set ldap search base
-  set_fact:
+  ansible.builtin.set_fact:
     ldap_search_base: 'ou=users,dc={{ network.domain | regex_replace("\.", ",dc=") }}'
   tags: facts
 
 - name: Load or create the password for the read-only account
   no_log: '{{ not system.devel }}'
-  set_fact:
+  ansible.builtin.set_fact:
     readonly_password: >-
       {{ lookup(creds.store, network.domain + "/ldap/readonly") }}
   tags: facts

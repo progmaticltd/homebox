@@ -4,7 +4,7 @@
   notify: Restart Prometheus alert manager
   vars:
     sign_separator: '-- '
-  template:
+  ansible.builtin.template:
     src: email.default.{{ format }}.tmpl
     dest: /etc/prometheus/alertmanager_templates/email.default.{{ format }}.tmpl
     block_start_string: '[%'

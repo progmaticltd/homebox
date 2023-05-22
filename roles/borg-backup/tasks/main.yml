@@ -2,17 +2,17 @@
 
 - name: Install required python packages
   tags: apt
-  apt:
+  ansible.builtin.apt:
     name: '{{ packages }}'
     state: present
 
 - name: Create the backups mount point root
-  file:
+  ansible.builtin.file:
     path: /mnt/backup
     state: directory
 
 - name: Create the directories to import and export the keys
-  file:
+  ansible.builtin.file:
     path: '{{ path }}'
     state: directory
     mode: '0700'
@@ -24,7 +24,7 @@
 
 - name: Create the backup config into /etc/homebox
   tags: config
-  ini_file:
+  community.general.ini_file:
     path: '/etc/homebox/backup.ini'
     section: 'alerts'
     option: '{{ option.name }}'
@@ -41,7 +41,7 @@
     loop_var: option
 
 - name: Configure each protocol
-  include_tasks: 'install-protocol-{{ location.url | urlsplit("scheme") }}.yml'
+  ansible.builtin.include_tasks: 'install-protocol-{{ location.url | urlsplit("scheme") }}.yml'
   loop:
     - '{{ backup.locations | default([]) }}'
   loop_control:
@@ -49,7 +49,7 @@
 
 - name: Add the cron entries to backup the home directory
   tags: config
-  template:
+  ansible.builtin.template:
     src: cron-backup-script.sh
     dest: '/etc/cron.{{ location.frequency | default("daily") }}/backup-{{ location.name }}'
     mode: '0700'
@@ -61,7 +61,7 @@
 - name: Add the cron entries to check the backup
   register: backup_config
   tags: config
-  template:
+  ansible.builtin.template:
     src: cron-check-script.sh
     dest: '/etc/cron.{{ location.check_frequency | default("weekly") }}/backup-check-{{ location.name }}'
     mode: '0700'
@@ -73,12 +73,12 @@
 - name: Create a random passphrase for encrypted backup
   tags: encryption
   no_log: true
-  set_fact:
+  ansible.builtin.set_fact:
     backup_key: '{{ lookup("password", "{{ encryption.backupKeyParams }}") }}'
 
 - name: Save the passphrase
   tags: encryption
-  template:
+  ansible.builtin.template:
     src: backup-key
     dest: /etc/homebox/backup-key
     owner: root
@@ -87,14 +87,14 @@
 
 - name: Copy the backup script
   tags: scripts
-  copy:
+  ansible.builtin.copy:
     src: backup.py
     dest: '/usr/local/sbin/homebox-backup'
     mode: '0700'
 
 - name: Create sync directories to import/export keys
   tags: sync
-  file:
+  ansible.builtin.file:
     path: '{{ path }}'
     state: directory
   loop:
@@ -107,7 +107,7 @@
   register: backup_keys_local_directory
   delegate_to: localhost
   tags: sync
-  file:
+  ansible.builtin.file:
     path: '{{ backup_directory }}/backup-keys/'
     state: directory
 
@@ -116,7 +116,7 @@
   when: not backup_keys_local_directory.changed
   tags: sync
   register: keys_restore
-  synchronize:
+  ansible.posix.synchronize:
     src: '{{ backup_directory }}/backup-keys/'
     dest: /tmp/backup-keys-import/
     mode: push
@@ -130,7 +130,7 @@
 - name: Initialise the repository, to test access and retrieve the key
   when: backup.locations is defined and backup.locations != []
   tags: backup
-  shell: >-
+  ansible.builtin.shell: >-
     /usr/local/sbin/homebox-backup
     --action init
     --config {{ location.name }}
@@ -146,14 +146,14 @@
 - name: Check if new keys have been copied in the export directory
   tags: sync
   register: keys_exported
-  find:
+  ansible.builtin.find:
     paths: /tmp/backup-keys-export/
     patterns: '*.key'
 
 - name: Retrieve the backup encryption keys on your local machine
   tags: sync
   when: keys_exported.matched > 0
-  synchronize:
+  ansible.posix.synchronize:
     mode: pull
     src: /tmp/backup-keys-export/*.key
     dest: '{{ backup_directory }}/backup-keys/'
@@ -164,7 +164,7 @@
 
 - name: Remove the backup keys directory, we don't need this anymore
   tags: sync
-  file:
+  ansible.builtin.file:
     path: '{{ path }}'
     state: absent
   loop:
@@ -175,7 +175,7 @@
 
 - name: Check if one ore more backup are marked for restoration
   tags: facts,restore
-  set_fact:
+  ansible.builtin.set_fact:
     restore_list: >-
       {{ backup.locations | selectattr("restore", "defined")
       | selectattr("restore", "equalto", true) | list | length }}
@@ -183,4 +183,4 @@
 - name: Restore backups from a previous installation
   when: restore_list | int > 0
   tags: restore
-  include_tasks: 'restore-all.yml'
+  ansible.builtin.include_tasks: 'restore-all.yml'

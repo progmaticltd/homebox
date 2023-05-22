@@ -4,7 +4,7 @@
   tags: postgres
   become: true
   become_user: postgres
-  postgresql_user:
+  community.postgresql.postgresql_user:
     name: sogo
     password: '{{ sogo_db_password }}'
     role_attr_flags: LOGIN
@@ -13,7 +13,7 @@
   tags: postgres
   become: true
   become_user: postgres
-  postgresql_db:
+  community.postgresql.postgresql_db:
     encoding: utf8
     name: sogo
     owner: sogo
@@ -22,7 +22,7 @@
   tags: postgres
   become: true
   become_user: postgres
-  postgresql_privs:
+  community.postgresql.postgresql_privs:
     db: sogo
     objs: ALL_IN_SCHEMA
     privs: ALL

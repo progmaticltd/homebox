@@ -1,12 +1,12 @@
 ---
 
 - name: Set the default log level
-  set_fact:
+  ansible.builtin.set_fact:
     log_level: '{{ system.debug | ternary("debug", "warn") }}'
   tags: config
 
 - name: Initialise default settings
-  set_fact:
+  ansible.builtin.set_fact:
     default_exporter_settings_args:
       - --web.listen-address='127.0.0.1:9100'
       - --log.level='{{ log_level }}'
@@ -18,7 +18,7 @@
 
 - name: Push the default parameters
   notify: Restart Prometheus node exporter
-  template:
+  ansible.builtin.template:
     src: defaults-node-exporter.conf
     dest: /etc/default/prometheus-node-exporter
     mode: 0644

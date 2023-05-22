@@ -3,12 +3,12 @@
 - name: Create the main DNS entries
   vars:
     dns_records: '{{ dns_records_main }}'
-  include_role:
+  ansible.builtin.include_role:
     name: dns-record
 
 - name: Create the DNS entries for the backup
   when: backup_ip is defined
   vars:
     dns_records: '{{ dns_records_backup }}'
-  include_role:
+  ansible.builtin.include_role:
     name: dns-record

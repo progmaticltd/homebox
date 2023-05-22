@@ -1,13 +1,13 @@
 ---
 
 - name: Remove postfix packages
-  apt:
+  ansible.builtin.apt:
     name: '{{ postfix_pkgs }}'
     state: absent
     purge: true
     autoremove: true
 
 - name: Reinstall exim packages
-  apt:
+  ansible.builtin.apt:
     name: '{{ exim_packages }}'
     state: present

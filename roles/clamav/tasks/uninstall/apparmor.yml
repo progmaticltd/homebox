@@ -2,7 +2,6 @@
 
 - name: Disable AppArmor profiles
   notify: Restart AppArmor service
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: 'aa-disable {{ aa_config }}'
   loop:
     - usr.bin.freshclam

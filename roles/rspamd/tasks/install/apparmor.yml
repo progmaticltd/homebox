@@ -2,9 +2,10 @@
 
 - name: Install rspamd AppArmor profile
   notify: Restart AppArmor service
-  template:
+  ansible.builtin.template:
     src: apparmor.conf
     dest: /etc/apparmor.d/usr.bin.rspamd
 
 - name: Activate AppArmor profiles
-  command: aa-enforce rspamd
+  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
+  ansible.builtin.command: aa-enforce rspamd

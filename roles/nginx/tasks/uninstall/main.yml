@@ -1,29 +1,29 @@
 ---
 
 - name: Remove the packages
-  include_tasks: uninstall/packages.yml
+  ansible.builtin.include_tasks: uninstall/packages.yml
 
 - name: Remove the config
-  include_tasks: uninstall/config.yml
+  ansible.builtin.include_tasks: uninstall/config.yml
 
 - name: Remove the logs
-  include_tasks: uninstall/logs.yml
+  ansible.builtin.include_tasks: uninstall/logs.yml
 
 - name: Remove the nftables rules
-  include_tasks: uninstall/nftables.yml
+  ansible.builtin.include_tasks: uninstall/nftables.yml
 
 - name: Remove the default content
-  include_tasks: uninstall/default-content.yml
+  ansible.builtin.include_tasks: uninstall/default-content.yml
 
 - name: Remove the apparmor settings
-  include_tasks: uninstall/apparmor.yml
+  ansible.builtin.include_tasks: uninstall/apparmor.yml
 
 - name: Remove the dns entry
-  include_tasks: uninstall/dns.yml
+  ansible.builtin.include_tasks: uninstall/dns.yml
 
 - name: Remove pam config
-  include_tasks: uninstall/pam.yml
+  ansible.builtin.include_tasks: uninstall/pam.yml
 
 - name: Remove prometheus settings
   tags: prometheus
-  include_tasks: uninstall/prometheus.yml
+  ansible.builtin.include_tasks: uninstall/prometheus.yml

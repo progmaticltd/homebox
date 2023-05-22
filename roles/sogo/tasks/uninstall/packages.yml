@@ -1,7 +1,7 @@
 ---
 
 - name: Start by installing the required packages
-  apt:
+  ansible.builtin.apt:
     name: '{{ sogo_pkgs }}'
     state: absent
     purge: true

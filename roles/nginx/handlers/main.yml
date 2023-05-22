@@ -1,7 +1,8 @@
 ---
 
 - name: Activate AppArmor profiles
-  command: aa-enforce usr.sbin.nginx
+  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
+  ansible.builtin.command: aa-enforce usr.sbin.nginx
 
 - name: Restart AppArmor service
   systemd:
@@ -10,7 +11,7 @@
     no_block: true
 
 - name: Check nginx config
-  shell: nginx -t
+  ansible.builtin.shell: nginx -t
   changed_when: false
 
 - name: Restart nginx

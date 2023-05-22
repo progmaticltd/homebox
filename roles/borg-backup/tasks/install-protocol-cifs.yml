@@ -2,7 +2,7 @@
 
 - name: Extract backup location details
   tags: backup, facts
-  set_fact:
+  ansible.builtin.set_fact:
     protocol: '{{ location.url | urlsplit("scheme") }}'
     location_host: '{{ location.url | urlsplit("hostname") }}'
     location_user: '{{ location.url | urlsplit("username") | default("guest") }}'
@@ -13,7 +13,7 @@
 
 - name: Create the backup config into /etc/homebox
   tags: config
-  ini_file:
+  community.general.ini_file:
     path: '/etc/homebox/backup.ini'
     section: '{{ location.name }}'
     option: '{{ option.name }}'
@@ -39,13 +39,13 @@
 
 # For Samba drives, uses cifs-utils
 - name: Install the required file systems
-  apt:
+  ansible.builtin.apt:
     name: 'cifs-utils'
     state: present
 
 - name: Configure the firewall to allow CIFS out connections
   tags: ufw
-  ufw:
+  community.general.ufw:
     direction: out
     proto: '{{ rule.proto }}'
     port: '{{ rule.ports }}'
@@ -62,12 +62,12 @@
     loop_var: rule
 
 - name: Create the credentials file
-  template:
+  ansible.builtin.template:
     src: cifs-creds.pwd
     dest: '/etc/homebox/backup-{{ location.name }}.pwd'
 
 - name: Set mount options for cifs
-  set_fact:
+  ansible.builtin.set_fact:
     mount_options:
       - 'credentials=/etc/homebox/backup-{{ location.name }}.pwd'
 
@@ -75,7 +75,7 @@
   register: mount_systemd
   notify: Reload Systemd
   tags: systemd
-  template:
+  ansible.builtin.template:
     src: 'mount-cifs.systemd'
     dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.mount'
 
@@ -89,7 +89,7 @@
 - name: Add automount definition for this device
   notify: Reload Systemd
   tags: systemd
-  template:
+  ansible.builtin.template:
     src: mount-auto.systemd
     dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.automount'
 

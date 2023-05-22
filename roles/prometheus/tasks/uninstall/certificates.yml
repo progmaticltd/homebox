@@ -4,11 +4,11 @@
   vars:
     certificates:
       - name: prometheus
-  include_role:
+  ansible.builtin.include_role:
     name: certificates
     tasks_from: ../uninstall/main.yml
 
 - name: Remove the certificate update hook
-  file:
+  ansible.builtin.file:
     path: /etc/lego/hooks/prometheus.{{ network.domain }}
     state: absent

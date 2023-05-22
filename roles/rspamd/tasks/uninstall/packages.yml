@@ -1,7 +1,7 @@
 ---
 
 - name: Remove the packages
-  apt:
+  ansible.builtin.apt:
     name: '{{ rspamd_pkgs }}'
     state: absent
     purge: true

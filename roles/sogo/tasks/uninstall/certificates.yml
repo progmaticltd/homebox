@@ -1,7 +1,7 @@
 ---
 
 - name: Remove the sogo certificates in the debian standard directory
-  file:
+  ansible.builtin.file:
     path: '{{ path }}'
     state: absent
   loop:

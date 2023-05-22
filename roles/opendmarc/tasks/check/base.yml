@@ -1,5 +1,5 @@
 ---
 
 - name: Test the domain for opendmarc records
-  shell: opendmarc-check {{ network.domain }}
+  ansible.builtin.shell: opendmarc-check {{ network.domain }}
   changed_when: false

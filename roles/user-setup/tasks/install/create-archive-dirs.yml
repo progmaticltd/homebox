@@ -1,7 +1,7 @@
 ---
 
 - name: Create the archives root folder
-  file:
+  ansible.builtin.file:
     path: /home/archives/{{ user.uid }}
     state: directory
     owner: '{{ user.uid }}'
@@ -10,7 +10,7 @@
   tags: storage
 
 - name: Create all the other folders
-  file:
+  ansible.builtin.file:
     path: /home/archives/{{ user.uid }}/{{ folder.path }}
     state: directory
     owner: '{{ user.uid }}'

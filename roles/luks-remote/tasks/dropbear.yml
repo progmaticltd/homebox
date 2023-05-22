@@ -1,13 +1,13 @@
 ---
 
 - name: Install the required packages
-  apt:
+  ansible.builtin.apt:
     update_cache: true
     name: '{{ packages }}'
     state: present
 
 - name: Create dropbear log folder
-  file:
+  ansible.builtin.file:
     path: /var/log/dropbear
     state: directory
     owner: root
@@ -15,13 +15,13 @@
     mode: 0700
 
 - name: Create dropbear log folder
-  file:
+  ansible.builtin.file:
     path: /etc/dropbear-initramfs
     state: directory
 
 - name: Copy the ssh public key for authentication
   notify: Update initramfs
-  copy:
+  ansible.builtin.copy:
     src: /root/.ssh/authorized_keys
     dest: /etc/dropbear-initramfs/authorized_keys
     remote_src: yes
@@ -29,18 +29,18 @@
 # NOTE: https://bugs.debian.org/955384
 - name: List OpenSSH keys
   register: keys_list
-  find:
+  ansible.builtin.find:
     path: /etc/ssh
     pattern: '*key'
 
 - name: Create the temporary directory to convert the key
-  file:
+  ansible.builtin.file:
     path: /root/ssh-keys-convert
     state: directory
     mode: '0700'
 
 - name: Copy the key in the temporary directory
-  copy:
+  ansible.builtin.copy:
     src: '{{ file.path }}'
     dest: '/root/ssh-keys-convert/{{ file.path | basename }}'
     mode: '0400'
@@ -50,7 +50,7 @@
     loop_var: file
 
 - name: Convert the key to PEM format
-  shell: >-
+  ansible.builtin.shell: >-
     ssh-keygen -p -N "" -m PEM -f {{ file.path | basename }}
   args:
     chdir: /root/ssh-keys-convert
@@ -60,7 +60,7 @@
 
 - name: Remove dropbear default keys
   notify: Update initramfs
-  copy:
+  ansible.builtin.copy:
     src: '{{ key.path }}'
     dest: '/etc/dropbear-initramfs/{{ key.path | basename }}'
     remote_src: true
@@ -69,7 +69,7 @@
     loop_var: key
 
 - name: Convert the key to dropbear format
-  shell: >-
+  ansible.builtin.shell: >-
     dropbearconvert
     openssh dropbear
     {{ file.path | basename }}
@@ -82,12 +82,12 @@
 
 - name: List new dropbear keys
   register: keys_list
-  find:
+  ansible.builtin.find:
     path: /etc/dropbear
     pattern: '*key'
 
 - name: Copy the new keys for dropbear initramfs
-  copy:
+  ansible.builtin.copy:
     src: '{{ file.path }}'
     dest: '/etc/dropbear-initramfs/{{ file.path | basename }}'
     mode: '0400'
@@ -97,6 +97,6 @@
     loop_var: file
 
 - name: Remove the temporary directory to convert the key
-  file:
+  ansible.builtin.file:
     path: /root/ssh-keys-convert
     state: absent

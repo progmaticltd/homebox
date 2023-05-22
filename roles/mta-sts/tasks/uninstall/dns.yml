@@ -9,7 +9,7 @@
       - name: mta-sts
         type: '{{ external_ip_type }}'
         value: '{{ external_ip }}'
-  include_role:
+  ansible.builtin.include_role:
     name: dns-record
     tasks_from: ../uninstall/main.yml
 
@@ -20,6 +20,6 @@
       - name: mta-sts
         type: '{{ backup_ip_type }}'
         value: '{{ backup_ip }}'
-  include_role:
+  ansible.builtin.include_role:
     name: dns-record
     tasks_from: ../uninstall/main.yml

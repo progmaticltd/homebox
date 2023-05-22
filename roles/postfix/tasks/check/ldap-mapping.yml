@@ -3,7 +3,7 @@
 
 - name: Check the LDAP mapping
   tags: postfix
-  shell: >-
+  ansible.builtin.shell: >-
     set -o pipefail ;
     postmap -q '{{ user.mail }}' ldap:/etc/postfix/ldap-aliases.cf
     | grep '{{ user.uid }}'
@@ -19,7 +19,7 @@
 
 - name: Check the LDAP mapping for email aliases
   tags: postfix
-  shell: >-
+  ansible.builtin.shell: >-
     set -o pipefail ;
     postmap -q '{{ user.otherMailBox[0] }}'
     ldap:/etc/postfix/ldap-aliases.cf
@@ -36,7 +36,7 @@
 
 - name: Check the LDAP mapping for email aliases
   tags: postfix
-  shell: >-
+  ansible.builtin.shell: >-
     set -o pipefail ;
     postmap -q '{{ user.aliases[0] }}'
     ldap:/etc/postfix/ldap-aliases.cf

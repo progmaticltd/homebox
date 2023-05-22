@@ -1,6 +1,6 @@
 ---
 
 - name: Load uri content
-  uri:
+  ansible.builtin.uri:
     url: https://mta-sts.{{ network.domain }}/.well-known/mta-sts.txt
     return_content: true

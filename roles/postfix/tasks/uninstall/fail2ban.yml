@@ -6,20 +6,20 @@
 # useful information from log files
 - name: Add custom postfix fail2ban rule to reduce noise
   notify: Restart fail2ban
-  file:
+  ansible.builtin.file:
     path: /etc/fail2ban/filter.d/postfix-nr.conf
     state: absent
 
 - name: Remove the section in the jail config
   notify: Restart fail2ban
-  ini_file:
+  community.general.ini_file:
     path: /etc/fail2ban/jail.conf
     section: postfix-nr
     state: absent
 
 - name: Disable fail2ban settings on postfix
   notify: Restart fail2ban
-  ini_file:
+  community.general.ini_file:
     path: /etc/fail2ban/jail.conf
     section: '{{ section }}'
     option: enabled

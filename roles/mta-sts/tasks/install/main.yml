@@ -1,20 +1,20 @@
 ---
 
 - name: Load the common facts
-  include_tasks: install/facts.yml
+  ansible.builtin.include_tasks: install/facts.yml
   tags: facts
 
 - name: Set DNS records
-  include_tasks: install/dns.yml
+  ansible.builtin.include_tasks: install/dns.yml
   tags: dns
 
 - name: Copy the certificates
-  include_tasks: install/certificates.yml
+  ansible.builtin.include_tasks: install/certificates.yml
   tags: certs
 
 - name: Web server configuration
-  include_tasks: install/nginx.yml
+  ansible.builtin.include_tasks: install/nginx.yml
   tags: nginx
 
 - name: AppArmor configuration
-  include_tasks: install/apparmor.yml
+  ansible.builtin.include_tasks: install/apparmor.yml

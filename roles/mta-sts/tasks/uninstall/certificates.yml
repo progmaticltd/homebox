@@ -1,7 +1,7 @@
 ---
 
 - name: Remove the certificates in the debian standard directory
-  file:
+  ansible.builtin.file:
     path: '{{ path }}'
     state: absent
   loop:
@@ -12,6 +12,6 @@
     loop_var: path
 
 - name: Remove the certificate update hook
-  file:
+  ansible.builtin.file:
     path: /etc/lego/hooks/mta-sts.{{ network.domain }}
     state: absent

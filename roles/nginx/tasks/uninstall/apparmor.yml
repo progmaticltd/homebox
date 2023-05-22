@@ -2,6 +2,6 @@
 
 - name: Remove nginx AppArmor profile
   notify: Restart AppArmor service
-  file:
+  ansible.builtin.file:
     path: /etc/apparmor.d/usr.sbin.nginx
     state: absent

@@ -3,7 +3,7 @@
 - name: Install some postfix AppArmor profile
   notify: Restart postfix
   register: aa_templates
-  template:
+  ansible.builtin.template:
     src: 'apparmor.d/{{ aa_config }}'
     dest: '/etc/apparmor.d/{{ aa_config }}'
   with_items:
@@ -14,7 +14,8 @@
 - name: Activate AppArmor profiles
   when: aa_templates.changed
   notify: Restart AppArmor service
-  command: 'aa-enforce {{ aa_config }}'
+  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
+  ansible.builtin.command: 'aa-enforce {{ aa_config }}'
   with_items:
     - '{{ postfix_apparmor_profiles }}'
   loop_control:

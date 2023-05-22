@@ -2,7 +2,7 @@
 
 - name: Copy the nftables rules files
   notify: Restart nftables
-  template:
+  ansible.builtin.template:
     src: nftables.nft
     dest: /etc/nftables/50-in-http.nft
     mode: 0600

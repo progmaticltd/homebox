@@ -3,7 +3,7 @@
 - name: Create the main DNS entries
   vars:
     dns_records: '{{ dns_records_main }}'
-  include_role:
+  ansible.builtin.include_role:
     name: dns-record
     tasks_from: ../uninstall/main.yml
 
@@ -11,6 +11,6 @@
   when: backup_ip is defined
   vars:
     dns_records: '{{ dns_records_backup }}'
-  include_role:
+  ansible.builtin.include_role:
     name: dns-record
     tasks_from: ../uninstall/main.yml

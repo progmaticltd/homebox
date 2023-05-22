@@ -1,7 +1,7 @@
 ---
 
 - name: Restart the ldap stack
-  service:
+  ansible.builtin.service:
     name: '{{ service.name }}'
     state: '{{ service.state }}'
   loop:

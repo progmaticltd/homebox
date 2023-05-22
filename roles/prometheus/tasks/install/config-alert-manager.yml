@@ -1,12 +1,12 @@
 ---
 
 - name: Set the default log level
-  set_fact:
+  ansible.builtin.set_fact:
     log_level: '{{ system.debug | ternary("debug", "warn") }}'
   tags: config
 
 - name: Initialise default settings
-  set_fact:
+  ansible.builtin.set_fact:
     default_alert_settings_args:
       - --web.listen-address='127.0.0.1:9093'
       - --cluster.listen-address='127.0.0.1:9094'
@@ -16,7 +16,7 @@
 
 - name: Deploy alert manager defaults
   notify: Restart Prometheus alert manager
-  template:
+  ansible.builtin.template:
     src: defaults-alert-manager.conf
     dest: /etc/default/prometheus-alertmanager
     mode: 0644
@@ -24,7 +24,7 @@
 
 - name: Deploy alert manager config
   notify: Restart Prometheus alert manager
-  template:
+  ansible.builtin.template:
     src: alertmanager.yml
     dest: /etc/prometheus/alertmanager.yml
     mode: 0644

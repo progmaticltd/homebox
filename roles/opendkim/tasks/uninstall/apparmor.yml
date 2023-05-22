@@ -2,6 +2,6 @@
 
 - name: Remove opendkim AppArmor profile
   notify: Restart AppArmor service
-  file:
+  ansible.builtin.file:
     path: /etc/apparmor.d/usr.sbin.opendkim
     state: absent

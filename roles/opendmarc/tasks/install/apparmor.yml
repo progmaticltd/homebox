@@ -2,9 +2,10 @@
 
 - name: Install opendmarc AppArmor profile
   notify: Restart AppArmor service
-  template:
+  ansible.builtin.template:
     src: apparmor.conf
     dest: /etc/apparmor.d/usr.sbin.opendmarc
 
 - name: Activate AppArmor profiles
-  command: aa-enforce usr.sbin.opendmarc
+  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
+  ansible.builtin.command: aa-enforce usr.sbin.opendmarc

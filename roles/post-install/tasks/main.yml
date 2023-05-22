@@ -1,19 +1,19 @@
 ---
 
 - name: Include common facts
-  include_tasks: facts.yml
+  ansible.builtin.include_tasks: facts.yml
 
 - name: Include common cleanup tasks
-  include_tasks: cleanup-common.yml
+  ansible.builtin.include_tasks: cleanup-common.yml
 
 - name: Partitions security
-  include_tasks: partitions-security.yml
+  ansible.builtin.include_tasks: partitions-security.yml
 
 - name: Create an administration user
-  include_tasks: admin.yml
+  ansible.builtin.include_tasks: admin.yml
 
 - name: Set limits for users
-  include_tasks: set-limits.yml
+  ansible.builtin.include_tasks: set-limits.yml
 
 - name: Check if the system need to be restarted
-  include_tasks: reboot.yml
+  ansible.builtin.include_tasks: reboot.yml

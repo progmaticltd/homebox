@@ -1,16 +1,16 @@
 ---
 
 - name: Copy sogo configuration
-  file:
+  ansible.builtin.file:
     path: /etc/sogo
     state: absent
 
 - name: Remove sogo cron table
-  file:
+  ansible.builtin.file:
     path: /etc/cron.d/sogo
     state: absent
 
 - name: Remove SOGo backups directory
-  file:
+  ansible.builtin.file:
     path: /var/backups/backups
     state: absent

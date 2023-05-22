@@ -2,7 +2,7 @@
 
 - name: Check if the mountpoint exists
   register: mp_check_cmd
-  shell: mountpoint {{ mp.path }}
+  ansible.builtin.shell: mountpoint {{ mp.path }}
   ignore_errors: true
   loop: '{{ mountpoints }}'
   loop_control:
@@ -15,7 +15,7 @@
     - Restart Prometheus
     - Restart Prometheus alert manager
     - Restart Prometheus node exporter
-  template:
+  ansible.builtin.template:
     src: disk-rules.yml
     dest: /etc/prometheus/alerts/partition-{{ mp.name }}-rules.yml
     block_start_string: '[%'

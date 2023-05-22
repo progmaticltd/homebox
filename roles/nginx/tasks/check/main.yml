@@ -1,7 +1,7 @@
 ---
 
 - name: Check nginx security grade
-  include_tasks: check/grade.yml
+  ansible.builtin.include_tasks: check/grade.yml
 
 - name: Check AppArmor settings
-  include_tasks: check/apparmor.yml
+  ansible.builtin.include_tasks: check/apparmor.yml

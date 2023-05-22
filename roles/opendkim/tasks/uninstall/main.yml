@@ -1,23 +1,23 @@
 ---
 
 - name: Load the facts
-  include_tasks: facts.yml
+  ansible.builtin.include_tasks: facts.yml
 
 - name: Remove packages
-  include_tasks: uninstall/packages.yml
+  ansible.builtin.include_tasks: uninstall/packages.yml
 
 - name: Remove apparmor config
-  include_tasks: uninstall/apparmor.yml
+  ansible.builtin.include_tasks: uninstall/apparmor.yml
 
 - name: Remove DNS record
-  include_tasks: uninstall/dns.yml
+  ansible.builtin.include_tasks: uninstall/dns.yml
 
 - name: Remove Prometheus config
   tags: prometheus
-  include_tasks: uninstall/prometheus.yml
+  ansible.builtin.include_tasks: uninstall/prometheus.yml
 
 - name: Remove postfix config
-  include_tasks: uninstall/postfix.yml
+  ansible.builtin.include_tasks: uninstall/postfix.yml
 
 - name: Final cleanup
-  include_tasks: uninstall/cleanup.yml
+  ansible.builtin.include_tasks: uninstall/cleanup.yml

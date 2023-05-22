@@ -1,7 +1,7 @@
 ---
 
 - name: Remove nginx AppArmor profile
-  file:
+  ansible.builtin.file:
     path: /etc/apparmor.d/local/mta-sts
     state: absent
   notify:
@@ -9,7 +9,7 @@
     - Restart nginx
 
 - name: Remove line in nginx AppArmor profile
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
     line: '  #include <local/mta-sts>'
     state: absent

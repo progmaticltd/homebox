@@ -2,9 +2,9 @@
 
 - name: Check if the drive is encrypted
   register: crypttab
-  stat:
+  ansible.builtin.stat:
     path: /etc/crypttab
 
 - name: Set up dropbear
   when: crypttab.stat.exists and crypttab.stat.size > 0
-  include_tasks: dropbear.yml
+  ansible.builtin.include_tasks: dropbear.yml

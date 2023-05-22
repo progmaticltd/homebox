@@ -4,7 +4,7 @@
   vars:
     shell: /bin/dash
     homeBase: /home/users
-  shell: >-
+  ansible.builtin.shell: >-
     set -o pipefail ;
     getent passwd |
     grep -E "^{{ u.uid }}:x:10[01][0-9]:10[01][0-9]:{{ u.cn }}:{{ homeBase }}/{{ u.uid }}:{{ u.shell | default(shell) }}"

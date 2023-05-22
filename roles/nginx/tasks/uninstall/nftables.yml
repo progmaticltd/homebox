@@ -2,6 +2,6 @@
 
 - name: Remove the nftables rules files
   notify: Restart nftables
-  file:
+  ansible.builtin.file:
     path: /etc/nftables/50-in-http.nft
     state: absent

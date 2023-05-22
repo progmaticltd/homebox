@@ -1,11 +1,11 @@
 ---
 
 - name: Gather the package facts
-  package_facts:
+  ansible.builtin.package_facts:
   tags: apt
 
 - name: Check that all packages are installed
-  assert:
+  ansible.builtin.assert:
     that: ansible_facts.packages[pkg] is defined
   loop: '{{ base_packages }}'
   loop_control:

@@ -1,6 +1,6 @@
 ---
 
 - name: Copy the template for /etc/mailname for completeness (not used by configuration)
-  template:
+  ansible.builtin.template:
     src: mailname
     dest: /etc/mailname

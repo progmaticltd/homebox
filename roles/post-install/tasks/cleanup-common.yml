@@ -7,20 +7,20 @@
 # <passwd="*"> request denied by validnames option.
 - name: Remove useless packages
   tags: apt
-  apt:
+  ansible.builtin.apt:
     name: '{{ cleanup_packages }}'
     state: absent
     autoremove: true
     purge: yes
 
 - name: Cleanup packages cache
-  apt:
+  ansible.builtin.apt:
     autoclean: true
     autoremove: true
 
 # SSH and remote access cleanup
 - name: Check if some users are configured with remote access
-  set_fact:
+  ansible.builtin.set_fact:
     remote_user_access: '{{ users | selectattr("ssh_key", "defined") | list != [] }}'
 
 # The next task will completely disable the remote access with SSH and root,
@@ -33,7 +33,7 @@
     - security.ssh_disable_root_access
   tags: security
   notify: Restart SSH
-  replace:
+  ansible.builtin.replace:
     path: /etc/ssh/sshd_config
     regexp: '^PermitRootLogin without-password'
     replace: 'PermitRootLogin no'
@@ -42,7 +42,7 @@
 # The external IP address detection tasks is creating these two files
 # Remove them, so we can run the script again if the IP address(es) changes
 - name: Remove cached external IP addresses
-  file:
+  ansible.builtin.file:
     path: '{{ path }}'
     state: absent
   loop:

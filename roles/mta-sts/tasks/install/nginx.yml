@@ -1,19 +1,19 @@
 ---
 
 - name: Create the directories for the site
-  file:
+  ansible.builtin.file:
     path: /var/www/mta-sts/.well-known
     state: directory
   tags: nginx
 
 - name: Add the site content files
-  template:
+  ansible.builtin.template:
     src: '{{ file.name }}'
     dest: '/var/www/mta-sts/{{ file.folder | default("") }}{{ file.name }}'
   loop:
     - name: index.html
     - name: mta-sts.txt
-      folder: .well-known/
+      grafana.grafana.folder: .well-known/
   loop_control:
     loop_var: file
   tags: nginx
@@ -23,7 +23,7 @@
   vars:
     csp: '{{ csp_default }}'
     fp: '{{ fp_default }}'
-  template:
+  ansible.builtin.template:
     src: nginx.conf
     dest: '/etc/nginx/sites-available/mta-sts.{{ network.domain }}.conf'
     owner: root
@@ -33,7 +33,7 @@
 
 - name: Activate mta-sts web site
   notify: Restart nginx
-  file:
+  ansible.builtin.file:
     src: '/etc/nginx/sites-available/mta-sts.{{ network.domain }}.conf'
     dest: '/etc/nginx/sites-enabled/mta-sts.{{ network.domain }}.conf'
     state: link

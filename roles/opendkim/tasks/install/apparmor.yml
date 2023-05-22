@@ -2,7 +2,7 @@
 
 - name: Install opendkim AppArmor profile
   notify: Restart opendkim
-  template:
+  ansible.builtin.template:
     src: apparmor.conf
     dest: /etc/apparmor.d/usr.sbin.opendkim
     force: no
@@ -10,5 +10,6 @@
 
 - name: Activate AppArmor profiles
   when: apparmor_config.changed
-  command: aa-enforce usr.sbin.opendkim
+  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
+  ansible.builtin.command: aa-enforce usr.sbin.opendkim
   notify: Restart AppArmor service

@@ -2,7 +2,7 @@
 
 - name: Extract backup location details
   tags: backup, facts
-  set_fact:
+  ansible.builtin.set_fact:
     protocol: '{{ location.url | urlsplit("scheme") }}'
     location_host: '{{ location.url | urlsplit("hostname") }}'
     location_user: '{{ location.url | urlsplit("username") | default("backup") }}'
@@ -11,7 +11,7 @@
 
 - name: Create the backup config into /etc/homebox
   tags: config
-  ini_file:
+  community.general.ini_file:
     path: '/etc/homebox/backup.ini'
     section: '{{ location.name }}'
     option: '{{ option.name }}'
@@ -40,7 +40,7 @@
   register: mount_systemd
   notify: Reload Systemd
   tags: systemd
-  template:
+  ansible.builtin.template:
     src: 'mount-usb.systemd'
     dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.mount'
 
@@ -53,7 +53,7 @@
 - name: Add automount definition for this device
   notify: Reload Systemd
   tags: systemd
-  template:
+  ansible.builtin.template:
     src: mount-auto.systemd
     dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.automount'
 

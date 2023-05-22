@@ -1,7 +1,7 @@
 ---
 
 - name: Copy the renewal script
-  copy:
+  ansible.builtin.copy:
     src: key-renew.sh
     dest: /usr/local/sbin/opendkim-key-renew
     mode: 0700
@@ -12,7 +12,7 @@
 # or anything prevented the new key to be generated.
 # The script is clever enough to skip key generation if already existing
 - name: Set the cron entry to renew the key
-  cron:
+  ansible.builtin.cron:
     cron_file: opendkim-key-renew
     day: '1,2,3,5,6,7'
     month: '1'

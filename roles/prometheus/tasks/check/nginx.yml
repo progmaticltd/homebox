@@ -3,6 +3,6 @@
 - name: Load prometheus home page
   delegate_to: localhost
   become: false
-  uri:
+  ansible.builtin.uri:
     url: https://prometheus.{{ network.domain }}/
     return_content: true

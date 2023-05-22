@@ -1,29 +1,29 @@
 ---
 
 - name: Unset nginx
-  include_tasks: uninstall/nginx.yml
+  ansible.builtin.include_tasks: uninstall/nginx.yml
 
 - name: Remove the certificates
-  include_tasks: uninstall/certificates.yml
+  ansible.builtin.include_tasks: uninstall/certificates.yml
 
 - name: Remove the packages
-  include_tasks: uninstall/packages.yml
+  ansible.builtin.include_tasks: uninstall/packages.yml
 
 - name: Remove the database
-  include_tasks: uninstall/database.yml
+  ansible.builtin.include_tasks: uninstall/database.yml
 
 - name: Remove config files
-  include_tasks: uninstall/config.yml
+  ansible.builtin.include_tasks: uninstall/config.yml
 
 - name: Remove DNS records
-  include_tasks: uninstall/dns.yml
+  ansible.builtin.include_tasks: uninstall/dns.yml
 
 - name: Remove prometheus config
   tags: prometheus
-  include_tasks: uninstall/prometheus.yml
+  ansible.builtin.include_tasks: uninstall/prometheus.yml
 
 - name: Remove AppArmor config
-  include_tasks: uninstall/apparmor.yml
+  ansible.builtin.include_tasks: uninstall/apparmor.yml
 
 - name: Configure the sieve filters
-  include_tasks: uninstall/sieve.yml
+  ansible.builtin.include_tasks: uninstall/sieve.yml

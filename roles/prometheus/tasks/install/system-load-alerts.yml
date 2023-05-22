@@ -6,7 +6,7 @@
     - Restart Prometheus
     - Restart Prometheus alert manager
     - Restart Prometheus node exporter
-  template:
+  ansible.builtin.template:
     src: system-load-rules.yml
     dest: /etc/prometheus/alerts/system-load-rules.yml
     block_start_string: '[%'

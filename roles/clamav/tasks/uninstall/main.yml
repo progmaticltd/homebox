@@ -1,5 +1,9 @@
 ---
 
+- name: Remove the filter from postfix
+  ansible.builtin.include_tasks: uninstall/postfix.yml
+  tags: postfix
+
 - name: Uninstall the packages
   ansible.builtin.include_tasks: uninstall/packages.yml
 
@@ -11,10 +15,6 @@
 
 - name: Remove the proxy settings
   ansible.builtin.include_tasks: uninstall/proxy.yml
-
-- name: Remove the filter from postfix
-  ansible.builtin.include_tasks: uninstall/postfix.yml
-  tags: postfix
 
 - name: Cleanup
   ansible.builtin.include_tasks: uninstall/cleanup.yml

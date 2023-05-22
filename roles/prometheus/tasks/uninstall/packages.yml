@@ -1,7 +1,7 @@
 ---
 
 - name: Uninstall the packages
-  apt:
+  ansible.builtin.apt:
     name: '{{ packages }}'
     state: absent
     purge: true

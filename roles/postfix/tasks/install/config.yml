@@ -2,7 +2,7 @@
 
 - name: Copy configuration template
   notify: Restart postfix
-  template:
+  ansible.builtin.template:
     src: "{{ file }}"
     dest: "/etc/postfix/{{ file }}"
   loop:

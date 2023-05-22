@@ -2,7 +2,7 @@
 # Backup the site locally
 - name: Backup the site content on your local machine
   tags: sync
-  synchronize:
+  ansible.posix.synchronize:
     mode: pull
     src: /var/www/www.{{ network.domain }}/*
     dest: '{{ backup_directory }}/website-simple/'

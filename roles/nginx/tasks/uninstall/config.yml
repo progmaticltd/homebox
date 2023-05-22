@@ -1,6 +1,6 @@
 ---
 
 - name: Remove nginx secure configuration
-  file:
+  ansible.builtin.file:
     path: /etc/nginx
     state: absent

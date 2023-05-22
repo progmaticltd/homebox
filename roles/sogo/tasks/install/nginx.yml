@@ -5,7 +5,7 @@
   vars:
     csp: '{{ sogo.csp | default(csp_default) }}'
     fp: '{{ sogo.fp | default(fp_default) }}'
-  template:
+  ansible.builtin.template:
     src: nginx.conf
     dest: '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'
     owner: root
@@ -15,7 +15,7 @@
 
 - name: Activate sogo web site
   notify: Restart nginx
-  file:
+  ansible.builtin.file:
     src: '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'
     dest: '/etc/nginx/sites-enabled/sogo.{{ network.domain }}.conf'
     state: link

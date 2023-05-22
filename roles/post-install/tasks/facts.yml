@@ -11,6 +11,6 @@
     name: dovecot
 
 - name: Store the facts
-  set_fact:
+  ansible.builtin.set_fact:
     postfix_active: '{{ postfix_service.status.SubState != "dead" }}'
     dovecot_active: '{{ dovecot_service.status.SubState != "dead" }}'

@@ -1,6 +1,6 @@
 ---
 
 - name: Purge the databases
-  file:
+  ansible.builtin.file:
     path: /var/lib/prometheus
     state: absent

@@ -1,7 +1,7 @@
 ---
 
 - name: Create dkim folder
-  file:
+  ansible.builtin.file:
     path: /var/spool/postfix/opendkim
     state: directory
     owner: opendkim
@@ -10,13 +10,13 @@
 
 - name: Create the configuration file
   notify: Restart opendkim
-  template:
+  ansible.builtin.template:
     src: opendkim.conf
     dest: /etc/opendkim.conf
 
 - name: Create the keys and signing table
   notify: Restart opendkim
-  template:
+  ansible.builtin.template:
     src: '{{ file }}'
     dest: '/etc/opendkim/{{ file }}'
   loop:

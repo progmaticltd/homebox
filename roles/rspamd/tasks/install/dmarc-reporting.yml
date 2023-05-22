@@ -2,6 +2,6 @@
 
 - name: Create local configuration files
   notify: Restart rspamd
-  template:
+  ansible.builtin.template:
     src: conf/dmarc.conf
     dest: /etc/rspamd/local.d/dmarc.conf

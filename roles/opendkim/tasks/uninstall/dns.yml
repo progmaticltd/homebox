@@ -1,7 +1,7 @@
 ---
 
 - name: Removes DNS record
-  shell: >-
+  ansible.builtin.shell: >-
     pdnsutil delete-rrset {{ network.domain }}
     {{ dkim_selector }}._domainkey TXT
   changed_when: true

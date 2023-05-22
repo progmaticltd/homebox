@@ -7,7 +7,7 @@
   vars:
     csp: '{{ prometheus.csp | default(csp_default) }}'
     fp: '{{ prometheus.fp | default(fp_default) }}'
-  template:
+  ansible.builtin.template:
     src: nginx.conf
     dest: /etc/nginx/sites-available/prometheus.{{ network.domain }}.conf
     owner: root
@@ -17,7 +17,7 @@
 
 - name: Activate prometheus web site
   notify: Restart nginx
-  file:
+  ansible.builtin.file:
     src: /etc/nginx/sites-available/prometheus.{{ network.domain }}.conf
     dest: /etc/nginx/sites-enabled/prometheus.{{ network.domain }}.conf
     state: link

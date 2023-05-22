@@ -1,6 +1,6 @@
 ---
 
 - name: Remove nginx default site
-  file:
+  ansible.builtin.file:
     path: /var/www/html
     state: absent

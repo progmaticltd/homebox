@@ -2,16 +2,16 @@
 
 
 - name: Remove AppArmor config
-  include_tasks: uninstall/apparmor.yml
+  ansible.builtin.include_tasks: uninstall/apparmor.yml
 
 - name: Remove nginx config
-  include_tasks: uninstall/nginx.yml
+  ansible.builtin.include_tasks: uninstall/nginx.yml
 
 - name: Remove certificates
-  include_tasks: uninstall/certs.yml
+  ansible.builtin.include_tasks: uninstall/certs.yml
 
 - name: Restart nginx now
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers
 
 - name: Remove nginx log files
-  include_tasks: uninstall/clean-logs.yml
+  ansible.builtin.include_tasks: uninstall/clean-logs.yml

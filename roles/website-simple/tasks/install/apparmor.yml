@@ -1,13 +1,13 @@
 ---
 
 - name: Install web site AppArmor profile
-  template:
+  ansible.builtin.template:
     src: apparmor.conf
     dest: /etc/apparmor.d/local/nginx-website-simple
 
 - name: Check if AppArmor nginx configuration already contains the line
   register: line_found
-  shell: >-
+  ansible.builtin.shell: >-
     grep -c 'include <local/nginx-website-simple>'
     /etc/apparmor.d/usr.sbin.nginx
   changed_when: false
@@ -16,7 +16,7 @@
 - name: Add website-simple AppAromor specific configuration
   when: line_found.stdout == '0'
   register: aa_config
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
     line: '  #include <local/nginx-website-simple>'
     insertbefore: '# End of local includes for homebox'
@@ -24,4 +24,5 @@
 - name: Activate AppArmor profiles
   notify: Restart AppArmor service
   when: aa_config.changed
-  command: 'aa-enforce usr.sbin.nginx'
+  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
+  ansible.builtin.command: 'aa-enforce usr.sbin.nginx'

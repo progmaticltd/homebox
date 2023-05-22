@@ -7,7 +7,7 @@
   tags: database
 
 - name: Check if the databases are up to date
-  assert:
+  ansible.builtin.assert:
     that: >
       "{{ dbname }} database is up-to-date"
       in freshclam_service_status.stdout

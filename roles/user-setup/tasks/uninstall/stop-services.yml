@@ -1,7 +1,7 @@
 ---
 
 - name: Stop all the services
-  service:
+  ansible.builtin.service:
     name: '{{ service.name }}'
     state: stopped
   loop:

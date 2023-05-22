@@ -1,11 +1,11 @@
 ---
 
 - name: Remove the configuration directory
-  file:
+  ansible.builtin.file:
     path: /etc/opendmarc
     state: absent
 
 - name: Remove the db configuration file
-  file:
+  ansible.builtin.file:
     path: /etc/dbconfig-common/opendmarc.conf
     state: absent

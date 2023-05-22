@@ -2,7 +2,7 @@
 
 - name: Deploy firewall rules
   notify: Restart nftables
-  template:
+  ansible.builtin.template:
     src: nftables/firewall.nft
     dest: /etc/nftables/60-rspamd.nft
   tags: nft

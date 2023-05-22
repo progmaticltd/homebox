@@ -1,7 +1,7 @@
 ---
 
 - name: Remove the DNARC DNS record
-  shell: >-
+  ansible.builtin.shell: >-
     pdnsutil delete-rrset {{ network.domain }}
     _dmarc TXT
   changed_when: true

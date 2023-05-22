@@ -1,10 +1,10 @@
 ---
 
 - name: Run the basic checks
-  include_tasks: check/base.yml
+  ansible.builtin.include_tasks: check/base.yml
 
 - name: Postfix related checks
-  include_tasks: check/postfix.yml
+  ansible.builtin.include_tasks: check/postfix.yml
 
 - name: AppArmor checks
-  include_tasks: check/apparmor.yml
+  ansible.builtin.include_tasks: check/apparmor.yml

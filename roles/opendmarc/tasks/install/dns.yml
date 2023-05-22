@@ -1,7 +1,7 @@
 ---
 
 - name: Initialise the dmarc record
-  set_fact:
+  ansible.builtin.set_fact:
     dmarc_record: >-
       "v=DMARC1; p={{ dmarc.domain.policy }};"
       "sp={{ dmarc.domain.policy }};adkim={{ dmarc.dkim_align[0] }};"
@@ -14,14 +14,14 @@
 
 - name: Create the dns record template
   register: nsupdate_file
-  template:
+  ansible.builtin.template:
     src: nsupdate.conf
     dest: /etc/opendmarc/nsupdate.conf
   tags: dns
 
 - name: Store the public key in DNS
   when: nsupdate_file.changed
-  shell: nsupdate nsupdate.conf
+  ansible.builtin.shell: nsupdate nsupdate.conf
   changed_when: true
   args:
     chdir: /etc/opendmarc

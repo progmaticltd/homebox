@@ -2,19 +2,19 @@
 
 - name: Set the record to search when not empty
   when: record.name != '@'
-  set_fact:
+  ansible.builtin.set_fact:
     query: '{{ record.name }}.{{ network.domain }}'
   tags: dns
 
 - name: Set the record to search when empty
   when: record.name == '@'
-  set_fact:
+  ansible.builtin.set_fact:
     query: '{{ network.domain }}'
   tags: dns
 
 - name: Check if the record exists with dig
   register: check_record
-  shell: >-
+  ansible.builtin.shell: >-
     set -o pipefail ;
     dig +nocomments +noall +answer
     -q {{ query }}
@@ -28,7 +28,7 @@
   tags: dns
 
 - name: Store the fact to create the record or not
-  set_fact:
+  ansible.builtin.set_fact:
     create_record: '{{ check_record.stdout == "0" }}'
   tags: dns
 
@@ -36,7 +36,7 @@
   when:
     - create_record
     - record.type | upper not in [ 'TXT', 'SRV', 'MX', 'SSHFP' ]
-  shell: >-
+  ansible.builtin.shell: >-
     pdnsutil add-record {{ network.domain }}
     {{ record.name }} {{ record.type | upper }}
     {{ record.value }}
@@ -47,7 +47,7 @@
   when:
     - create_record
     - record.type | upper == 'TXT'
-  shell: >-
+  ansible.builtin.shell: >-
     pdnsutil add-record {{ network.domain }}
     {{ record.name }} {{ record.type | upper }}
     '"{{ record.value }}"'
@@ -58,7 +58,7 @@
   when:
     - create_record
     - record.type | upper == 'SRV'
-  shell: >-
+  ansible.builtin.shell: >-
     pdnsutil add-record {{ network.domain }}
     {{ record.name }} {{ record.type | upper }}
     "{{ record.priority | default(0) }}
@@ -72,7 +72,7 @@
   when:
     - create_record
     - record.type | upper == 'MX'
-  shell: >-
+  ansible.builtin.shell: >-
     pdnsutil add-record {{ network.domain }}
     {{ record.name }} {{ record.type | upper }}
     "{{ record.priority | default(0) }}
@@ -84,7 +84,7 @@
   when:
     - create_record
     - record.type | upper == 'SSHFP'
-  shell: >-
+  ansible.builtin.shell: >-
     pdnsutil add-record {{ network.domain }}
     {{ record.name }} {{ record.type | upper }}
     "{{ record.algo }}

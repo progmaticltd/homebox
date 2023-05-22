@@ -1,11 +1,11 @@
 ---
 
 - name: Remove the cron file
-  file:
+  ansible.builtin.file:
     path: /etc/cron.d/opendkim-key-renew
     state: absent
 
 - name: Copy the renewal script
-  file:
+  ansible.builtin.file:
     path: /usr/local/sbin/opendkim-key-renew
     state: absent

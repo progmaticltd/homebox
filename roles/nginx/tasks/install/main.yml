@@ -1,34 +1,34 @@
 ---
 
 - name: Install the base required packages
-  include_tasks: install/packages.yml
+  ansible.builtin.include_tasks: install/packages.yml
 
 - name: Copy the default certificates
-  include_tasks: install/certificates.yml
+  ansible.builtin.include_tasks: install/certificates.yml
   tags: certs
 
 - name: Configure the package
-  include_tasks: install/config.yml
+  ansible.builtin.include_tasks: install/config.yml
   tags: config
 
 - name: Copy the default content site
-  include_tasks: install/default-content.yml
+  ansible.builtin.include_tasks: install/default-content.yml
   tags: site, config
 
 - name: Create the default DNS entries
-  include_tasks: install/dns.yml
+  ansible.builtin.include_tasks: install/dns.yml
   tags: dns
 
 - name: Add Prometheus alerts
   when: prometheus.install
-  include_tasks: install/prometheus.yml
+  ansible.builtin.include_tasks: install/prometheus.yml
   tags: prometheus
 
 - name: Add pam authentication module
-  include_tasks: install/pam.yml
+  ansible.builtin.include_tasks: install/pam.yml
 
 - name: Create the firewall rules
-  include_tasks: install/nftables.yml
+  ansible.builtin.include_tasks: install/nftables.yml
 
 - name: Configure AppArmor
-  include_tasks: install/apparmor.yml
+  ansible.builtin.include_tasks: install/apparmor.yml

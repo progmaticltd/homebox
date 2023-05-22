@@ -1,25 +1,25 @@
 ---
 
 - name: Install the required file systems
-  apt:
+  ansible.builtin.apt:
     name: 's3fs'
     state: present
 
 - name: Create the S3 credentials file
-  template:
+  ansible.builtin.template:
     src: passwd-s3fs
     dest: '/etc/homebox/s3fs-{{ location.name }}'
     mode: '0600'
 
 - name: Create the backup cache folder
-  file:
+  ansible.builtin.file:
     path: /home/.backup-cache/
     state: directory
     mode: '0700'
 
 - name: Extract backup location details
   tags: backup, facts
-  set_fact:
+  ansible.builtin.set_fact:
     protocol: '{{ location.url | urlsplit("scheme") }}'
     location_host: '{{ location.url | urlsplit("hostname") }}'
     location_user: '{{ location.url | urlsplit("username") | default("backup") }}'
@@ -29,7 +29,7 @@
 # Backup handling
 - name: Add some patterns to exclude in the backups
   tags: backup
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/homebox/backup-exclude
     line: '{{ line }}'
   with_items:
@@ -40,7 +40,7 @@
 
 - name: Create the backup config into /etc/homebox
   tags: config
-  ini_file:
+  community.general.ini_file:
     path: '/etc/homebox/backup.ini'
     section: '{{ location.name }}'
     option: '{{ option.name }}'
@@ -65,7 +65,7 @@
     loop_var: option
 
 - name: Set mount options for s3fs
-  set_fact:
+  ansible.builtin.set_fact:
     mount_options:
       - 'default_acl=private'
       - 'passwd_file=/etc/homebox/s3fs-{{ location.name }}'
@@ -75,28 +75,28 @@
 - name: Add region if specified
   when: >-
     "region" in location
-  set_fact:
+  ansible.builtin.set_fact:
     mount_options:
       - 'endpoint={{ location.region }}'
 
 - name: Add custom host if not using AWS
   when: >-
     "host" in location
-  set_fact:
+  ansible.builtin.set_fact:
     mount_options: '{{ mount_options + [ "host=https://"+location.host ] }}'
 
 - name: Add mount point definition for this device
   register: mount_systemd
   notify: Reload Systemd
   tags: systemd
-  template:
+  ansible.builtin.template:
     src: 'mount-s3fs.systemd'
     dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.mount'
 
 - name: Add automount definition for this device
   notify: Reload Systemd
   tags: systemd
-  template:
+  ansible.builtin.template:
     src: mount-auto.systemd
     dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.automount'
 

@@ -12,3 +12,5 @@
   loop_control:
     loop_var: line
   tags: postfix
+
+- ansible.builtin.meta: flush_handlers

@@ -1,7 +1,7 @@
 ---
 
 - name: Update initramfs
-  shell: >-
+  ansible.builtin.shell: >-
     mountpoint -q /boot &&
     mount -o remount,rw /boot ;
     update-initramfs -u

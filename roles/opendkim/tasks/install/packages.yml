@@ -2,6 +2,6 @@
 
 - name: Install opendkim packages for mail signing
   notify: Restart opendkim
-  apt:
+  ansible.builtin.apt:
     name: '{{ dkim_pkgs }}'
     state: present

@@ -2,6 +2,6 @@
 
 - name: Remove prometheus alerts
   tags: prometheus
-  file:
+  ansible.builtin.file:
     path: /etc/prometheus/alerts/opendkim-rules.yml
     state: absent

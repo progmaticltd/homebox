@@ -1,7 +1,7 @@
 ---
 
 - name: Remove password quality module
-  pamd:
+  community.general.pamd:
     name: pwquality
     state: absent
     type: password

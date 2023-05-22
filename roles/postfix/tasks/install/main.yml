@@ -1,37 +1,37 @@
 ---
 
 - name: Pre-installation tasks
-  include_tasks: install/preinstall.yml
+  ansible.builtin.include_tasks: install/preinstall.yml
 
 - name: Install the packages
-  include_tasks: install/packages.yml
+  ansible.builtin.include_tasks: install/packages.yml
 
 - name: Set the initial facts
-  include_tasks: install/facts.yml
+  ansible.builtin.include_tasks: install/facts.yml
   tags: facts
 
 - name: Copy the certificates
-  include_tasks: install/certificates.yml
+  ansible.builtin.include_tasks: install/certificates.yml
   tags: certs
 
 - name: Generic config
-  include_tasks: install/config.yml
+  ansible.builtin.include_tasks: install/config.yml
 
 - name: Firewall configuration
-  include_tasks: install/firewall.yml
+  ansible.builtin.include_tasks: install/firewall.yml
 
 - name: AppArmor configuration
-  include_tasks: install/apparmor.yml
+  ansible.builtin.include_tasks: install/apparmor.yml
 
 - name: Logging configuration
-  include_tasks: install/rsyslog.yml
+  ansible.builtin.include_tasks: install/rsyslog.yml
   tags: syslog
 
 - name: Add Prometheus alerts
   when: prometheus.install
   tags: prometheus
-  include_tasks: install/prometheus.yml
+  ansible.builtin.include_tasks: install/prometheus.yml
 
 - name: DNS configuration
-  include_tasks: install/dns.yml
+  ansible.builtin.include_tasks: install/dns.yml
   tags: dns

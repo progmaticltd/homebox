@@ -2,7 +2,7 @@
 
 - name: Create directory to install the keys
   notify: Restart opendkim
-  file:
+  ansible.builtin.file:
     path: /etc/opendkim/keys
     state: directory
     owner: opendkim
@@ -12,7 +12,8 @@
 - name: Run the command to create the keys
   notify: Restart opendkim
   register: keys
-  command: >-
+  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
+  ansible.builtin.command: >-
     opendkim-genkey
     --restrict
     --directory /etc/opendkim/keys
@@ -26,7 +27,7 @@
 
 - name: Set the default permissions
   notify: Restart opendkim
-  file:
+  ansible.builtin.file:
     path: '{{ file.path }}'
     mode: '{{ file.mode }}'
     owner: opendkim

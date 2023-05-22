@@ -6,6 +6,6 @@
       - name: www
         value: '{{ network.hostname }}.{{ network.domain }}'
         type: cname
-  include_role:
+  ansible.builtin.include_role:
     name: dns-record
     tasks_from: uninstall/main.yml

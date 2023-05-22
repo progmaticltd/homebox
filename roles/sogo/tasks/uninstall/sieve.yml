@@ -1,7 +1,7 @@
 ---
 
 - name: Create SOGo's sieve filters file
-  file:
+  ansible.builtin.file:
     path: '/home/users/{{ user.uid }}/mails/sieve/sogo.sieve'
     state: absent
   loop: '{{ users }}'
@@ -9,6 +9,6 @@
     loop_var: user
 
 - name: Create postmaster SOGo's sieve filters file
-  file:
+  ansible.builtin.file:
     path: '/home/users/postmaster/mails/sieve/sogo.sieve'
     state: absent

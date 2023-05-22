@@ -2,7 +2,7 @@
 
 - name: Create local configuration files
   notify: Restart rspamd
-  template:
+  ansible.builtin.template:
     src: 'conf/{{ file }}'
     dest: '/etc/rspamd/local.d/{{ file }}'
   loop:

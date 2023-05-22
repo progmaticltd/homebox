@@ -1,6 +1,6 @@
 ---
 
 - name: Remove nginx logs
-  file:
+  ansible.builtin.file:
     path: /var/log/nginx
     state: absent

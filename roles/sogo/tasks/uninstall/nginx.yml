@@ -2,7 +2,7 @@
 
 - name: Remove sogo web site
   notify: Restart nginx
-  file:
+  ansible.builtin.file:
     path: '{{ path }}'
     state: absent
   loop:

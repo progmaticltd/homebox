@@ -1,13 +1,13 @@
 ---
 
 - name: Create the directory
-  file:
+  ansible.builtin.file:
     path: /etc/opendmarc
     state: directory
     mode: 0700
 
 - name: use socket in postfix chroot directory
-  replace:
+  ansible.builtin.replace:
     path: /etc/opendmarc.conf
     regexp: '^Socket(.*)'
     replace: 'Socket local:/var/spool/postfix/opendmarc/opendmarc.sock'

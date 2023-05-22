@@ -1,35 +1,35 @@
 ---
 
 - name: Remove the site content files
-  file:
+  ansible.builtin.file:
     path: /var/www/mta-sts/
     state: absent
 
 - name: Remove the nginx enabled site
   notify: Restart nginx
-  file:
+  ansible.builtin.file:
     path: /etc/nginx/sites-enabled/mta-sts.{{ network.domain }}.conf
     state: absent
 
 - name: Remove the nginx site config
   notify: Restart nginx
-  file:
+  ansible.builtin.file:
     path: /etc/nginx/sites-available/mta-sts.{{ network.domain }}.conf
     state: absent
 
 - name: Remove the directory for the site
-  file:
+  ansible.builtin.file:
     path: /var/www/mta-sts/
     state: absent
 
 - name: List nginx log files
   register: nginx_log_files
-  find:
+  ansible.builtin.find:
     path: /var/log/nginx/
     pattern: mta-tls*
 
 - name: Remove nginx log files
-  file:
+  ansible.builtin.file:
     path: '{{ file.path }}'
     state: absent
   loop: '{{ nginx_log_files.files }}'

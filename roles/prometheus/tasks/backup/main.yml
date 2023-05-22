@@ -18,7 +18,7 @@
     loop_var: service
 
 - name: Pull prometheus database
-  synchronize:
+  ansible.posix.synchronize:
     mode: pull
     src: /var/lib/prometheus
     dest: '{{ backup_dir }}/'

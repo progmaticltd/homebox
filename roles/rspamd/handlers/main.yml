@@ -12,7 +12,7 @@
     no_block: true
 
 - name: Restart postfix
-  service:
+  ansible.builtin.service:
     name: postfix
     state: restarted
 

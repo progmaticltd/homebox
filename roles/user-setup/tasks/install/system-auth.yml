@@ -1,27 +1,27 @@
 ---
 
 - name: Configure libnss to use passwords and groups
-  debconf:
+  ansible.builtin.debconf:
     name: libnss-ldap
     question: 'libnss-ldapd/nsswitch'
     value: 'passwd, group, shadow'
     vtype: multiselect
 
 - name: Install the required packages for interactive login
-  apt:
+  ansible.builtin.apt:
     name: '{{ auth_pkgs }}'
     state: present
 
 - name: Update the ldap configuration file
   notify: Restart the ldap stack
-  template:
+  ansible.builtin.template:
     src: nslcd.conf
     dest: /etc/nslcd.conf
     mode: 0600
 
 - name: Ensure nsswithch is configured correctly
   notify: Restart the ldap stack
-  replace:
+  ansible.builtin.replace:
     path: /etc/nsswitch.conf
     regexp: '{{ entry }}'
     replace: '\1 ldap'

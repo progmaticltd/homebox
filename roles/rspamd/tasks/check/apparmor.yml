@@ -2,7 +2,7 @@
 
 - name: Check that opendkim is running in enforced mode
   register: aa_status
-  shell: >-
+  ansible.builtin.shell: >-
     aa-status --json | jq '.profiles["/usr/bin/rspamd"]'
   changed_when: false
   failed_when: >

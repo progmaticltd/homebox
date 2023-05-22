@@ -1,7 +1,7 @@
 ---
 
 - name: Remove opendmarc package
-  apt:
+  ansible.builtin.apt:
     name: opendmarc
     state: absent
     purge: true

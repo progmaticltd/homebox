@@ -36,5 +36,3 @@
   tags: always
   tasks:
     - shell: apt-get clean
-      args:
-        warn: false

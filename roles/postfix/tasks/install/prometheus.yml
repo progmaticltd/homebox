@@ -2,18 +2,18 @@
 
 - name: Install prometheus postfix exporter
   tags: prometheus
-  apt:
+  ansible.builtin.apt:
     name: prometheus-postfix-exporter
     state: present
 
 - name: Deploy target configuration
   tags: prometheus
-  template:
+  ansible.builtin.template:
     src: prometheus/target.yml
     dest: /etc/prometheus/targets/postfix.yml
 
 - name: Deploy prometheus alerts
   tags: prometheus
-  template:
+  ansible.builtin.template:
     src: prometheus/alerts.yml
     dest: /etc/prometheus/alerts/postfix-rules.yml

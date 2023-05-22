@@ -11,12 +11,12 @@ modules:
     timeout: 5s
     tcp:
       query_response:
-        - expect: "OK.*STARTTLS"
+        - ansible.builtin.expect: "OK.*STARTTLS"
         - send: ". STARTTLS"
-        - expect: "OK"
+        - ansible.builtin.expect: "OK"
         - starttls: true
         - send: ". capability"
-        - expect: "CAPABILITY IMAP4rev1"
+        - ansible.builtin.expect: "CAPABILITY IMAP4rev1"
 
   pop3:
     prober: pop3
@@ -24,7 +24,7 @@ modules:
     prober: tcp
     tcp:
       query_response:
-      - expect: "^+OK"
+      - ansible.builtin.expect: "^+OK"
       tls: true
       tls_config:
         insecure_skip_verify: false
@@ -36,21 +36,21 @@ modules:
     timeout: 5s
     tcp:
       query_response:
-        - expect: "^220 ([^ ]+) ESMTP (.+)$"
+        - ansible.builtin.expect: "^220 ([^ ]+) ESMTP (.+)$"
         - send: "EHLO prober\r"
-        - expect: "^250-STARTTLS"
+        - ansible.builtin.expect: "^250-STARTTLS"
         - send: "STARTTLS\r"
-        - expect: "^220"
+        - ansible.builtin.expect: "^220"
         - starttls: true
         - send: "EHLO prober\r"
-        - expect: "^250-AUTH"
+        - ansible.builtin.expect: "^250-AUTH"
         - send: "QUIT\r"
 
   ssh_banner:
     prober: tcp
     tcp:
       query_response:
-      - expect: "^SSH-2.0-"
+      - ansible.builtin.expect: "^SSH-2.0-"
 
   icmp:
     prober: icmp

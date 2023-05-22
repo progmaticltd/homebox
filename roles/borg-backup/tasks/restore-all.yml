@@ -3,7 +3,7 @@
 - name: Deploy the services to restore the backup
   notify: Start restore services
   tags: restore
-  template:
+  ansible.builtin.template:
     src: backup-restore.systemd
     dest: /etc/systemd/system/backup-restore-{{ location.name }}.service
   loop: '{{ backup.locations }}'
@@ -20,6 +20,6 @@
     loop_var: location
 
 - name: Copy the SOGo restore script
-  copy:
+  ansible.builtin.copy:
     src: sogo-restore.sh
     dest: /usr/local/sbin/sogo-restore.sh

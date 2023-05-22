@@ -2,12 +2,12 @@
 
 - name: Remove prometheus alerts
   tags: prometheus
-  file:
+  ansible.builtin.file:
     path: /etc/prometheus/alerts/nginx-rules.yml
     state: absent
 
 - name: Remove prometheus nginx exporter
-  apt:
+  ansible.builtin.apt:
     name: nginx-prometheus-exporter
     state: absent
     purge: true

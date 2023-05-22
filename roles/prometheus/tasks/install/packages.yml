@@ -4,6 +4,6 @@
   notify:
     - Restart Prometheus
     - Restart Prometheus node exporter
-  apt:
+  ansible.builtin.apt:
     name: '{{ packages }}'
     state: present

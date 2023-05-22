@@ -2,6 +2,6 @@
 ---
 
 - name: Install rspamd packages
-  apt:
+  ansible.builtin.apt:
     name: '{{ rspamd_pkgs }}'
     state: present

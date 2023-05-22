@@ -2,7 +2,7 @@
 
 - name: Remove milters
   notify: Restart postfix
-  replace:
+  ansible.builtin.replace:
     path: /etc/postfix/main.cf
     regexp: '^    unix:opendkim/opendkim\.sock$'
     replace: '    # dkim:'
