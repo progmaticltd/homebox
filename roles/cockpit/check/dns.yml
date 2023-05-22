@@ -1,6 +1,6 @@
 ---
 
 - name: Check the DNS entry
-  getent:
+  ansible.builtin.getent:
     database: hosts
     key: 'cockpit.{{ network.domain }}'

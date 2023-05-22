@@ -1,7 +1,7 @@
 ---
 
 - name: Set DNS records
-  include_tasks: check/dns.yml
+  ansible.builtin.include_tasks: check/dns.yml
 
 - name: Web server encryption settings
-  include_tasks: check/grade.yml
+  ansible.builtin.include_tasks: check/grade.yml

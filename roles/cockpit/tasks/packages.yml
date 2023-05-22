@@ -1,11 +1,11 @@
 ---
 
 - name: Install the cockpit packages
-  apt:
+  ansible.builtin.apt:
     name: [ cockpit, cockpit-pcp ]
     state: present
 
 - name: Create the configuration file
-  template:
+  ansible.builtin.template:
     src: cockpit.conf
     dest: /etc/cockpit/cockpit.conf

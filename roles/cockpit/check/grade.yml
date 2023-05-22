@@ -2,11 +2,11 @@
 
 - name: Load TLS ciphers used
   register: tls_ciphers_report
-  shell: sslscan --no-colour cockpit.{{ network.domain }}:443
+  ansible.builtin.shell: sslscan --no-colour cockpit.{{ network.domain }}:443
   changed_when: false
 
 - name: Ensure authorised TLS cipher are used
-  assert:
+  ansible.builtin.assert:
     that: >-
       {{ tls_ciphers_report.stdout_lines
       | select("match", tls_version)
@@ -18,7 +18,7 @@
     loop_var: tls_version
 
 - name: Ensure no ‘unused’ TLS cipher is activated
-  assert:
+  ansible.builtin.assert:
     that: >-
       {{ tls_ciphers_report.stdout_lines
       | select("match", tls_version)

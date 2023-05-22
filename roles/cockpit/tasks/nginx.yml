@@ -8,7 +8,7 @@
   vars:
     csp: '{{ mail.antispam.webui.csp | default(csp_default) }}'
     fp: '{{ mail.antispam.webui.fp | default(fp_default) }}'
-  template:
+  ansible.builtin.template:
     src: nginx.conf
     dest: /etc/nginx/sites-available/cockpit.{{ network.domain }}.conf
     owner: root
@@ -20,7 +20,7 @@
   notify:
     - Check nginx config
     - Restart nginx
-  file:
+  ansible.builtin.file:
     src: /etc/nginx/sites-available/cockpit.{{ network.domain }}.conf
     dest: /etc/nginx/sites-enabled/cockpit.{{ network.domain }}.conf
     state: link
