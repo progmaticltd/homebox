@@ -1,20 +1,20 @@
 ---
 
 - name: Uninstall the packages
-  include_tasks: uninstall/packages.yml
+  ansible.builtin.include_tasks: uninstall/packages.yml
 
 - name: Remove apparmor profiles
-  include_tasks: uninstall/apparmor.yml
+  ansible.builtin.include_tasks: uninstall/apparmor.yml
 
 - name: Remove configuration
-  include_tasks: uninstall/config.yml
+  ansible.builtin.include_tasks: uninstall/config.yml
 
 - name: Remove the proxy settings
-  include_tasks: uninstall/proxy.yml
+  ansible.builtin.include_tasks: uninstall/proxy.yml
 
 - name: Remove the filter from postfix
-  include_tasks: uninstall/postfix.yml
+  ansible.builtin.include_tasks: uninstall/postfix.yml
   tags: postfix
 
 - name: Cleanup
-  include_tasks: uninstall/cleanup.yml
+  ansible.builtin.include_tasks: uninstall/cleanup.yml

@@ -2,7 +2,7 @@
 
 - name: Install clamav antivirus suite
   register: clamav_packages
-  apt:
+  ansible.builtin.apt:
     name: '{{ packages }}'
     state: present
   tags: apt

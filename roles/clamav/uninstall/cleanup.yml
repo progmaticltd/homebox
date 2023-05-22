@@ -1,7 +1,7 @@
 ---
 
 - name: Remove logs folder
-  file:
+  ansible.builtin.file:
     path: '{{ path }}'
     state: absent
   loop:
@@ -11,6 +11,6 @@
     loop_var: path
 
 - name: Remove lib store folder
-  file:
+  ansible.builtin.file:
     path: /var/lib/clamav
     state: absent

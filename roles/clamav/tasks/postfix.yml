@@ -2,7 +2,7 @@
 
 - name: Add postfix content filter
   notify: Restart postfix
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/postfix/main.cf
     line: '{{ line }}'
     state: present

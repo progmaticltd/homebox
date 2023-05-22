@@ -2,7 +2,7 @@
 
 - name: Set up the configuration file
   notify: Restart clamav services
-  template:
+  ansible.builtin.template:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
   loop:
@@ -15,7 +15,7 @@
   tags: config
 
 - name: Create the clamsmtp templates directory
-  file:
+  ansible.builtin.file:
     path: /etc/clamsmtp
     state: directory
     owner: clamsmtp
@@ -24,7 +24,7 @@
   tags: config
 
 - name: Create the logs folder for clamsmtp
-  file:
+  ansible.builtin.file:
     path: /var/log/clamsmtp
     owner: clamsmtp
     group: clamsmtp

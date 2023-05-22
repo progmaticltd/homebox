@@ -2,17 +2,17 @@
 
 - name: Install swaks to send package
   register: swaks_pkg
-  apt:
+  ansible.builtin.apt:
     name: swaks
     state: present
 
 - name: Create a unique subject and filename for testing
-  set_fact:
+  ansible.builtin.set_fact:
     test_subject: 'Test email with virus {{ 1048576 | random | to_uuid }}'
     test_filename: '{{ 1048576 | random | to_uuid }}'
 
 - name: Create an email template
-  template:
+  ansible.builtin.template:
     src: check/testmsg-01.txt
     dest: /tmp/testmsg-01.txt
     mode: 0600
@@ -20,7 +20,7 @@
     group: clamav
 
 - name: Create an email template
-  copy:
+  ansible.builtin.copy:
     src: check/clam.exe
     dest: /tmp/clam.exe
     mode: 0600
@@ -29,7 +29,7 @@
 
 - name: Check if an email with a virus is rejected
   no_log: not system.devel
-  shell: >-
+  ansible.builtin.shell: >-
     swaks
     --from="{{ users[0].mail }}"
     --to "{{ users[1].mail }}"
@@ -49,7 +49,7 @@
 - name: Check if the email has been bounced
   when: mail.antivirus.action == 'bounce'
   register: email_bounced
-  shell: >-
+  ansible.builtin.shell: >-
     grep -l -e '{{ test_subject }}'
     /home/users/{{ users[0].uid }}/mails/maildir/new/*
     | xargs grep -l 'Virus Detected'
@@ -58,7 +58,7 @@
   delay: 2
 
 - name: Remove swaks package
-  apt:
+  ansible.builtin.apt:
     name: swaks
     state: absent
     purge: true

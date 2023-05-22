@@ -2,14 +2,14 @@
 
 - name: Start clamav freshclam service
   register: clamav_freshclam
-  service:
+  ansible.builtin.service:
     name: clamav-freshclam
     state: started
     enabled: yes
 
 - name: Wait for the daily update file
   register: daily_update
-  wait_for:
+  ansible.builtin.wait_for:
     path: /var/lib/clamav/daily.cvd
     sleep: 1
     timeout: 10
@@ -20,7 +20,7 @@
 
 - name: Wait for the main update file
   register: main_update
-  wait_for:
+  ansible.builtin.wait_for:
     path: /var/lib/clamav/main.cvd
     sleep: 1
     timeout: 10

@@ -1,7 +1,7 @@
 ---
 
 - name: Uninstall clamav antivirus suite
-  apt:
+  ansible.builtin.apt:
     name: '{{ packages }}'
     state: absent
     purge: true

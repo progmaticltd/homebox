@@ -2,14 +2,14 @@
 
 - name: Whitelist auto update domains in the proxy
   register: tinyproxy_filter
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/tinyproxy/filter
     line: '^database\.clamav\.net$'
   tags: proxy
 
 - name: Restart tinyproxy
   when: tinyproxy_filter.changed
-  service:
+  ansible.builtin.service:
     name: tinyproxy
     state: restarted
   tags: proxy

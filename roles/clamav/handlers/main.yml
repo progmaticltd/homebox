@@ -12,16 +12,16 @@
     loop_var: service
 
 - name: Restart AppArmor service
-  service:
+  ansible.builtin.service:
     name: apparmor
     state: reloaded
 
 - name: Restart tinyproxy
-  service:
+  ansible.builtin.service:
     name: tinyproxy
     state: restarted
 
 - name: Restart postfix
-  service:
+  ansible.builtin.service:
     name: postfix
     state: restarted

@@ -2,7 +2,8 @@
 
 - name: Disable AppArmor profiles
   notify: Restart AppArmor service
-  command: 'aa-disable {{ aa_config }}'
+  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
+  ansible.builtin.command: 'aa-disable {{ aa_config }}'
   loop:
     - usr.bin.freshclam
     - usr.sbin.clamd
@@ -12,7 +13,7 @@
     loop_var: aa_config
 
 - name: Remove clamav AppArmor profiles
-  file:
+  ansible.builtin.file:
     path: '/etc/apparmor.d/{{ aa_config }}'
     state: absent
   loop:

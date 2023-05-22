@@ -3,7 +3,7 @@
 - name: Install some clamav AppArmor profiles
   notify: Restart clamav services
   register: aa_templates
-  template:
+  ansible.builtin.template:
     src: apparmor.conf
     dest: /etc/apparmor.d/usr.sbin.clamsmtpd
   tags: apparmor
@@ -11,7 +11,8 @@
 - name: Activate AppArmor profiles
   when: aa_templates.changed
   notify: Restart AppArmor service
-  command: 'aa-enforce {{ aa_config }}'
+  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
+  ansible.builtin.command: 'aa-enforce {{ aa_config }}'
   loop:
     - usr.bin.freshclam
     - usr.sbin.clamd
