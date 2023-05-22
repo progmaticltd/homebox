@@ -10,44 +10,44 @@
 # First IP address, mandatory. Remove the extra zeros,
 # to ensure the IP is correctly compared with IPv6 filters
 - name: Store the extenal IP address specified manually
-  set_fact:
+  ansible.builtin.set_fact:
     external_ip: '{{ network.external_ip | regex_replace("(\.|:)0+", "\1") }}'
 
 - name: Set external IP address type (A or AAAA)
-  set_fact:
+  ansible.builtin.set_fact:
     external_ip_type: '{{ external_ip | ipv6 | ternary("AAAA", "A") }}'
 
 # Backup IP address if defined
 - name: Get the backup IP address
   when: network.backup_ip != None and (network.backup_ip | length > 0)
-  set_fact:
+  ansible.builtin.set_fact:
     backup_ip: '{{ network.backup_ip | regex_replace("(\.|:)0+", "\1") }}'
 
 - name: Set backup IP address type (A or AAAA)
   when: backup_ip is defined and (backup_ip | length > 0)
-  set_fact:
+  ansible.builtin.set_fact:
     backup_ip_type: '{{ backup_ip | ipv6 | ternary("AAAA", "A") }}'
 
 - name: Unset the IPv6 flag
-  set_fact:
+  ansible.builtin.set_fact:
     ipv6_used: false
 
 - name: Set the IPv6 flag
   when: >-
     external_ip_type == "AAAA" or
     ( backup_ip_type is defined and backup_ip_type == "AAAA" )
-  set_fact:
+  ansible.builtin.set_fact:
     ipv6_used: true
 
 - name: Initialise the array that will contains all the IPs
   when: network.backup_ip == None or network.backup_ip | length == 0
-  set_fact:
+  ansible.builtin.set_fact:
     external_ip_addresses:
       - '{{ external_ip }}'
 
 - name: Initialise the array that will contains all the IPs
   when: network.backup_ip != None and (network.backup_ip | length > 0)
-  set_fact:
+  ansible.builtin.set_fact:
     external_ip_addresses:
       - '{{ external_ip }}'
       - '{{ backup_ip }}'

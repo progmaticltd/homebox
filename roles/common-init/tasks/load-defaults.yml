@@ -12,14 +12,14 @@
 - name: Combine default and user defined network settings
   run_once: true
   when: network is defined
-  set_fact:
+  ansible.builtin.set_fact:
     network: '{{ network_default | combine(network, recursive=True) }}'
     cacheable: true
 
 - name: Use default network settings
   run_once: true
   when: network is not defined
-  set_fact:
+  ansible.builtin.set_fact:
     network: '{{ network_default }}'
     cacheable: true
 
@@ -29,14 +29,14 @@
 - name: Combine default and user defined mail settings
   run_once: true
   when: mail is defined
-  set_fact:
+  ansible.builtin.set_fact:
     mail: '{{ mail_default | combine(mail, recursive=True) }}'
     cacheable: true
 
 - name: Use default mail settings
   run_once: true
   when: mail is not defined
-  set_fact:
+  ansible.builtin.set_fact:
     mail: '{{ mail_default }}'
     cacheable: true
 
@@ -47,7 +47,7 @@
   run_once: true
   no_log: true
   when: passwords is defined
-  set_fact:
+  ansible.builtin.set_fact:
     passwords: '{{ passwords_default | combine(passwords, recursive=True) }}'
     cacheable: true
 
@@ -55,7 +55,7 @@
   run_once: true
   no_log: true
   when: passwords is not defined
-  set_fact:
+  ansible.builtin.set_fact:
     passwords: '{{ passwords_default }}'
     cacheable: true
 
@@ -65,14 +65,14 @@
 - name: Combine default and user defined system settings
   run_once: true
   when: system is defined
-  set_fact:
+  ansible.builtin.set_fact:
     system: '{{ system_default | combine(system, recursive=True) }}'
     cacheable: true
 
 - name: Use default system settings
   run_once: true
   when: system is not defined
-  set_fact:
+  ansible.builtin.set_fact:
     system: '{{ system_default }}'
     cacheable: true
 
@@ -82,14 +82,14 @@
 - name: Combine default and user defined security settings
   run_once: true
   when: security is defined
-  set_fact:
+  ansible.builtin.set_fact:
     security: '{{ security_default | combine(security, recursive=True) }}'
     cacheable: true
 
 - name: Use default security settings
   run_once: true
   when: security is not defined
-  set_fact:
+  ansible.builtin.set_fact:
     security: '{{ security_default }}'
     cacheable: true
 
@@ -99,14 +99,14 @@
 - name: Combine default and user defined dictionaries settings
   run_once: true
   when: dictionaries is defined
-  set_fact:
+  ansible.builtin.set_fact:
     dictionaries: '{{ dictionaries_default | union(dictionaries) }}'
     cacheable: true
 
 - name: Use default dictionaries settings
   run_once: true
   when: dictionaries is not defined
-  set_fact:
+  ansible.builtin.set_fact:
     dictionaries: '{{ dictionaries_default }}'
     cacheable: true
 
@@ -116,14 +116,14 @@
 - name: Combine default and user defined website settings
   run_once: true
   when: website is defined
-  set_fact:
+  ansible.builtin.set_fact:
     website: '{{ website_default | combine(website, recursive=True) }}'
     cacheable: true
 
 - name: Use default website settings
   run_once: true
   when: website is not defined
-  set_fact:
+  ansible.builtin.set_fact:
     website: '{{ website_default }}'
     cacheable: true
 
@@ -133,14 +133,14 @@
 - name: Combine default and user defined backup settings
   run_once: true
   when: backup is defined
-  set_fact:
+  ansible.builtin.set_fact:
     backup: '{{ backup_default | combine(backup, recursive=True) }}'
     cacheable: true
 
 - name: Use default backup settings
   run_once: true
   when: backup is not defined
-  set_fact:
+  ansible.builtin.set_fact:
     backup: '{{ backup_default }}'
     cacheable: true
 
@@ -150,14 +150,14 @@
 - name: Combine default and user defined dmarc settings
   run_once: true
   when: dmarc is defined
-  set_fact:
+  ansible.builtin.set_fact:
     dmarc: '{{ dmarc_default | combine(dmarc, recursive=True) }}'
     cacheable: true
 
 - name: Use default dmarc settings
   run_once: true
   when: dmarc is not defined
-  set_fact:
+  ansible.builtin.set_fact:
     dmarc: '{{ dmarc_default }}'
     cacheable: true
 
@@ -167,14 +167,14 @@
 - name: Combine default and user defined ejabberd settings
   run_once: true
   when: ejabberd is defined
-  set_fact:
+  ansible.builtin.set_fact:
     ejabberd: '{{ ejabberd_default | combine(ejabberd, recursive=True) }}'
     cacheable: true
 
 - name: Use default ejabberd settings
   run_once: true
   when: ejabberd is not defined
-  set_fact:
+  ansible.builtin.set_fact:
     ejabberd: '{{ ejabberd_default }}'
     cacheable: true
 
@@ -184,14 +184,14 @@
 - name: Combine default and user defined posix_groups settings
   run_once: true
   when: posix_groups is defined
-  set_fact:
+  ansible.builtin.set_fact:
     posix_groups: '{{ posix_groups_default | union(posix_groups) }}'
     cacheable: true
 
 - name: Use default posix_groups settings
   run_once: true
   when: posix_groups is not defined
-  set_fact:
+  ansible.builtin.set_fact:
     posix_groups: '{{ posix_groups_default }}'
     cacheable: true
 
@@ -201,14 +201,14 @@
 - name: Combine default and user defined sogo settings
   run_once: true
   when: sogo is defined
-  set_fact:
+  ansible.builtin.set_fact:
     sogo: '{{ sogo_default | combine(sogo, recursive=True) }}'
     cacheable: true
 
 - name: Use default sogo settings
   run_once: true
   when: sogo is not defined
-  set_fact:
+  ansible.builtin.set_fact:
     sogo: '{{ sogo_default }}'
     cacheable: true
 
@@ -218,14 +218,14 @@
 - name: Combine default and user defined backup settings
   run_once: true
   when: backup is defined
-  set_fact:
+  ansible.builtin.set_fact:
     backup: '{{ backup_default | combine(backup, recursive=True) }}'
     cacheable: true
 
 - name: Use default backup settings
   run_once: true
   when: backup is not defined
-  set_fact:
+  ansible.builtin.set_fact:
     backup: '{{ backup_default }}'
     cacheable: true
 
@@ -235,14 +235,14 @@
 - name: Combine default and user defined creds settings
   run_once: true
   when: creds is defined
-  set_fact:
+  ansible.builtin.set_fact:
     creds: '{{ creds_default | combine(creds, recursive=True) }}'
     cacheable: true
 
 - name: Use default creds settings
   run_once: true
   when: creds is not defined
-  set_fact:
+  ansible.builtin.set_fact:
     creds: '{{ creds_default }}'
     cacheable: true
 
@@ -252,14 +252,14 @@
 - name: Combine default and user defined DNS settings
   run_once: true
   when: dns is defined
-  set_fact:
+  ansible.builtin.set_fact:
     dns: '{{ dns_default | combine(dns, recursive=True) }}'
     cacheable: true
 
 - name: Use default dns settings
   run_once: true
   when: dns is not defined
-  set_fact:
+  ansible.builtin.set_fact:
     dns: '{{ dns_default }}'
     cacheable: true
 
@@ -269,14 +269,14 @@
 - name: Combine default and user defined Prometheus settings
   run_once: true
   when: prometheus is defined
-  set_fact:
+  ansible.builtin.set_fact:
     prometheus: '{{ prometheus_default | combine(prometheus, recursive=True) }}'
     cacheable: true
 
 - name: Use default prometheus settings
   run_once: true
   when: prometheus is not defined
-  set_fact:
+  ansible.builtin.set_fact:
     prometheus: '{{ prometheus_default }}'
     cacheable: true
 
@@ -285,6 +285,6 @@
 # Mark the default settings as loaded to speed-up the deployment process.
 - name: Mark the default settings as loaded
   run_once: true
-  set_fact:
+  ansible.builtin.set_fact:
     defaults_loaded: true
     cacheable: true
