@@ -2,7 +2,7 @@
 
 - name: Ensure the required packages are installed
   ansible.builtin.apt:
-    name: [ rsync ]
+    name: rsync
     state: present
 
 - name: Create the certificates cache directory
