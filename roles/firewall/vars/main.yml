@@ -19,3 +19,9 @@ rule_files:
     include: true
   - name: 90-close
     include: true
+
+
+f2b_packages:
+  - fail2ban
+  - jq
+  - ipcalc-ng

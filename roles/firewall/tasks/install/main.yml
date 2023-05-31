@@ -8,8 +8,8 @@
   ansible.builtin.include_tasks: install/packages.yml
 
 - name: Prepare logging settings
-  tags: logging
   ansible.builtin.include_tasks: install/logging.yml
+  tags: logging
 
 - name: Set the generic firewall rules
   ansible.builtin.include_tasks: install/generic-rules.yml
@@ -26,9 +26,12 @@
 - name: Install and configure fail2ban
   when: security.fail2ban
   ansible.builtin.include_tasks: install/fail2ban.yml
+  tags: f2b, scripts
 
 - name: Configure SSH
   ansible.builtin.include_tasks: install/ssh-config.yml
+  tags: ssh
 
 - name: Start the firewall
   ansible.builtin.include_tasks: install/start.yml
+  tags: systemd
