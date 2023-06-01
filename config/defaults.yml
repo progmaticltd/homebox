@@ -269,10 +269,12 @@ security_default:
 
 
 ###############################################################################
-# Dictionaries to install in the system
-dictionaries_default:
+# Languages and dictionaries to install in the system
+languages_default:
   - name: English
     id: en
+  - name: French
+    id: fr
 
 
 ###############################################################################

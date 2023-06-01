@@ -95,19 +95,19 @@
 
 
 ################################################################################
-# Merge dictionaries defaults
-- name: Combine default and user defined dictionaries settings
+# Merge languages defaults
+- name: Combine default and user defined languages settings
   run_once: true
-  when: dictionaries is defined
+  when: languages is defined
   ansible.builtin.set_fact:
-    dictionaries: '{{ dictionaries_default | union(dictionaries) }}'
+    languages: '{{ languages_default | union(languages) }}'
     cacheable: true
 
-- name: Use default dictionaries settings
+- name: Use default languages settings
   run_once: true
-  when: dictionaries is not defined
+  when: languages is not defined
   ansible.builtin.set_fact:
-    dictionaries: '{{ dictionaries_default }}'
+    languages: '{{ languages_default }}'
     cacheable: true
 
 
