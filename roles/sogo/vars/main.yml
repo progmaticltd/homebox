@@ -34,7 +34,7 @@ csp_default:
     - id: img-src
       value: "https: data: 'self' 'unsafe-inline'"
     - id: style-src
-      value: "https: 'self' 'unsafe-inline'"
+      value: "https: 'self' 'unsafe-inline' data:"
     - id: media-src
       value: "https: 'self'"
     - id: font-src
