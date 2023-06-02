@@ -19,7 +19,7 @@
   notify: Restart ejabberd
   ansible.builtin.debug:
     var: updated_certs
-  changed_when: updated_certs | length > 0
+  changed_when: updated_certs | default([]) | length > 0
   tags: certs
 
 - name: Create the nginx certificate
@@ -38,7 +38,7 @@
     - Restart nginx
   ansible.builtin.debug:
     var: updated_certs
-  changed_when: updated_certs | length > 0
+  changed_when: updated_certs | default([]) | length > 0
   tags: certs
 
 - name: Deploy the hooks for each certificate update

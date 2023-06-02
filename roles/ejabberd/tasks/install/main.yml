@@ -27,8 +27,8 @@
 
 - name: Add Prometheus alerts
   when: prometheus.install
-  tags: prometheus
   ansible.builtin.include_tasks: install/prometheus.yml
+  tags: prometheus
 
 - name: Deply the firewall rules
   ansible.builtin.include_tasks: install/firewall.yml
