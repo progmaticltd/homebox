@@ -1,16 +1,16 @@
 ---
 
 - name: Load postmaster XMPP password
-  tags: xmpp
   no_log: '{{ not system.devel }}'
   ansible.builtin.set_fact:
     postmaster_password: >-
       {{ lookup(creds.store, network.domain + "/ldap/postmaster") }}
+  tags: xmpp
 
 - name: Push the xmpp parameters
-  tags: xmpp
   notify: Restart Prometheus XMPP alerts
   ansible.builtin.template:
     src: xmpp-alerts.yml
     dest: /etc/prometheus/xmpp-alerts.yml
     mode: 0600
+  tags: xmpp
