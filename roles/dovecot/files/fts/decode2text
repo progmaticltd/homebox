@@ -27,9 +27,9 @@ fi
 # For logs
 NOW=$(date -Iseconds)
 
-# Set locale
-# LANG=en_US.UTF-8
-# export LANG
+# Be nice
+sleep 3
+renice -n 10 $$
 
 # Logging helpers
 error() {

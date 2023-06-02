@@ -44,6 +44,10 @@
   /usr/bin/gunzip mrix,
   /usr/bin/gzip mrix,
 
+  # Dynamically limit cpu usage
+  /usr/bin/sleep mrix,
+  /usr/bin/renice mrix,
+
   /lib/x86_64-linux-gnu/ld-*.so mr,
 
   /usr/lib/dovecot/xml2text rix,

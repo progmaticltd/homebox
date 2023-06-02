@@ -13,7 +13,7 @@
     src: fts/decode2text
     dest: /usr/local/bin/decode2text
     mode: 0755
-  tags: fts
+  tags: fts, scripts
 
 - name: Make sure the log file exist
   ansible.builtin.file:
@@ -34,3 +34,28 @@
   loop_control:
     loop_var: file
   tags: fts
+
+- name: Install dovecot indexer AppArmor profile
+  register: aa_templates
+  ansible.builtin.template:
+    src: 'apparmor.d/{{ aa_config }}.cf'
+    dest: '/etc/apparmor.d/{{ aa_config }}'
+  loop:
+    - usr.lib.dovecot.indexer
+    - usr.lib.dovecot.indexer-worker
+    - usr.local.bin.decode2text
+  loop_control:
+    loop_var: aa_config
+  tags: fts,apparmor
+
+- name: Activate AppArmor profiles
+  when: aa_templates.changed
+  notify: Restart AppArmor service
+  ansible.builtin.command: 'aa-enforce {{ aa_config }}'
+  loop:
+    - usr.lib.dovecot.indexer
+    - usr.lib.dovecot.indexer-worker
+    - usr.local.bin.decode2text
+  loop_control:
+    loop_var: aa_config
+  tags: fts,apparmor

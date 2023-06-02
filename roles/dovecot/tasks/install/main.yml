@@ -50,7 +50,7 @@
 - name: Include full text search tasks
   when: mail.fts.active
   ansible.builtin.include_tasks: install/fts.yml
-  tags: fts
+  tags: fts, apparmor, scripts
 
 - name: Include virtual mailboxes tasks
   when: mail.virtual_folders.active

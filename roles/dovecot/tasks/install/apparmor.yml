@@ -20,37 +20,9 @@
 - name: Activate AppArmor profiles
   when: aa_templates.changed
   notify: Restart AppArmor service
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: >-
     aa-enforce {{ file.path | basename }}
   loop: '{{ dovecot_apparmor_profiles.files }}'
   loop_control:
     loop_var: file
-  tags: apparmor
-
-- name: Install dovecot indexer AppArmor profile
-  when: mail.fts.active
-  register: aa_templates
-  ansible.builtin.template:
-    src: 'apparmor.d/{{ aa_config }}.cf'
-    dest: '/etc/apparmor.d/{{ aa_config }}'
-  loop:
-    - usr.lib.dovecot.indexer
-    - usr.lib.dovecot.indexer-worker
-    - usr.local.bin.decode2text
-  loop_control:
-    loop_var: aa_config
-  tags: apparmor
-
-- name: Activate AppArmor profiles
-  when: mail.fts.active and aa_templates.changed
-  notify: Restart AppArmor service
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
-  ansible.builtin.command: 'aa-enforce {{ aa_config }}'
-  loop:
-    - usr.lib.dovecot.indexer
-    - usr.lib.dovecot.indexer-worker
-    - usr.local.bin.decode2text
-  loop_control:
-    loop_var: aa_config
   tags: apparmor
