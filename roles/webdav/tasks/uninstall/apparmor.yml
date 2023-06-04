@@ -1,0 +1,18 @@
+---
+
+- name: Remove webdav AppArmor specific configuration
+  notify:
+    - Restart AppArmor service
+    - Restart nginx
+  ansible.builtin.lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/nginx-webdav>'
+    state: absent
+
+- name: Install nginx AppArmor profile
+  notify:
+    - Restart AppArmor service
+    - Restart nginx
+  ansible.builtin.file:
+    path: /etc/apparmor.d/local/nginx-webdav
+    state: absent

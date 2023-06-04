@@ -1,0 +1,42 @@
+---
+
+- name: Create default directory
+  ansible.builtin.file:
+    path: /var/www/webdav/
+    state: directory
+  tags: nginx
+
+- name: Create temporary directory
+  ansible.builtin.file:
+    path: /var/www/webdav/tmp
+    owner: www-data
+    group: www-data
+    mode: 0700
+    state: directory
+  tags: nginx
+
+- name: Create an empty index file to avoid errors
+  ansible.builtin.copy:
+    content: ''
+    dest: /var/www/webdav/index.html
+  tags: nginx
+
+- name: Create the webdav site
+  notify: Restart nginx
+  vars:
+    csp: '{{ csp_default }}'
+    fp: '{{ fp_default }}'
+  ansible.builtin.template:
+    src: nginx.conf
+    dest: /etc/nginx/sites-available/webdav.{{ network.domain }}.conf
+    owner: root
+    group: root
+    mode: 0644
+  tags: nginx
+
+- name: Enable nginx site
+  ansible.builtin.file:
+    src: '/etc/nginx/sites-available/webdav.{{ network.domain }}.conf'
+    dest: '/etc/nginx/sites-enabled/webdav.{{ network.domain }}.conf'
+    state: link
+  tags: nginx

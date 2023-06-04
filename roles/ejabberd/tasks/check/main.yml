@@ -1,7 +1,7 @@
 ---
 
 - name: Load some facts
-  ansible.builtin.include_tasks: facts.yml
+  ansible.builtin.include_tasks: install/facts.yml
 
 - name: Install the packages
   ansible.builtin.include_tasks: check/packages.yml

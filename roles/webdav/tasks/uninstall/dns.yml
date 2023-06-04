@@ -1,0 +1,10 @@
+---
+
+- name: Delete the main DNS record
+  vars:
+    dns_records:
+      - name: webdav
+        type: CNAME
+  ansible.builtin.include_role:
+    name: dns-record
+    tasks_from: ../uninstall/main.yml

@@ -1,0 +1,16 @@
+---
+
+- name: Remove nginx config
+  ansible.builtin.include_tasks: uninstall/nginx.yml
+
+- name: Uninstall the packages
+  ansible.builtin.include_tasks: uninstall/packages.yml
+
+- name: Remove AppArmor config files
+  ansible.builtin.include_tasks: uninstall/apparmor.yml
+
+- name: Remove the certificates
+  ansible.builtin.include_tasks: uninstall/certificates.yml
+
+- name: Delete the DNS records
+  ansible.builtin.include_tasks: uninstall/dns.yml

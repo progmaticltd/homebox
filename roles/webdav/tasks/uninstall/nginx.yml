@@ -1,0 +1,18 @@
+---
+
+- name: Remove the webdav site
+  notify: Restart nginx
+  ansible.builtin.file:
+    path: /etc/nginx/sites-available/webdav.{{ network.domain }}.conf
+    state: absent
+
+- name: Removed enabled nginx site
+  notify: Restart nginx
+  ansible.builtin.file:
+    path: '/etc/nginx/sites-enabled/webdav.{{ network.domain }}.conf'
+    state: absent
+
+- name: Remove the autoconfiguration directory
+  ansible.builtin.file:
+    path: /var/www/webdav/
+    state: absent

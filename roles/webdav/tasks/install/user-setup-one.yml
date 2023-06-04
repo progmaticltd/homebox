@@ -1,0 +1,47 @@
+---
+
+- name: Create file shares directory for each user
+  ansible.builtin.file:
+    path: /home/archives/{{ user.uid }}/files
+    state: directory
+    owner: '{{ user.uid }}'
+    group: 'mail_users'
+    mode: 0700
+  tags: users
+
+- name: Allow the web server to travers the home folder folder
+  ansible.posix.acl:
+    path: /home/archives/{{ user.uid }}
+    entity: www-data
+    permissions: rx
+    etype: user
+    state: present
+  tags: users
+
+- name: Allow the web server to read and write files in this folder
+  ansible.posix.acl:
+    path: /home/archives/{{ user.uid }}/files
+    entity: www-data
+    permissions: rwx
+    etype: user
+    state: present
+  tags: users
+
+- name: Make sure new files get the same ACL rights
+  ansible.posix.acl:
+    path: /home/archives/{{ user.uid }}/files
+    entity: www-data
+    permissions: rwx
+    etype: user
+    default: true
+    state: present
+  tags: users
+
+- name: Create a default empty index file
+  ansible.builtin.copy:
+    content: ''
+    dest: /home/archives/{{ user.uid }}/files/index-default.html
+    owner: '{{ user.uid }}'
+    group: 'mail_users'
+    mode: 0644
+  tags: users

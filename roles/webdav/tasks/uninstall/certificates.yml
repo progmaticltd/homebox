@@ -1,0 +1,12 @@
+---
+
+- name: Remove the webdav certificates from the debian standard directory
+  ansible.builtin.file:
+    path: '{{ path }}'
+    state: absent
+  loop:
+    - /etc/ssl/certs/webdav.{{ network.domain }}.issuer.crt
+    - /etc/ssl/certs/webdav.{{ network.domain }}.crt
+    - /etc/ssl/private/webdav.{{ network.domain }}.key
+  loop_control:
+    loop_var: path
