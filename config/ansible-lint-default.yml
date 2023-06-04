@@ -11,34 +11,27 @@
 
 # The current disabled warnings are:
 
-# 701: No 'galaxy_info' found.
-# Not sure yet how to fix this, cannot find doc online yet.
-
-# 503: Tasks that run when changed should likely be handlers.
-# This one should be fixed.
-
-# 305: Use shell only when shell functionality is required
-# For this project, too many commands relies on shell scripts
-
-# 301: Commands should not change things if nothing needs doing
-# Maybe some of the commands can be made as handlers
-
 exclude_paths:
   - install/playbooks/roles/ldap/tasks/main.yml
   - install/playbooks/roles/postfix/tasks/main.yml
   - install/playbooks/roles/dovecot/tasks/main.yml
+
 parseable: true
 quiet: false
 rulesdir: []
+
 warn_list:
   - '106'     # Role name (some roles have ‘-’ in their name)
   - '207'     # Nested jinja pattern (experimental, does not work)
   - '208'     # Files permissions unset or incorrect
+
 skip_list:
   - '701'     # No 'galaxy_info' found
   - '503'     # Tasks that run when changed should likely be handlers
   - '305'     # Use shell only when shell functionality is required
   - '301'     # Commands should not change things if nothing needs doing
+  - yaml[line-length]
+
 tags: []
 use_default_rules: true
 verbosity: 1

@@ -52,6 +52,11 @@
   ansible.builtin.include_tasks: install/fts.yml
   tags: fts, apparmor, scripts
 
+- name: Add fail2ban configuration
+  when: security.fail2ban.active
+  ansible.builtin.include_tasks: install/fail2ban.yml
+  tags: f2b
+
 - name: Include virtual mailboxes tasks
   when: mail.virtual_folders.active
   ansible.builtin.include_tasks: install/virtual.yml

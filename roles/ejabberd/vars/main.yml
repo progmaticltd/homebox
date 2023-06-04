@@ -6,13 +6,13 @@ packages:
   - ejabberd
   - graphicsmagick
   - graphicsmagick-imagemagick-compat
+  - erlang-p1-pgsql
 
 
 std_cert_names:
   - conference
   - files
   - proxy
-  - pubsub
   - upload
   - vjud
   - xmpp

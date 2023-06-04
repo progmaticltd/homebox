@@ -1,31 +1,38 @@
 ---
 
-- name: Install sqlite for ejabberd
-  ansible.builtin.apt:
-    name: sqlite3
+- name: Install psycopg2
+  apt:
+    name: python3-psycopg2
     state: present
+  tags: postgres, apt
 
-- name: Copy the database initialisation schema
-  ansible.builtin.copy:
-    src: database.sql
-    dest: /etc/ejabberd/database.sql
+- name: Create the database user
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_user:
+    name: ejabberd
+    password: '{{ ejabberd_db_password }}'
+    role_attr_flags: LOGIN
+  tags: postgres
+
+# See https://docs.ejabberd.im/admin/configuration/database/
+- name: Create and initialise the database
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    encoding: utf8
+    name: ejabberd
     owner: ejabberd
-    group: ejabberd
-    mode: 0600
+    state: restore
+    target: /usr/share/ejabberd/sql/pg.sql
+  tags: postgres
 
-- name: Create sqlite database for message storage
-  ansible.builtin.shell: >-
-    set -o pipefail ;
-    cat /etc/ejabberd/database.sql
-    | sqlite3 /var/lib/ejabberd/storage.db
-  args:
-    executable: /usr/bin/bash
-    creates: /var/lib/ejabberd/storage.db
-  changed_when: true
-
-- name: Ensure the database permissions
-  ansible.builtin.file:
-    path: /var/lib/ejabberd/storage.db
-    owner: ejabberd
-    group: ejabberd
-    mode: 0600
+- name: Initialise grants
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_privs:
+    db: ejabberd
+    objs: ALL_IN_SCHEMA
+    privs: ALL
+    role: ejabberd
+  tags: postgres

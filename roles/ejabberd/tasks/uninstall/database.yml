@@ -1,0 +1,26 @@
+---
+
+- name: Install psycopg2
+  apt:
+    name: python3-psycopg2
+    state: present
+  tags: postgres, apt
+
+- name: Remove the database
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    encoding: utf8
+    name: ejabberd
+    owner: ejabberd
+    state: absent
+  tags: postgres
+
+- name: Remove the database user
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_user:
+    name: ejabberd
+    password: '{{ ejabberd_db_password }}'
+    role_attr_flags: LOGIN
+  tags: postgres

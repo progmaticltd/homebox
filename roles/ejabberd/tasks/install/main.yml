@@ -2,12 +2,15 @@
 
 - name: Load some facts
   ansible.builtin.include_tasks: install/facts.yml
+  tags: facts
 
 - name: Install the packages
   ansible.builtin.include_tasks: install/packages.yml
+  tags: apt
 
 - name: Configure the database
   ansible.builtin.include_tasks: install/database.yml
+  tags: postgres
 
 - name: Deploy the certificates
   ansible.builtin.include_tasks: install/certificates.yml
@@ -15,6 +18,7 @@
 
 - name: Push the configuration
   ansible.builtin.include_tasks: install/config.yml
+  tags: config
 
 - name: Configure web access
   ansible.builtin.include_tasks: install/webaccess.yml
@@ -29,6 +33,11 @@
   when: prometheus.install
   ansible.builtin.include_tasks: install/prometheus.yml
   tags: prometheus
+
+- name: Configure fail2ban for ejabberd
+  when: security.fail2ban.active
+  ansible.builtin.include_tasks: install/fail2ban.yml
+  tags: f2b
 
 - name: Deply the firewall rules
   ansible.builtin.include_tasks: install/firewall.yml

@@ -27,9 +27,9 @@ for cert_file in $cert_files; do
     sans=$(openssl x509 -in $cert_file -noout -ext subjectAltName | tail -n +2 | sed 's/ //g' | tr '\n' ',' | sed 's/,$//')
 
     # Compute dates
-    from_days=$(date +%s -d "$from")
+    today=$(date +%s)
     till_days=$(date +%s -d "$till")
-    valid_days=$(((till_days - from_days) / 86400))
+    valid_days=$(((till_days - today) / 86400))
 
     if openssl verify -untrusted $cafile $cert_file >/dev/null 2>&1; then
         printf "%s|%s|%s|%s|%s|%s|OK\n" "$fqdn" "$from" "$till" "$valid_days" "$issuer" "$sans" >>$temp_file

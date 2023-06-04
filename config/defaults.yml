@@ -4,7 +4,7 @@
 # configuration file for customisation.
 
 # Default network settings
-# If you are behind a NAT, perhaps you will have to specify your real external IP address
+# If you are behind a NAT, you will have to specify your real external IP address
 # The backup IP address is used when you have a second IP address
 network_default:
   external_ip: ~
@@ -129,10 +129,14 @@ mail_default:
   # useful to debug sieve without setting the debug flag system wide
   sieve:
     debug: false
+
   #############################################################################
   # Fail2ban parameters
   fail2ban:
-    time: 3600
+    maxretry: 10
+    find_time: 24h
+    ban_time: 1h
+
   #############################################################################
   # mta-sts (RFC 8461)
   mta_sts:
@@ -227,7 +231,8 @@ security_default:
     time: 00:00
 
   # Install fail2ban or not
-  fail2ban: false
+  fail2ban:
+    active: false
 
   # Auto ban parameters
   autoban:
@@ -328,8 +333,9 @@ ejabberd_default:
   # Ban clients after too much authentication failures (1h after 10 attempts)
   fail2ban:
     active: true
-    lifetime: 3600
-    failures: 10
+    maxretry: 5
+    find_time: 24h
+    ban_time: 1h
   # Server-to-server communication
   s2s:
     active: true
@@ -350,19 +356,19 @@ ejabberd_default:
   shaper:
     normal: 1000
     fast: 50000
-    proxyrate: 10240 # file transfer proxy
+    proxyrate: 10240
 
 
 # Default posix groups
 posix_groups_default:
-- gid: mail_users
-  description: Mail users
-  gidNumber: 1001
-  mail: 'users@{{ network.domain }}'
-- gid: administrators
-  description: Administrators
-  gidNumber: 2000
-  mail: 'admin@{{ network.domain }}'
+  - gid: mail_users
+    description: Mail users
+    gidNumber: 1001
+    mail: 'users@{{ network.domain }}'
+  - gid: administrators
+    description: Administrators
+    gidNumber: 2000
+    mail: 'admin@{{ network.domain }}'
 
 
 # Default settings for SOGo groupware
@@ -410,10 +416,10 @@ backup_default:
 # Default DNS settings
 dns_default:
   provider: gandi
-  refresh: 10800              # Time secondary servers should wait before asking again primary servers for the SOA record
+  refresh: 10800              # Time secondary servers should wait before asking again primary servers the SOA record
   retry: 3600                 # The length of time a server should wait for asking an unresponsive primary nameserver
-  expire: 604800              # f a secondary server does not get a response from the primary server for this amount of time,
-                              # it should stop responding to queries for the zone.
+  expire: 604800              # If a secondary server does not get a response from the primary server for this amount
+                              #  of time, it should stop responding to queries for the zone.
   ttl: 600                    # Default TTL
 
   # Custom delays and retries to check DNS propagation

@@ -27,10 +27,15 @@
   ansible.builtin.include_tasks: install/rsyslog.yml
   tags: syslog
 
+- name: Add fail2ban configuration
+  when: security.fail2ban.active
+  ansible.builtin.include_tasks: install/fail2ban.yml
+  tags: f2b
+
 - name: Add Prometheus alerts
   when: prometheus.install
-  tags: prometheus
   ansible.builtin.include_tasks: install/prometheus.yml
+  tags: prometheus
 
 - name: DNS configuration
   ansible.builtin.include_tasks: install/dns.yml

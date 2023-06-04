@@ -1,0 +1,9 @@
+---
+
+- name: Deploy the jail configuration
+  notify: Restart fail2ban
+  ansible.builtin.template:
+    src: f2b/jail.conf
+    dest: /etc/fail2ban/jail.d/ejabberd.conf
+    mode: 0644
+  tags: f2b

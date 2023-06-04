@@ -4,11 +4,22 @@
   no_log: '{{ not system.devel }}'
   ansible.builtin.set_fact:
     ldap_ro_password: '{{ lookup(creds.store, network.domain + "/ldap/readonly") }}'
+  tags: facts
 
 - name: Compute the users DN
   ansible.builtin.set_fact:
     ldap_users_dn: 'ou=users,dc={{ network.domain.split(".") | join(",dc=") }}'
+  tags: facts
 
 - name: Set the readonly user’ DN
   ansible.builtin.set_fact:
     ldap_readonly_dn: 'cn=readonly account,{{ ldap_users_dn }}'
+  tags: facts
+
+- name: Create or get the database account password
+  no_log: '{{ not system.devel }}'
+  ansible.builtin.set_fact:
+    ejabberd_db_password: >-
+      {{ lookup(creds.store, network.domain + "/postgresql/ejabberd"
+      + creds.opts.create + creds.opts.system) }}
+  tags: facts

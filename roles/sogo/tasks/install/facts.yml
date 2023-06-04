@@ -3,7 +3,6 @@
 - name: Get the server’s timezone
   tags: config
   register: tz_command
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: cat /etc/timezone
 
 - name: Get the server timezone

@@ -53,11 +53,11 @@
       script: renew-xmpp-cert
     - sub: proxy
       script: renew-xmpp-cert
-    - sub: pubsub
-      script: renew-xmpp-cert
     - sub: upload
       script: renew-xmpp-cert
     - sub: vjud
+      script: renew-xmpp-cert
+    - sub: pubsub
       script: renew-xmpp-cert
     - sub: xmpp
       script: renew-nginx-cert
