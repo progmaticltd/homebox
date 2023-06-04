@@ -6,6 +6,13 @@
     state: directory
   tags: nginx
 
+- name: Create default content directory
+  ansible.builtin.file:
+    path: /var/www/webdav/default
+    mode: 0700
+    state: directory
+  tags: nginx
+
 - name: Create temporary directory
   ansible.builtin.file:
     path: /var/www/webdav/tmp
@@ -18,7 +25,7 @@
 - name: Create an empty index file to avoid errors
   ansible.builtin.copy:
     content: ''
-    dest: /var/www/webdav/index.html
+    dest: /var/www/webdav/default/index.html
   tags: nginx
 
 - name: Create the webdav site
