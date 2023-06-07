@@ -23,8 +23,8 @@
   tags: nginx
 
 - name: Create an empty index file to avoid errors
-  ansible.builtin.copy:
-    content: ''
+  ansible.builtin.template:
+    src: index.html
     dest: /var/www/webdav/default/index.html
   tags: nginx
 
@@ -46,4 +46,21 @@
     src: '/etc/nginx/sites-available/webdav.{{ network.domain }}.conf'
     dest: '/etc/nginx/sites-enabled/webdav.{{ network.domain }}.conf'
     state: link
+  tags: nginx
+
+- name: Create lua functions folder
+  notify: Restart nginx
+  ansible.builtin.file:
+    path: /var/www/webdav/functions/
+    state: directory
+  tags: nginx
+
+- name: Copy function files
+  notify: Restart nginx
+  ansible.builtin.copy:
+    src: lua/{{ file }}.lua
+    dest: /var/www/webdav/functions/{{ file }}.lua
+  loop: [ init, access, rewrite ]
+  loop_control:
+    loop_var: file
   tags: nginx

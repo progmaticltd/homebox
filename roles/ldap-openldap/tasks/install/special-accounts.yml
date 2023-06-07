@@ -37,6 +37,20 @@
   ansible.builtin.set_fact:
     postmaster_aliases: '{{ ldap.postmaster.mailAliases }}'
 
+- name: Create the postmaster group
+  community.general.ldap_entry:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ admin_password }}'
+    dn: 'cn=postmaster,{{ ldap.groups.dn }}'
+    state: present
+    attributes:
+      cn: postmaster
+      gidNumber: 1999
+    objectClass:
+      - top
+      - posixGroup
+  tags: groups
+
 - name: Create the postmaster account
   community.general.ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
@@ -52,7 +66,7 @@
       homeDirectory: /home/users/postmaster
       loginShell: '{{ users_defaults.shell }}'
       uidNumber: '{{ users_defaults.uid_start + 999 }}'
-      gidNumber: '{{ users_defaults.gid_start }}'
+      gidNumber: '{{ users_defaults.uid_start + 999 }}'
       mail: 'postmaster@{{ network.domain }}'
       intlMailAddr: '{{ postmaster_aliases }}'
       shadowMin: 0

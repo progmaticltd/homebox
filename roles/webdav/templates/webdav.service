@@ -1,0 +1,11 @@
+[Unit]
+Description=User webdav server
+ConditionDirectoryNotEmpty=%h/.config/webdav/
+
+[Service]
+Type=forking
+ExecStart=/usr/sbin/nginx -c %h/.config/webdav/nginx.conf
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

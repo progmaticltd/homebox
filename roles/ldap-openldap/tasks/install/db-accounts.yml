@@ -8,14 +8,16 @@
     dn: '{{ ldap.groups.dn }}'
     objectClass: organizationalUnit
     state: present
+  tags: groups
 
 - name: Create all the group accounts
   community.general.ldap_entry:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ admin_password }}'
     dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
+    state: present
     attributes:
-      cn:  '{{ group.description }}'
+      cn:  '{{ group.gid }}'
       gidNumber: '{{ group.gidNumber }}'
     objectClass:
       - top
@@ -23,6 +25,7 @@
   loop: '{{ posix_groups }}'
   loop_control:
     loop_var: group
+  tags: groups
 
 - name: Make sure we have a parent entry for users
   community.general.ldap_entry:
@@ -31,6 +34,7 @@
     dn: '{{ ldap.users.dn }}'
     objectClass: organizationalUnit
     state: present
+  tags: groups
 
 - name: Create each user in the database
   ansible.builtin.include_tasks: user-account.yml
@@ -38,3 +42,4 @@
   loop_control:
     loop_var: user
     index_var: index
+  tags: groups

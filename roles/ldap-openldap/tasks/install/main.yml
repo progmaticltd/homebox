@@ -32,14 +32,15 @@
 
 - name: Create the special accounts
   ansible.builtin.include_tasks: install/special-accounts.yml
+  tags: groups
 
 - name: Set access policies
   ansible.builtin.include_tasks: install/access-policies.yml
 
 - name: Add prometheus alerts
   when: prometheus.install
-  tags: prometheus
   ansible.builtin.include_tasks: install/prometheus.yml
+  tags: prometheus
 
 - name: Post accounts creation configuration
   ansible.builtin.include_tasks: install/post-install.yml

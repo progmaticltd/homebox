@@ -1,8 +1,26 @@
 ---
 
+- name: Create systemd user service
+  register: webdav_service
+  ansible.builtin.template:
+    src: webdav.service
+    dest: /etc/systemd/user/webdav.service
+    mode: 0644
+  tags: users
+
+- name: Load systemd user service
+  when: webdav_service.changed
+  ansible.builtin.systemd:
+    daemon_reload: true
+    name: webdav
+    scope: global
+    state: started
+  tags: users
+
 - name: Create DAV directory for each user
   ansible.builtin.include_tasks: install/user-setup-one.yml
   loop: '{{ users }}'
   loop_control:
     loop_var: user
+    no_block: true
   tags: users

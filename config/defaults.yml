@@ -363,7 +363,7 @@ ejabberd_default:
 posix_groups_default:
   - gid: mail_users
     description: Mail users
-    gidNumber: 1001
+    gidNumber: 1000
     mail: 'users@{{ network.domain }}'
   - gid: administrators
     description: Administrators

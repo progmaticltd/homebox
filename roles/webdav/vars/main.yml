@@ -18,7 +18,9 @@ csp_default:
     - id: default-src
     - id: script-src
     - id: img-src
+      value: "https: 'self' 'unsafe-inline'"
     - id: style-src
+      value: "https: 'self' 'unsafe-inline'"
     - id: media-src
     - id: font-src
     - id: base-uri
@@ -49,4 +51,7 @@ fp_default:
 # Packages to install
 packages:
   - libnginx-mod-http-dav-ext
-  - libnginx-mod-http-fancyindex
+  - libnginx-mod-http-headers-more-filter
+  - libnginx-mod-http-lua
+  - libnginx-mod-http-ndk
+  - lua-filesystem
