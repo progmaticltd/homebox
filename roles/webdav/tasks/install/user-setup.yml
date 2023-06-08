@@ -1,5 +1,14 @@
 ---
 
+- name: Create the webdav root directory for the user
+  ansible.builtin.file:
+    path: /var/tmp/webdav-user/
+    state: directory
+    owner: www-data
+    group: mail_users
+    mode: '0750'
+  tags: users
+
 - name: Create systemd user service
   register: webdav_service
   ansible.builtin.template:
@@ -15,6 +24,7 @@
     name: webdav
     scope: global
     state: started
+    no_block: true
   tags: users
 
 - name: Create DAV directory for each user
@@ -22,5 +32,4 @@
   loop: '{{ users }}'
   loop_control:
     loop_var: user
-    no_block: true
   tags: users

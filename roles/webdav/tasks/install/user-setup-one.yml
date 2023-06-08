@@ -9,36 +9,36 @@
     mode: '0700'
   tags: users
 
-- name: Create a default empty index file
-  ansible.builtin.template:
-    src: index.html
-    dest: /home/archives/{{ user.uid }}/files/index-default.html
-    owner: '{{ user.uid }}'
-    group: '{{ user.uid }}'
-    mode: 0600
+- name: Allow the user to traverse the webdav directory
+  ansible.posix.acl:
+    path: /var/tmp/webdav-user/
+    etype: user
+    entity: '{{ user.uid }}'
+    permissions: 'rx'
+    state: present
   tags: users
 
-- name: Create the webdav directory for the user
+- name: Create the webdav root directory for the user
   ansible.builtin.file:
-    path: /home/archives/{{ user.uid }}/webdav
+    path: /var/tmp/webdav-user/{{ user.uid }}/
     state: directory
     owner: '{{ user.uid }}'
-    group: '{{ user.uid }}'
-    mode: '0700'
-  tags: users
-
-- name: Create webdav config directory for the user
-  ansible.builtin.file:
-    path: /home/users/{{ user.uid }}/.config/webdav
-    state: directory
-    owner: '{{ user.uid }}'
-    group: '{{ user.uid }}'
-    mode: '0700'
+    group: www-data
+    mode: '0750'
   tags: users
 
 - name: Create temporary storage directory for the user
   ansible.builtin.file:
-    path: /home/archives/{{ user.uid }}/tmp
+    path: /var/tmp/webdav-user/{{ user.uid }}/tmp
+    state: directory
+    owner: '{{ user.uid }}'
+    group: '{{ user.uid }}'
+    mode: '0700'
+  tags: users
+
+- name: Create config directory for the user
+  ansible.builtin.file:
+    path: /home/users/{{ user.uid }}/.config/webdav
     state: directory
     owner: '{{ user.uid }}'
     group: '{{ user.uid }}'

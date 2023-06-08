@@ -53,6 +53,7 @@
   ansible.builtin.file:
     path: /var/www/webdav/functions/
     state: directory
+    mode: 0755
   tags: nginx
 
 - name: Copy function files
@@ -60,6 +61,9 @@
   ansible.builtin.copy:
     src: lua/{{ file }}.lua
     dest: /var/www/webdav/functions/{{ file }}.lua
+    owner: root
+    group: root
+    mode: 0644
   loop: [ init, access, rewrite ]
   loop_control:
     loop_var: file

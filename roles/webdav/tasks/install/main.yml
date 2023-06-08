@@ -20,10 +20,10 @@
   ansible.builtin.include_tasks: install/apparmor.yml
   tags: apparmor
 
-- name: Copy the certificates
-  ansible.builtin.include_tasks: install/certificates.yml
-  tags: certs
+# - name: Copy the certificates
+#   ansible.builtin.include_tasks: install/certificates.yml
+#   tags: certs
 
-- name: Set the DNS records
-  ansible.builtin.include_tasks: install/dns.yml
-  tags: dns
+# - name: Set the DNS records
+#   ansible.builtin.include_tasks: install/dns.yml
+#   tags: dns
