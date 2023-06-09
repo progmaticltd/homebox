@@ -2,24 +2,28 @@
 
 - name: Check if DNSSEC is already configured
   register: zone_keys_cmd
-  ansible.builtin.shell:  pdnsutil list-keys
+  ansible.builtin.shell: pdnsutil list-keys
   changed_when: false
+  tags: dnssec
 
 - name: Store the command result
   ansible.builtin.set_fact:
     dnssec_configured: '{{ zone_keys_cmd.stdout_lines | length > 3 }}'
+  tags: dnssec
 
 - name: Set-up DNSSEC
   when: not dnssec_configured
   ansible.builtin.shell: >-
     pdnsutil secure-zone {{ network.domain }}
   changed_when: true
+  tags: dnssec
 
 - name: Calculates the ordername and auth fields
   when: not dnssec_configured
   ansible.builtin.shell: >-
     pdnsutil rectify-zone {{ network.domain }}
   changed_when: true
+  tags: dnssec
 
 - name: Create a KSK and ZSK keys
   when: not dnssec_configured
@@ -30,3 +34,4 @@
   loop: [ KSK, ZSK ]
   loop_control:
     loop_var: type
+  tags: dnssec

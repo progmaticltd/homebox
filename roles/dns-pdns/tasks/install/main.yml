@@ -20,10 +20,15 @@
 
 - name: Set-up DNSSEC
   ansible.builtin.include_tasks: install/dnssec.yml
+  tags: dnssec
 
 - name: Configure domain forwarding
   ansible.builtin.include_tasks: install/forward.yml
   tags: forward
+
+- name: Deploy management scripts
+  ansible.builtin.include_tasks: install/scripts.yml
+  tags: scripts
 
 - name: Set-up Prometheus config
   ansible.builtin.include_tasks: install/prometheus.yml
