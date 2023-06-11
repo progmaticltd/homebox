@@ -1,11 +1,24 @@
 #!/bin/dash
 
 # Parameters: (spam or ham), user, date, from, to, subject
-learnType=$1
+type=$1
 
-# Set the host
+# Error codes
+success=0
+param_error=10
+runtime_error=20
+
+if [ "$type" != "spam" ] && [ "$type" != "ham" ]; then
+    logger "Invalid type parameter for ham or spam: '$type'"
+    exit $param_error
+fi
+
+# rspamd socket to use
 host="unix:/run/rspamd/controller.sock"
 
-exec /usr/bin/rspamc -v -h "$host" "learn_${learnType}"
+if ! /usr/bin/rspamc -v -h "$host" "learn_${type}"; then
+    logger "Error when running rspamc client"
+    exit $runtime_error
+fi
 
-exit 0
+exit $success

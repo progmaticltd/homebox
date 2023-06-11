@@ -24,9 +24,11 @@
 
 - name: Configure sieve scripts
   ansible.builtin.include_tasks: install/sieve.yml
+  tags: sieve, scripts, spam
 
 - name: Configure antispam
   ansible.builtin.include_tasks: install/antispam.yml
+  tags: sieve, scripts, spam
 
 - name: Import imersonate tasks
   when: mail.impersonate.active

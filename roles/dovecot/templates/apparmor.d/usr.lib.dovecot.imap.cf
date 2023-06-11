@@ -3,8 +3,10 @@
 
 /usr/lib/dovecot/imap {
   #include <abstractions/base>
-  #include <abstractions/nameservice>
   #include <abstractions/dovecot-common>
+  #include <abstractions/nameservice>
+  #include <abstractions/openssl>
+  #include <local/usr.lib.dovecot.imap>
 
   capability setuid,
   deny capability block_suspend,

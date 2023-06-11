@@ -1,0 +1,40 @@
+---
+
+- name: Copy global sieve configuration
+  register: sieve_script
+  notify: Restart dovecot
+  ansible.builtin.template:
+    src: 'sieve/{{ file }}'
+    dest: '/etc/dovecot/sieve/{{ file }}'
+    mode: '0644'
+  tags: sieve
+
+- name: Create global sieve scripts symbolic links in /var
+  ansible.builtin.file:
+    src: '/etc/dovecot/sieve/{{ file }}'
+    dest: '/var/lib/dovecot/sieve/{{ file }}'
+    state: link
+  tags: sieve
+
+- name: Restart dovecot to reload sieve plugins
+  systemd:
+    name: dovecot
+    state: restarted
+  tags: sieve
+
+- name: Compile global sieve scripts
+  when: sieve_script.changed
+  ansible.builtin.shell: >-
+    /usr/bin/sievec
+    /var/lib/dovecot/sieve/{{ file }}
+    /var/lib/dovecot/sieve/{{ file | replace(".sieve", ".svbin") }}
+  changed_when: true
+  tags: sieve
+
+- name: Allow users to read the compiled sieve scripts
+  ansible.builtin.file:
+    path: '/var/lib/dovecot/sieve/{{ file | replace(".sieve", ".svbin") }}'
+    mode: '0644'
+    owner: root
+    group: root
+  tags: sieve

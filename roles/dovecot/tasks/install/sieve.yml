@@ -1,7 +1,6 @@
 ---
 
 - name: Create the global sieve directories
-  tags: sieve
   ansible.builtin.file:
     path: '{{ dir.path }}'
     state: directory
@@ -19,59 +18,18 @@
       owner: dovecot
       group: dovecot
       mode: '0755'
+    # executables directory
+    - path: /usr/lib/dovecot/sieve-extprograms/
+      owner: dovenull
+      group: dovenull
+      mode: '0755'
   loop_control:
     loop_var: dir
-
-- name: Copy global sieve configuration
   tags: sieve
-  notify: Restart dovecot
-  ansible.builtin.template:
-    src: 'sieve/{{ file }}'
-    dest: '/etc/dovecot/sieve/{{ file }}'
-    mode: '0640'
-  with_items:
-    - '{{ sieve.global_scripts }}'
+
+- name: Configure sieve scripts
+  ansible.builtin.include_tasks: install/sieve-install.yml
+  loop: '{{ sieve.global_scripts }}'
   loop_control:
     loop_var: file
-
-- name: Create global sieve scripts symbolic links in /var
-  tags: dovecot
-  ansible.builtin.file:
-    src: '/etc/dovecot/sieve/{{ file }}'
-    dest: '/var/lib/dovecot/sieve/{{ file }}'
-    state: link
-  with_items:
-    - '{{ sieve.global_scripts }}'
-  loop_control:
-    loop_var: file
-
-- name: Restart dovecot to reload sieve plugins
-  tags: dovecot
-  systemd:
-    name: dovecot
-    state: restarted
-
-- name: Compile global sieve scripts
-  tags: dovecot
-  ansible.builtin.shell: >-
-      /usr/bin/sievec
-      /var/lib/dovecot/sieve/{{ file }}
-      /var/lib/dovecot/sieve/{{ file | replace(".sieve", ".svbin") }}
-  args:
-    creates: '/var/lib/dovecot/sieve/{{ file | replace(".sieve", ".svbin") }}'
-  with_items:
-    - '{{ sieve.global_scripts }}'
-  loop_control:
-    loop_var: file
-
-- name: Allow users to read the compiled sieve scripts
-  tags: dovecot
-  ansible.builtin.file:
-    path: '/var/lib/dovecot/sieve/{{ file | replace(".sieve", ".svbin") }}'
-    mode: '0644'
-    owner: root
-    group: root
-  with_items:
-    - '{{ sieve.global_scripts }}'
-  loop_control:
-    loop_var: file
+  tags: sieve

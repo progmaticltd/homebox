@@ -15,8 +15,11 @@
 
   # Allow the imap process to run the global sieve scripts
   /etc/dovecot/sieve/* r,
-  /etc/dovecot/sieve/*.sh ix,
   /usr/bin/rspamc mix,
+
+  # For rspamd
+  /sys/kernel/mm/transparent_hugepage/enabled r,
+  /usr/bin/logger Cx,
 
   # Dovecot write temporary files in the sieve scripts folder
   /var/lib/dovecot/sieve/* rw,
@@ -37,3 +40,6 @@
   # The imap daemon wants to read these folders
   owner /home/{users,archives}/*/ r,
   owner /home/{users,archives}/*/mails/ r,
+
+  # Execute sieve scripts
+  /usr/lib/dovecot/sieve-extprograms/learn-hamorspam.sh ix,

@@ -428,6 +428,14 @@ dns_default:
     retries: 10
     delay: 15
 
+  # Replication. settings
+  replication:
+    active: false
+    axfr_ips:
+      - 127.0.0.0/8
+      - ::1
+    notify: [ ]
+
   # Additional DNS records to create
   extra_records: [ ]
 

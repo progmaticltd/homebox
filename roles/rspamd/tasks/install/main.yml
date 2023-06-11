@@ -5,9 +5,11 @@
 
 - name: Load the passwords
   ansible.builtin.include_tasks: install/passwords.yml
+  tags: facts
 
 - name: Configure the packages
   ansible.builtin.include_tasks: install/config.yml
+  tags: config
 
 - name: Install the firewall rules
   ansible.builtin.include_tasks: install/firewall.yml

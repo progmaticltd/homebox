@@ -20,3 +20,4 @@
     - worker-proxy.inc
   loop_control:
     loop_var: file
+  tags: config

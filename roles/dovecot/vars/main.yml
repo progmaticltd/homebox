@@ -147,3 +147,19 @@ dovecot_binaries:
   - /usr/lib/dovecot/ssl-params
   - /usr/lib/dovecot/stats
   - /usr/local/sbin/dovecot-postlogin
+
+# Configuration files to deploy
+config_files:
+  - 10-auth.conf
+  - 10-master.conf
+  - 10-mail.conf
+  - 10-logging.conf
+  - 15-lda.conf
+  - 15-mailboxes.conf
+  - 20-managesieve.conf
+  - 20-imap.conf
+  - 20-lmtp.conf
+  - 90-sieve.conf
+  - 90-plugin.conf
+  - 90-quota.conf
+  - 90-sieve-extprograms.conf

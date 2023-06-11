@@ -2,6 +2,7 @@
 
 require [
   "vnd.dovecot.pipe",
+  "vnd.dovecot.execute",
   "copy",
   "imapsieve",
   "environment",
@@ -12,20 +13,8 @@ if environment :matches "imap.mailbox" "*" {
   set "mailbox" "${1}";
 }
 
-if environment :matches "imap.user" "*" {
-  set "user" "${1}";
+# Mark the message as spam when moved into the Junk folder
+if string :is "${mailbox}" "Junk" {
+  execute :pipe "learn-hamorspam.sh" [ "spam" ];
+  stop;
 }
-
-if header :matches "From" "*" {
-  set "from" "${1}";
-}
-
-if header :matches "To" "*" {
-  set "to" "${1}";
-}
-
-if header :matches "Date" "*" {
-  set "date" "${1}";
-}
-
-pipe :copy "learn-hamorspam.sh" [ "spam", "${user}", "{$date}", "${from}", "${to}", "${subject}" ];

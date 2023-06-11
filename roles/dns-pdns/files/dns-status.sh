@@ -10,6 +10,7 @@ DOMAIN_NOT_LIVE=10
 DNSSEC_NOT_LIVE=20
 
 # Init
+hostname=$(hostname -s)
 domain=$(hostname -d)
 
 # Diagnostic functions
@@ -50,6 +51,26 @@ fi
 
 # Keys are live and published
 printf "DNS keys are published:\n"
+
+# Check if replication is active
+secondaries=$(dig NS "$domain" +short | grep -v "$hostname")
+
+if [ "$secondaries" != "" ]; then
+
+    main_sig=$(dig DNSKEY "$domain" @127.1.1.53 +short | sort | md5sum)
+
+    for sec in "$secondaries"; do
+        sec_sig=$(dig DNSKEY "$domain" @127.1.1.53 +short | sort | md5sum)
+
+        if [ "$main_sig" = "$sec_sig" ]; then
+            echo "$sec: Not sync"
+        else
+            echo "$sec: OK"
+        fi
+
+    done
+
+fi
 
 # Display DNSSEC keys
 pdnsutil list-keys "$domain"
