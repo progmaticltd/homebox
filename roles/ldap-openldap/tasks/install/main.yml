@@ -44,3 +44,4 @@
 
 - name: Post accounts creation configuration
   ansible.builtin.include_tasks: install/post-install.yml
+  tags: post-install

@@ -5,63 +5,75 @@
   ansible.builtin.template:
     src: indexes.ldif
     dest: /etc/ldap/changes/indexes.ldif
+  tags: post-install
 
 - name: Add indexes to the database for optimisation
   when: index_defs.changed
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
-  ansible.builtin.command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/indexes.ldif
+  ansible.builtin.command: >-
+    ldapmodify -QY EXTERNAL
+    -H ldapi:///
+    -f /etc/ldap/changes/indexes.ldif
+  changed_when: true
+  tags: post-install
 
 - name: Update the indexes
   when: index_defs.changed
   become: true
   become_user: openldap
   become_method: sudo
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: 'slapindex -n 1 -v {{ field }}'
   with_items: '{{ indexed_fields }}'
   loop_control:
     loop_var: field
+  tags: post-install
 
-- name: Add local accounts to users groups
-  ldap_attr:
+- name: Add accounts to mail_users group
+  community.general.ldap_attrs:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ admin_password }}'
     dn: 'cn=mail_users,{{ ldap.groups.dn }}'
-    name: memberUid
-    values: '{{ user.uid }}'
+    attributes:
+      memberUid: '{{ user.uid }}'
     state: present
   loop: '{{ users }}'
   loop_control:
     loop_var: user
+  tags: post-install
 
 - name: Add system accounts to administrators groups
-  ldap_attr:
+  community.general.ldap_attrs:
     bind_dn: '{{ ldap.admin.dn }}'
     bind_pw: '{{ admin_password }}'
     dn: 'cn=administrators,{{ ldap.groups.dn }}'
-    name: memberUid
-    values: '{{ uid }}'
+    attributes:
+      memberUid: '{{ uid }}'
     state: present
   loop:
     - manager
     - postmaster
   loop_control:
     loop_var: uid
+  tags: post-install
 
 - name: Copy the ldap ssl config on the server before running it
   register: ldap_ssl
   ansible.builtin.template:
     src: ssl-config-end.ldif
     dest: /etc/ldap/changes/ssl-config-end.ldif
+  tags: post-install
 
 - name: Modify the configuration if not already done
   when: ldap_ssl.changed
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
-  ansible.builtin.command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ssl-config-end.ldif
+  ansible.builtin.command: >-
+    ldapmodify -QY EXTERNAL
+    -H ldapi:///
+    -f /etc/ldap/changes/ssl-config-end.ldif
   changed_when: true
+  tags: post-install
 
 - name: Restart the ldap stack
   when: ldap_ssl.changed
   ansible.builtin.service:
     name: slapd
     state: restarted
+  tags: post-install
