@@ -22,6 +22,7 @@
 
 - name: Configure AppArmor
   ansible.builtin.include_tasks: install/apparmor.yml
+  tags: apparmor
 
 - name: Create DNS records
   ansible.builtin.include_tasks: install/dns.yml

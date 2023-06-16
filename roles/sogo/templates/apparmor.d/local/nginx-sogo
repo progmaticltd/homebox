@@ -1,3 +1,5 @@
   # Web content
   /usr/share/GNUstep/SOGo/WebServerResources/ r,
   /usr/share/GNUstep/SOGo/WebServerResources/** r,
+  /usr/lib/GNUstep/SOGo/ r,
+  /usr/lib/GNUstep/SOGo/** r,
