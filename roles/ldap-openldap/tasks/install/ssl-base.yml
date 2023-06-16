@@ -28,7 +28,6 @@
 
 - name: Allow openldap to read certificates
   register: openldap_user
-  # possible ambiguous replacement: user : ansible.builtin.user | awx.awx.user | inspur.ispim.user | inspur.sm.user | lowlydba.sqlserver.user | sensu.sensu_go.user | theforeman.foreman.user | vultr.cloud.user
   ansible.builtin.user:
     name: openldap
     groups: ssl-cert
@@ -51,7 +50,6 @@
 
 - name: Modify the configuration if not already done
   when: ldap_ssl.changed
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: >
     ldapmodify -QY EXTERNAL
     -H ldapi:///

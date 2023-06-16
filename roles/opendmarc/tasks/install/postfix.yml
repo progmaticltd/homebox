@@ -10,7 +10,6 @@
 
 - name: Add postfix to opendmarc group
   notify: Restart postfix
-  # possible ambiguous replacement: user : ansible.builtin.user | awx.awx.user | inspur.ispim.user | inspur.sm.user | lowlydba.sqlserver.user | sensu.sensu_go.user | theforeman.foreman.user | vultr.cloud.user
   ansible.builtin.user:
     name: postfix
     groups: opendmarc

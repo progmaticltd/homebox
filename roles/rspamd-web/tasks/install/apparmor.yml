@@ -26,6 +26,5 @@
 - name: Activate AppArmor profiles
   when: aa_config.changed
   tags: rspamd, security, apparmor
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: 'aa-enforce usr.sbin.nginx'
   notify: Restart AppArmor service

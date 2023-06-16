@@ -38,5 +38,4 @@
 - name: Activate AppArmor profiles
   notify: Restart AppArmor service
   when: aa_config.changed
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: 'aa-enforce usr.sbin.nginx'

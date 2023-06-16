@@ -12,7 +12,6 @@
 - name: Run the command to create the keys
   notify: Restart opendkim
   register: keys
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: >-
     opendkim-genkey
     --restrict

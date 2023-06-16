@@ -1,7 +1,6 @@
 ---
 
 - name: Activate AppArmor profiles
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: aa-enforce usr.sbin.nginx
 
 - name: Restart AppArmor service

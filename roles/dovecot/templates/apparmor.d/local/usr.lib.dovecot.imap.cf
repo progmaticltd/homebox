@@ -41,5 +41,5 @@
   owner /home/{users,archives}/*/ r,
   owner /home/{users,archives}/*/mails/ r,
 
-  # Execute sieve scripts
-  /usr/lib/dovecot/sieve-extprograms/learn-hamorspam.sh ix,
+  # Allow the execution of external sieve scripts
+  /usr/lib/dovecot/sieve-extprograms/*.sh ix,

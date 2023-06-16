@@ -28,7 +28,6 @@
     loop_var: account
 
 - name: Encrypt each configuration file using the server's passphrase and place them in the safe
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: >-
     openssl aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt
     -in /home/users/{{ user.uid }}/mails/import/conf/{{ account.name }}-{{ account.type }}.conf

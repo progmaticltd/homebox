@@ -9,7 +9,6 @@
     mode: '0600'
 
 - name: Lock the root account
-  # possible ambiguous replacement: user : ansible.builtin.user | awx.awx.user | inspur.ispim.user | inspur.sm.user | lowlydba.sqlserver.user | sensu.sensu_go.user | theforeman.foreman.user | vultr.cloud.user
   ansible.builtin.user:
     name: root
     password_lock: '{{ security.lock_root_password }}'

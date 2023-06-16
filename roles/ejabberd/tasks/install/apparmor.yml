@@ -9,5 +9,4 @@
 - name: Activate AppArmor profiles
   when: aa_templates.changed
   notify: Restart AppArmor service
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: 'aa-enforce usr.sbin.ejabberdctl'

@@ -13,13 +13,11 @@
     gid_number: '{{ 2000 + (999 | random) }}'
 
 - name: Create Administrators group
-  # possible ambiguous replacement: group : ansible.builtin.group | awx.awx.group
   ansible.builtin.group:
     name: '{{ system.admin.group_name | lower }}'
     gid: '{{ gid_number | int }}'
 
 - name: Create the Administration user
-  # possible ambiguous replacement: user : ansible.builtin.user | awx.awx.user | inspur.ispim.user | inspur.sm.user | lowlydba.sqlserver.user | sensu.sensu_go.user | theforeman.foreman.user | vultr.cloud.user
   ansible.builtin.user:
     name: '{{ system.admin.name }}'
     group: '{{ system.admin.group_name }}'

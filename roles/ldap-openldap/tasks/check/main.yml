@@ -76,7 +76,6 @@
   become: true
   become_user: openldap
   become_method: sudo
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: 'slapindex -n 1 -v {{ field }}'
   changed_when: false
   loop:

@@ -1,0 +1,11 @@
+---
+
+- name: Copy custom script to classify emails
+  ansible.builtin.copy:
+    src: dovecot/learn-hamorspam.sh
+    dest: /usr/lib/dovecot/sieve-extprograms/learn-hamorspam.sh
+    owner: _rspamd
+    group: _rspamd
+    mode: '0755'
+    force: true
+  tags: dovecot

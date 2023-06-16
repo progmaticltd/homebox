@@ -8,7 +8,6 @@
 
 - name: Load password policy module into the OLC database
   when: ppolicy_module.changed
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ppolicy-module.ldif
 
 - name: Copy the password policy schema into the changes directory
@@ -20,7 +19,6 @@
 
 - name: Activate password policies schema
   when: ppolicy_schema.changed
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ppolicy-schema.ldif
 
 - name: Copy the overlay into the changes directory
@@ -31,7 +29,6 @@
 
 - name: Load the overlay definition
   when: ldap_pwd_overlay.changed
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/overlay.ldif
 
 - name: Create the password policies parent entry
@@ -98,5 +95,4 @@
 
 - name: Load the password hash overlay
   when: passwd_hash.changed
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/password-hash.ldif

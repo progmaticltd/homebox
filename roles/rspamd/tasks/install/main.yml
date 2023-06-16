@@ -25,6 +25,10 @@
   ansible.builtin.include_tasks: install/proxy.yml
   tags: proxy
 
+- name: Configure dovecot sieve filters
+  ansible.builtin.include_tasks: install/dovecot.yml
+  tags: dovecot
+
 - name: Add Prometheus alerts
   when: prometheus.install
   ansible.builtin.include_tasks: install/prometheus.yml

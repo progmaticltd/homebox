@@ -1,5 +1,5 @@
 # Included from top-level .conf file
-bind_socket = "/var/spool/postfix/rspamd/rspamd.sock mode=0660 owner=_rspamd group=_rspamd ";
+bind_socket = "/var/spool/postfix/rspamd/rspamd.sock mode=0660 owner=_rspamd";
 type = "proxy";
 
 milter = yes;   # Enable milter mode

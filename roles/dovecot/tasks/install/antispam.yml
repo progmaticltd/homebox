@@ -1,10 +1,12 @@
 ---
 
-- name: Copy custom script to classify emails
+- name: Deploy a default empty antispam script if not already existing
   when: mail.antispam.active
-  notify: Restart dovecot
   ansible.builtin.copy:
-    src: antispam/learn-hamorspam.sh
+    src: antispam/noop.sh
     dest: /usr/lib/dovecot/sieve-extprograms/learn-hamorspam.sh
+    owner: root
+    group: root
     mode: 0755
+    force: false
   tags: sieve, scripts, spam

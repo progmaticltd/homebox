@@ -7,5 +7,4 @@
     dest: /etc/apparmor.d/usr.bin.rspamd
 
 - name: Activate AppArmor profiles
-  # possible ambiguous replacement: command : ansible.builtin.command | community.ciscosmb.command | community.routeros.command
   ansible.builtin.command: aa-enforce rspamd
