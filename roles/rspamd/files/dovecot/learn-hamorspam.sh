@@ -1,6 +1,6 @@
 #!/bin/dash
 
-# Parameters: (spam or ham), user, date, from, to, subject
+# Parameters: (spam or ham)
 type=$1
 
 # Error codes
@@ -19,7 +19,7 @@ fi
 
 if [ ! -w "$socket" ]; then
     echo "Cannot open socket file for writing"
-    exit $runtime_error
+    exit $socket_error
 fi
 
 if ! /usr/bin/rspamc -v -h "$socket" "learn_${type}"; then
