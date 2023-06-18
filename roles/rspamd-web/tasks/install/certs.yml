@@ -7,6 +7,10 @@
         type: ec384
   ansible.builtin.include_role:
     name: certificates
+    tasks_from: install/main.yml
+    apply:
+      tags: always
+  tags: certs
 
 - name: Check if the certificate has been updated
   notify:
@@ -15,9 +19,11 @@
   ansible.builtin.debug:
     var: updated_certs
   changed_when: updated_certs | length > 0
+  tags: certs
 
-- name: Copy the certificate update hook for SMTP
+- name: Copy the certificate update hook for rspamd
   ansible.builtin.copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/rspamd.{{ network.domain }}/renew-cert.sh
     mode: 0700
+  tags: certs

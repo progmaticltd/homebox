@@ -1,5 +1,13 @@
 ---
 
+- name: Add rspamd to dovecot null least privilegied account
+  notify: Restart rspamd
+  user:
+    name: _rspamd
+    groups: mail
+    append: true
+  tags: dovecot
+
 # This will replace the default empty script deployed by the dovecot role
 - name: Copy custom script to classify emails
   ansible.builtin.copy:
