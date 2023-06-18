@@ -1,0 +1,8 @@
+---
+
+- name: Add the user to mail group
+  ansible.builtin.user:
+    name: '{{ user.uid }}'
+    groups: mail
+    append: true
+  tags: group

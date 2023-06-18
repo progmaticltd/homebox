@@ -16,6 +16,13 @@
 - name: Create top level directories and skeleton
   ansible.builtin.include_tasks: install/init-common.yml
 
+- name: Add users to local groups
+  ansible.builtin.include_tasks: install/group-membership.yml
+  loop: '{{ init_users }}'
+  loop_control:
+    loop_var: user
+  tags: group
+
 - name: Create home directories
   ansible.builtin.include_tasks: install/create-home-dirs.yml
   loop: '{{ init_users }}'
