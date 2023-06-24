@@ -19,6 +19,7 @@
 
 - name: Firewall configuration
   ansible.builtin.include_tasks: install/firewall.yml
+  tags: firewall
 
 - name: AppArmor configuration
   ansible.builtin.include_tasks: install/apparmor.yml

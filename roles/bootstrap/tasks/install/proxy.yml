@@ -13,6 +13,15 @@
     dest: /etc/tinyproxy/tinyproxy.conf
   tags: proxy
 
+- name: Create logs directory
+  ansible.builtin.file:
+    path: /var/log/tinyproxy
+    state: directory
+    owner: root
+    group: tinyproxy
+    mode: 0770
+  tags: proxy
+
 - name: Allow safe web sites access access
   notify: Restart tinyproxy
   ansible.builtin.lineinfile:

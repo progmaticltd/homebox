@@ -4,9 +4,9 @@
   vars:
     certificates:
       - name: imap
-        tags: certs
   ansible.builtin.include_role:
     name: certificates
+    tasks_from: install/main.yml
     apply:
       tags: always
   tags: certs
@@ -23,9 +23,9 @@
   vars:
     certificates:
       - name: pop3
-        tags: certs
   ansible.builtin.include_role:
     name: certificates
+    tasks_from: install/main.yml
     apply:
       tags: always
   tags: certs

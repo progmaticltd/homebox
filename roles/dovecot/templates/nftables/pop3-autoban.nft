@@ -1,0 +1,44 @@
+#!/usr/sbin/nft -f
+
+# These rules are limiting new pop3 connections below a certain rate,
+# As soon as the authentication succeed, the source IP address is whitelisted
+# in the "trusted_list", which bypass these rules, in the input chain.
+
+table inet filter {
+
+    set banned_ipv4 {
+        type ipv4_addr . inet_service
+        flags dynamic,timeout
+        timeout {{ mail.autoban.period }}
+    }
+
+    set banned_ipv6 {
+        type ipv6_addr . inet_service
+        flags dynamic,timeout
+        timeout {{ mail.autoban.period }}
+    }
+
+    chain input {
+
+        meta nfproto ipv4 tcp dport pop3 ct state new,untracked \
+        limit rate over {{ mail.autoban.rate }} add @banned_ipv4 { ip saddr . pop3 } \
+        comment "Ban IPv4 addresses establishing pop3 connections above {{ mail.autoban.rate }}."
+
+        meta nfproto ipv6 tcp dport pop3 ct state new,untracked \
+        limit rate over {{ mail.autoban.rate }} add @banned_ipv6 { ip6 saddr . pop3 } \
+        comment "Ban IPv6 addresses establishing pop3 connections above {{ mail.autoban.rate }}."
+
+        meta nfproto ipv4 tcp dport pop3s ct state new,untracked \
+        limit rate over {{ mail.autoban.rate }} add @banned_ipv4 { ip saddr . pop3s } \
+        comment "Ban IPv4 addresses establishing pop3s connections above {{ mail.autoban.rate }}."
+
+        meta nfproto ipv6 tcp dport pop3s ct state new,untracked \
+        limit rate over {{ mail.autoban.rate }} add @banned_ipv6 { ip6 saddr . pop3s } \
+        comment "Ban IPv6 addresses establishing pop3s connections above {{ mail.autoban.rate }}."
+
+        # Accept new connections by default
+        tcp dport { pop3, pop3s } ct state new counter accept \
+        comment "Accept pop3/pop3s connections"
+    }
+
+}

@@ -6,6 +6,7 @@
       - name: mta-sts
   ansible.builtin.include_role:
     name: certificates
+    tasks_from: install/main.yml
     apply:
       tags: always
   tags: certs

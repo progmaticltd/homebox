@@ -4,7 +4,6 @@
 table inet filter {
 
     chain input {
-
         tcp dport { pop3, pop3s } ct state new counter accept \
         comment "Accept pop3/pop3s connections"
     }

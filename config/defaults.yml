@@ -76,6 +76,8 @@ mail_default:
     #   disable_vrfy_command = no
     #   frozen_delivered_to = no
 
+
+
   #############################################################################
   antispam:                 # Check inbound and outbound emails for viruses
     active: true            # or false
@@ -129,6 +131,14 @@ mail_default:
   # useful to debug sieve without setting the debug flag system wide
   sieve:
     debug: false
+
+  #############################################################################
+  # Autoban is a lighter alternative to fail2ban, using nftables
+  autoban:
+    active: false       #
+    rate: 10/minute     # above this rate, IMAP and SMTP connections are rejected
+    period: 1h          # period for banning IPs
+
 
   #############################################################################
   # Fail2ban parameters

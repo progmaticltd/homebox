@@ -1,0 +1,31 @@
+#!/usr/sbin/nft -f
+
+# Allow SSH access from the initial installer IPs
+# both IPv4 and IPv6
+
+table inet filter {
+
+    set trusted_ipv4 {
+        type ipv4_addr . inet_service
+        flags dynamic,timeout
+        timeout 1h
+    }
+
+    set trusted_ipv6 {
+        type ipv6_addr . inet_service
+        flags dynamic,timeout
+        timeout 1h
+    }
+
+    chain input {
+
+        ip saddr . tcp dport @trusted_ipv4 \
+        ct state new counter accept \
+        comment "Trusted IPv4 ssh connections"
+
+        ip6 saddr . tcp dport @trusted_ipv6 \
+        ct state new counter accept \
+        comment "Trusted IPv6 ssh connections"
+    }
+
+}

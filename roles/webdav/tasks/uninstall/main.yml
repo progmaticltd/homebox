@@ -11,6 +11,3 @@
 
 - name: Remove the certificates
   ansible.builtin.include_tasks: uninstall/certificates.yml
-
-- name: Delete the DNS records
-  ansible.builtin.include_tasks: uninstall/dns.yml

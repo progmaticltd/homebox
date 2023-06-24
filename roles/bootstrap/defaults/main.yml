@@ -10,6 +10,7 @@ unwanted_packages:
 
 # These packages are absolutely required to run homebox
 base_packages:
+  - acl
   - apparmor-utils
   - apt-listchanges
   - apt-transport-https

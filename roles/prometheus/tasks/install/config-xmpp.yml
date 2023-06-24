@@ -21,6 +21,6 @@
     path: /etc/prometheus/xmpp-alerts.yml
     entity: prometheus
     etype: user
-    permission: r
+    permissions: r
     state: present
   tags: xmpp

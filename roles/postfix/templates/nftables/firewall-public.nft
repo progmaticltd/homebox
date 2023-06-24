@@ -1,0 +1,26 @@
+#!/usr/sbin/nft -f
+
+table inet filter {
+
+    chain input {
+
+        tcp dport smtp \
+        ct state new counter accept \
+        comment "Email transfer agent (smtp)"
+
+        tcp dport { submission, submissions } \
+        ct state new counter accept \
+        comment "Email submission(s)"
+
+    }
+
+    chain output {
+
+        meta skuid { postfix, root } \
+        tcp dport smtp \
+        ct state new counter accept \
+        comment "Outgoing mail"
+
+    }
+
+}

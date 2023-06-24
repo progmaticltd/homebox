@@ -7,7 +7,9 @@
         type: ec384
   ansible.builtin.include_role:
     name: certificates
-    apply: { tags: always }
+    tasks_from: install/main.yml
+    apply:
+      tags: always
   tags: certs
 
 - name: Check if the certificate has been updated

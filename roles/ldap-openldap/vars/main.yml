@@ -13,7 +13,6 @@ ldap_packages:
     - ldapscripts
     - ldapvi
     - libldap-common
-    - libpam-cracklib
     - libpam-pwquality
     - python3-ldap
     - python3-ldap3

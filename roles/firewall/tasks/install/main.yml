@@ -16,7 +16,7 @@
   tags: rules
 
 - name: Set the remote access firewall rules for public networks
-  ansible.builtin.include_tasks: install/public-access.yml
+  ansible.builtin.include_tasks: install/trusted-ips.yml
   tags: rules
 
 - name: Set the remote access firewall rules for private networks

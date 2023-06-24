@@ -4,13 +4,13 @@
 - name: Check if /tmp is a mount point
   register: tmp_mountpoint_cmd
   ansible.builtin.shell: mountpoint -q /tmp/
-  failed_when: false
+  ignore_errors: true
   changed_when: false
   args:
     warn: false
 
 - name: Mount /tmp as no exec by default
-  when: tmp_mountpoint_cmd.rc == 0
+  when: tmp_mountpoint_cmd is not failed
   register: fstab_file
   ansible.builtin.replace:
     path: /etc/fstab
@@ -35,12 +35,12 @@
   register: boot_mountpoint_cmd
   ansible.builtin.shell: mountpoint -q /boot/
   failed_when: false
-  changed_when: false
+  ignore_errors: true
   args:
     warn: false
 
 - name: Mount /boot as read only by default
-  when: boot_mountpoint_cmd.rc == 0
+  when: boot_mountpoint_cmd is not failed
   register: fstab_file
   ansible.builtin.replace:
     path: /etc/fstab
@@ -70,7 +70,7 @@
     warn: false
 
 - name: Mount /home as no exec by default
-  when: home_mountpoint_cmd.rc == 0
+  when: home_mountpoint_cmd.rc | default(1) == 0
   register: fstab_file
   ansible.builtin.replace:
     path: /etc/fstab

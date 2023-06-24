@@ -1,0 +1,50 @@
+#!/usr/sbin/nft -f
+
+# These rules are limiting new submission connections below a certain rate,
+# As soon as the authentication succeed, the source IP address is whitelisted
+# in the "trusted_list", which bypass these rules, in the input chain.
+
+table inet filter {
+
+    set banned_ipv4 {
+        type ipv4_addr . inet_service
+        flags dynamic,timeout
+        timeout {{ mail.autoban.period }}
+    }
+
+    set banned_ipv6 {
+        type ipv6_addr . inet_service
+        flags dynamic,timeout
+        timeout {{ mail.autoban.period }}
+    }
+
+    chain input {
+        # Limit new submission connections ala fail2ban
+        meta nfproto ipv4 tcp dport submissions ct state new,untracked \
+        limit rate over {{ mail.autoban.rate }} add @banned_ipv4 { ip saddr . submissions }
+
+        meta nfproto ipv6 tcp dport submissions ct state new,untracked \
+        limit rate over {{ mail.autoban.rate }} add @banned_ipv6 { ip6 saddr . submissions }
+
+        meta nfproto ipv4 tcp dport submission ct state new,untracked \
+        limit rate over {{ mail.autoban.rate }} add @banned_ipv4 { ip saddr . submission }
+
+        meta nfproto ipv6 tcp dport submission ct state new,untracked \
+        limit rate over {{ mail.autoban.rate }} add @banned_ipv6 { ip6 saddr . submission }
+
+        # Accept new connections by default
+        tcp dport smtp ct state new counter accept \
+        comment "Email transfer agent (smtp)"
+
+        tcp dport { submission, submissions } ct state new counter accept \
+        comment "Email submission(s)"
+    }
+
+
+    chain output {
+        meta skuid { postfix, root } \
+        tcp dport smtp \
+        ct state new counter accept \
+        comment "Outgoing mail"
+    }
+}

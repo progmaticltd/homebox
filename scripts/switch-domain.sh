@@ -35,3 +35,7 @@ fi
 
 ln -nsf "system-${domain}.yml" system.yml
 ln -nsf "hosts-${domain}.yml" hosts.yml
+
+# Display the output
+ls -l system.yml
+ls -l hosts.yml

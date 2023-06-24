@@ -1,0 +1,20 @@
+---
+
+- name: Deploy IMAP public access firewall rules
+  notify: Restart nftables
+  ansible.builtin.template:
+    src: nftables/imap-public.nft
+    dest: /etc/nftables/70-imap.nft
+  tags: firewall
+
+- name: Deploy POP3 public access firewall rules
+  when: mail.pop3
+  notify: Restart nftables
+  ansible.builtin.template:
+    src: nftables/pop3-public.nft
+    dest: /etc/nftables/70-pop3.nft
+  tags: firewall
+
+- name: Restart the firewall now if needed
+  ansible.builtin.meta: flush_handlers
+  tags: firewall
