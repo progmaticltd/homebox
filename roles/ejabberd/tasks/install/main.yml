@@ -41,3 +41,4 @@
 
 - name: Deply the firewall rules
   ansible.builtin.include_tasks: install/firewall.yml
+  tags: firewall

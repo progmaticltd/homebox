@@ -37,11 +37,11 @@
   ansible.builtin.template:
     src: rules/20-trusted-ips.nft
     dest: /etc/nftables/20-trusted-ips.nft
-  tags: rules
+  tags: rules, autoban
 
 - name: Banned IP addresses rules
   notify: Restart nftables
   ansible.builtin.template:
     src: rules/25-banned-ips.nft
     dest: /etc/nftables/25-banned-ips.nft
-  tags: rules
+  tags: rules, autoban

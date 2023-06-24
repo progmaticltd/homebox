@@ -367,6 +367,11 @@ ejabberd_default:
     normal: 1000
     fast: 50000
     proxyrate: 10240
+  # Autoban is a lighter alternative to fail2ban, using nftables
+  autoban:
+    active: false       # set to true to use nftables rate limiting and sets with timeout
+    rate: 10/minute     # above this rate, new connections are rejected
+    period: 1h          # period for banning IPs
 
 
 # Default posix groups

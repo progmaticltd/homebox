@@ -15,9 +15,10 @@
   ansible.builtin.include_tasks: install/generic-rules.yml
   tags: rules
 
-- name: Set the remote access firewall rules for public networks
-  ansible.builtin.include_tasks: install/trusted-ips.yml
-  tags: rules
+- name: Create sets to store trusted and banned networks
+  when: security.fail2ban
+  ansible.builtin.include_tasks: install/autoban.yml
+  tags: rules, autoban
 
 - name: Set the remote access firewall rules for private networks
   ansible.builtin.include_tasks: install/private-access.yml
