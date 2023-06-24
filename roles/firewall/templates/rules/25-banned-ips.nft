@@ -17,12 +17,12 @@ table inet filter {
     chain input {
 
         ip saddr . tcp dport @banned_ipv4 \
-        ct state new counter accept \
-        comment "Banned IPv4 ssh connections"
+        ct state new counter drop \
+        comment "Drop connections from banned IPs (v4)"
 
         ip6 saddr . tcp dport @banned_ipv6 \
-        ct state new counter accept \
-        comment "Banned IPv6 ssh connections"
+        ct state new counter drop \
+        comment "Drop connections from banned IPs (v6)"
     }
 
 }
