@@ -9,6 +9,9 @@ export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 # The default duration to use for whitelisting
 period="1d"
 
+# List of ports to whitelist
+ports="143 993 995 465 587 5222"
+
 # The firewall list to update
 fw_set=""
 
@@ -21,11 +24,11 @@ fi
 # Submission(s) authentication is now allowed from these IPs.
 # imap(S) and pop3s are whitelisted, bypassing subsequent firewall rules.
 if [ "$fw_set" != "" ]; then
-    nft add element inet filter "$fw_set" "{ $IP . 143 timeout $period }"  # imap
-    nft add element inet filter "$fw_set" "{ $IP . 993 timeout $period }"  # imaps
-    nft add element inet filter "$fw_set" "{ $IP . 995 timeout $period }"  # pop3s
-    nft add element inet filter "$fw_set" "{ $IP . 465 timeout $period }"  # submissions
-    nft add element inet filter "$fw_set" "{ $IP . 587 timeout $period }"  # submission
+
+    for port in $ports; do
+        nft add element inet filter "$fw_set" "{ $IP . $port timeout $period }"
+    done
+
 fi
 
 exec "$@"
