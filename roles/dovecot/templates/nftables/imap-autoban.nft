@@ -20,18 +20,21 @@ table inet filter {
 
     chain input {
 
-        # Limit new imap connections ala fail2ban
         meta nfproto ipv4 tcp dport imaps ct state new,untracked \
-        limit rate over {{ mail.autoban.rate }} add @banned_ipv4 { ip saddr . imaps }
+        limit rate over {{ mail.autoban.rate }} add @banned_ipv4 { ip saddr . imaps }  \
+        comment "Ban IPv4 addresses establishing imap connections above {{ mail.autoban.rate }}."
 
         meta nfproto ipv6 tcp dport imaps ct state new,untracked \
-        limit rate over {{ mail.autoban.rate }} add @banned_ipv6 { ip6 saddr . imaps }
+        limit rate over {{ mail.autoban.rate }} add @banned_ipv6 { ip6 saddr . imaps }  \
+        comment "Ban IPv4 addresses establishing imap connections above {{ mail.autoban.rate }}."
 
         meta nfproto ipv4 tcp dport imap ct state new,untracked \
-        limit rate over {{ mail.autoban.rate }} add @banned_ipv4 { ip saddr . imap }
+        limit rate over {{ mail.autoban.rate }} add @banned_ipv4 { ip saddr . imap }  \
+        comment "Ban IPv4 addresses establishing imap connections above {{ mail.autoban.rate }}."
 
         meta nfproto ipv6 tcp dport imap ct state new,untracked \
-        limit rate over {{ mail.autoban.rate }} add @banned_ipv6 { ip6 saddr . imap }
+        limit rate over {{ mail.autoban.rate }} add @banned_ipv6 { ip6 saddr . imap }  \
+        comment "Ban IPv4 addresses establishing imap connections above {{ mail.autoban.rate }}."
 
         # Accept new connections by default
         tcp dport { imap, imaps } ct state new counter accept \
