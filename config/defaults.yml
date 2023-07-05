@@ -245,7 +245,9 @@ security_default:
     active: false
 
   # Auto ban parameters
+  # autoban is a lighter alternative of fail2ban, based on nftables advanced features.
   autoban:
+    active: false
     rate: 1/minute
     duration: 10m
 

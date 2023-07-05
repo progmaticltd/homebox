@@ -16,7 +16,7 @@
   tags: rules
 
 - name: Create sets to store trusted and banned networks
-  when: security.fail2ban
+  when: security.autoban.active
   ansible.builtin.include_tasks: install/autoban.yml
   tags: rules, autoban
 

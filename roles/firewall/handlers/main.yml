@@ -15,3 +15,12 @@
   systemd:
     name: ssh
     state: restarted
+
+- name: Reload systemd
+  systemd:
+    daemon-reload: true
+
+- name: Enable nftables list service
+  systemd:
+    name: nftables-lists
+    enabled: true

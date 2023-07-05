@@ -1,0 +1,16 @@
+# Service to load and save nftables dynamic lists
+
+[Unit]
+Description=Firewall dynamic lists save and load
+Requisite=nftables.service
+After=nftables.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/nftables-lists load
+ExecReload=/usr/local/sbin/nftables-lists reload
+ExecStop=/usr/local/sbin/nftables-lists save
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

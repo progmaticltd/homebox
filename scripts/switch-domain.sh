@@ -20,6 +20,8 @@ if [ ! -d "$SCRIPT_PATH/../config" ]; then
     exit 1
 fi
 
+echo "Switching configuration file to domain '$domain'."
+
 cd "$SCRIPT_PATH/../config" || exit
 
 if [ ! -f "system-${domain}.yml" ]; then
@@ -36,6 +38,14 @@ fi
 ln -nsf "system-${domain}.yml" system.yml
 ln -nsf "hosts-${domain}.yml" hosts.yml
 
-# Display the output
-ls -l system.yml
-ls -l hosts.yml
+# Show IP address
+external_ip=$(sed -En 's/  external_ip: //p' system.yml)
+backup_ip=$(sed -En 's/  backup_ip: //p' system.yml)
+
+if [ ! -z "external_ip" ]; then
+    echo "External IP address: $external_ip"
+fi
+
+if [ ! -z "backup_ip" ]; then
+    echo "Backup IP address: $backup_ip"
+fi

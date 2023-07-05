@@ -2,3 +2,6 @@
 
 # Include all other rules
 include "/etc/nftables/*.nft"
+
+# Include all other rules
+include "/etc/nftables/*.nft"

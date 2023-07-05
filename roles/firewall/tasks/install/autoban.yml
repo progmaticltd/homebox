@@ -3,35 +3,6 @@
 # These tasks are deployinga specific list of “trusted” abd “banned” IP addresses,
 # dynamically updated by services like dovecot, postfix, suricata, etc.
 
-# - name: Get the external IP address
-#   delegate_to: localhost
-#   register: ext_ip_api_response
-#   ansible.builtin.uri:
-#     url: https://api.ipify.org/
-#     return_content: true
-#   tags: rules
-
-# - name: Store the public IP
-#   ansible.builtin.set_fact:
-#     public_ip4: '{{ ext_ip_api_response.content }}'
-#   tags: rules
-
-# # If IPv6 is disabled on the local machine,
-# # this task will fail, and we will just skip
-# # the next firewall update.
-# - name: Get the external IP address (IPv6)
-#   delegate_to: localhost
-#   register: ext_ip6_api_response
-#   ansible.builtin.uri:
-#     url: https://api64.ipify.org/
-#     return_content: true
-#   tags: rules
-
-# - name: Store the public IP
-#   ansible.builtin.set_fact:
-#     public_ip6: '{{ ext_ip6_api_response.content }}'
-#   tags: rules
-
 - name: Truted IP addresses rules
   notify: Restart nftables
   ansible.builtin.template:
@@ -44,4 +15,20 @@
   ansible.builtin.template:
     src: rules/25-banned-ips.nft
     dest: /etc/nftables/25-banned-ips.nft
+  tags: rules, autoban
+
+- name: deploy the save/load script
+  ansible.builtin.copy:
+    src: nftables-lists.sh
+    dest: /usr/local/sbin/nftables-lists
+    mode: 0700
+  tags: rules, autoban
+
+- name: deploy the systemd service
+  notify:
+    - Reload systemd
+    - Enable nftables list service
+  ansible.builtin.copy:
+    src: nftables-lists.service
+    dest: /etc/systemd/system/nftables-lists.service
   tags: rules, autoban
