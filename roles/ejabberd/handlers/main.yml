@@ -10,12 +10,6 @@
     state: restarted
     no_block: true
 
-- name: Restart fail2ban
-  systemd:
-    name: fail2ban
-    state: restarted
-    no_block: true
-
 - name: Restart ejabberd
   systemd:
     name: ejabberd

@@ -12,6 +12,10 @@
 - name: Create an administration user
   ansible.builtin.include_tasks: install/admin.yml
 
+- name: DNS settings update
+  ansible.builtin.include_tasks: install/dns.yml
+  tags: dns
+
 - name: Set limits for users
   ansible.builtin.include_tasks: install/set-limits.yml
 

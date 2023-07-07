@@ -1,9 +1,5 @@
 ---
 
-- name: Remove fail2ban
-  when: security.fail2ban
-  ansible.builtin.include_tasks: uninstall/fail2ban.yml
-
 - name: Install the required packages
   ansible.builtin.include_tasks: uninstall/packages.yml
 

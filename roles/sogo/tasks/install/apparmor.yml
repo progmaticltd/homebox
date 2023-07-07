@@ -1,7 +1,6 @@
 ---
 
 - name: Install nginx AppArmor profile
-  tags: security, apparmor
   notify:
     - Activate AppArmor profile
     - Restart AppArmor service
@@ -41,7 +40,6 @@
     - Activate AppArmor profile
     - Restart AppArmor service
     - Restart nginx
-  tags: security, apparmor
   ansible.builtin.lineinfile:
     path: /etc/apparmor.d/usr.sbin.nginx
     line: '  #include <local/nginx-sogo>'

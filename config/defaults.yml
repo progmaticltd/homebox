@@ -135,17 +135,9 @@ mail_default:
   #############################################################################
   # Autoban is a lighter alternative to fail2ban, using nftables
   autoban:
-    active: false       #
-    rate: 10/minute     # above this rate, IMAP and SMTP connections are rejected
-    period: 1h          # period for banning IPs
-
-
-  #############################################################################
-  # Fail2ban parameters
-  fail2ban:
-    maxretry: 10
-    find_time: 24h
-    ban_time: 1h
+    active: true        #
+    rate: 10/minute     # above this rate, connections are rejected
+    period: 1d          # period for banning IPs
 
   #############################################################################
   # mta-sts (RFC 8461)
@@ -154,8 +146,8 @@ mail_default:
     mode: enforce      # You can also use testing. When system.dev, the mode is
                        # set to testing automatically
   #############################################################################
-  # List of IP addresses and authorised domains to send emails; empty by default
-  extra_senders: []
+  # Additional spf records authorised domains to send emails; empty by default.
+  extra_senders: [ ]
   # extra_senders:
   #   - 'ip4:212.27.32.5'
   #   - 'ip6:fe80::2e0:70ff:fe63:f069/64'
@@ -240,16 +232,12 @@ security_default:
     active: true
     time: 00:00
 
-  # Install fail2ban or not
-  fail2ban:
-    active: false
-
   # Auto ban parameters
   # autoban is a lighter alternative of fail2ban, based on nftables advanced features.
   autoban:
-    active: false
-    rate: 1/minute
-    duration: 10m
+    active: true
+    rate: 10/minute
+    period: 2h
 
   # various options when luks is installed
   luks:
@@ -342,12 +330,6 @@ dmarc_default:
 ejabberd_default:
   install: true
   allow_contrib_modules: false
-  # Ban clients after too much authentication failures (1h after 10 attempts)
-  fail2ban:
-    active: true
-    maxretry: 5
-    find_time: 24h
-    ban_time: 1h
   # Server-to-server communication
   s2s:
     active: true
@@ -369,11 +351,6 @@ ejabberd_default:
     normal: 1000
     fast: 50000
     proxyrate: 10240
-  # Autoban is a lighter alternative to fail2ban, using nftables
-  autoban:
-    active: false       # set to true to use nftables rate limiting and sets with timeout
-    rate: 10/minute     # above this rate, new connections are rejected
-    period: 1h          # period for banning IPs
 
 
 # Default posix groups

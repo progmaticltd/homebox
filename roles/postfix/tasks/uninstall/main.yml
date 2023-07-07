@@ -15,9 +15,6 @@
 - name: Remove AppArmor configuration
   ansible.builtin.include_tasks: uninstall/apparmor.yml
 
-- name: Remove Fail2ban configuration
-  ansible.builtin.include_tasks: uninstall/fail2ban.yml
-
 - name: Remove Prometheus alerts
   tags: prometheus
   ansible.builtin.include_tasks: uninstall/prometheus.yml

@@ -12,7 +12,7 @@
   tags: logging
 
 - name: Set the generic firewall rules
-  ansible.builtin.include_tasks: install/generic-rules.yml
+  ansible.builtin.include_tasks: install/rules.yml
   tags: rules
 
 - name: Create sets to store trusted and banned networks
@@ -23,11 +23,6 @@
 - name: Set the remote access firewall rules for private networks
   ansible.builtin.include_tasks: install/private-access.yml
   tags: rules
-
-- name: Install and configure fail2ban
-  when: security.fail2ban
-  ansible.builtin.include_tasks: install/fail2ban.yml
-  tags: f2b, scripts
 
 - name: Configure SSH
   ansible.builtin.include_tasks: install/ssh-config.yml

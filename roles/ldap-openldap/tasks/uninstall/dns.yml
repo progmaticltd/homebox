@@ -8,4 +8,4 @@
         type: cname
   ansible.builtin.include_role:
     name: dns-record
-    tasks_from: ../uninstall/main.yml
+    tasks_from: uninstall/main.yml

@@ -13,10 +13,5 @@
   ansible.builtin.include_tasks: uninstall/prometheus.yml
   tags: prometheus
 
-- name: Configure fail2ban for ejabberd
-  when: security.fail2ban.active
-  ansible.builtin.include_tasks: uninstall/fail2ban.yml
-  tags: f2b
-
 - name: Remove DNS records
   ansible.builtin.include_tasks: uninstall/dns.yml

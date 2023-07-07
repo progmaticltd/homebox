@@ -46,14 +46,6 @@ server to connect, and let you enter the passphrase.
 All the daemons are carefully configured with an AppArmor profile, in enforce mode. This protects you against remote
 intrusion and 0-day vulnerabilities as well.
 
-## Fail2ban integration
-
-Fail2ban can be integrated and configured, to automatically blacklist IP addresses used by spammers to attack your
-server. It makes this kind of attacks inefficient, and saves your bandwidth too. The duration of jail is customisable
-for jabber and email services.
-
-By default, nftables dynamic set is used to ban SSH bots automatically.
-
 ## LDAP Authentication
 
 One password per user, for all the services. All the user accounts are saved in the LDAP database, using the OpenLDAP

@@ -6,11 +6,6 @@
     state: restarted
     enabled: true
 
-- name: Restart fail2ban
-  systemd:
-    name: fail2ban
-    state: restarted
-
 - name: Restart SSH
   systemd:
     name: ssh

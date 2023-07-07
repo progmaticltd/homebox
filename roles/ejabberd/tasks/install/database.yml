@@ -16,7 +16,19 @@
   tags: postgres
 
 # See https://docs.ejabberd.im/admin/configuration/database/
-- name: Create and initialise the database
+- name: Create the database
+  register: database
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    encoding: utf8
+    name: ejabberd
+    owner: ejabberd
+    state: present
+  tags: postgres
+
+- name: Initialise the database
+  when: database.changed
   become: true
   become_user: postgres
   community.postgresql.postgresql_db:

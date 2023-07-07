@@ -1,8 +1,0 @@
----
-
-- name: Remove fail2ban jail configuration
-  notify: Restart fail2ban
-  ansible.builtin.file:
-    path: /etc/fail2ban/jail.d/ejabberd.conf
-    state: absent
-  tags: f2b

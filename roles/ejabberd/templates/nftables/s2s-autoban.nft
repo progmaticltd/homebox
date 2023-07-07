@@ -7,13 +7,13 @@ table inet filter {
     set banned_ipv4 {
         type ipv4_addr . inet_service
         flags dynamic,timeout
-        timeout {{ ejabberd.autoban.period }}
+        timeout {{ security.autoban.period }}
     }
 
     set banned_ipv6 {
         type ipv6_addr . inet_service
         flags dynamic,timeout
-        timeout {{ ejabberd.autoban.period }}
+        timeout {{ security.autoban.period }}
     }
 
     chain input {

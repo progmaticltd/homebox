@@ -9,8 +9,10 @@
       - name: vjud
       - name: pubsub
       - name: proxy
+      - name: xmpp
   ansible.builtin.include_role:
     name: certificates
+    tasks_from: install/main.yml
     apply:
       tags: always
   tags: certs

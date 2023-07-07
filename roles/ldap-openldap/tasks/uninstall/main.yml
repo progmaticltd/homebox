@@ -8,3 +8,8 @@
 
 - name: Remove the configuration and database
   ansible.builtin.include_tasks: uninstall/cleanup.yml
+
+- name: Remove prometheus alerts
+  when: prometheus.install
+  ansible.builtin.include_tasks: uninstall/prometheus.yml
+  tags: prometheus

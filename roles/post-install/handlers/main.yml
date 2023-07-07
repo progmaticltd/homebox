@@ -19,3 +19,8 @@
     name: dovecot
     state: restarted
     no_block: true
+
+- name: Restart unbound
+  systemd:
+    name: unbound
+    state: restarted

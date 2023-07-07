@@ -3,25 +3,10 @@
 # These rules are included in numeric order,
 # to generate the final firewall rules set.
 rule_files:
-  - name: 00-init
-    include: true
-  - name: 10-base
-    include: true
-  - name: 10-outbound
-    include: true
-  - name: 20-proxy
-    include: true
-  - name: 30-ssh-open
-    include: '{{ security.fail2ban }}'
-  - name: 30-ssh-autoban
-    include: '{{ not security.fail2ban }}'
-  - name: 40-in-dns
-    include: true
-  - name: 90-close
-    include: true
-
-
-f2b_packages:
-  - fail2ban
-  - jq
-  - ipcalc-ng
+  - 00-init
+  - 10-base
+  - 10-outbound
+  - 20-proxy
+  - 30-ssh-autoban
+  - 40-in-dns
+  - 90-close

@@ -9,20 +9,10 @@
 - name: Copy the main rules files
   notify: Restart nftables
   ansible.builtin.template:
-    src: rules/{{ file.name }}.nft
-    dest: /etc/nftables/{{ file.name }}.nft
+    src: rules/{{ file }}.nft
+    dest: /etc/nftables/{{ file }}.nft
     mode: 0600
-  loop: '{{ rule_files | selectattr("include", "equalto", true) | list }}'
-  loop_control:
-    loop_var: file
-  tags: rules
-
-- name: Remove the excluded files
-  notify: Restart nftables
-  ansible.builtin.file:
-    path: /etc/nftables/{{ file.name }}.nft
-    state: absent
-  loop: '{{ rule_files | selectattr("include", "equalto", false) | list }}'
+  loop: '{{ rule_files }}'
   loop_control:
     loop_var: file
   tags: rules

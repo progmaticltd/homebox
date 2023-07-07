@@ -34,11 +34,6 @@
   ansible.builtin.include_tasks: install/prometheus.yml
   tags: prometheus
 
-- name: Configure fail2ban for ejabberd
-  when: security.fail2ban.active
-  ansible.builtin.include_tasks: install/fail2ban.yml
-  tags: f2b
-
 - name: Deply the firewall rules
   ansible.builtin.include_tasks: install/firewall.yml
   tags: firewall

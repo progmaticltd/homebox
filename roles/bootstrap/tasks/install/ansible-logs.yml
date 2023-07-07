@@ -1,5 +1,10 @@
 ---
 
+- name: Ensure rsyslog is installed
+  apt:
+    name: rsyslog
+    state: present
+
 - name: Deploy the system log configuration
   register: rsyslog_config
   ansible.builtin.template:

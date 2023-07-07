@@ -130,7 +130,6 @@ listen:
 
 ##
 ## Authentication using LDAP
-##
 auth_method: ldap
 ldap_servers:
   - 'ldap.{{ network.domain }}'
