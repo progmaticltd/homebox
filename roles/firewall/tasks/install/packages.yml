@@ -21,6 +21,6 @@
 
 - name: Restart nftables now
   when: nftables_pkg.changed
-  systemd:
+  ansible.builtin.systemd:
     name: nftables
     state: restarted

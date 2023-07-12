@@ -80,6 +80,6 @@
 
 - name: Restart LDAP now if needed
   when: ldap_conf.changed or ldap_def_conf.changed
-  systemd:
+  ansible.builtin.systemd:
     service: slapd
     state: restarted

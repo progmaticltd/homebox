@@ -1,6 +1,6 @@
 ---
 
 - name: Restart the ldap stack
-  systemd:
+  ansible.builtin.systemd:
     name: slapd
     state: restarted

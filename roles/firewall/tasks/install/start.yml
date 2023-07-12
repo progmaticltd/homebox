@@ -6,7 +6,7 @@
     state: absent
 
 - name: Ensure the nftables service is enabled
-  systemd:
+  ansible.builtin.systemd:
     name: nftables
     daemon_reload: true
     enabled: true

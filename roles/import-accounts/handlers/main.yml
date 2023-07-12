@@ -2,7 +2,7 @@
 
 - name: Restart dovecot
   tags: dovecot
-  systemd:
+  ansible.builtin.systemd:
     name: dovecot
     state: restarted
     no_block: true

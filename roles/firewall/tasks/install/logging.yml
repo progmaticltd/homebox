@@ -29,7 +29,7 @@
 - name: Restart rsyslog now
   tags: logging
   when: rsyslog_config.changed
-  systemd:
+  ansible.builtin.systemd:
     name: rsyslog
     state: restarted
 

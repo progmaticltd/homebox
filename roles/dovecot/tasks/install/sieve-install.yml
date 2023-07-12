@@ -17,7 +17,7 @@
   tags: sieve
 
 - name: Restart dovecot to reload sieve plugins
-  systemd:
+  ansible.builtin.systemd:
     name: dovecot
     state: restarted
   tags: sieve

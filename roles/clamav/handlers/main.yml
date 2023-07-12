@@ -1,7 +1,7 @@
 ---
 
 - name: Restart clamav services
-  systemd:
+  ansible.builtin.systemd:
     name: '{{ service }}'
     state: restarted
     enabled: yes

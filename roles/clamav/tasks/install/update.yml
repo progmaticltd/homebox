@@ -32,7 +32,7 @@
 
 - name: Start clamav service
   register: clamav_daemon
-  systemd:
+  ansible.builtin.systemd:
     name: clamav-daemon
     state: started
     no_block: true

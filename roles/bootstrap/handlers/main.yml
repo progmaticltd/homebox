@@ -1,16 +1,16 @@
 ---
 
 - name: Restart tinyproxy
-  systemd:
+  ansible.builtin.systemd:
     name: tinyproxy
     state: restarted
 
 - name: Restart unbound
-  systemd:
+  ansible.builtin.systemd:
     name: unbound
     state: restarted
 
 - name: Restart unattended-upgrades
-  systemd:
+  ansible.builtin.systemd:
     name: unattended-upgrades
     state: restarted

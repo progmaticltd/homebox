@@ -19,7 +19,7 @@
       ansible.builtin.shell: nginx -t
       changed_when: false
     - name: Restart nginx
-      systemd:
+      ansible.builtin.systemd:
         name: nginx
         state: restarted
         no_block: true

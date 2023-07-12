@@ -1,14 +1,14 @@
 ---
 
 - name: Restart nginx server
-  systemd:
+  ansible.builtin.systemd:
     name: nginx
     state: restarted
     no_block: true
 
 - name: Restart AppArmor service
   tags: apparmor
-  systemd:
+  ansible.builtin.systemd:
     name: apparmor
     state: restarted
     no_block: true

@@ -5,24 +5,24 @@
   ansible.builtin.shell: update-ca-certificates --verbose
 
 - name: Restart tinyproxy
-  systemd:
+  ansible.builtin.systemd:
     name: tinyproxy
     state: restarted
 
 - name: Restart AppArmor
-  systemd:
+  ansible.builtin.systemd:
     name: apparmor
     state: restarted
 
 - name: Restart cert-renew timer
-  systemd:
+  ansible.builtin.systemd:
     name: cert-renew.timer
     state: restarted
     enabled: true
     daemon_reload: true
 
 - name: Restart cert-renew service
-  systemd:
+  ansible.builtin.systemd:
     name: cert-renew.timer
     enabled: true
     daemon_reload: true

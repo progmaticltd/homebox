@@ -4,7 +4,7 @@
   ansible.builtin.command: aa-enforce usr.sbin.nginx
 
 - name: Restart AppArmor service
-  systemd:
+  ansible.builtin.systemd:
     name: apparmor
     state: restarted
     no_block: true
@@ -14,7 +14,7 @@
   changed_when: false
 
 - name: Restart nginx
-  systemd:
+  ansible.builtin.systemd:
     name: nginx
     state: restarted
     no_block: true

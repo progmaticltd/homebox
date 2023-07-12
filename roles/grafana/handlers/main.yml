@@ -1,13 +1,13 @@
 ---
 
 - name: Restart tinyproxy
-  systemd:
+  ansible.builtin.systemd:
     name: tinyproxy
     state: restarted
     no_block: true
 
 - name: Restart Grafana server
-  systemd:
+  ansible.builtin.systemd:
     name: grafana-server
     state: restarted
 
@@ -16,6 +16,6 @@
   changed_when: false
 
 - name: Restart nginx
-  systemd:
+  ansible.builtin.systemd:
     name: nginx
     state: restarted

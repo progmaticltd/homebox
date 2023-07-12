@@ -13,7 +13,7 @@
 
 - name: Restart tinyproxy if needed
   when: tinyproxy_config.changed
-  systemd:
+  ansible.builtin.systemd:
     name: tinyproxy
     state: restarted
   tags: monitor, python

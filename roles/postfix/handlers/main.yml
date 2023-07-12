@@ -2,7 +2,7 @@
 
 - name: Restart postfix
   tags: postfix
-  systemd:
+  ansible.builtin.systemd:
     name: '{{ service }}'
     state: restarted
     no_block: true
@@ -13,25 +13,25 @@
     loop_var: service
 
 - name: Restart AppArmor service
-  systemd:
+  ansible.builtin.systemd:
     name: apparmor
     state: restarted
     no_block: true
 
 - name: Restart fail2ban
-  systemd:
+  ansible.builtin.systemd:
     name: fail2ban
     state: restarted
     no_block: true
 
 - name: Restart firewall
-  systemd:
+  ansible.builtin.systemd:
     name: nftables
     state: restarted
     no_block: true
 
 - name: Restart rsyslog
-  systemd:
+  ansible.builtin.systemd:
     name: rsyslog
     state: restarted
     no_block: true

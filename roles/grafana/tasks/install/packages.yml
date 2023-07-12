@@ -22,7 +22,7 @@
 
 - name: Restart Grafana server
   when: package_status.changed
-  systemd:
+  ansible.builtin.systemd:
     name: grafana-server
     state: started
     enabled: true

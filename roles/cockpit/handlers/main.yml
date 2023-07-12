@@ -5,13 +5,13 @@
   changed_when: false
 
 - name: Restart nginx
-  systemd:
+  ansible.builtin.systemd:
     name: nginx
     state: restarted
     no_block: true
 
 - name: Restart AppArmor service
-  systemd:
+  ansible.builtin.systemd:
     name: apparmor
     state: restarted
     no_block: true

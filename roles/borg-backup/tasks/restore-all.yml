@@ -12,7 +12,7 @@
 
 - name: Enable the services to restore backup
   notify: Start restore services
-  systemd:
+  ansible.builtin.systemd:
     name: backup-restore-{{ location.name }}
     enabled: '{{ location.restore | default(false) }}'
   loop: '{{ backup.locations }}'

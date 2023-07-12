@@ -8,7 +8,7 @@
     state: present
 
 - name: Stop the prometheus services
-  systemd:
+  ansible.builtin.systemd:
     name: '{{ service }}'
     state: stopped
   loop:
@@ -40,7 +40,7 @@
       - '--delete'
 
 - name: Start the prometheus services
-  systemd:
+  ansible.builtin.systemd:
     name: '{{ service }}'
     state: stopped
   loop:

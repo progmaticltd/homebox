@@ -1,26 +1,26 @@
 ---
 
 - name: Restart SSH
-  systemd:
+  ansible.builtin.systemd:
     name: ssh
     state: restarted
     no_block: true
 
 - name: Restart Postfix
   when: postfix_active
-  systemd:
+  ansible.builtin.systemd:
     name: postfix
     state: restarted
     no_block: true
 
 - name: Restart Dovecot
   when: dovecot_active
-  systemd:
+  ansible.builtin.systemd:
     name: dovecot
     state: restarted
     no_block: true
 
 - name: Restart unbound
-  systemd:
+  ansible.builtin.systemd:
     name: unbound
     state: restarted

@@ -1,7 +1,7 @@
 ---
 
 - name: Stop PowerDNS
-  systemd:
+  ansible.builtin.systemd:
     name: pdns
     state: stopped
   ignore_errors: true

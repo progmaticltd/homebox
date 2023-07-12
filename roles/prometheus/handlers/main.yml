@@ -4,7 +4,7 @@
   ansible.builtin.command: 'aa-enforce usr.sbin.nginx'
 
 - name: Restart AppArmor service
-  systemd:
+  ansible.builtin.systemd:
     name: apparmor
     state: restarted
     no_block: true
@@ -14,37 +14,37 @@
   changed_when: false
 
 - name: Restart nginx
-  systemd:
+  ansible.builtin.systemd:
     name: nginx
     state: restarted
     no_block: true
 
 - name: Restart Prometheus
-  systemd:
+  ansible.builtin.systemd:
     name: prometheus
     state: restarted
     no_block: true
 
 - name: Restart Prometheus node exporter
-  systemd:
+  ansible.builtin.systemd:
     name: prometheus-node-exporter
     state: restarted
     no_block: true
 
 - name: Restart Prometheus blackbox exporter
-  systemd:
+  ansible.builtin.systemd:
     name: prometheus-blackbox-exporter
     state: restarted
     no_block: true
 
 - name: Restart Prometheus alert manager
-  systemd:
+  ansible.builtin.systemd:
     name: prometheus-alertmanager
     state: restarted
     no_block: true
 
 - name: Restart Prometheus XMPP alerts
-  systemd:
+  ansible.builtin.systemd:
     name: prometheus-xmpp-alerts
     state: restarted
     no_block: true

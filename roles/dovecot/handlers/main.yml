@@ -2,25 +2,25 @@
 
 - name: Restart dovecot
   tags: dovecot
-  systemd:
+  ansible.builtin.systemd:
     name: dovecot
     state: restarted
     no_block: true
 
 - name: Restart AppArmor service
-  systemd:
+  ansible.builtin.systemd:
     name: apparmor
     state: restarted
     no_block: true
 
 - name: Restart nftables
-  systemd:
+  ansible.builtin.systemd:
     name: nftables
     state: restarted
     no_block: true
 
 - name: Restart rsyslog
-  systemd:
+  ansible.builtin.systemd:
     name: rsyslog
     state: restarted
     no_block: true

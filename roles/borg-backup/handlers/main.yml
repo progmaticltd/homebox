@@ -1,23 +1,23 @@
 ---
 
 - name: Reload Systemd
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: yes
 
 - name: Restart Systemd local fs target
-  systemd:
+  ansible.builtin.systemd:
     name: local-fs.target
     state: restarted
     no_block: true
 
 - name: Restart memcached
-  systemd:
+  ansible.builtin.systemd:
     name: memcached
     state: restarted
     no_block: true
 
 - name: Start restore services
-  systemd:
+  ansible.builtin.systemd:
     name: backup-restore-{{ location.name }}
     state: '{{ location.restore | ternary("started", omit) }}'
     no_block: true

@@ -15,7 +15,7 @@
 
 - name: Reload the proxy now if needed
   when: proxy_conf.changed
-  systemd:
+  ansible.builtin.systemd:
     name: tinyproxy
     state: restarted
   tags: proxy

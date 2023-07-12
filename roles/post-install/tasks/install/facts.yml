@@ -2,12 +2,12 @@
 
 - name: Check if postfix is active
   register: postfix_service
-  systemd:
+  ansible.builtin.systemd:
     name: postfix
 
 - name: Check if dovecot is active
   register: dovecot_service
-  systemd:
+  ansible.builtin.systemd:
     name: dovecot
 
 - name: Store the facts

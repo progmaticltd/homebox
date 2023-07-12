@@ -1,20 +1,20 @@
 ---
 
 - name: Restart opendkim
-  systemd:
+  ansible.builtin.systemd:
     name: opendkim
     state: restarted
     enabled: true
     no_block: true
 
 - name: Restart AppArmor service
-  systemd:
+  ansible.builtin.systemd:
     name: apparmor
     state: restarted
     no_block: true
 
 - name: Restart postfix
-  systemd:
+  ansible.builtin.systemd:
     name: postfix
     state: restarted
     no_block: true

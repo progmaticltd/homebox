@@ -104,7 +104,7 @@
 
 - name: Enable the mount service
   tags: systemd
-  systemd:
+  ansible.builtin.systemd:
     name: 'mnt-backup-{{ location.name }}.mount'
     enabled: true
     state: started
@@ -118,7 +118,7 @@
 
 - name: Enable the automount service
   tags: systemd
-  systemd:
+  ansible.builtin.systemd:
     name: 'mnt-backup-{{ location.name }}.automount'
     enabled: true
     state: restarted

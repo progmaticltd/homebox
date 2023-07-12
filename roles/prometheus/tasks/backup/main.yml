@@ -8,7 +8,7 @@
 #     use_proxy: false
 
 - name: Stop the prometheus services
-  systemd:
+  ansible.builtin.systemd:
     name: '{{ service }}'
     state: stopped
   loop:
@@ -25,7 +25,7 @@
     archive: true
 
 - name: Start the prometheus services
-  systemd:
+  ansible.builtin.systemd:
     name: '{{ service }}'
     state: stopped
   loop:

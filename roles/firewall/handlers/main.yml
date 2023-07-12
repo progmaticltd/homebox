@@ -1,21 +1,21 @@
 ---
 
 - name: Restart nftables
-  systemd:
+  ansible.builtin.systemd:
     name: nftables
     state: restarted
     enabled: true
 
 - name: Restart SSH
-  systemd:
+  ansible.builtin.systemd:
     name: ssh
     state: restarted
 
 - name: Reload systemd
-  systemd:
+  ansible.builtin.systemd:
     daemon-reload: true
 
 - name: Enable nftables list service
-  systemd:
+  ansible.builtin.systemd:
     name: nftables-lists
     enabled: true

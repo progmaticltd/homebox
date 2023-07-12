@@ -103,7 +103,7 @@
 - name: Enable the automount service
   notify: Reload Systemd
   tags: systemd
-  systemd:
+  ansible.builtin.systemd:
     name: 'mnt-backup-{{ location.name }}.automount'
     enabled: true
     state: started
@@ -111,6 +111,6 @@
 - name: Enable the mount service
   notify: Reload Systemd
   tags: systemd
-  systemd:
+  ansible.builtin.systemd:
     name: 'mnt-backup-{{ location.name }}.mount'
     enabled: true

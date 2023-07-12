@@ -2,7 +2,7 @@
 
 - name: Stop the grafana server
   tags: apt
-  systemd:
+  ansible.builtin.systemd:
     name: grafana-server
     state: stopped
   ignore_errors: true
