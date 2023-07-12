@@ -6,7 +6,7 @@
   ansible.builtin.template:
     src: nftables/firewall-public.nft
     dest: /etc/nftables/60-postfix.nft
-    mode: 0600
+    mode: '0600'
   tags: firewall
 
 - name: Copy the firewall configuration file
@@ -15,5 +15,5 @@
   ansible.builtin.template:
     src: nftables/firewall-autoban.nft
     dest: /etc/nftables/60-postfix.nft
-    mode: 0600
+    mode: '0600'
   tags: firewall

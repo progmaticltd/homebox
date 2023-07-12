@@ -4,6 +4,6 @@
   ansible.builtin.fetch:
     src: /usr/local/share/ca-certificates/homebox-temp-ca.crt
     dest: /tmp/homebox-temp-ca.crt
-    mode: 0644
+    mode: '0644'
     flat: true
   tags: certs

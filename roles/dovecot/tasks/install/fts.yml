@@ -12,13 +12,13 @@
   ansible.builtin.copy:
     src: fts/decode2text
     dest: /usr/local/bin/decode2text
-    mode: 0755
+    mode: '0755'
   tags: fts, scripts
 
 - name: Make sure the log file exist
   ansible.builtin.file:
     path: /var/log/decode2text.log
-    mode: 0644
+    mode: '0644'
     owner: dovecot
     group: dovecot
     state: touch

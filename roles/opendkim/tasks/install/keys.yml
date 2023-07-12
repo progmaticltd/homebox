@@ -7,7 +7,7 @@
     state: directory
     owner: opendkim
     group: opendkim
-    mode: 0700
+    mode: '0700'
 
 - name: Run the command to create the keys
   notify: Restart opendkim

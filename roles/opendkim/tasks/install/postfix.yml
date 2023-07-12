@@ -6,7 +6,7 @@
     state: directory
     owner: opendkim
     group: opendkim
-    mode: 0750
+    mode: '0750'
 
 - name: Add postfix to opendkim group
   notify: Restart postfix

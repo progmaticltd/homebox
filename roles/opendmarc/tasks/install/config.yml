@@ -4,7 +4,7 @@
   ansible.builtin.file:
     path: /etc/opendmarc
     state: directory
-    mode: 0700
+    mode: '0700'
 
 - name: use socket in postfix chroot directory
   ansible.builtin.replace:

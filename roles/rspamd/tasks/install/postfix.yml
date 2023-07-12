@@ -6,7 +6,7 @@
     state: directory
     owner: _rspamd
     group: _rspamd
-    mode: 0750
+    mode: '0750'
 
 - name: Add postfix to rspamd group
   notify: Restart postfix

@@ -47,7 +47,7 @@
   ansible.builtin.copy:
     src: '{{ hook.script }}.sh'
     dest: '/etc/lego/hooks/{{ hook.sub }}.{{ network.domain }}/{{ hook.script }}'
-    mode: 0700
+    mode: '0700'
   loop:
     - sub: conference
       script: renew-xmpp-cert

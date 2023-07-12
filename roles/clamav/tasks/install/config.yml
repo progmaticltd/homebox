@@ -20,7 +20,7 @@
     state: directory
     owner: clamsmtp
     group: clamsmtp
-    mode: 0700
+    mode: '0700'
   tags: config
 
 - name: Create the logs folder for clamsmtp
@@ -28,6 +28,6 @@
     path: /var/log/clamsmtp
     owner: clamsmtp
     group: clamsmtp
-    mode: 0700
+    mode: '0700'
     state: directory
   tags: config

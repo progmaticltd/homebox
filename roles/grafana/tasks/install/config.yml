@@ -20,7 +20,7 @@
   ansible.builtin.file:
     path: /var/lib/grafana/plugins
     state: directory
-    mode: 0700
+    mode: '0700'
     owner: grafana
     group: grafana
   tags: config
@@ -30,7 +30,7 @@
   ansible.builtin.template:
     src: grafana.ini
     dest: /etc/grafana/grafana.ini
-    mode: 0640
+    mode: '0640'
     owner: root
     group: grafana
   tags: config
@@ -40,7 +40,7 @@
   ansible.builtin.template:
     src: ldap.toml
     dest: /etc/grafana/ldap.toml
-    mode: 0640
+    mode: '0640'
     owner: root
     group: grafana
   tags: config

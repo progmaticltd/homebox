@@ -25,12 +25,12 @@
   ansible.builtin.file:
     dest: /etc/lego/hooks/openpgpkey.{{ network.domain }}
     state: directory
-    mode: 0700
+    mode: '0700'
   tags: certs
 
 - name: Copy the certificate update hook
   ansible.builtin.copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/openpgpkey.{{ network.domain }}/renew-cert.sh
-    mode: 0700
+    mode: '0700'
   tags: certs

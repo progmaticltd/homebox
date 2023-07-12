@@ -25,7 +25,7 @@
   ansible.builtin.file:
     path: /etc/lego/hooks/{{ filename }}/
     state: directory
-    mode: 0700
+    mode: '0700'
   tags: certs
 
 - name: Check if the certificate exists
@@ -124,5 +124,5 @@
     path: /etc/lego/monitor.list
     line: '{{ certificate.monitor }}'
     create: true
-    mode: 0600
+    mode: '0600'
   tags: certs

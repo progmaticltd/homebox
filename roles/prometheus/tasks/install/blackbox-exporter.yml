@@ -17,7 +17,7 @@
   ansible.builtin.template:
     src: defaults-blackbox-exporter.yml
     dest: /etc/prometheus/prometheus-blackbox-exporter.yml
-    mode: 0644
+    mode: '0644'
     variable_start_string: '[['
     variable_end_string: ']]'
     block_start_string: '[%'

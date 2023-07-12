@@ -8,7 +8,7 @@
   ansible.builtin.copy:
     src: check/clam.exe
     dest: /tmp/{{ test_filename }}
-    mode: 0600
+    mode: '0600'
 
 - name: Check if the antivirus is working
   register: clamscan_cmd
@@ -23,4 +23,4 @@
   ansible.builtin.copy:
     src: check/clam.exe
     dest: /tmp/{{ test_filename }}
-    mode: 0600
+    mode: '0600'

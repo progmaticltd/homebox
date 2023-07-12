@@ -18,7 +18,7 @@
     dest: /var/www/autodiscover/autodiscover/autodiscover.xml
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   tags: nginx
 
 - name: Create the autodiscover site
@@ -31,7 +31,7 @@
     dest: /etc/nginx/sites-available/autodiscover.{{ network.domain }}.conf
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   tags: nginx
 
 - name: Enable nginx site

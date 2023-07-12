@@ -19,7 +19,7 @@
   ansible.builtin.template:
     src: defaults-alert-manager.conf
     dest: /etc/default/prometheus-alertmanager
-    mode: 0644
+    mode: '0644'
   tags: config
 
 - name: Deploy alert manager config
@@ -27,7 +27,7 @@
   ansible.builtin.template:
     src: alertmanager.yml
     dest: /etc/prometheus/alertmanager.yml
-    mode: 0644
+    mode: '0644'
     variable_start_string: '[['
     variable_end_string: ']]'
     block_start_string: '[%'

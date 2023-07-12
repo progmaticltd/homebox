@@ -14,7 +14,7 @@
   ansible.builtin.copy:
     content: '{{ sshfp_records_cmd.stdout }}'
     dest: /etc/powerdns/sshfp.txt
-    mode: 0400
+    mode: '0400'
   tags: sshfp
 
 - name: Delete the current SSHFP records

@@ -6,7 +6,7 @@
     state: directory
     owner: '{{ user.uid }}'
     group: mail_users
-    mode: 0700
+    mode: '0700'
   tags: storage
 
 - name: Create all the other folders

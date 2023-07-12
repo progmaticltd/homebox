@@ -6,7 +6,7 @@
     state: directory
     owner: pdns
     group: pdns
-    mode: 0700
+    mode: '0700'
   tags: config
 
 - name: Initialise the database
@@ -28,7 +28,7 @@
     path: /var/lib/powerdns/default.db
     owner: pdns
     group: pdns
-    mode: 0644
+    mode: '0644'
   tags: config
 
 - name: Create configuration subdir
@@ -63,5 +63,5 @@
     dest: /etc/powerdns/pdns.d/homebox.conf
     owner: root
     group: pdns
-    mode: 0640
+    mode: '0640'
   tags: config

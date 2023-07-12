@@ -5,5 +5,5 @@
   copy:
     src: scripts/post-login-script.sh
     dest: /usr/local/sbin/dovecot-post-login
-    mode: 0755
+    mode: '0755'
   tags: post-login

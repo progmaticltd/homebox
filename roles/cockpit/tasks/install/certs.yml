@@ -23,4 +23,4 @@
   ansible.builtin.copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/cockpit.{{ network.domain }}/renew-cert.sh
-    mode: 0700
+    mode: '0700'

@@ -9,7 +9,7 @@
 - name: Create default content directory
   ansible.builtin.file:
     path: /var/www/webdav/default
-    mode: 0700
+    mode: '0700'
     state: directory
   tags: nginx
 
@@ -18,7 +18,7 @@
     path: /var/www/webdav/tmp
     owner: www-data
     group: www-data
-    mode: 0700
+    mode: '0700'
     state: directory
   tags: nginx
 
@@ -38,7 +38,7 @@
     dest: /etc/nginx/sites-available/webdav.{{ network.domain }}.conf
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   tags: nginx
 
 - name: Enable nginx site
@@ -53,7 +53,7 @@
   ansible.builtin.file:
     path: /var/www/webdav/functions/
     state: directory
-    mode: 0755
+    mode: '0755'
   tags: nginx
 
 - name: Copy function files
@@ -63,7 +63,7 @@
     dest: /var/www/webdav/functions/{{ file }}.lua
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   loop: [ init, access, rewrite ]
   loop_control:
     loop_var: file

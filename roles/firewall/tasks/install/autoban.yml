@@ -21,7 +21,7 @@
   ansible.builtin.copy:
     src: nftables-lists.sh
     dest: /usr/local/sbin/nftables-lists
-    mode: 0700
+    mode: '0700'
   tags: rules, autoban
 
 - name: deploy the systemd service

@@ -4,7 +4,7 @@
   ansible.builtin.template:
     src: renew.conf
     dest: /etc/lego/renew.conf
-    mode: 0400
+    mode: '0400'
   tags: postinstall
 
 - name: Update system certificates to add LetsEncrypt staging CAs

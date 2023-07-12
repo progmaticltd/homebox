@@ -4,5 +4,5 @@
   copy:
     src: dns-status.sh
     dest: /usr/local/bin/dns-status
-    mode: 0755
+    mode: '0755'
   tags: scripts

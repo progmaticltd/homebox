@@ -7,7 +7,7 @@
     dest: /etc/nginx/sites-available/xmpp.{{ network.domain }}.conf
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Enable nginx site
   notify: Restart nginx
@@ -22,7 +22,7 @@
     state: directory
     owner: root
     group: ejabberd
-    mode: 0775
+    mode: '0775'
 
 - name: Allow the jabber server to write in the folder
   ansible.posix.acl:
@@ -39,4 +39,4 @@
     dest: /var/www/ejabberd/files/index.html
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'

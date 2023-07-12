@@ -21,5 +21,5 @@
   ansible.builtin.template:
     src: defaults-node-exporter.conf
     dest: /etc/default/prometheus-node-exporter
-    mode: 0644
+    mode: '0644'
   tags: config

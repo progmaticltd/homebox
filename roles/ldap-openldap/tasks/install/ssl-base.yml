@@ -24,7 +24,7 @@
   ansible.builtin.copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/ldap.{{ network.domain }}/renew-cert.sh
-    mode: 0700
+    mode: '0700'
   tags: certs
 
 - name: Allow openldap to read certificates

@@ -6,7 +6,7 @@
     state: directory
     owner: opendmarc
     group: opendmarc
-    mode: 0750
+    mode: '0750'
 
 - name: Add postfix to opendmarc group
   notify: Restart postfix

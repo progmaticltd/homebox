@@ -5,4 +5,4 @@
   ansible.builtin.template:
     src: rsyslog.conf
     dest: /etc/rsyslog.d/dovecot-homebox.conf
-    mode: 0644
+    mode: '0644'

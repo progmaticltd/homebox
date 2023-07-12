@@ -19,7 +19,7 @@
     state: directory
     owner: root
     group: tinyproxy
-    mode: 0770
+    mode: '0770'
   tags: proxy
 
 - name: Allow safe web sites access access

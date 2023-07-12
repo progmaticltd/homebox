@@ -25,4 +25,4 @@
   ansible.builtin.template:
     src: ssh/sshd.conf
     dest: /etc/ssh/sshd_config.d/homebox.conf
-    mode: 0644
+    mode: '0644'

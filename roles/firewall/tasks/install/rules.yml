@@ -11,7 +11,7 @@
   ansible.builtin.template:
     src: rules/{{ file }}.nft
     dest: /etc/nftables/{{ file }}.nft
-    mode: 0600
+    mode: '0600'
   loop: '{{ rule_files }}'
   loop_control:
     loop_var: file
@@ -22,5 +22,5 @@
   ansible.builtin.template:
     src: rules/main.nft
     dest: /etc/nftables.conf
-    mode: 0600
+    mode: '0600'
   tags: rules

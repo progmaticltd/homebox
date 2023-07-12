@@ -49,14 +49,14 @@
   ansible.builtin.file:
     path: /var/lib/lego/certificates/{{ filename }}.crt
     group: ssl-cert
-    mode: 0644
+    mode: '0644'
   tags: certs
 
 - name: Set the certificate issuer permissions
   ansible.builtin.file:
     path: /var/lib/lego/certificates/{{ filename }}.issuer.crt
     group: ssl-cert
-    mode: 0644
+    mode: '0644'
   tags: certs
 
 - name: Set the pem file permissions
@@ -64,12 +64,12 @@
   ansible.builtin.file:
     path: /var/lib/lego/certificates/{{ filename }}.pem
     group: ssl-cert
-    mode: 0640
+    mode: '0640'
   tags: certs
 
 - name: Set the private keys permissions
   ansible.builtin.file:
     path: /var/lib/lego/certificates/{{ filename }}.key
     group: ssl-cert
-    mode: 0640
+    mode: '0640'
   tags: certs

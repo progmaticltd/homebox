@@ -19,5 +19,5 @@
     password: '{{ master_password }}'
     owner: dovecot
     group: dovecot
-    mode: 0400
+    mode: '0400'
     crypt_scheme: ldap_sha1

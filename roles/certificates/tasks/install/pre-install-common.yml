@@ -4,7 +4,7 @@
   ansible.builtin.file:
     path: /etc/lego
     state: directory
-    mode: 0755
+    mode: '0755'
     owner: root
     group: root
   tags: preinstall
@@ -13,7 +13,7 @@
   ansible.builtin.file:
     path: /var/lib/lego
     state: directory
-    mode: 0750
+    mode: '0750'
     group: ssl-cert
   tags: preinstall
 
@@ -21,7 +21,7 @@
   ansible.builtin.file:
     path: /var/lib/lego/certificates
     state: directory
-    mode: 0750
+    mode: '0750'
     group: ssl-cert
   tags: preinstall
 

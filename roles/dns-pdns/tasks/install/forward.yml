@@ -5,7 +5,7 @@
   ansible.builtin.template:
     src: unbound-forward.conf
     dest: /etc/unbound/unbound.conf.d/10-forward-internal.conf
-    mode: 0644
+    mode: '0644'
   tags: forward
 
 - name: Restart the server now if needed

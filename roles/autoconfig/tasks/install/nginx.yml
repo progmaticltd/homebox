@@ -18,7 +18,7 @@
     dest: /var/www/autoconfig/mail/config-v1.1.xml
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   tags: nginx
 
 - name: Create the autoconfig site
@@ -31,7 +31,7 @@
     dest: '/etc/nginx/sites-available/autoconfig.{{ network.domain }}.conf'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   tags: nginx
 
 - name: Enable nginx site

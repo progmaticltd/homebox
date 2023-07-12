@@ -41,7 +41,7 @@
   ansible.builtin.copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/imap.{{ network.domain }}/renew-cert.sh
-    mode: 0700
+    mode: '0700'
   tags: certs
 
 - name: Copy the certificate update hook for POP3
@@ -49,5 +49,5 @@
   ansible.builtin.copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/pop3.{{ network.domain }}/renew-cert.sh
-    mode: 0700
+    mode: '0700'
   tags: certs

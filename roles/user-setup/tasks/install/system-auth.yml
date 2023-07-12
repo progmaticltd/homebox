@@ -17,7 +17,7 @@
   ansible.builtin.template:
     src: nslcd.conf
     dest: /etc/nslcd.conf
-    mode: 0600
+    mode: '0600'
 
 - name: Ensure nsswithch is configured correctly
   notify: Restart the ldap stack

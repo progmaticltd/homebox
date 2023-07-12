@@ -5,7 +5,7 @@
   ansible.builtin.file:
     path: /var/log/nftables
     state: directory
-    mode: 0700
+    mode: '0700'
 
 - name: Create empty configuration files for tail/lnav
   tags: logging

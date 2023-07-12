@@ -27,7 +27,7 @@
     provider: selfsigned
     owner: root
     group: ssl-cert
-    mode: 0644
+    mode: '0644'
   tags: certs
 
 - name: Register the certificate authority
@@ -37,6 +37,6 @@
     dest: /usr/local/share/ca-certificates/homebox-temp-ca.crt
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
     remote_src: true
   tags: certs

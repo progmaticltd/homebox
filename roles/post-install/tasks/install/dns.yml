@@ -5,5 +5,5 @@
   ansible.builtin.template:
     src: 00-unbound.conf
     dest: /etc/unbound/unbound.conf.d/00-common.conf
-    mode: 0644
+    mode: '0644'
   tags: dns

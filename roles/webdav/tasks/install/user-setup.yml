@@ -14,7 +14,7 @@
   ansible.builtin.template:
     src: webdav.service
     dest: /etc/systemd/user/webdav.service
-    mode: 0644
+    mode: '0644'
   tags: users
 
 - name: Load systemd user service

@@ -12,7 +12,7 @@
     dest: /etc/nginx/sites-available/prometheus.{{ network.domain }}.conf
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   tags: nginx
 
 - name: Activate prometheus web site

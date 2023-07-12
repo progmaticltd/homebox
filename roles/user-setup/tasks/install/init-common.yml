@@ -6,7 +6,7 @@
     owner: root
     group: users
     state: directory
-    mode: 0755
+    mode: '0755'
   loop: [ users, archives ]
   loop_control:
     loop_var: dir

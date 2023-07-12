@@ -7,6 +7,6 @@
     dest: /usr/lib/dovecot/sieve-extprograms/learn-hamorspam.sh
     owner: root
     group: root
-    mode: 0755
+    mode: '0755'
     force: false
   tags: sieve, scripts, spam

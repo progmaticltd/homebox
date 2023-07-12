@@ -25,7 +25,7 @@
   ansible.builtin.file:
     path: /etc/lego/hooks/{{ filename }}/
     state: directory
-    mode: 0700
+    mode: '0700'
   tags: certs
 
 - name: Check if the certificate exists
@@ -73,7 +73,7 @@
     force: '{{ renew_cert }}'
     owner: root
     group: ssl-cert
-    mode: 0640
+    mode: '0640'
   tags: certs
 
 - name: Create certificate signing request (CSR)
@@ -99,7 +99,7 @@
     force: '{{ renew_cert }}'
     owner: root
     group: ssl-cert
-    mode: 0644
+    mode: '0644'
   tags: certs
 
 - name: Create the issuer file

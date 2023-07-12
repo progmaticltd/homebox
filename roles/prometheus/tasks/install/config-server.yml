@@ -4,14 +4,14 @@
   ansible.builtin.file:
     path: /etc/prometheus/alerts
     state: directory
-    mode: 0755
+    mode: '0755'
   tags: config
 
 - name: Create the targets directory
   ansible.builtin.file:
     path: /etc/prometheus/targets
     state: directory
-    mode: 0755
+    mode: '0755'
   tags: config
 
 - name: Set the default settings
@@ -35,7 +35,7 @@
   ansible.builtin.template:
     src: defaults-server.conf
     dest: /etc/default/prometheus
-    mode: 0644
+    mode: '0644'
   tags: config
 
 - name: Push the standard amtool configuration
@@ -43,7 +43,7 @@
   ansible.builtin.template:
     src: amtool.yml
     dest: /etc/prometheus/amtool.yml
-    mode: 0644
+    mode: '0644'
   tags: config
 
 - name: Push the standard configuration
@@ -51,5 +51,5 @@
   ansible.builtin.template:
     src: prometheus.yml
     dest: /etc/prometheus/prometheus.yml
-    mode: 0644
+    mode: '0644'
   tags: config

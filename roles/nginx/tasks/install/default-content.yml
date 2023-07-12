@@ -37,7 +37,7 @@
     dest: /etc/nginx/sites-available/{{ network.domain }}.conf
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   tags: config
 
 - name: Enable root web site
@@ -68,7 +68,7 @@
     dest: /etc/nginx/sites-available/_catchall.{{ network.domain }}.conf
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   tags: config
 
 - name: Enable the wildcard / catchall website
