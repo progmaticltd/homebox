@@ -77,7 +77,7 @@
   ansible.builtin.lineinfile:
     path: /root/.ssh/known_hosts
     line: '{{ line }}'
-    create: yes
+    create: true
   with_items:
     - '{{ keyscan.stdout_lines }}'
   loop_control:

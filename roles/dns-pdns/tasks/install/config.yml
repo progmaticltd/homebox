@@ -53,7 +53,7 @@
       {{ dns.refresh }} {{ dns.retry }}
       {{ dns.expire }}
       {{ dns.ttl }}
-    cacheable: yes
+    cacheable: true
   tags: config
 
 - name: Add custom settings

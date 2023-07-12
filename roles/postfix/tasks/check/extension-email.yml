@@ -25,7 +25,7 @@
     --server smtp.{{ network.domain }}
     --body /tmp/testmsg-01.txt
   changed_when: false
-  become: yes
+  become: true
   become_method: sudo
   become_user: postfix
 

@@ -31,7 +31,7 @@
     etype: user
     permissions: rwx
     state: present
-    default: yes
+    default: true
 
 - name: Create the http upload jabber site
   ansible.builtin.template:

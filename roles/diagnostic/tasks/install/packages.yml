@@ -4,4 +4,4 @@
   ansible.builtin.apt:
     name: '{{ devel.packages }}'
     state: present
-    install_recommends: no
+    install_recommends: false

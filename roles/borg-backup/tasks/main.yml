@@ -120,9 +120,9 @@
     src: '{{ backup_directory }}/backup-keys/'
     dest: /tmp/backup-keys-import/
     mode: push
-    owner: no
-    group: no
-    perms: yes
+    owner: false
+    group: false
+    perms: true
     rsync_opts:
       - '--no-motd'
       - '--quiet'
@@ -157,7 +157,7 @@
     mode: pull
     src: /tmp/backup-keys-export/*.key
     dest: '{{ backup_directory }}/backup-keys/'
-    perms: yes
+    perms: true
     rsync_opts:
       - '--no-motd'
       - '--quiet'

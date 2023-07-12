@@ -5,7 +5,7 @@
   ansible.builtin.template:
     src: apparmor.conf
     dest: /etc/apparmor.d/usr.sbin.opendkim
-    force: no
+    force: false
   register: apparmor_config
 
 - name: Activate AppArmor profiles

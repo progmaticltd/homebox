@@ -24,7 +24,7 @@
   ansible.builtin.copy:
     src: /root/.ssh/authorized_keys
     dest: /etc/dropbear-initramfs/authorized_keys
-    remote_src: yes
+    remote_src: true
 
 # NOTE: https://bugs.debian.org/955384
 - name: List OpenSSH keys

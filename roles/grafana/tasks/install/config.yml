@@ -90,7 +90,7 @@
           name: admin
           role: Admin
         body_format: json
-        force_basic_auth: yes
+        force_basic_auth: true
     - name: Store the api key into the password store
       ansible.builtin.set_fact:
         grafana_api_key: >-

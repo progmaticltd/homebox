@@ -11,7 +11,7 @@
     name: '{{ cleanup_packages }}'
     state: absent
     autoremove: true
-    purge: yes
+    purge: true
 
 - name: Cleanup packages cache
   ansible.builtin.apt:

@@ -2,7 +2,7 @@
 
 - name: Test opendkim key files exists and are readable
   ansible.builtin.shell: test -f '/etc/opendkim/keys/{{ file }}'
-  become: yes
+  become: true
   become_method: sudo
   become_user: opendkim
   loop:
@@ -15,7 +15,7 @@
 # This need to check if it is still working
 # the first time we deploy a domain
 - name: Test opendkim configuration
-  become: yes
+  become: true
   become_method: sudo
   become_user: opendkim
   register: result

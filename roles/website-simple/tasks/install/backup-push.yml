@@ -18,9 +18,9 @@
   ansible.posix.synchronize:
     src: '{{ backup_directory }}/website-simple/'
     dest: /var/www/www.{{ network.domain }}
-    owner: no
-    group: no
-    perms: yes
+    owner: false
+    group: false
+    perms: true
     rsync_opts:
       - '--no-motd'
       - '--update'

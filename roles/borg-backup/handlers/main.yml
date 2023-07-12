@@ -2,7 +2,7 @@
 
 - name: Reload Systemd
   ansible.builtin.systemd:
-    daemon_reload: yes
+    daemon_reload: true
 
 - name: Restart Systemd local fs target
   ansible.builtin.systemd:

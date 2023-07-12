@@ -32,7 +32,7 @@
     --auth-password="{{ user0_password }}"
     --server smtp.{{ network.domain }}
     --body /tmp/testmsg-01.txt
-  become: yes
+  become: true
   become_method: sudo
   become_user: postfix
 

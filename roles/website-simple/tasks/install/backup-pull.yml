@@ -6,7 +6,7 @@
     mode: pull
     src: /var/www/www.{{ network.domain }}/*
     dest: '{{ backup_directory }}/website-simple/'
-    perms: yes
+    perms: true
     archive: false
     recursive: true
     rsync_opts:

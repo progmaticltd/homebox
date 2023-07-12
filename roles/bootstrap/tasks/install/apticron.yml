@@ -16,7 +16,7 @@
 - name: Install distribution default configuration of apticron if not already present
   when: not apticron_conf_stat.stat.exists
   ansible.builtin.copy:
-    remote_src: yes
+    remote_src: true
     src: /usr/lib/apticron/apticron.conf
     dest: /etc/apticron/apticron.conf
 

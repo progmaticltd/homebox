@@ -55,8 +55,8 @@ dovecot:
     - xlsx2csv
   settings:
     mail_max_userip_connections: 64
-    lda_mailbox_autocreate: no
-    lda_mailbox_autosubscribe: no
+    lda_mailbox_autocreate: false
+    lda_mailbox_autosubscribe: false
   # Authorized characters for the username
   username_chars: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890.-_@
   # Since Debian Buster, these profiles are included in apparmor-proofiles-extra

@@ -8,7 +8,7 @@
   ansible.builtin.template:
     src: apparmor-base.conf
     dest: /etc/apparmor.d/usr.sbin.nginx
-    force: yes
+    force: true
 
 - name: Install web site AppArmor profile
   notify:
