@@ -5,3 +5,9 @@
   ansible.builtin.file:
     path: /etc/apparmor.d/usr.bin.rspamd
     state: absent
+
+- name: Remove the apparmor config file
+  notify: Restart AppArmor service
+  ansible.builtin.file:
+    path: /etc/apparmor.d/usr.bin.redis-check-rdb
+    state: absent

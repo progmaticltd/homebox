@@ -1,10 +1,27 @@
 ---
 
 - name: Install rspamd AppArmor profile
+  register: rspamd_profile
   notify: Restart AppArmor service
   ansible.builtin.template:
-    src: apparmor.conf
+    src: apparmor/rspamd.conf
     dest: /etc/apparmor.d/usr.bin.rspamd
+  tags: apparmor
 
 - name: Activate AppArmor profiles
+  when: rspamd_profile.changed
   ansible.builtin.command: aa-enforce rspamd
+  tags: apparmor
+
+- name: Install redis AppArmor profile
+  register: redis_profile
+  notify: Restart AppArmor service
+  ansible.builtin.template:
+    src: apparmor/redis.conf
+    dest: /etc/apparmor.d/usr.bin.redis-check-rdb
+  tags: apparmor
+
+- name: Activate AppArmor profiles
+  when: redis_profile.changed
+  ansible.builtin.command: aa-enforce usr.bin.redis-check-rdb
+  tags: apparmor

@@ -1,10 +1,5 @@
 #!/bin/sh
 
-# Working on git
-if [ "$GIT_FORCE_PUSH" = "True" ]; then
-    exit
-fi
-
 set -e
 
 # Manually added options to skip to the command line.
@@ -18,100 +13,101 @@ z40=0000000000000000000000000000000000000000
 
 # Check if ansible is usable
 ansible-lint --version >/dev/null || {
-	cat >&2 <<- EOF
+    cat >&2 <<- EOF
 
-	Please make sure ansible-lint is installed and usable.
+    Please make sure ansible-lint is installed and usable.
 
-	The git pre-push hook uses ansible-lint to validate ansible playbooks YAML
-	files on commits.
+    The git pre-push hook uses ansible-lint to validate ansible playbooks YAML
+    files on commits.
 
-	EOF
-	exit 1
+    EOF
+    exit 1
 }
 
 # Create the logs directory if not exists. It is ignored by git anyway
 test -d logs || mkdir logs
 
-while read -r local_ref local_sha _ _ # remote_ref and remote_sha are not used
+while read -r local_ref local_sha _ _     # remote_ref and remote_sha are not used
 do
-	if [ "$local_sha" = $z40 ]
-	then
-		# Handle delete
-		# Do not run ansible-lint on the branch to be deleted
-		:
-		# Continue processing the next branch if any
-	else
-		echo "Let's check files with ansible-lint"
+    if [ "$local_sha" = $z40 ]
+    then
+        # Handle delete
+        # Do not run ansible-lint on the branch to be deleted
+        :
+        # Continue processing the next branch if any
+    else
+        echo "Let's check files with ansible-lint"
 
-		# Create a temporary file to list ansible files to check
-		tmp_checklist=$(mktemp)
+        # Create a temporary file to list ansible files to check
+        tmp_checklist=$(mktemp)
 
-		# Write the list of the main ansible files and directories
-		find \
-			roles/* \
-			-maxdepth 0 -print0 \
-			> "$tmp_checklist"
+        # Write the list of the main ansible files and directories
+        find \
+            roles/* \
+            -maxdepth 0 -print0 \
+            > "$tmp_checklist"
 
-		# Create a temporary directory
-		tmp_dir="$(mktemp -d)"
+        # Create a temporary directory
+        tmp_dir="$(mktemp -d)"
 
-		# Set the log file
-		log_file="$(git rev-parse --show-toplevel)/logs/ansible-lint-pre-push.log"
+        # Set the log file
+        log_file="$(git rev-parse --show-toplevel)/logs/ansible-lint-pre-push.log"
 
-		# Export the branch to the temporary directory
-		echo "Exporting $local_ref to $tmp_dir"
-		git archive "$local_sha" | tar -x -C "$tmp_dir" || exit $?
+        # Export the branch to the temporary directory
+        echo "Exporting $local_ref to $tmp_dir"
+        git archive "$local_sha" | tar -x -C "$tmp_dir" || exit $?
 
-		# Use a subshell to get to the temporary directory, run ansible-lint
-		# with a different error handling, and remember the exit status of the
-		# xargs call if any error
-		lint_result=0
-		(
-			cd "$tmp_dir"
+        # Use a subshell to get to the temporary directory, run ansible-lint
+        # with a different error handling, and remember the exit status of the
+        # xargs call if any error
+        lint_result=0
+        (
+            cd "$tmp_dir"
 
-			# Do not exit on error until the end of the subshell
-			set +e
+            # Do not exit on error until the end of the subshell
+            set +e
 
-			echo "Running ansible-lint on all playbooks"
-			echo "Full log is being written to $log_file"
-			# shellcheck disable=SC2016
-			xargs -0 -I {} \
-				sh -c 'PYTHONUNBUFFERED=1 ansible-lint -x 106,207,208 "$1" 2>&1' -- "{}" \
-				< "$tmp_checklist" \
-				> "$log_file"
+            echo "Running ansible-lint on all playbooks"
+            echo "Full log is being written to $log_file"
+            #  -x 106,207,208
+            # shellcheck disable=SC2016
+            xargs -0 -I {} \
+                sh -c 'PYTHONUNBUFFERED=1 ansible-lint "$1" 2>&1' -- "{}" \
+                < "$tmp_checklist" \
+                > "$log_file"
 
-		# Back to: set -e
-		) || lint_result=$?
+        # Back to: set -e
+        ) || lint_result=$?
 
-		# Remove the temporary directory
-		rm -rf "$tmp_dir"
+        # Remove the temporary directory
+        rm -rf "$tmp_dir"
 
-		# Remove the temporary checklist file
-		rm -f "$tmp_checklist"
+        # Remove the temporary checklist file
+        rm -f "$tmp_checklist"
 
-		case "$lint_result" in
-			"0")
-				if grep --color=auto -h -e 'WARNING:' "$log_file" >&2
-				then
-					echo "Please address the ansible-lint warnings"
-					exit 1
-				fi
-				echo "Looks good for ansible-lint"
-				# Continue processing the next branch if any
-				;;
-			"123")
-				grep --color=auto -h -A 11 -e 'Syntax Error' "$log_file" >&2 || true
-				grep --color=auto -h -e '\[E...]' "$log_file" >&2 || true
-				grep --color=auto -h -e 'WARNING:' "$log_file" >&2 || true
-				echo "Please fix the ansible-lint errors and warnings"
-				exit $lint_result
-				;;
-			*)
-				echo >&2 "Sorry, something wrong happened"
-				exit $lint_result
-				;;
-		esac
-	fi
+        case "$lint_result" in
+            "0")
+                if grep --color=auto -h -e 'WARNING:' "$log_file" >&2
+                then
+                    echo "Please address the ansible-lint warnings"
+                    exit 1
+                fi
+                echo "Looks good for ansible-lint"
+                # Continue processing the next branch if any
+                ;;
+            "123")
+                grep --color=auto -h -A 11 -e 'Syntax Error' "$log_file" >&2 || true
+                grep --color=auto -h -e '\[E...]' "$log_file" >&2 || true
+                grep --color=auto -h -e 'WARNING:' "$log_file" >&2 || true
+                echo "Please fix the ansible-lint errors and warnings"
+                exit $lint_result
+                ;;
+            *)
+                echo >&2 "Sorry, something wrong happened"
+                exit $lint_result
+                ;;
+        esac
+    fi
 done
 
 exit 0

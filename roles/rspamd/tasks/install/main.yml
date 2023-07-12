@@ -17,6 +17,7 @@
 
 - name: Configure AppArmor
   ansible.builtin.include_tasks: install/apparmor.yml
+  tags: apparmor
 
 - name: Add the filter to postfix
   ansible.builtin.include_tasks: install/postfix.yml
