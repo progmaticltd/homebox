@@ -6,7 +6,7 @@
   ansible.builtin.get_url:
     url: 'https://autoconfig.{{ network.domain }}/mail/config-v1.1.xml?emailaddress={{ email }}'
     dest: /tmp/autoconfig.xml
-    mode: 0600
+    mode: '0600'
     force: true
 
 - name: Check the autoconfig answer is valid

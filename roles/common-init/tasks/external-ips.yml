@@ -15,7 +15,7 @@
 
 - name: Set external IP address type (A or AAAA)
   ansible.builtin.set_fact:
-    external_ip_type: '{{ external_ip | ipv6 | ternary("AAAA", "A") }}'
+    external_ip_type: '{{ external_ip | ansible.utils.ipv6 | ternary("AAAA", "A") }}'
 
 # Backup IP address if defined
 - name: Get the backup IP address
@@ -26,7 +26,7 @@
 - name: Set backup IP address type (A or AAAA)
   when: backup_ip is defined and (backup_ip | length > 0)
   ansible.builtin.set_fact:
-    backup_ip_type: '{{ backup_ip | ipv6 | ternary("AAAA", "A") }}'
+    backup_ip_type: '{{ backup_ip | ansible.utils.ipv6 | ternary("AAAA", "A") }}'
 
 - name: Unset the IPv6 flag
   ansible.builtin.set_fact:

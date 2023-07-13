@@ -14,7 +14,7 @@
     - external_ip_type is defined
     - external_ip_type == 'A'
   ansible.builtin.set_fact:
-    ext_ipv4: '{{ external_ip | ipv4 }}'
+    ext_ipv4: '{{ external_ip | ansible.utils.ipv4 }}'
   tags: config
 
 - name: Get the first IPv4 address
@@ -23,7 +23,7 @@
     - backup_ip_type is defined
     - backup_ip_type == 'A'
   ansible.builtin.set_fact:
-    ext_ipv4: '{{ backup_ip | ipv4 }}'
+    ext_ipv4: '{{ backup_ip | ansible.utils.ipv4 }}'
   tags: config
 
 - name: Get the first IPv6 address
@@ -31,7 +31,7 @@
     - external_ip_type is defined
     - external_ip_type == 'AAAA'
   ansible.builtin.set_fact:
-    ext_ipv6: '{{ external_ip | ipv6 }}'
+    ext_ipv6: '{{ external_ip | ansible.utils.ipv6 }}'
   tags: config
 
 - name: Get the first IPv6 address
@@ -40,7 +40,7 @@
     - backup_ip_type is defined
     - backup_ip_type == 'AAAA'
   ansible.builtin.set_fact:
-    ext_ipv6: '{{ backup_ip | ipv6 }}'
+    ext_ipv6: '{{ backup_ip | ansible.utils.ipv6 }}'
   tags: config
 
 - name: Copy ejabberd configuration

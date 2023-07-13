@@ -47,13 +47,13 @@
 - name: Filter by IP address for IPv6
   when: external_ip_type == 'AAAA'
   ansible.builtin.set_fact:
-    dns_servers: '{{ network.dns.servers | ipv6 }}'
+    dns_servers: '{{ network.dns.servers | ansible.utils.ipv6 }}'
   tags: network
 
 - name: Filter by IP address for IPv4
   when: external_ip_type == 'A'
   ansible.builtin.set_fact:
-    dns_servers: '{{ network.dns.servers | ipv4 }}'
+    dns_servers: '{{ network.dns.servers | ansible.utils.ipv4 }}'
   tags: network
 
 - name: Deploy unbound common config

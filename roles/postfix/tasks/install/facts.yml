@@ -18,13 +18,17 @@
 # Use IP addresses as SPF mechanisms for the server itself
 - name: Add the external IP address as SPF sender
   ansible.builtin.set_fact:
-    spf_senders: '{{ "ip6:" + external_ip if external_ip | ipv6 else "ip4:" + external_ip }}'
+    spf_senders: >-
+      {{ "ip6:" + external_ip if external_ip
+      | ansible.utils.ipv6 else "ip4:" + external_ip }}
   tags: facts
 
 - name: Add the backup IP address as SPF sender
   when: backup_ip is defined
   ansible.builtin.set_fact:
-    spf_senders: '{{ spf_senders }} {{ "ip6:" + backup_ip if backup_ip | ipv6 else "ip4:" + backup_ip }}'
+    spf_senders: >-
+      {{ spf_senders }} {{ "ip6:" + backup_ip if backup_ip | ansible.utils.ipv6
+      else "ip4:" + backup_ip }}
   tags: facts
 
 - name: Add the user configured extra senders to the SPF record
