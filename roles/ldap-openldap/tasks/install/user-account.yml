@@ -15,6 +15,7 @@
 
 - name: Generate a new password
   when: load_user_password is failed
+  tags: facts
   block:
     - name: Use an acrostic for the new password
       register: acrostic_cmd
@@ -45,7 +46,6 @@
       ansible.builtin.set_fact:
         user_password: '{{ lookup(creds.store, password_path + " create=true userpass=" + userpass) }}'
       tags: facts
-  tags: facts
 
 - name: Create the dedicated group for this user
   community.general.ldap_entry:

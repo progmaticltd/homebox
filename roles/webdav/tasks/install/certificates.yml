@@ -14,6 +14,7 @@
 
 - name: Check nginx config and restart it
   when: updated_certs | length > 0
+  tags: certs
   block:
     - name: Check nginx config
       ansible.builtin.shell: nginx -t
@@ -23,7 +24,6 @@
         name: nginx
         state: restarted
         no_block: true
-  tags: certs
 
 - name: Copy the certificate update hook
   ansible.builtin.copy:

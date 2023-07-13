@@ -26,6 +26,7 @@
 
 - name: Create the data source and store the ID
   when: ds_info is failed
+  tags: dashboards
   block:
     - name: Create the datasource
       register: ds_create
@@ -41,7 +42,6 @@
     - name: Store the ID
       ansible.builtin.set_fact:
         prometheus_ds: '{{ ds_create.datasource }}'
-  tags: dashboards
 
 - name: Create or update all the dashboards
   ansible.builtin.include_tasks: dashboard-import.yml
