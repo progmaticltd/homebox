@@ -16,6 +16,7 @@
     method: POST
     body: ''
     status_code: 200
+    mode: '0600'
     dest: /tmp/autodiscover.xml
 
 - name: Check the autodiscover answer is valid

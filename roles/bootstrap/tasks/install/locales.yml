@@ -9,7 +9,7 @@
 
 - name: Get the locale value on the current machine
   ansible.builtin.set_fact:
-    locale: "{{ lookup('env','LANG') }}"
+    locale: "{{ lookup('env', 'LANG') }}"
 
 - name: Configure locales
   register: debconf_locales

@@ -4,12 +4,14 @@
   ansible.builtin.file:
     path: /var/www/autodiscover/autodiscover/
     state: directory
+    mode: '0755'
   tags: nginx
 
 - name: Create an empty index file to avoid errors
   ansible.builtin.copy:
     content: ''
     dest: /var/www/autodiscover/index.html
+    mode: '0644'
   tags: nginx
 
 - name: Copy XML template
