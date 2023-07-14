@@ -13,6 +13,7 @@
   ansible.builtin.template:
     src: dhclient.conf
     dest: /etc/dhcp/dhclient.conf
+    mode: '0644'
   tags: network
 
 - name: Remove isc-dhcp-client debug file

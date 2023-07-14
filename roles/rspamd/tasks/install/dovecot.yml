@@ -2,7 +2,7 @@
 
 - name: Add rspamd to dovecot null least privilegied account
   notify: Restart rspamd
-  user:
+  ansible.builtin.user:
     name: _rspamd
     groups: mail
     append: true

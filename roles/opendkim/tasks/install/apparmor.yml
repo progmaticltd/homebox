@@ -6,9 +6,11 @@
     src: apparmor.conf
     dest: /etc/apparmor.d/usr.sbin.opendkim
     force: false
+    mode: '0644'
   register: apparmor_config
 
 - name: Activate AppArmor profiles
   when: apparmor_config.changed
   ansible.builtin.command: aa-enforce usr.sbin.opendkim
   notify: Restart AppArmor service
+  changed_when: true

@@ -2,9 +2,11 @@
 
 - name: Check if rspamd has been installed
   ansible.builtin.shell: dpkg -s rspamd
+  changed_when: false
 
-- name: Check if the rspamd service is up and running # noqa 303
+- name: Check if the rspamd service is up and running # noqa command-instead-of-module
   ansible.builtin.shell: systemctl status rspamd
+  changed_when: false
 
 - name: Check appamor settings
   ansible.builtin.include_tasks: check/apparmor.yml

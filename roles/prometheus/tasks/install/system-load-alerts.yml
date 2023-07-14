@@ -1,7 +1,6 @@
 ---
 
 - name: Deploy the system load monitoring file
-  tags: system
   notify:
     - Restart Prometheus
     - Restart Prometheus alert manager
@@ -13,3 +12,5 @@
     block_end_string: '%]'
     variable_start_string: '[['
     variable_end_string: ']]'
+    mode: '0644'
+  tags: system

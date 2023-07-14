@@ -5,4 +5,5 @@
   ansible.builtin.template:
     src: nftables/firewall.nft
     dest: /etc/nftables/60-rspamd.nft
+    mode: '0600'
   tags: nft

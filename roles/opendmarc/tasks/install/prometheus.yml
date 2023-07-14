@@ -1,7 +1,8 @@
 ---
 
 - name: Deploy prometheus alerts
-  tags: prometheus
   ansible.builtin.template:
     src: prometheus/alerts.yml
     dest: /etc/prometheus/alerts/opendmarc-rules.yml
+    mode: '0600'
+  tags: prometheus

@@ -5,3 +5,5 @@
   ansible.builtin.template:
     src: conf/dmarc.conf
     dest: /etc/rspamd/local.d/dmarc.conf
+    mode: '0644'
+  tags: dmarc

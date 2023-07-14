@@ -16,7 +16,7 @@
   tags: facts
 
 # Use IP addresses as SPF mechanisms for the server itself
-- name: Add the external IP address as SPF sender
+- name: Add the external IP address as SPF sender  # noqa jinja[invalid]
   ansible.builtin.set_fact:
     spf_senders: >-
       {{ "ip6:" + external_ip if external_ip

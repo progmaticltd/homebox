@@ -17,6 +17,7 @@
   ansible.builtin.template:
     src: nsupdate.conf
     dest: /etc/opendmarc/nsupdate.conf
+    mode: '0600'
   tags: dns
 
 - name: Store the public key in DNS

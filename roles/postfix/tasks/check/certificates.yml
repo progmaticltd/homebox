@@ -11,6 +11,7 @@
     -servername smtp.{{ network.domain }}
     -connect smtp.{{ network.domain }}:{{ mail.postfix.submissions.port }} 2>&1
     | grep 'Verification: OK'
+  changed_when: false
   args:
     executable: /bin/bash
 
@@ -22,6 +23,7 @@
     -connect smtp.{{ network.domain }}:25
     -starttls smtp 2>&1
     | grep 'Verification: OK'
+  changed_when: false
   args:
     executable: /bin/bash
 
@@ -34,5 +36,6 @@
     -connect smtp.{{ network.domain }}:{{ mail.postfix.submission.port }}
     -starttls smtp 2>&1
     | grep 'Verification: OK'
+  changed_when: false
   args:
     executable: /bin/bash

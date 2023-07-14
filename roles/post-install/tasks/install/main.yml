@@ -16,7 +16,7 @@
   ansible.builtin.include_tasks: install/dns.yml
   tags: dns
 
-- name: network settings update
+- name: Network settings update
   ansible.builtin.include_tasks: install/network.yml
   tags: network
 

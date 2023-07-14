@@ -5,6 +5,8 @@
   ansible.builtin.template:
     src: apparmor.conf
     dest: /etc/apparmor.d/usr.sbin.opendmarc
+    mode: '0644'
 
 - name: Activate AppArmor profiles
   ansible.builtin.command: aa-enforce usr.sbin.opendmarc
+  changed_when: true

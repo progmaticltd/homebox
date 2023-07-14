@@ -4,6 +4,8 @@
   ansible.builtin.template:
     src: apparmor.conf
     dest: /etc/apparmor.d/local/nginx-website-simple
+    mode: '0644'
+  tags: apparmor
 
 - name: Check if AppArmor nginx configuration already contains the line
   register: line_found
@@ -24,4 +26,5 @@
 - name: Activate AppArmor profiles
   notify: Restart AppArmor service
   when: aa_config.changed
-  ansible.builtin.command: 'aa-enforce usr.sbin.nginx'
+  ansible.builtin.command: aa-enforce usr.sbin.nginx
+  changed_when: false

@@ -8,6 +8,7 @@
 - name: Check each postfix package
   ansible.builtin.shell: >-
     dpkg -s {{ pkg }}
+  changed_when: false
   loop: '{{ postfix_pkgs }}'
   loop_control:
     loop_var: pkg

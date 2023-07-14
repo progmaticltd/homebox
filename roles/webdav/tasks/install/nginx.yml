@@ -4,6 +4,7 @@
   ansible.builtin.file:
     path: /var/www/webdav/
     state: directory
+    mode: '0755'
   tags: nginx
 
 - name: Create default content directory
@@ -26,6 +27,7 @@
   ansible.builtin.template:
     src: index.html
     dest: /var/www/webdav/default/index.html
+    mode: '0644'
   tags: nginx
 
 - name: Create the webdav site

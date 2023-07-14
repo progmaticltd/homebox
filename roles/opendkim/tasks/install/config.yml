@@ -13,12 +13,14 @@
   ansible.builtin.template:
     src: opendkim.conf
     dest: /etc/opendkim.conf
+    mode: '0644'
 
 - name: Create the keys and signing table
   notify: Restart opendkim
   ansible.builtin.template:
     src: '{{ file }}'
     dest: '/etc/opendkim/{{ file }}'
+    mode: '0644'
   loop:
     - keytable
     - signingtable

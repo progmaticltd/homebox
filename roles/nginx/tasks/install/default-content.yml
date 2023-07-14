@@ -4,12 +4,14 @@
   ansible.builtin.file:
     path: /var/www/default
     state: directory
+    mode: '0755'
   tags: config
 
 - name: Create the empty default page
   ansible.builtin.template:
     src: index-default.html
     dest: /var/www/default/index-default.html
+    mode: '0644'
   tags: config
 
 # See RFC 8615
@@ -17,12 +19,14 @@
   ansible.builtin.file:
     path: /var/www/default/.well-known/
     state: directory
+    mode: '0755'
   tags: config
 
 - name: Create the default DNT policy
   ansible.builtin.copy:
     src: dnt-policy.txt
     dest: /var/www/default/.well-known/dnt-policy.txt
+    mode: '0644'
   tags: config
 
 - name: Create the root website configuration file

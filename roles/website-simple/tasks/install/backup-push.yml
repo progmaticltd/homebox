@@ -6,15 +6,15 @@
     state: present
 
 - name: Create a directory for web site backup if it does not exists
-  tags: backup
   delegate_to: localhost
   ansible.builtin.file:
     path: '{{ backup_directory }}/website-simple/'
     state: directory
+    mode: '0755'
+  tags: backup
 
 # Push the site if already backup up
-- name: If the web site has been generated before, copy the files on the remote server
-  tags: sync
+- name: Restore the web site if applicable
   ansible.posix.synchronize:
     src: '{{ backup_directory }}/website-simple/'
     dest: /var/www/www.{{ network.domain }}
@@ -24,3 +24,4 @@
     rsync_opts:
       - '--no-motd'
       - '--update'
+  tags: sync

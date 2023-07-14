@@ -10,12 +10,14 @@
   ansible.builtin.template:
     src: prometheus/alerts.yml
     dest: /etc/prometheus/alerts/nginx-rules.yml
+    mode: '0644'
   tags: prometheus
 
 - name: Deploy nginx metrics site
   ansible.builtin.template:
     src: metrics-site.conf
     dest: /etc/nginx/sites-available/metrics.conf
+    mode: '0644'
   tags: prometheus
 
 - name: Deploy prometheus exporter config
@@ -23,6 +25,7 @@
   ansible.builtin.template:
     src: prometheus/default-nginx-exporter.conf
     dest: /etc/default/prometheus-nginx-exporter
+    mode: '0644'
   tags: prometheus
 
 - name: Enable metrics site
@@ -34,10 +37,12 @@
     src: /etc/nginx/sites-available/metrics.conf
     dest: /etc/nginx/sites-enabled/metrics.conf
     state: link
+    mode: '0644'
   tags: prometheus
 
 - name: Deploy target configuration
   ansible.builtin.template:
     src: prometheus/targets.yml
     dest: /etc/prometheus/targets/nginx.yml
+    mode: '0644'
   tags: prometheus

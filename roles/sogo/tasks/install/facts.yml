@@ -1,9 +1,10 @@
 ---
 
 - name: Get the server’s timezone
-  tags: config
   register: tz_command
   ansible.builtin.command: cat /etc/timezone
+  changed_when: false
+  tags: config
 
 - name: Get the server timezone
   tags: config

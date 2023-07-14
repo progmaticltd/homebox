@@ -56,8 +56,8 @@
     path: '/var/www/www.{{ network.domain }}/{{ path }}'
     state: absent
   loop:
-      - index-demo.html
-      - css/demo.css
-      - js/demo.js
+    - index-demo.html
+    - css/demo.css
+    - js/demo.js
   loop_control:
     loop_var: path

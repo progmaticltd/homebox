@@ -12,6 +12,7 @@
   ansible.builtin.template:
     src: ocsp.conf
     dest: /etc/nginx/conf.d/ocsp.conf
+    mode: '0644'
   tags: config
 
 - name: Deploy the logging restrictions
@@ -19,4 +20,5 @@
   ansible.builtin.template:
     src: logging.conf
     dest: /etc/nginx/conf.d/logging.conf
+    mode: '0644'
   tags: config

@@ -11,6 +11,7 @@
     block_end_string: '%]'
     variable_start_string: '[['
     variable_end_string: ']]'
+    mode: '0644'
   loop: [ html, text ]
   loop_control:
     loop_var: format

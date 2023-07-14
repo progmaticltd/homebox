@@ -1,7 +1,8 @@
 ---
 
 - name: Deploy prometheus alerts
-  tags: prometheus
   ansible.builtin.template:
     src: prometheus/alerts.yml
     dest: /etc/prometheus/alerts/sogo-rules.yml
+    mode: '0644'
+  tags: prometheus

@@ -8,6 +8,7 @@
   ansible.builtin.template:
     src: apparmor.conf
     dest: /etc/apparmor.d/local/nginx-webdav
+    mode: '0644'
   tags: apparmor
 
 - name: Check if AppArmor nginx configuration already contains the line

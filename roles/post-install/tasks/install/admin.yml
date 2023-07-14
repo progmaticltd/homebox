@@ -7,7 +7,7 @@
       {{ lookup(creds.store, network.domain + "/user/admin"
       + creds.opts.create) }}
 
-- name: use a random uid and gid numbers
+- name: Use a random uid and gid numbers
   ansible.builtin.set_fact:
     uid_number: '{{ 2000 + (999 | random) }}'
     gid_number: '{{ 2000 + (999 | random) }}'

@@ -4,6 +4,7 @@
   register: mp_check_cmd
   ansible.builtin.shell: mountpoint {{ mp.path }}
   ignore_errors: true
+  changed_when: false
   loop: '{{ mountpoints }}'
   loop_control:
     loop_var: mp
@@ -22,6 +23,7 @@
     block_end_string: '%]'
     variable_start_string: '[['
     variable_end_string: ']]'
+    mode: '0644'
   loop: '{{ mountpoints }}'
   loop_control:
     loop_var: mp

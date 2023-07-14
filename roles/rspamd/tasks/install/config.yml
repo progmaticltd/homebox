@@ -5,6 +5,7 @@
   ansible.builtin.template:
     src: 'conf/{{ file }}'
     dest: '/etc/rspamd/local.d/{{ file }}'
+    mode: '0644'
   loop:
     - classifier-bayes.conf
     - logging.conf

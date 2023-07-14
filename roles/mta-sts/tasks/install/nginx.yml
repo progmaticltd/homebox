@@ -4,12 +4,14 @@
   ansible.builtin.file:
     path: /var/www/mta-sts/.well-known
     state: directory
+    mode: '0755'
   tags: nginx
 
 - name: Add the site content files
   ansible.builtin.template:
     src: '{{ file.name }}'
     dest: '/var/www/mta-sts/{{ file.folder | default("") }}{{ file.name }}'
+    mode: '0644'
   loop:
     - name: index.html
     - name: mta-sts.txt

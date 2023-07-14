@@ -11,6 +11,7 @@
   ansible.builtin.copy:
     content: ''
     dest: /var/www/openpgpkey/index.html
+    mode: '0644'
   tags: nginx
 
 - name: Create the nginx template

@@ -1,52 +1,51 @@
 ---
 
-
 - name: Check the LDAP mapping
-  tags: postfix
   ansible.builtin.shell: >-
     set -o pipefail ;
     postmap -q '{{ user.mail }}' ldap:/etc/postfix/ldap-aliases.cf
     | grep '{{ user.uid }}'
+  changed_when: false
   args:
     executable: /bin/bash
   become: true
   become_method: sudo
   become_user: postfix
-  with_items:
-    - '{{ users }}'
+  loop: '{{ users }}'
   loop_control:
     loop_var: user
+  tags: postfix
 
 - name: Check the LDAP mapping for email aliases
-  tags: postfix
   ansible.builtin.shell: >-
     set -o pipefail ;
     postmap -q '{{ user.otherMailBox[0] }}'
     ldap:/etc/postfix/ldap-aliases.cf
     | grep '{{ user.uid }}'
+  changed_when: false
   args:
     executable: /bin/bash
   become: true
   become_method: sudo
   become_user: postfix
-  with_items:
-    - '{{ users | selectattr("otherMailBox", "defined") | list }}'
+  loop: '{{ users | selectattr("otherMailBox", "defined") | list }}'
   loop_control:
     loop_var: user
+  tags: postfix
 
 - name: Check the LDAP mapping for email aliases
-  tags: postfix
   ansible.builtin.shell: >-
     set -o pipefail ;
     postmap -q '{{ user.aliases[0] }}'
     ldap:/etc/postfix/ldap-aliases.cf
     | grep '{{ user.uid }}'
+  changed_when: false
   args:
     executable: /bin/bash
   become: true
   become_method: sudo
   become_user: postfix
-  with_items:
-    - '{{ users | selectattr("aliases", "defined") | list }}'
+  loop: '{{ users | selectattr("aliases", "defined") | list }}'
   loop_control:
     loop_var: user
+  tags: postfix

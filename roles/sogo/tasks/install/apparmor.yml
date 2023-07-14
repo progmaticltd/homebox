@@ -8,6 +8,7 @@
   ansible.builtin.template:
     src: '{{ profile.src }}'
     dest: '{{ profile.dest }}'
+    mode: '0644'
   loop:
     - src: apparmor.d/local/nginx-sogo
       dest: '/etc/apparmor.d/local/nginx-sogo'

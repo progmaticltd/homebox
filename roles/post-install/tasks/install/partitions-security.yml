@@ -21,6 +21,7 @@
   when: fstab_file.changed
   ansible.builtin.shell: >-
     mount -o remount /tmp
+  changed_when: true
   args:
     warn: false
 
@@ -29,11 +30,13 @@
   ansible.builtin.copy:
     src: tmp-mnt.cf
     dest: /etc/apt/apt.conf.d/00tmp-permissions
+    mode: '0644'
 
 # boot partition ###############################################################
 - name: Check if /boot is a mount point
   register: boot_mountpoint_cmd
   ansible.builtin.shell: mountpoint -q /boot/
+  changed_when: false
   failed_when: false
   ignore_errors: true
   args:
@@ -51,6 +54,7 @@
   when: fstab_file.changed
   ansible.builtin.shell: >-
     mount -o remount /boot
+  changed_when: true
   args:
     warn: false
 
@@ -59,6 +63,7 @@
   ansible.builtin.copy:
     src: boot-mnt.cf
     dest: /etc/apt/apt.conf.d/00boot-permissions
+    mode: '0644'
 
 # home partition ###############################################################
 - name: Check if /home is a mount point
@@ -81,5 +86,6 @@
   when: fstab_file.changed
   ansible.builtin.shell: >-
     mount -o remount /home
+  changed_when: true
   args:
     warn: false

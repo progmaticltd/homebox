@@ -3,6 +3,7 @@
 - name: Check that opendmarc is running in enforced mode
   register: aa_status
   ansible.builtin.shell: >-
+    set -o pipefail;
     aa-status --json | jq '.profiles["/usr/sbin/opendmarc"]'
   changed_when: false
   failed_when: >

@@ -6,7 +6,7 @@
     state: directory
     mode: '0700'
 
-- name: use socket in postfix chroot directory
+- name: Use socket in postfix chroot directory
   ansible.builtin.replace:
     path: /etc/opendmarc.conf
     regexp: '^Socket(.*)'

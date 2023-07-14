@@ -38,3 +38,4 @@
 - name: Include DMARC reporting if activated
   when: dmarc.send_reports.active
   ansible.builtin.include_tasks: install/dmarc-reporting.yml
+  tags: dmarc

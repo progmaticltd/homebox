@@ -6,11 +6,13 @@
   ansible.builtin.template:
     src: apparmor/rspamd.conf
     dest: /etc/apparmor.d/usr.bin.rspamd
+    mode: '0644'
   tags: apparmor
 
 - name: Activate AppArmor profiles
   when: rspamd_profile.changed
   ansible.builtin.command: aa-enforce rspamd
+  changed_when: true
   tags: apparmor
 
 - name: Install redis AppArmor profile
@@ -19,9 +21,11 @@
   ansible.builtin.template:
     src: apparmor/redis.conf
     dest: /etc/apparmor.d/usr.bin.redis-check-rdb
+    mode: '0644'
   tags: apparmor
 
 - name: Activate AppArmor profiles
   when: redis_profile.changed
   ansible.builtin.command: aa-enforce usr.bin.redis-check-rdb
+  changed_when: true
   tags: apparmor

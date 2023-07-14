@@ -1,10 +1,11 @@
 ---
 
 - name: Install nginx AppArmor profile
-  tags: rspamd, security, apparmor
   ansible.builtin.template:
     src: apparmor.conf
     dest: /etc/apparmor.d/local/nginx-rspamd-web
+    mode: '0644'
+  tags: security, apparmor
 
 - name: Check if AppArmor nginx configuration already contains the line
   register: line_found
@@ -25,6 +26,7 @@
 
 - name: Activate AppArmor profiles
   when: aa_config.changed
-  tags: rspamd, security, apparmor
-  ansible.builtin.command: 'aa-enforce usr.sbin.nginx'
+  ansible.builtin.command: aa-enforce usr.sbin.nginx
+  changed_when: true
   notify: Restart AppArmor service
+  tags: security, apparmor

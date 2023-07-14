@@ -59,3 +59,4 @@
   ansible.builtin.shell: >-
     grep -l "Subject: {{ test_subject }}"
     /home/users/{{ users[0].uid }}/mails/maildir/.Sent/cur/*
+  changed_when: false

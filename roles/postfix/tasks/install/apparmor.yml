@@ -6,8 +6,8 @@
   ansible.builtin.template:
     src: 'apparmor.d/{{ aa_config }}'
     dest: '/etc/apparmor.d/{{ aa_config }}'
-  with_items:
-    - '{{ postfix_apparmor_profiles }}'
+    mode: '0644'
+  loop: '{{ postfix_apparmor_profiles }}'
   loop_control:
     loop_var: aa_config
 
@@ -15,7 +15,7 @@
   when: aa_templates.changed
   notify: Restart AppArmor service
   ansible.builtin.command: 'aa-enforce {{ aa_config }}'
-  with_items:
-    - '{{ postfix_apparmor_profiles }}'
+  changed_when: true
+  loop: '{{ postfix_apparmor_profiles }}'
   loop_control:
     loop_var: aa_config

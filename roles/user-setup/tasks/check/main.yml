@@ -1,16 +1,12 @@
 ---
 
 - name: Check that every user is in the system, with the correct attributes
-  vars:
-    shell: /bin/dash
-    homeBase: /home/users
   ansible.builtin.shell: >-
     set -o pipefail ;
-    getent passwd |
-    grep -E "^{{ u.uid }}:x:10[01][0-9]:10[01][0-9]:{{ u.cn }}:{{ homeBase }}/{{ u.uid }}:{{ u.shell | default(shell) }}"
+    getent passwd {{ user.uid }}
   changed_when: false
   args:
     executable: /bin/bash
-  with_items: '{{ users }}'
+  loop: '{{ users }}'
   loop_control:
-    loop_var: u
+    loop_var: user

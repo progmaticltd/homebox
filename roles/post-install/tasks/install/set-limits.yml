@@ -11,3 +11,4 @@
   ansible.builtin.template:
     src: limits.conf
     dest: /etc/security/limits.d/homebox.conf
+    mode: '0644'

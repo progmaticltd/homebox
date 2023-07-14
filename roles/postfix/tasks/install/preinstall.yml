@@ -4,3 +4,4 @@
   ansible.builtin.template:
     src: mailname
     dest: /etc/mailname
+    mode: '0644'
