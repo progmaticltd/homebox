@@ -2,10 +2,8 @@
 
 - name: Check that internet without proxy access is blocked
   register: internet_direct_access
-  environment:
-    https_proxy: ~
   ansible.builtin.uri:
-    use_proxy: true
+    use_proxy: false
     url: https://deb.debian.org/
     return_content: true
   ignore_errors: true

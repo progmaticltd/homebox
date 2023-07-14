@@ -25,7 +25,7 @@
     group: ssl-cert
   tags: preinstall
 
-- name: link for compatibility with lego executable
+- name: Link for compatibility with lego executable
   ansible.builtin.file:
     src: /var/lib/lego/certificates
     dest: /etc/lego/certificates

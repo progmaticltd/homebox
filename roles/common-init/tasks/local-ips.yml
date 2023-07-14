@@ -3,11 +3,11 @@
 - name: Get the public external IPv4
   ansible.builtin.set_fact:
     public_ext_ip4: '{{ lookup("pipe", "curl -s -4 https://icanhazip.com") }}'
+  failed_when: false
   tags: facts
-  ignore_errors: true
 
 - name: Get the public external IPv6
   ansible.builtin.set_fact:
     public_ext_ip6: '{{ lookup("pipe", "curl -s -6 https://icanhazip.com") }}'
+  failed_when: false
   tags: facts
-  ignore_errors: true

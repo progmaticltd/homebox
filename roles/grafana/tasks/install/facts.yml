@@ -44,7 +44,7 @@
       + creds.opts.create) }}
   tags: facts
 
-- name: Load api key if already defined
+- name: Load api key if already defined  # noqa ignore-errors
   ansible.builtin.set_fact:
     grafana_api_key: '{{ lookup(creds.store, network.domain + "/grafana/api-key") }}'
   ignore_errors: true

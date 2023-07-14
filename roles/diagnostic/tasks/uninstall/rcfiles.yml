@@ -12,4 +12,5 @@
   ansible.builtin.copy:
     src: /etc/skel/.bashrc
     dest: /root/.bashrc
+    mode: '0600'
     remote_src: true

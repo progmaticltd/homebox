@@ -7,6 +7,7 @@
     src: nftables/s2s-autoban.nft
     dest: /etc/nftables/70-jabber-s2s.nft
     validate: nft -c -f "%s"
+    mode: '0600'
   tags: firewall
 
 - name: Deploy server access firewall rules (fully exposed)
@@ -16,6 +17,7 @@
     src: nftables/s2s-public.nft
     dest: /etc/nftables/70-jabber-s2s.nft
     validate: nft -c -f "%s"
+    mode: '0600'
   tags: firewall
 
 - name: Deploy client access firewall rules
@@ -24,4 +26,5 @@
     src: nftables/c2s-public.nft
     dest: /etc/nftables/70-jabber-c2s.nft
     validate: nft -c -f "%s"
+    mode: '0600'
   tags: firewall

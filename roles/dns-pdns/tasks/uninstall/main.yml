@@ -4,7 +4,7 @@
   ansible.builtin.systemd:
     name: pdns
     state: stopped
-  ignore_errors: true
+  failed_when: false
 
 - name: Remove the installed packages
   ansible.builtin.apt:

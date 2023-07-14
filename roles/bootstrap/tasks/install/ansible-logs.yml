@@ -1,7 +1,7 @@
 ---
 
 - name: Ensure rsyslog is installed
-  apt:
+  ansible.builtin.apt:
     name: rsyslog
     state: present
 
@@ -10,6 +10,7 @@
   ansible.builtin.template:
     src: ansible-logs.conf
     dest: /etc/rsyslog.d/ansible.conf
+    mode: '0644'
 
 - name: Restart rsyslog now
   when: rsyslog_config.changed

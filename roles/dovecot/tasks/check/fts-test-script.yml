@@ -4,6 +4,7 @@
   ansible.builtin.copy:
     src: 'check/{{ attachment.uid }}.{{ attachment.extension }}'
     dest: '/tmp/file.data'
+    mode: '0644'
 
 # Check if the parser can return the string when converting to text
 - name: Check if the text conversion script returns the uuid ({{ attachment.description }})
@@ -12,6 +13,7 @@
     cat /tmp/file.data
     | /usr/local/bin/decode2text {{ attachment.mime }}
     | grep "{{ attachment.search | default(attachment.uid) }}"
+  changed_when: false
   args:
     executable: /bin/bash
 

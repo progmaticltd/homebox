@@ -5,6 +5,7 @@
   ansible.builtin.template:
     src: nftables/imap-public.nft
     dest: /etc/nftables/70-imap.nft
+    mode: '0600'
   tags: firewall
 
 - name: Deploy POP3 public access firewall rules
@@ -13,6 +14,7 @@
   ansible.builtin.template:
     src: nftables/pop3-public.nft
     dest: /etc/nftables/70-pop3.nft
+    mode: '0600'
   tags: firewall
 
 - name: Restart the firewall now if needed

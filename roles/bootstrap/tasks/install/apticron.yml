@@ -19,6 +19,7 @@
     remote_src: true
     src: /usr/lib/apticron/apticron.conf
     dest: /etc/apticron/apticron.conf
+    mode: '0644'
 
 - name: Configure apticron to send email alerts
   ansible.builtin.replace:

@@ -1,7 +1,7 @@
 ---
 
 - name: Deploy management scripts
-  copy:
+  ansible.builtin.copy:
     src: dns-status.sh
     dest: /usr/local/bin/dns-status
     mode: '0755'

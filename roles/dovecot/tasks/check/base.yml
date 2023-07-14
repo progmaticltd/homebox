@@ -7,6 +7,6 @@
   loop_control:
     loop_var: pkg
 
-- name: Check if the dovecot service is up and running # noqa 303
+- name: Check if the dovecot service is up and running  # noqa command-instead-of-module
   ansible.builtin.shell: systemctl status dovecot
   changed_when: false

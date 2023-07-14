@@ -5,6 +5,7 @@
   ansible.builtin.shell: >-
     host -t {{ external_ip_type }} {{ network.hostname }}.{{ network.domain }}
     1.1.1.1
+  changed_when: false
   retries: '{{ dns.propagation.retries | default(10) }}'
   delay: '{{ dns.propagation.delay | default(60) }}'
   until: external_ip_check.rc == 0
@@ -15,6 +16,7 @@
   ansible.builtin.shell: >-
     host -t {{ backup_ip_type }} {{ network.hostname }}.{{ network.domain }}
     1.1.1.1
+  changed_when: false
   retries: '{{ dns.propagation.retries | default(10) }}'
   delay: '{{ dns.propagation.delay | default(60) }}'
   until: backup_ip_check.rc == 0

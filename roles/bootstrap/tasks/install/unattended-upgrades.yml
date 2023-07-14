@@ -24,4 +24,5 @@
   ansible.builtin.template:
     src: unattended-upgrades.conf
     dest: /etc/apt/apt.conf.d/50unattended-upgrades
+    mode: '0644'
   tags: autoupdate

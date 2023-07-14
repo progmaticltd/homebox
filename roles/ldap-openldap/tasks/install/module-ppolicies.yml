@@ -5,32 +5,44 @@
   ansible.builtin.template:
     src: ppolicy-module.ldif
     dest: /etc/ldap/changes/ppolicy-module.ldif
+    mode: '0644'
 
 - name: Load password policy module into the OLC database
   when: ppolicy_module.changed
-  ansible.builtin.command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ppolicy-module.ldif
+  ansible.builtin.command: >-
+    ldapmodify -QY EXTERNAL
+    -H ldapi:/// -f /etc/ldap/changes/ppolicy-module.ldif
+  changed_when: true
 
 # TODO: Check the options for new slapd package on bookworm
-# - name: Copy the password policy schema into the changes directory
-#   register: ppolicy_schema
-#   ansible.builtin.copy:
-#     src: /etc/ldap/schema/ppolicy.ldif
-#     dest: /etc/ldap/changes/ppolicy-schema.ldif
-#     remote_src: true
+- name: Copy the password policy schema into the changes directory
+  register: ppolicy_schema
+  ansible.builtin.copy:
+    src: /etc/ldap/schema/ppolicy.ldif
+    dest: /etc/ldap/changes/ppolicy-schema.ldif
+    remote_src: true
+    mode: '0644'
 
-# - name: Activate password policies schema
-#   when: ppolicy_schema.changed
-#   ansible.builtin.command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/ppolicy-schema.ldif
+- name: Activate password policies schema
+  when: ppolicy_schema.changed
+  ansible.builtin.command: >-
+    ldapadd -QY EXTERNAL
+    -H ldapi:/// -f /etc/ldap/changes/ppolicy-schema.ldif
+  changed_when: true
 
 - name: Copy the overlay into the changes directory
   register: ldap_pwd_overlay
   ansible.builtin.template:
     src: overlay.ldif
     dest: /etc/ldap/changes/overlay.ldif
+    mode: '0644'
 
 - name: Load the overlay definition
   when: ldap_pwd_overlay.changed
-  ansible.builtin.command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/overlay.ldif
+  ansible.builtin.command: >-
+    ldapadd -QY EXTERNAL
+    -H ldapi:/// -f /etc/ldap/changes/overlay.ldif
+  changed_when: true
 
 - name: Create the password policies parent entry
   community.general.ldap_entry:
@@ -93,7 +105,11 @@
   ansible.builtin.template:
     src: password-hash.ldif
     dest: /etc/ldap/changes/password-hash.ldif
+    mode: '0644'
 
 - name: Load the password hash overlay
   when: passwd_hash.changed
-  ansible.builtin.command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/password-hash.ldif
+  ansible.builtin.command: >-
+    ldapmodify -QY EXTERNAL
+    -H ldapi:/// -f /etc/ldap/changes/password-hash.ldif
+  changed_when: true

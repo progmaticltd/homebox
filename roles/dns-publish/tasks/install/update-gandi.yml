@@ -82,7 +82,6 @@
     headers:
       authorization: 'Apikey {{ api_key }}'
     status_code: [ 200, 202 ]
-  ignore_errors: true
 
 - name: List current DNSSEC
   delegate_to: localhost

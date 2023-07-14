@@ -12,6 +12,6 @@
   tags: facts
 
 - name: Create the list of languages for fts
-  set_fact:
+  ansible.builtin.set_fact:
     fts_languages: '{{ languages | map(attribute="id") }}'
   tags: facts

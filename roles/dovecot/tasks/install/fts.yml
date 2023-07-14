@@ -26,13 +26,9 @@
 
 - name: Copy fts mime configuration files
   ansible.builtin.template:
-    src: '{{ file.src }}'
-    dest: '{{ file.dest }}'
-  loop:
-    - src: fts/mime-supported.conf
-      dest: /etc/dovecot/fts-mime-types.conf
-  loop_control:
-    loop_var: file
+    src: fts/mime-supported.conf
+    dest: /etc/dovecot/fts-mime-types.conf
+    mode: '0644'
   tags: fts
 
 - name: Install dovecot indexer AppArmor profile
@@ -40,6 +36,7 @@
   ansible.builtin.template:
     src: 'apparmor.d/{{ aa_config }}.cf'
     dest: '/etc/apparmor.d/{{ aa_config }}'
+    mode: '0644'
   loop:
     - usr.lib.dovecot.indexer
     - usr.lib.dovecot.indexer-worker
@@ -52,6 +49,7 @@
   when: aa_templates.changed
   notify: Restart AppArmor service
   ansible.builtin.command: 'aa-enforce {{ aa_config }}'
+  changed_when: true
   loop:
     - usr.lib.dovecot.indexer
     - usr.lib.dovecot.indexer-worker

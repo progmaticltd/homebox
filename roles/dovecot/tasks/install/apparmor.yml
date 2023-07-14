@@ -5,6 +5,7 @@
   ansible.builtin.template:
     src: 'apparmor.d/{{ aa_config }}.cf'
     dest: '/etc/apparmor.d/{{ aa_config }}'
+    mode: '0644'
   loop: '{{ apparmor.profiles }}'
   loop_control:
     loop_var: aa_config
@@ -22,6 +23,7 @@
   notify: Restart AppArmor service
   ansible.builtin.command: >-
     aa-enforce {{ file.path | basename }}
+  changed_when: true
   loop: '{{ dovecot_apparmor_profiles.files }}'
   loop_control:
     loop_var: file

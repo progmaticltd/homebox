@@ -6,6 +6,7 @@
   ansible.builtin.template:
     src: rules/20-ssh-private.nft
     dest: /etc/nftables/20-ssh-private.nft
+    mode: '0600'
   tags: rules
 
 - name: Remove the SSH private access file

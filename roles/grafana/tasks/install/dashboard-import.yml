@@ -7,6 +7,7 @@
     dest: /etc/grafana/dashboards/{{ dashboard.name }}.json
     variable_start_string: '[['
     variable_end_string: ']]'
+    mode: '0644'
   tags: dashboards
 
 - name: Import the dashboard

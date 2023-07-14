@@ -11,6 +11,7 @@
   ansible.builtin.template:
     src: tinyproxy.conf
     dest: /etc/tinyproxy/tinyproxy.conf
+    mode: '0644'
   tags: proxy
 
 - name: Create logs directory
@@ -28,6 +29,7 @@
     path: /etc/tinyproxy/filter
     line: '^{{ host | regex_escape }}$'
     create: true
+    mode: '0644'
   loop: '{{ whitelisted_hosts }}'
   loop_control:
     loop_var: host
@@ -39,6 +41,7 @@
     path: /etc/tinyproxy/filter
     line: '^.*\.{{ network.domain }}$'
     create: true
+    mode: '0644'
   tags: proxy
 
 - name: Restart the proxy now if needed
@@ -49,6 +52,7 @@
   ansible.builtin.template:
     src: proxy.conf
     dest: /etc/apt/apt.conf.d/00proxy
+    mode: '0644'
   tags: proxy
 
 - name: Advertise the proxy as environment variables
@@ -63,7 +67,7 @@
     loop_var: line
   tags: proxy
 
-- name: Set Systemd environment   # noqa 303
+- name: Set Systemd environment  # noqa command-instead-of-module
   ansible.builtin.shell: >-
     systemctl set-environment {{ line }}
   loop:
@@ -72,4 +76,5 @@
     - no_proxy=127.0.0.1,localhost,.{{ network.domain }},{{ network.domain }}
   loop_control:
     loop_var: line
+  changed_when: true
   tags: proxy

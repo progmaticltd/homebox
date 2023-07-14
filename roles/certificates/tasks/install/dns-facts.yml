@@ -1,16 +1,16 @@
 ---
 
-- name: Filter by IP address for IPv6
+- name: Filter by IP address for IPv6  # noqa jinja[invalid]
   when: external_ip_type == 'AAAA'
   ansible.builtin.set_fact:
-    dns_servers: '{{ network.dns.servers | ansible.utils.ipv6 }}'
+    dns_servers: '{{ network.dns.servers | ansible.utils.ipv6("address") }}'
     dns_is_live: false
   tags: dns
 
-- name: Filter by IP address for IPv4
+- name: Filter by IP address for IPv4  # noqa jinja[invalid]
   when: external_ip_type == 'A'
   ansible.builtin.set_fact:
-    dns_servers: '{{ network.dns.servers | ansible.utils.ipv4 }}'
+    dns_servers: '{{ network.dns.servers | ansible.utils.ipv4("address") }}'
     dns_is_live: false
   tags: dns
 
@@ -48,7 +48,7 @@
         | grep {{ external_ip_addresses[0] | regex_escape }}
       ignore_errors: true
       changed_when: false
-    - name: Set the DNS live fact
+    - name: Set the DNS live fact  # noqa jinja[invalid]
       ansible.builtin.set_fact:
         dns_is_live: '{{ host_test is not failed }}'
 
@@ -63,6 +63,6 @@
       ignore_errors: true
       changed_when: false
       tags: dns
-    - name: Store the fact when the DNS server is live
+    - name: Store the fact when the DNS server is live  # noqa jinja[invalid]
       ansible.builtin.set_fact:
         dns_is_live: '{{ host_test is not failed }}'

@@ -53,7 +53,7 @@
 
 - name: Build the san list for the command line
   ansible.builtin.set_fact:
-    domains_list: '{{ domains_list + [ "DNS:"+san_domain] }}'
+    domains_list: '{{ domains_list + [ "DNS:" + san_domain ] }}'
   loop: '{{ certificate.san_list | default([]) }}'
   loop_control:
     loop_var: san_domain
@@ -109,4 +109,5 @@
     /etc/ssl/certs/homebox-temp-ca.pem
     /var/lib/lego/certificates/{{ filename }}.crt
     >/var/lib/lego/certificates/{{ filename }}.issuer.crt
+  changed_when: true
   tags: certs

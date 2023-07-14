@@ -11,14 +11,13 @@
 
 # The current disabled warnings are:
 
-exclude_paths:
-  - install/playbooks/roles/ldap/tasks/main.yml
-  - install/playbooks/roles/postfix/tasks/main.yml
-  - install/playbooks/roles/dovecot/tasks/main.yml
+exclude_paths: [ ]
 
 parseable: true
-quiet: false
-rulesdir: []
+
+quiet: true
+
+rulesdir: [ ]
 
 warn_list:
   - '106'     # Role name (some roles have ‘-’ in their name)
@@ -26,12 +25,19 @@ warn_list:
   - '208'     # Files permissions unset or incorrect
 
 skip_list:
-  - '701'     # No 'galaxy_info' found
-  - '503'     # Tasks that run when changed should likely be handlers
-  - '305'     # Use shell only when shell functionality is required
-  - '301'     # Commands should not change things if nothing needs doing
-  - yaml[line-length]
+  # - '701'                     # No 'galaxy_info' found
+  # - '503'                     # Tasks that run when changed should likely be handlers
+  # - '305'                     # Use shell only when shell functionality is required
+  # - '301'                     # Commands should not change things if nothing needs doing
+  - 'no-handler'                # We sometimes restart services directly
+  - 'command-instead-of-shell'  # shell commands are used for now
+  - 'yaml[line-length]'         # TODO: Set a maximum line length somewhere (e.g. 120)
+  - 'yaml[brackets]'            # For spaces after opening and before closing brackets
+  - 'jinja[spacing]'            # This warning appears when using multiline blocks (e.g. '>-')
+  - 'role-name'                 # What's wrong with hyphen in names ‽
 
-tags: []
+tags: [ ]
+
 use_default_rules: true
+
 verbosity: 1

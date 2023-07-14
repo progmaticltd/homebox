@@ -5,6 +5,7 @@
   ansible.builtin.template:
     src: cert-renew.service
     dest: /etc/systemd/system/cert-renew.service
+    mode: '0644'
   tags: service
 
 - name: Copy the certificate renewal timer
@@ -12,4 +13,5 @@
   ansible.builtin.template:
     src: cert-renew.timer
     dest: /etc/systemd/system/cert-renew.timer
+    mode: '0644'
   tags: service

@@ -16,6 +16,10 @@
   ansible.builtin.include_tasks: install/dns.yml
   tags: dns
 
+- name: network settings update
+  ansible.builtin.include_tasks: install/network.yml
+  tags: network
+
 - name: Set limits for users
   ansible.builtin.include_tasks: install/set-limits.yml
 

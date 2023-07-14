@@ -5,6 +5,7 @@
   ansible.builtin.template:
     src: '{{ file.src }}'
     dest: '{{ file.dest }}'
+    mode: '0644'
   loop:
     - src: clamsmtpd.conf
       dest: /etc/clamsmtpd.conf

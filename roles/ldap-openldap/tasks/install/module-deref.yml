@@ -5,7 +5,11 @@
   ansible.builtin.template:
     src: deref-module.ldif
     dest: /etc/ldap/changes/deref-module.ldif
+    mode: '0644'
 
 - name: Load deref module into the OLC database
   when: deref_module.changed
-  ansible.builtin.command: ldapmodify -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/deref-module.ldif
+  ansible.builtin.command: >-
+    ldapmodify -QY EXTERNAL
+    -H ldapi:/// -f /etc/ldap/changes/deref-module.ldif
+  changed_when: true

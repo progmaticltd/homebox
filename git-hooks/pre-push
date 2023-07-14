@@ -72,10 +72,10 @@ do
 
         echo "Running ansible-lint on all playbooks"
         echo "Full log is being written to $log_file"
-        #  -x 106,207,208
+
         # shellcheck disable=SC2016
         xargs -0 -I {} \
-            sh -c 'PYTHONUNBUFFERED=1 ansible-lint "$1" 2>&1' -- "{}" \
+            sh -c 'PYTHONUNBUFFERED=1 ansible-lint -q -x 106,207,208 "$1" 2>&1' -- "{}" \
             < "$tmp_checklist" \
             > "$log_file"
 

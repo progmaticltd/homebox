@@ -6,7 +6,11 @@
     src: /etc/ldap/schema/misc.ldif
     dest: /etc/ldap/changes/misc.ldif
     remote_src: true
+    mode: '0644'
 
 - name: Load misc schema for multiple email addresses
   when: misc_schema.changed
-  ansible.builtin.command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/misc.ldif
+  ansible.builtin.command: >-
+    ldapadd -QY EXTERNAL
+    -H ldapi:/// -f /etc/ldap/changes/misc.ldif
+  changed_when: true

@@ -7,9 +7,9 @@
     - usr.bin.freshclam
     - usr.sbin.clamd
     - usr.sbin.clamsmtpd
-  ignore_errors: true
   loop_control:
     loop_var: aa_config
+  changed_when: true
 
 - name: Remove clamav AppArmor profiles
   ansible.builtin.file:

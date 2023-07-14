@@ -11,6 +11,7 @@
   ansible.builtin.template:
     src: sources.list
     dest: /etc/apt/sources.list
+    mode: '0644'
 
 - name: Find all third party repositories
   register: tp_repositories_found
@@ -39,6 +40,7 @@
   ansible.builtin.template:
     src: extra-packages.conf
     dest: /etc/apt/90extra
+    mode: '0644'
 
 - name: Upgrade the distribution
   when: packages_cache.changed

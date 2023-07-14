@@ -6,6 +6,7 @@
   ansible.builtin.template:
     src: apparmor.conf
     dest: /etc/apparmor.d/usr.sbin.clamsmtpd
+    mode: '0644'
   tags: apparmor
 
 - name: Activate AppArmor profiles
@@ -17,4 +18,5 @@
     - usr.sbin.clamd
   loop_control:
     loop_var: aa_config
+  changed_when: true
   tags: apparmor

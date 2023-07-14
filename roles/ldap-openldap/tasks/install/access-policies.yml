@@ -5,7 +5,11 @@
   ansible.builtin.template:
     src: access-policies.ldif
     dest: /etc/ldap/changes/access-policies.ldif
+    mode: '0644'
 
 - name: Load access policies
   when: access_policies.changed
-  ansible.builtin.command: ldapadd -QY EXTERNAL -H ldapi:/// -f /etc/ldap/changes/access-policies.ldif
+  ansible.builtin.command: >-
+    ldapadd -QY EXTERNAL
+    -H ldapi:/// -f /etc/ldap/changes/access-policies.ldif
+  changed_when: true

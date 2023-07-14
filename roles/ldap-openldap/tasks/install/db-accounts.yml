@@ -17,7 +17,7 @@
     dn: 'cn={{ group.gid }},{{ ldap.groups.dn }}'
     state: present
     attributes:
-      cn:  '{{ group.gid }}'
+      cn: '{{ group.gid }}'
       gidNumber: '{{ group.gidNumber }}'
     objectClass:
       - top

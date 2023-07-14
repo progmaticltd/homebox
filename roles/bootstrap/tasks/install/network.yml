@@ -22,6 +22,7 @@
     src: hosts.conf
     dest: /etc/hosts
     attributes: +i
+    mode: '0644'
   tags: network
 
 - name: Check if /etc/resolv.conf is a real file
@@ -44,16 +45,16 @@
     attributes: -i
   tags: network
 
-- name: Filter by IP address for IPv6
+- name: Filter by IP address for IPv6  # noqa jinja[invalid]
   when: external_ip_type == 'AAAA'
   ansible.builtin.set_fact:
-    dns_servers: '{{ network.dns.servers | ansible.utils.ipv6 }}'
+    dns_servers: '{{ network.dns.servers | ansible.utils.ipv6("address") }}'
   tags: network
 
-- name: Filter by IP address for IPv4
+- name: Filter by IP address for IPv4  # noqa jinja[invalid]
   when: external_ip_type == 'A'
   ansible.builtin.set_fact:
-    dns_servers: '{{ network.dns.servers | ansible.utils.ipv4 }}'
+    dns_servers: '{{ network.dns.servers | ansible.utils.ipv4("address") }}'
   tags: network
 
 - name: Deploy unbound common config
@@ -80,4 +81,5 @@
     src: resolv.conf
     dest: /etc/resolv.conf
     attributes: +i
+    mode: '0644'
   tags: network

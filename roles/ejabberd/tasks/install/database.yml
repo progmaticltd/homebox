@@ -1,7 +1,7 @@
 ---
 
 - name: Install psycopg2
-  apt:
+  ansible.builtin.apt:
     name: python3-psycopg2
     state: present
   tags: postgres, apt

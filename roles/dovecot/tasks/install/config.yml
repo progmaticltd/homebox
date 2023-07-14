@@ -12,24 +12,17 @@
 - name: Activate SSL configuration
   notify: Restart dovecot
   ansible.builtin.template:
-    src: 'conf.d/{{ file }}'
-    dest: '/etc/dovecot/conf.d/{{ file }}'
-  with_items:
-    - 10-ssl.conf
-  loop_control:
-    loop_var: file
+    src: conf.d/10-ssl.conf
+    dest: /etc/dovecot/conf.d/10-ssl.conf
+    mode: '0644'
   tags: ssl, config
 
 - name: Create dovecot global configuration files
   notify: Restart dovecot
   ansible.builtin.template:
-    src: '{{ file }}'
-    dest: '/etc/dovecot/{{ file }}'
+    src: dovecot-ldap.conf.ext
+    dest: /etc/dovecot/dovecot-ldap.conf.ext
     mode: '0600'
-  with_items:
-    - dovecot-ldap.conf.ext
-  loop_control:
-    loop_var: file
   tags: config
 
 - name: Create the initial list of mail_plugins
@@ -54,6 +47,7 @@
   ansible.builtin.template:
     src: 'conf.d/{{ file }}'
     dest: '/etc/dovecot/conf.d/{{ file }}'
+    mode: '0644'
   loop: '{{ config_files }}'
   loop_control:
     loop_var: file

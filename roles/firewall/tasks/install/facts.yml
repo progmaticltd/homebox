@@ -12,7 +12,7 @@
     remote_ip: '{{ hostvars[inventory_hostname]["ansible_default_ipv6"]["address"] | default(None) }}'
   tags: facts
 
-- name: Check the type of IP address for the remote host
+- name: Check the type of IP address for the remote host  # noqa jinja[invalid]
   ansible.builtin.set_fact:
-    remote_ip_private: '{{ (remote_ip | ipaddr("private")) != None }}'
+    remote_ip_private: '{{ (remote_ip | ansible.utils.ipaddr("private")) != None }}'
   tags: facts

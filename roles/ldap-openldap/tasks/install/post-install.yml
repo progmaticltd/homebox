@@ -5,6 +5,7 @@
   ansible.builtin.template:
     src: indexes.ldif
     dest: /etc/ldap/changes/indexes.ldif
+    mode: '0644'
   tags: post-install
 
 - name: Add indexes to the database for optimisation
@@ -22,7 +23,8 @@
   become_user: openldap
   become_method: sudo
   ansible.builtin.command: 'slapindex -n 1 -v {{ field }}'
-  with_items: '{{ indexed_fields }}'
+  loop: '{{ indexed_fields }}'
+  changed_when: true
   loop_control:
     loop_var: field
   tags: post-install
@@ -60,6 +62,7 @@
   ansible.builtin.template:
     src: ssl-config-end.ldif
     dest: /etc/ldap/changes/ssl-config-end.ldif
+    mode: '0644'
   tags: post-install
 
 - name: Modify the configuration if not already done

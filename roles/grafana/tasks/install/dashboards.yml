@@ -4,6 +4,7 @@
   ansible.builtin.file:
     path: /etc/grafana/dashboards/
     state: directory
+    mode: '0755'
   tags: dashboards
 
 - name: Get the datasource info using the API

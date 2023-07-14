@@ -1,24 +1,22 @@
 ---
 
-- name: deploy the template to update resolv.conf
-  ansible.builtin.template:
-    src: resolv.conf
-    dest: /etc/resolv.conf
-
 # Check if a DHCP client is installed. In this case,
 # make sure it is not querying the external DNS servers
 - name: Check if dhclient is installed
   register: dhclient_config
   ansible.builtin.stat:
     path: /etc/dhcp/dhclient.conf
+  tags: network
 
 - name: Disable DNS server updates in dhclient configuration file
   when: dhclient_config.stat.isreg
   ansible.builtin.template:
     src: dhclient.conf
     dest: /etc/dhcp/dhclient.conf
+  tags: network
 
 - name: Remove isc-dhcp-client debug file
   ansible.builtin.file:
     path: /etc/dhcp/dhclient-exit-hooks.d/debug
     state: absent
+  tags: network

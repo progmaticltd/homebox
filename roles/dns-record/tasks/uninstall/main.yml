@@ -4,6 +4,7 @@
   ansible.builtin.shell: >-
     pdnsutil delete-rrset {{ network.domain }}
     {{ record.name }} {{ record.type }}
+  changed_when: true
   loop: '{{ dns_records }}'
   loop_control:
     loop_var: record

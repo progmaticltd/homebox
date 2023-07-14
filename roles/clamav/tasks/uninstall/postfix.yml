@@ -13,4 +13,5 @@
     loop_var: line
   tags: postfix
 
-- ansible.builtin.meta: flush_handlers
+- name: Restart postfix now
+  ansible.builtin.meta: flush_handlers

@@ -8,6 +8,7 @@
   ansible.builtin.template:
     src: rules/20-trusted-ips.nft
     dest: /etc/nftables/20-trusted-ips.nft
+    mode: '0600'
   tags: rules, autoban
 
 - name: Banned IP addresses rules
@@ -15,20 +16,22 @@
   ansible.builtin.template:
     src: rules/25-banned-ips.nft
     dest: /etc/nftables/25-banned-ips.nft
+    mode: '0600'
   tags: rules, autoban
 
-- name: deploy the save/load script
+- name: Deploy the save/load script
   ansible.builtin.copy:
     src: nftables-lists.sh
     dest: /usr/local/sbin/nftables-lists
     mode: '0700'
   tags: rules, autoban
 
-- name: deploy the systemd service
+- name: Deploy the systemd service
   notify:
     - Reload systemd
     - Enable nftables list service
   ansible.builtin.copy:
     src: nftables-lists.service
     dest: /etc/systemd/system/nftables-lists.service
+    mode: '0644'
   tags: rules, autoban

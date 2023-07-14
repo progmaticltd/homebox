@@ -65,18 +65,21 @@
   ansible.builtin.file:
     path: /etc/ldap/changes
     state: directory
+    mode: '0755'
 
 - name: Copy the client configuration
   register: ldap_conf
   ansible.builtin.template:
     src: ldap.conf
     dest: /etc/ldap/ldap.conf
+    mode: '0644'
 
 - name: Configure the ldap server for SSL / TLS
   register: ldap_def_conf
   ansible.builtin.template:
     src: default-slapd.conf
     dest: /etc/default/slapd
+    mode: '0644'
 
 - name: Restart LDAP now if needed
   when: ldap_conf.changed or ldap_def_conf.changed

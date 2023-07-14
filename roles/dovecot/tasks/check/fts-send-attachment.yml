@@ -16,6 +16,7 @@
   ansible.builtin.copy:
     src: 'check/{{ attachment.uid }}.{{ attachment.extension }}'
     dest: /tmp/file.{{ attachment.extension }}
+    mode: '0644'
 
 - name: Send an email with attachment ({{ attachment.description }})
   ansible.builtin.shell: >-
@@ -35,6 +36,7 @@
   become: true
   become_method: sudo
   become_user: postfix
+  changed_when: false
 
 - name: Cleanup, delete the attachment and the email template
   ansible.builtin.file:
@@ -51,6 +53,7 @@
   ansible.builtin.shell: >-
     doveadm fts rescan -u "{{ users[1].uid }}" &&
     doveadm index -u "{{ users[1].uid }}" 'INBOX'
+  changed_when: true
 
 # Now, we do a search inside the emais using the uuid,
 # this should return one result
@@ -62,6 +65,7 @@
     | grep -E '[a-f0-9-]+\s[0-9]'
   args:
     executable: /bin/bash
+  changed_when: true
   until: email_found.rc == 0
   retries: 12
   delay: 5
@@ -71,3 +75,4 @@
   ansible.builtin.shell: >-
     doveadm expunge -u "{{ users[1].uid }}"
     mailbox 'inbox' all
+  changed_when: true

@@ -4,6 +4,7 @@
   ansible.builtin.file:
     path: /etc/nftables
     state: directory
+    mode: '0700'
   tags: rules
 
 - name: Copy the main rules files

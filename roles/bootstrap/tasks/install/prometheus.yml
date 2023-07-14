@@ -4,10 +4,12 @@
   ansible.builtin.file:
     path: /etc/prometheus/alerts
     state: directory
+    mode: '0755'
   tags: prometheus
 
 - name: Create the prometheus targets directory
   ansible.builtin.file:
     path: /etc/prometheus/targets
     state: directory
+    mode: '0755'
   tags: prometheus

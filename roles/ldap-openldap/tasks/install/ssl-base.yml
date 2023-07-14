@@ -47,6 +47,7 @@
   ansible.builtin.template:
     src: ssl-config.ldif
     dest: /etc/ldap/changes/ssl-config.ldif
+    mode: '0644'
   tags: certs
 
 - name: Modify the configuration if not already done

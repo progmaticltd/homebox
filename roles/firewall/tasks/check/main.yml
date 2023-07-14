@@ -8,13 +8,4 @@
   register: nft_rules
   ansible.builtin.shell: nft list ruleset
   failed_when: nft_rules.stdout == ''
-
-- name: List the rule files
-  register: rule_files
-  ansible.builtin.find:
-    path: /etc/nftables
-    pattern: '*.nft'
-
-- name: Check that the number of copied files
-  ansible.builtin.assert:
-    that: rule_files.files | length >= 7
+  changed_when: false

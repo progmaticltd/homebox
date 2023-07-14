@@ -1,16 +1,16 @@
 ---
 
 - name: Add some patterns to exclude in the backups
-  tags: backup
   ansible.builtin.lineinfile:
     path: /etc/homebox/backup-exclude
     line: '{{ line }}'
     create: true
     state: present
+    mode: '0600'
   loop:
     - '# Dovecot: Exclude indexes from backup'
-    - '/home/users/*/mails/indexes/*'
-    - '/home/users/*/.dovecot.lda-dupes*'
-    - '/home/users/*/mails/sieve/logs/*'
+    - '/home/*/*/.dovecot.lda-dupes*'
+    - '/home/*/*/mails/sieve/logs/*'
   loop_control:
     loop_var: line
+  tags: backup

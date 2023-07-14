@@ -83,7 +83,7 @@
   when: >-
     "host" in location
   ansible.builtin.set_fact:
-    mount_options: '{{ mount_options + [ "host=https://"+location.host ] }}'
+    mount_options: '{{ mount_options + [ "host=https://" + location.host ] }}'
 
 - name: Add mount point definition for this device
   register: mount_systemd

@@ -98,8 +98,8 @@
     path: '{{ path }}'
     state: directory
   loop:
-    -  /tmp/backup-keys-import
-    -  /tmp/backup-keys-export
+    - /tmp/backup-keys-import
+    - /tmp/backup-keys-export
   loop_control:
     loop_var: path
 
@@ -168,8 +168,8 @@
     path: '{{ path }}'
     state: absent
   loop:
-    -  /tmp/backup-keys-import
-    -  /tmp/backup-keys-export
+    - /tmp/backup-keys-import
+    - /tmp/backup-keys-export
   loop_control:
     loop_var: path
 

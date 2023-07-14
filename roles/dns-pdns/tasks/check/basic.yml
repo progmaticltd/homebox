@@ -1,6 +1,6 @@
 ---
 
-- name: Check if PowerDNS is running
+- name: Check if PowerDNS is running  # noqa command-instead-of-module
   ansible.builtin.shell:
     systemctl is-active pdns
   changed_when: false

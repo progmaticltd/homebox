@@ -4,10 +4,12 @@
   ansible.builtin.template:
     src: prometheus/target.yml
     dest: /etc/prometheus/targets/pdns.yml
+    mode: '0644'
   tags: prometheus
 
 - name: Deploy prometheus alerts
   ansible.builtin.template:
     src: prometheus/alerts.yml
     dest: /etc/prometheus/alerts/pdns-rules.yml
+    mode: '0644'
   tags: prometheus
