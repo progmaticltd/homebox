@@ -1,7 +1,7 @@
 ---
 
 - name: Load some facts
-  ansible.builtin.include_tasks: facts.yml
+  ansible.builtin.include_tasks: install/facts.yml
 
 - name: Set DNS records
   ansible.builtin.include_tasks: check/dns.yml

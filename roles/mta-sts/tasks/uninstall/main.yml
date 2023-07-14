@@ -1,7 +1,7 @@
 ---
 
 - name: Load the common facts
-  ansible.builtin.include_tasks: facts.yml
+  ansible.builtin.include_tasks: install/facts.yml
 
 - name: Remove DNS records
   ansible.builtin.include_tasks: uninstall/dns.yml

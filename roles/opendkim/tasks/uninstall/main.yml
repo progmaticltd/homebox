@@ -1,7 +1,7 @@
 ---
 
 - name: Load the facts
-  ansible.builtin.include_tasks: facts.yml
+  ansible.builtin.include_tasks: install/facts.yml
 
 - name: Remove packages
   ansible.builtin.include_tasks: uninstall/packages.yml

@@ -25,10 +25,6 @@ warn_list:
   - '208'     # Files permissions unset or incorrect
 
 skip_list:
-  # - '701'                     # No 'galaxy_info' found
-  # - '503'                     # Tasks that run when changed should likely be handlers
-  # - '305'                     # Use shell only when shell functionality is required
-  # - '301'                     # Commands should not change things if nothing needs doing
   - 'no-handler'                # We sometimes restart services directly
   - 'command-instead-of-shell'  # shell commands are used for now
   - 'yaml[line-length]'         # TODO: Set a maximum line length somewhere (e.g. 120)
