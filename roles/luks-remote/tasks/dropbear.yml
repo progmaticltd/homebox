@@ -18,6 +18,7 @@
   ansible.builtin.file:
     path: /etc/dropbear-initramfs
     state: directory
+    mode: '0755'
 
 - name: Copy the ssh public key for authentication
   notify: Update initramfs
@@ -25,6 +26,7 @@
     src: /root/.ssh/authorized_keys
     dest: /etc/dropbear-initramfs/authorized_keys
     remote_src: true
+    mode: '0600'
 
 # NOTE: https://bugs.debian.org/955384
 - name: List OpenSSH keys
@@ -54,6 +56,7 @@
     ssh-keygen -p -N "" -m PEM -f {{ file.path | basename }}
   args:
     chdir: /root/ssh-keys-convert
+  changed_when: false
   loop: '{{ keys_list.files }}'
   loop_control:
     loop_var: file
@@ -64,6 +67,7 @@
     src: '{{ key.path }}'
     dest: '/etc/dropbear-initramfs/{{ key.path | basename }}'
     remote_src: true
+    mode: '0600'
   loop: '{{ keys_list.files }}'
   loop_control:
     loop_var: key
@@ -76,6 +80,7 @@
     /etc/dropbear/{{ file.path | basename | replace("ssh_host", "dropbear") | replace("_key", "_host_key") }}
   args:
     chdir: /root/ssh-keys-convert
+  changed_when: false
   loop: '{{ keys_list.files }}'
   loop_control:
     loop_var: file

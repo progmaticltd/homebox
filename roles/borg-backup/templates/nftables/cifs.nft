@@ -1,0 +1,15 @@
+#!/usr/sbin/nft -f
+
+table inet filter {
+
+    chain output {
+
+        udp dport { 137, 138 } ct state new counter accept \
+        comment "Allow outbound netbios ns/dgm connection for cifs backup."
+
+        tcp dport { 139, 445 } ct state new counter accept \
+        comment "Allow outbound netbiios-ssn / microsoft-ds connection for cifs backup."
+
+    }
+
+}

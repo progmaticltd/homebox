@@ -6,6 +6,7 @@
   ansible.builtin.template:
     src: backup-restore.systemd
     dest: /etc/systemd/system/backup-restore-{{ location.name }}.service
+    mode: '0644'
   loop: '{{ backup.locations }}'
   loop_control:
     loop_var: location
@@ -23,3 +24,4 @@
   ansible.builtin.copy:
     src: sogo-restore.sh
     dest: /usr/local/sbin/sogo-restore.sh
+    mode: '0755'

@@ -1,7 +1,6 @@
 ---
 
 - name: Extract backup location details
-  tags: backup, facts
   ansible.builtin.set_fact:
     protocol: '{{ location.url | urlsplit("scheme") }}'
     location_host: '{{ location.url | urlsplit("hostname") }}'
@@ -10,6 +9,7 @@
     location_path: '{{ location.url | urlsplit("path") }}'
     location_details: '{{ location.url | urlsplit }}'
     location_domain: '{{ location.domain | default(None) }}'
+  tags: backup, facts
 
 - name: Create the backup config into /etc/homebox
   tags: config
@@ -19,7 +19,7 @@
     option: '{{ option.name }}'
     value: '{{ option.value }}'
     mode: '0600'
-  with_items:
+  loop:
     - name: url
       value: '{{ location.url }}'
     - name: active
@@ -43,28 +43,19 @@
     name: 'cifs-utils'
     state: present
 
-- name: Configure the firewall to allow CIFS out connections
-  tags: ufw
-  community.general.ufw:
-    direction: out
-    proto: '{{ rule.proto }}'
-    port: '{{ rule.ports }}'
-    comment: '{{ rule.comment }}'
-    rule: allow
-  with_items:
-    - proto: udp
-      ports: 137,138
-      comment: 'Allow samba output connections for backup {{ location.name }}'
-    - proto: tcp
-      ports: 139,445
-      comment: 'Allow samba output connections for backup {{ location.name }}'
-  loop_control:
-    loop_var: rule
+- name: Deploy CIFS output firewall rules
+  notify: Restart nftables
+  ansible.builtin.template:
+    src: nftables/cifs.nft
+    dest: /etc/nftables/80-backup-cifs.nft
+    mode: '0600'
+  tags: firewall
 
 - name: Create the credentials file
   ansible.builtin.template:
     src: cifs-creds.pwd
     dest: '/etc/homebox/backup-{{ location.name }}.pwd'
+    mode: '0600'
 
 - name: Set mount options for cifs
   ansible.builtin.set_fact:
@@ -74,30 +65,32 @@
 - name: Add mount point definition for this device
   register: mount_systemd
   notify: Reload Systemd
-  tags: systemd
   ansible.builtin.template:
     src: 'mount-cifs.systemd'
     dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.mount'
+    mode: '0600'
+  tags: systemd
 
 - name: Enable the mount service
-  tags: systemd
   ansible.builtin.systemd:
     name: 'mnt-backup-{{ location.name }}.mount'
     enabled: true
     daemon_reload: true
+  tags: systemd
 
 - name: Add automount definition for this device
   notify: Reload Systemd
-  tags: systemd
   ansible.builtin.template:
     src: mount-auto.systemd
     dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.automount'
+    mode: '0600'
+  tags: systemd
 
 - name: Enable the automount service
-  tags: systemd
   ansible.builtin.systemd:
     name: 'mnt-backup-{{ location.name }}.automount'
     enabled: true
     daemon_reload: true
     state: restarted
     no_block: true
+  tags: systemd

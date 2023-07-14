@@ -88,29 +88,31 @@
 - name: Add mount point definition for this device
   register: mount_systemd
   notify: Reload Systemd
-  tags: systemd
   ansible.builtin.template:
     src: 'mount-s3fs.systemd'
     dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.mount'
+    mode: '0600'
+  tags: systemd
 
 - name: Add automount definition for this device
   notify: Reload Systemd
-  tags: systemd
   ansible.builtin.template:
     src: mount-auto.systemd
     dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.automount'
+    mode: '0600'
+  tags: systemd
 
 - name: Enable the automount service
   notify: Reload Systemd
-  tags: systemd
   ansible.builtin.systemd:
     name: 'mnt-backup-{{ location.name }}.automount'
     enabled: true
     state: started
+  tags: systemd
 
 - name: Enable the mount service
   notify: Reload Systemd
-  tags: systemd
   ansible.builtin.systemd:
     name: 'mnt-backup-{{ location.name }}.mount'
     enabled: true
+  tags: systemd

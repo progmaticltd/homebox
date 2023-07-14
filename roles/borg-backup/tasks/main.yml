@@ -10,6 +10,7 @@
   ansible.builtin.file:
     path: /mnt/backup
     state: directory
+    mode: '0755'
 
 - name: Create the directories to import and export the keys
   ansible.builtin.file:
@@ -93,28 +94,29 @@
     mode: '0700'
 
 - name: Create sync directories to import/export keys
-  tags: sync
   ansible.builtin.file:
     path: '{{ path }}'
     state: directory
+    mode: '0755'
   loop:
     - /tmp/backup-keys-import
     - /tmp/backup-keys-export
   loop_control:
     loop_var: path
+  tags: sync
 
 - name: Create the backup keys directory locally if it does not exists
   register: backup_keys_local_directory
   delegate_to: localhost
-  tags: sync
   ansible.builtin.file:
     path: '{{ backup_directory }}/backup-keys/'
     state: directory
+    mode: '0755'
+  tags: sync
 
 # If the folder already existed, upload the keys on the server.
 - name: Upload the backup encryption keys if they exists
   when: not backup_keys_local_directory.changed
-  tags: sync
   register: keys_restore
   ansible.posix.synchronize:
     src: '{{ backup_directory }}/backup-keys/'
@@ -126,32 +128,32 @@
     rsync_opts:
       - '--no-motd'
       - '--quiet'
+  tags: sync
 
 - name: Initialise the repository, to test access and retrieve the key
   when: backup.locations is defined and backup.locations != []
-  tags: backup
   ansible.builtin.shell: >-
     /usr/local/sbin/homebox-backup
     --action init
     --config {{ location.name }}
     --import-key-path /tmp/backup-keys-import/{{ location.name }}.key
     --export-key-path /tmp/backup-keys-export/{{ location.name }}.key
-  loop:
-    - '{{ backup.locations | selectattr("restore", "equalto", false) | list }}'
+  changed_when: true
+  loop: '{{ backup.locations | selectattr("restore", "equalto", false) | list }}'
   loop_control:
     loop_var: location
+  tags: backup
 
 # In this direction, we should overwrite the keys
 # in case new ones have been created
 - name: Check if new keys have been copied in the export directory
-  tags: sync
   register: keys_exported
   ansible.builtin.find:
     paths: /tmp/backup-keys-export/
     patterns: '*.key'
+  tags: sync
 
 - name: Retrieve the backup encryption keys on your local machine
-  tags: sync
   when: keys_exported.matched > 0
   ansible.posix.synchronize:
     mode: pull
@@ -161,6 +163,7 @@
     rsync_opts:
       - '--no-motd'
       - '--quiet'
+  tags: sync
 
 - name: Remove the backup keys directory, we don't need this anymore
   tags: sync
@@ -182,5 +185,5 @@
 
 - name: Restore backups from a previous installation
   when: restore_list | int > 0
-  tags: restore
   ansible.builtin.include_tasks: 'restore-all.yml'
+  tags: restore

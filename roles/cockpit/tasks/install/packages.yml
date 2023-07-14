@@ -9,3 +9,4 @@
   ansible.builtin.template:
     src: cockpit.conf
     dest: /etc/cockpit/cockpit.conf
+    mode: '0644'

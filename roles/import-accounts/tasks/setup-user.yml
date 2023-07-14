@@ -7,7 +7,7 @@
     group: users
     state: directory
     mode: '0700'
-  with_items:
+  loop:
     - '/home/users/{{ user.uid }}/mails/import/safe'
     - '/home/users/{{ user.uid }}/mails/import/conf'
     - '/home/users/{{ user.uid }}/mails/import/logs'
@@ -22,8 +22,7 @@
     owner: '{{ user.uid }}'
     group: users
     mode: '0600'
-  with_items:
-    - '{{ user.external_accounts | default([]) }}'
+  loop: '{{ user.external_accounts | default([]) }}'
   loop_control:
     loop_var: account
 
@@ -33,8 +32,8 @@
     -in /home/users/{{ user.uid }}/mails/import/conf/{{ account.name }}-{{ account.type }}.conf
     -out /home/users/{{ user.uid }}/mails/import/safe/{{ account.name }}-{{ account.type }}.conf
     -pass file:/etc/homebox/system-key
-  with_items:
-    - '{{ user.external_accounts | default([]) }}'
+  changed_when: false
+  loop: '{{ user.external_accounts | default([]) }}'
   loop_control:
     loop_var: account
 
@@ -44,8 +43,7 @@
     owner: '{{ user.uid }}'
     group: users
     mode: '0600'
-  with_items:
-    - '{{ user.external_accounts | default([]) }}'
+  loop: '{{ user.external_accounts | default([]) }}'
   loop_control:
     loop_var: account
 
@@ -53,7 +51,6 @@
   ansible.builtin.file:
     path: '/home/users/{{ user.uid }}/mails/import/conf/{{ account.name }}-{{ account.type }}.conf'
     state: absent
-  with_items:
-    - '{{ user.external_accounts | default([]) }}'
+  loop: '{{ user.external_accounts | default([]) }}'
   loop_control:
     loop_var: account
