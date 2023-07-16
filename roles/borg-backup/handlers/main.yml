@@ -16,6 +16,12 @@
     state: restarted
     no_block: true
 
+- name: Restart tinyproxy
+  ansible.builtin.systemd:
+    name: tinyproxy
+    state: restarted
+    no_block: true
+
 - name: Start restore services
   ansible.builtin.systemd:
     name: backup-restore-{{ location.name }}

@@ -85,6 +85,14 @@
   ansible.builtin.set_fact:
     mount_options: '{{ mount_options + [ "host=https://" + location.host ] }}'
 
+- name: Whitelist URL in the proxy
+  notify: Restart tinyproxy
+  ansible.builtin.lineinfile:
+    path: '/etc/tinyproxy/filter'
+    line: '^{{ location.host | regex_escape }}$'
+    mode: '0644'
+  tags: proxy
+
 - name: Add mount point definition for this device
   register: mount_systemd
   notify: Reload Systemd
