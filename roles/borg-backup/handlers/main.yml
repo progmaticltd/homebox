@@ -16,6 +16,12 @@
     state: restarted
     no_block: true
 
+- name: Restart nftables
+  ansible.builtin.systemd:
+    name: nftables
+    state: restarted
+    no_block: true
+
 - name: Restart tinyproxy
   ansible.builtin.systemd:
     name: tinyproxy

@@ -47,6 +47,7 @@
   loop: '{{ backup.locations | default([]) }}'
   loop_control:
     loop_var: location
+  tags: config
 
 - name: Add the cron entries to backup the home directory
   ansible.builtin.template:

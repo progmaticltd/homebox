@@ -32,7 +32,7 @@
   ansible.builtin.lineinfile:
     path: /etc/homebox/backup-exclude
     line: '{{ line }}'
-  with_items:
+  loop:
     - "# Exclude cache from backup"
     - 'pp:/home/.backup-cache/'
   loop_control:
@@ -46,7 +46,7 @@
     option: '{{ option.name }}'
     value: '{{ option.value }}'
     mode: '0600'
-  with_items:
+  loop:
     - name: url
       value: '{{ location.url }}'
     - name: active
@@ -85,19 +85,20 @@
   ansible.builtin.set_fact:
     mount_options: '{{ mount_options + [ "host=https://" + location.host ] }}'
 
-- name: Whitelist URL in the proxy
-  notify: Restart tinyproxy
-  ansible.builtin.lineinfile:
-    path: '/etc/tinyproxy/filter'
-    line: '^{{ location.host | regex_escape }}$'
-    mode: '0644'
-  tags: proxy
+- name: Allow direct https access to this host
+  notify: Restart nftables
+  ansible.builtin.template:
+    src: nftables/s3fs.nft
+    dest: /etc/nftables/80-s3fs-{{ location.name }}.nft
+    validate: nft -c -f "%s"
+    mode: '0600'
+  tags: nftables
 
 - name: Add mount point definition for this device
   register: mount_systemd
   notify: Reload Systemd
   ansible.builtin.template:
-    src: 'mount-s3fs.systemd'
+    src: 'systemd/mount-s3fs.systemd'
     dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.mount'
     mode: '0600'
   tags: systemd

@@ -40,7 +40,7 @@
   register: mount_systemd
   notify: Reload Systemd
   ansible.builtin.template:
-    src: 'mount-usb.systemd'
+    src: 'systemd/mount-usb.systemd'
     dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.mount'
     mode: '0600'
   tags: systemd

@@ -16,7 +16,7 @@
   notify: Start restore services
   tags: restore
   ansible.builtin.template:
-    src: backup-restore.systemd
+    src: systemd/backup-restore.systemd
     dest: /etc/systemd/system/backup-restore-{{ location.name }}.service
     mode: '0644'
   loop: '{{ backup.locations }}'
