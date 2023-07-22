@@ -91,6 +91,11 @@ for cert in $certs; do
 
     # Get the FQDN from the filename
     fqdn=$(basename "$cert" '.key')
+
+    if [ "$fqdn" = "_.$domain" ]; then
+        fqdn="*.$domain"
+    fi
+
     msg "Checking $fqdn"
 
     # Initialise the options

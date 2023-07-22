@@ -131,13 +131,7 @@
 
 - name: Initialise the repository, to test access and retrieve the key
   when: backup.locations is defined and backup.locations != []
-  ansible.builtin.shell: >-
-    /usr/local/sbin/homebox-backup
-    --action init
-    --config {{ location.name }}
-    --import-key-path /tmp/backup-keys-import/{{ location.name }}.key
-    --export-key-path /tmp/backup-keys-export/{{ location.name }}.key
-  changed_when: true
+  ansible.builtin.include_tasks: init-repository.yml
   loop: '{{ backup.locations | selectattr("restore", "equalto", false) | list }}'
   loop_control:
     loop_var: location

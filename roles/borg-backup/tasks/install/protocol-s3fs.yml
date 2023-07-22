@@ -100,7 +100,7 @@
   ansible.builtin.template:
     src: 'systemd/mount-s3fs.systemd'
     dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.mount'
-    mode: '0600'
+    mode: '0644'
   tags: systemd
 
 - name: Add automount definition for this device
@@ -108,7 +108,7 @@
   ansible.builtin.template:
     src: mount-auto.systemd
     dest: '/etc/systemd/system/mnt-backup-{{ location.name }}.automount'
-    mode: '0600'
+    mode: '0644'
   tags: systemd
 
 - name: Enable the automount service

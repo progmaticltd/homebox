@@ -20,6 +20,7 @@ pages:
   - Homebox Installation: installation.md
   - Email configuration: email-configuration.md
   - Web keys directory: web-keys-directory.md
+  - WebDAV server: webdav.md
   - Sogo Groupware: groupware-sogo.md
   - Antispam configuration: antispam-rspamd.md
   - Jabber configuration: jabber-configuration.md

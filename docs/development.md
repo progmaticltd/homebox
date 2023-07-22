@@ -60,7 +60,7 @@ Unless your IP address changes too often or your port 25 is blocked, you do not 
 
 However, the more you want to test, the more your router need to be configured:
 
-- TCP/80 (HTTP): Used to query letsencrypt for the certificates. Open it at least to obtain the SSL using
+- UDP/53 (DNS): Used to query letsencrypt for the certificates. Open it at least to obtain the SSL using
   LetsEncrypt. You can then close the port once you have the certificates.
 - TCP/25: SMTP, to receive and transfer emails from and to other SMTP servers on the internet. You need this one only to
   test the reception and transmission of external emails.
@@ -92,10 +92,8 @@ transparently forward the traffic from the internet.
 ### Create your hosts file
 
 ```sh
-
   cd config
   cp hosts-example.yml hosts.yml
-
 ```
 
 The host file is in YAML format, and contains only one host, which is your homebox server.
@@ -103,14 +101,12 @@ The host file is in YAML format, and contains only one host, which is your homeb
 Here is an example:
 
 ```yaml
-
 all:
   hosts:
     homebox:
       ansible_host: 192.168.42.1
       ansible_user: root
       ansible_port: 22
-
 ```
 
 I have actually tested with the Ansible remote user as root. However, it should be possible to run as an admin user and
@@ -121,21 +117,17 @@ use sudo with little modifications.
 First, as you would do for a live environment, copy the sample configuration to create your own:
 
 ```sh
-
 cd config
 cp system-example.yml system.yml
-
 ```
 
 The file is self explanatory, and inside, you will find the following block:
 
 ```yaml
-
 system:
   release: bullseye
   devel: true
   debug: true
-
 ```
 
 ### The "debug" flag
