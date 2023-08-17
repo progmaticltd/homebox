@@ -40,15 +40,14 @@
     mode: '0755'
   tags: backup
 
-- name: Allow external SSH connections
-  tags: ufw
-  community.general.ufw:
-    direction: out
-    proto: tcp
-    port: 22
-    src: any
-    rule: allow
-    comment: Allow the box to connect outside via SSH for backup
+- name: Allow direct ssh access to this host
+  notify: Restart nftables
+  ansible.builtin.template:
+    src: nftables/sshfs.nft
+    dest: /etc/nftables/80-sshfs-{{ location.name }}.nft
+    validate: nft -c -f "%s"
+    mode: '0600'
+  tags: nftables
 
 - name: Include the generated configutations in the main file
   tags: ssh

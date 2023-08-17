@@ -1,0 +1,30 @@
+---
+
+- name: Remove nftable rules
+  notify: Restart nftables
+  ansible.builtin.file:
+    path: /etc/nftables/80-sshfs-{{ location.name }}.nft
+    state: absent
+  tags: nftables
+
+- name: Remove the backup location
+  ansible.builtin.file:
+    path: '/root/.ssh/config.d/backup-{{ location.name }}'
+    state: absent
+  tags: ssh
+
+- name: Get backup server signature
+  ansible.builtin.shell: 'ssh-keyscan -H {{ location_host }}'
+  changed_when: false
+  register: keyscan
+  tags: ssh
+
+- name: Remove the backup server to known_hosts, once for all
+  ansible.builtin.lineinfile:
+    path: /root/.ssh/known_hosts
+    line: '{{ line }}'
+    state: absent
+  loop: '{{ keyscan.stdout_lines }}'
+  loop_control:
+    loop_var: line
+  tags: ssh

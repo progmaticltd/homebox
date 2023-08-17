@@ -1,0 +1,62 @@
+---
+
+- name: Remove the cron entries to backup the home directory
+  ansible.builtin.file:
+    path: '/etc/cron.{{ location.frequency | default("daily") }}/backup-{{ location.name }}'
+    state: absent
+  loop: '{{ backup.locations | default([]) }}'
+  loop_control:
+    loop_var: location
+  tags: config
+
+- name: Remove the cron entries to check the backup
+  tags: config
+  ansible.builtin.file:
+    path: '/etc/cron.{{ location.check_frequency | default("weekly") }}/backup-check-{{ location.name }}'
+    state: absent
+  loop: '{{ backup.locations | default([]) }}'
+  loop_control:
+    loop_var: location
+
+- name: Deconfigure each protocol
+  ansible.builtin.include_tasks:
+    file: 'uninstall/protocol-{{ location.url | urlsplit("scheme") }}.yml'
+  loop: '{{ backup.locations | default([]) }}'
+  loop_control:
+    loop_var: location
+  tags: config
+
+- name: Remove the passphrase
+  ansible.builtin.file:
+    path: /etc/homebox/backup-key
+    state: absent
+  tags: encryption
+
+- name: Remove the backup script
+  ansible.builtin.file:
+    path: '/usr/local/sbin/homebox-backup'
+    state: absent
+  tags: scripts
+
+- name: Remove the backup config from /etc/homebox
+  ansible.builtin.file:
+    path: '/etc/homebox/backup.ini'
+    state: absent
+  tags: config
+
+- name: Remove backup exclude file
+  ansible.builtin.file:
+    path: /etc/homebox/backup-exclude
+    state: absent
+
+- name: Remove the backups mount point root
+  ansible.builtin.file:
+    path: /mnt/backup
+    state: absent
+
+- name: Remove the packages
+  ansible.builtin.apt:
+    name: '{{ packages }}'
+    state: absent
+    autoremove: true
+  tags: apt

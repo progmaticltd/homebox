@@ -5,7 +5,7 @@ Description=automatic mount for {{ location.name }}
 
 [Automount]
 Where=/mnt/backup/{{ location.name }}
-TimeoutIdleSec={{ location.idle_sec | default(60) }}
+TimeoutIdleSec={{ location.idle_sec | default(300) }}
 
 [Install]
 WantedBy=multi-user.target

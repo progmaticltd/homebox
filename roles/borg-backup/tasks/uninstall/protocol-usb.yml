@@ -1,0 +1,27 @@
+---
+
+- name: Stop the automount service
+  ansible.builtin.systemd:
+    name: 'mnt-backup-{{ location.name }}.automount'
+    state: stopped
+  tags: systemd
+
+- name: Remove automount definition for this device
+  notify: Reload Systemd
+  ansible.builtin.file:
+    path: '/etc/systemd/system/mnt-backup-{{ location.name }}.automount'
+    state: absent
+  tags: systemd
+
+- name: Stop the mount service
+  ansible.builtin.systemd:
+    name: 'mnt-backup-{{ location.name }}.mount'
+    state: stopped
+  tags: systemd
+
+- name: Remove mount point definition for this device
+  notify: Reload Systemd
+  ansible.builtin.file:
+    path: '/etc/systemd/system/mnt-backup-{{ location.name }}.mount'
+    state: absent
+  tags: systemd

@@ -1,0 +1,63 @@
+---
+
+- name: Create a directory to store all the ssh configuration segments
+  ansible.builtin.file:
+    path: /root/.ssh/config.d/
+    state: directory
+    mode: '0755'
+  tags: backup
+
+- name: Remove the backup location
+  ansible.builtin.template:
+    path: '/root/.ssh/config.d/backup-{{ location.name }}'
+    state: absent
+  tags: ssh
+
+- name: Get backup server signature
+  ansible.builtin.shell: 'ssh-keyscan -H {{ location_host }}'
+  changed_when: false
+  register: keyscan
+  tags: ssh
+
+- name: Add the backup server to known_hosts, once for all
+  ansible.builtin.lineinfile:
+    path: /root/.ssh/known_hosts
+    line: '{{ line }}'
+    state: absent
+  loop: '{{ keyscan.stdout_lines }}'
+  loop_control:
+    loop_var: line
+  tags: ssh
+
+- name: Uninstall the required file systems
+  ansible.builtin.apt:
+    name: sshfs
+    state: absent
+    purge: true
+    autoremove: true
+
+- name: Stop the automount service
+  ansible.builtin.systemd:
+    name: 'mnt-backup-{{ location.name }}.automount'
+    state: stopped
+  tags: systemd
+
+- name: Remove automount definition for this device
+  notify: Reload Systemd
+  ansible.builtin.file:
+    path: '/etc/systemd/system/mnt-backup-{{ location.name }}.automount'
+    state: absent
+  tags: systemd
+
+- name: Stop the mount service
+  ansible.builtin.systemd:
+    name: 'mnt-backup-{{ location.name }}.mount'
+    state: stopped
+  tags: systemd
+
+- name: Remove mount point definition for this device
+  notify: Reload Systemd
+  ansible.builtin.file:
+    path: '/etc/systemd/system/mnt-backup-{{ location.name }}.mount'
+    state: absent
+  tags: systemd
