@@ -10,7 +10,6 @@ The locations currently supported are:
 - sshfs: remote backup on another server through SSH only (does not use remote borg server).
 - cifs: samba share, probably on your local network.
 - usb: named USB stick / NAS drive.
-- s3fs: Backup on Amazon S3.
 
 For each location, the following procedure is followed:
 
@@ -201,58 +200,6 @@ backup:
     keep_weekly: 4
     keep_monthly: 6
 ```
-
-## Backup on Amazon S3
-
-You can also backup on a S3 bucket on the AWS cloud platform. Here is an example:
-
-```yaml
-backup:
-  ...
-  - name: s3main
-    automount: true
-    url: s3fs:///mnt/backup/s3main/homebox
-    active: yes
-    frequency: weekly
-    keep_weekly: 4
-    keep_monthly: 6
-    access_key_id: AKD1WAGJDIKWSX2TRPQR
-    secret_access_key: gBiRu5hPSyswK17TNpp2IIf5sWDNJx6Vb9Gx3rjF
-    bucket_name: homebox-backup.example.com
-    region: eu-west-2
-    rate_limit: 500
-```
-
-And here is an appropriate example of bucket policy:
-
-```json
-{
-    "Version": "2012-10-17",
-    "Id": "Policy1559913732504",
-    "Statement": [
-        {
-            "Sid": "Stmt1559913723346",
-            "Effect": "Allow",
-            "Principal": {
-                "AWS": "arn:aws:iam::399724661369:user/homebox"
-            },
-            "Action": "s3:*",
-            "Resource": "arn:aws:s3:::homebox-backup.example.com"
-        }
-    ]
-}
-```
-
-You can use the [Amazon S3 policy generator](https://awspolicygen.s3.amazonaws.com/policygen.html).
-
-As usual, everything is encrypted locally using borg backup. Therefore, no one will be able to
-decrypt your files without the encryption key.
-
-!!! Note
-    - This location storage is actually under scrutiny, and might be removed if proven unstable.
-    - Under the hood, [S3FS](https://github.com/s3fs-fuse/s3fs-fuse) is used, with the cache option activated, and
-      located in /home/.backup-cache/. Because this folder content is about the size if the whole backup, the /home
-      partition should have enough available disk space.
 
 # Backup contents
 

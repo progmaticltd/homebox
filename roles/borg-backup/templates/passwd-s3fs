@@ -1,1 +1,0 @@
-{{ location.access_key_id }}:{{ location.secret_access_key }}

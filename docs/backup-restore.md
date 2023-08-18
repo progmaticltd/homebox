@@ -48,8 +48,8 @@ easily restore it from scratch, with the all your users' data. This is done by a
 The important thing is to have kept the [deployment backup folder](deployment-backup.md) in a safe place, for instance
 on an encrypted USB drive.
 
-Let's say you have used Amazon S3 for the daily backup of your system. So, open your system.yml file with your favourite
-editor, and add the line `restore: true` to the backup location you want to restore from. For instance:
+Let's say you have used a samba server for the daily backup of your system. So, open your system.yml file with your
+favourite editor, and add the line `restore: true` to the backup location you want to restore from. For instance:
 
 ``` yaml hl_lines="9"
 backup:
@@ -59,16 +59,14 @@ backup:
     recipient: 'hendrick@universiteitleiden.nl'
     jabber: true
   locations:
-  - name: s3main
+  - name: samba
     restore: true
-    url: s3fs://mnt/backup/s3main/casimir.fx
+    url: smb://mnt/backup/samba/
     active: yes
     frequency: daily
     keep_daily: 7
     keep_weekly: 4
     keep_monthly: 6
-    access_key_id: AKIAM2HEGKRL50SDZTTC
-    secret_access_key: MpHag/11PUXRVIDSKMV8YQZZDW95IGDV
     bucket_name: casimir.fx
     region: eu-west-2
     check_frequency: weekly
