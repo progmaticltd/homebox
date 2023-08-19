@@ -23,3 +23,16 @@
       {{ lookup(creds.store, network.domain + "/postgresql/ejabberd"
       + creds.opts.create + creds.opts.system) }}
   tags: facts
+
+- name: Read port ranges to use
+  register: ephemeral_ports_cmd
+  shell: >-
+    sysctl -n net.ipv4.ip_local_port_range
+    | tr '\t' '-'
+  changed_when: false
+  tags: facts
+
+- name: Store the ephemeral ports
+  set_fact:
+    ephemeral_ports: '{{ ephemeral_ports_cmd.stdout }}'
+  tags: facts
