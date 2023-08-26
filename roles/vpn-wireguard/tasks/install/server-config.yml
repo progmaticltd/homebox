@@ -1,0 +1,66 @@
+---
+
+- name: Activate IP forwarding
+  sysctl:
+    reload: true
+    name: '{{ name }}'
+    value: 1
+    sysctl_file: /etc/sysctl.d/wireguard.conf
+  loop:
+    - net.ipv4.ip_forward
+    - net.ipv6.conf.all.forwarding
+  loop_control:
+    loop_var: name
+  tags: config
+
+# Basic implementation of RFC 4193
+- name: Get the date
+  set_fact:
+    date: '{{ lookup("pipe", "date +%s%N") }}'
+  tags: config
+
+- name: Get the machine ID
+  register: machine_id_file
+  slurp:
+    src: /var/lib/dbus/machine-id
+  tags: config
+
+- name: Store the machine ID
+  set_fact:
+    machine_id: '{{ machine_id_file["content"] }}'
+  tags: config
+
+- name: Extract the prefix
+  set_fact:
+    ipv6prefix_full: '{{ (date + machine_id) | hash("sha1") }}'
+  tags: config
+
+- name: Extract the prefix
+  set_fact:
+    ipv6prefix: 'fd{{ ipv6prefix_full[30:] }}'
+  tags: config
+
+- name: Format the prefix
+  set_fact:
+    ipv6prefix: '{{ ipv6prefix | regex_replace("(....)", "\1:") }}:'
+  tags: config
+
+- name: Deploy the device configuration file
+  notify: Reload systemd network
+  template:
+    src: server.netdev
+    dest: /etc/systemd/network/wg0.netdev
+    owner: root
+    group: systemd-network
+    mode: '0660'
+  tags: config
+
+- name: Deploy the network configuration file
+  notify: Reload systemd network
+  template:
+    src: server.network
+    dest: /etc/systemd/network/wg0.network
+    owner: root
+    group: systemd-network
+    mode: '0660'
+  tags: config

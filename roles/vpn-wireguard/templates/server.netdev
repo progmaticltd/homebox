@@ -1,0 +1,17 @@
+# Wireguard network definition
+[NetDev]
+Name=wg0
+Kind=wireguard
+Description=WireGuard for {{ network.domain }}
+
+[WireGuard]
+PrivateKey={{ private_key }}
+ListenPort={{ wireguard.network.port }}
+
+{% for user in users %}
+
+# Config for {{ user.uid }}
+[WireGuardPeer]
+PublicKey={{ user_keys[user.uid] }}
+AllowedIPs = 0.0.0.0/0, ::/0
+{% endfor %}

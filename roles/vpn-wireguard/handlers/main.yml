@@ -1,0 +1,9 @@
+---
+
+- name: Reload systemd network
+  shell: networkctl reload
+
+- name: Restart nftables
+  systemd:
+    name: nftables
+    state: restarted
