@@ -2,7 +2,7 @@
 
 - name: Set the password path in the store
   ansible.builtin.set_fact:
-    password_path: '{{ network.domain }}/ldap/{{ user.uid }}'
+    password_path: '{{ creds.prefix }}/ldap/{{ user.uid }}'
   tags: facts
 
 - name: Try to load user’s password from the password store

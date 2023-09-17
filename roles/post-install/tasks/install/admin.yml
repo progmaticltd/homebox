@@ -4,7 +4,7 @@
   no_log: '{{ not system.devel }}'
   ansible.builtin.set_fact:
     admin_password: >-
-      {{ lookup(creds.store, network.domain + "/user/admin"
+      {{ lookup(creds.store, creds.prefix + "/user/admin"
       + creds.opts.create) }}
 
 - name: Use a random uid and gid numbers

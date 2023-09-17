@@ -1,12 +1,18 @@
 ---
 
 - name: Get the public external IPv4
+  environment:
+    http_proxy: ~
+    https_proxy: ~
   ansible.builtin.set_fact:
     public_ext_ip4: '{{ lookup("pipe", "curl -s -4 https://icanhazip.com") }}'
   failed_when: false
   tags: facts
 
 - name: Get the public external IPv6
+  environment:
+    http_proxy: ~
+    https_proxy: ~
   ansible.builtin.set_fact:
     public_ext_ip6: '{{ lookup("pipe", "curl -s -6 https://icanhazip.com") }}'
   failed_when: false

@@ -3,7 +3,7 @@
 - name: Initialise the master user password parameters
   tags: impersonate
   ansible.builtin.set_fact:
-    master_password_params: '{{ network.domain }}/dovecot/master'
+    master_password_params: '{{ creds.prefix }}/dovecot/master'
 
 - name: Create the master user account password
   tags: impersonate

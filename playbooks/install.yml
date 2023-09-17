@@ -5,8 +5,16 @@
 # export the role you want to run in the ‘ROLE’ environment variable
 # and run the playbook.
 
-- name: Run the install tasks of one role
+- name: Clear facts
   hosts: homebox
+  tasks:
+    - name: Clear facts
+      meta: clear_facts
+
+- name: Run common initialisation tasks
+  hosts: homebox
+  vars:
+    backup_folder: '{{ playbook_dir }}/../backup/{{ network.domain }}/'
   vars_files:
     - '{{ playbook_dir }}/../config/system.yml'
     - '{{ playbook_dir }}/../config/defaults.yml'
@@ -26,6 +34,7 @@
   hosts: homebox
   vars:
     debug: '{{ system.debug }}'
+    backup_folder: '{{ playbook_dir }}/{{ network.domain }}/'
   vars_files:
     - '{{ playbook_dir }}/../config/system.yml'
     - '{{ playbook_dir }}/../config/defaults.yml'

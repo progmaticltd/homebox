@@ -1,12 +1,12 @@
 ---
 
-- name: Install the packages
-  ansible.builtin.include_tasks: install/packages.yml
-  tags: apt
-
 - name: Whitelist virus database
   ansible.builtin.include_tasks: install/proxy.yml
   tags: proxy
+
+- name: Install the packages
+  ansible.builtin.include_tasks: install/packages.yml
+  tags: apt
 
 - name: Configure the packages
   ansible.builtin.include_tasks: install/config.yml

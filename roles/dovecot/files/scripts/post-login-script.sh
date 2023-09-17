@@ -25,9 +25,15 @@ fi
 # imap(S) and pop3s are whitelisted, bypassing subsequent firewall rules.
 if [ "$fw_set" != "" ]; then
 
-    for port in $ports; do
-        nft add element inet filter "$fw_set" "{ $IP . $port timeout $period }"
-    done
+    # Check if the IP address already contained in the set
+    # nft element query does not work with intervals.
+    if ! nft list set inet filter "$fw_set" | grep -qF "$IP"; then
+
+        for port in $ports; do
+            nft add element inet filter "$fw_set" "{ $IP . $port timeout $period }"
+        done
+
+    fi
 
 fi
 

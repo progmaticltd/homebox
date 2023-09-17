@@ -15,20 +15,20 @@
   changed_when: true
 
 # TODO: Check the options for new slapd package on bookworm
-- name: Copy the password policy schema into the changes directory
-  register: ppolicy_schema
-  ansible.builtin.copy:
-    src: /etc/ldap/schema/ppolicy.ldif
-    dest: /etc/ldap/changes/ppolicy-schema.ldif
-    remote_src: true
-    mode: '0644'
+# - name: Copy the password policy schema into the changes directory
+#   register: ppolicy_schema
+#   ansible.builtin.copy:
+#     src: /etc/ldap/schema/ppolicy.ldif
+#     dest: /etc/ldap/changes/ppolicy-schema.ldif
+#     remote_src: true
+#     mode: '0644'
 
-- name: Activate password policies schema
-  when: ppolicy_schema.changed
-  ansible.builtin.command: >-
-    ldapadd -QY EXTERNAL
-    -H ldapi:/// -f /etc/ldap/changes/ppolicy-schema.ldif
-  changed_when: true
+# - name: Activate password policies schema
+#   when: ppolicy_schema.changed
+#   ansible.builtin.command: >-
+#     ldapadd -QY EXTERNAL
+#     -H ldapi:/// -f /etc/ldap/changes/ppolicy-schema.ldif
+#   changed_when: true
 
 - name: Copy the overlay into the changes directory
   register: ldap_pwd_overlay

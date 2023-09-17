@@ -96,7 +96,7 @@
       ansible.builtin.set_fact:
         grafana_api_key: >-
           {{ lookup(creds.store,
-          network.domain + "/grafana/api-key"
+          creds.prefix + "/grafana/api-key"
           + creds.opts.create
           + creds.opts.overwrite
           + " userpass=" + api_key_create_call.json.key

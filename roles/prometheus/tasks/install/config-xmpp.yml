@@ -4,7 +4,7 @@
   no_log: '{{ not system.devel }}'
   ansible.builtin.set_fact:
     postmaster_password: >-
-      {{ lookup(creds.store, network.domain + "/ldap/postmaster") }}
+      {{ lookup(creds.store, creds.prefix + "/ldap/postmaster") }}
   tags: xmpp
 
 - name: Push the xmpp parameters
