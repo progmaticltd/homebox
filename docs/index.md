@@ -26,7 +26,7 @@ This project is for you if:
 
 ## Main components
 
-- Operating System: Debian Bullseye
+- Operating System: Debian Bookworm
 - Authentication: OpenLDAP
 - DNS: PowerDNS
 - Firewall: nftables
