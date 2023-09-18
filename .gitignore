@@ -3,9 +3,7 @@
 
 # Ignore everything on the config folder, except sample and default files
 config/*
-!config/defaults.yml
-!config/*-default*.yml
-!config/*-example.yml
+!config/defaults/*
 
 # Ignore ansible error files
 *.retry

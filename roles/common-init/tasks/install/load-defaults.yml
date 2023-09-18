@@ -129,23 +129,6 @@
 
 
 ################################################################################
-# Merge backup defaults
-- name: Combine default and user defined backup settings
-  run_once: true
-  when: backup is defined
-  ansible.builtin.set_fact:
-    backup: '{{ backup_default | combine(backup, recursive=True) }}'
-    cacheable: true
-
-- name: Use default backup settings
-  run_once: true
-  when: backup is not defined
-  ansible.builtin.set_fact:
-    backup: '{{ backup_default }}'
-    cacheable: true
-
-
-################################################################################
 # Merge defaults DMARC keys settings
 - name: Combine default and user defined dmarc settings
   run_once: true
@@ -210,23 +193,6 @@
   when: sogo is not defined
   ansible.builtin.set_fact:
     sogo: '{{ sogo_default }}'
-    cacheable: true
-
-
-################################################################################
-# Merge defaults backup settings
-- name: Combine default and user defined backup settings
-  run_once: true
-  when: backup is defined
-  ansible.builtin.set_fact:
-    backup: '{{ backup_default | combine(backup, recursive=True) }}'
-    cacheable: true
-
-- name: Use default backup settings
-  run_once: true
-  when: backup is not defined
-  ansible.builtin.set_fact:
-    backup: '{{ backup_default }}'
     cacheable: true
 
 

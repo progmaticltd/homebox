@@ -1,0 +1,4 @@
+---
+
+webdav:
+  max_file_size: 1G

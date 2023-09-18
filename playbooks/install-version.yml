@@ -1,0 +1,20 @@
+---
+
+- name: Run the install tasks for each role
+  hosts: homebox
+  vars:
+    debug: '{{ system.debug }}'
+    backup_folder: '{{ playbook_dir }}/../backup/{{ network.domain }}/'
+  vars_files:
+    - '{{ playbook_dir }}/../config/defaults/common-security.yml'
+    - '{{ playbook_dir }}/../config/defaults/version-{{ version | default("small") }}.yml'
+    - '{{ playbook_dir }}/../config/system.yml'
+  tasks:
+    - name: Run the role selected
+      include_role:
+        name: '{{ role }}'
+        tasks_from: install/main.yml
+      loop: '{{ roles_list }}'
+      loop_control:
+        loop_var: role
+      tags: always
