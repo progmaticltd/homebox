@@ -5,11 +5,21 @@
 
 - name: Run all the tasks to make the system live
   hosts: homebox
+  vars:
+    debug: '{{ system.debug }}'
+    backup_folder: '{{ playbook_dir }}/../backup/{{ network.domain }}/'
   vars_files:
+    - '{{ playbook_dir }}/../config/defaults/common-security.yml'
+    - '{{ playbook_dir }}/../config/defaults/version-{{ version | default("small") }}.yml'
     - '{{ playbook_dir }}/../config/system.yml'
-    - '{{ playbook_dir }}/../config/defaults.yml'
-  roles:
-    - role: common-init
+  tasks:
+    - name: Run common tasks
       tags: always
-    - role: dns-publish
-      tags: dns
+      include_role:
+        name: common-init
+        tasks_from: install/main.yml
+    - name: Publish DNS glue records
+      tags: always
+      include_role:
+        name: dns-publish
+        tasks_from: install/main.yml
