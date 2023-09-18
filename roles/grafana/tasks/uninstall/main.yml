@@ -12,8 +12,8 @@
   tags: apt
 
 - name: Remove the proxy exception to access grafana site
-  tags: proxy
   ansible.builtin.include_tasks: uninstall/proxy.yml
+  tags: proxy
 
 - name: Remove extra files
   ansible.builtin.include_tasks: uninstall/cleanup.yml

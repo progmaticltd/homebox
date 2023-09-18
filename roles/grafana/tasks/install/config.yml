@@ -51,7 +51,6 @@
 # See https://github.com/grafana/grafana/issues/12638
 - name: Set the admin password using the API
   when: package_status.changed | default(false)
-  tags: config
   block:
     - name: Wait for Grafana API to be available
       ansible.builtin.wait_for:
@@ -75,10 +74,10 @@
       ansible.builtin.debug:
         var: password_api
         verbosity: 1
+  tags: config
 
 - name: Create and store the api key
   when: package_status.changed | default(false)
-  tags: config
   block:
     - name: Call the api to create the admin key
       register: api_key_create_call
@@ -92,7 +91,9 @@
           role: Admin
         body_format: json
         force_basic_auth: true
-    - name: Store the api key into the password store
+    - name: Store the api key into the passwordstore using pass
+      when: creds.store == "passwordstore"
+      no_log: '{{ not system.devel }}'
       ansible.builtin.set_fact:
         grafana_api_key: >-
           {{ lookup(creds.store,
@@ -101,3 +102,15 @@
           + creds.opts.overwrite
           + " userpass=" + api_key_create_call.json.key
           )}}
+    - name: Store the api key into the password text file
+      when: creds.store == "password"
+      delegate_to: localhost
+      no_log: '{{ not system.devel }}'
+      ansible.builtin.copy:
+        content: '{{ api_key_create_call.json.key }}'
+        dest: '{{ backup_folder }}/{{ creds.prefix }}/grafana/admin'
+        mode: '0600'
+    - name: Store the api key
+      ansible.builtin.set_fact:
+        grafana_api_key: '{{ api_key_create_call.json.key }}'
+  tags: config
