@@ -16,7 +16,6 @@ pages:
   - Features: features.md
   - Before the installation: prerequisites.md
   - Prometheus monitoring: prometheus.md
-  - Debian OS installation: preseed.md
   - Homebox Installation: installation.md
   - Email configuration: email-configuration.md
   - Web keys directory: web-keys-directory.md
