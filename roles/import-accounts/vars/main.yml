@@ -1,5 +1,0 @@
----
-
-mail_import_pkgs:
-  - isync
-  - libsasl2-modules
