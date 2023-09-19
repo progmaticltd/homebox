@@ -24,8 +24,6 @@
 
 - name: Run all the roles selected
   hosts: homebox
-  vars:
-    backup_dir: '{{ playbook_dir }}/../backup/{{ network.domain }}'
   vars_files:
     - '{{ playbook_dir }}/../config/system.yml'
     - '{{ playbook_dir }}/../config/defaults.yml'

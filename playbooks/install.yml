@@ -17,7 +17,7 @@
   hosts: homebox
   vars:
     debug: '{{ system.debug }}'
-    backup_folder: '{{ playbook_dir }}/../backup/{{ network.domain }}/'
+    backup_directory: '{{ playbook_dir }}/../backup/{{ network.domain }}/'
   vars_files:
     - '{{ playbook_dir }}/../config/defaults/common-security.yml'
     - '{{ playbook_dir }}/../config/defaults/version-{{ version | default("small") }}.yml'

@@ -26,7 +26,6 @@ Using root during the installation process is a requirement. However, the system
 installed. See the security section, [Defining administrators](/security-configuration/#defining-administrators).
 
 
-
 ## Step 2: Describe your system
 
 The main configuration file to create is in the config folder. There is an example named system-example.yml ready to
@@ -34,7 +33,7 @@ copy and customise. There is also a configuration file defaults.yml. This file c
 
 ```sh
 cd config
-cp system-example.yml system.yml
+cp defaults/version-small.yml system.yml
 nano system.yml
 ```
 
@@ -45,8 +44,6 @@ The system configuration file is a complete YAML configuration file containing a
 - Email parameters, like maximum attachment size, antivirus options, etc.
 - Some password policies, like minimum length and complexity.
 - SOGo settings if you want to install it.
-- Firewall policies, especially SSH access.
-- Security settings.
 - Backup strategies.
 
 The most important settings are the first two sections, the others can be left to their default values.

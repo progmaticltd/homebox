@@ -15,8 +15,9 @@ pages:
   - Home: index.md
   - Features: features.md
   - Before the installation: prerequisites.md
-  - Prometheus monitoring: prometheus.md
   - Homebox Installation: installation.md
+  - Credentials: credentials.md
+  - Prometheus monitoring: prometheus.md
   - Email configuration: email-configuration.md
   - Web keys directory: web-keys-directory.md
   - WebDAV server: webdav.md

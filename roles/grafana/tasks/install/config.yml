@@ -109,7 +109,7 @@
       no_log: '{{ not system.devel }}'
       ansible.builtin.copy:
         content: '{{ api_key_create_call.json.key }}'
-        dest: '{{ backup_folder }}/{{ creds.prefix }}/grafana/admin'
+        dest: '{{ backup_directory }}/{{ creds.prefix }}/grafana/admin'
         mode: '0600'
     - name: Store the api key
       ansible.builtin.set_fact:
