@@ -36,6 +36,7 @@ This project is for you if:
 - Antivirus: ClamAV
 - Groupware: SOGo
 - Jabber: ejabberd
+- Monitoring: Prometheus and Grafana
 
 ## Other projects to mention
 
