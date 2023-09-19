@@ -1,17 +1,5 @@
 ---
 
-- name: Check if one ore more backup are marked for restoration
-  ansible.builtin.set_fact:
-    restore_list: >-
-      {{ backup.locations | selectattr("restore", "defined")
-      | selectattr("restore", "equalto", true) | list | length }}
-  tags: facts,restore
-
-- name: Restore backups from a previous installation
-  when: restore_list | int > 0
-  ansible.builtin.include_tasks: 'restore-all.yml'
-  tags: restore
-
 - name: Deploy the services to restore the backup
   notify: Start restore services
   tags: restore
