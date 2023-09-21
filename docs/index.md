@@ -14,11 +14,8 @@ This project is for you if:
 ## Philosophy
 
 - You should be able to upgrade anything installed via the apt command. No git clone / wget / curl here, ever.
-- If you are using your own hardware, the disk can be fully encrypted using
-  [LUKS](https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup).
-  Nobody will be able to steal your hardware _and_ your information.
-- AppArmor is activated on the first boot, and all the services are configured to support it. This makes your server
-  very safe against remote intrusion, even when using 0-day vulnerabilities.
+- Most of the services are protected AppArmor kernel security module. This makes your server very safe against remote
+  intrusion and 0-day vulnerabilities.
 - You can set up multiple backup destination, local and remote, all encrypted.
 - A lot of default choices made towards simplicity, [KISS principle](https://en.wikipedia.org/wiki/KISS_principle),
   and safety.

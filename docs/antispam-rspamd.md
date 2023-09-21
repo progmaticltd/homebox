@@ -2,12 +2,21 @@
 
 ## Default configuration
 
-By default, the mail server is protected against spam with rspamd.
+By default, the mail server is protected against spam with [rspamd](https://www.rspamd.com/).
 
-Optionally, the web user interface is accessible from the LAN:
+```yml
+mail:
+  […]
+  antispam:                 # Check inbound and outbound emails for viruses
+    active: true            # use false to disable
+```
 
-```yaml
-  antispam:                 # Check inbound and outbound emails for virusesyaml
+Optionally, the web user interface is accessible from the local network:
+
+```yml
+mail:
+  [...]
+  antispam:                 # Check inbound and outbound emails for viruses
     webui:                  # rspamd web interface
       active: true          # Activate or not
       allow:                # a list of IP address that can access the web interface
@@ -16,6 +25,5 @@ Optionally, the web user interface is accessible from the LAN:
         - 10.0.0.0/8
 ```
 
-A strong password is generated for the administrator account.
-After the deployment, the password is stored in the credentials store,
-using `rspamd/admin.pwd`.
+A strong password is generated for the administrator account. After the deployment, the password is stored in the
+credentials store, using `rspamd/admin`.

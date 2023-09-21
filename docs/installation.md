@@ -22,9 +22,20 @@ all:
       ansible_port: 22
 ```
 
+To use Python3 as the default interpreter:
+
+``` yaml hl_lines="7"
+all:
+  hosts:
+    homebox:
+      ansible_host: 192.168.1.254
+      ansible_user: root
+      ansible_port: 22
+      ansible_python_interpreter: /usr/bin/python3
+```
+
 Using root during the installation process is a requirement. However, the system can be configured to use sudo once
 installed. See the security section, [Defining administrators](/security-configuration/#defining-administrators).
-
 
 ## Step 2: Describe your system
 
@@ -58,7 +69,6 @@ Once you have modified the file, you are ready to start the installation.
     You need to be careful with the indentation in your Yaml file, the number of spaces is significant.
 
 
-
 ## Step 3: Configure your system
 
 
@@ -79,7 +89,6 @@ The hostname is important, use the real one. If you used the preseed configurati
 network domain.
 
 
-
 ### External IP addresses
 
 It is important here to specify the external IP address(es) your system can be reached at.
@@ -97,7 +106,6 @@ network:
 
 !!! Tip
     If you do not have a backup IP address, use "~", which means "None" or Null in yaml.
-
 
 
 ### Users list
@@ -129,7 +137,6 @@ You do not have to set the passwords for each user. A random password will be ge
 _pass_, in the ldap sub directory.
 
 
-
 ### Email options
 
 This is the second most important settings. Here is an example of the email options you can override:
@@ -144,7 +151,6 @@ mail:
 ```
 
 Advanced options are detailed on the [email configuration](email-configuration.md) page.
-
 
 
 ### Security options
@@ -216,7 +222,6 @@ The information is looked at this path:
 
 For instance, for the domain `example.net`, the API key need to be stored into pass or the credential store of your
 choice, using the following path: `example.net/gandi/api-key`.
-
 
 
 ## Step 4: Start the installation

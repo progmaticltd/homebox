@@ -91,6 +91,7 @@ for cert in $certs; do
 
     # Get the FQDN from the filename
     fqdn=$(basename "$cert" '.key')
+    cert_file="/var/lib/lego/certificates/${fqdn}.crt"
 
     if [ "$fqdn" = "_.$domain" ]; then
         fqdn="*.$domain"
@@ -113,18 +114,31 @@ for cert in $certs; do
         common_options="$common_options --pem"
     fi
 
-    renew_options="--reuse-key"
-    renew_options="$renew_options --renew-hook run-parts /etc/lego/hooks/$fqdn/"
-
     # When not live, just display the command that would be run
     if [ "$live" != "1" ]; then
         msg "lego $common_options renew $renew_options"
         continue
     fi
 
-    # Renew X certificate at a time.
-    if ! lego $common_options renew $renew_options; then
-        msg "Could not renew certificate '$cert'. Trying the next"
+    # If if it a temporary certificate, use run, instead of renew.
+    temp_ca=$(openssl x509 -in "$cert_file" -noout -issuer | grep -c "Temporary CA")
+
+    msg "Temporary CA: $temp_ca"
+
+    # By default, renew the certificate unless it is a temporary one
+    if [ "$temp_ca" = "1" ]; then
+        run_options=""
+        success=$(lego $common_options run $run_options)
+        msg "Generating new certificate $fqdn: $success"
+    else
+        renew_options="--reuse-key --renew-hook run-parts /etc/lego/hooks/$fqdn/"
+        success=$(lego $common_options renew $renew_options)
+        msg "Renewing certificate $fqdn: $success"
+    fi
+
+    if ! $success; then
+        # Renew X certificate at a time.
+        msg "Could not run/renew certificate '$fqdn'. Trying the next"
         continue
     fi
 
