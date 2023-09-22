@@ -1,0 +1,17 @@
+---
+
+- name: Stop the DNS server
+  systemd:
+    name: pdns
+    state: stopped
+
+- name: Retrieve the database
+  fetch:
+    src: /var/lib/powerdns/default.db
+    dest: '{{ backup_directory }}/pdns/default.db'
+    flat: true
+
+- name: Start the DNS server
+  systemd:
+    name: pdns
+    state: started

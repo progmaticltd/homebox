@@ -1,0 +1,16 @@
+---
+
+- name: Stop the DNS server
+  systemd:
+    name: pdns
+    state: stopped
+
+- name: Copy the database
+  copy:
+    src: '{{ backup_directory }}/pdns/default.db'
+    dest: /var/lib/powerdns/default.db
+
+- name: Start the DNS server
+  systemd:
+    name: pdns
+    state: started

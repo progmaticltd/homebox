@@ -23,13 +23,10 @@
     - '{{ playbook_dir }}/../config/defaults/version-{{ version | default("small") }}.yml'
     - '{{ playbook_dir }}/../config/system.yml'
   tasks:
-    - name: Reset the SSH connection
-      meta: reset_connection
-      tags: always
     - name: Run common initialisation tasks
       include_role:
         name: common-init
-        tasks_from: check/main.yml
+        tasks_from: install/main.yml
       tags: always
     - name: Run the roles selected
       include_role:
