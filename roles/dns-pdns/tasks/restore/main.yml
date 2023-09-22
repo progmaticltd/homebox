@@ -9,6 +9,9 @@
   ansible.builtin.copy:
     src: '{{ backup_directory }}/pdns/default.db'
     dest: /var/lib/powerdns/default.db
+    owner: pdns
+    group: pdns
+    mode: '0644'
 
 - name: Start the DNS server
   ansible.builtin.systemd:
