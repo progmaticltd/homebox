@@ -4,5 +4,5 @@
   ansible.posix.synchronize:
     mode: pull
     src: /var/lib/lego/certificates
-    dest: '{{ backup_dir }}/'
+    dest: '{{ backup_directory }}/'
     archive: true
