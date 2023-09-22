@@ -1,0 +1,27 @@
+---
+
+- name: Install rsync if not already installed
+  ansible.builtin.apt:
+    name: rsync
+    state: present
+
+- name: Create a directory for web site backup if it does not exists
+  delegate_to: localhost
+  ansible.builtin.file:
+    path: '{{ backup_directory }}/website-simple/'
+    state: directory
+    mode: '0755'
+  tags: backup
+
+# Push the site if already backup up
+- name: Restore the web site if applicable
+  ansible.posix.synchronize:
+    src: '{{ backup_directory }}/website-simple/'
+    dest: /var/www/www.{{ network.domain }}
+    owner: false
+    group: false
+    perms: true
+    rsync_opts:
+      - '--no-motd'
+      - '--update'
+  tags: sync

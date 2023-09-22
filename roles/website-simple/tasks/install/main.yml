@@ -1,8 +1,5 @@
 ---
 
-- name: Push the web site if it already exists
-  ansible.builtin.include_tasks: install/backup-push.yml
-
 - name: Create default web site
   ansible.builtin.include_tasks: install/default-content.yml
 
@@ -19,6 +16,3 @@
 
 - name: Configure apparmor
   ansible.builtin.include_tasks: install/apparmor.yml
-
-- name: Pull the web site content
-  ansible.builtin.include_tasks: install/backup-pull.yml
