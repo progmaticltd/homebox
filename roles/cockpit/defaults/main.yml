@@ -2,4 +2,3 @@
 
 cockpit:
   install: false
-  allowed_ips: [ ]
