@@ -8,7 +8,7 @@
 - name: Create keys directory locally
   become: false
   delegate_to: localhost
-  file:
+  ansible.builtin.file:
     path: '{{ backup_directory }}/opendkim-keys'
     state: directory
     mode: '0700'
