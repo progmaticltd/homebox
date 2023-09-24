@@ -7,6 +7,14 @@
       {{ lookup(creds.store, creds.prefix + "/user/admin"
       + creds.opts.create) }}
 
+- name: Create random salt
+  no_log: '{{ not system.devel }}'
+  ansible.builtin.set_fact:
+    salt_password: >-
+      {{ lookup("password", "/dev/null",
+      chars=['ascii_letters', 'digits'],
+      length=16) }}
+
 - name: Use a random uid and gid numbers
   ansible.builtin.set_fact:
     uid_number: '{{ 2000 + (999 | random) }}'
@@ -22,5 +30,6 @@
     name: '{{ system.admin.name }}'
     group: '{{ system.admin.group_name }}'
     groups: sudo
-    password: '{{ admin_password | password_hash("sha512") }}'
+    password: >-
+      {{ admin_password | password_hash("sha512", salt_password) }}
     uid: '{{ uid_number | int }}'

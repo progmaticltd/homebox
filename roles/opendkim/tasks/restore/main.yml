@@ -1,0 +1,20 @@
+---
+
+- name: List key files in the backup directory
+  register: keys
+  become: false
+  delegate_to: localhost
+  ansible.builtin.find:
+    path: '{{ backup_directory }}/opendkim-keys'
+
+- name: Push key files
+  notify: Restart opendkim
+  ansible.builtin.copy:
+    src: '{{ backup_directory }}/opendkim-keys/{{ key_file.path | basename }}'
+    dest: '/etc/opendkim/keys/{{ key_file.path | basename }}'
+    owner: opendkim
+    group: opendkim
+    mode: preserve
+  loop: '{{ keys.files }}'
+  loop_control:
+    loop_var: key_file

@@ -3,7 +3,8 @@
 
 ## Step 1: Locate your system
 
-Whatever you chose to host your system at home, or with a VPS, you need to specify its location to Ansible.
+Whatever you chose to host your system at home, or with a VPS, you need to specify its location to Ansible, using an
+inventory file. Copy the example file to create your own:
 
 ```sh
 cd config
@@ -11,20 +12,9 @@ cp hosts-example.yml hosts.yml
 vi hosts.yml
 ```
 
-Here is an example on your LAN:
+Then, edit the file, and fill your system's IP address, here is an example on your LAN:
 
-``` yaml hl_lines="4"
-all:
-  hosts:
-    homebox:
-      ansible_host: 192.168.1.254
-      ansible_user: root
-      ansible_port: 22
-```
-
-To use Python3 as the default interpreter:
-
-``` yaml hl_lines="7"
+```yml
 all:
   hosts:
     homebox:
@@ -34,30 +24,39 @@ all:
       ansible_python_interpreter: /usr/bin/python3
 ```
 
-Using root during the installation process is a requirement. However, the system can be configured to use sudo once
-installed. See the security section, [Defining administrators](/security-configuration/#defining-administrators).
+!!! Note
+    Using root during the installation process is not an absolute requirement, and will depends on your
+    configuration. For instance, some VPS will use a specific _admin_ user and `sudo` for administration. Of course,
+    once installed, the system can be configured to use the `sudo` command instead.
+    See the security section, [Defining administrators](/security-configuration/#defining-administrators).
 
 ## Step 2: Describe your system
 
-The main configuration file to create is in the config folder. There is an example named system-example.yml ready to
-copy and customise. There is also a configuration file defaults.yml. This file contains all the possible options.
+The main configuration file to create is in the config folder. The `config/defaults` folder contains many versions ready
+to copy and customise. There are also pre-configured settings:
+
+- Mini: mail server with only minimal settings, useful for systems with limited resources.
+- Small: mail server only with extended options.
+- Medium: mail and collaboration server.
+- Large: mail, collaboration server and extra components.
+
+More details about the features included in each version can be seen in the [features page](features.md).
+
 
 ```sh
 cd config
-cp defaults/version-small.yml system.yml
+cp defaults/<version>-small.yml system.yml
 nano system.yml
 ```
 
-The system configuration file is a complete YAML configuration file containing all your settings:
+Individual components can still be added, by copying the settings from large. For instance to add a small web site to
+your settings, copied from _mini_ or _small_, just copy the section from large:
 
-- Network information, specifically your IP address(es) and domain name.
-- User and group details, like email addresses and aliases.
-- Email parameters, like maximum attachment size, antivirus options, etc.
-- Some password policies, like minimum length and complexity.
-- SOGo settings if you want to install it.
-- Backup strategies.
-
-The most important settings are the first two sections, the others can be left to their default values.
+```yml
+website:
+  install: true
+  locale: en_GB.UTF-8
+```
 
 Once you have modified the file, you are ready to start the installation.
 
@@ -66,18 +65,18 @@ Once you have modified the file, you are ready to start the installation.
     value without having to copy entire branches.
 
 !!! Warning
-    You need to be careful with the indentation in your Yaml file, the number of spaces is significant.
+    You need to be careful with the indentation in your Yaml file, the number of spaces is significant. You can use an
+    editor that highlight syntax errors.
 
 
 ## Step 3: Configure your system
-
 
 ### Domain name and host name
 
 Every network subdomain entries, email addresses, etc... will include the domain name, so this is important you put the
 real value here:
 
-```yaml
+```yml
 network:
   domain: homebox.space
   hostname: mail.homebox.space
@@ -85,21 +84,18 @@ network:
   backup_ip: ~
 ```
 
-The hostname is important, use the real one. If you used the preseed configuration, it should be just mail and your
-network domain.
-
+The hostname is important, so make sure to use the real one. The hostname of your server can be obtained from the
+command line, using the `hostname` command.
 
 ### External IP addresses
 
-It is important here to specify the external IP address(es) your system can be reached at.
+It is important here to specify the external IP address your system can be reached at. Multiple configurations are
+supported, for instance, with one IPv4 and one IPv6:
 
-Multiple configurations are supported, for instance, with one IPv4 and one IPv6:
-
-
-```yaml
+```yml
 network:
   domain: homebox.space
-  hostname: mail.homebox.space
+  hostname: tartan.homebox.space
   external_ip: 12.34.56.78
   backup_ip: 2001:15f0:5502:bf1:5400:01ff:feca:dea6
 ```
@@ -108,95 +104,51 @@ network:
     If you do not have a backup IP address, use "~", which means "None" or Null in yaml.
 
 
-### Users list
+### Create the users list
 
 The file format should be self-explanatory. The other piece of information you need to fill first is the user list. In
 its simplest form, you will have something like this:
 
-``` yaml
+```yml
 users:
-- uid: john
-  cn: John Doe
-  first_name: John
-  last_name: Doe
-  mail: john.doe@example.com
-  aliases:
-    - john@homebox.space
-    - johny@homebox.space
-    - johny-be-good@homebox.space
-- uid: jane
-  cn: Jane Doe
-  first_name: Jane
-  last_name: Doe
-  mail: jane.doe@example.com
-  aliases:
-    - jane@homebox.space
+  - uid: john
+    cn: John Doe
+    first_name: John
+    last_name: Doe
+    mail: john.doe@example.com
+    aliases:
+      - john@homebox.space
+      - johny@homebox.space
+      - johny-be-good@homebox.space
+  - uid: jane
+    cn: Jane Doe
+    first_name: Jane
+    last_name: Doe
+    mail: jane.doe@example.com
+    aliases:
+      - jane@homebox.space
 ```
 
-You do not have to set the passwords for each user. A random password will be generated, using XKCD, and saved into
-_pass_, in the ldap sub directory.
+A random password will be generated for each user, using [XKCD passwords](https://xkcd.com/936/), and saved into your
+[credentials store](credentials.md), in the ldap subdirectory.
 
 
 ### Email options
 
-This is the second most important settings. Here is an example of the email options you can override:
+Optionally, you can override the email settings, for instance by activating _autodiscover_ (for Microsoft Outlook), or
+changing the quota sizes, like the example below:
 
-``` yaml
+```yml
 mail:
-  max_attachment_size: 25   # In megabytes
+  max_attachment_size: 50   # In megabytes
   autoconfig: true          # Support Thunderbird automatic configuration
-  autodiscover: false       # Support MS Outlook automatic configuration (uses https)
+  autodiscover: true        # Support MS Outlook automatic configuration (uses https)
   quota:
-    default: 1G             # Maximum allowed mailbox size for your users.
+    default: 1G               # Maximum allowed mailbox size for your users.
+    archive: 10G              # Maximum allowed archived mailbox size for your users.
 ```
 
 Advanced options are detailed on the [email configuration](email-configuration.md) page.
-
-
-### Security options
-
-Security options are detailed on the [security page](security-configuration.md).
-The default settings are:
-
-- Automatically install security updates using unattended upgrades.
-- Send alerts to the postmaster.
-- Force root SSH login to use public key cryptography, and not a password.
-- Disable the root password.
-
-Other options are possible, see the security page for details.
-
-
-### Default password store
-
-By default, homebox is using [pass](https://www.passwordstore.org/), with these settings:
-
-
-```yaml
-creds_default:
-  store: passwordstore
-  prefix: '{{ network.domain }}/'
-  opts:
-    create: ' create=True'
-    # Used for system, should be safe without quoting, but long enough to be secure
-    system: ' length=16 nosymbols=true'
-```
-
-However, you can use any of the Ansible password lookup plugin. If you want to use plain text password files, see the
-[password lookup](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/password_lookup.html):
-
-```yaml
-creds:
-  store: password
-  prefix: '/home/alice/homebox/backup/'
-  opts:
-    # Used for system, should be safe without quoting, but long enough to be secure
-    system: ' length=16 chars=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-	create: ''
-```
-
-In the example above, passwords will be stored in the _backup_ folder in homebox, using the domain name
-“mydomain.io”. __This folder is automatically exclude from git__.
-
 
 
 ### Publish DNS information
@@ -204,9 +156,9 @@ In the example above, passwords will be stored in the _backup_ folder in homebox
 Although HomeBox has a DNS server included, it is still needed to register information online. The following need to be
 registered:
 
-- The main DNS server for your domain
-- The DNSSEC keys (KSK and ZSK)
-- Your glue records
+- The [glue record](https://en.wikipedia.org/wiki/Domain_Name_System#Circular_dependencies_and_glue_records) for your
+  domains, i.e. the IP addresses and the hostname of your server.
+- The keys used to sign your domain records, for DNSSEC.
 
 
 #### Using Gandi
@@ -214,27 +166,33 @@ registered:
 If you are using [Gandi](https://www.gandi.net/) DNS provider, HomeBox automatically publish the information above,
 using Gandi’s API. The only information you need to fill is your Gandi API key, in your password store.
 
+[Create an API key](https://docs.gandi.net/en/account_management/security/developer_access.html#generate-an-api-key)
+with Gandi.
+
 The information is looked at this path:
 
 ```
-{{ lookup(creds.store, network.domain + "/gandi/api-key") }}
+backup/<domain>/gandi/api-key
 ```
 
 For instance, for the domain `example.net`, the API key need to be stored into pass or the credential store of your
-choice, using the following path: `example.net/gandi/api-key`.
+choice, using the following path: `backup/example.net/gandi/api-key`.
 
 
 ## Step 4: Start the installation
 
-You can choose a flavour to install, using a different playbook. Four playbooks are included by default: mini, small,
+You can choose a version to install, using a different playbook. Four playbooks are included by default: mini, small,
 medium and large. Depending on the features and the capacity of your server.
 
-For instance, the mini server:
+For instance, the _mini server_ variant:
 
 ```sh
 cd playbooks
-ansible-playbook -i ../config/hosts.yml install-mini.yml
+ansible-playbook -e version=mini install-version.yml
 ```
 
-Depending the “flavour you chose”, the installation takes between 20 and 25 minutes, with a reasonable fast laptop and
+Depending the version you chose, the installation takes between 10 and 25 minutes, with a reasonable fast laptop and
 internet connection.
+
+If something isn't working, open a discussion on [HomeBox website](https://github.com/progmaticltd/homebox/discussions),
+and we will be here to help.

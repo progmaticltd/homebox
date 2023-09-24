@@ -17,14 +17,14 @@ https, with a dedicated SSL certificate.
 
 # Activate POP protocol
 
+By default, the IMAP protocol is activated and POP3 is disabled. If you need the POP3 protocol, just set the flag pop3
+to true.
+
 ```yaml
-mail_default:
+mail:
   ...
   pop3: false               # Activate the POP3 protocol or not
 ```
-
-By default, the IMAP protocol is activated and POP3 is disabled. If you need the POP3 protocol, just set the flag pop3
-to true, and run the Ansbible dovecot playbook.
 
 # Antivirus configuration
 
@@ -41,15 +41,14 @@ mail:
 
 The platform can scan the emails received and sent, using [ClamAV](https://clamav.net/).
 
-- You can disable the antivirus, by setting ‘active’ to false.
+- You can enable or disable the antivirus, by setting ‘active’ to true or false, respectively.
 - By default, emails with viruses are dropped silently, but you can set the action to ‘bounce’ if you wish to send an
   alert to the external senders.
 
 # Master users
 
-As Dovecot is used, it is possible to activate the "impersonate" or _master users_ feature.  If you activate this
-option, a _master_ user will be created, allowing you to logon as any user. The RoundCube impersonate plugin will be
-activated as well.
+As Dovecot is used, it is possible to activate the "impersonate" or _master users_ feature. If you activate this
+option, a _master_ user will be created, allowing you to logon as any user.
 
 Example with this configuration:
 
@@ -66,14 +65,7 @@ If one user is called john, you can now login as john, using "john/master" and t
 
 The password is automatically generated, and saved in the backup folder, in the file __ldap/master.pwd__.
 
-!!! Warning
-    Every time the _master account_ feature is used, a notice is sent to the original user, both by email and with
-    Jabber when installed.
-
 # Advanced features
-
-When this flag is set to true, some advanced features will be available, and a more recent version of Dovecot will be
-installed, from the Debian backports repository.
 
 ## International email addresses
 
@@ -91,10 +83,9 @@ users:
     - andré@homebox.space
 ```
 
-!!! Note
-    This is possible if all the software and the platforms involved support it. Not all major email providers are
-    supporting this, Yahoo mail, for instance, does not even let you send an email with an internationalised user name.
-    This feature is not entirely tested yet, but is working so far between two homebox servers and SOGo or evolution.
+This is only possible if all the software and the platforms involved support it. Not all major email providers are
+supporting this, Yahoo mail, for instance, does not even let you send an email with an internationalised user name.
+This feature is not entirely tested yet, but is working so far between two homebox servers and SOGo or evolution.
 
 ## Email addresses extensions
 
@@ -112,13 +103,14 @@ For a user with an email address like __john@homebox.space__, any email sent to 
 stored in the folder "lists".
 
 !!! Note
-    If the folder does not exists, the email will be placed in your INBOX.
+    If the folder does not exists, it will not be created automatically, and the email will be placed in your inbox.
 
 ## Custom Postfix options
 
 You can add any compatible postfix configuration, by defining the variable "extra-settings" into your system.yml
-file. In this case, anything this variable contains will be added into the main.cf file.  The [postfix
-documentation](http://www.postfix.org/documentation.html) should help you.
+file. In this case, anything this variable contains will be added into the main.cf file.
+
+The [postfix documentation](http://www.postfix.org/documentation.html) should help you.
 
 Example: You want to send a copy of any email received to another external address, and allow the VRFY command:
 
@@ -139,7 +131,7 @@ The example below allows you to send email via an extra IPv4, an extra IPv6 and 
 
 ``` yaml hl_lines="3 4 5 6"
 mail:
-  ...
+  […]
   extra_senders:
     - 'ip4:212.27.32.5'
     - 'ip6:fe80::2e0:70ff:fe63:f069/64'

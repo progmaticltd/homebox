@@ -39,12 +39,11 @@ This project is for you if:
 
 If you are interested in self-hosting, you will find a lot of interesting projects on the internet, for instance:
 
-- [Sovereign](https://github.com/sovereign/sovereign): A different
-  target, but a similar deployment approach using Ansible.
-- [yunohost](https://yunohost.org/): Contains a lot of plugins and
-  features, not all of them are stable, but it is worth testing.
-- [mailinabox](https://mailinabox.email/), more oriented towards online
-  hosting, but very good as well.
+- [Sovereign](https://github.com/sovereign/sovereign): A different target, but a similar deployment approach using
+  Ansible.
+- [yunohost](https://yunohost.org/): Contains a lot of plugins and features, not all of them are stable, but it is worth
+  testing.
+- [mailinabox](https://mailinabox.email/), more oriented towards online hosting, but very good as well.
 - [and many others...](https://github.com/Kickball/awesome-selfhosted)
 
 All have plenty of features, but maybe a different approach to self-hosting, though.

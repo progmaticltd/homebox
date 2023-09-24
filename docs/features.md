@@ -1,9 +1,45 @@
 
+## Detailed features list
+
+There are four pre-configured settings you could use:
+
+- Mini: mail server with only minimal settings, useful for systems with limited resources.
+- Small: mail server only with extended options.
+- Medium: mail and collaboration server.
+- Large: mail, collaboration server and extraneous components.
+
+| Feature                                 | Mini | Small | Medium | Large | Software                              |
+|-----------------------------------------|------|-------|--------|-------|---------------------------------------|
+| Firewall                                | ✓    | ✓     | ✓      | ✓     | nftables                              |
+| DNS server                              | ✓    | ✓     | ✓      | ✓     | PowerDNS                              |
+| LetsEncrypt certificates                | ✓    | ✓     | ✓      | ✓     | Lego                                  |
+| LDAP central authentication             | ✓    | ✓     | ✓      | ✓     | OpenLDAP                              |
+| Web server                              | ✓    | ✓     | ✓      | ✓     | nginx                                 |
+| Simple web site                         | 𐄂    | 𐄂     | ✓      | ✓     | nginx                                 |
+| Mails (SMTP and Submission)             | ✓    | ✓     | ✓      | ✓     | Postfix                               |
+| Mails (IMAP and optionally POP3, Sieve) | ✓    | ✓     | ✓      | ✓     | Dovecot                               |
+| Full text search                        | 𐄂    | ✓     | ✓      | ✓     | dovecot-fts plugin                    |
+| Virtual folders                         | 𐄂    | ✓     | ✓      | ✓     | dovecot virtual folders plugin        |
+| Emails auto config for Thunderbird      | ✓    | ✓     | ✓      | ✓     | nginx                                 |
+| Emails auto discover for Outlook        | 𐄂    | ✓     | ✓      | ✓     | nginx                                 |
+| Antispam                                | 𐄂    | ✓     | ✓      | ✓     | rspamd                                |
+| Antispam web interface                  | 𐄂    | ✓     | ✓      | ✓     | rspamd and nginx                      |
+| Antivirus                               | 𐄂    | ✓     | ✓      | ✓     | ClamAV                                |
+| CalDAV / CardDav / Webmail              | 𐄂    | 𐄂     | ✓      | ✓     | SOGo                                  |
+| WebDAV server                           | 𐄂    | 𐄂     | ✓      | ✓     | nginx                                 |
+| Jabber server                           | 𐄂    | 𐄂     | ✓      | ✓     | eJabberd                              |
+| Monitoring                              | 𐄂    | 𐄂     | 𐄂      | ✓     | Prometheus                            |
+| Monitoring dashboards                   | 𐄂    | 𐄂     | 𐄂      | ✓     | Grafana from the official web site    |
+| Web console access                      | ☐    | ☐     | ☐      | ☐     | optional component, nginx and cockpit |
+| Web key directory                       | ☐    | ☐     | ☐      | ☐     | optional component, nginx and GnuPG   |
+| Remote backup                           | ☐    | ☐     | ☐      | ☐     | optional component, borg-backup       |
+
+
 # Backup and disaster recovery
 
 ## Multiple encrypted backups
 
-You can set up multiple backups for your users' home folders, remote or local, with multiple frequencies as well. For
+You can set up multiple backups for your users’ home folders, remote or local, with multiple frequencies as well. For
 instance, one daily backup on your NAS using a Samba share, and a weekly backup on a remote server using SSH. All the
 backups are encrypted and managed by the excellent _borgbackup_ package. A [summary email](/backup/#emails-reporting) is
 sent at the end of the backup process. If you have opted for the Jabber installation, a short message is sent as well,
@@ -32,16 +68,17 @@ than the previous ones.
 ## Automatic security update
 
 Once your system is installed, any security update will be installed in the background, without you having to do
-anything. This is set using the [Debian unattended upgrades](https://wiki.debian.org/UnattendedUpgrades) package.  If
-you prefer to install security updates yourself, you can disable this behaviour in your system.yml file.
+anything. This is set using the [Debian unattended upgrades](https://wiki.debian.org/UnattendedUpgrades) package. If you
+prefer to install security updates yourself, you can disable this behaviour in your system.yml file.
 
 Only the security updates are installed, new packages versions still need to be installed manually.
 
 ## High profiles for SSL / HTTPS
 
-All HTTPS sites are configured to use [HSTS](https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security).  For nginx
+All HTTPS sites are configured to use [HSTS](https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security). For nginx
 and dovecot, a 2048 Diffie-Helman parameter file is generated upon installation.  Ranked score A on
 [geekflare.com](https://tools.geekflare.com/) and A+ on [ssllabs.com](https://www.ssllabs.com).
+
 
 # Email features
 
@@ -73,8 +110,9 @@ address, for instance ‘:’, ‘~’, ‘/’ etc.
 Sieve filtering support, with automatic answering, vacation, regular expression, custom scripts support, etc. The web
 interface to configure your filters is powerful but easy to use.
 
-You can also access your sieve filters with the _ManageSieve_ protocol, and the [Thunderbird
-extension](https://addons.mozilla.org/en-US/thunderbird/addon/sieve/).
+You can access your filters with the _ManageSieve_ protocol, and any compatible client. If SOGo is installed, there is
+an intuitive interface you can use in the emails settings. If you are using Mozilla Thunderbird, you can use the
+[ManageSieve extension](https://addons.mozilla.org/en-US/thunderbird/addon/sieve/).
 
 For instance, you can automatically:
 
@@ -121,8 +159,8 @@ email is sent as well.
 ## Automatic client configuration
 
 The server supports _Mozilla Thunderbird_, _Microsoft Outlook_ and other email clients automatic configuration. This
-makes the life of your users easier. It creates and publishes autoconfig.xml, autodiscover.xml and DNS records ([RFC
-6186](https://tools.ietf.org/html/rfc6186)).
+makes the life of your users easier. It creates and publishes autoconfig.xml, autodiscover.xml and DNS records
+([RFC 6186](https://tools.ietf.org/html/rfc6186)).
 
 ## Antivirus
 

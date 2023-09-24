@@ -1,7 +1,8 @@
 
 ## OpenPGP Web Key Directory
 
-You can publish your users’ PGP public keys as a [Web Key Directory](https://tools.ietf.org/html/draft-koch-openpgp-webkey-service).
+You can publish your users’ PGP public keys, using the included
+[Web Key Directory](https://tools.ietf.org/html/draft-koch-openpgp-webkey-service) implemented.
 
 Mail clients should locate PGP public keys automatically using this scheme, as well as [GnuPG doing it by default since
 version 2.1.23](https://wiki.gnupg.org/WKD#Implementations).
@@ -12,7 +13,7 @@ direct method might be needed to support the first clients that implemented the 
 To deploy the Web Key Directory, the public keys are expected to be in the server configuration in a “pgp_public_keys”
 object list along with the user’s _uid_.
 
-```
+```yml
 pgp_public_keys:
   - uid: andre
     public_key: |-

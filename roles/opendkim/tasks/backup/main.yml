@@ -1,0 +1,23 @@
+---
+
+- name: List key files on the server
+  register: keys
+  ansible.builtin.find:
+    path: /etc/opendkim/keys
+
+- name: Create keys directory locally
+  become: false
+  delegate_to: localhost
+  file:
+    path: '{{ backup_directory }}/opendkim-keys'
+    state: directory
+    mode: '0700'
+
+- name: Pull key files
+  ansible.builtin.fetch:
+    src: '{{ key_file.path }}'
+    dest: '{{ backup_directory }}/opendkim-keys/{{ key_file.path | basename }}'
+    flat: true
+  loop: '{{ keys.files }}'
+  loop_control:
+    loop_var: key_file

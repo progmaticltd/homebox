@@ -42,7 +42,7 @@ Then, run the dedicated playbook to update users:
 ```sh
 cd install
 export ROLE=ldap-openldap,user-setup
-ansible-playbook -v -i ../config/hosts.yml playbooks/install.yml
+ansible-playbook playbooks/install.yml
 ```
 
 The home playbook creates the home directories for this user.
@@ -73,7 +73,7 @@ This can be done through SSH, like you are doing on any Debian server.
 Most components can be added or removed individually, using the unit playbook, for instance:
 
 ```sh
-ROLE=ejabberd ansible-playbook -l homebox install.yml
+ROLE=ejabberd ansible-playbook install.yml
 ```
 
 This will install the ejabberd XMPP server.
@@ -81,7 +81,7 @@ This will install the ejabberd XMPP server.
 or
 
 ```sh
-ROLE=ejabberd ansible-playbook -l homebox uninstall.yml
+ROLE=ejabberd ansible-playbook uninstall.yml
 ```
 
 This will delete the ejabberd XMPP server.
@@ -91,43 +91,11 @@ This will delete the ejabberd XMPP server.
 Adding or removing ClamAV can be done using the following command:
 
 ```sh
-ROLE=clamav ansible-playbook -l homebox install.yml
+ROLE=clamav ansible-playbook install.yml
 ```
 
 Or to be removed:
 
 ```sh
-ROLE=clamav ansible-playbook -l homebox uninstall.yml
-```
-
-
-## Restarting the system when the drive is encrypted
-
-If you have installed the system with the main drive encrypted using LUKS, you need to keep a way to decrypt your drive,
-locally or remotely.
-
-There is a role you can run, to install _dropbear_. When the system starts, a small SSH server is started, to allowing
-you to decrypt the drive remotely.
-
-Here how to install it:
-
-```sh
-ROLE=luks-remote ansible-playbook -l homebox install.yml
-```
-
-Here is an example using a command line SSH client:
-
-```sh
-andre@london:~ $ ssh root@example.net
-
-To unlock root partition, and maybe others like swap, run `cryptroot-unlock`
-
-BusyBox v1.22.1 (Debian 1:1.22.0-19+b3) built-in shell (ash)
-Enter 'help' for a list of built-in commands.
-
-~ # cryptroot-unlock
-Please unlock disk sda5_crypt:
-cryptsetup: sda5_crypt set up successfully
-~ # Connection to 192.168.32.12 closed by remote host.
-Connection to 192.168.32.12 closed.
+ROLE=clamav ansible-playbook uninstall.yml
 ```

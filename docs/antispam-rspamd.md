@@ -2,7 +2,7 @@
 
 ## Default configuration
 
-By default, the mail server is protected against spam with [rspamd](https://www.rspamd.com/).
+The default anti-spam server is [rspamd](https://www.rspamd.com/).
 
 ```yml
 mail:
@@ -15,7 +15,7 @@ Optionally, the web user interface is accessible from the local network:
 
 ```yml
 mail:
-  [...]
+  […]
   antispam:                 # Check inbound and outbound emails for viruses
     webui:                  # rspamd web interface
       active: true          # Activate or not

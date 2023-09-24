@@ -5,7 +5,7 @@ You can then work with multiple domain, e.g. for development.
 
 Each folder contains:
 
-- certificates: Letsencrypt Certificates backup (staging/dev only).
+- certificates: Letsencrypt certificates when running the backup tasks of the certificate role.
 - dkim: dkim keys.
 - ldap: LDAP passwords automatically generated.
 - rspamd: rspamd web interface password.
