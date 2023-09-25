@@ -60,5 +60,5 @@
   no_log: '{{ not system.devel }}'
   ansible.builtin.set_fact:
     readonly_password: >-
-      {{ lookup(creds.store, network.domain + "/ldap/readonly") }}
+      {{ lookup(creds.store, creds.prefix + "/ldap/readonly") }}
   tags: facts

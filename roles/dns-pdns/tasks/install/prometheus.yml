@@ -1,6 +1,7 @@
 ---
 
 - name: Deploy target configuration
+  when: prometheus.install
   ansible.builtin.template:
     src: prometheus/target.yml
     dest: /etc/prometheus/targets/pdns.yml
@@ -8,6 +9,7 @@
   tags: prometheus
 
 - name: Deploy prometheus alerts
+  when: prometheus.install
   ansible.builtin.template:
     src: prometheus/alerts.yml
     dest: /etc/prometheus/alerts/pdns-rules.yml

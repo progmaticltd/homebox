@@ -11,7 +11,7 @@
 - name: Wait for the daily update file
   register: daily_update
   ansible.builtin.wait_for:
-    path: /var/lib/clamav/daily.cld
+    path: /var/lib/clamav/daily.cvd
     sleep: 1
     timeout: 10
     state: present

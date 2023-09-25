@@ -92,12 +92,25 @@
           role: Admin
         body_format: json
         force_basic_auth: true
-    - name: Store the api key into the password store
+    - name: Store the api key into the passwordstore using pass
+      when: creds.store == "passwordstore"
+      no_log: '{{ not system.devel }}'
       ansible.builtin.set_fact:
         grafana_api_key: >-
           {{ lookup(creds.store,
-          network.domain + "/grafana/api-key"
+          creds.prefix + "/grafana/api-key"
           + creds.opts.create
           + creds.opts.overwrite
           + " userpass=" + api_key_create_call.json.key
           )}}
+    - name: Store the api key into the password text file
+      when: creds.store == "password"
+      delegate_to: localhost
+      no_log: '{{ not system.devel }}'
+      ansible.builtin.copy:
+        content: '{{ api_key_create_call.json.key }}'
+        dest: '{{ backup_directory }}/{{ creds.prefix }}/grafana/admin'
+        mode: '0600'
+    - name: Store the api key
+      ansible.builtin.set_fact:
+        grafana_api_key: '{{ api_key_create_call.json.key }}'

@@ -1,6 +1,6 @@
 ---
 
-## Call the restore tasks on a role
+## Call the restore tasks on a or more role
 
 # export the role you want to run in the ‘ROLE’ environment variable
 # and run the playbook.
@@ -13,23 +13,20 @@
       set_fact:
         roles_list: '{{ lookup("env", "ROLE").split(",") }}'
 
-- name: Run the install tasks of one role
-  hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../config/system.yml'
-    - '{{ playbook_dir }}/../config/defaults.yml'
-  roles:
-    - role: common-init
-      tags: always
-
-- name: Run all the roles selected
+- name: Run the restore tasks on the roles selected
   hosts: homebox
   vars:
-    backup_dir: '{{ playbook_dir }}/../backup/{{ network.domain }}'
+    debug: '{{ system.debug }}'
+    backup_directory: '{{ playbook_dir }}/../backup/{{ network.domain }}/'
   vars_files:
+    - '{{ playbook_dir }}/../config/defaults/common-security.yml'
+    - '{{ playbook_dir }}/../config/defaults/version-{{ version | default("small") }}.yml'
     - '{{ playbook_dir }}/../config/system.yml'
-    - '{{ playbook_dir }}/../config/defaults.yml'
   tasks:
+    - name: Load common settings
+      tags: always
+      include_role:
+        name: common-init
     - name: Run the role selected
       tags: always
       include_role:

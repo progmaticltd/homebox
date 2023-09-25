@@ -33,7 +33,11 @@ if host "$domain" 2606:4700:4700::64 2>&1 >/dev/null; then
 elif host "$domain" 1.1.1.1 2>&1 >/dev/null; then
     dns_server=1.1.1.1
 else
-    printf "DNS server for ${domain} is not live."
+    printf "DNS server for ${domain} is not live.\n"
+
+    # More detailed report
+    delv "$domain"
+
     exit $DOMAIN_NOT_LIVE
 fi
 
@@ -45,6 +49,7 @@ if [ "$public_keys" != "$local_keys" ]; then
 
     printf "DNS keys are not published\n"
     dnskeys_details
+
     exit $DNSSEC_NOT_LIVE
 
 fi

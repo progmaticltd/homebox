@@ -5,7 +5,7 @@
 - name: Load gandi’s api key
   no_log: '{{ not system.devel }}'
   ansible.builtin.set_fact:
-    api_key: '{{ lookup(creds.store, network.domain + "/gandi/api-key") }}'
+    api_key: '{{ lookup(creds.store, creds.prefix + "/gandi/api-key") }}'
 
 - name: Get the glue rectord for this host
   register: existing_records

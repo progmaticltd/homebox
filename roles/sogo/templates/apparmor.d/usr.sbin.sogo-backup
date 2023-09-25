@@ -10,7 +10,6 @@
   # capabilities
   capability dac_override,
 
-
   # Executables
   /usr/sbin/sogo-backup r,
   /usr/sbin/sogo-tool mr,
@@ -90,7 +89,9 @@
   /usr/share/GNUstep/** r,
 
   # backup folders
+  owner /var/backups/sogo/ w,
   /var/backups/backups/ rw,
   /var/backups/backups/** r,
   /var/backups/backups/** rw,
+
 }

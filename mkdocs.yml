@@ -2,9 +2,11 @@
 
 site_name: homebox installation
 repo_url: https://github.com/progmaticltd/homebox/
-site_description: How to install HomeBox self hosting solution
+site_description: Install HomeBox self hosting solution
 site_author: André Rodier
-copyright: Creative Commons Attribution-ShareAlike 4.0 International License
+copyright: >-
+  Creative Commons Attribution-ShareAlike 4.0
+  International License
 markdown_extensions:
   - smarty
   - admonition
@@ -15,19 +17,19 @@ pages:
   - Home: index.md
   - Features: features.md
   - Before the installation: prerequisites.md
-  - Prometheus monitoring: prometheus.md
-  - Debian OS installation: preseed.md
   - Homebox Installation: installation.md
+  - Credentials: credentials.md
+  - Security configuration: security-configuration.md
   - Email configuration: email-configuration.md
-  - Web keys directory: web-keys-directory.md
-  - WebDAV server: webdav.md
-  - Sogo Groupware: groupware-sogo.md
   - Antispam configuration: antispam-rspamd.md
+  - Web keys directory: web-keys-directory.md
+  - SOGo Groupware: groupware-sogo.md
   - Jabber configuration: jabber-configuration.md
   - Static web site: website-static.md
-  - Security configuration: security-configuration.md
   - Backup your home folders: backup-home.md
   - Backup restoration: backup-restore.md
   - Maintenance: maintenance.md
+  - WebDAV server: webdav.md
+  - Prometheus monitoring: prometheus.md
   - Testing and development: development.md
   - Code of conduct: codeofconduct.md

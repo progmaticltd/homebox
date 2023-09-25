@@ -1,6 +1,7 @@
+---
+
 # Host files for the homebox project
 # Choose the box that will host the system
-# It might be a virtual machine host or even your local machine.
 
 all:
   hosts:
@@ -8,3 +9,4 @@ all:
       ansible_host: homebox.example.home
       ansible_user: root
       ansible_port: 22
+      ansible_python_interpreter: /usr/bin/python3

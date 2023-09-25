@@ -16,13 +16,13 @@
   no_log: '{{ not system.devel }}'
   ansible.builtin.set_fact:
     sogo_db_password: >-
-      {{ lookup(creds.store, network.domain + "/postgresql/sogo"
+      {{ lookup(creds.store, creds.prefix + "/postgresql/sogo"
       + creds.opts.create + creds.opts.system) }}
 
 - name: Load or create the password for the read-only account
   no_log: '{{ not system.devel }}'
   ansible.builtin.set_fact:
-    ldap_ro_password: '{{ lookup(creds.store, network.domain + "/ldap/readonly") }}'
+    ldap_ro_password: '{{ lookup(creds.store, creds.prefix + "/ldap/readonly") }}'
 
 - name: Compute the users DN
   ansible.builtin.set_fact:

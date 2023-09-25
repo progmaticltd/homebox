@@ -1,0 +1,256 @@
+---
+
+# This role load all the default values, and merge them with user specified values.
+# This is a first version, roughly copy and paste, but will evolve to something more
+# elaborated later. The final purpose is fulfilled:
+# Users can specify copy partial branches of default values, and not worry
+# about new version changes.
+
+
+################################################################################
+# Merge user options with default options
+- name: Combine default and user defined network settings
+  run_once: true
+  when: network is defined
+  ansible.builtin.set_fact:
+    network: '{{ network_default | combine(network, recursive=True) }}'
+    cacheable: true
+
+- name: Use default network settings
+  run_once: true
+  when: network is not defined
+  ansible.builtin.set_fact:
+    network: '{{ network_default }}'
+    cacheable: true
+
+
+################################################################################
+# Merge user options with default options
+- name: Combine default and user defined mail settings
+  run_once: true
+  when: mail is defined
+  ansible.builtin.set_fact:
+    mail: '{{ mail_default | combine(mail, recursive=True) }}'
+    cacheable: true
+
+- name: Use default mail settings
+  run_once: true
+  when: mail is not defined
+  ansible.builtin.set_fact:
+    mail: '{{ mail_default }}'
+    cacheable: true
+
+
+################################################################################
+# Merge user options with default options
+- name: Combine default and user defined password settings
+  run_once: true
+  no_log: true
+  when: passwords is defined
+  ansible.builtin.set_fact:
+    passwords: '{{ passwords_default | combine(passwords, recursive=True) }}'
+    cacheable: true
+
+- name: Use default passwords settings
+  run_once: true
+  no_log: true
+  when: passwords is not defined
+  ansible.builtin.set_fact:
+    passwords: '{{ passwords_default }}'
+    cacheable: true
+
+
+################################################################################
+# Merge system defaults
+- name: Combine default and user defined system settings
+  run_once: true
+  when: system is defined
+  ansible.builtin.set_fact:
+    system: '{{ system_default | combine(system, recursive=True) }}'
+    cacheable: true
+
+- name: Use default system settings
+  run_once: true
+  when: system is not defined
+  ansible.builtin.set_fact:
+    system: '{{ system_default }}'
+    cacheable: true
+
+
+################################################################################
+# Merge security defaults
+- name: Combine default and user defined security settings
+  run_once: true
+  when: security is defined
+  ansible.builtin.set_fact:
+    security: '{{ security_default | combine(security, recursive=True) }}'
+    cacheable: true
+
+- name: Use default security settings
+  run_once: true
+  when: security is not defined
+  ansible.builtin.set_fact:
+    security: '{{ security_default }}'
+    cacheable: true
+
+
+################################################################################
+# Merge languages defaults
+- name: Combine default and user defined languages settings
+  run_once: true
+  when: languages is defined
+  ansible.builtin.set_fact:
+    languages: '{{ languages_default | union(languages) }}'
+    cacheable: true
+
+- name: Use default languages settings
+  run_once: true
+  when: languages is not defined
+  ansible.builtin.set_fact:
+    languages: '{{ languages_default }}'
+    cacheable: true
+
+
+################################################################################
+# Merge website defaults
+- name: Combine default and user defined website settings
+  run_once: true
+  when: website is defined
+  ansible.builtin.set_fact:
+    website: '{{ website_default | combine(website, recursive=True) }}'
+    cacheable: true
+
+- name: Use default website settings
+  run_once: true
+  when: website is not defined
+  ansible.builtin.set_fact:
+    website: '{{ website_default }}'
+    cacheable: true
+
+
+################################################################################
+# Merge defaults DMARC keys settings
+- name: Combine default and user defined dmarc settings
+  run_once: true
+  when: dmarc is defined
+  ansible.builtin.set_fact:
+    dmarc: '{{ dmarc_default | combine(dmarc, recursive=True) }}'
+    cacheable: true
+
+- name: Use default dmarc settings
+  run_once: true
+  when: dmarc is not defined
+  ansible.builtin.set_fact:
+    dmarc: '{{ dmarc_default }}'
+    cacheable: true
+
+
+################################################################################
+# Merge defaults ejabberd settings
+- name: Combine default and user defined ejabberd settings
+  run_once: true
+  when: ejabberd is defined
+  ansible.builtin.set_fact:
+    ejabberd: '{{ ejabberd_default | combine(ejabberd, recursive=True) }}'
+    cacheable: true
+
+- name: Use default ejabberd settings
+  run_once: true
+  when: ejabberd is not defined
+  ansible.builtin.set_fact:
+    ejabberd: '{{ ejabberd_default }}'
+    cacheable: true
+
+
+################################################################################
+# Merge defaults posix_groups settings
+- name: Combine default and user defined posix_groups settings
+  run_once: true
+  when: posix_groups is defined
+  ansible.builtin.set_fact:
+    posix_groups: '{{ posix_groups_default | union(posix_groups) }}'
+    cacheable: true
+
+- name: Use default posix_groups settings
+  run_once: true
+  when: posix_groups is not defined
+  ansible.builtin.set_fact:
+    posix_groups: '{{ posix_groups_default }}'
+    cacheable: true
+
+
+################################################################################
+# Merge defaults sogo settings
+- name: Combine default and user defined sogo settings
+  run_once: true
+  when: sogo is defined
+  ansible.builtin.set_fact:
+    sogo: '{{ sogo_default | combine(sogo, recursive=True) }}'
+    cacheable: true
+
+- name: Use default sogo settings
+  run_once: true
+  when: sogo is not defined
+  ansible.builtin.set_fact:
+    sogo: '{{ sogo_default }}'
+    cacheable: true
+
+
+################################################################################
+# Merge defaults creds settings
+- name: Combine default and user defined creds settings
+  run_once: true
+  when: creds is defined
+  ansible.builtin.set_fact:
+    creds: '{{ creds_default | combine(creds, recursive=True) }}'
+    cacheable: true
+
+- name: Use default creds settings
+  run_once: true
+  when: creds is not defined
+  ansible.builtin.set_fact:
+    creds: '{{ creds_default }}'
+    cacheable: true
+
+
+################################################################################
+# Merge defaults DNS settings
+- name: Combine default and user defined DNS settings
+  run_once: true
+  when: dns is defined
+  ansible.builtin.set_fact:
+    dns: '{{ dns_default | combine(dns, recursive=True) }}'
+    cacheable: true
+
+- name: Use default dns settings
+  run_once: true
+  when: dns is not defined
+  ansible.builtin.set_fact:
+    dns: '{{ dns_default }}'
+    cacheable: true
+
+
+################################################################################
+# Merge defaults Prometheus settings
+- name: Combine default and user defined Prometheus settings
+  run_once: true
+  when: prometheus is defined
+  ansible.builtin.set_fact:
+    prometheus: '{{ prometheus_default | combine(prometheus, recursive=True) }}'
+    cacheable: true
+
+- name: Use default prometheus settings
+  run_once: true
+  when: prometheus is not defined
+  ansible.builtin.set_fact:
+    prometheus: '{{ prometheus_default }}'
+    cacheable: true
+
+
+################################################################################
+# Mark the default settings as loaded to speed-up the deployment process.
+- name: Mark the default settings as loaded
+  run_once: true
+  ansible.builtin.set_fact:
+    defaults_loaded: true
+    cacheable: true

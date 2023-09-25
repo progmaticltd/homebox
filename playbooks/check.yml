@@ -5,15 +5,6 @@
 # export the roles you want to run in the ‘ROLE’ environment variable,
 # using a coma separated list.
 
-- name: Load the common tasks
-  hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../config/system.yml'
-    - '{{ playbook_dir }}/../config/defaults.yml'
-  roles:
-    - role: common-init
-      tags: always
-
 - name: Load the roles to run
   hosts: homebox
   tags: always
@@ -24,12 +15,18 @@
 
 - name: Run the checking tasks for each role
   hosts: homebox
+  vars:
+    debug: '{{ system.debug }}'
+    backup_directory: '{{ playbook_dir }}/../backup/{{ network.domain }}/'
   vars_files:
+    - '{{ playbook_dir }}/../config/defaults/common-security.yml'
+    - '{{ playbook_dir }}/../config/defaults/version-{{ version | default("small") }}.yml'
     - '{{ playbook_dir }}/../config/system.yml'
-    - '{{ playbook_dir }}/../config/defaults.yml'
   tasks:
-    - name: Reset the SSH connection
-      meta: reset_connection
+    - name: Run common initialisation tasks
+      include_role:
+        name: common-init
+        tasks_from: install/main.yml
       tags: always
     - name: Run the roles selected
       include_role:

@@ -15,7 +15,7 @@
 - name: Load facts
   ansible.builtin.set_fact:
     user0_uid: '{{ users[0].uid }}'
-    user0_password: '{{ lookup(creds.store, network.domain + "/ldap/" + users[0].uid) }}'
+    user0_password: '{{ lookup(creds.store, creds.prefix + "/ldap/" + users[0].uid) }}'
 
 - name: Send an email to the main email address of the other user
   ansible.builtin.shell: >-

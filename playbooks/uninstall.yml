@@ -5,25 +5,32 @@
 # export the role you want to run in the ‘ROLE’ environment variable
 # and run the playbook.
 
-- name: Load the common tasks
-  hosts: homebox
-  vars_files:
-    - '{{ playbook_dir }}/../config/system.yml'
-    - '{{ playbook_dir }}/../config/defaults.yml'
-  roles:
-    - role: common-init
-      tags: always
-
-- name: Run the uninstall tasks for each role
+- name: Load the roles to run
   hosts: homebox
   tags: always
-  vars_files:
-    - '{{ playbook_dir }}/../config/system.yml'
-    - '{{ playbook_dir }}/../config/defaults.yml'
   tasks:
-    - include_role:
-        name: '{{ lookup("env", "ROLE") }}'
+    - name: Load the roles to run
+      set_fact:
+        roles_list: '{{ lookup("env", "ROLE").split(",") }}'
+
+- name: Run the install tasks for each role
+  hosts: homebox
+  vars:
+    debug: '{{ system.debug }}'
+    backup_directory: '{{ playbook_dir }}/../backup/{{ network.domain }}/'
+  vars_files:
+    - '{{ playbook_dir }}/../config/defaults/common-security.yml'
+    - '{{ playbook_dir }}/../config/defaults/version-{{ version | default("small") }}.yml'
+    - '{{ playbook_dir }}/../config/system.yml'
+  tasks:
+    - name: Run the role selected
+      tags: always
+      include_role:
+        name: '{{ role }}'
         tasks_from: uninstall/main.yml
+      loop: '{{ roles_list }}'
+      loop_control:
+        loop_var: role
 
 - name: Remove AppArmor unknown profiles
   hosts: homebox

@@ -7,22 +7,12 @@ The default settings are
 - Force root SSH login to use public key cryptography, and not a password.
 - Disable the root password.
 
-```yaml
-###############################################################################
-# Extra security values
-security_default:
-  auto_update: true                             # Install security updates automatically, using unattended-upgrades
-  ssh_disable_root_access_with_password: true   # Force SSH authentication to use public / private key
-  ssh_disable_root_access: false                # At the end of the installation, completely disable remote
-                                                # root access via SSH and force the use of sudo for the administrators
-  lock_root_password: true                      # Disable console root access by locking root password.
-  alerts_email:
-    - 'admin@{{ network.domain }}'
-  # various options when luks is installed
-  luks:
-    yubikey: false
+!!! Note
+    It is also possible to configure the server to automatically reboot during the night, when a new kernel has been
+    installed.
 
-```
+See the file `config/defaults/common-security.yml`.
+
 
 # Options details
 
@@ -39,7 +29,7 @@ The root account is locked by default, which means only SSH access is possible. 
 administrators, you can now activate the `sudo` command to become root for these accounts and completely disable root
 SSH login:
 
-```yaml
+```yml
 # Security settings
 security:
   ssh_disable_root_access_with_password: true

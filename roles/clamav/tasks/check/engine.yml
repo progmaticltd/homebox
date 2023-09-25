@@ -6,21 +6,21 @@
 
 - name: Copy the infected file
   ansible.builtin.copy:
-    src: check/clam.exe
+    src: check/eicar.txt
     dest: /tmp/{{ test_filename }}
     mode: '0600'
 
 - name: Check if the antivirus is working
   register: clamscan_cmd
   ansible.builtin.shell: >-
-    clamscan -v /tmp/{{ test_filename }}
+    clamscan -d /var/lib/clamav
+    /tmp/{{ test_filename }}
   changed_when: false
   failed_when: >-
     "Infected files: 1"
     not in clamscan_cmd.stdout
 
-- name: Delete the infected file
-  ansible.builtin.copy:
-    src: check/clam.exe
-    dest: /tmp/{{ test_filename }}
-    mode: '0600'
+- name: Remove the infected file
+  ansible.builtin.file:
+    path: /tmp/{{ test_filename }}
+    state: absent

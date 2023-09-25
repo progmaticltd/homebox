@@ -3,6 +3,7 @@ Description=Certificate renewal service
 After=network.target
 
 [Service]
+WorkingDirectory=/etc/lego
 Type=oneshot
 ExecStart=/usr/local/sbin/cert-renew
 RemainAfterExit=false

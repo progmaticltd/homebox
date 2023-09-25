@@ -20,7 +20,7 @@
 - name: Push the metrics
   ansible.posix.synchronize:
     mode: push
-    src: '{{ backup_dir }}/prometheus/metrics2'
+    src: '{{ backup_directory }}/prometheus/metrics2'
     dest: /var/lib/prometheus/metrics2
     archive: true
     owner: true
@@ -31,7 +31,7 @@
 - name: Push the node exporter folder
   ansible.posix.synchronize:
     mode: push
-    src: '{{ backup_dir }}/prometheus/node-exporter'
+    src: '{{ backup_directory }}/prometheus/node-exporter'
     dest: /var/lib/prometheus/node-exporter
     archive: true
     owner: true

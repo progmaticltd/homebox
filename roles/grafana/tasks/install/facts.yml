@@ -25,14 +25,14 @@
   no_log: '{{ not system.devel }}'
   ansible.builtin.set_fact:
     readonly_password: >-
-      {{ lookup(creds.store, network.domain + "/ldap/readonly") }}
+      {{ lookup(creds.store, creds.prefix + "/ldap/readonly") }}
   tags: facts
 
 - name: Load or crate the password for the admin account
   no_log: '{{ not system.devel }}'
   ansible.builtin.set_fact:
     grafana_admin_password: >-
-      {{ lookup(creds.store, network.domain + "/grafana/admin"
+      {{ lookup(creds.store, creds.prefix + "/grafana/admin"
       + creds.opts.create) }}
   tags: facts
 
@@ -40,12 +40,12 @@
   no_log: '{{ not system.devel }}'
   ansible.builtin.set_fact:
     grafana_manager_password: >-
-      {{ lookup(creds.store, network.domain + "/grafana/manager"
+      {{ lookup(creds.store, creds.prefix + "/grafana/manager"
       + creds.opts.create) }}
   tags: facts
 
 - name: Load api key if already defined  # noqa ignore-errors
   ansible.builtin.set_fact:
-    grafana_api_key: '{{ lookup(creds.store, network.domain + "/grafana/api-key") }}'
+    grafana_api_key: '{{ lookup(creds.store, creds.prefix + "/grafana/api-key") }}'
   ignore_errors: true
   tags: facts

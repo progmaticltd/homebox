@@ -14,7 +14,7 @@
 - name: Push the certificate on the server
   ansible.posix.synchronize:
     mode: push
-    src: '{{ backup_dir }}/certificates'
+    src: '{{ backup_directory }}/certificates'
     dest: /var/lib/lego/
     archive: true
     owner: true
