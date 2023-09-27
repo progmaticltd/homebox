@@ -1,0 +1,365 @@
+---
+
+# This is the list of roles to be run to install the system
+# This cannot be overriden
+roles_list:
+  - common-init
+  - bootstrap
+  - firewall
+  - dns-pdns
+  - certificates
+  - ldap-openldap
+  - user-setup
+  - nginx
+  - rspamd
+  - opendkim
+  - opendmarc
+  - mta-sts
+  - postfix
+  - dovecot
+  - autoconfig
+  - prometheus
+  - post-install
+
+
+# These are the default values, you can copy and paste into your system.yml
+# configuration file, removing the "_default" suffix for customisation.
+# You don’t need to copy all the fields, only the ones you want to override.
+
+# Default network settings
+# If you are behind a NAT, you will have to specify your real external IP address
+# The backup IP address is used when you have a second IP address
+network_default:
+  external_ip: ~
+  backup_ip: ~
+  dns:
+    # When the server has no IPv4, IPv6 is used
+    servers:
+      - 1.1.1.1                 # Cloudflare
+      - 8.8.8.8                 # Google
+      - 208.67.222.222          # Cisco
+      - 2606:4700:4700::1111    # Cloudflare
+      - 2001:4860:4860::8888    # Google
+      - 2620:0:ccc::2           # Cisco OpenDNS
+    options:
+      - debug
+      - timeout:2
+      - edns0
+
+# Shortcut notation to the backup directory. All the build artifacts will be
+# saved in this directory
+backup_directory: "{{ playbook_dir }}/../backup/{{ network.domain }}"
+
+
+# Standard policies
+policies:
+  system:
+    password: 'length=16 chars=ascii_letters,digits'
+    passphrase: 'length=40'
+
+
+# Encryption parameters
+encryption:
+  systemKeyParams: "{{ backup_directory }}/encryption/system-key.pwd {{ policies.system.passphrase }}"
+  backupKeyParams: "{{ backup_directory }}/encryption/backup-key.pwd {{ policies.system.passphrase }}"
+
+
+###############################################################################
+# Email related default options
+mail_default:
+  max_attachment_size: 25     # In megabytes
+  autoconfig: true            # Support Thunderbird automatic configuration
+  pop3: true                  # Activate the POP3 protocol or not
+  autodiscover: true          # Support MS Outlook automatic configuration (uses https)
+  quota:
+    port: 30000               # port used by dovecot for the quota daemon
+    default: 1G               # Maximum allowed mailbox size for your users.
+    archive: 10G              # Maximum allowed archived mailbox size for your users.
+  discard_duplicates: false   # Discard duplicates messages. It is safe, but has some side
+                              # effects when you are sending a message to a mailing list.
+                              # This is now disabled by default.
+                              # The default timerange to search duplicated messages is one hour.
+  #############################################################################
+  # Postfix options
+  postfix:
+    mynetworks: ~             # Authorized IP addresses to send emails without authentication
+                              # e.g. 192.168.0.0/16, 172.16.0.0/12, 10.10.0.0/8
+    submissions:              # Submission port over implicit TLS
+      port: 465               # https://tools.ietf.org/html/rfc8314#section-3.3
+    submission:               # Submission port with STARTTLS available
+      port: 587
+      active: true
+    # Obfuscate user agent, or complete remove
+    # - version: remove the version.
+    # - remove: remove the whole user agent information
+    obfs_user_agent: remove
+    # Put anything you want here, even on multiple lines, this will
+    # be added on main.cf. See the example here:
+    # extra_settings: |
+    #   disable_vrfy_command = no
+    #   frozen_delivered_to = no
+
+  #############################################################################
+  antispam:                 # Check inbound and outbound emails for viruses
+    active: true            # or false
+    webui:                  # rspamd web interface
+      active: true          # Activate or not
+      allow:                # a list of IP address that can access the web interface
+        - 192.168.0.0/16    # RFC1918 local networks
+        - 172.16.0.0/12
+        - 10.0.0.0/8
+
+  #############################################################################
+  antivirus:                # Check inbound and outbound emails for viruses
+    active: true            # or false
+    action: drop            # Action to do when a virus is found in an email: bounce or drop
+                            # be careful, bouncing external emails is a way to expose clamav
+                            # usage
+    quarantine: true        # Place emails with a virus in quarantine, for further analysis
+
+  #############################################################################
+  impersonate:              # Activate dovecot "master" user feature, ideal for families and
+                            # communities
+    active: false           # https://wiki2.dovecot.org/Authentication/MasterUsers
+    master: master          # master user name
+    separator: '*'          # Separation char between master user / real user name.
+
+  #############################################################################
+  # Dovecot FTS (Full Text search using Xapian)
+  fts:
+    active: true
+
+  #############################################################################
+  # Virtual folders
+  virtual_folders:          # Create virtual IMAP folders, like flagged,
+    active: false           # deleted, unread, conversations, etc.
+  #############################################################################
+  recipient_delimiter: '+'  # The character you want to use to split email address
+                            # from mailbox, i.e.:
+                            # when receiving a message to john+lists@example.com,
+                            # it should go directly to the 'lists' folder.
+                            # It is also useful to track which sites are selling or sharing your
+                            # email address to other sites.
+
+  #############################################################################
+  # Sieve specific parameters
+  # set debug to true to create log files in the user's mail/sieve/logs.
+  # useful to debug sieve without setting the debug flag system wide
+  sieve:
+    debug: false
+
+  #############################################################################
+  # Autoban is a lighter alternative to fail2ban, using nftables
+  autoban:
+    active: true        #
+    rate: 10/minute     # above this rate, connections are rejected
+    period: 1d          # period for banning IPs
+
+  #############################################################################
+  # mta-sts (RFC 8461)
+  mta_sts:
+    max_age: 86400
+    mode: enforce      # You can also use testing. When system.dev, the mode is
+                       # set to testing automatically
+
+  #############################################################################
+  # Additional spf records authorised domains to send emails; empty by default.
+  extra_senders: [ ]
+  # extra_senders:
+  #   - 'ip4:212.27.32.5'
+  #   - 'ip6:fe80::2e0:70ff:fe63:f069/64'
+  #   - 'include:_spf.google.com'
+
+
+###############################################################################
+# Default system settings
+system_default:
+  release: bookworm        # distribution to use (stretch/buster/bullseye)
+  devel: false             # mark the system as a development machine
+  debug: false             # activate debug options
+  track_changes: true      # track changes in /etc
+  cockpit: false           # install cockpit or not
+  reboot_timeout: 300      # wait 5 minutes max when rebooting the system
+  apt:                     # The apt sections to use,
+    sections: [ main ]     # contrib and non-free not activated by default
+
+  # Administration settings
+  # the user below is automatically added to the sudo group
+  admin:
+    name: admin            # Administrator’s account name
+    group_name: admin      # Administrator’s group name
+    uid_number: 2000
+    gid_number: 2000
+
+
+###############################################################################
+# Languages and dictionaries to install in the system
+languages_default:
+  - name: English
+    id: en
+
+
+###############################################################################
+# Install a static web site on www.yourdomain.com
+# Still requests two certificates:
+# One for for https://yourdomain.com/ and one for https://www.yourdomain.com
+website_default:
+  install: false
+  locale: en_GB.UTF-8
+
+
+###############################################################################
+# DMARC keys default parameters
+dmarc_default:
+  domain:
+    # none, quarantine or reject
+    policy: quarantine
+  subdomain:
+    # none, quarantine or reject
+    policy: quarantine
+  rua:
+    email: 'postmaster@{{ network.domain }}'
+    max_size: 10240
+  ruf:
+    email: 'postmaster@{{ network.domain }}'
+    max_size: 10240
+  reporting:
+    format: afrf    # or iodef
+    interval: 86400
+    percent: 100
+    # The following parameters are for reports sending
+    # Not activated yet until fully tested on a live system
+    sending: false
+    organisation: '{{ network.domain }}'
+  dkim_align: strict
+  spf_align: relaxed
+  send_reports:
+    active: false
+
+
+###############################################################################
+# Jabber server
+# The port numbers are not exposed externally, everything
+# is behind nginx, in https.
+# By default, the server is open to other servers (public flag to true).
+# To restrict to only a few domains, set the flag to false, and
+# enter the list of domains in the trust array
+ejabberd_default:
+  install: true
+  allow_contrib_modules: false
+  # Server-to-server communication
+  s2s:
+    active: true
+    use_starttls: required_trusted
+    public: true
+    trust:
+      - jabber.org
+  # https upload module
+  http_upload:
+    port: 5443
+    secret_length: 40
+    max_size: 104857600
+    thumbnail: false
+  # direct file transfer
+  file_transfer:
+    port: 7778
+  # traffic shaper
+  shaper:
+    normal: 1000
+    fast: 50000
+    proxyrate: 10240
+
+
+# Default posix groups
+posix_groups_default:
+  - gid: mail_users
+    description: Mail users
+    gidNumber: 1000
+    mail: 'users@{{ network.domain }}'
+  - gid: administrators
+    description: Administrators
+    gidNumber: 2000
+    mail: 'admin@{{ network.domain }}'
+
+
+# Default settings for SOGo groupware
+sogo_default:
+  install: false
+  appointment_send_emails: true
+  vacation: true
+  forward: true
+  sieve_scripts: true
+  first_day_of_week: 1 # 1 is Monday
+  day_start_time: 9
+  day_end_time: 17
+  time_format: '%H:%M'
+  refresh_view_check: every_minute
+  auxiliary_accounts: true
+  # Possible values: https://sogo.nu/files/docs/SOGoInstallationGuide.html#_general_preferences
+  language: English
+  enable_public_access: false
+  password_change: true
+  milters:
+    active: false
+    debug: true
+
+
+# Default DNS settings
+dns_default:
+  provider: gandi
+  refresh: 10800              # Time secondary servers should wait before asking again primary servers the SOA record
+  retry: 3600                 # The length of time a server should wait for asking an unresponsive primary nameserver
+  expire: 604800              # If a secondary server does not get a response from the primary server for this amount
+                              #  of time, it should stop responding to queries for the zone.
+  ttl: 600                    # Default TTL
+
+  # Custom delays and retries to check DNS propagation
+  propagation:
+    check: true
+    retries: 10
+    delay: 15
+
+  # Replication. settings
+  replication:
+    active: false
+    axfr_ips:
+      - 127.0.0.0/8
+      - ::1
+    notify: [ ]
+
+  # Additional DNS records to create
+  extra_records: [ ]
+
+
+# Default Prometheus settings
+prometheus_default:
+  install: true
+  memory:
+    alert: 80
+  swap:
+    alert: 80
+  system_load:
+    alert: 80
+  global:
+    xmpp:
+      recipient: '{{ users[0].mail }}'
+    mail:
+      recipient: '{{ users[0].mail }}'
+
+###############################################################################
+# Additional certificates and DNS records
+#
+extra_certs: [ ]
+
+###############################################################################
+# Additional certificates and DNS records
+#
+# Credentials store to use
+creds_default:
+  store: password
+  prefix: '{{ network.domain }}/'
+  opts:
+    create: ' create=True'
+    # Used for system, should be safe without quoting, but long enough to be secure
+    system: ' length=16 nosymbols=true'
+    overwrite: ' overwrite=True'

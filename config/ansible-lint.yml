@@ -1,0 +1,39 @@
+---
+
+# This is a temporary ansible-lint file, to be able to start from a clean base.
+# We may uncomment some of the warnings once we find a proper way to fix them
+
+# It is currently used by the CI environment (Jenkins) and the pre-commit hook
+
+# Some files cannot be found by ansible lint, when using include_tasks.
+# See https://github.com/ansible/ansible-lint/issues/507
+# These files are excluded for now
+
+# The current disabled warnings are:
+
+exclude_paths: [ ]
+
+parseable: true
+
+quiet: true
+
+rulesdir: [ ]
+
+warn_list:
+  - '106'     # Role name (some roles have ‘-’ in their name)
+  - '207'     # Nested jinja pattern (experimental, does not work)
+  - '208'     # Files permissions unset or incorrect
+
+skip_list:
+  - 'no-handler'                # We sometimes restart services directly
+  - 'command-instead-of-shell'  # shell commands are used for now
+  - 'yaml[line-length]'         # TODO: Set a maximum line length somewhere (e.g. 120)
+  - 'yaml[brackets]'            # For spaces after opening and before closing brackets
+  - 'jinja[spacing]'            # This warning appears when using multiline blocks (e.g. '>-')
+  - 'role-name'                 # What's wrong with hyphen in names ‽
+
+tags: [ ]
+
+use_default_rules: true
+
+verbosity: 1

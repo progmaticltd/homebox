@@ -2,8 +2,14 @@
 ##############################################################################
 
 # Ignore everything on the config folder, except sample and default files
-config/*
-!config/defaults/*
+
+# Your default configuration
+config/hosts.yml
+config/system.yml
+
+# Your other sites configuration
+config/hosts-*.yml
+config/system-*.yml
 
 # Ignore ansible error files
 *.retry
@@ -46,7 +52,3 @@ common/ansible.cfg
 # before the first boot, at the same level
 !preseed/misc/readme.md
 preseed/misc/*
-
-# Ignores your system configuration and your public key
-preseed/config/*
-!preseed/config/*-example.yml

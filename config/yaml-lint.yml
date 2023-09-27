@@ -1,0 +1,41 @@
+---
+
+extends: default
+
+rules:
+  # 80 chars should be enough, but don't fail if a line is longer
+  line-length:
+    max: 120
+    allow-non-breakable-inline-mappings: true
+    level: warning
+
+  braces:
+    level: warning
+    max-spaces-inside: 1
+
+  brackets:
+    level: warning
+    max-spaces-inside: 1
+
+  colons:
+    level: warning
+
+  commas:
+    level: warning
+
+  comments: disable
+  comments-indentation: disable
+
+  document-start: disable
+
+  empty-lines:
+    level: warning
+
+  hyphens:
+    level: warning
+
+  indentation:
+    level: warning
+    indent-sequences: consistent
+
+  truthy: disable
