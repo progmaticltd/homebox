@@ -2,9 +2,12 @@
 
 # Postfix blacklists to use
 # See https://en.wikipedia.org/wiki/Comparison_of_DNS_blacklists
-dns_blacklists:
-  - zen.spamhaus.org
-  - b.barracudacentral.org
+# Example:
+# dns_blacklists:
+#   - zen.spamhaus.org
+#   - b.barracudacentral.org
+dns_blacklists: [ ]
+
 
 master_addresses:
   - postmaster
@@ -16,6 +19,7 @@ master_addresses:
   - masteruser
   - admin
   - root
+
 
 # LDAP configuration
 ldap:
