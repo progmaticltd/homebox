@@ -9,5 +9,10 @@ table inet filter {
         tcp dport { http, https } ct state new counter accept \
         comment "http(s) traffic for rspamd"
 
+        # Allow access to port 11335 to fuzzy[12].rspamd.com
+        meta skuid _rspamd \
+        udp dport 11335 ct state new counter accept \
+        comment "fuzzy traffic for rspamd"
+
     }
 }
