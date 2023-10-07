@@ -13,7 +13,8 @@ define icmp6_out = {
 define icmp6_in = {
     nd-neighbor-solicit,
     nd-router-advert,
-    nd-neighbor-advert
+    nd-neighbor-advert,
+    echo-request
 }
 
 table inet filter {
