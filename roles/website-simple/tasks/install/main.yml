@@ -5,6 +5,7 @@
 
 - name: Create the DNS record
   ansible.builtin.include_tasks: install/dns.yml
+  tags: dns
 
 - name: Copy the certificate
   ansible.builtin.include_tasks: install/certificates.yml

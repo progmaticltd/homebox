@@ -12,7 +12,15 @@
   owner /home/{users,archives}/*/mails/maildir/.vsize.* rwkl,
   owner /home/{users,archives}/*/mails/indexes/dovecot* rwkl,
 
+  # allow to create inet streams
+  network inet stream,
+  network inet6 stream,
+
   # Get users and groups list
   /etc/passwd r,
   /etc/group r,
   /etc/nsswitch.conf r,
+
+  # proc filesystem
+  /proc/@{pid}/stat r,
+  /proc/@{pid}/io r,

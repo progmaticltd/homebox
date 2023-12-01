@@ -24,8 +24,8 @@
     state: present
   tags: monitor, python
 
-- name: Install dns monitor python script
-  ansible.builtin.pip:
-    name: dnsyo
-    state: present
-  tags: monitor, python
+# - name: Install dns monitor python script
+#   ansible.builtin.pip:
+#     name: dnsyo
+#     state: present
+#   tags: monitor, python

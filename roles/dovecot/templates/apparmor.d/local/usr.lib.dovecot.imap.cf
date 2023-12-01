@@ -43,3 +43,6 @@
 
   # Allow the execution of external sieve scripts
   /usr/lib/dovecot/sieve-extprograms/*.sh ix,
+
+  # Proc filesystem
+  /proc/@{pid}/stat r,

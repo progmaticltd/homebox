@@ -1,7 +1,15 @@
 ---
 
 - name: Load and merge user and default settings
-  ansible.builtin.include_tasks: install/load-defaults.yml
+  ansible.builtin.include_tasks:
+    file: install/load-defaults.yml
+    apply:
+      tags: always
+  tags: always
 
 - name: Parse external IP address types
-  ansible.builtin.include_tasks: install/external-ips.yml
+  ansible.builtin.include_tasks:
+    file: install/external-ips.yml
+    apply:
+      tags: always
+  tags: always

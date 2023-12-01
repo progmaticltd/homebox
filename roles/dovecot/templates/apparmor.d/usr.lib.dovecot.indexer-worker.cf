@@ -41,4 +41,8 @@
 
   /lib/x86_64-linux-gnu/ld-*.so mr,
   /usr/lib/dovecot/indexer-worker mr,
+
+  # proc filesystem
+  /proc/@{pid}/stat r,
+  /proc/@{pid}/io r,
 }

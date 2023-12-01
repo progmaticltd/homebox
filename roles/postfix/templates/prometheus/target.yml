@@ -3,4 +3,4 @@
 - targets:
     - '127.0.0.1:9154'
   labels:
-    ansible.builtin.service: postfix
+    service: postfix

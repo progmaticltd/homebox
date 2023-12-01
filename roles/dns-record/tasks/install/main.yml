@@ -1,5 +1,11 @@
 ---
 
+- name: Show the records to generate
+  debug:
+    var: dns_records
+    verbosity: 2
+  tags: dns
+
 - name: Create the required DNS records
   ansible.builtin.include_tasks: dns.yml
   loop: '{{ dns_records }}'

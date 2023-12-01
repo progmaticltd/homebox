@@ -69,7 +69,7 @@
   when: zone_create_cmd.changed
   ansible.builtin.shell: >-
     pdnsutil add-record {{ network.domain }}
-    '*' CAA
+    '@' CAA
     '0 issue "letsencrypt.org"'
   changed_when: true
 
@@ -77,6 +77,6 @@
   when: zone_create_cmd.changed
   ansible.builtin.shell: >-
     pdnsutil add-record {{ network.domain }}
-    '*' CAA
+    '@' CAA
     '0 iodef "mailto:security@{{ network.domain }}"'
   changed_when: true

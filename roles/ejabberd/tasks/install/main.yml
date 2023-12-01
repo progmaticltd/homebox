@@ -28,6 +28,7 @@
 
 - name: Configure DNS records
   ansible.builtin.include_tasks: install/dns.yml
+  tags: dns
 
 - name: Add Prometheus alerts
   when: prometheus.install

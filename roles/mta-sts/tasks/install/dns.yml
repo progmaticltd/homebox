@@ -11,6 +11,7 @@
         value: '{{ external_ip }}'
   ansible.builtin.include_role:
     name: dns-record
+    tasks_from: install/main.yml
   tags: dns
 
 - name: Create the backup DNS entries
@@ -22,4 +23,5 @@
         value: '{{ backup_ip }}'
   ansible.builtin.include_role:
     name: dns-record
+    tasks_from: install/main.yml
   tags: dns
