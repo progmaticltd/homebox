@@ -27,8 +27,11 @@
 - name: Read port ranges to use
   register: ephemeral_ports_cmd
   ansible.builtin.shell: >-
+    set -o pipefail;
     sysctl -n net.ipv4.ip_local_port_range
     | tr '\t' '-'
+  args:
+    executable: /bin/bash
   changed_when: false
   tags: facts
 
