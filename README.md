@@ -33,7 +33,7 @@ suggestions and support, and another one dedicated for development.
 - Automatic security updates (optional).
 - Centralised authentication with an LDAP users database, SSL certificate, password policies, PAM integration.
 - AppArmor activated by default, with a profile for all daemons.
-- Random passwords generated and saved into pass by default.
+- Random passwords generated and saved using [pass](https://passwordstore.org) or plain text files.
 - Can be used at home, on a dedicated or virtual server hosted online.
 - Flexible IP address support: IPv4 only, IPv6 only, and IPv4+IPv4 or IPv4+IPv6.
 - Embedded DNS server, with CAA, DNSSEC and SSHFP (SSH fingerprint) support.

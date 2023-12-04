@@ -41,6 +41,8 @@ security_default:
       - ECDHE-RSA-CHACHA20-POLY1305
       - DHE-RSA-AES128-GCM-SHA256
       - DHE-RSA-AES256-GCM-SHA384
+      - DHE-RSA-CHACHA20-POLY1305
+
     # Protocol versions listed from oldest to newest
     versions:
       - 'TLSv1.2'
