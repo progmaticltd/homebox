@@ -8,7 +8,6 @@
     append: true
   tags: config
 
-
 - name: Get the first IPv4 address  # noqa jinja[invalid]
   when:
     - external_ip_type is defined
