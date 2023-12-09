@@ -1,7 +1,8 @@
 ---
 
 - name: Certificates OCSP check with LE
+  notify: Restart tinyproxy
   ansible.builtin.lineinfile:
     path: /etc/tinyproxy/filter
-    line: '^r3\.o\.lencr\.org$'
+    line: '^r3\.[oi]\.lencr\.org$'
   tags: proxy
