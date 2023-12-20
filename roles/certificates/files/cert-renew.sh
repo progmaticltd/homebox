@@ -127,7 +127,7 @@ for cert in $certs; do
 
     # By default, renew the certificate unless it is a temporary one
     if [ "$temp_ca" = "1" ]; then
-        run_options=""
+        run_options="--preferred-chain='ISRG Root X1'"
         success=$(lego $common_options run $run_options)
         msg "Generating new certificate $fqdn: $success"
     else

@@ -1,6 +1,0 @@
----
-
-- name: Initialise user keys
-  set_fact:
-    user_keys: { }
-  tags: facts

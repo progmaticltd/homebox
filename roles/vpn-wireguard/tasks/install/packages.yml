@@ -1,7 +1,0 @@
----
-
-- name: Install the required packages
-  apt:
-    name: '{{ packages }}'
-    install_recommends: false
-  tags: apt

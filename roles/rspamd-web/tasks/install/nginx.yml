@@ -1,5 +1,7 @@
 ---
 
+# This is needed to ensure nginx can read the controller file
+# /run/rspamd/controller.sock
 - name: Add nginx user to rspamd group
   ansible.builtin.user:
     name: www-data

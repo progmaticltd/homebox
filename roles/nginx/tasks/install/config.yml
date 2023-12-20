@@ -15,6 +15,14 @@
     mode: '0644'
   tags: config
 
+- name: Disable compression
+  notify: Restart nginx
+  ansible.builtin.replace:
+    path: /etc/nginx/nginx.conf
+    regexp: 'gzip on;'
+    replace: 'gzip off;'
+  tags: config
+
 - name: Deploy the logging restrictions
   notify: Restart nginx
   ansible.builtin.template:

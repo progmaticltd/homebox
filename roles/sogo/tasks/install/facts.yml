@@ -4,13 +4,13 @@
   register: tz_command
   ansible.builtin.command: cat /etc/timezone
   changed_when: false
-  tags: config
+  tags: facts
 
 - name: Get the server timezone
-  tags: config
   ansible.builtin.set_fact:
     server_time_zone: '{{ tz_command.stdout }}'
   changed_when: false
+  tags: facts
 
 - name: Create or get the sogo database account password
   no_log: '{{ not system.devel }}'
@@ -18,12 +18,15 @@
     sogo_db_password: >-
       {{ lookup(creds.store, creds.prefix + "/postgresql/sogo"
       + creds.opts.create + creds.opts.system) }}
+  tags: facts
 
 - name: Load or create the password for the read-only account
   no_log: '{{ not system.devel }}'
   ansible.builtin.set_fact:
     ldap_ro_password: '{{ lookup(creds.store, creds.prefix + "/ldap/readonly") }}'
+  tags: facts
 
 - name: Compute the users DN
   ansible.builtin.set_fact:
     ldap_users_dn: 'ou=users,dc={{ network.domain.split(".") | join(",dc=") }}'
+  tags: facts

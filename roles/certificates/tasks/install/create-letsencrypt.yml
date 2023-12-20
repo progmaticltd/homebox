@@ -103,7 +103,7 @@
     --path /etc/lego
     {{ domains_list | join(" ") }}
     {{ certificate.pem | default(false) | ternary("--pem", " ") }}
-    run
+    run --preferred-chain="ISRG Root X1"
   until: create_cert is not failed
   retries: 10
   delay: 2
