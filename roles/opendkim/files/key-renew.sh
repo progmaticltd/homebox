@@ -52,8 +52,8 @@ else
     gen_args="$gen_args --note='DKIM key for $hostname on $domain'"
 
     if ! opendkim-genkey $gen_args; then
-	echo "Key creation for year $year failed, exiting"
-	exit  $KEY_GEN_FAILED
+        echo "Key creation for year $year failed, exiting"
+        exit  $KEY_GEN_FAILED
     fi
 
     echo "Successfully created key for year $year"
@@ -75,8 +75,8 @@ else
     ns_args="-d $domain -F -M -u -T 86400 -o nsupdate-$selector.conf"
 
     if ! opendkim-genzone $ns_args; then
-	echo "DNS record generation failed, exiting"
-	exit  $DNS_GEN_FAILED
+        echo "DNS record generation failed, exiting"
+        exit  $DNS_GEN_FAILED
     fi
 
     # Ensure the permissions are correct
