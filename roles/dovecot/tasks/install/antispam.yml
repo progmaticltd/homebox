@@ -1,5 +1,14 @@
 ---
 
+- name: Create sieve external programs folder
+  file:
+    path: /usr/lib/dovecot/sieve-extprograms
+    state: directory
+    owner: dovenull
+    group: dovenull
+    mode: '0755'
+  tags: dovecot
+
 - name: Deploy a default empty antispam script if not already existing
   when: mail.antispam.active
   ansible.builtin.copy:
