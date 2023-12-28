@@ -1,7 +1,9 @@
 ---
 
 - name: Copy nginx configuration
-  notify: Restart nginx
+  notify:
+    - Check nginx config
+    - Restart nginx
   vars:
     csp: '{{ sogo.csp | default(csp_default) }}'
     fp: '{{ sogo.fp | default(fp_default) }}'
@@ -14,7 +16,9 @@
   tags: nginx
 
 - name: Activate sogo web site
-  notify: Restart nginx
+  notify:
+    - Check nginx config
+    - Restart nginx
   ansible.builtin.file:
     src: '/etc/nginx/sites-available/sogo.{{ network.domain }}.conf'
     dest: '/etc/nginx/sites-enabled/sogo.{{ network.domain }}.conf'
