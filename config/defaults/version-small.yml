@@ -11,12 +11,12 @@ roles_list:
   - ldap-openldap
   - user-setup
   - nginx
-  - rspamd
   - opendkim
   - opendmarc
   - mta-sts
   - postfix
   - dovecot
+  - rspamd
   - autoconfig
   - prometheus
   - post-install
