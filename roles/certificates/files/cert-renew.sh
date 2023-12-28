@@ -3,7 +3,11 @@
 ## Simple script to renew certificates
 ## This is normally called by a systemd timer
 ## Export the environment variable DRYRUN=1 to test
+##
 #
+
+# The arguments are built locally
+# shellcheck disable=SC2086
 
 # Load parameters
 verbose=0
@@ -81,8 +85,12 @@ fi
 certs=$(find /var/lib/lego/certificates/ -name '*.key' | sort -R)
 
 # Load DNS and common settings
-export PDNS_API_URL=$(sed -n s/^PDNS_API_URL=//p /etc/lego/renew.conf)
-export PDNS_API_KEY=$(sed -n s/^PDNS_API_KEY=//p /etc/lego/renew.conf)
+PDNS_API_URL=$(sed -n s/^PDNS_API_URL=//p /etc/lego/renew.conf)
+PDNS_API_KEY=$(sed -n s/^PDNS_API_KEY=//p /etc/lego/renew.conf)
+
+# Export the PowerDNS variables
+export PDNS_API_URL
+export PDNS_API_KEY
 
 cert_server=$(sed -n s/^CERT_SERVER=//p /etc/lego/renew.conf)
 cert_email=$(sed -n s/^CERT_EMAIL=//p /etc/lego/renew.conf)
@@ -110,7 +118,7 @@ for cert in $certs; do
     common_options="$common_options --domains $fqdn"
 
     # Test if the pem file exists for this certificate
-    if test -f /var/lib/lego/certificates/$fqdn.pem; then
+    if test -f "/var/lib/lego/certificates/$fqdn.pem"; then
         common_options="$common_options --pem"
     fi
 
@@ -127,16 +135,17 @@ for cert in $certs; do
 
     # By default, renew the certificate unless it is a temporary one
     if [ "$temp_ca" = "1" ]; then
-        run_options="--preferred-chain='ISRG Root X1'"
-        success=$(lego $common_options run $run_options)
+        lego $common_options run --preferred-chain='ISRG Root X1'
+        success="$?"
         msg "Generating new certificate $fqdn: $success"
     else
         renew_options="--reuse-key --renew-hook run-parts /etc/lego/hooks/$fqdn/"
-        success=$(lego $common_options renew $renew_options)
+        lego $common_options renew $renew_options
+        success="$?"
         msg "Renewing certificate $fqdn: $success"
     fi
 
-    if ! $success; then
+    if [ $success != "0" ]; then
         # Renew X certificate at a time.
         msg "Could not run/renew certificate '$fqdn'. Trying the next"
         continue
