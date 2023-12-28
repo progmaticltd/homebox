@@ -9,6 +9,15 @@
     mode: '0700'
   tags: users
 
+- name: Create file shares directory for the user
+  ansible.builtin.file:
+    path: /home/archives/{{ user.uid }}/webdav/
+    state: directory
+    owner: '{{ user.uid }}'
+    group: '{{ user.uid }}'
+    mode: '0700'
+  tags: users
+
 - name: Allow the user to traverse the webdav directory
   ansible.posix.acl:
     path: /var/tmp/webdav-user/
@@ -54,11 +63,58 @@
     mode: '0600'
   tags: users
 
-- name: Start webdav systemd user service
+- name: Prevent the system to stop the user service
+  ansible.builtin.shell: >-
+    loginctl enable-linger '{{ user.uid }}'
+  changed_when: true
+  tags: users
+
+- name: Get the user ID
+  register: id_cmd
+  shell: id -u {{ user.uid }}
+  changed_when: false
+  tags: users
+
+- name: Store the user ID
+  set_fact:
+    user_id: '{{ id_cmd.stdout }}'
+  tags: users
+
+- name: Enable the service as a user
+  become: true
   become_user: '{{ user.uid }}'
-  ansible.builtin.systemd:
-    name: webdav
-    scope: user
-    state: started
-    no_block: true
+  become_method: sudo
+  become_flags: '--preserve-env'
+  ansible.builtin.shell: >-
+    systemctl --user enable webdav
+  changed_when: true
+  environment:
+    XDG_RUNTIME_DIR: /run/user/{{ user_id }}
+    DBUS_SESSION_BUS_ADDRESS: unix:path=/run/user/{{ user_id }}/bus
+  tags: users
+
+- name: Start the service as a user
+  become: true
+  become_user: '{{ user.uid }}'
+  become_method: sudo
+  become_flags: '--preserve-env'
+  ansible.builtin.shell: >-
+    systemctl --user start webdav
+  changed_when: true
+  environment:
+    XDG_RUNTIME_DIR: /run/user/{{ user_id }}
+    DBUS_SESSION_BUS_ADDRESS: unix:path=/run/user/{{ user_id }}/bus
+  tags: users
+
+- name: Show the service status as a user
+  become: true
+  become_user: '{{ user.uid }}'
+  become_method: sudo
+  become_flags: '--preserve-env'
+  ansible.builtin.shell: >-
+    systemctl --user status webdav
+  changed_when: false
+  environment:
+    XDG_RUNTIME_DIR: /run/user/{{ user_id }}
+    DBUS_SESSION_BUS_ADDRESS: unix:path=/run/user/{{ user_id }}/bus
   tags: users

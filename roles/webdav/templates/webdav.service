@@ -6,6 +6,7 @@ ConditionDirectoryNotEmpty=%h/.config/webdav/
 Type=forking
 ExecStart=/usr/sbin/nginx -c %h/.config/webdav/nginx.conf
 Restart=on-failure
+WorkingDirectory=%h
 
 [Install]
 WantedBy=default.target

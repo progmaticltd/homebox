@@ -27,7 +27,7 @@
     no_block: true
   tags: users
 
-- name: Create DAV directory for each user
+- name: Set-up services for each user
   ansible.builtin.include_tasks: install/user-setup-one.yml
   loop: '{{ users }}'
   loop_control:

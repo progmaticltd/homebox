@@ -4,13 +4,13 @@
   ansible.builtin.include_tasks: install/packages.yml
   tags: apt
 
-- name: Set-up user shares
-  ansible.builtin.include_tasks: install/user-setup.yml
-  tags: users
-
 - name: Load basic facts
   ansible.builtin.include_tasks: install/facts.yml
   tags: facts
+
+- name: Set-up user shares
+  ansible.builtin.include_tasks: install/user-setup.yml
+  tags: users
 
 - name: Deploy nginx config
   ansible.builtin.include_tasks: install/nginx.yml
