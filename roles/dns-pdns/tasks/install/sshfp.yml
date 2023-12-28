@@ -26,6 +26,7 @@
   tags: sshfp
 
 - name: Create the main SSHFP records
+  when: sshfp_records_file.changed
   vars:
     name: '{{ network.hostname }}'
   ansible.builtin.include_tasks: sshfp-record.yml

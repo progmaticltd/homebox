@@ -25,4 +25,7 @@
         search: '{{ sshfp_data[0:40] | upper }}'
   ansible.builtin.include_role:
     name: dns-record
+    tasks_from: install/main.yml
+    apply:
+      tags: always
   tags: sshfp
