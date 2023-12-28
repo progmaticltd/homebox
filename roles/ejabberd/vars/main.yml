@@ -4,9 +4,10 @@
 packages:
   - acl
   - ejabberd
+  - erlang-p1-pgsql
   - graphicsmagick
   - graphicsmagick-imagemagick-compat
-  - erlang-p1-pgsql
+  - postgresql
 
 
 std_cert_names:
@@ -48,6 +49,7 @@ dns_records_main:
     port: 3478
     value: '{{ network.domain }}'
     create: true
+
 
 dns_records_backup:
   - name: xmpp
