@@ -1,7 +1,7 @@
 ---
 
 - name: Show the records to generate
-  debug:
+  ansible.builtin.debug:
     var: dns_records
     verbosity: 2
   tags: dns

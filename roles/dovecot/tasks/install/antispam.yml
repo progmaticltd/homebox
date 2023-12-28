@@ -1,7 +1,7 @@
 ---
 
 - name: Create sieve external programs folder
-  file:
+  ansible.builtin.file:
     path: /usr/lib/dovecot/sieve-extprograms
     state: directory
     owner: dovenull
