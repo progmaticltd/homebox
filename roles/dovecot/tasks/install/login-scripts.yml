@@ -1,5 +1,11 @@
 ---
 
+- name: Install ipcalc-ng for the login script
+  ansible.builtin.apt:
+    name: ipcalc-ng
+    state: present
+  tags: post-login
+
 - name: Add the login script to whitelist IPs on successful authentication
   when: mail.autoban.active
   ansible.builtin.copy:
