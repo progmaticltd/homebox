@@ -289,8 +289,8 @@ prometheus_default:
 extra_certs: [ ]
 
 # Ansible lookup to use: passwords
-creds:
-  store: 'ansible.builtin.password'
+creds_default:
+  store: password
   prefix: '{{ backup_directory }}/credentials/'
   opts:
     create: ''

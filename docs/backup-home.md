@@ -213,7 +213,7 @@ Some folders are excluded from the backup, like the email indexes and temporary 
 !!! Note
     If the Transmission bittorrent daemon is installed, the downloaded files are excluded.
 
-# Emails reporting
+# Emails reporting=
 
 By default, the backup jobs are run overnight, and an email is sent to the postmaster, with a summary of the backup job:
 

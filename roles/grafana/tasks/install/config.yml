@@ -47,6 +47,7 @@
 
 - name: Restart Grafana now if needed
   ansible.builtin.meta: flush_handlers
+  tags: config
 
 # See https://github.com/grafana/grafana/issues/12638
 - name: Set the admin password using the API

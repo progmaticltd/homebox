@@ -5,31 +5,33 @@ If something goes wrong, here are a few resources:
 - The [Postfix mailing lists](http://www.postfix.org/lists.html).
 - The [Dovecot mailing lists](https://www.dovecot.org/mailinglists.html).
 - The [Debian mailing lists](https://lists.debian.org/).
-- Our [github page](https://github.com/progmaticltd/homebox)
+- Our [github page](https://github.com/progmaticltd/homebox).
+- The [Ansible quick start](https://docs.ansible.com/ansible/latest/getting_started/index.html).
 - Finally, [Duckduckgo](https://duckduckgo.com/) or [Google](https://google.com/).
+
 
 ## Folders content
 
 The repository contains a few folders you should be familiar with:
 
-- config: The main Yaml configuration files for your homebox device.
-- preseed: Environment to create an automatic ISO image installer for Debian.
-- install: Ansible scripts to install or test the whole server environment.
-- backup: A very useful folder that contains some important files like the passwords and certificates generated when
+- backup: The folder that contains some important files like the passwords and certificates generated when
   deploying the system. This allows you to "replay" the deployment on a new server after a disaster, without losing any
   information. This folder is generated automatically on the first deployment, and ignored by git.
-- tests: Ansible playbooks to test the platform.
-- sandbox: Put here anything you don't want to commit.
+- config: Your configuration files, specific to your platform and domain.
+- config/defaults: The default pre-configured values and settings.
+- devel: Role template and development specific files
 - docs: This project documentation.
-- uninstall: Ansible scripts to uninstall some of the components. This allows you to test them.
-- devel: A set of containers to help setup a local development environment.
+- playbooks: Ansible playbooks to install, uninstall or check the whole server environment.
+- roles: The roles list. Each role has tasks to install, uninstall and check the system.
+- sandbox: Put here anything you don't want to commit.
+- scripts: utility scripts, for instance the domain selection script.
+
 
 ## Branches
 
 - The current developments are done in the [dev](https://github.com/progmaticltd/homebox/tree/dev) branch.
-- The master branch is kept for releases.
+- The main branch is kept for releases.
 
-Starting in May 2019, the approach will be to use gitflow, from the dev branch.
 
 ## Test machine
 
@@ -45,14 +47,6 @@ For instance:
 
 `apt-get install libvirt virt-manager`
 
-## Preseed
-
-There is a preseed folder that creates an an ISO image for automatic installation.  It is using Docker, and builds an
-automatic installer from a YAML configuration file.  The [preseed page](preseed.md) give more details about this
-feature.
-
-!!! Note
-    This installer installs Debian only, it does not deploy the platform.
 
 ## Router configuration
 
@@ -71,13 +65,13 @@ your router during the development time:
 - TCP/143 and TCP/993: IMAP and IMAPS
 - TCP/110 and TCP/995: POP3 and POP3S
 - TCP/587: [Submission](https://en.wikipedia.org/wiki/Opportunistic_TLS).
-- TCP/465: [SMTPS](https://en.wikipedia.org/wiki/SMTPS) (this one is kept for compatibility with some old devices, but
-  perhaps will be removed soon)
+- TCP/465: [SMTPS](https://en.wikipedia.org/wiki/SMTPS) (this one is kept for compatibility with some old devices)
 - TCP/4190: ManageSieve. Used to remotely access your mail filters, for instance with
   [thunderbird sieve plugin](https://addons.mozilla.org/en-US/thunderbird/addon/sieve/).
 - TCP/443: HTTPS access for the webmail and also Outlook autodiscover feature.
 - TCP/5222 and TCP/5269: Jabber, clients to server and server to server implementation.
 - UDP/53 and TCP/53: DNS Server.
+
 
 ### Bridging your workstation
 
@@ -88,6 +82,7 @@ transparently forward the traffic from the internet.
 - On Linux arch: [Network bridge](https://wiki.archlinux.org/index.php/Network_bridge)
 - A fancy guide on Ubuntu:
   [Linux bridge with Network Manager](http://ask.xmodulo.com/configure-linux-bridge-network-manager-ubuntu.html)
+
 
 ### Create your hosts file
 
@@ -112,6 +107,7 @@ all:
 I have actually tested with the Ansible remote user as root. However, it should be possible to run as an admin user and
 use sudo with little modifications.
 
+
 ## System configuration
 
 First, as you would do for a live environment, copy the sample configuration to create your own:
@@ -125,10 +121,11 @@ The file is self explanatory, and inside, you will find the following block:
 
 ```yaml
 system:
-  release: bullseye
+  release: bookworm
   devel: true
   debug: true
 ```
+
 
 ### The "debug" flag
 
@@ -163,35 +160,6 @@ git config --local core.hooksPath git-hooks
 ```
 
 
-## Development playbook
-
-The first playbook to run is probably "dev-support.yml". It installs some diagnostic and convenience packages on the
-server, to make your life easier during the development phase.
-
-For instance, these packages are installed:
-
-- mc
-- telnet
-- dnsutils
-- whois
-- tmux
-- pfqueue
-- aptitude
-- man
-- less
-- vim
-- net-tools
-- file
-- swaks
-- curl
-- locate
-- colorized-logs
-- bash-completion
-
-- The script also configures a basic bashrc / zshrc.
-- It is also adding the LetsEncrypt staging root certificate authority to the system.
-
-
 ## Installation playbooks
 
 The main playbook 'main.yml' and includes all other playbooks, with some of them conditional, as some components are
@@ -211,166 +179,6 @@ bashrc to its default state. You probably want to run this script before putting
 
 It is also removing the LetsEncrypt staging root certificate authority from the system.
 
-
-## Tests / Diagnostic playbooks.
-
-There is also a tests folder that contains test playbooks.  These playbooks are running a list of system and integration
-tests on your development server.  This is useful for diagnostic purposes and also during the development phase, to be
-sure nothing is broken before committing anything.
-
-It does not replace a full test suite in a pre-production environment, but has been enough so far to catch common
-mistakes made in the scripts.
-
-The following roles are run:
-
-- Install the development packages above,
-- Basic system tests
-- LDAP server: Binding, users list, SSL certificate, etc.
-- Home folders: Presence and permissions
-- Antivirus rspamd: Current state
-- Service opendmarc: Current state
-- SMTP certificate: presence and validity
-- Service opendkim: Current state, key validdity
-- Service postfix: Current state, certificate, emails sending and receiving
-- POP3 certificate: presence and validity
-- IMAP certificate: presence and validity
-- Service dovecot: current state, user authentication, email resolution
-- Web site for roundcube: basic access, SSL certificate test
-- Web site "autoconfig" for Thunderbird: Check the validity of the XML generated
-- Web Site "autodiscover" for Outlook: HTTPS certificate, check the validity of the XML
-  generated
-- Antivirus tests, for instance check that an email with a virus is bounced.
-- Full text search inside attachments
-- DNS records when the DNS server is installed.
-
-
-## Profiling the playbook
-
-You can profile the time taken by the whole playbook, using the Ansible profile_roles plugin:
-
-```ini hl_lines="5"
-[defaults]
-retry_files_enabled = False
-display_skipped_hosts = False
-stdout_callback = yaml
-callback_whitelist = profile_roles
-roles_path = .:{{ playbook_dir }}/../../common/roles/
-connection_plugins = {{ playbook_dir }}/../../common/connection-plugins/
-remote_tmp = /tmp/
-```
-
-Then, once you have finished to run the playbook, you will see the total time. For instance:
-
-For a full deployment:
-
-```
-PLAY RECAP *********************************************************************
-homebox                    : ok=644  changed=394  unreachable=0    failed=0
-localhost                  : ok=0    changed=0    unreachable=0    failed=0
-
-Saturday 22 June 2019  15:18:09 +0100 (0:00:00.424)       0:18:59.596 *********
-===============================================================================
-dovecot --------------------------------------------------------------- 176.27s
-system-prepare -------------------------------------------------------- 118.33s
-postfix --------------------------------------------------------------- 112.06s
-certificates ---------------------------------------------------------- 100.98s
-load-defaults ---------------------------------------------------------- 81.55s
-roundcube -------------------------------------------------------------- 67.77s
-ldap ------------------------------------------------------------------- 66.80s
-clamav ----------------------------------------------------------------- 59.39s
-external-ip ------------------------------------------------------------ 39.54s
-sogo ------------------------------------------------------------------- 38.57s
-opendkim --------------------------------------------------------------- 27.84s
-dns-server-bind -------------------------------------------------------- 27.40s
-setup ------------------------------------------------------------------ 25.43s
-rspamd ----------------------------------------------------------------- 24.34s
-opendmarc -------------------------------------------------------------- 23.52s
-packages --------------------------------------------------------------- 21.38s
-website-simple --------------------------------------------------------- 17.81s
-system-cleanup --------------------------------------------------------- 16.34s
-user-setup ------------------------------------------------------------- 15.64s
-autoconfig ------------------------------------------------------------- 14.98s
-autodiscover ----------------------------------------------------------- 14.98s
-remote-access ---------------------------------------------------------- 14.89s
-nginx ------------------------------------------------------------------ 13.14s
-imapproxy --------------------------------------------------------------- 8.58s
-dns-server-bind-refresh ------------------------------------------------- 2.69s
-well-known-services ----------------------------------------------------- 2.10s
-dns-server-check-propagation -------------------------------------------- 1.22s
-ejabberd ---------------------------------------------------------------- 0.75s
-transmission ------------------------------------------------------------ 0.63s
-borg-backup ------------------------------------------------------------- 0.58s
-zabbix-server ----------------------------------------------------------- 0.54s
-luks-remote ------------------------------------------------------------- 0.50s
-fwknop-server ----------------------------------------------------------- 0.40s
-privoxy ----------------------------------------------------------------- 0.31s
-backup-server ----------------------------------------------------------- 0.19s
-tor --------------------------------------------------------------------- 0.18s
-import-accounts --------------------------------------------------------- 0.18s
-rspamd-web -------------------------------------------------------------- 0.18s
-fwknop-client ----------------------------------------------------------- 0.17s
-ssh-keygen -------------------------------------------------------------- 0.13s
-extra-certs ------------------------------------------------------------- 0.06s
-sendxmpp ---------------------------------------------------------------- 0.05s
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-total ---------------------------------------------------------------- 1139.50s
-```
-
-And for an update:
-
-```text
-PLAY RECAP *********************************************************************
-homebox                    : ok=557  changed=66   unreachable=0    failed=0
-localhost                  : ok=0    changed=0    unreachable=0    failed=0
-
-Saturday 22 June 2019  14:50:39 +0100 (0:00:00.442)       0:09:57.571 *********
-===============================================================================
-load-defaults ---------------------------------------------------------- 85.87s
-certificates ----------------------------------------------------------- 78.07s
-dovecot ---------------------------------------------------------------- 54.67s
-postfix ---------------------------------------------------------------- 42.22s
-external-ip ------------------------------------------------------------ 36.11s
-ldap ------------------------------------------------------------------- 34.02s
-system-prepare --------------------------------------------------------- 27.48s
-setup ------------------------------------------------------------------ 23.86s
-dns-server-bind -------------------------------------------------------- 22.62s
-opendkim --------------------------------------------------------------- 22.37s
-rspamd ----------------------------------------------------------------- 22.30s
-opendmarc -------------------------------------------------------------- 18.06s
-roundcube -------------------------------------------------------------- 17.91s
-user-setup ------------------------------------------------------------- 15.80s
-nginx ------------------------------------------------------------------ 15.27s
-sogo ------------------------------------------------------------------- 14.75s
-remote-access ---------------------------------------------------------- 13.83s
-website-simple ---------------------------------------------------------- 8.27s
-system-cleanup ---------------------------------------------------------- 7.65s
-clamav ------------------------------------------------------------------ 6.65s
-autoconfig -------------------------------------------------------------- 5.68s
-autodiscover ------------------------------------------------------------ 5.37s
-imapproxy --------------------------------------------------------------- 4.82s
-packages ---------------------------------------------------------------- 3.09s
-dns-server-bind-refresh ------------------------------------------------- 1.93s
-well-known-services ----------------------------------------------------- 1.35s
-dns-server-check-propagation -------------------------------------------- 0.98s
-ejabberd ---------------------------------------------------------------- 0.77s
-transmission ------------------------------------------------------------ 0.75s
-borg-backup ------------------------------------------------------------- 0.62s
-zabbix-server ----------------------------------------------------------- 0.58s
-luks-remote ------------------------------------------------------------- 0.53s
-fwknop-server ----------------------------------------------------------- 0.43s
-privoxy ----------------------------------------------------------------- 0.32s
-access-check ------------------------------------------------------------ 0.28s
-rspamd-web -------------------------------------------------------------- 0.24s
-backup-server ----------------------------------------------------------- 0.21s
-tor --------------------------------------------------------------------- 0.20s
-fwknop-client ----------------------------------------------------------- 0.18s
-access-report ----------------------------------------------------------- 0.16s
-ssh-keygen -------------------------------------------------------------- 0.14s
-extra-certs ------------------------------------------------------------- 0.06s
-sendxmpp ---------------------------------------------------------------- 0.06s
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-total ----------------------------------------------------------------- 597.48s
-```
 
 ## Some development tools to consider
 

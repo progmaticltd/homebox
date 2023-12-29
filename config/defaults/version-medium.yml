@@ -13,10 +13,10 @@ roles_list:
   - nginx
   - mta-sts
   - postfix
-  - rspamd
   - opendkim
   - opendmarc
   - dovecot
+  - rspamd
   - autodiscover
   - autoconfig
   - prometheus
