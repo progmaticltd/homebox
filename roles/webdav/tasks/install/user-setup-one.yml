@@ -71,16 +71,16 @@
 
 - name: Get the user ID
   register: id_cmd
-  shell: id -u {{ user.uid }}
+  ansible.builtin.shell: id -u {{ user.uid }}
   changed_when: false
   tags: users
 
 - name: Store the user ID
-  set_fact:
+  ansible.builtin.set_fact:
     user_id: '{{ id_cmd.stdout }}'
   tags: users
 
-- name: Enable the service as a user
+- name: Enable the service as a user     # noqa: command-instead-of-module
   become: true
   become_user: '{{ user.uid }}'
   become_method: sudo
@@ -93,7 +93,7 @@
     DBUS_SESSION_BUS_ADDRESS: unix:path=/run/user/{{ user_id }}/bus
   tags: users
 
-- name: Start the service as a user
+- name: Start the service as a user     # noqa: command-instead-of-module
   become: true
   become_user: '{{ user.uid }}'
   become_method: sudo
@@ -106,7 +106,7 @@
     DBUS_SESSION_BUS_ADDRESS: unix:path=/run/user/{{ user_id }}/bus
   tags: users
 
-- name: Show the service status as a user
+- name: Show the service status as a user     # noqa: command-instead-of-module
   become: true
   become_user: '{{ user.uid }}'
   become_method: sudo
