@@ -13,7 +13,7 @@ markdown_extensions:
   - codehilite
 extra_css: [ css/extra.css ]
 theme: readthedocs
-pages:
+nav:
   - Home: index.md
   - Features: features.md
   - Before the installation: prerequisites.md
