@@ -4,10 +4,10 @@
   register: index_page
   ansible.builtin.stat:
     path: /var/www/www.{{ network.domain }}/index.html
+  tags: website
 
 - name: Create the website site root folder if needed
   when: not index_page.stat.exists
-  tags: website
   ansible.builtin.file:
     path: '{{ path }}'
     state: directory
@@ -20,19 +20,19 @@
     - /var/www/www.{{ network.domain }}/js
   loop_control:
     loop_var: path
+  tags: website
 
 - name: Get the locale information to build a default web site page.
   when: not index_page.stat.exists
-  tags: website
   ansible.builtin.set_fact:
     website_language: '{{ website.locale | regex_replace("_.*", "") }}'
     website_charset: '{{ website.locale | regex_replace(".*\.", "") }}'
+  tags: website
 
 # Create the real one, and name it index.html. it will not be overwritten if you redeploy
 # same for main.css and main.js
 - name: Create a very simple fallback page.
   when: not index_page.stat.exists
-  tags: website
   ansible.builtin.template:
     src: '{{ path.name }}'
     dest: '{{ path.dest }}'
@@ -48,10 +48,10 @@
       dest: /var/www/www.{{ network.domain }}/js/demo.js
   loop_control:
     loop_var: path
+  tags: website
 
 - name: Remove the demo files if there is a real index file
   when: index_page.stat.exists
-  tags: website
   ansible.builtin.file:
     path: '/var/www/www.{{ network.domain }}/{{ path }}'
     state: absent
@@ -61,3 +61,4 @@
     - js/demo.js
   loop_control:
     loop_var: path
+  tags: website
