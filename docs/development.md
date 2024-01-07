@@ -21,6 +21,7 @@ The repository contains a few folders you should be familiar with:
 - config/defaults: The default pre-configured values and settings.
 - devel: Role template and development specific files
 - docs: This project documentation.
+- git-hooks: Git pre-push and pre-commit hooks, mainly calling ansible-lint.
 - playbooks: Ansible playbooks to install, uninstall or check the whole server environment.
 - roles: The roles list. Each role has tasks to install, uninstall and check the system.
 - sandbox: Put here anything you don't want to commit.
@@ -31,21 +32,6 @@ The repository contains a few folders you should be familiar with:
 
 - The current developments are done in the [dev](https://github.com/progmaticltd/homebox/tree/dev) branch.
 - The main branch is kept for releases.
-
-
-## Test machine
-
-You can start to develop using a virtual machine on your workstation, for instance using KVM or VirtualBox. The
-environment runs on Debian Stable. You can install it using a minimalistic ISO image, called
-[netinst](https://www.debian.org/CD/netinst/).
-
-I suggest you to use a virtual machine to test, especially with snapshots capabilities.  By using snapshots, you can
-rollback to any stage and run the Ansible scripts again. On Linux, KVM/libvirt is the best choice, and VirtualBox might
-be acceptable.
-
-For instance:
-
-`apt-get install libvirt virt-manager`
 
 
 ## Router configuration
@@ -106,6 +92,21 @@ all:
 
 I have actually tested with the Ansible remote user as root. However, it should be possible to run as an admin user and
 use sudo with little modifications.
+
+
+## Test machine
+
+You can start to develop using a virtual machine on your workstation, for instance using KVM or VirtualBox. The
+environment runs on Debian Stable. You can install it using a minimalistic ISO image, called
+[netinst](https://www.debian.org/CD/netinst/).
+
+I suggest you to use a virtual machine to test, especially with snapshots capabilities.  By using snapshots, you can
+rollback to any stage and run the Ansible scripts again. On Linux, KVM/libvirt is the best choice, and VirtualBox might
+be acceptable.
+
+For instance:
+
+`apt-get install libvirt virt-manager`
 
 
 ## System configuration

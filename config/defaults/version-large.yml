@@ -314,7 +314,7 @@ dns_default:
   provider: gandi
   refresh: 10800              # Time secondary servers should wait before asking again primary servers the SOA record
   retry: 3600                 # The length of time a server should wait for asking an unresponsive primary nameserver
-  expire: 604800              # If a secondary server does not get a response from the primary server for this amount
+  expire: 1209600             # If a secondary server does not get a response from the primary server for this amount
                               #  of time, it should stop responding to queries for the zone.
   ttl: 600                    # Default TTL
 

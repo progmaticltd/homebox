@@ -79,7 +79,7 @@ real value here:
 ```yml
 network:
   domain: homebox.space
-  hostname: mail.homebox.space
+  hostname: tartan
   external_ip: ~
   backup_ip: ~
 ```
@@ -196,3 +196,9 @@ internet connection.
 
 If something isn't working, open a discussion on [HomeBox website](https://github.com/progmaticltd/homebox/discussions),
 and we will be here to help.
+
+During this phase, temporary certificates are created, till the DNS server is live.
+
+## Step 5: Publish the DNS information
+
+Once the system has been installed,

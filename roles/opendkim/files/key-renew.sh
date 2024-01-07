@@ -9,6 +9,7 @@ SUCCESS=0
 KEY_GEN_FAILED=10
 DNS_GEN_FAILED=20
 DNS_UPD_FAILED=30
+SYSTEM_ERROR=40
 
 year=$(date +"%Y")
 
@@ -35,7 +36,10 @@ if [ "$cur_dns_record" != "" ]; then
     exit $SUCCESS
 fi
 
-cd /etc/opendkim/keys
+if ! cd /etc/opendkim/keys; then
+    echo "Could not enter directory /etc/opendkim/keys"
+    exit $SYSTEM_ERROR
+fi
 
 # Only create the key if it does not already exists
 if test -f "$selector.txt"; then
@@ -45,13 +49,13 @@ if test -f "$selector.txt"; then
 else
 
     # Build the arguments
-    gen_args="--restrict"
-    gen_args="$gen_args --domain '$domain'"
-    gen_args="$gen_args --bits 1024"
-    gen_args="$gen_args --selector=$selector"
-    gen_args="$gen_args --note='DKIM key for $hostname on $domain'"
+    set -- "--restrict"
+    set -- "$@" "--domain=$domain"
+    set -- "$@" "--bits=1024"
+    set -- "$@" "--selector=$selector"
+    set -- "$@" "--note='DKIM key for $hostname on $domain'"
 
-    if ! opendkim-genkey $gen_args; then
+    if ! opendkim-genkey "$@"; then
         echo "Key creation for year $year failed, exiting"
         exit  $KEY_GEN_FAILED
     fi
@@ -63,7 +67,11 @@ fi
 # The key should be now in /etc/opendkim/keys/<selector>.txt
 # Now, create the new DNS record
 
-cd /etc/opendkim/dns
+if ! cd /etc/opendkim/dns; then
+    echo "Could not enter directory /etc/opendkim/dns"
+    exit $SYSTEM_ERROR
+fi
+
 
 if test -f "nsupdate-$selector.conf"; then
 
@@ -72,12 +80,16 @@ if test -f "nsupdate-$selector.conf"; then
 else
 
     # Build arguments list
-    ns_args="-d $domain -F -M -u -T 86400 -o nsupdate-$selector.conf"
+    set -- "-d" "$domain" "-F" "-M" "-u" "-T" "86400" "-o" "nsupdate-$selector.conf"
 
-    if ! opendkim-genzone $ns_args; then
+    if ! opendkim-genzone "$@"; then
         echo "DNS record generation failed, exiting"
         exit  $DNS_GEN_FAILED
     fi
+
+    # Use the local IP specific address to avoid an error,
+    # as the script connects to localhost by default.
+    sed -i "s/^server $hostname$/server 127.1.1.53/" "nsupdate-$selector.conf"
 
     # Ensure the permissions are correct
     chown opendkim:opendkim "/etc/opendkim/keys/$selector.txt"
