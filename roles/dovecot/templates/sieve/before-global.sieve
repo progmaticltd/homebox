@@ -42,3 +42,9 @@ if string :is "${from}{{ mail.recipient_delimiter[0] }}Sent" "${to}" {
 if header :matches "X-Postmaster-Alert" "*" {
   addflag "$label1";
 }
+
+# Move spam to the junk folder
+if header :contains "X-Spam" "Yes" {
+  fileinto "Junk";
+  stop;
+}

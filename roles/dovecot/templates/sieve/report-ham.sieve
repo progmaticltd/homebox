@@ -18,5 +18,10 @@ if string :is "${mailbox}" "Trash" {
   stop;
 }
 
+# Do not report ham if the flag is not set
+if header :contains "X-Spam" "No" {
+  stop;
+}
+
 # Mark the message as not spam
 execute :pipe "learn-hamorspam.sh" [ "ham" ];
