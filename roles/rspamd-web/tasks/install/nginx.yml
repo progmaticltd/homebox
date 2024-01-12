@@ -5,7 +5,7 @@
 - name: Add nginx user to rspamd group
   ansible.builtin.user:
     name: www-data
-    groups: _rspamd
+    groups: [ _rspamd, mail ]
     append: true
   tags: nginx
 
