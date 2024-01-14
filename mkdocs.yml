@@ -22,3 +22,6 @@ nav:
   - Run the installation: 40-run-the-installation.md
   - Check the installation: 50-check-the-installation.md
   - Installation troubleshooting: 60-installation-troubleshooting.md
+  - Publish the domain automatically: 70-publish-the-system-automatically.md
+  - Publish the domain manually: 80-publish-the-system-manually.md
+  - Renew the certificates: 90-renew-certificates.md

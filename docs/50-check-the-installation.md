@@ -75,3 +75,46 @@ root@bochica:~#
 ```
 
 Now that your server is ready to use, you can publish the DNS server on internet
+
+## The backup folder
+
+The credentials created from the installation, should be stored in a folder named from the domain name, in the _backup_
+folder. This folder is excluded from git as well:
+
+```txt
+ls -lR backup
+backup:
+total 8
+-rw-r--r-- 1 andre andre  485 Jan 13 11:36 readme.md
+drwx------ 6 andre andre 4096 Jan 14 17:42 sweethome.box
+
+backup/sweethome.box:
+total 16
+drwx------ 2 andre andre 4096 Jan 14 17:42 dns
+drwx------ 2 andre andre 4096 Jan 14 17:40 ldap
+drwx------ 2 andre andre 4096 Jan 14 17:40 postgresql
+drwx------ 2 andre andre 4096 Jan 14 17:42 user
+
+backup/sweethome.box/dns:
+total 4
+-rw------- 1 andre andre 17 Jan 14 17:33 api-key
+
+backup/sweethome.box/ldap:
+total 32
+-rw------- 1 andre andre 17 Jan 14 17:34 admin
+-rw------- 1 andre andre 21 Jan 14 17:34 frodo
+-rw------- 1 andre andre 17 Jan 14 17:34 manager
+-rw------- 1 andre andre 21 Jan 14 17:34 meriadoc
+-rw------- 1 andre andre 21 Jan 14 17:34 peregrin
+-rw------- 1 andre andre 21 Jan 14 17:34 postmaster
+-rw------- 1 andre andre 17 Jan 14 17:34 readonly
+-rw------- 1 andre andre 21 Jan 14 17:34 samwise
+
+backup/sweethome.box/postgresql:
+total 4
+-rw------- 1 andre andre 17 Jan 14 17:40 sogo
+
+backup/sweethome.box/user:
+total 4
+-rw------- 1 andre andre 21 Jan 14 17:42 admin
+```
