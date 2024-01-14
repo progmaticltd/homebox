@@ -3,23 +3,10 @@ server at home or online.
 
 The source code is on [GitHub](https://github.com/progmaticltd/homebox).
 
-This project is for you if:
+The features list is visible on a [dedicated website](https://homebox.space).
 
-- You are interested to host your emails yourself, for privacy, security or any other reason.
-- You want your server to be secure against both physical and remote intrusion.
-- You want a low maintanance box that keep itself updated automatically.
-- You prefer security and stability over latest features.
-- You trust the Debian community to push security updates.
-
-## Philosophy
-
-- You should be able to upgrade anything installed via the apt command. No git clone / wget / curl here, ever.
-- Most of the services are protected AppArmor kernel security module. This makes your server very safe against remote
-  intrusion and 0-day vulnerabilities.
-- You can set up multiple backup destination, local and remote, all encrypted.
-- A lot of default choices made towards simplicity, [KISS principle](https://en.wikipedia.org/wiki/KISS_principle),
-  and safety.
-- Attention to details, keep focused on the nitty-gritty features of self hosting, like full IPv6 support and DNSSEC.
+!!! Warning
+	The documentation for the dev branch is actually being rewritten, and will be merged in the main branch once ready.
 
 ## Main components
 
@@ -34,16 +21,3 @@ This project is for you if:
 - Groupware: SOGo
 - Jabber: ejabberd
 - Monitoring: Prometheus and Grafana
-
-## Other projects to mention
-
-If you are interested in self-hosting, you will find a lot of interesting projects on the internet, for instance:
-
-- [Sovereign](https://github.com/sovereign/sovereign): A different target, but a similar deployment approach using
-  Ansible.
-- [yunohost](https://yunohost.org/): Contains a lot of plugins and features, not all of them are stable, but it is worth
-  testing.
-- [mailinabox](https://mailinabox.email/), more oriented towards online hosting, but very good as well.
-- [and many others...](https://github.com/Kickball/awesome-selfhosted)
-
-All have plenty of features, but maybe a different approach to self-hosting, though.

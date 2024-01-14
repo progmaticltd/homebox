@@ -8,17 +8,6 @@ a.toctree-l3 {
     text-indent: 15pt;
 }
 
-div.codehilite {
-    border: 2px solid #ddd;
-    padding: 2px;
-    overflow: hidden;
-    margin-bottom: 2em;
-}
-
-div.codehilite:hover {
-    overflow: auto;
-}
-
 /* Someone tried to be clever
  * and added negative margin with padding
  * just kiss. I only asked highlighting a line

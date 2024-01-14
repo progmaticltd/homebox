@@ -15,21 +15,8 @@ extra_css: [ css/extra.css ]
 theme: readthedocs
 nav:
   - Home: index.md
-  - Features: features.md
-  - Before the installation: prerequisites.md
-  - Homebox Installation: installation.md
-  - Credentials: credentials.md
-  - Security configuration: security-configuration.md
-  - Email configuration: email-configuration.md
-  - Antispam configuration: antispam-rspamd.md
-  - Web keys directory: web-keys-directory.md
-  - SOGo Groupware: groupware-sogo.md
-  - Jabber configuration: jabber-configuration.md
-  - Static web site: website-static.md
-  - Backup your home folders: backup-home.md
-  - Backup restoration: backup-restore.md
-  - Maintenance: maintenance.md
-  - WebDAV server: webdav.md
-  - Prometheus monitoring: prometheus.md
-  - Testing and development: development.md
-  - Code of conduct: codeofconduct.md
+  - Introduction: 00-introduction.md
+  - Prepare your target server: 10-prepare-your-target.md
+  - Prepare your workstation: 20-prepare-your-workstation.md
+  - Define your configuration: 30-define-your-config.md
+  - Run the installation: 40-run-the-installation.md
