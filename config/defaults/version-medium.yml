@@ -20,6 +20,7 @@ roles_list:
   - autodiscover
   - autoconfig
   - prometheus
+  - grafana
   - post-install
 
 
@@ -349,16 +350,3 @@ prometheus_default:
 # Additional certificates and DNS records
 #
 extra_certs: [ ]
-
-###############################################################################
-# Additional certificates and DNS records
-#
-# Credentials store to use
-creds_default:
-  store: password
-  prefix: '{{ network.domain }}/'
-  opts:
-    create: ' create=True'
-    # Used for system, should be safe without quoting, but long enough to be secure
-    system: ' length=16 nosymbols=true'
-    overwrite: ' overwrite=True'

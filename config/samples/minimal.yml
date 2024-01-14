@@ -1,0 +1,66 @@
+---
+
+###############################################################################
+# Domain and hostname information
+network:
+  domain: <you-domain>
+  hostname: <you-hostname>
+  external_ip: <first external IP address, IPv4 or IPv6>
+  backup_ip: <if you have one, second external IP address, IPv4 or IPv6>
+
+
+###############################################################################
+# Fill the list of users.
+# You can keep the {{ network.domain, or replace by your domain }}
+# You can have as many users as you want.
+# Here some examples:
+
+users:
+  - uid: frodo
+    cn: Frodo Baggins
+    first_name: Frodo
+    last_name: Baggins
+    mail: frodo.baggins@{{ network.domain }}
+    aliases:
+      - frodo@{{ network.domain }}
+  - uid: samwise
+    cn: Samwise Gamgee
+    first_name: Samwise
+    last_name: Gamgee
+    mail: samwise.gamgee@{{ network.domain }}
+    aliases:
+      - samwise@{{ network.domain }}
+      - sam@{{ network.domain }}
+  - uid: peregrin
+    cn: Peregrin Took
+    first_name: Peregrin
+    last_name: Took
+    mail: peregrin.took@{{ network.domain }}
+    aliases:
+      - peregrin@{{ network.domain }}
+      - pippin@{{ network.domain }}
+  - uid: meriadoc
+    cn: Meriadoc Brandybuck
+    first_name: Meriadoc
+    last_name: Brandybuck
+    mail: meriadoc.brandybuck@{{ network.domain }}
+    aliases:
+      - meriadoc@{{ network.domain }}
+      - merry@{{ network.domain }}
+
+
+###############################################################################
+# System related
+# Perhaps nothing to be changed, except for development and testing purposes
+system:
+  release: bookworm
+  devel: false
+  debug: false
+
+
+###############################################################################
+# If you are using Gandi, you can enter an API key here
+# This will automatically update the DNS glue records
+# With the external IPs of your system
+dns:
+  provider: gandi

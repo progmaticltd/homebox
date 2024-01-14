@@ -287,12 +287,3 @@ prometheus_default:
 # Additional certificates and DNS records
 #
 extra_certs: [ ]
-
-# Ansible lookup to use: passwords
-creds_default:
-  store: password
-  prefix: '{{ backup_directory }}/credentials/'
-  opts:
-    create: ''
-    # Used for system, should be safe without quoting, but long enough to be secure
-    system: ' chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" length=24'
