@@ -41,10 +41,6 @@ modules/*
 cloud/*
 !cloud/readme.md
 
-# Common config
-common/ansible.cfg
-
-
 # Preseed
 ##############################################################################
 
