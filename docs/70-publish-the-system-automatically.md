@@ -1,11 +1,11 @@
-# Publish the system on internet
+# Publishing your domain automatically
 
 Once your system has been installed successfully, you will need to _publish_ your DNS information, so your domain can be
 reached from the internet.
 
-If you have used Gandi, the process is fairly easy, otherwise, generic explanations are provided in the next section.
+## Store the api key for ansible
 
-## Publishing your domain with Gandi
+If you have used Gandi, the process is fairly easy, otherwise, generic explanations are provided in the next section.
 
 First, you will need to store the API and the token in the password store, so Ansible can access it.
 
@@ -19,15 +19,26 @@ For plain text passwords, use the following commands:
 Store the API key in the backup directory:
 
 ```sh
-echo SVIs912q5RasCmIZ9YDC1XOc > backup/sweethome.box/api-key
+echo SVIs912q5RasCmIZ9YDC1XOc > backup/sweethome.box/gandi/api-key
 chmod 0600 backup/sweethome.box/api-key
 ```
 
 You can publish your domain using the following command
 
-### For plain text passwords
+### If you are using _pass_
 
-### Run the command to publish your domain
+If you are using pass, you will need to add the token to the password database, by using this command on the
+workstation:
+
+```sh
+pass insert sweethome.box/gandi/api-key
+Enter password for sweethome.box/gandi/api-key: ******
+Retype password for sweethome.box/gandi/api-key: ******
+```
+
+Your api key is now safely stored into _pass_.
+
+## Run the command to publish your domain
 
 Everything is handled through an Ansible role, with one command:
 
