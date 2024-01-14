@@ -5,6 +5,7 @@ cert_packages:
   - colorize
   - jq
   - lego
+  - python3-cryptography
   - ssl-cert
 
 # The IP address to reach pdns api
