@@ -20,3 +20,5 @@ nav:
   - Prepare your workstation: 20-prepare-your-workstation.md
   - Define your configuration: 30-define-your-config.md
   - Run the installation: 40-run-the-installation.md
+  - Check the installation: 50-check-the-installation.md
+  - Installation troubleshooting: 60-installation-troubleshooting.md

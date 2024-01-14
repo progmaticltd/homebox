@@ -39,7 +39,7 @@ Adding new user `hbinstall' to supplemental / extra groups `users' ...
 Adding user `hbinstall' to group `users' ...
 ```
 
-Now, let's install _sudo_, and add the new user to the sudo group:
+Now, let's install _sudo_,...
 
 ```txt
 root@debian:~# apt install sudo
@@ -62,10 +62,21 @@ Processing triggers for man-db (2.11.2-2) ...
 Processing triggers for libc-bin (2.36-9+deb12u3) ...
 ```
 
+..., and add the new user to the sudo and root groups:
+
 ```txt
 root@debian:~# adduser hbinstall sudo
 Adding user `hbinstall' to group `sudo' ...
 Done.
+root@debian:~# adduser hbinstall root
+Adding user `hbinstall' to group `root' ...
+Done.
+```
+
+Finally, we need to grant the `hbinstall` user to run any command without using password:
+
+```sh
+echo 'hbinstall ALL=(ALL) NOPASSWD: ALL' >/etc/sudoers.d/hbinstall
 ```
 
 Now, the user hbinstall has administrative access on the system. The next step will let the user connect over ssh

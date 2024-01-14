@@ -141,9 +141,8 @@ Wikipedia.
 
 Open the file config/hosts.yml, and modify the values according to your target IP addresses.
 
-!!! Note
-    The IP address need to be the one you use for connecting over SSH. If your system is hosted online, this is probably
-    the public IP address as well. If you work on a LAN, this could be the local IP address.
+The IP address need to be the one you use for connecting over SSH. If your system is hosted online, this is probably the
+public IP address as well. If you work on a LAN, this could be the local IP address.
 
 ```yml
 all:
@@ -152,7 +151,11 @@ all:
       ansible_host: <replace with your IP address>
       ansible_user: hbinstall
       ansible_port: 22
+	  ansible_become: true
 ```
+
+!!! Note
+    If you are connecting to your server with the root user, you can remove the `ansible_become: true` line.
 
 Test your configuration with the following command
 
@@ -259,7 +262,7 @@ dns:
   provider: gandi
 ```
 
-At the end of the process, you shoud have your handle and a token:
+At the end of the process, you should have your handle and a token:
 
 - handle: `JD461-GANDI`
 - key: `SVIs912q5RasCmIZ9YDC1XOc`
