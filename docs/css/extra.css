@@ -20,3 +20,19 @@ div.codehilite span.hll {
 div.wy-nav-content {
     max-width: 1200px;
 }
+
+table {
+    margin: 2em auto;
+}
+
+table tr td, table tr th {
+    padding: 2pt 4pt;
+}
+
+table tr:nth-child(odd) td {
+    background-color: #f5f5f5;
+}
+
+table tr:nth-child(odd) th {
+    background-color: #e0e0e0;
+}
