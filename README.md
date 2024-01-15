@@ -26,22 +26,20 @@ suggestions and support, and another one dedicated for development.
 
 ### System installation and features
 
-- Custom Debian installer generation with full disk encryption and fully automatic installation.
-- Unlock the system upon boot by entering the passphrase through SSH or with a Yubikey.
-- Install packages only from Debian stable (Bullseye).
+- Install packages only from Debian stable (Bookworm).
 - Automatic [letsencrypt](https://letsencrypt.org) certificates generation using DNS challenge.
-- Automatic security updates (optional).
-- Centralised authentication with an LDAP users database, SSL certificate, password policies, PAM integration.
-- AppArmor activated by default, with a profile for all daemons.
-- Random passwords generated and saved using [pass](https://passwordstore.org) or plain text files.
+- Automatic security updates.
+- Centralised authentication with an LDAP users database and password policies.
+- AppArmor activated, with a profile for all daemons.
+- Random passwords generated and saved using [pass](https://passwordstore.org).
 - Can be used at home, on a dedicated or virtual server hosted online.
 - Flexible IP address support: IPv4 only, IPv6 only, and IPv4+IPv4 or IPv4+IPv6.
-- Embedded DNS server, with CAA, DNSSEC and SSHFP (SSH fingerprint) support.
-- Grade A https sites, HSTS implemented by default.
-- Automatic configuration of OpenPGP Web Key Directory.
+- Embedded DNS server, with CAA, DNSSEC and SSH fingerprint (SSHFP records).
+- All the http sites ranked **A+**, with HSTS implemented out of the box.
 - Automatic firewall rules for inbound, outbound and forwarding traffic, using nftables.
 - Restricted outbound traffic to the minimum.
 - Automatic update of DNS servers and glue records on Gandi.
+- Automatic configuration of OpenPGP Web Key Directory.
 
 
 ### Emails
@@ -60,8 +58,7 @@ suggestions and support, and another one dedicated for development.
 - Optional master user creation, e.g. for families with children or moderated communities.
 - Server side full text search inside emails, attached documents and files and
   compressed archives, with better results than GMail.
-- SOGo webmail with sieve filters management, password change form, Calendar and Address book management, GUI
-  to import other account emails.
+- Modern and responsive web access to emails, calendars and address books.
 - Powerful and light antispam system with [rspamd](https://rspamd.com/) and optional access to the web interface.
 - Antivirus for inbound _and_ outbound emails with [clamav](https://www.clamav.net/).
 - Automatic configuration for Thunderbird and Outlook using published XML and other clients with
@@ -78,11 +75,11 @@ suggestions and support, and another one dedicated for development.
 
 ### Other optional features
 
-- Incremental backups, encrypted, on multiple destination (SFTP, S3, Samba share or USB drive), with email and Jabber
-  reporting.
+- Static web site skeleton configuration, with https certificates and A+ security grade.
 - Jabber server, using [ejabberd](https://www.ejabberd.im/), with LDAP authentication, direct or offline file transfer
   and optional server to server communication.
-- Static web site skeleton configuration, with https certificates and A+ security grade by default.
+- Incremental backups, encrypted, on multiple destination (SFTP, S3, Samba share or USB drive), with email and Jabber
+  reporting.
 
 
 ### Development
