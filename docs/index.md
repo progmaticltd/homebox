@@ -5,9 +5,6 @@ The source code is on [GitHub](https://github.com/progmaticltd/homebox).
 
 The features list is visible on a [dedicated website](https://homebox.space).
 
-!!! Warning
-	The documentation for the dev branch is actually being rewritten, and will be merged in the main branch once ready.
-
 ## Main components
 
 - Operating System: Debian Bookworm
