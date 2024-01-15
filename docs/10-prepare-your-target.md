@@ -6,7 +6,7 @@ next section if your system already have a dedicated user with an SSH connection
 
 ## Create an installation user
 
-** Everything described here happens on the remote server, here just called "debian" **
+**Everything described here happens on the remote server, here just called "debian"**
 
 This section creates a user dedicated for the installation, that will be removed later. You can skip it in the following
 cases:
