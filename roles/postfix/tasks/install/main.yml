@@ -16,6 +16,7 @@
 
 - name: Generic config
   ansible.builtin.include_tasks: install/config.yml
+  tags: config
 
 - name: Firewall configuration
   ansible.builtin.include_tasks: install/firewall.yml

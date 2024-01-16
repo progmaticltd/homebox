@@ -132,8 +132,8 @@ non_smtpd_milters =
     # antispam:
     # antivirus:
 
-# Special filters on the headers
-header_checks = pcre:/etc/postfix/headers-check.cf
+# Special filters on the headers when sending emails outside
+smtp_header_checks = pcre:/etc/postfix/headers-check.cf
 
 # The macros that are sent to Milter applications after the SMTP MAIL FROM command.
 milter_mail_macros = i {mail_addr} {client_addr} {client_name} {auth_authen} {auth_type}

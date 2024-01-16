@@ -1,6 +1,6 @@
 ---
 
-- name: Copy configuration template
+- name: Copy configuration templates
   notify: Restart postfix
   ansible.builtin.template:
     src: "{{ file }}"
@@ -14,3 +14,4 @@
     - headers-check.cf
   loop_control:
     loop_var: file
+  tags: config
