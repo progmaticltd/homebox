@@ -47,7 +47,7 @@ else
     # Build the arguments
     gen_args="--restrict"
     gen_args="$gen_args --domain '$domain'"
-    gen_args="$gen_args --bits 1024"
+    gen_args="$gen_args --bits 2048"
     gen_args="$gen_args --selector=$selector"
     gen_args="$gen_args --note='DKIM key for $hostname on $domain'"
 
@@ -72,7 +72,7 @@ if test -f "nsupdate-$selector.conf"; then
 else
 
     # Build arguments list
-    ns_args="-d $domain -F -M -u -T 86400 -o nsupdate-$selector.conf"
+    ns_args="-d $domain -C hostmaster@$domain -N 127.1.1.53 -F -M -u -T 86400 -o nsupdate-$selector.conf"
 
     if ! opendkim-genzone $ns_args; then
         echo "DNS record generation failed, exiting"
@@ -86,7 +86,7 @@ else
     chown opendkim:opendkim "/etc/opendkim/keys/$selector.private"
     chmod 0600 "/etc/opendkim/keys/$selector.private"
 
-    echo "Successfully created DNS record"
+    echo "Successfully created DNS update file"
 
 fi
 
@@ -98,5 +98,16 @@ if ! nsupdate "nsupdate-$selector.conf"; then
 
 fi
 
-echo "DNS update success."
+echo "DNS record created."
+
+cd /etc/opendkim
+
+# Enforce the use of the new key in the configuration
+last_year=$((year - 1))
+
+sed -i "s/$last_year/$year/g" keytable
+sed -i "s/$last_year/$year/g" signingtable
+
+systemctl restart opendkim
+
 exit  $SUCCESS
