@@ -55,7 +55,7 @@ Here some requirements _estimations_, which could vary depending of the traffic,
 | Mini    | 512MB          | 1GB                |
 | Small   | 1GB            | 2GB                |
 | Medium  | 2GB            | 4GB                |
-| Large   | 2GB            | 4GB or more        |
+| Large   | 4GB            | 4GB or more        |
 
 Even for a small or mini flavour, you can still add components that don't require big amounts of memory, and see how the
 system reacts, depending on the traffic, the swap usage, etc. Some services, like grafana or rspamd, requires more

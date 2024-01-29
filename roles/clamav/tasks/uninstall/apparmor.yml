@@ -10,6 +10,7 @@
   loop_control:
     loop_var: aa_config
   changed_when: true
+  failed_when: false
 
 - name: Remove clamav AppArmor profiles
   ansible.builtin.file:
