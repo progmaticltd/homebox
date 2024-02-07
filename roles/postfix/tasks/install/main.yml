@@ -37,3 +37,7 @@
 - name: DNS configuration
   ansible.builtin.include_tasks: install/dns.yml
   tags: dns
+
+- name: DANE configuration
+  ansible.builtin.include_tasks: install/dane.yml
+  tags: dns, dane
