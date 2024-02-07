@@ -139,7 +139,7 @@ for cert in $certs; do
         success="$?"
         msg "Generating new certificate $fqdn: $success"
     else
-        renew_options="--reuse-key --renew-hook run-parts /etc/lego/hooks/$fqdn/"
+        renew_options="--reuse-key --renew-hook 'run-parts /etc/lego/hooks/$fqdn/'"
         lego $common_options renew $renew_options
         success="$?"
         msg "Renewing certificate $fqdn: $success"
