@@ -1,0 +1,8 @@
+---
+
+- name: Create folder to share dane DNS records
+  ansible.builtin.file:
+    path: /etc/lego/dane
+    state: directory
+    mode: '0700'
+  tags: dane

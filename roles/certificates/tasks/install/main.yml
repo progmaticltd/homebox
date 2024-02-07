@@ -31,6 +31,10 @@
   ansible.builtin.include_tasks: install/service.yml
   tags: service
 
+- name: DANE scripts related tasks
+  ansible.builtin.include_tasks: install/dane.yml
+  tags: dane
+
 - name: Update proxy settings
   ansible.builtin.include_tasks: install/proxy.yml
   tags: proxy

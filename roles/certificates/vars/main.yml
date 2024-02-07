@@ -3,6 +3,7 @@
 cert_packages:
   - ca-certificates
   - colorize
+  - gnutls-bin
   - jq
   - lego
   - python3-cryptography

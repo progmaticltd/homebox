@@ -13,3 +13,10 @@
     dest: /usr/local/sbin/cert-renew
     mode: '0700'
   tags: scripts
+
+- name: Copy the DANE script
+  ansible.builtin.copy:
+    src: dane-set-record.sh
+    dest: /usr/local/sbin/dane-set-record
+    mode: '0700'
+  tags: scripts
