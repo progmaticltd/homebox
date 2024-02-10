@@ -14,6 +14,13 @@
     mode: '0700'
   tags: scripts
 
+- name: Copy the certificate renewal hook
+  ansible.builtin.copy:
+    src: cert-renew-hook.sh
+    dest: /usr/local/sbin/cert-renew-hook
+    mode: '0700'
+  tags: scripts
+
 - name: Copy the DANE script
   ansible.builtin.copy:
     src: dane-set-record.sh

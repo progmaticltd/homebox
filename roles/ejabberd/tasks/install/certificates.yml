@@ -65,4 +65,4 @@
       script: renew-nginx-cert
   loop_control:
     loop_var: hook
-  tags: certs
+  tags: certs, scripts

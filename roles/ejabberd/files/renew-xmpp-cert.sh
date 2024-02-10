@@ -1,9 +1,28 @@
 #!/bin/dash
 
-# Restart ejabberd at midnight
+# Get the domain
+domain=$(hostname -d)
 
-if ! cat /var/spool/cron/atjobs/* | grep -c 'systemctl restart ejabberd'; then
+# Check what time the service has been restarted
+svc_time=$(systemctl show ejabberd --value --property=ActiveEnterTimestamp --timestamp=unix | sed s/@//)
 
-    echo 'systemctl restart ejabberd' | at midnight
+# Compare the timestamp of each certificate
+certs="conference files upload vjud pubsub proxy xmpp"
 
-fi
+for cert in $certs; do
+    cert_time=$(stat -c %Y "/var/lib/lego/certificates/$cert.$domain.crt")
+
+    # Check if the service start time is after
+    # the last modification time of the certificate
+    printf "$cert.$domain: "
+    if [ $svc_time -gt $cert_time ]; then
+        echo "OK"
+        continue
+    fi
+
+    echo "renewed."
+    echo " - restarting ejabberd service."
+    systemctl restart ejabberd
+    break
+
+done

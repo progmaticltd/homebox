@@ -13,6 +13,13 @@
 verbose=0
 live=0
 
+# Check if this file exists
+lock_file="/tmp/cert-renew"
+touch "$lock_file"
+
+# Days to renew
+RENEW_DAYS=30
+
 # Check if we want to run the script in dry-run mode
 dryrun="${DRYRUN:=0}"
 
@@ -32,13 +39,19 @@ dns_ipv6=2606:4700:4700::64
 
 # Small function to display a message in verbode mode
 msg() {
-
     if [ "$verbose" = "0" ]; then
         return
     fi
-
     echo "$1"
 }
+
+cleanup() {
+    rm -f "$lock_file"
+    exit
+}
+
+# Clean-up on exit
+trap "cleanup" INT EXIT HUP TERM
 
 # Use the SMTP hostname to check if the system is actually "live" on internet
 domain=$(hostname -d)
@@ -82,7 +95,10 @@ else
 fi
 
 # List all the certificates
-certs=$(find /var/lib/lego/certificates/ -name '*.key' | sort -R)
+certs=$(find /var/lib/lego/certificates/ -maxdepth 1 -name '*.key' | sort -R)
+
+# System CA to use to check the certificates
+ca_system="/etc/ssl/certs/ca-certificates.crt"
 
 # Load DNS and common settings
 PDNS_API_URL=$(sed -n s/^PDNS_API_URL=//p /etc/lego/renew.conf)
@@ -100,9 +116,23 @@ for cert in $certs; do
     # Get the FQDN from the filename
     fqdn=$(basename "$cert" '.key')
     cert_file="/var/lib/lego/certificates/${fqdn}.crt"
+    ca_file="/var/lib/lego/certificates/${fqdn}.issuer.crt"
 
     if [ "$fqdn" = "_.$domain" ]; then
         fqdn="*.$domain"
+    fi
+
+    # Get the key type
+    key_file=$(echo $cert_file | sed 's/\.crt$/.key/')
+    key_type=$(sed -En 's/.*BEGIN (EC|RSA) PRIVATE KEY.*/\1/p' "$key_file")
+
+    # Check modulus
+    key_modulus=""
+    crt_modulus=""
+
+    if [ "$key_type" = "RSA" ]; then
+        key_modulus=$(openssl rsa -noout -modulus -in "$key_file" | openssl sha256)
+        crt_modulus=$(openssl x509 -noout -modulus -in "$cert_file" | openssl sha256)
     fi
 
     msg "Checking $fqdn"
@@ -124,29 +154,38 @@ for cert in $certs; do
 
     # When not live, just display the command that would be run
     if [ "$live" != "1" ]; then
-        msg "lego $common_options renew $renew_options"
+        msg "lego $common_options renew"
         continue
     fi
 
     # If if it a temporary certificate, use run, instead of renew.
     temp_ca=$(openssl x509 -in "$cert_file" -noout -issuer | grep -c "Temporary CA")
 
-    msg "Temporary CA: $temp_ca"
 
     # By default, renew the certificate unless it is a temporary one
     if [ "$temp_ca" = "1" ]; then
+        msg "Temporary CA: $temp_ca"
+        lego $common_options run --preferred-chain='ISRG Root X1'
+        success="$?"
+        msg "Generating new certificate $fqdn: $success"
+    elif ! openssl verify -trusted "$ca_system" -trusted "$ca_file" "$cert_file" >/dev/null 2>&1; then
+        msg "Rebuilding untrusted certificate"
+        lego $common_options run --preferred-chain='ISRG Root X1'
+        success="$?"
+        msg "Generating new certificate $fqdn: $success"
+    elif [ "$key_modulus" != "$crt_modulus" ]; then
+        msg "Rebuilding mismatch certificate"
         lego $common_options run --preferred-chain='ISRG Root X1'
         success="$?"
         msg "Generating new certificate $fqdn: $success"
     else
-        renew_options="--reuse-key --renew-hook 'run-parts /etc/lego/hooks/$fqdn/'"
-        lego $common_options renew $renew_options
+        lego $common_options renew --days $RENEW_DAYS --preferred-chain='ISRG Root X1'
         success="$?"
         msg "Renewing certificate $fqdn: $success"
     fi
 
+    # Renew X certificate at a time.
     if [ $success != "0" ]; then
-        # Renew X certificate at a time.
         msg "Could not run/renew certificate '$fqdn'. Trying the next"
         continue
     fi

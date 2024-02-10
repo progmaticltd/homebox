@@ -14,7 +14,7 @@
 
 - name: Deploy the certificates
   ansible.builtin.include_tasks: install/certificates.yml
-  tags: certs
+  tags: certs, scripts
 
 - name: Push the configuration
   ansible.builtin.include_tasks: install/config.yml
