@@ -9,6 +9,7 @@
   ansible.builtin.include_role:
     name: certificates
     tasks_from: install/main.yml
+  tags: certs
 
 - name: Check for updated certificates
   notify:
@@ -18,9 +19,11 @@
     verbosity: 1
     var: updated_certs
   changed_when: updated_certs | length > 0
+  tags: certs
 
 - name: Copy the certificate update hook
   ansible.builtin.copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/cockpit.{{ network.domain }}/renew-cert.sh
     mode: '0700'
+  tags: certs, scripts

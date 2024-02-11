@@ -2,6 +2,7 @@
 
 - name: Install the certificates
   ansible.builtin.include_tasks: install/certs.yml
+  tags: certs, scripts
 
 - name: Install the packages
   ansible.builtin.include_tasks: install/packages.yml
