@@ -31,18 +31,18 @@
     src: renew-cert.sh
     dest: /etc/lego/hooks/{{ network.domain }}/renew-cert.sh
     mode: '0700'
-  tags: certs
+  tags: certs, facts
 
 - name: Copy the certificate update hook for www site
   ansible.builtin.copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/www.{{ network.domain }}/renew-cert.sh
     mode: '0700'
-  tags: certs
+  tags: certs, facts
 
 - name: Copy the certificate update hook for wildcard site
   ansible.builtin.copy:
     src: renew-cert.sh
     dest: /etc/lego/hooks/_.{{ network.domain }}/renew-cert.sh
     mode: '0700'
-  tags: certs
+  tags: certs, facts

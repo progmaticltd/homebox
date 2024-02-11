@@ -161,7 +161,6 @@ for cert in $certs; do
     # If if it a temporary certificate, use run, instead of renew.
     temp_ca=$(openssl x509 -in "$cert_file" -noout -issuer | grep -c "Temporary CA")
 
-
     # By default, renew the certificate unless it is a temporary one
     if [ "$temp_ca" = "1" ]; then
         msg "Temporary CA: $temp_ca"

@@ -28,11 +28,11 @@ fi
 
 # Get the domain
 domain=$(hostname -d)
-fqdn="autodiscover.$domain"
+fqdn="imap.$domain"
 cert_path="/var/lib/lego/certificates/$fqdn.crt"
 
 # Load server certificate dates
-server_dates=$(echo "" | openssl s_client -showcerts -servername $fqdn -connect $fqdn:443 2>&1 | openssl x509 -noout -dates)
+server_dates=$(echo "" | openssl s_client -showcerts -servername $fqdn -connect $fqdn:993 2>&1 | openssl x509 -noout -dates)
 server_until=$(echo "$server_dates" | sed -En 's/notAfter=(.*)/\1/p')
 
 # Load file certificate dates
@@ -48,7 +48,7 @@ if [ $server_until_epoch -lt $file_until_epoch ]; then
     if [ "$action" = "status" ]; then
         echo "Not live"
     elif [ "$action" = "activate" ]; then
-        systemctl reload nginx
+        systemctl restart dovecot
     fi
 elif [ "$action" = "status" ]; then
     echo "Live"

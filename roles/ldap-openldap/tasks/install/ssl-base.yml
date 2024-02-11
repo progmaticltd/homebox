@@ -25,7 +25,7 @@
     src: renew-cert.sh
     dest: /etc/lego/hooks/ldap.{{ network.domain }}/renew-cert.sh
     mode: '0700'
-  tags: certs
+  tags: certs, scripts
 
 - name: Allow openldap to read certificates
   register: openldap_user

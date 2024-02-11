@@ -9,7 +9,7 @@
 
 - name: Configure the certificates
   ansible.builtin.include_tasks: install/certificates.yml
-  tags: certs
+  tags: certs, scripts
 
 - name: Configure nginx
   ansible.builtin.include_tasks: install/nginx.yml

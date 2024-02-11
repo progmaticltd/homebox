@@ -10,7 +10,7 @@
 
 - name: Copy the certificates
   ansible.builtin.include_tasks: install/certificates.yml
-  tags: certs
+  tags: certs, scripts
 
 - name: Web server configuration
   ansible.builtin.include_tasks: install/nginx.yml

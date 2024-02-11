@@ -12,7 +12,7 @@
 
 - name: Copy the certificates
   ansible.builtin.include_tasks: install/certificates.yml
-  tags: certs
+  tags: certs, scripts
 
 - name: Generic config
   ansible.builtin.include_tasks: install/config.yml

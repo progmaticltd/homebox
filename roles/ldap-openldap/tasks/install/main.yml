@@ -13,7 +13,7 @@
 
 - name: Configure the basic encryption
   ansible.builtin.include_tasks: install/ssl-base.yml
-  tags: certs
+  tags: certs, scripts
 
 - name: Configure the deref module
   ansible.builtin.include_tasks: install/module-deref.yml

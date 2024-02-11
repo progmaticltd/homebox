@@ -9,6 +9,7 @@
 
 - name: Initialise the database with some content
   ansible.builtin.include_tasks: install/init-db.yml
+  tags: records
 
 - name: Create SSHFP records
   ansible.builtin.include_tasks: install/sshfp.yml

@@ -5,7 +5,7 @@
 
 - name: Copy the default certificates
   ansible.builtin.include_tasks: install/certificates.yml
-  tags: certs
+  tags: certs, facts
 
 - name: Configure the package
   ansible.builtin.include_tasks: install/config.yml

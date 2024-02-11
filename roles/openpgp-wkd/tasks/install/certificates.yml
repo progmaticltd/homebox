@@ -33,4 +33,4 @@
     src: renew-cert.sh
     dest: /etc/lego/hooks/openpgpkey.{{ network.domain }}/renew-cert.sh
     mode: '0700'
-  tags: certs
+  tags: certs, scripts

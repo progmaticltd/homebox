@@ -18,7 +18,7 @@
 
 - name: Copy the certificates
   ansible.builtin.include_tasks: install/certificates.yml
-  tags: certs
+  tags: certs, scripts
 
 - name: Set the DNS records
   ansible.builtin.include_tasks: install/dns.yml

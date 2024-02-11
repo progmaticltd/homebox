@@ -46,7 +46,7 @@
 - name: Deploy the hooks for each certificate update
   ansible.builtin.copy:
     src: '{{ hook.script }}.sh'
-    dest: '/etc/lego/hooks/{{ hook.sub }}.{{ network.domain }}/{{ hook.script }}'
+    dest: '/etc/lego/hooks/{{ hook.sub }}.{{ network.domain }}/renew-cert.sh'
     mode: '0700'
   loop:
     - sub: conference
