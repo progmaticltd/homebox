@@ -70,9 +70,10 @@ for ca_file in $cert_files; do
         status=$("$status_script_path" status 2>&1)
     fi
 
-    # Create a small progress bar
-    width=$((valid_days / 9))
-    bar=$(echo "##########" | head -c "$width")
+    # Create a small progress bar for visibility.
+    # The maximum is 90 days.
+    width=$(((1+valid_days) / 9))
+    bar=$(echo "==========" | head -c "$width")
     bar=$(printf "%02d [%-10s]" "$valid_days" "$bar")
 
     if [ "$key_modulus" != "$crt_modulus" ]; then
