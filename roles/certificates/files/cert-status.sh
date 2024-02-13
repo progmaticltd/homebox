@@ -62,12 +62,12 @@ for ca_file in $cert_files; do
     status="Unknown"
     status_script_path="/etc/lego/hooks/$subdomain.$domain/renew-cert.sh"
     if [ "$subdomain" = "*" ]; then
-	status_script_path="/etc/lego/hooks/_.$domain/renew-cert.sh"
+        status_script_path="/etc/lego/hooks/_.$domain/renew-cert.sh"
     elif [ "$subdomain" = "" ]; then
-	status_script_path="/etc/lego/hooks/$domain/renew-cert.sh"
+        status_script_path="/etc/lego/hooks/$domain/renew-cert.sh"
     fi
     if [ -x "$status_script_path" ]; then
-	status=$("$status_script_path" status 2>&1)
+        status=$("$status_script_path" status 2>&1)
     fi
 
     # Create a small progress bar
