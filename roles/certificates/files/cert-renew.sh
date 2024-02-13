@@ -17,9 +17,6 @@ live=0
 lock_file="/tmp/cert-renew"
 touch "$lock_file"
 
-# Days to renew
-RENEW_DAYS=30
-
 # Check if we want to run the script in dry-run mode
 dryrun="${DRYRUN:=0}"
 
@@ -135,6 +132,9 @@ for cert in $certs; do
         crt_modulus=$(openssl x509 -noout -modulus -in "$cert_file" | openssl sha256)
     fi
 
+    # Get the certificate file last modification epoch
+    old_cert_file_epoch=$(stat -c %Y "$cert_file")
+
     msg "Checking $fqdn"
 
     # Initialise the options
@@ -164,29 +164,39 @@ for cert in $certs; do
     # By default, renew the certificate unless it is a temporary one
     if [ "$temp_ca" = "1" ]; then
         msg "Temporary CA: $temp_ca"
-        lego $common_options run --preferred-chain='ISRG Root X1'
+        lego_output=$(lego $common_options run --preferred-chain='ISRG Root X1' 2>&1)
         success="$?"
         msg "Generating new certificate $fqdn: $success"
     elif ! openssl verify -trusted "$ca_system" -trusted "$ca_file" "$cert_file" >/dev/null 2>&1; then
         msg "Rebuilding untrusted certificate"
-        lego $common_options run --preferred-chain='ISRG Root X1'
+        lego_output=$(lego $common_options run --preferred-chain='ISRG Root X1' 2>&1)
         success="$?"
         msg "Generating new certificate $fqdn: $success"
     elif [ "$key_modulus" != "$crt_modulus" ]; then
         msg "Rebuilding mismatch certificate"
-        lego $common_options run --preferred-chain='ISRG Root X1'
+        lego_output=$(lego $common_options run --preferred-chain='ISRG Root X1' 2>&1)
         success="$?"
         msg "Generating new certificate $fqdn: $success"
     else
-        lego $common_options renew --days $RENEW_DAYS --preferred-chain='ISRG Root X1'
+        lego_output=$(lego $common_options renew --preferred-chain='ISRG Root X1' 2>&1)
         success="$?"
         msg "Renewing certificate $fqdn: $success"
     fi
 
     # Renew X certificate at a time.
     if [ $success != "0" ]; then
-        msg "Could not run/renew certificate '$fqdn'. Trying the next"
+        msg "Could not run/renew certificate '$fqdn':"
+        msg "$lego_output"
         continue
+    fi
+
+    # Get the certificate file last modification epoch
+    new_cert_file_epoch=$(stat -c %Y "$cert_file")
+
+    # Call the hook when the certificate file has changed
+    if [ "$old_cert_file_epoch" != "$new_cert_file_epoch" ]; then
+        msg "Calling hooks for $fqdn"
+        run-parts "/etc/lego/hooks/${fqdn}" --arg=activate
     fi
 
     # The certificate has been renewed, wait a few seconds, and continue.

@@ -29,3 +29,11 @@
   loop: '{{ security.tls.unused_versions }}'
   loop_control:
     loop_var: tls_version
+
+- name: Check DANE records for client to server
+  ansible.builtin.shell: danetool --port 5223 --check xmpp.{{ network.domain }}
+  changed_when: false
+
+- name: Check DANE records for server to server
+  ansible.builtin.shell: danetool --port 5269 --check xmpp.{{ network.domain }}
+  changed_when: false

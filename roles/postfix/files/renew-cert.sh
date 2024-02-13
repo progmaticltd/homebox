@@ -46,7 +46,7 @@ file_until_epoch=$(date +%s -d "$file_until")
 # Run the actions
 if [ $server_until_epoch -lt $file_until_epoch ]; then
     if [ "$action" = "status" ]; then
-        echo "Not live"
+        echo "Pending"
     elif [ "$action" = "activate" ]; then
 
         # Refresh the DANE record if needed

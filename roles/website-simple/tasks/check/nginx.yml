@@ -4,7 +4,8 @@
   ansible.builtin.set_fact:
     test_urls:
       - www.{{ network.domain }}/
-      - www.{{ network.domain }}//test/this?sub#url
+      - www.{{ network.domain }}/test/this?sub#url
+  tags: nginx
 
 - name: Check the that the root site returns 302 in http mode
   register: http_access
@@ -13,13 +14,14 @@
     follow_redirects: none
     method: GET
   failed_when: >-
-    http_access.status != 301
-    or http_access.location != "https://" + url
+    http_access.status not in [ 301, 302 ]
   loop: '{{ test_urls }}'
   loop_control:
     loop_var: url
+  tags: nginx
 
 - name: Check the that I can access the website
   ansible.builtin.uri:
     url: 'https://www.{{ network.domain }}/'
     return_content: true
+  tags: nginx

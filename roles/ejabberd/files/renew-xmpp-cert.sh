@@ -47,6 +47,15 @@ if [ $server_until_epoch -lt $file_until_epoch ]; then
     if [ "$action" = "status" ]; then
         echo "Not live"
     elif [ "$action" = "activate" ]; then
+
+        # Refresh the DANE records if needed
+        /usr/local/sbin/dane-set-record xmpp 5223
+
+        # Create the s2s record as well
+        if nc -z 127.0.0.1 5269; then
+            /usr/local/sbin/dane-set-record xmpp 5269
+        fi
+
         systemctl reload ejabberd
     fi
 elif [ "$action" = "status" ]; then

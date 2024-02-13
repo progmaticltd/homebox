@@ -43,11 +43,12 @@ file_until=$(echo "$file_dates" | sed -En 's/notAfter=(.*)/\1/p')
 server_until_epoch=$(date +%s -d "$server_until")
 file_until_epoch=$(date +%s -d "$file_until")
 
-# Run the actions
+# When activating the new certificate, set the dane record and restart dovecot
 if [ $server_until_epoch -lt $file_until_epoch ]; then
     if [ "$action" = "status" ]; then
         echo "Not live"
     elif [ "$action" = "activate" ]; then
+        /usr/local/sbin/dane-set-record pop3 995
         systemctl restart dovecot
     fi
 elif [ "$action" = "status" ]; then

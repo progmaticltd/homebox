@@ -3,14 +3,14 @@
 # Start from the certificates directory
 cd /etc/lego/certificates || exit
 
+# The parent domain
+domain=$(hostname -d)
+
 # List all certificate files by time
-cert_files=$(find /var/lib/lego/certificates/ -maxdepth 1 -name '*.crt' | grep -Fv .issuer.crt)
+cert_files=$(ls -1tr /var/lib/lego/certificates/*issuer.crt)
 
 # System CA to use to check the certificates
 ca_system="/etc/ssl/certs/ca-certificates.crt"
-
-# The parent domain
-domain=$(hostname -d)
 
 # Create the temporary output
 temp_file=$(mktemp)
@@ -23,9 +23,9 @@ cleanup()
 }
 
 # Create the summary table
-for cert_file in $cert_files; do
+for ca_file in $cert_files; do
 
-    ca_file=$(echo "$cert_file" | sed 's/\.crt$/.issuer.crt/')
+    cert_file=$(echo "$ca_file" | sed 's/\.issuer\.crt$/.crt/')
     key_file=$(echo "$cert_file" | sed 's/\.crt$/.key/')
     issuer=$(openssl x509 -in "$cert_file" -noout -issuer | sed 's/.*= //')
     from=$(openssl x509 -in "$cert_file" -noout -dates | sed -En 's/notBefore=(.*)/\1/p')
@@ -70,17 +70,22 @@ for cert_file in $cert_files; do
 	status=$("$status_script_path" status 2>&1)
     fi
 
+    # Create a small progress bar
+    width=$((valid_days / 9))
+    bar=$(echo "##########" | head -c "$width")
+    bar=$(printf "%02d [%-10s]" "$valid_days" "$bar")
+
     if [ "$key_modulus" != "$crt_modulus" ]; then
         printf "%s|%s|%s|%s|%s|%s|%s|%s|Mismatch!\n" \
-               "$subdomain" "$from_short" "$till_short" "$valid_days" "$issuer" "$sans" "$key_type" "$status">>"$temp_file"
+               "$subdomain" "$from_short" "$till_short" "$bar" "$issuer" "$sans" "$key_type" "$status">>"$temp_file"
     elif openssl verify -trusted "$ca_system" -trusted "$ca_file" "$cert_file" >/dev/null 2>&1; then
         printf "%s|%s|%s|%s|%s|%s|%s|%s|OK\n" \
-               "$subdomain" "$from_short" "$till_short" "$valid_days" "$issuer" "$sans" "$key_type" "$status">>"$temp_file"
+               "$subdomain" "$from_short" "$till_short" "$bar" "$issuer" "$sans" "$key_type" "$status">>"$temp_file"
     else
         error=$(openssl verify -trusted "$ca_system" -trusted "$ca_file" "$cert_file" 2>&1 | sed -En 's/.*: //p')
         error=$(echo "$error" | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
         printf "%s|%s|%s|%s|%s|%s|%s|%s|$error\n" \
-               "$subdomain" "$from_short" "$till_short" "$valid_days" "$issuer" "$sans" "$key_type" "$status">>"$temp_file"
+               "$subdomain" "$from_short" "$till_short" "$bar" "$issuer" "$sans" "$key_type" "$status">>"$temp_file"
     fi
 
 done

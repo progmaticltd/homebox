@@ -5,6 +5,7 @@
 
 - name: Web server configuration
   ansible.builtin.include_tasks: check/nginx.yml
+  tags: nginx
 
 - name: Web server encryption settings
   ansible.builtin.include_tasks: check/grade.yml
