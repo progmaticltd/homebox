@@ -16,5 +16,5 @@
   ansible.builtin.include_tasks: check/apparmor.yml
 
 - name: Run full text search checks
-  when: mail.fts.active
+  when: mail.fts.active and system.devel
   ansible.builtin.include_tasks: check/fts.yml

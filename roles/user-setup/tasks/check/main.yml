@@ -1,12 +1,19 @@
 ---
 
-- name: Check that every user is in the system, with the correct attributes
-  ansible.builtin.shell: >-
-    set -o pipefail ;
-    getent passwd {{ user.uid }}
-  changed_when: false
-  args:
-    executable: /bin/bash
+- name: Check that every user is in the system
+  ansible.builtin.getent:
+    key: '{{ user.uid }}'
+    service: ldap
+    database: passwd
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Check that every user has a specific group
+  ansible.builtin.getent:
+    key: '{{ user.uid }}'
+    service: ldap
+    database: group
   loop: '{{ users }}'
   loop_control:
     loop_var: user

@@ -4,7 +4,6 @@
 # These tests are sending and receiving emails
 # They need to be done on development servers only
 - name: Test parsing script ({{ attachment.description }})
-  when: system.devel
   ansible.builtin.include_tasks: ./fts-test-script.yml
   loop: '{{ attachments | selectattr("script_test", "equalto", true) | list }}'
   loop_control:

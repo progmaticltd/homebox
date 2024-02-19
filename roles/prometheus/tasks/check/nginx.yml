@@ -1,8 +1,8 @@
 ---
 
-- name: Load prometheus home page
+- name: Ensure prometheus is not publicly accessible
   delegate_to: localhost
   become: false
   ansible.builtin.uri:
     url: https://prometheus.{{ network.domain }}/
-    return_content: true
+    status_code: [ 401 ]

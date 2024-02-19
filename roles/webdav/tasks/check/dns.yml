@@ -3,4 +3,4 @@
 - name: Check the DNS entry
   ansible.builtin.getent:
     database: hosts
-    key: 'autodiscover.{{ network.domain }}'
+    key: 'webdav.{{ network.domain }}'

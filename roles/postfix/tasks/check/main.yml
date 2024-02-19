@@ -12,14 +12,21 @@
 - name: Check the LDAP mapping
   ansible.builtin.include_tasks: check/ldap-mapping.yml
 
-- name: Check simple email reception
-  ansible.builtin.include_tasks: check/simple-email.yml
-
-- name: Check email reception with UTF8 email address
-  ansible.builtin.include_tasks: check/utf8-email.yml
-
-- name: Check email reception with extension
-  ansible.builtin.include_tasks: check/extension-email.yml
+- name: Check AppArmor
+  ansible.builtin.include_tasks: check/apparmor.yml
+  tags: apparmor
 
 - name: Check TLS settings
   ansible.builtin.include_tasks: check/tls.yml
+
+- name: Check simple email reception
+  when: system.devel
+  ansible.builtin.include_tasks: check/simple-email.yml
+
+- name: Check email reception with UTF8 email address
+  when: system.devel
+  ansible.builtin.include_tasks: check/utf8-email.yml
+
+- name: Check email reception with extension
+  when: system.devel
+  ansible.builtin.include_tasks: check/extension-email.yml

@@ -15,7 +15,7 @@
   loop:
     - name: index.html
     - name: mta-sts.txt
-      grafana.grafana.folder: .well-known/
+      folder: .well-known/
   loop_control:
     loop_var: file
   tags: nginx

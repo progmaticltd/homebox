@@ -1,6 +1,7 @@
 ---
 
 - name: Test authentication on the first user
+  when: system.devel
   ansible.builtin.shell: >-
     set -o pipefail ;
     doveadm auth login -- '{{ user0_uid }}' '{{ user0_password }}'

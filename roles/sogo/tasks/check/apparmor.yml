@@ -5,6 +5,8 @@
   ansible.builtin.shell: >-
     set -o pipefail;
     aa-status --json | jq '.profiles["{{ sogo_binary }}"]'
+  args:
+    executable: /bin/bash
   changed_when: false
   loop: '{{ sogo_binaries }}'
   loop_control:

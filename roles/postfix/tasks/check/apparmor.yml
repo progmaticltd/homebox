@@ -1,13 +1,16 @@
 ---
 
-- name: Check that opendkim is running in enforced mode
+- name: Check that postfix kbinary is running in enforced mode
   register: aa_status
   ansible.builtin.shell: >-
     set -o pipefail;
-    aa-status --json | jq '.profiles["{{ sogo_binary }}"]'
+    aa-status --json | jq '.profiles["{{ postfix_binary }}"]'
   changed_when: false
-  loop: '{{ sogo_binaries }}'
+  args:
+    executable: /bin/bash
+  loop: '{{ postfix_binaries }}'
   loop_control:
-    loop_var: sogo_binary
+    loop_var: postfix_binary
   failed_when: >
     aa_status.stdout | trim('"') != "enforce"
+  tags: apparmor

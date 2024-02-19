@@ -1,6 +1,6 @@
 ---
 
-- name: Check the DNS entry
+- name: Check that the DNS entry exists
   ansible.builtin.getent:
     database: hosts
     key: 'www.{{ network.domain }}'

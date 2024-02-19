@@ -5,6 +5,8 @@
   ansible.builtin.shell: >-
     set -o pipefail;
     aa-status --json | jq '.profiles["/usr/sbin/opendmarc"]'
+  args:
+    executable: /bin/bash
   changed_when: false
   failed_when: >
     {{ aa_status.stdout | trim('"') != "enforce" }}

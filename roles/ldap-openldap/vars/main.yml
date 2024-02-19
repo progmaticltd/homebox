@@ -10,7 +10,6 @@ ldap_packages:
   install:
     - cracklib-runtime
     - ldap-utils
-    - ldapscripts
     - ldapvi
     - libldap-common
     - libpam-pwquality
