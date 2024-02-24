@@ -6,4 +6,50 @@
     src: pam-nginx.conf
     dest: /etc/pam.d/nginx
     mode: '0644'
-  tags: nginx
+  tags: pam
+
+- name: Install pam AppArmor profile
+  notify:
+    - Activate AppArmor profiles
+    - Restart AppArmor service
+    - Restart nginx
+  ansible.builtin.template:
+    src: apparmor-pam.conf
+    dest: /etc/apparmor.d/local/nginx-pam
+    mode: '0644'
+  tags: pam
+
+- name: Install pam unix_chkpwd profile
+  notify:
+    - Activate AppArmor profiles
+    - Restart AppArmor service
+  ansible.builtin.template:
+    src: apparmor-unix-chkpwd.conf
+    dest: /etc/apparmor.d/usr.sbin.unix_chkpwd
+    mode: '0644'
+  tags: pam
+
+- name: Check if AppArmor nginx configuration already contains the line
+  register: line_found
+  ansible.builtin.shell: >-
+    grep -c 'include <local/nginx-pam>'
+    /etc/apparmor.d/usr.sbin.nginx
+  changed_when: false
+  failed_when: false
+  tags: pam
+
+- name: Add pam AppAromor specific configuration
+  when: line_found.stdout == '0'
+  register: aa_config
+  ansible.builtin.lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/nginx-pam>'
+    insertbefore: '# End of local includes for homebox'
+  tags: pam
+
+- name: Activate AppArmor profiles
+  notify: Restart AppArmor service
+  when: aa_config.changed
+  ansible.builtin.command: 'aa-enforce usr.sbin.nginx'
+  changed_when: true
+  tags: pam

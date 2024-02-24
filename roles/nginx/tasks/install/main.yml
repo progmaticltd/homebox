@@ -26,6 +26,7 @@
 
 - name: Add pam authentication module
   ansible.builtin.include_tasks: install/pam.yml
+  tags: pam
 
 - name: Create the firewall rules
   ansible.builtin.include_tasks: install/nftables.yml
