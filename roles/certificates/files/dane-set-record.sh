@@ -6,10 +6,12 @@
 ## Examples
 ##   - dane-set-record smtp 25
 ##   - dane-set-record www 443
+##   - dane-set-record @ 5223
 ##
 ## This will generate a DNS record automatically,
 ## with the certificate public key signature.
 ## SHA256 is used by default
+## When subdomain is "@", the DANE record will be store at the root level.
 #
 
 # exit codes
@@ -41,12 +43,21 @@ if [ -z "$port" ]; then
     exit $PARAM_ERROR
 fi
 
-# Domain to use
+# Domain and certificate to use
 domain=$(hostname -d)
-fqdn="$sub_domain.$domain"
+crt_file=""
+fqdn=""
+record_name=""
 
-# Check if the file exists
-crt_file="$crt_root/$sub_domain.$domain.crt"
+if [ "$sub_domain" = "@" ]; then
+    fqdn="$domain"
+    crt_file="$crt_root/$domain.crt"
+    record_name="_$port._tcp"
+else
+    fqdn="$sub_domain.$domain"
+    crt_file="$crt_root/$sub_domain.$domain.crt"
+    record_name="_$port._tcp.$sub_domain.$domain"
+fi
 
 if [ ! -r "$crt_file" ]; then
     echo "Certificate not found for $fqdn" 1>&2
@@ -61,7 +72,6 @@ danetool --tlsa-rr --host "$fqdn" --hash="$hash" \
          --outfile "$outfile"
 
 # Get the DNS record details
-name=$(cut -d . -f 1,2,3 < "$outfile")
 content=$(sed -E 's/.*TLSA \( ([a-f0-9 ]+) \)/\1/' "$outfile")
 
 # Check if the record exists and is already valid
@@ -71,12 +81,12 @@ if danetool --quiet --check="$fqdn" --port="$port" >/dev/null 2>&1; then
 fi
 
 # Delete old record of exists
-if ! pdnsutil delete-rrset  "$domain" "$name" TLSA; then
+if ! pdnsutil delete-rrset  "$domain" "$record_name" TLSA; then
     echo "No old record to delete" 1>&2
 fi
 
 # Add the DNS record
-if ! pdnsutil add-record "$domain" "$name" TLSA "$content"; then
+if ! pdnsutil add-record "$domain" "$record_name" TLSA "$content"; then
     echo "Could not add DNS record" 1>&2
     exit $DNS_ERROR
 fi
