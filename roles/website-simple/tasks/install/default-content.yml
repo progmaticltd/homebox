@@ -42,6 +42,10 @@
   loop:
     - name: index-demo.html
       dest: /var/www/www.{{ network.domain }}/index-demo.html
+    - name: error-demo.html
+      dest: /var/www/www.{{ network.domain }}/error-demo.html
+    - name: notfound-demo.html
+      dest: /var/www/www.{{ network.domain }}/notfound-demo.html
     - name: demo.css
       dest: /var/www/www.{{ network.domain }}/css/demo.css
     - name: demo.js
