@@ -49,11 +49,11 @@ if [ $server_until_epoch -lt $file_until_epoch ]; then
     elif [ "$action" = "activate" ]; then
 
         # Refresh the DANE records if needed
-        /usr/local/sbin/dane-set-record xmpp 5223
+        /usr/local/sbin/dane-set-record @ 5223
 
-        # Create the s2s record as well
+        # Create the s2s DANE record as well
         if nc -z 127.0.0.1 5269; then
-            /usr/local/sbin/dane-set-record xmpp 5269
+            /usr/local/sbin/dane-set-record @ 5269
         fi
 
         systemctl reload ejabberd

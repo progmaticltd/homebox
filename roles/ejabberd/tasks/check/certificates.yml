@@ -1,6 +1,5 @@
 ---
 
-
 - name: Load TLS ciphers used
   register: tls_ciphers_report
   ansible.builtin.shell: sslscan --no-colour smtp.{{ network.domain }}:5223
@@ -31,9 +30,10 @@
     loop_var: tls_version
 
 - name: Check DANE records for client to server
-  ansible.builtin.shell: danetool --port 5223 --check xmpp.{{ network.domain }}
+  ansible.builtin.shell: danetool --port 5223 --check {{ network.domain }}
   changed_when: false
 
 - name: Check DANE records for server to server
-  ansible.builtin.shell: danetool --port 5269 --check xmpp.{{ network.domain }}
+  when: ejabberd.s2s.active
+  ansible.builtin.shell: danetool --port 5269 --check {{ network.domain }}
   changed_when: false

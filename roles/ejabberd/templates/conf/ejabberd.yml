@@ -58,13 +58,14 @@ host_config:
     sql_database: ejabberd
 
 
+# Client to server parameters
+c2s_ciphers: TLS_CIPHERS
+c2s_protocol_options: TLS_OPTIONS
+
+# Server to server parameters
 s2s_ciphers: TLS_CIPHERS
 s2s_use_starttls: required
 s2s_protocol_options: TLS_OPTIONS
-
-
-c2s_ciphers: TLS_CIPHERS
-c2s_protocol_options: TLS_OPTIONS
 
 
 listen:
@@ -307,6 +308,8 @@ modules:
     max_connections: 5
     access: proxy65_access
     shaper: proxy65_shaper
+    # Use the right certificate for this service
+    certfile: '/etc/ssl/certs/proxy.{{ network.domain }}.crt'
 
   ### Publish-Subscribe Service (XEP-0060)
   mod_pubsub:
@@ -319,6 +322,9 @@ modules:
     plugins:
       - flat
       - pep
+    # Use the right certificate for this service
+    certfile: '/etc/ssl/certs/pubsub.{{ network.domain }}.crt'
+
 
   mod_push: { }
   mod_push_keepalive: { }
