@@ -1,0 +1,19 @@
+---
+
+- name: Remove symbolic linnke
+  notify:
+    - Check nginx config
+    - Restart nginx
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/cockpit.{{ network.domain }}.conf
+    state: absent
+  tags: nginx
+
+- name: Create the web site
+  notify:
+    - Check nginx config
+    - Restart nginx
+  ansible.builtin.file:
+    path: /etc/nginx/sites-available/cockpit.{{ network.domain }}.conf
+    state: absent
+  tags: nginx

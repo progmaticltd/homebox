@@ -1,0 +1,24 @@
+---
+
+- name: Create the systemd configuration directory for the socket
+  ansible.builtin.file:
+    path: /etc/systemd/system/cockpit.socket.d
+    state: directory
+    mode: '0700'
+  tags: config
+
+- name: Create the socket configuration file
+  notify: Restart cockpit socket
+  ansible.builtin.template:
+    src: listen.conf
+    dest: /etc/systemd/system/cockpit.socket.d/listen.conf
+    mode: '0600'
+  tags: config
+
+- name: Create the configuration file
+  notify: Restart cockpit service
+  ansible.builtin.template:
+    src: cockpit.conf
+    dest: /etc/cockpit/cockpit.conf
+    mode: '0644'
+  tags: config

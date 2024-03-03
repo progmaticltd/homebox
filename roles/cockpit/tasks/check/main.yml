@@ -1,1 +1,13 @@
 ---
+
+- name: Check DNS records
+  ansible.builtin.include_tasks: check/dns.yml
+  tags: dns
+
+- name: Check the web server configuration
+  ansible.builtin.include_tasks: check/nginx.yml
+  tags: nginx
+
+- name: Check nginx encryption settings
+  ansible.builtin.include_tasks: check/grade.yml
+  tags: nginx

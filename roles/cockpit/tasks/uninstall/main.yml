@@ -1,53 +1,17 @@
 ---
 
-- name: Remove nginx AppArmor profile
-  ansible.builtin.file:
-    path: /etc/apparmor.d/local/nginx-cockpit-web
-    state: absent
+- name: Remove the packages
+  ansible.builtin.include_tasks: uninstall/packages.yml
+  tags: apt
 
-- name: Remove cockpit AppArmor specific configuration
-  ansible.builtin.lineinfile:
-    path: /etc/apparmor.d/usr.sbin.nginx
-    line: '  #include <local/nginx-cockpit-web>'
-    state: absent
+- name: Remove nginx site
+  ansible.builtin.include_tasks: uninstall/nginx.yml
+  tags: nginx
 
-- name: Remove nginx configuration
-  notify:
-    - Check nginx config
-    - Restart nginx
-  ansible.builtin.file:
-    path: '{{ path }}'
-    state: absent
-  loop:
-    - '/etc/nginx/sites-available/cockpit.{{ network.domain }}.conf'
-    - '/etc/nginx/sites-enabled/cockpit.{{ network.domain }}.conf'
-  loop_control:
-    loop_var: path
+- name: Install the certificates
+  ansible.builtin.include_tasks: uninstall/certs.yml
+  tags: certs, scripts
 
-- name: Remove the certificates
-  ansible.builtin.file:
-    path: '{{ path }}'
-    state: absent
-  loop:
-    - /etc/ssl/certs/cockpit.{{ network.domain }}.issuer.crt
-    - /etc/ssl/certs/cockpit.{{ network.domain }}.crt
-    - /etc/ssl/private/cockpit.{{ network.domain }}.key
-  loop_control:
-    loop_var: path
-
-- name: Restart nginx now
-  ansible.builtin.meta: flush_handlers
-
-- name: Get all nginx log files
-  register: nginx_logs
-  ansible.builtin.find:
-    path: /var/log/nginx
-    pattern: 'cockpit*'
-
-- name: Remove nginx log files
-  ansible.builtin.file:
-    path: '{{ file.path }}'
-    state: absent
-  loop: '{{ nginx_logs.files }}'
-  loop_control:
-    loop_var: file
+- name: Remove all configuration files
+  ansible.builtin.include_tasks: uninstall/config.yml
+  tags: config

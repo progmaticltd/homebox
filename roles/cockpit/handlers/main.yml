@@ -1,5 +1,9 @@
 ---
 
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
 - name: Check nginx config
   ansible.builtin.shell: nginx -t
   changed_when: false
@@ -9,6 +13,17 @@
     name: nginx
     state: restarted
     no_block: true
+
+- name: Restart cockpit socket
+  ansible.builtin.systemd:
+    name: cockpit.socket
+    state: restarted
+    daemon_reload: true
+
+- name: Restart cockpit service
+  ansible.builtin.systemd:
+    name: cockpit
+    state: restarted
 
 - name: Restart AppArmor service
   ansible.builtin.systemd:

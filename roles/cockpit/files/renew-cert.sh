@@ -48,7 +48,11 @@ if [ $server_until_epoch -lt $file_until_epoch ]; then
     if [ "$action" = "status" ]; then
         echo "Pending"
     elif [ "$action" = "activate" ]; then
+        # Restart nginx
         systemctl reload nginx
+
+        # Refresh the DANE record if needed
+        /usr/local/sbin/dane-set-record cockpit 443
     fi
 elif [ "$action" = "status" ]; then
     echo "Live"

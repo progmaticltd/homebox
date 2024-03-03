@@ -1,7 +1,6 @@
 ---
 
 - name: Create the web site
-  tags: nginx
   notify:
     - Check nginx config
     - Restart nginx
@@ -14,9 +13,9 @@
     owner: root
     group: root
     mode: '0644'
+  tags: nginx
 
 - name: Copy cockpit configuration
-  tags: nginx
   notify:
     - Check nginx config
     - Restart nginx
@@ -24,3 +23,4 @@
     src: /etc/nginx/sites-available/cockpit.{{ network.domain }}.conf
     dest: /etc/nginx/sites-enabled/cockpit.{{ network.domain }}.conf
     state: link
+  tags: nginx

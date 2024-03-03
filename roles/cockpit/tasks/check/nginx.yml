@@ -1,0 +1,8 @@
+---
+
+- name: Load uri content
+  ansible.builtin.uri:
+    url: https://cockpit.{{ network.domain }}/
+    return_content: true
+    status_code: 401
+  tags: nginx

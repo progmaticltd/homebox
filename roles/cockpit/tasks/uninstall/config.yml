@@ -1,0 +1,15 @@
+---
+
+- name: Create the systemd configuration directory for the socket
+  notify: Reload systemd
+  ansible.builtin.file:
+    path: /etc/systemd/system/cockpit.socket.d
+    state: absent
+  tags: config
+
+- name: Create the configuration file
+  notify: Reload systemd
+  ansible.builtin.file:
+    path: /etc/cockpit/cockpit.conf
+    state: absent
+  tags: config

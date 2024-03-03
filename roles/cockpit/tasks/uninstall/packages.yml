@@ -1,7 +1,8 @@
 ---
 
-- name: Install the cockpit packages
+- name: Remove the cockpit packages
   ansible.builtin.apt:
     name: [ cockpit, cockpit-pcp ]
-    state: present
+    state: absent
+    purge: true
   tags: apt
