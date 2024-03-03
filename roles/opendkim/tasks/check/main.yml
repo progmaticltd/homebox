@@ -11,3 +11,4 @@
 
 - name: AppArmor checks
   ansible.builtin.include_tasks: check/apparmor.yml
+  tags: apparmor

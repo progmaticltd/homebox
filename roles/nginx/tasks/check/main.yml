@@ -5,3 +5,4 @@
 
 - name: Check AppArmor settings
   ansible.builtin.include_tasks: check/apparmor.yml
+  tags: apparmor

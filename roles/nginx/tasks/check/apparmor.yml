@@ -8,5 +8,5 @@
   args:
     executable: /bin/bash
   changed_when: false
-  failed_when: >
-    aa_status.stdout | trim('"') != "enforce"
+  failed_when: aa_status.stdout | trim('"') != "enforce"
+  tags: apparmor

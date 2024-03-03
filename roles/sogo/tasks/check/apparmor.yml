@@ -11,5 +11,4 @@
   loop: '{{ sogo_binaries }}'
   loop_control:
     loop_var: sogo_binary
-  failed_when: >
-    aa_status.stdout | trim('"') != "enforce"
+  failed_when: aa_status.stdout | trim('"') != "enforce"

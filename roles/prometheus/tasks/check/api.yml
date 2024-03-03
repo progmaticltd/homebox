@@ -1,6 +1,5 @@
 ---
 
-
 - name: Call the prometheus API
   ansible.builtin.uri:
     url: http://127.0.0.1:9090/api/v1/labels
