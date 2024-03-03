@@ -1,0 +1,25 @@
+---
+
+# See https://www.internetsociety.org/deploy360/dnssec/tools/
+# These two domains should fail: www.dnssec-failed.org and www.rhybar.cz
+
+- name: Query a domain with wrong DNSSEC configuration
+  register: broken_hosts_lookup
+  getent:
+    database: hosts
+    key: '{{ domain }}.'
+  loop:
+    - www.dnssec-failed.org
+    - www.rhybar.cz
+  loop_control:
+    loop_var: domain
+  ignore_errors: true
+  tags: dns
+
+- name: Check that all the queries failed
+  assert:
+    that: '{{ lookup is failed }}'
+  loop: '{{ broken_hosts_lookup.results }}'
+  loop_control:
+    loop_var: lookup
+  tags: dns
