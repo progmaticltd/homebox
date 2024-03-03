@@ -24,7 +24,7 @@
     src: nftables-lists.sh
     dest: /usr/local/sbin/nftables-lists
     mode: '0700'
-  tags: rules, autoban
+  tags: rules, autoban, scripts
 
 - name: Deploy the systemd service
   notify:
@@ -35,3 +35,10 @@
     dest: /etc/systemd/system/nftables-lists.service
     mode: '0644'
   tags: rules, autoban
+
+- name: Deploy the status script
+  ansible.builtin.copy:
+    src: fw-status.sh
+    dest: /usr/local/sbin/fw-status
+    mode: '0700'
+  tags: rules, autoban, scripts

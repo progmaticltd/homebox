@@ -18,7 +18,7 @@
 - name: Create sets to store trusted and banned networks
   when: security.autoban.active
   ansible.builtin.include_tasks: install/autoban.yml
-  tags: rules, autoban
+  tags: rules, autoban, scripts
 
 - name: Set the remote access firewall rules for private networks
   ansible.builtin.include_tasks: install/private-access.yml
