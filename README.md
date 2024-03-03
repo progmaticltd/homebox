@@ -11,6 +11,10 @@ A set of Ansible scripts to setup a secure email and personal files server. This
 - [Stable branch](http://homebox.readthedocs.io/en/main/)
 - [Development branch](http://homebox.readthedocs.io/en/dev/)
 
+## Following the development using RSS feeds
+
+- [Stable branch](https://github.com/progmaticltd/homebox/commits/main.atom)
+- [Development branch](https://github.com/progmaticltd/homebox/commits/dev.atom)
 
 ## Mailing lists
 
