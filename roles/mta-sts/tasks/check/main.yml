@@ -3,10 +3,10 @@
 - name: Load some facts
   ansible.builtin.include_tasks: install/facts.yml
 
-- name: Set DNS records
+- name: Check DNS records
   ansible.builtin.include_tasks: check/dns.yml
 
-- name: Web server configuration
+- name: Check the web server configuration
   ansible.builtin.include_tasks: check/nginx.yml
 
 - name: Check nginx encryption settings

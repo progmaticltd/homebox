@@ -8,6 +8,8 @@
   tags: nginx
 
 - name: Check the that the root site returns 302 in http mode
+  delegate_to: localhost
+  become: false
   register: http_access
   ansible.builtin.uri:
     url: 'http://{{ url }}'
@@ -21,6 +23,8 @@
   tags: nginx
 
 - name: Check the that I can access the website
+  delegate_to: localhost
+  become: false
   ansible.builtin.uri:
     url: 'https://www.{{ network.domain }}/'
     return_content: true

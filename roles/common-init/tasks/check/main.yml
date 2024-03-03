@@ -1,0 +1,6 @@
+---
+
+# The role common-init does not produce any change,
+# but load the user defined settings,
+# and merge them with the default ones.
+# There is nothing to check.

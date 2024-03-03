@@ -1,6 +1,6 @@
 ---
 
-- name: Check that postfix kbinary is running in enforced mode
+- name: Check that postfix binary is running in enforced mode
   register: aa_status
   ansible.builtin.shell: >-
     set -o pipefail;
