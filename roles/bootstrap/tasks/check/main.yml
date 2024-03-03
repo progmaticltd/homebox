@@ -8,6 +8,10 @@
   ansible.builtin.include_tasks: check/packages.yml
   tags: apt
 
+- name: Check that DNSSEC client works as expected
+  ansible.builtin.include_tasks: check/dns-client.yml
+  tags: dns
+
 - name: Configure the locales
   ansible.builtin.include_tasks: check/locales.yml
 
