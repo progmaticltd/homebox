@@ -5,7 +5,7 @@
 
 - name: Query a domain with wrong DNSSEC configuration
   register: broken_hosts_lookup
-  getent:
+  ansible.builtin.getent:
     database: hosts
     key: '{{ domain }}.'
   loop:
@@ -17,7 +17,7 @@
   tags: dns
 
 - name: Check that all the queries failed
-  assert:
+  ansible.builtin.assert:
     that: '{{ lookup is failed }}'
   loop: '{{ broken_hosts_lookup.results }}'
   loop_control:
