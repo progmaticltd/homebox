@@ -1,0 +1,24 @@
+---
+
+- name: Create the DNS entries
+  vars:
+    dns_records:
+      - name: webdav
+        type: '{{ external_ip_type }}'
+        value: '{{ external_ip }}'
+  ansible.builtin.include_role:
+    name: dns-record
+    tasks_from: install/main.yml
+  tags: dns
+
+- name: Create the backup DNS entries
+  when: backup_ip is defined
+  vars:
+    dns_records:
+      - name: webdav
+        type: '{{ backup_ip_type }}'
+        value: '{{ backup_ip }}'
+  ansible.builtin.include_role:
+    name: dns-record
+    tasks_from: install/main.yml
+  tags: dns
