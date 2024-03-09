@@ -20,3 +20,4 @@
 
 - name: Install postfix config
   ansible.builtin.include_tasks: install/postfix.yml
+  tags: postfix

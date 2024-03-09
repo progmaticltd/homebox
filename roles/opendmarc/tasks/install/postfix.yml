@@ -7,6 +7,7 @@
     owner: opendmarc
     group: opendmarc
     mode: '0750'
+  tags: postfix
 
 - name: Add postfix to opendmarc group
   notify: Restart postfix
@@ -14,6 +15,7 @@
     name: postfix
     groups: opendmarc
     append: true
+  tags: postfix
 
 - name: Install the milter
   notify: Restart postfix
@@ -21,3 +23,4 @@
     path: /etc/postfix/main.cf
     regexp: '^    # dmarc:'
     replace: '    unix:opendmarc/opendmarc.sock'
+  tags: postfix
