@@ -7,6 +7,7 @@
     owner: opendkim
     group: opendkim
     mode: '0750'
+  tags: postfix
 
 - name: Add postfix to opendkim group
   notify: Restart postfix
@@ -14,6 +15,7 @@
     name: postfix
     groups: opendkim
     append: true
+  tags: postfix
 
 - name: Install the milter
   notify: Restart postfix
@@ -21,3 +23,4 @@
     path: /etc/postfix/main.cf
     regexp: '^    # dkim:'
     replace: '    unix:opendkim/opendkim.sock'
+  tags: postfix

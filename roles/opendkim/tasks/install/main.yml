@@ -23,6 +23,7 @@
 
 - name: Configure postfix
   ansible.builtin.include_tasks: install/postfix.yml
+  tags: postfix
 
 - name: Configure Prometheus
   when: prometheus.install
