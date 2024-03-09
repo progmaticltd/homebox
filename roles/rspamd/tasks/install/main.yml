@@ -21,6 +21,7 @@
 
 - name: Add the filter to postfix
   ansible.builtin.include_tasks: install/postfix.yml
+  tags: postfix
 
 - name: Configure rspamd to use the proxy
   ansible.builtin.include_tasks: install/proxy.yml
