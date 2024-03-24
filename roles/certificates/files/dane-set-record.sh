@@ -56,7 +56,7 @@ if [ "$sub_domain" = "@" ]; then
 else
     fqdn="$sub_domain.$domain"
     crt_file="$crt_root/$sub_domain.$domain.crt"
-    record_name="_$port._tcp.$sub_domain.$domain"
+    record_name="_$port._tcp.$sub_domain"
 fi
 
 if [ ! -r "$crt_file" ]; then
@@ -80,8 +80,11 @@ if danetool --quiet --check="$fqdn" --port="$port" >/dev/null 2>&1; then
     exit $SUCCESS
 fi
 
+# User feedback
+echo "Replacing record '$record_name'" 1>&2
+
 # Delete old record of exists
-if ! pdnsutil delete-rrset  "$domain" "$record_name" TLSA; then
+if ! pdnsutil delete-rrset "$domain" "$record_name" TLSA; then
     echo "No old record to delete" 1>&2
 fi
 

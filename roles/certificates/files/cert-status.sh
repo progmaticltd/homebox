@@ -15,6 +15,8 @@ ca_system="/etc/ssl/certs/ca-certificates.crt"
 # Create the temporary output
 temp_file=$(mktemp)
 
+
+
 # Remove temporary files on exit
 trap cleanup 1 2 3 6
 cleanup()
@@ -37,6 +39,19 @@ for ca_file in $cert_files; do
 
     # Get the key type
     key_type=$(sed -En 's/.*BEGIN (EC|RSA) PRIVATE KEY.*/\1/p' "$key_file")
+
+    # Check the ports used by TLS records if any
+    dane_ports=$(pdnsutil list-zone "$domain" | sed -En "s/^_([0-9]+)\\._(tcp|udp)\\.$subdomain\\.$domain.*TLSA.*/\\1/p")
+
+    dane_status=""
+    for port in $dane_ports; do
+        valid=$(danetool --port $port --check "$subdomain.$domain" 2>&1 | grep -c 'Certificate matches')
+        if [ "$valid" = "0" ]; then
+            dane_status="Error"
+            break
+        fi
+        dane_status="OK"
+    done
 
     # Check modulus
     key_modulus=""
@@ -77,22 +92,22 @@ for ca_file in $cert_files; do
     bar=$(printf "%02d [%-10s]" "$valid_days" "$bar")
 
     if [ "$key_modulus" != "$crt_modulus" ]; then
-        printf "%s|%s|%s|%s|%s|%s|%s|%s|Mismatch!\n" \
-               "$subdomain" "$from_short" "$till_short" "$bar" "$issuer" "$sans" "$key_type" "$status">>"$temp_file"
+        printf "%s|%s|%s|%s|%s|%s|%s|%s|%s|Mismatch!\n" \
+               "$subdomain" "$from_short" "$till_short" "$bar" "$issuer" "$sans" "$key_type" "$dane_status" "$status">>"$temp_file"
     elif openssl verify -trusted "$ca_system" -trusted "$ca_file" "$cert_file" >/dev/null 2>&1; then
-        printf "%s|%s|%s|%s|%s|%s|%s|%s|OK\n" \
-               "$subdomain" "$from_short" "$till_short" "$bar" "$issuer" "$sans" "$key_type" "$status">>"$temp_file"
+        printf "%s|%s|%s|%s|%s|%s|%s|%s|%s|OK\n" \
+               "$subdomain" "$from_short" "$till_short" "$bar" "$issuer" "$sans" "$key_type" "$dane_status" "$status">>"$temp_file"
     else
         error=$(openssl verify -trusted "$ca_system" -trusted "$ca_file" "$cert_file" 2>&1 | sed -En 's/.*: //p')
         error=$(echo "$error" | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
-        printf "%s|%s|%s|%s|%s|%s|%s|%s|$error\n" \
-               "$subdomain" "$from_short" "$till_short" "$bar" "$issuer" "$sans" "$key_type" "$status">>"$temp_file"
+        printf "%s|%s|%s|%s|%s|%s|%s|%s|%s|$error\n" \
+               "$subdomain" "$from_short" "$till_short" "$bar" "$issuer" "$sans" "$key_type" "$dane_status" "$status">>"$temp_file"
     fi
 
 done
 
 # Display the output table formatted
-columns='Domain,Valid from,Valid until,Days left,Issuer,Full domains list,Type,Status,Details'
+columns='Domain,Valid from,Valid until,Days left,Issuer,Full domains list,Type,DANE,Status,Details'
 column -t -s '|' -o '  | ' -N "$columns" -W Status "$temp_file"
 
 # Remove temporary files
