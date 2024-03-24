@@ -48,6 +48,7 @@ if [ $server_until_epoch -lt $file_until_epoch ]; then
     if [ "$action" = "status" ]; then
         echo "Not live"
     elif [ "$action" = "activate" ]; then
+        /usr/local/sbin/dane-set-record pop3 110
         /usr/local/sbin/dane-set-record pop3 995
         systemctl restart dovecot
     fi

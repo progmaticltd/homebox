@@ -49,6 +49,7 @@ if [ $server_until_epoch -lt $file_until_epoch ]; then
         echo "Not live"
     elif [ "$action" = "activate" ]; then
         /usr/local/sbin/dane-set-record imap 993
+        /usr/local/sbin/dane-set-record imap 143
         systemctl restart dovecot
     fi
 elif [ "$action" = "status" ]; then
