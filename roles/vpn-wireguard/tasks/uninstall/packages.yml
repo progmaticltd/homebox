@@ -8,7 +8,7 @@
   tags: apt
 
 - name: Remove the configuration directory
-  file:
+  ansible.builtin.file:
     path: /etc/wireguard
     state: absent
   tags: keys

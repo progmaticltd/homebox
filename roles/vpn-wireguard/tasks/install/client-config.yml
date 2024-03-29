@@ -52,7 +52,7 @@
   when: client_config.changed
   block:
     - name: Create the QR code image file
-      shell: >-
+      ansible.builtin.shell: >-
         qrencode -t png32
         -r /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/client.conf
         -o /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/qrcode.png
@@ -63,7 +63,7 @@
         group: '{{ user.uid }}'
         mode: '0600'
     - name: Create the QR code ascii file
-      shell: >-
+      ansible.builtin.shell: >-
         qrencode -t ansiutf8
         -r /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/client.conf
         -o /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/qrcode.asc

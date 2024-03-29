@@ -1,7 +1,7 @@
 ---
 
 - name: Remove the user’s keys directory
-  file:
+  ansible.builtin.file:
     path: /home/users/{{ user.uid }}/vpn/
     state: absent
   tags: keys

@@ -2,7 +2,7 @@
 
 - name: Remove the firewall rules
   notify: Restart nftables
-  file:
+  ansible.builtin.file:
     path: /etc/nftables/05-wireguard.nft
     state: absent
   tags: nftables

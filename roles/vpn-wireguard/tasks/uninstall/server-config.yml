@@ -13,7 +13,7 @@
   tags: config
 
 - name: Remove the sysctl configuration file
-  file:
+  ansible.builtin.file:
     path: /etc/sysctl.d/wireguard.conf
     state: absent
   tags: config
@@ -22,7 +22,7 @@
   notify:
     - Restart systemd network
     - Activate systemd-networkd
-  file:
+  ansible.builtin.file:
     path: /etc/systemd/network/wg0.netdev
     state: absent
   tags: config
@@ -31,7 +31,7 @@
   notify:
     - Restart systemd network
     - Activate systemd-networkd
-  file:
+  ansible.builtin.file:
     path: /etc/systemd/network/wg0.network
     state: absent
   tags: config

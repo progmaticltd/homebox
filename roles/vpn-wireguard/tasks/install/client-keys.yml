@@ -14,7 +14,7 @@
   become: true
   become_user: '{{ user.uid }}'
   no_log: '{{ not system.devel }}'
-  shell: >-
+  ansible.builtin.shell: >-
     wg genkey | tee private-key
     | wg pubkey > public-key
   args:
@@ -43,7 +43,7 @@
 
 - name: Create a pre-shared key
   no_log: '{{ not system.devel }}'
-  shell: wg genpsk >pre-shared-key
+  ansible.builtin.shell: wg genpsk >pre-shared-key
   args:
     chdir: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/
     creates: pre-shared-key

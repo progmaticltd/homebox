@@ -36,7 +36,7 @@
       ansible.builtin.slurp:
         src: /etc/wireguard/public-key
     - name: Remember the public key
-      set_fact:
+      ansible.builtin.set_fact:
         server_public_key: '{{ slurp_public_key["content"] | b64decode | trim }}'
   tags: keys, facts
 

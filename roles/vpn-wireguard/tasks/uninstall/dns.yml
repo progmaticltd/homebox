@@ -4,7 +4,7 @@
   notify:
     - Check unbound config
     - Restart unbound
-  file:
+  ansible.builtin.file:
     path: /etc/unbound/unbound.conf.d/20-wireguard.conf
     state: absent
   tags: dns
