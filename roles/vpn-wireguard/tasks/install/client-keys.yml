@@ -15,14 +15,17 @@
   become_user: '{{ user.uid }}'
   no_log: '{{ not system.devel }}'
   ansible.builtin.shell: >-
+    set -o pipefail;
     wg genkey | tee private-key
     | wg pubkey > public-key
   args:
     chdir: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/
     creates: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/private-key
+    executable: /bin/bash
   tags: keys
 
 - name: Load the public key previously generated
+  tags: keys
   block:
     - name: Dump the user’s public key
       register: slurp_public_key
@@ -31,7 +34,6 @@
     - name: Remember the user’s public key
       ansible.builtin.set_fact:
         public_key: '{{ slurp_public_key["content"] | b64decode | trim }}'
-  tags: keys
 
 - name: Set permissions to the file
   ansible.builtin.file:
@@ -59,6 +61,7 @@
 
 - name: Load the pre-shared key previously generated
   no_log: '{{ not system.devel }}'
+  tags: keys
   block:
     - name: Dump the user pre-shared key
       register: slurp_pre_shared_key
@@ -67,7 +70,6 @@
     - name: Remember the user pre-shared key
       ansible.builtin.set_fact:
         user_pre_shared_key: '{{ slurp_pre_shared_key["content"] | b64decode | trim }}'
-  tags: keys
 
 - name: Append the user’s public key
   ansible.builtin.set_fact:

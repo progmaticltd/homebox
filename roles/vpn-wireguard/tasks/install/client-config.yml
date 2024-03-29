@@ -30,6 +30,7 @@
 
 - name: Load private key from the user directory
   no_log: '{{ not system.devel }}'
+  tags: client
   block:
     - name: Dump the user’s private key
       ansible.builtin.slurp:
@@ -38,7 +39,6 @@
     - name: Store the user’s private key
       ansible.builtin.set_fact:
         client_private_key: '{{ user_private_key_slurp["content"] | b64decode | trim }}'
-  tags: client
 
 - name: Create the configuration file
   register: client_config
@@ -50,12 +50,14 @@
 
 - name: Create the QR code file
   when: client_config.changed
+  tags: client
   block:
     - name: Create the QR code image file
       ansible.builtin.shell: >-
         qrencode -t png32
         -r /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/client.conf
         -o /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/qrcode.png
+      changed_when: true
     - name: Set the permissions
       ansible.builtin.file:
         path: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/qrcode.png
@@ -67,10 +69,10 @@
         qrencode -t ansiutf8
         -r /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/client.conf
         -o /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/qrcode.asc
+      changed_when: true
     - name: Set the permissions
       ansible.builtin.file:
         path: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/qrcode.asc
         owner: '{{ user.uid }}'
         group: '{{ user.uid }}'
         mode: '0600'
-  tags: client
