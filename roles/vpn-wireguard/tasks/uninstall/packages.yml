@@ -1,7 +1,7 @@
 ---
 
 - name: Install the required packages
-  apt:
+  ansible.builtin.apt:
     name: '{{ packages }}'
     state: absent
     purge: true

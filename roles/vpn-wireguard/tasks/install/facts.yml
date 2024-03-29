@@ -9,8 +9,11 @@
 - name: Get the first user ID
   register: first_user_id_cmd
   ansible.builtin.shell: >-
+    set -o pipefail;
     getent passwd -s ldap | cut -d : -f 3
     | sort -n | head -n 1
+  args:
+    executable: /bin/bash
   changed_when: false
   tags: facts
 

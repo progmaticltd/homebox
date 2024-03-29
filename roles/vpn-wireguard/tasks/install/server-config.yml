@@ -1,7 +1,7 @@
 ---
 
 - name: Activate IP forwarding
-  sysctl:
+  ansible.posix.sysctl:
     reload: true
     name: '{{ name }}'
     value: 1
