@@ -1,7 +1,7 @@
 ---
 
 - name: Create the configuration directory
-  file:
+  ansible.builtin.file:
     path: /etc/wireguard
     state: directory
     mode: '0700'
@@ -9,7 +9,7 @@
 
 - name: Generate private and public keys
   register: genkey_cmd
-  shell: >-
+  ansible.builtin.shell: >-
     wg genkey | tee private-key
     | wg pubkey >public-key
   args:
@@ -22,10 +22,10 @@
   block:
     - name: Dump private key
       register: slurp_private_key
-      slurp:
+      ansible.builtin.slurp:
         src: /etc/wireguard/private-key
     - name: Remember the private key
-      set_fact:
+      ansible.builtin.set_fact:
         server_private_key: '{{ slurp_private_key["content"] | b64decode | trim }}'
   tags: keys
 
@@ -33,7 +33,7 @@
   block:
     - name: Dump public key
       register: slurp_public_key
-      slurp:
+      ansible.builtin.slurp:
         src: /etc/wireguard/public-key
     - name: Remember the public key
       set_fact:
@@ -41,7 +41,7 @@
   tags: keys, facts
 
 - name: Ensure permissions are correct
-  file:
+  ansible.builtin.file:
     path: /etc/wireguard/private-key
     mode: '0600'
   tags: keys
