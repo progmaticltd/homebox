@@ -2,23 +2,46 @@
 
 - name: Set the facts
   ansible.builtin.include_tasks: install/facts.yml
+  tags: facts
 
 - name: Install the packages
   ansible.builtin.include_tasks: install/packages.yml
+  tags: apt
 
-- name: Create the server keys
-  ansible.builtin.include_tasks: install/server-keys.yml
+- name: Add DNS specific configuration
+  ansible.builtin.include_tasks: install/dns.yml
+  tags: dns
 
-- name: Configure user keys
+- name: Configure users’ keys
+  vars:
+    client_conf_id: default
   ansible.builtin.include_tasks: install/client-keys.yml
   loop: '{{ users }}'
   loop_control:
     loop_var: user
+  tags: keys
 
-- name: Configure the server
+- name: Create users’ client config files
+  vars:
+    client_conf_id: default
+    client_ip_prefix: 10
+  ansible.builtin.include_tasks: install/client-config.yml
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+  tags: client
+
+- name: Create or load the server’s keys
+  ansible.builtin.include_tasks: install/server-keys.yml
+  tags: keys, facts
+
+- name: Create the server configuration file
+  vars:
+    client_conf_id: default
+    client_ip_prefix: 10
   ansible.builtin.include_tasks: install/server-config.yml
   tags: config
 
 - name: Configure the firewall
   ansible.builtin.include_tasks: install/firewall.yml
-  tags: nftables
+  tags: firewall

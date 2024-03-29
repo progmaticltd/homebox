@@ -1,6 +1,6 @@
 ---
 
 packages:
+  - qrencode
   - wireguard
-  - wireguard-dkms
   - wireguard-tools

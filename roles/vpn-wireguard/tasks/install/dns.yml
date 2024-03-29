@@ -1,0 +1,11 @@
+---
+
+- name: Allow the VPN clients to use the DNS server
+  notify:
+    - Check unbound config
+    - Restart unbound
+  template:
+    src: unbound.conf
+    dest: /etc/unbound/unbound.conf.d/20-wireguard.conf
+    mode: '0600'
+  tags: dns

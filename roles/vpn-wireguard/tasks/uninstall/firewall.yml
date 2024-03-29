@@ -1,0 +1,8 @@
+---
+
+- name: Remove the firewall rules
+  notify: Restart nftables
+  file:
+    path: /etc/nftables/05-wireguard.nft
+    state: absent
+  tags: nftables

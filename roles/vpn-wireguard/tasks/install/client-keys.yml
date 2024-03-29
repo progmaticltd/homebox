@@ -2,40 +2,81 @@
 
 - name: Create the user directory
   file:
-    path: /home/users/{{ user.uid }}/vpn/default-keys/
+    path: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/
     state: directory
     owner: '{{ user.uid }}'
     group: '{{ user.uid }}'
     mode: '0700'
+  tags: keys
 
 - name: Create the key pair for this user
   register: genkey_cmd
   become: true
   become_user: '{{ user.uid }}'
+  no_log: '{{ not system.devel }}'
   shell: >-
     wg genkey | tee private-key
     | wg pubkey > public-key
   args:
-    chdir: /home/users/{{ user.uid }}/vpn/default-keys/
-    creates: /home/users/{{ user.uid }}/vpn/default-keys/private-key
+    chdir: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/
+    creates: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/private-key
+  tags: keys
 
-- name: Load the private key previously generated
-  when: not genkey_cmd.changed
+- name: Load the public key previously generated
   block:
-    - name: Dump public key
-      register: dumpkey_cmd
-      shell: cat /home/users/{{ user.uid }}/vpn/default-keys/public-key
-      changed_when: false
-    - name: Remember the key
+    - name: Dump the user’s public key
+      register: slurp_public_key
+      slurp:
+        src: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/public-key
+    - name: Remember the user’s public key
       set_fact:
-        public_key: '{{ dumpkey_cmd.stdout }}'
-
-- name: Append the user key
-  set_fact:
-    user_keys: >-
-      {{ user_keys | combine({ user.uid: dumpkey_cmd.stdout}) }}
+        public_key: '{{ slurp_public_key["content"] | b64decode | trim }}'
+  tags: keys
 
 - name: Set permissions to the file
   file:
-    path: /home/users/{{ user.uid }}/vpn/default-keys/private-key
+    path: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/private-key
+    owner: '{{ user.uid }}'
+    group: '{{ user.uid }}'
     mode: '0600'
+  tags: keys
+
+- name: Create a pre-shared key
+  no_log: '{{ not system.devel }}'
+  shell: wg genpsk >pre-shared-key
+  args:
+    chdir: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/
+    creates: pre-shared-key
+  tags: keys
+
+- name: Set pre-shared key permissions
+  file:
+    path: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/pre-shared-key
+    owner: '{{ user.uid }}'
+    group: '{{ user.uid }}'
+    mode: '0600'
+  tags: keys
+
+- name: Load the pre-shared key previously generated
+  no_log: '{{ not system.devel }}'
+  block:
+    - name: Dump the user pre-shared key
+      register: slurp_pre_shared_key
+      slurp:
+        src: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/pre-shared-key
+    - name: Remember the user pre-shared key
+      set_fact:
+        user_pre_shared_key: '{{ slurp_pre_shared_key["content"] | b64decode | trim }}'
+  tags: keys
+
+- name: Append the user’s public key
+  set_fact:
+    user_keys: >-
+      {{ user_keys | combine({ user.uid: public_key }) }}
+  tags: keys
+
+- name: Append the user’s pre-shared key
+  set_fact:
+    user_pre_shared_keys: >-
+      {{ user_pre_shared_keys | combine({ user.uid: user_pre_shared_key }) }}
+  tags: keys

@@ -1,9 +1,30 @@
 ---
 
+- name: Activate systemd-networkd
+  systemd:
+    name: systemd-networkd
+    state: restarted
+    enabled: true
+
 - name: Reload systemd network
   shell: networkctl reload
+
+- name: Restart systemd network
+  shell: >-
+    networkctl down wg0;
+    ip link del wg0;
+    systemctl restart systemd-networkd
 
 - name: Restart nftables
   systemd:
     name: nftables
+    state: restarted
+
+- name: Check unbound config
+  shell: unbound-checkconf
+  changed_when: false
+
+- name: Restart unbound
+  systemd:
+    name: unbound
     state: restarted

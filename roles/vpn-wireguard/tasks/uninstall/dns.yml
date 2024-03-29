@@ -1,0 +1,10 @@
+---
+
+- name: Remove VPN specific configu from the DNS server
+  notify:
+    - Check unbound config
+    - Restart unbound
+  file:
+    path: /etc/unbound/unbound.conf.d/20-wireguard.conf
+    state: absent
+  tags: dns

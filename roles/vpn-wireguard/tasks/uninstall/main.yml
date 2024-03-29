@@ -1,3 +1,30 @@
 ---
 
-# Tasks to run when uninstalling the role
+- name: Load the facts
+  ansible.builtin.include_tasks: install/facts.yml
+  tags: facts
+
+- name: Remove the firewall entries
+  ansible.builtin.include_tasks: uninstall/firewall.yml
+  tags: nftables
+
+- name: Stop the server
+  ansible.builtin.include_tasks: uninstall/server-config.yml
+  tags: config
+
+- name: Remove the server keys
+  ansible.builtin.include_tasks: uninstall/server-keys.yml
+
+- name: Remove user keys
+  ansible.builtin.include_tasks: uninstall/client-keys.yml
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+  tags: keys
+
+- name: Remove and purge the packages
+  ansible.builtin.include_tasks: uninstall/packages.yml
+  tags: apt
+
+- name: Remove VPN specfic DNS settings
+  ansible.builtin.include_tasks: uninstall/dns.yml

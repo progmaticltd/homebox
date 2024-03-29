@@ -1,0 +1,37 @@
+---
+
+- name: Deactivate IP forwarding
+  ansible.posix.sysctl:
+    reload: true
+    name: '{{ name }}'
+    value: 0
+  loop:
+    - net.ipv4.ip_forward
+    - net.ipv6.conf.all.forwarding
+  loop_control:
+    loop_var: name
+  tags: config
+
+- name: Remove the sysctl configuration file
+  file:
+    path: /etc/sysctl.d/wireguard.conf
+    state: absent
+  tags: config
+
+- name: Remove the device configuration file
+  notify:
+    - Restart systemd network
+    - Activate systemd-networkd
+  file:
+    path: /etc/systemd/network/wg0.netdev
+    state: absent
+  tags: config
+
+- name: Remove the network configuration file
+  notify:
+    - Restart systemd network
+    - Activate systemd-networkd
+  file:
+    path: /etc/systemd/network/wg0.network
+    state: absent
+  tags: config

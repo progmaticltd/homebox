@@ -1,0 +1,13 @@
+---
+
+- name: Remove the private key
+  file:
+    path: /etc/wireguard/private-key
+    state: absent
+  tags: keys
+
+- name: Remove the public key
+  file:
+    path: /etc/wireguard/public-key
+    state: absent
+  tags: keys

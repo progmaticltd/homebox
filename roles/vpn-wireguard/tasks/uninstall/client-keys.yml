@@ -1,0 +1,7 @@
+---
+
+- name: Remove the user’s keys directory
+  file:
+    path: /home/users/{{ user.uid }}/vpn/
+    state: absent
+  tags: keys

@@ -1,0 +1,14 @@
+---
+
+- name: Install the required packages
+  apt:
+    name: '{{ packages }}'
+    state: absent
+    purge: true
+  tags: apt
+
+- name: Remove the configuration directory
+  file:
+    path: /etc/wireguard
+    state: absent
+  tags: keys

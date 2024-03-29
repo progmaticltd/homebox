@@ -1,0 +1,76 @@
+---
+
+- name: Get user details
+  ansible.builtin.getent:
+    database: passwd
+    key: '{{ user.uid }}'
+    split: ':'
+    service: ldap
+  tags: client
+
+- name: Store the user ID number
+  set_fact:
+    user_id_number: '{{ getent_passwd[user.uid][1] | int }}'
+  tags: client
+
+- name: Store the IP address number for this user
+  set_fact:
+    client_ip_index: '{{ client_ip_prefix|int + user_id_number|int - user_id_base|int }}'
+  tags: client
+
+- name: Create the client IP addresses for this user and this config
+  set_fact:
+    client_ipv4: >-
+      {{ wireguard.network.ipv4_address
+      | ansible.utils.nthhost(client_ip_index) }}
+    client_ipv6: >-
+      {{ wireguard.network.ipv6_address
+      | ansible.utils.nthhost(client_ip_index) }}
+  tags: client
+
+- name: Load private key from the user directory
+  no_log: '{{ not system.devel }}'
+  block:
+    - name: Dump the user’s private key
+      ansible.builtin.slurp:
+        src: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/private-key
+      register: user_private_key_slurp
+    - name: Store the user’s private key
+      set_fact:
+        client_private_key: '{{ user_private_key_slurp["content"] | b64decode | trim }}'
+  tags: client
+
+- name: Create the configuration file
+  register: client_config
+  template:
+    src: client.conf
+    dest: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/client.conf
+    mode: '0600'
+  tags: client
+
+- name: Create the QR code file
+  when: client_config.changed
+  block:
+    - name: Create the QR code image file
+      shell: >-
+        qrencode -t png32
+        -r /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/client.conf
+        -o /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/qrcode.png
+    - name: Set the permissions
+      file:
+        path: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/qrcode.png
+        owner: '{{ user.uid }}'
+        group: '{{ user.uid }}'
+        mode: '0600'
+    - name: Create the QR code ascii file
+      shell: >-
+        qrencode -t ansiutf8
+        -r /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/client.conf
+        -o /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/qrcode.asc
+    - name: Set the permissions
+      file:
+        path: /home/users/{{ user.uid }}/vpn/{{ client_conf_id }}/qrcode.asc
+        owner: '{{ user.uid }}'
+        group: '{{ user.uid }}'
+        mode: '0600'
+  tags: client
