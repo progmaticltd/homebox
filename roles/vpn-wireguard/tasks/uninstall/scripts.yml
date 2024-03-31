@@ -1,0 +1,12 @@
+---
+
+- name: Remove the firewall update script
+  ansible.builtin.file:
+    path: /usr/lib/networkd-dispatcher/{{ subdir }}/wireguard
+    state: absent
+  loop:
+    - 'routable.d'
+    - 'off.d'
+  loop_control:
+    loop_var: subdir
+  tags: scripts

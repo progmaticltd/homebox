@@ -45,3 +45,7 @@
 - name: Configure the firewall
   ansible.builtin.include_tasks: install/firewall.yml
   tags: firewall
+
+- name: Deploy the custom scripts
+  ansible.builtin.include_tasks: install/scripts.yml
+  tags: scripts

@@ -1,0 +1,15 @@
+---
+
+- name: Deploy the firewall update script
+  ansible.builtin.template:
+    src: update-firewall.sh
+    dest: /usr/lib/networkd-dispatcher/{{ subdir }}/wireguard
+    owner: root
+    group: root
+    mode: '0755'
+  loop:
+    - 'routable.d'
+    - 'off.d'
+  loop_control:
+    loop_var: subdir
+  tags: scripts

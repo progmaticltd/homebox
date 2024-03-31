@@ -1,20 +1,25 @@
 #!/usr/sbin/nft -f
 
+# Enforcing firewall rules for to the Wireguard VPN server:
+# - accept VPN connections
+# - enforce the VPN use for the services requiring authentication
+
 table inet filter {
 
     chain input {
 
+        # Establish VPN connections
         udp dport {{ wireguard.network.port }} ct state new counter accept \
         comment "Wireguard VPN client connections"
 
-        iifname wg0 ct state new counter accept
     }
 
     chain forward {
-        iifname wg0 ct state new counter accept
-        oifname wg0 ct state established,related counter accept
-    }
 
+        iifname wg0 ct state new counter accept comment "Wireguard VPN"
+        oifname wg0 ct state established,related counter accept comment "Wireguard VPN"
+
+    }
 }
 
 table inet nat {

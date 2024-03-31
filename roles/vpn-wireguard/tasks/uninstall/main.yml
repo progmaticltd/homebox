@@ -26,5 +26,9 @@
   ansible.builtin.include_tasks: uninstall/packages.yml
   tags: apt
 
+- name: Remove the custom scripts
+  ansible.builtin.include_tasks: uninstall/scripts.yml
+  tags: scripts
+
 - name: Remove VPN specfic DNS settings
   ansible.builtin.include_tasks: uninstall/dns.yml

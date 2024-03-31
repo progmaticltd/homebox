@@ -18,7 +18,7 @@
 - name: Deploy firewall rules
   notify: Restart nftables
   ansible.builtin.template:
-    src: fwrules.nft
+    src: fwrules/{{ wireguard.firewall.type }}.nft
     dest: /etc/nftables/05-wireguard.nft
     validate: nft -c -f "%s"
     mode: '0600'

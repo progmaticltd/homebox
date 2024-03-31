@@ -2,6 +2,8 @@
 
 # Default variables
 wireguard:
+  firewall:
+    type: basic
   network:
     ipv4_address: 172.16.1.0/24
     ipv6_address: fdde:cade:2020:deaf::/64
