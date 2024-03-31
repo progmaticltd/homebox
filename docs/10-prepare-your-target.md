@@ -17,7 +17,7 @@ cases:
 In our case, we'll create a temporary user, called for instance `hbinstall`, for HomeBox install, and give them a random
 password:
 
-```txt
+```plain
 root@debian:~# adduser hbinstall
 Adding user `hbinstall' ...
 Adding new group `hbinstall' (1000) ...
@@ -41,7 +41,7 @@ Adding user `hbinstall' to group `users' ...
 
 Now, let's install _sudo_,...
 
-```txt
+```plain
 root@debian:~# apt install sudo
 Reading package lists... Done
 Building dependency tree... Done
@@ -64,7 +64,7 @@ Processing triggers for libc-bin (2.36-9+deb12u3) ...
 
 ..., and add the new user to the sudo and root groups:
 
-```txt
+```plain
 root@debian:~# adduser hbinstall sudo
 Adding user `hbinstall' to group `sudo' ...
 Done.
