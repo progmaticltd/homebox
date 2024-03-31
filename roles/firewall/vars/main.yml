@@ -7,6 +7,8 @@ rule_files:
   - 10-base
   - 10-outbound
   - 20-proxy
+  - 20-trusted-networks
+  - 25-banned-networks
   - 30-ssh-autoban
   - 40-in-dns
   - 90-close

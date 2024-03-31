@@ -28,3 +28,7 @@
   ansible.builtin.file:
     path: /etc/logrotate.d/nftables
     state: absent
+
+- name: Remove utility scripts
+  ansible.builtin.include_tasks: uninstall/scripts.yml
+  tags: scripts
