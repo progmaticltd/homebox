@@ -10,7 +10,7 @@ here the creation of your private key.
 
 ### Copy your public key
 
-```txt
+```plain
 andre@hamilton> ssh-copy-id hbinstall@192.168.33.95
 /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
 /usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
@@ -26,7 +26,7 @@ and check to make sure that only the key(s) you wanted were added.
 
 Now, the connection should be automatic, i.e. without entering a password:
 
-```txt
+```plain
 andre@hamilton> ssh hbinstall@192.168.33.95
 Linux debian 6.1.0-17-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.69-1 (2023-12-30) x86_64
 
@@ -46,7 +46,7 @@ This is optional, but it will be more convenient to add ssh settings to connect 
 name and an IP address. So, on the workstation, in your ssh configuration file `~/.ssh/config`, you can add the
 following block, for instance:
 
-```txt
+```plain
 Host homebox
     User hbinstall
 	HostName 192.168.33.95
@@ -54,7 +54,7 @@ Host homebox
 
 Yo can now establish the connection with _homebox_ more easily:
 
-```txt
+```plain
 ssh homebox
 […]
 Linux debian 6.1.0-17-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.69-1 (2023-12-30) x86_64
@@ -78,7 +78,7 @@ sudo apt install ansible
 
 ## Clone the repository
 
-```txt
+```plain
 git clone git@github.com:progmaticltd/homebox.git
 Cloning into 'homebox'...
 remote: Enumerating objects: 26137, done.
