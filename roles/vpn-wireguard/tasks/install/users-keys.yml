@@ -117,7 +117,7 @@
 
 - name: Store this user/config info
   no_log: '{{ hide_secrets }}'
-  set_fact:
+  ansible.builtin.set_fact:
     user_info_config:
       public_key: '{{ public_key }}'
       private_key: '{{ private_key }}'
@@ -129,7 +129,7 @@
 
 - name: Name this configuration
   no_log: '{{ hide_secrets }}'
-  set_fact:
+  ansible.builtin.set_fact:
     named_config: '{{ { config.name: user_info_config } }}'
   tags: users, keys
 

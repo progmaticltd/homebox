@@ -2,7 +2,7 @@
 
 - name: Load private key from the user directory
   no_log: '{{ hide_secrets }}'
-  set_fact:
+  ansible.builtin.set_fact:
     user_ipv4: '{{ peers_info[user.uid][config.name].ipv4 }}/24'
     user_ipv6: '{{ peers_info[user.uid][config.name].ipv6 }}/64'
     user_private_key: '{{ peers_info[user.uid][config.name].private_key }}'
