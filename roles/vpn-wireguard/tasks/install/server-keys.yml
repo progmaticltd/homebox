@@ -20,7 +20,7 @@
   tags: keys
 
 - name: Load the private key previously generated
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   tags: keys
   block:
     - name: Dump private key

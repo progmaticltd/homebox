@@ -1,0 +1,141 @@
+---
+
+- name: Get user details
+  ansible.builtin.getent:
+    database: passwd
+    key: '{{ user.uid }}'
+    split: ':'
+    service: ldap
+  tags: users
+
+- name: Store the user ID number
+  ansible.builtin.set_fact:
+    user_id_number: '{{ getent_passwd[user.uid][1] | int }}'
+  tags: users
+
+- name: Store the IP address number for this user
+  ansible.builtin.set_fact:
+    user_ip4_index: >-
+      {{ wireguard.network.ipv4_incr * (user_id_number|int - user_id_base|int)
+      + config_id }}
+    user_ip6_index: >-
+      {{ wireguard.network.ipv6_incr * (user_id_number|int - user_id_base|int)
+      + config_id }}
+  tags: users
+
+- name: Create the user IP addresses for this user and this config
+  ansible.builtin.set_fact:
+    user_ipv4: >-
+      {{ wireguard.network.ipv4_address
+      | ansible.utils.nthhost(user_ip4_index) }}
+    user_ipv6: >-
+      {{ wireguard.network.ipv6_address
+      | ansible.utils.nthhost(user_ip6_index) }}
+  tags: users
+
+- name: Create the user directory
+  ansible.builtin.file:
+    path: /home/archives/{{ user.uid }}/files/vpn/{{ config.name }}/
+    state: directory
+    owner: '{{ user.uid }}'
+    group: '{{ user.uid }}'
+    mode: '0700'
+  tags: users, keys
+
+- name: Create the key pair for this user
+  register: genkey_cmd
+  become: true
+  become_user: '{{ user.uid }}'
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.shell: >-
+    set -o pipefail;
+    wg genkey | tee private-key
+    | wg pubkey > public-key
+  args:
+    chdir: /home/archives/{{ user.uid }}/files/vpn/{{ config.name }}/
+    creates: /home/archives/{{ user.uid }}/files/vpn/{{ config.name }}/private-key
+    executable: /bin/bash
+  tags: users, keys
+
+- name: Load the public key previously generated
+  tags: users, keys
+  block:
+    - name: Dump the user’s public key
+      register: slurp_public_key
+      ansible.builtin.slurp:
+        src: /home/archives/{{ user.uid }}/files/vpn/{{ config.name }}/public-key
+    - name: Remember the user’s public key
+      ansible.builtin.set_fact:
+        public_key: '{{ slurp_public_key["content"] | b64decode | trim }}'
+
+- name: Load the private key previously generated
+  tags: users, keys
+  block:
+    - name: Dump the user’s private key
+      register: slurp_private_key
+      ansible.builtin.slurp:
+        src: /home/archives/{{ user.uid }}/files/vpn/{{ config.name }}/private-key
+    - name: Remember the user’s private key
+      ansible.builtin.set_fact:
+        private_key: '{{ slurp_private_key["content"] | b64decode | trim }}'
+
+- name: Set permissions to the file
+  ansible.builtin.file:
+    path: /home/archives/{{ user.uid }}/files/vpn/{{ config.name }}/private-key
+    owner: '{{ user.uid }}'
+    group: '{{ user.uid }}'
+    mode: '0600'
+  tags: users, keys
+
+- name: Create a pre-shared key
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.shell: wg genpsk >pre-shared-key
+  args:
+    chdir: /home/archives/{{ user.uid }}/files/vpn/{{ config.name }}/
+    creates: pre-shared-key
+  tags: users, keys
+
+- name: Set pre-shared key permissions
+  ansible.builtin.file:
+    path: /home/archives/{{ user.uid }}/files/vpn/{{ config.name }}/pre-shared-key
+    owner: '{{ user.uid }}'
+    group: '{{ user.uid }}'
+    mode: '0600'
+  tags: users, keys
+
+- name: Load the pre-shared key previously generated
+  no_log: '{{ hide_secrets }}'
+  tags: users, keys
+  block:
+    - name: Dump the user pre-shared key
+      register: slurp_pre_shared_key
+      ansible.builtin.slurp:
+        src: /home/archives/{{ user.uid }}/files/vpn/{{ config.name }}/pre-shared-key
+    - name: Remember the user pre-shared key
+      ansible.builtin.set_fact:
+        user_pre_shared_key: '{{ slurp_pre_shared_key["content"] | b64decode | trim }}'
+
+- name: Store this user/config info
+  no_log: '{{ hide_secrets }}'
+  set_fact:
+    user_info_config:
+      public_key: '{{ public_key }}'
+      private_key: '{{ private_key }}'
+      pre_shared_key: '{{ user_pre_shared_key }}'
+      ipv4: '{{ user_ipv4 }}'
+      ipv6: '{{ user_ipv6 }}'
+      type: '{{ config.type }}'
+  tags: users, keys
+
+- name: Name this configuration
+  no_log: '{{ hide_secrets }}'
+  set_fact:
+    named_config: '{{ { config.name: user_info_config } }}'
+  tags: users, keys
+
+- name: Append the user’s public key
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.set_fact:
+    peers_info: >-
+      {{ peers_info | combine({ user.uid: named_config }, recursive=true) }}
+  tags: users, keys

@@ -5,6 +5,21 @@ wireguard:
   firewall:
     type: basic
   network:
-    ipv4_address: 172.16.1.0/24
+    ipv4_address: 10.10.1.0/24
     ipv6_address: fdde:cade:2020:deaf::/64
     port: 51820
+  # Maximum number of confifguration for each user
+  # Be careful the number of users you have:
+  # ((1+nb_users) * max_config)-1 should be less than
+  # the IPv4 address range. If it is above, use for instance a
+  # /16 or /12 or even /10 for the cidr.
+  max_config: 10
+  # By default, reates two configs for each user.
+  configs:
+    - name: default
+      type: basic
+    - name: mobile
+      type: enforce
+
+# This will contains peer detailed info to build the server configuration
+peers_info: { }

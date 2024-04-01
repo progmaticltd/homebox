@@ -2,7 +2,7 @@
 
 - name: Deploy the firewall update script
   ansible.builtin.template:
-    src: update-firewall.sh
+    src: scripts/update-firewall.sh
     dest: /usr/lib/networkd-dispatcher/{{ subdir }}/wireguard
     owner: root
     group: root

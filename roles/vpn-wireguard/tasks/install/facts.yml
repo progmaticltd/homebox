@@ -1,11 +1,5 @@
 ---
 
-- name: Initialise user keys
-  ansible.builtin.set_fact:
-    user_keys: { }
-    user_pre_shared_keys: { }
-  tags: facts
-
 - name: Get the first user ID
   register: first_user_id_cmd
   ansible.builtin.shell: >-

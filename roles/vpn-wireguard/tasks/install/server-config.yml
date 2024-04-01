@@ -18,7 +18,7 @@
     - Reload systemd network
     - Activate systemd-networkd
   ansible.builtin.template:
-    src: server.netdev
+    src: systemd/server.netdev
     dest: /etc/systemd/network/wg0.netdev
     owner: root
     group: systemd-network
@@ -30,7 +30,7 @@
     - Reload systemd network
     - Activate systemd-networkd
   ansible.builtin.template:
-    src: server.network
+    src: systemd/server.network
     dest: /etc/systemd/network/wg0.network
     owner: root
     group: systemd-network

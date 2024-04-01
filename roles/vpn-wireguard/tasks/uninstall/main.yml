@@ -16,7 +16,7 @@
   ansible.builtin.include_tasks: uninstall/server-keys.yml
 
 - name: Remove user keys
-  ansible.builtin.include_tasks: uninstall/client-keys.yml
+  ansible.builtin.include_tasks: uninstall/users-keys.yml
   loop: '{{ users }}'
   loop_control:
     loop_var: user

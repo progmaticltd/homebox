@@ -8,7 +8,7 @@
   ansible.builtin.include_tasks: install/packages.yml
   tags: apt
 
-- name: Add DNS specific configuration
+- name: Add unbound specific configuration
   ansible.builtin.include_tasks: install/dns.yml
   tags: dns
 
@@ -17,30 +17,24 @@
   tags: keys, facts
 
 - name: Configure users’ keys
-  vars:
-    client_conf_id: default
-  ansible.builtin.include_tasks: install/client-keys.yml
-  loop: '{{ users }}'
+  ansible.builtin.include_tasks: install/users-all-keys.yml
+  loop: '{{ wireguard.configs }}'
   loop_control:
-    loop_var: user
+    loop_var: config
+    index_var: config_id
   tags: keys
 
 - name: Create the server configuration file
-  vars:
-    client_conf_id: default
-    client_ip_prefix: 10
   ansible.builtin.include_tasks: install/server-config.yml
   tags: config
 
-- name: Create users’ client config files
-  vars:
-    client_conf_id: default
-    client_ip_prefix: 10
-  ansible.builtin.include_tasks: install/client-config.yml
-  loop: '{{ users }}'
+- name: Create users’ user config files
+  ansible.builtin.include_tasks: install/users-all-config.yml
+  loop: '{{ wireguard.configs }}'
   loop_control:
-    loop_var: user
-  tags: client
+    loop_var: config
+    index_var: config_id
+  tags: users
 
 - name: Configure the firewall
   ansible.builtin.include_tasks: install/firewall.yml

@@ -1,6 +1,6 @@
 # Wireguard network definition
 [Match]
-Name=wg0
+Name = wg0
 
 [Network]
 Address = {{ wireguard.network.ipv4_address | ansible.utils.ipaddr(1) }}
