@@ -8,12 +8,14 @@ wireguard:
     ipv4_address: 10.10.1.0/24
     ipv6_address: fdde:cade:2020:deaf::/64
     port: 51820
-  # Maximum number of confifguration for each user
-  # Be careful the number of users you have:
-  # ((1+nb_users) * max_config)-1 should be less than
-  # the IPv4 address range. If it is above, use for instance a
-  # /16 or /12 or even /10 for the cidr.
-  max_config: 10
+  # IP address increment for each user
+  # for 254 IPs (/24), this offers a maximum of 25 users with an IPv4 address.
+  # if you need more user, increase the cidr range, like /16, /12 or /8,
+  # or reduce the increment.
+  # In the current configuration, IPv6 increment gives the same last digit
+  # of the IPv4 address, for clarity.
+    ipv4_incr: 10
+    ipv6_incr: 16
   # By default, reates two configs for each user.
   configs:
     - name: default

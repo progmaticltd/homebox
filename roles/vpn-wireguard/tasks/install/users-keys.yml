@@ -125,6 +125,7 @@
       ipv4: '{{ user_ipv4 }}'
       ipv6: '{{ user_ipv6 }}'
       type: '{{ config.type }}'
+      name: '{{ config.name }}'
   tags: users, keys
 
 - name: Name this configuration
