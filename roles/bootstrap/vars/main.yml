@@ -6,3 +6,4 @@ whitelisted_hosts:
   - deb.debian.org
   - letsencrypt.org
   - security.debian.org
+  - '{{ system.apt.mirror }}'
