@@ -11,3 +11,11 @@
   loop_control:
     loop_var: pkg
   tags: apt
+
+- name: Check that all packages are installed
+  ansible.builtin.assert:
+    that: ansible_facts.packages[pkg] is defined
+  loop: '{{ recommended_packages }}'
+  loop_control:
+    loop_var: pkg
+  tags: apt

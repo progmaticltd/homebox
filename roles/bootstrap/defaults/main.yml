@@ -25,3 +25,6 @@ base_packages:
   - systemd-timesyncd
   - unattended-upgrades
   - xkcdpass
+
+recommended_packages:
+  - colorize

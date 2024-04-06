@@ -2,7 +2,9 @@
 
 - name: Install unbound
   ansible.builtin.apt:
-    name: unbound
+    pkg:
+      - dns-root-data
+      - unbound
     state: present
   tags: network
 
