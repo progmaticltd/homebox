@@ -24,14 +24,15 @@
     - '{{ playbook_dir }}/../config/system.yml'
   tasks:
     - name: Load common settings
-      tags: always
       include_role:
         name: common-init
-    - name: Run the roles selected
+        tasks_from: install/main.yml
       tags: always
+    - name: Run the roles selected
       include_role:
         name: '{{ role }}'
         tasks_from: backup/main.yml
       loop: '{{ roles_list }}'
       loop_control:
         loop_var: role
+      tags: always
