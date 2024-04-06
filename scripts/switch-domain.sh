@@ -26,7 +26,7 @@ cd "$SCRIPT_PATH/../config" || exit
 
 if [ ! -f "system-${domain}.yml" ]; then
     echo "Create the system-${domain}.yml file in config first."
-    echo "See system-example.yml for bare minimum and defaults.yml for all possible values"
+    echo "See system-minimal.yml for bare minimum and defaults.yml for all possible values"
     exit 2;
 fi
 
