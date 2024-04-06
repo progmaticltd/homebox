@@ -1,0 +1,25 @@
+---
+
+- name: Get the default network interface
+  register: ext_iface_cmd
+  ansible.builtin.shell: >-
+    set -o pipefail ;
+    ip route | sed -En 's/default via.*dev (.*)/\1/p'
+  args:
+    executable: /bin/bash
+  changed_when: false
+  tags: firewall
+
+- name: Set the network interface name
+  ansible.builtin.set_fact:
+    ext_iface_name: '{{ ext_iface_cmd.stdout }}'
+  tags: firewall
+
+- name: Deploy firewall rules
+  notify: Restart nftables
+  ansible.builtin.template:
+    src: fwrules/{{ wireguard.firewall.type }}.nft
+    dest: /etc/nftables/05-wireguard.nft
+    validate: nft -c -f "%s"
+    mode: '0600'
+  tags: firewall

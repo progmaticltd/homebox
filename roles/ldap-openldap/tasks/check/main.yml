@@ -16,7 +16,7 @@
     executable: /bin/bash
 
 - name: Check that I can bind as readonly and get all uids
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.shell: >-
     ldapsearch
     -H ldapi:///
@@ -26,7 +26,7 @@
   changed_when: false
 
 - name: Check that I can bind as manager and get my details
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.shell: >-
     ldapsearch
     -H ldapi:///
@@ -36,7 +36,7 @@
   changed_when: false
 
 - name: Check that I can bind as admin and get all uids
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.shell: >-
     ldapsearch
     -H ldapi:///
@@ -46,7 +46,7 @@
   changed_when: false
 
 - name: Check that every user is in the database
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.shell: >-
     set -o pipefail ;
     ldapsearch
@@ -63,7 +63,7 @@
     loop_var: user
 
 - name: Check that I can bind using SSL
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.shell: >-
     ldapsearch
     -H ldaps://ldap.{{ network.domain }}/

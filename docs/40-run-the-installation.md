@@ -28,7 +28,7 @@ ansible-playbook install-version.yml
 
 Once the installation is finished, you should see a final output like this:
 
-```txt
+```plain
 ...
 
 PLAY RECAP *************************************************************************************************************

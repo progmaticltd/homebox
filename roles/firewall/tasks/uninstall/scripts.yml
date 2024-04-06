@@ -1,0 +1,7 @@
+---
+
+- name: Reove the small control script
+  ansible.builtin.file:
+    path: /usr/local/sbin/fw-control
+    state: absent
+  tags: scripts

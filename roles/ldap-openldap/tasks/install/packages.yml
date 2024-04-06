@@ -8,7 +8,7 @@
 # Pre-configure the LDAP sever before instaling
 - name: Configure the LDAP administration account
   when: not slapd_stats.stat.exists
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.debconf:
     name: slapd
     question: '{{ conf.question }}'

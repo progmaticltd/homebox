@@ -1,0 +1,8 @@
+---
+
+- name: Deploy the small control script
+  ansible.builtin.copy:
+    src: fw-control.sh
+    dest: /usr/local/sbin/fw-control
+    mode: '0700'
+  tags: scripts

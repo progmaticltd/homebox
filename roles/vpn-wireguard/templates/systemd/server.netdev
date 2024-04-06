@@ -1,0 +1,24 @@
+# Wireguard network definition
+[NetDev]
+Name = wg0
+Kind = wireguard
+Description = WireGuard for {{ network.domain }}
+
+[WireGuard]
+PrivateKey = {{ server_private_key }}
+ListenPort = {{ wireguard.network.port }}
+
+{% for user in users %}
+
+{% set configs = peers_info[user.uid] %}
+{% for config_name in configs.keys() %}
+{% set config = peers_info[user.uid][config_name] %}
+
+# Config for user "{{ user.uid }}-{{ config_name }}" ( {{ config.name }} )
+[WireGuardPeer]
+PublicKey = {{ config["public_key"] }}
+PresharedKey = {{ config["pre_shared_key"] }}
+AllowedIPs = {{ config["ipv4"] }}/32, {{ config["ipv6"] }}/128
+{% endfor %}
+
+{% endfor %}

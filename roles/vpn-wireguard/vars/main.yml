@@ -1,0 +1,7 @@
+---
+
+packages:
+  - networkd-dispatcher
+  - qrencode
+  - wireguard
+  - wireguard-tools

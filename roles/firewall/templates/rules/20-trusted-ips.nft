@@ -1,7 +1,9 @@
 #!/usr/sbin/nft -f
 
-# Allow SSH access from the initial installer IPs
-# both IPv4 and IPv6
+# These rules automatically accept pre-defined connections.
+# This is for instance used by dovecot and postfix,
+# to whitelist IPs for submission(s)
+# after successful authentication on IMAP(S).
 
 table inet filter {
 
@@ -21,11 +23,12 @@ table inet filter {
 
         ip saddr . tcp dport @trusted_ipv4 \
         ct state new counter accept \
-        comment "Trusted IPv4 ssh connections"
+        comment "Trusted IPv4 connections"
 
         ip6 saddr . tcp dport @trusted_ipv6 \
         ct state new counter accept \
-        comment "Trusted IPv6 ssh connections"
+        comment "Trusted IPv6 connections"
+
     }
 
 }

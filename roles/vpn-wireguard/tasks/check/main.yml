@@ -1,0 +1,6 @@
+---
+
+- name: Check that wireguard is working
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.shell: wg showconf wg0
+  changed_when: false

@@ -3,10 +3,10 @@
 ## Simple script to display the current banned IP addresses in the firewall
 ##
 
-banned_ipv4=$(nft -j list set inet filter banned_ipv4 | jq '[.nftables[1].set.elem[]]')
-banned_ipv6=$(nft -j list set inet filter banned_ipv6 | jq '[.nftables[1].set.elem[]]')
-trusted_ipv4=$(nft -j list set inet filter trusted_ipv4 | jq '[.nftables[1].set.elem[]]')
-trusted_ipv6=$(nft -j list set inet filter trusted_ipv6 | jq '[.nftables[1].set.elem[]]')
+banned_ipv4=$(nft -j list set inet filter banned_ipv4 | jq '[.nftables[1].set.elem[]]' 2>/dev/null)
+banned_ipv6=$(nft -j list set inet filter banned_ipv6 | jq '[.nftables[1].set.elem[]]' 2>/dev/null)
+trusted_ipv4=$(nft -j list set inet filter trusted_ipv4 | jq '[.nftables[1].set.elem[]]' 2>/dev/null)
+trusted_ipv6=$(nft -j list set inet filter trusted_ipv6 | jq '[.nftables[1].set.elem[]]' 2>/dev/null)
 
 banned_ipv4_count=$(echo "$banned_ipv4" | jq '. | length')
 banned_ipv6_count=$(echo "$banned_ipv6" | jq '. | length')

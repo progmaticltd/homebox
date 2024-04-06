@@ -1,0 +1,30 @@
+---
+
+- name: Activate systemd-networkd
+  ansible.builtin.systemd:
+    name: systemd-networkd
+    state: restarted
+    enabled: true
+
+- name: Reload systemd network
+  ansible.builtin.shell: networkctl reload
+
+- name: Restart systemd network
+  ansible.builtin.shell: >-
+    networkctl down wg0;
+    ip link del wg0;
+    systemctl restart systemd-networkd
+
+- name: Restart nftables
+  ansible.builtin.systemd:
+    name: nftables
+    state: restarted
+
+- name: Check unbound config
+  ansible.builtin.shell: unbound-checkconf
+  changed_when: false
+
+- name: Restart unbound
+  ansible.builtin.systemd:
+    name: unbound
+    state: restarted

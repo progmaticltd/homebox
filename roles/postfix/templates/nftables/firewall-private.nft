@@ -1,0 +1,52 @@
+#!/usr/sbin/nft -f
+
+# Limit submission(s) connections to specific networks,
+# perhaps from a local network, or the included VPN one.
+# Connections from the trusted networks are allowed,
+# and the rest is dropped or rejected.
+
+table inet filter {
+
+    set trusted_networks_ipv4 {
+        typeof ip saddr
+        flags interval,timeout
+        auto-merge
+        timeout {{ security.trusted.period }}
+    }
+
+    set trusted_networks_ipv6 {
+        typeof ip6 saddr
+        flags interval,timeout
+        auto-merge
+        timeout {{ security.trusted.period }}
+    }
+
+    chain input {
+
+        # Accept mails between servers on smtp port
+        tcp dport smtp ct state new counter accept \
+        comment "Email transfer agent (smtp)"
+
+        # Only allow connections from trusted networks
+        ip saddr @trusted_networks_ipv4 \
+        tcp dport { submission, submissions } \
+        ct state new counter accept \
+        comment "Accept connections from trusted networks (v4)"
+
+        ip6 saddr @trusted_networks_ipv6 \
+        tcp dport { submission, submissions } \
+        ct state new counter accept \
+        comment "Accept connections from trusted networks (v6)"
+
+        tcp dport { submission, submissions } counter drop \
+        comment "Drop untrusted connections."
+    }
+
+
+    chain output {
+        meta skuid { postfix, root } \
+        tcp dport smtp \
+        ct state new counter accept \
+        comment "Outgoing mail"
+    }
+}

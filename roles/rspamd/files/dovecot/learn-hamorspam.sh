@@ -18,12 +18,12 @@ if [ "$type" != "spam" ] && [ "$type" != "ham" ]; then
 fi
 
 if [ ! -w "$socket" ]; then
-    echo "Cannot open socket file for writing"
+    logger "Cannot open socket file for writing"
     exit $socket_error
 fi
 
 if ! /usr/bin/rspamc -v -h "$socket" "learn_${type}"; then
-    echo "Error when running rspamc client"
+    logger "Error when running rspamc client"
     exit $runtime_error
 fi
 

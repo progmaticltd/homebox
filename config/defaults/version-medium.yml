@@ -150,9 +150,16 @@ mail_default:
     debug: false
 
   #############################################################################
+  # Mail protection settings
+  # - public: no protection, only use this if you know what you are doing.
+  # - autoban: automatically ban offender IPs, ala fail2ban (default).
+  # - private: authentication is only allowed from trusted networks.
+  protection:
+    type: autoban
+
+  #############################################################################
   # Autoban is a lighter alternative to fail2ban, using nftables
   autoban:
-    active: true        #
     rate: 10/minute     # above this rate, connections are rejected
     period: 1d          # period for banning IPs
 

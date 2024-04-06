@@ -1,0 +1,51 @@
+#!/usr/sbin/nft -f
+
+# These rules are limiting new pop3 to specific networks.
+# It is meant to restrict connections to VPN and LANs.
+
+table inet filter {
+
+    set trusted_networks_ipv4 {
+        typeof ip saddr
+        flags interval,timeout
+        auto-merge
+        timeout {{ security.trusted.period }}
+    }
+
+    set trusted_networks_ipv6 {
+        typeof ip6 saddr
+        flags interval,timeout
+        auto-merge
+        timeout {{ security.trusted.period }}
+    }
+
+    set trusted_ipv4 {
+        type ipv4_addr . inet_service
+        flags dynamic,timeout
+        timeout {{ security.trusted.period }}
+    }
+
+    set trusted_ipv6 {
+        type ipv6_addr . inet_service
+        flags dynamic,timeout
+        timeout {{ security.trusted.period }}
+    }
+
+    chain input {
+
+        # Accept connections from trusted networks
+        tcp dport { pop3, pop3s } \
+        ip saddr @trusted_networks_ipv4 \
+        ct state new \
+        counter accept \
+        comment "Accept pop3/pop3s connections on IPv4"
+
+        tcp dport { pop3, pop3s } \
+        ip6 saddr @trusted_networks_ipv6 \
+        ct state new \
+        counter accept \
+        comment "Accept pop3/pop3s connections on IPv6"
+
+    }
+
+}

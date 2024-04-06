@@ -1,0 +1,16 @@
+#!/usr/sbin/nft -f
+
+# Basic firewall rules for to the Wireguard VPN server:
+# Accept VPN connections but does not add any extra rules
+
+
+table inet filter {
+
+    chain input {
+
+        udp dport {{ wireguard.network.port }} ct state new counter accept \
+        comment "Wireguard VPN client connections"
+
+    }
+
+}

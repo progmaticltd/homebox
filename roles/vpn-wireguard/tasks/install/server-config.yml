@@ -1,0 +1,38 @@
+---
+
+- name: Activate IP forwarding
+  ansible.posix.sysctl:
+    reload: true
+    name: '{{ name }}'
+    value: 1
+    sysctl_file: /etc/sysctl.d/wireguard.conf
+  loop:
+    - net.ipv4.ip_forward
+    - net.ipv6.conf.all.forwarding
+  loop_control:
+    loop_var: name
+  tags: config
+
+- name: Deploy the device configuration file
+  notify:
+    - Reload systemd network
+    - Activate systemd-networkd
+  ansible.builtin.template:
+    src: systemd/server.netdev
+    dest: /etc/systemd/network/wg0.netdev
+    owner: root
+    group: systemd-network
+    mode: '0660'
+  tags: config
+
+- name: Deploy the network configuration file
+  notify:
+    - Reload systemd network
+    - Activate systemd-networkd
+  ansible.builtin.template:
+    src: systemd/server.network
+    dest: /etc/systemd/network/wg0.network
+    owner: root
+    group: systemd-network
+    mode: '0660'
+  tags: config

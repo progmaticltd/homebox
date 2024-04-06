@@ -3,8 +3,8 @@
 ###############################################################################
 # Domain and hostname information
 network:
-  domain:        # your domain name
-  hostname:      # your hostname
+  domain:        # your domain name, e.g. arda.world
+  hostname:      # your hostname, middle-earth
   external_ip:   # first external IP address, IPv4 or IPv6
   backup_ip:     # if you have one, second external IP address, IPv4 or IPv6, otherwise, use ~
   bind_ip:       # If you are behind a NAT, the local IP address externally NAT'ed,
