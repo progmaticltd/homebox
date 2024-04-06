@@ -16,6 +16,8 @@ wireguard:
   # of the IPv4 address, for clarity.
     ipv4_incr: 10
     ipv6_incr: 16
+  # Send "keeps alive" packets at this interval.
+  keep_alive: 15
   # By default, reates two configs for each user.
   configs:
     - name: default

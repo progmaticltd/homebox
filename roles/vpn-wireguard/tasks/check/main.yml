@@ -1,3 +1,5 @@
 ---
 
-# Tasks to run when checking the role installation status
+- name: Check that wireguard is working
+  shell: wg showconf wg0
+  changed_when: false
