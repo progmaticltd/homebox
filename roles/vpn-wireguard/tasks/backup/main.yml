@@ -21,6 +21,7 @@
 
 - name: Store the public and the private keys in the password store
   when: creds.store == 'community.general.passwordstore'
+  tags: backup
   block:
     - name: Store the private key
       no_log: '{{ hide_secrets }}'
@@ -33,12 +34,12 @@
         _: >-
           {{ lookup(creds.store, creds.prefix + "/wireguard/public-key",
           create=true, missing="create", userpass=public_key) }}
-  tags: backup
 
 - name: Store the public and the private keys in plain text files
   when: creds.store == 'ansible.builtin.password'
   delegate_to: localhost
   become: false
+  tags: backup
   block:
     - name: Create credentials directory
       ansible.builtin.file:
@@ -56,4 +57,3 @@
         content: '{{ public_key }}'
         dest: '{{ backup_directory }}/wireguard/public-key'
         mode: '0600'
-  tags: backup
