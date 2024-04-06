@@ -1,20 +1,20 @@
 ---
 
 - name: load the public key from the credentials store
-  set_fact:
+  ansible.builtin.set_fact:
     public_key: >-
       {{ lookup(creds.store, creds.prefix + "/wireguard/public-key") }}
   tags: restore
 
 - name: load the private key from the credentials store
   no_log: '{{ hide_secrets }}'
-  set_fact:
+  ansible.builtin.set_fact:
     private_key: >-
       {{ lookup(creds.store, creds.prefix + "/wireguard/private-key") }}
   tags: restore
 
 - name: Restore the public key
-  copy:
+  ansible.builtin.copy:
     content: '{{ public_key }}'
     dest: /etc/wireguard/public-key
     mode: '0644'
@@ -22,7 +22,7 @@
 
 - name: Restore the private key
   no_log: '{{ hide_secrets }}'
-  copy:
+  ansible.builtin.copy:
     content: '{{ private_key }}'
     dest: /etc/wireguard/private-key
     mode: '0600'
