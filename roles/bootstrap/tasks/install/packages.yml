@@ -4,3 +4,8 @@
   ansible.builtin.apt:
     name: '{{ base_packages }}'
     state: present
+
+- name: Install the packages absolutely required
+  ansible.builtin.apt:
+    name: '{{ recommended_packages }}'
+    state: present
