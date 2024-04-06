@@ -35,7 +35,7 @@
 - name: Get the DNS api key
   no_log: '{{ hide_secrets }}'
   ansible.builtin.set_fact:
-    api_key: '{{ lookup(creds.store, creds.prefix + "dns/api-key") }}'
+    api_key: '{{ lookup(creds.store, creds.prefix + "/dns/api-key") }}'
   tags: preinstall
 
 # LetsEncrypt will need to be accessed once the DNS server is live.
