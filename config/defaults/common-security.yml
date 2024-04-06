@@ -103,7 +103,7 @@ passwords_default:
 #
 # Credentials store to use
 creds_default:
-  store: password
+  store: ansible.builtin.password
   prefix: '../backup/{{ network.domain }}/'
   opts:
     create: ''   # no creation option for plain text passwords
