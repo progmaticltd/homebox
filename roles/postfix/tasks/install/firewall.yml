@@ -1,19 +1,9 @@
 ---
 
-- name: Copy the firewall configuration file
-  when: not mail.autoban.active
+- name: Deploy the firewall rules
   notify: Restart firewall
   ansible.builtin.template:
-    src: nftables/firewall-public.nft
-    dest: /etc/nftables/60-postfix.nft
-    mode: '0600'
-  tags: firewall
-
-- name: Copy the firewall configuration file
-  when: mail.autoban.active
-  notify: Restart firewall
-  ansible.builtin.template:
-    src: nftables/firewall-autoban.nft
+    src: nftables/firewall-{{ mail.protection.type }}.nft
     dest: /etc/nftables/60-postfix.nft
     mode: '0600'
   tags: firewall

@@ -1,0 +1,53 @@
+---
+
+- name: Load the server’s keys
+  ansible.builtin.include_tasks: restore/main.yml
+  tags: restore
+
+- name: Set the facts
+  ansible.builtin.include_tasks: install/facts.yml
+  tags: facts
+
+- name: Install the packages
+  ansible.builtin.include_tasks: install/packages.yml
+  tags: apt
+
+- name: Add unbound specific configuration
+  ansible.builtin.include_tasks: install/dns.yml
+  tags: dns
+
+- name: Create or load the server’s keys
+  ansible.builtin.include_tasks: install/server-keys.yml
+  tags: keys, facts
+
+- name: Configure users’ keys
+  ansible.builtin.include_tasks: install/users-all-keys.yml
+  loop: '{{ wireguard.configs }}'
+  loop_control:
+    loop_var: config
+    index_var: config_id
+  tags: keys
+
+- name: Create the server configuration file
+  ansible.builtin.include_tasks: install/server-config.yml
+  tags: config
+
+- name: Create users’ user config files
+  ansible.builtin.include_tasks: install/users-all-config.yml
+  loop: '{{ wireguard.configs }}'
+  loop_control:
+    loop_var: config
+    index_var: config_id
+  tags: users
+
+- name: Configure the firewall
+  ansible.builtin.include_tasks: install/firewall.yml
+  tags: firewall
+
+- name: Deploy the custom scripts
+  ansible.builtin.include_tasks: install/scripts.yml
+  tags: scripts
+
+- name: Backup the server’s keys
+  ansible.builtin.include_tasks: backup/main.yml
+  tags: backup

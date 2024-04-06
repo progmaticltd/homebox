@@ -42,14 +42,14 @@ Your api key is now safely stored into _pass_.
 
 Everything is handled through an Ansible role, with one command:
 
-```txt
+```plain
 cd playbooks
 ROLE=dns-publish ansible-playbook -v install.yml
 ```
 
 The output should be something like this:
 
-```txt
+```plain
 PLAY RECAP *************************************************************************************************************
 homebox                    : ok=61   changed=0    unreachable=0    failed=0    skipped=15   rescued=0    ignored=1
 

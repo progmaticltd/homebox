@@ -18,6 +18,9 @@
   /etc/group r,
   /etc/passwd r,
 
+  # virtual fs
+  /proc/@{pid}/stat r,
+
   # When storing indexes outside maildir
   owner /home/{users,archives}/*/mails/indexes/**/dovecot.index.log rak,
   owner /home/{users,archives}/*/mails/indexes/**/dovecot.index.log rwk,

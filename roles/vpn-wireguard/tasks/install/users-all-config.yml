@@ -1,0 +1,8 @@
+---
+
+- name: Create users’ user config files
+  ansible.builtin.include_tasks: install/users-config.yml
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+  tags: users

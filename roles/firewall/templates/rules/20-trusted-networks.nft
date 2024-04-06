@@ -1,0 +1,26 @@
+#!/usr/sbin/nft -f
+
+# This set let you trust entire networks,
+# without having to create other rules.
+# It is mainly useful with the Wireguard role,
+# that automatically adds the VPN's network on start.
+# Some services, like postfix submission(s) and dovecot,
+# can then whitelist these connections automatically.
+
+table inet filter {
+
+    set trusted_networks_ipv4 {
+        typeof ip saddr
+        flags interval,timeout
+        auto-merge
+        timeout {{ security.trusted.period }}
+    }
+
+    set trusted_networks_ipv6 {
+        typeof ip6 saddr
+        flags interval,timeout
+        auto-merge
+        timeout {{ security.trusted.period }}
+    }
+
+}

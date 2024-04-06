@@ -1,7 +1,7 @@
 ---
 
 - name: Load or create the password for the read-only account
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.set_fact:
     ldap_ro_password: '{{ lookup(creds.store, creds.prefix + "/ldap/readonly") }}'
   tags: facts
@@ -17,7 +17,7 @@
   tags: facts
 
 - name: Create or get the database account password
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.set_fact:
     ejabberd_db_password: >-
       {{ lookup(creds.store, creds.prefix + "/postgresql/ejabberd"

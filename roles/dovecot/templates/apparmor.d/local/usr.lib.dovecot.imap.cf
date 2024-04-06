@@ -19,7 +19,8 @@
 
   # For rspamd
   /sys/kernel/mm/transparent_hugepage/enabled r,
-  /usr/bin/logger Cx,
+  /usr/bin/logger mr,
+  /usr/bin/logger Px,
 
   # Dovecot write temporary files in the sieve scripts folder
   /var/lib/dovecot/sieve/* rw,

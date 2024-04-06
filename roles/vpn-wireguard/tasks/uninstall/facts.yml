@@ -1,0 +1,6 @@
+---
+
+- name: Initialise user keys
+  ansible.builtin.set_fact:
+    user_keys: { }
+  tags: facts

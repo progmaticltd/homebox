@@ -9,7 +9,7 @@ root@bochica ~# cert-renew
 The first time it is run, this command should takes some significant time, and will create all the certificates using
 LetsEncrypt certificate authority. Once run, the `cert-status` command should give you something like this:
 
-```txt
+```plain
 root@bochica ~# cert-status
 Domain      | Valid from                | Valid until               | Days left  | Issuer  | Full domains list             | Status
 imap        | Dec 27 12:02:40 2023 GMT  | Mar 26 12:02:39 2024 GMT  | 71         | R3      | DNS:imap.sweethome.box        | OK

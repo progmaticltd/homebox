@@ -9,32 +9,18 @@ export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 # The default duration to use for whitelisting
 period="1d"
 
-# List of ports to whitelist
-ports="143 993 995 465 587 5222"
+# List of possible ports to whitelist
+ports="110 995 143 993 465 587 4190"
 
-# The firewall list to update
-fw_set=""
+for port in $ports; do
 
-if ipcalc-ng -s -c -4 "$IP"; then
-    fw_set="trusted_ipv4"
-elif ipcalc-ng -s -c -6 "$IP"; then
-    fw_set="trusted_ipv6"
-fi
-
-# Submission(s) authentication is now allowed from these IPs.
-# imap(S) and pop3s are whitelisted, bypassing subsequent firewall rules.
-if [ "$fw_set" != "" ]; then
-
-    # Check if the IP address already contained in the set
-    # nft element query does not work with intervals.
-    if ! nft list set inet filter "$fw_set" | grep -qF "$IP"; then
-
-        for port in $ports; do
-            nft add element inet filter "$fw_set" "{ $IP . $port timeout $period }"
-        done
-
+    # Skip the ports that are not listening
+    if ! nc -z 127.0.0.1 $port; then
+       continue
     fi
 
-fi
+    fw-control trust "$IP" "$port" "$period"
+
+done
 
 exec "$@"
