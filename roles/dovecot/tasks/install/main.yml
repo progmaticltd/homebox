@@ -7,14 +7,8 @@
 - name: Install the required packages
   ansible.builtin.include_tasks: install/packages.yml
 
-- name: Configure firewall for full public access
-  when: not mail.autoban.active
-  ansible.builtin.include_tasks: install/firewall-public.yml
-  tags: firewall
-
-- name: Configure firewall for automatic IP banning access
-  when: mail.autoban.active
-  ansible.builtin.include_tasks: install/firewall-autoban.yml
+- name: Configure firewall
+  ansible.builtin.include_tasks: install/firewall-{{ mail.protection.type }}.yml
   tags: firewall
 
 - name: Configure all DNS records

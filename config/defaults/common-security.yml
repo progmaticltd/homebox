@@ -23,6 +23,8 @@ security_default:
     active: true
     rate: 10/minute
     period: 2h
+  trusted:
+    period: 2h
 
   # The size of the Diffie-Hellman parameters to use for DHE ciphers.
   # Predifined values from the RFC7919 will be used wherever possible.
@@ -101,7 +103,7 @@ passwords_default:
 #
 # Credentials store to use
 creds_default:
-  store: password
+  store: ansible.builtin.password
   prefix: '../backup/{{ network.domain }}/'
   opts:
     create: ''   # no creation option for plain text passwords

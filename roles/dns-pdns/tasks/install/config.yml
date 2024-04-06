@@ -39,7 +39,7 @@
   tags: config
 
 - name: Create a custom api key
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.set_fact:
     api_key: >-
       {{ lookup(creds.store, creds.prefix + "dns/api-key" +

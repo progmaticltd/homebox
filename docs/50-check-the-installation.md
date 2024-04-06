@@ -9,7 +9,7 @@ All the checking are now done on the target server.
 
 Once the installation is finished, you should now see the users list, by running the command `getent passwd -s ldap`:
 
-```txt
+```plain
 root@bochica:~# getent passwd -s ldap
 frodo:x:1001:1001:Frodo Baggins:/home/users/frodo:/bin/dash
 samwise:x:1002:1002:Samwise Gamgee:/home/users/samwise:/bin/dash
@@ -25,7 +25,7 @@ see on the next page the command to run to "plug" your system on internet.
 
 The status of your DNS server can be seen using the `dns-status` command:
 
-```txt
+```plain
 root@bochica:~# dns-status
 DNS server for sweethome.box is not live.
 ;; resolution failed: ncache nxdomain
@@ -41,7 +41,7 @@ DNS server for sweethome.box is not live.
 
 Once the server is live, you should see instead something like this:
 
-```txt
+```plain
 DNS keys are published:
 Zone                          Type Act Pub Size    Algorithm       ID   Location    Keytag
 ------------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ Now that your server is ready to use, you can publish the DNS server on internet
 The credentials created from the installation, should be stored in a folder named from the domain name, in the _backup_
 folder. This folder is excluded from git as well:
 
-```txt
+```plain
 ls -lR backup
 backup:
 total 8

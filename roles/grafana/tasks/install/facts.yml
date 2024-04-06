@@ -13,7 +13,7 @@
   tags: facts
 
 - name: Generate or load the password for grafana database access
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.set_fact:
     grafana_db_password: >
       {{ lookup(creds.store,
@@ -22,14 +22,14 @@
   tags: facts
 
 - name: Load the password for the read-only LDAP account
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.set_fact:
     readonly_password: >-
       {{ lookup(creds.store, creds.prefix + "/ldap/readonly") }}
   tags: facts
 
 - name: Load or crate the password for the admin account
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.set_fact:
     grafana_admin_password: >-
       {{ lookup(creds.store, creds.prefix + "/grafana/admin"
@@ -37,7 +37,7 @@
   tags: facts
 
 - name: Load or create the password for the organisation manager account
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.set_fact:
     grafana_manager_password: >-
       {{ lookup(creds.store, creds.prefix + "/grafana/manager"

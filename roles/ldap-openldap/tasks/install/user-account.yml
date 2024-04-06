@@ -7,7 +7,7 @@
 
 - name: Try to load user’s password from the password store
   register: load_user_password
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.set_fact:
     user_password: '{{ lookup(creds.store, password_path) }}'
   ignore_errors: true
@@ -26,7 +26,7 @@
       tags: facts
 
     - name: Create a random password using xkcd
-      no_log: '{{ not system.devel }}'
+      no_log: '{{ hide_secrets }}'
       register: xkcd_pass_cmd
       ansible.builtin.shell: >-
         xkcdpass
@@ -42,7 +42,7 @@
       tags: facts
 
     - name: Load saved password from the password store
-      no_log: '{{ not system.devel }}'
+      no_log: '{{ hide_secrets }}'
       ansible.builtin.set_fact:
         user_password: '{{ lookup(creds.store, password_path + " create=true userpass=" + userpass) }}'
       tags: facts

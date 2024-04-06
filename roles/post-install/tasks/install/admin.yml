@@ -1,14 +1,14 @@
 ---
 
 - name: Load or create the password for the admin user
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.set_fact:
     admin_password: >-
       {{ lookup(creds.store, creds.prefix + "/user/admin"
       + creds.opts.create) }}
 
 - name: Create random salt
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.set_fact:
     salt_password: >-
       {{ lookup("password", "/dev/null",

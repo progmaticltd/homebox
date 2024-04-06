@@ -1,0 +1,49 @@
+---
+
+- name: Load private key from the user directory
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.set_fact:
+    user_ipv4: '{{ peers_info[user.uid][config.name].ipv4 }}/24'
+    user_ipv6: '{{ peers_info[user.uid][config.name].ipv6 }}/64'
+    user_private_key: '{{ peers_info[user.uid][config.name].private_key }}'
+    user_pre_shared_key: '{{ peers_info[user.uid][config.name].pre_shared_key }}'
+  tags: users
+
+- name: Create the configuration file
+  register: user_config
+  ansible.builtin.template:
+    src: users/{{ config.type }}.conf
+    dest: /home/archives/{{ user.uid }}/files/vpn/{{ config.name }}/user.conf
+    mode: '0600'
+    owner: '{{ user.uid }}'
+    group: '{{ user.uid }}'
+  tags: users
+
+- name: Create the QR code file
+  when: user_config.changed
+  tags: users
+  block:
+    - name: Create the QR code image file
+      ansible.builtin.shell: >-
+        qrencode -t png32
+        -r /home/archives/{{ user.uid }}/files/vpn/{{ config.name }}/user.conf
+        -o /home/archives/{{ user.uid }}/files/vpn/{{ config.name }}/qrcode.png
+      changed_when: true
+    - name: Set the permissions
+      ansible.builtin.file:
+        path: /home/archives/{{ user.uid }}/files/vpn/{{ config.name }}/qrcode.png
+        owner: '{{ user.uid }}'
+        group: '{{ user.uid }}'
+        mode: '0600'
+    - name: Create the QR code ascii file
+      ansible.builtin.shell: >-
+        qrencode -t ansiutf8
+        -r /home/archives/{{ user.uid }}/files/vpn/{{ config.name }}/user.conf
+        -o /home/archives/{{ user.uid }}/files/vpn/{{ config.name }}/qrcode.asc
+      changed_when: true
+    - name: Set the permissions
+      ansible.builtin.file:
+        path: /home/archives/{{ user.uid }}/files/vpn/{{ config.name }}/qrcode.asc
+        owner: '{{ user.uid }}'
+        group: '{{ user.uid }}'
+        mode: '0600'

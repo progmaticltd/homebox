@@ -1,0 +1,8 @@
+---
+
+- name: Configure users’ keys
+  ansible.builtin.include_tasks: install/users-keys.yml
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+  tags: keys

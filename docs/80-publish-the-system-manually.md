@@ -6,17 +6,17 @@ On the target server, run the command `pdnsutil export-zone-dnskey` to export th
 
 The syntax is `pdnsutil export-zone-dnskey <domain> <key-id>`. For instance:
 
-```txt
+```plain
 root@bochica:~# pdnsutil export-zone-dnskey sweethome.box 1
 sweethome.box IN DNSKEY 257 3 13 0YhoHk1QTXntIJMmSpRQsu0xDJXKGWryc8/1maCET5hgBNpkj+wA1RJ/DB9hUgbWxJ4zhL4p/Vzsdfc3Xbt0wg==
 ```
 
-```txt
+```plain
 root@bochica:~# pdnsutil export-zone-dnskey sweethome.box 2
 sweethome.box IN DNSKEY 257 3 13 woa93fOM44Zi454jawfRnrsXGM9RLR/olf3Uif1S7uQ3WBqCo3jc4AtXfWt1O/ecTxKpx35SpDPw2VoGTR28Sw==
 ```
 
-```txt
+```plain
 root@bochica:~# pdnsutil export-zone-dnskey sweethome.box 3
 sweethome.box IN DNSKEY 256 3 13 qVdBeyVDeRNg8CB3bpXlxPwH1VxX1BaSw+WaUcXeK51Mbm7wIxScAJwx9fnkynJjCIfL6vChpoUcy4x5Z5IerA==
 ```

@@ -20,6 +20,10 @@
   ansible.builtin.include_tasks: install/autoban.yml
   tags: rules, autoban, scripts
 
+- name: Deploy other utility scripts
+  ansible.builtin.include_tasks: install/scripts.yml
+  tags: scripts
+
 - name: Set the remote access firewall rules for private networks
   ansible.builtin.include_tasks: install/private-access.yml
   tags: rules

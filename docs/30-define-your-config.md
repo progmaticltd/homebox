@@ -91,6 +91,29 @@ Same for the inventory file for Ansible:
 cp config/samples/hosts.yml config/hosts-<domain-name>.yml
 ```
 
+The inventory should contains this:
+
+```yml
+all:
+  hosts:
+    homebox:
+      ansible_host: homebox.example.home
+      ansible_user: hbinstall
+      ansible_port: 22
+      ansible_become: true
+```
+
+You can also use the root user if you prefer:
+
+```yml
+all:
+  hosts:
+    homebox:
+      ansible_host: homebox.example.home
+      ansible_user: root
+      ansible_port: 22
+```
+
 Then, activate the domain with this command:
 
 ```sh

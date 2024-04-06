@@ -3,7 +3,7 @@
 # Use Gandi’s API to publish DNSSEC records
 
 - name: Load gandi’s api key
-  no_log: '{{ not system.devel }}'
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.set_fact:
     api_key: '{{ lookup(creds.store, creds.prefix + "/gandi/api-key") }}'
 

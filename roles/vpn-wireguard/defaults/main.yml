@@ -1,0 +1,29 @@
+---
+
+# Default variables
+wireguard:
+  firewall:
+    type: basic
+  network:
+    ipv4_address: 10.10.1.0/24
+    ipv6_address: fdde:cade:2020:deaf::/64
+    port: 51820
+  # IP address increment for each user
+  # for 254 IPs (/24), this offers a maximum of 25 users with an IPv4 address.
+  # if you need more user, increase the cidr range, like /16, /12 or /8,
+  # or reduce the increment.
+  # In the current configuration, IPv6 increment gives the same last digit
+  # of the IPv4 address, for clarity.
+    ipv4_incr: 10
+    ipv6_incr: 16
+  # Send "keeps alive" packets at this interval.
+  keep_alive: 15
+  # By default, reates two configs for each user.
+  configs:
+    - name: default
+      type: basic
+    - name: mobile
+      type: enforce
+
+# This will contains peer detailed info to build the server configuration
+peers_info: { }

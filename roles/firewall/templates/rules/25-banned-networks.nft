@@ -1,0 +1,34 @@
+#!/usr/sbin/nft -f
+
+# This set let you ban entire networks,
+# without having to create other rules.
+
+table inet filter {
+
+    set banned_networks_ipv4 {
+        typeof ip saddr
+        flags interval,timeout
+        auto-merge
+        timeout {{ security.autoban.period }}
+    }
+
+    set banned_networks_ipv6 {
+        typeof ip6 saddr
+        flags interval,timeout
+        auto-merge
+        timeout {{ security.autoban.period }}
+    }
+
+    chain input {
+
+        ip saddr @banned_networks_ipv4 \
+        ct state new counter drop \
+        comment "Drop connections from banned networks (v4)"
+
+        ip6 saddr @banned_networks_ipv6 \
+        ct state new counter drop \
+        comment "Drop connections from banned networks (v6)"
+
+    }
+
+}

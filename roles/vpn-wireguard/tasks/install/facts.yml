@@ -1,0 +1,56 @@
+---
+
+- name: Get the first user ID
+  register: first_user_id_cmd
+  ansible.builtin.shell: >-
+    set -o pipefail;
+    getent passwd -s ldap | cut -d : -f 3
+    | sort -n | head -n 1
+  args:
+    executable: /bin/bash
+  changed_when: false
+  tags: facts
+
+- name: Store the user ID base
+  ansible.builtin.set_fact:
+    user_id_base: >-
+      {{ first_user_id_cmd.stdout | int - 1 | int }}
+  tags: facts
+
+# Basic implementation of RFC 4193 (https://en.wikipedia.org/wiki/Unique_local_address)
+- name: Get the date
+  ansible.builtin.set_fact:
+    date: '{{ lookup("pipe", "date +%s%N") }}'
+  tags: facts
+
+- name: Get the machine ID
+  register: machine_id_file
+  ansible.builtin.slurp:
+    src: /var/lib/dbus/machine-id
+  tags: facts
+
+- name: Store the machine ID
+  ansible.builtin.set_fact:
+    machine_id: '{{ machine_id_file["content"] | b64decode }}'
+  tags: facts
+
+- name: Extract the prefix
+  ansible.builtin.set_fact:
+    ipv6prefix_full: '{{ (date + machine_id) | hash("sha1") }}'
+  tags: facts
+
+- name: Extract the prefix
+  ansible.builtin.set_fact:
+    ipv6prefix: 'fd{{ ipv6prefix_full[30:] }}'
+  tags: facts
+
+- name: Format the prefix
+  ansible.builtin.set_fact:
+    ipv6prefix: '{{ ipv6prefix | regex_replace("(....)", "\1:") }}:'
+  tags: facts
+
+- name: Compute the server private IP address
+  ansible.builtin.set_fact:
+    server_private_ip4: '{{ wireguard.network.ipv4_address | ansible.utils.nthhost(1) }}'
+    server_private_ip6: '{{ wireguard.network.ipv6_address | ansible.utils.nthhost(1) }}'
+  tags: facts
