@@ -1,5 +1,20 @@
 ---
 
+- name: Check apt mirror is valid for us
+  changed_when: false
+  failed_when: not system_apt_mirror_release_match.rc == 0
+  register: system_apt_mirror_release_match
+  ansible.builtin.shell: >-
+    wget --no-config -qO - --wait=3 --random-wait \
+      "http://{{ system.apt.mirror }}/debian/dists/{{ distribution_release }}/Release" \
+        |egrep -q "^Codename[:][[:blank:]]+{{ distribution_release }}"
+  loop:
+    - "{{ system.release }}"
+    - "{{ system.release }}-updates"
+    - "{{ system.release }}-backports"
+  loop_control:
+    loop_var: distribution_release
+
 - name: Check if we can run apt update without error
   ansible.builtin.apt:
     update_cache: true

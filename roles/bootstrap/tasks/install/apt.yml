@@ -6,6 +6,22 @@
   ansible.builtin.set_fact:
     sections: '{{ system.apt.sections | join(" ") }}'
 
+
+- name: Check apt mirror is valid for us
+  changed_when: false
+  failed_when: not system_apt_mirror_release_match.rc == 0
+  register: system_apt_mirror_release_match
+  ansible.builtin.shell: >-
+    wget --no-config -qO - --wait=3 --random-wait \
+      "http://{{ system.apt.mirror }}/debian/dists/{{ distribution_release }}/Release" \
+        |egrep -q "^Codename[:][[:blank:]]+{{ distribution_release }}"
+  loop:
+    - "{{ system.release }}"
+    - "{{ system.release }}-updates"
+    - "{{ system.release }}-backports"
+  loop_control:
+    loop_var: distribution_release
+
 - name: Initialise default repositories
   register: repositories
   ansible.builtin.template:

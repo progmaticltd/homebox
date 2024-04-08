@@ -68,7 +68,7 @@ If you are planning to work with multiple domains, jump to the next section dire
 Once you have chosen your flavour, you need to copy the configuration sample, to create yours:
 
 ```sh
-cp config/samples/minimal.yml config/system.yml
+cp config/samples/system-minimal.yml config/system.yml
 ```
 
 You also need to copy the inventory file for Ansible.
@@ -79,10 +79,10 @@ cp config/samples/hosts.yml config/hosts.yml
 
 ### Working with multiple domains
 
-To work with multiple domains, uses these commands instead, by adjusting `<domain-name>`:
+To work with multiple domains, use these commands instead, by adjusting `<domain-name>`:
 
 ```sh
-cp config/samples/minimal.yml config/system-<domain-name>.yml
+cp config/samples/system-minimal.yml config/system-<domain-name>.yml
 ```
 
 Same for the inventory file for Ansible:
@@ -91,7 +91,7 @@ Same for the inventory file for Ansible:
 cp config/samples/hosts.yml config/hosts-<domain-name>.yml
 ```
 
-The inventory should contains this:
+The inventory should contain this:
 
 ```yml
 all:
@@ -265,6 +265,8 @@ system:
   release: bookworm
   devel: false
   debug: false
+  apt:
+    mirror: deb.debian.org
 ```
 
 #### DNS provider
