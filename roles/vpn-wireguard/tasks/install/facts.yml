@@ -18,7 +18,7 @@
   tags: facts
 
 - name: Display wireguard configuration
-  debug:
+  ansible.builtin.debug:
     var: wireguard
     verbosity: 2
   tags: facts
