@@ -11,23 +11,25 @@
   register: genkey_cmd
   ansible.builtin.shell: >-
     set -o pipefail;
+    umask 077;
     wg genkey | tee private-key
     | wg pubkey >public-key
   args:
-    creates: /etc/wireguard/public-key
+    creates: private-key
     chdir: /etc/wireguard
     executable: /bin/bash
   tags: keys
 
 - name: Load the private key previously generated
-  no_log: '{{ hide_secrets }}'
   tags: keys
   block:
     - name: Dump private key
+      no_log: '{{ hide_secrets }}'
       register: slurp_private_key
       ansible.builtin.slurp:
         src: /etc/wireguard/private-key
     - name: Remember the private key
+      no_log: '{{ hide_secrets }}'
       ansible.builtin.set_fact:
         server_private_key: '{{ slurp_private_key["content"] | b64decode | trim }}'
 

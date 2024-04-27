@@ -13,7 +13,7 @@
       set_fact:
         roles_list: '{{ lookup("env", "ROLE").split(",") }}'
 
-- name: Run the install tasks for each role
+- name: Run the uninstall tasks for each role
   hosts: homebox
   vars:
     debug: '{{ system.debug }}'

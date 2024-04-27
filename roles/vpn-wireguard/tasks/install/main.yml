@@ -1,9 +1,5 @@
 ---
 
-- name: Load the server’s keys
-  ansible.builtin.include_tasks: restore/main.yml
-  tags: restore
-
 - name: Set the facts
   ansible.builtin.include_tasks: install/facts.yml
   tags: facts

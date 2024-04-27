@@ -17,6 +17,12 @@
       {{ first_user_id_cmd.stdout | int - 1 | int }}
   tags: facts
 
+- name: Display wireguard configuration
+  debug:
+    var: wireguard
+    verbosity: 2
+  tags: facts
+
 # Basic implementation of RFC 4193 (https://en.wikipedia.org/wiki/Unique_local_address)
 - name: Get the date
   ansible.builtin.set_fact:

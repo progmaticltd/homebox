@@ -17,7 +17,7 @@
   hosts: homebox
   vars:
     debug: '{{ debug | default(system.debug) }}'
-    hide_secrets: '{{ hide_secrets | default(not system.devel) }}'
+    hide_secrets: true
     backup_directory: '{{ playbook_dir }}/../backup/{{ network.domain }}/'
   vars_files:
     - '{{ playbook_dir }}/../config/defaults/common-security.yml'
