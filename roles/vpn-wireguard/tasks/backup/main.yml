@@ -14,6 +14,7 @@
   tags: backup
 
 - name: Store the keys
+  no_log: '{{ hide_secrets }}'
   ansible.builtin.set_fact:
     private_key: '{{ private_key_slurp["content"] | b64decode }}'
     public_key: '{{ public_key_slurp["content"] | b64decode }}'
@@ -27,12 +28,12 @@
       no_log: '{{ hide_secrets }}'
       ansible.builtin.set_fact:
         _: >-
-          {{ lookup(creds.store, creds.prefix + "/wireguard/private-key",
+          {{ lookup(creds.store, creds.prefix + "/wireguard/server/private-key",
           create=true, missing="create", userpass=private_key) }}
     - name: Store the public key
       ansible.builtin.set_fact:
         _: >-
-          {{ lookup(creds.store, creds.prefix + "/wireguard/public-key",
+          {{ lookup(creds.store, creds.prefix + "/wireguard/server/public-key",
           create=true, missing="create", userpass=public_key) }}
 
 - name: Store the public and the private keys in plain text files
@@ -43,17 +44,17 @@
   block:
     - name: Create credentials directory
       ansible.builtin.file:
-        path: '{{ backup_directory }}/wireguard'
+        path: '{{ backup_directory }}/wireguard/server'
         mode: '0700'
         state: directory
     - name: Store the private key
       no_log: '{{ hide_secrets }}'
       ansible.builtin.copy:
         content: '{{ private_key }}'
-        dest: '{{ backup_directory }}/wireguard/private-key'
+        dest: '{{ backup_directory }}/wireguard/server/private-key'
         mode: '0600'
     - name: Store the public key
       ansible.builtin.copy:
         content: '{{ public_key }}'
-        dest: '{{ backup_directory }}/wireguard/public-key'
+        dest: '{{ backup_directory }}/wireguard/server/public-key'
         mode: '0600'

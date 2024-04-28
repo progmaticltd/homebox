@@ -16,7 +16,8 @@
 - name: Run the backup tasls on the roles selected
   hosts: homebox
   vars:
-    debug: '{{ system.debug }}'
+    debug: '{{ debug | system.debug }}'
+    hide_secrets: true
     backup_directory: '{{ playbook_dir }}/../backup/{{ network.domain }}/'
   vars_files:
     - '{{ playbook_dir }}/../config/defaults/common-security.yml'
