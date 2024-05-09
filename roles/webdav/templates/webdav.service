@@ -4,9 +4,9 @@ ConditionDirectoryNotEmpty=%h/.config/webdav/
 
 [Service]
 Type=forking
-ExecStartPre=/usr/bin/rm /var/tmp/webdav-user/%u/socket
+ExecStartPre=/usr/bin/rm -f /var/tmp/webdav-user/%u/socket
 ExecStart=/usr/sbin/nginx -c %h/.config/webdav/nginx.conf
-ExecStop=/usr/bin/rm /var/tmp/webdav-user/%u/socket
+ExecStopPost=/usr/bin/rm -f /var/tmp/webdav-user/%u/socket
 Restart=on-failure
 WorkingDirectory=%h
 PrivateTmp=yes
