@@ -1,0 +1,12 @@
+---
+
+- name: Load the git-users group
+  ansible.builtin.getent:
+    key: git-users
+    database: group
+    split: ':'
+  tags: groups
+
+- name: Store the git-group id
+  ansible.builtin.set_fact:
+    git_users_gid: '{{ getent_group["git-users"][1] }}'

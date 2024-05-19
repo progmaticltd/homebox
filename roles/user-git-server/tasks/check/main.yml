@@ -2,7 +2,7 @@
 
 - name: Load the common facts
   ansible.builtin.include_tasks:
-    file: base/facts.yml
+    file: check/facts.yml
   tags: facts
 
 - name: Check the git-users group
@@ -17,7 +17,7 @@
 
 - name: Check SSH settings for each user
   ansible.builtin.include_tasks:
-    file: check/configure-user.yml
+    file: check/user.yml
   loop: '{{ ssh_users }}'
   loop_control:
     loop_var: user

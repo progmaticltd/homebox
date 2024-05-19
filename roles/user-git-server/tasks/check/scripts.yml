@@ -1,0 +1,20 @@
+---
+
+- name: Load script stats
+  register: git_only_script
+  ansible.builtin.stat:
+    path: /usr/local/bin/git-only
+  tags: scripts
+
+- name: Ensure script stats are correct
+  ansible.builtin.assert:
+    that:
+      - git_only_script.stat.uid == 0
+      - git_only_script.stat.gid == git_users_gid | int
+  tags: scripts
+
+- name: Check the git-only script
+  ansible.builtin.shell:
+    cmd: /usr/local/bin/git-only --help
+  changed_when: false
+  tags: scripts

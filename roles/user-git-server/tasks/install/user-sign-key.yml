@@ -6,6 +6,7 @@
   ansible.builtin.file:
     path: '{{ backup_directory }}/ssh/users/{{ user.uid }}'
     state: directory
+    mode: '0700'
   tags: users, keys
 
 - name: Create a unique the key ID from the data
@@ -25,6 +26,7 @@
   ansible.builtin.copy:
     content: '{{ sshkey.type }} {{ sshkey.data | replace(" ", "") }} {{ sshkey.comment | default("") }}'
     dest: '{{ backup_directory }}/ssh/users/{{ user.uid }}/{{ key_file_name }}.pub'
+    mode: '0644'
   tags: users, keys
 
 - name: Temporary decrypt the server CA key
@@ -68,6 +70,7 @@
   ansible.builtin.template:
     src: ssh-user.conf
     dest: '{{ backup_directory }}/ssh/users/{{ user.uid }}/{{ key_file_name }}-ssh.conf'
+    mode: '0644'
   tags: users, keys
 
 - name: Re-encrypt the key

@@ -1,0 +1,27 @@
+---
+
+- name: Load the users details
+  ansible.builtin.getent:
+    key: '{{ user.uid }}'
+    database: passwd
+    split: ':'
+  tags: users
+
+- name: Store the user UID number
+  ansible.builtin.set_fact:
+    uid_number: '{{ getent_passwd[user.uid][1] }}'
+  tags: users
+
+- name: Check that the user has repositories defined
+  register: user_git_folder
+  ansible.builtin.stat:
+    path: '/home/archives/{{ user.uid }}/git/repositories'
+  tags: users
+
+- name: Ensure the git folder exists
+  ansible.builtin.assert:
+    that:
+      - 'user_git_folder.stat.isdir'
+      - 'user_git_folder.stat.mode == "0700"'
+      - 'user_git_folder.stat.uid == uid_number | int'
+  tags: users

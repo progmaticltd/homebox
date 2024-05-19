@@ -1,0 +1,6 @@
+---
+
+- name: Load and store the full list of users with SSH options defined
+  ansible.builtin.set_fact:
+    ssh_users: '{{ users | selectattr("ssh", "defined") }}'
+  tags: facts

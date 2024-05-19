@@ -4,5 +4,7 @@
   ansible.builtin.copy:
     src: git-only.sh
     dest: /usr/local/bin/git-only
-    mode: '0755'
+    owner: root
+    group: git-users
+    mode: '0750'
   tags: scripts
