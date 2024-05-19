@@ -1,0 +1,6 @@
+---
+
+# Default settings
+git:
+  ssh:
+    validity: 52w

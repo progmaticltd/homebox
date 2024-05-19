@@ -25,10 +25,10 @@
     - '{{ playbook_dir }}/../config/system.yml'
   tasks:
     - name: Run the role selected
-      tags: always
       include_role:
         name: '{{ role }}'
         tasks_from: install/main.yml
       loop: '{{ [ "common-init" ] + roles_list }}'
       loop_control:
         loop_var: role
+      tags: always

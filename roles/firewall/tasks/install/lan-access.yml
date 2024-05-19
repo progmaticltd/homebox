@@ -1,0 +1,18 @@
+---
+
+- name: Deploy the SSH private access file
+  when: remote_ip_private
+  notify: Restart nftables
+  ansible.builtin.template:
+    src: rules/20-ssh-private.nft
+    dest: /etc/nftables/20-ssh-private.nft
+    mode: '0600'
+  tags: rules
+
+- name: Remove the SSH private access file
+  when: not remote_ip_private
+  notify: Restart nftables
+  ansible.builtin.file:
+    path: /etc/nftables/20-ssh-private.nft
+    state: absent
+  tags: rules

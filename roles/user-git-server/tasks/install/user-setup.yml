@@ -1,0 +1,30 @@
+---
+
+- name: Add the user to the git_users group
+  ansible.builtin.user:
+    name: '{{ user.uid }}'
+    groups: git-users
+    append: true
+  tags: users
+
+- name: Create the git folders
+  ansible.builtin.file:
+    path: '{{ path }}'
+    state: directory
+    mode: '0700'
+    owner: '{{ user.uid }}'
+    group: '{{ user.uid }}'
+  loop:
+    - /home/archives/{{ user.uid }}/git
+    - /home/archives/{{ user.uid }}/git/repositories
+  loop_control:
+    loop_var: path
+  tags: users
+
+- name: Sign each of user’s key
+  ansible.builtin.include_tasks:
+    file: install/user-sign-key.yml
+  loop: '{{ user.ssh | selectattr("usage", "equalto", "git") }}'
+  loop_control:
+    loop_var: key
+  tags: users, keys

@@ -1,0 +1,42 @@
+#!/usr/sbin/nft -f
+
+# This rule is added after other SSH rules, only allowing private SSH access.
+# When the setting security.ssh.public is set to false
+
+table inet filter {
+
+    set trusted_networks_ipv4 {
+        typeof ip saddr
+        flags interval,timeout
+        auto-merge
+        timeout {{ security.trusted.period }}
+    }
+
+    set trusted_networks_ipv6 {
+        typeof ip6 saddr
+        flags interval,timeout
+        auto-merge
+        timeout {{ security.trusted.period }}
+    }
+
+    chain input {
+
+        # Accept connections from trusted networks
+        tcp dport ssh \
+        ip saddr @trusted_networks_ipv4 \
+        ct state new \
+        counter accept \
+        comment "Accept SSH connections from trusted IPv4"
+
+        tcp dport ssh \
+        ip6 saddr @trusted_networks_ipv6 \
+        ct state new \
+        counter accept \
+        comment "Accept SSH connections from trusted IPv6"
+
+        # Drop other SSH connections
+        tcp dport ssh ct state new counter drop \
+        comment "Drop other ssh connections"
+    }
+
+}

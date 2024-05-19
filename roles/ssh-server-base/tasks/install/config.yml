@@ -1,28 +1,38 @@
 ---
 
 - name: Do not allow SSH from root with a password
-  notify: Restart SSH
+  notify:
+    - Check SSH config
+    - Restart SSH
   ansible.builtin.replace:
     path: /etc/ssh/sshd_config
     regexp: '^PermitRootLogin yes'
     replace: 'PermitRootLogin without-password'
     mode: '0600'
-
-- name: Lock the root account
-  ansible.builtin.user:
-    name: root
-    password_lock: '{{ security.lock_root_password }}'
+  tags: config
 
 - name: Remove users password access from SSH
-  notify: Restart SSH
+  notify:
+    - Check SSH config
+    - Restart SSH
   ansible.builtin.replace:
     path: /etc/ssh/sshd_config
     regexp: '^#?PasswordAuthentication yes.*'
     replace: 'PasswordAuthentication no'
     mode: '0600'
+  tags: config
 
-- name: Custom SSH server setting
+- name: Check if users have SSH keys defined
+  set_fact:
+    user_ssh_access: '{{ users | selectattr("ssh", "defined") | length > 0 }}'
+  tags: config
+
+- name: Add custom settings for the  SSH server
+  notify:
+    - Check SSH config
+    - Restart SSH
   ansible.builtin.template:
-    src: ssh/sshd.conf
+    src: sshd.conf
     dest: /etc/ssh/sshd_config.d/homebox.conf
     mode: '0644'
+  tags: config

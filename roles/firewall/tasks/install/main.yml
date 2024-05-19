@@ -6,6 +6,7 @@
 
 - name: Install the required packages
   ansible.builtin.include_tasks: install/packages.yml
+  tags: apt
 
 - name: Prepare logging settings
   ansible.builtin.include_tasks: install/logging.yml
@@ -15,7 +16,7 @@
   ansible.builtin.include_tasks: install/rules.yml
   tags: rules
 
-- name: Create sets to store trusted and banned networks
+- name: Restrict SSH access using automatic ban
   when: security.autoban.active
   ansible.builtin.include_tasks: install/autoban.yml
   tags: rules, autoban, scripts
@@ -24,13 +25,13 @@
   ansible.builtin.include_tasks: install/scripts.yml
   tags: scripts
 
-- name: Set the remote access firewall rules for private networks
-  ansible.builtin.include_tasks: install/private-access.yml
+- name: Add or remove the rules for LAN networks
+  ansible.builtin.include_tasks: install/lan-access.yml
   tags: rules
 
-- name: Configure SSH
-  ansible.builtin.include_tasks: install/ssh-config.yml
-  tags: ssh
+- name: Deploy private or public final SSH access rules
+  ansible.builtin.include_tasks: install/ssh-rules.yml
+  tags: ssh, rules
 
 - name: Start the firewall
   ansible.builtin.include_tasks: install/start.yml

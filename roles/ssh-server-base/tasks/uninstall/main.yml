@@ -1,0 +1,9 @@
+---
+
+- name: Remove SSH config settings
+  ansible.builtin.include_tasks: uninstall/config.yml
+  tags: config
+
+- name: Remove the certificates for CA auth
+  ansible.builtin.include_tasks: uninstall/cert-auth.yml
+  tags: ca

@@ -1,0 +1,7 @@
+---
+
+- name: Remove the restricted git script
+  ansible.builtin.file:
+    path: /usr/local/bin/git-only
+    state: absent
+  tags: scripts

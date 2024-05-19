@@ -19,6 +19,23 @@
     mode: '0600'
   tags: rules, autoban
 
+- name: Deploy SSH rules for automatic ban
+  when: security.ssh.public
+  notify: Restart nftables
+  ansible.builtin.template:
+    src: rules/30-ssh-autoban.nft
+    dest: /etc/nftables/30-ssh-autoban.nft
+    mode: '0600'
+  tags: rules, autoban
+
+- name: Remove SSH rules for automatic ban
+  when: not security.ssh.public
+  notify: Restart nftables
+  ansible.builtin.file:
+    path: /etc/nftables/30-ssh-autoban.nft
+    state: absent
+  tags: rules, autoban
+
 - name: Deploy the save/load script
   ansible.builtin.copy:
     src: nftables-lists.sh

@@ -7,20 +7,24 @@
     state: absent
     purge: true
     autoremove: true
+  tags: apt
 
 - name: Install the required packages
   register: nftables_pkg
   ansible.builtin.apt:
     name: nftables
     state: present
+  tags: apt
 
 - name: Flush all rules
   when: ufw_pkg.changed
   ansible.builtin.shell: nft flush ruleset
   changed_when: true
+  tags: apt
 
 - name: Restart nftables now
   when: nftables_pkg.changed
   ansible.builtin.systemd:
     name: nftables
     state: restarted
+  tags: apt

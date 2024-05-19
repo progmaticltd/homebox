@@ -3,7 +3,8 @@
 - name: Load or create the password for the read-only account
   no_log: '{{ hide_secrets }}'
   ansible.builtin.set_fact:
-    ldap_ro_password: '{{ lookup(creds.store, creds.prefix + "/ldap/readonly") }}'
+    ldap_ro_password: >-
+      {{ lookup(creds.store, creds.prefix + "/ldap/readonly" + creds.opts.create) }}
   tags: facts
 
 - name: Compute the users DN

@@ -1,0 +1,31 @@
+---
+
+- name: Configure SSH in private access
+  when: not security.ssh.public
+  notify: Restart nftables
+  tags: ssh, rules
+  block:
+    - name: Deploy SSH rules for private access only
+      ansible.builtin.template:
+        src: rules/30-ssh-private.nft
+        dest: /etc/nftables/30-ssh-private.nft
+        mode: '0600'
+    - name: Remove public rule
+      ansible.builtin.file:
+        path: /etc/nftables/30-ssh-public.nft
+        state: absent
+
+- name: Deploy SSH rules for public access
+  when: security.ssh.public
+  tags: ssh, rules
+  notify: Restart nftables
+  block:
+    - name: Deploy SSH rules for public access
+      ansible.builtin.template:
+        src: rules/30-ssh-public.nft
+        dest: /etc/nftables/30-ssh-public.nft
+        mode: '0600'
+    - name: Remove private access rules
+      ansible.builtin.file:
+        path: /etc/nftables/30-ssh-private.nft
+        state: absent

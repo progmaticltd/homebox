@@ -1,0 +1,16 @@
+---
+
+- name: Load the server certificate
+  register: server_cert
+  ansible.builtin.shell:
+    cmd: ssh-keygen -L -f {{ network.hostname }}.{{ network.domain }}-cert.pub
+    chdir: /etc/ssh/ca
+  changed_when: false
+
+- name: Check the certificate fields
+  assert:
+    that:
+      - '"Valid: forever" in server_cert.stdout'
+      - '"{{ network.hostname }}.{{ network.domain }}" in server_cert.stdout'
+      - '"{{ network.domain }}" in server_cert.stdout'
+      - '"*.{{ network.domain }}" in server_cert.stdout'

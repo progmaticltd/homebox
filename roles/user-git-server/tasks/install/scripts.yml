@@ -1,0 +1,8 @@
+---
+
+- name: Install the restricted git script
+  ansible.builtin.copy:
+    src: git-only.sh
+    dest: /usr/local/bin/git-only
+    mode: '0755'
+  tags: scripts

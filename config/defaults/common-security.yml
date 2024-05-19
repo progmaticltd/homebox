@@ -4,13 +4,18 @@
 # Extra security values
 security_default:
   auto_update: true                             # Install security updates automatically, using unattended-upgrades
-  ssh_disable_root_access_with_password: true   # Force SSH authentication to use public / private key for root
   ssh_disable_root_access: false                # At the end of the installation, completely disable remote
                                                 # root access via SSH and force the use of sudo for the administrators
   lock_root_password: true                      # Disable console root access by locking root password.
-  ssh_disable_users_access_with_password: false # Force SSH authentication to use public / private key for all users
   alerts_email:
     - 'admin@{{ network.domain }}'
+
+  # Set this flag to true to only allow SSH from "trusted" IPs.
+  # This does not make your server more secure, it is just stopping the noise from bots attempting SSH connections.
+  # If this mod is activated, SSH connections will be only allowed from "trusted" IPs, i.e. VPN IPs,
+  # and IPs added using port knocking. The port knocking used is fwknop, aka single packet port knocking.
+  ssh:
+    public: true
 
   # Automatically reboot the system when needed after an upgrade
   auto_reboot:

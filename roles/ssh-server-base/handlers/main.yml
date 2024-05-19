@@ -1,0 +1,11 @@
+---
+
+- name: Check SSH config
+  ansible.builtin.shell:
+    cmd: sshd -t
+  changed_when: false
+
+- name: Restart SSH
+  ansible.builtin.systemd:
+    name: ssh
+    state: restarted

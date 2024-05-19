@@ -23,14 +23,19 @@
     - '{{ playbook_dir }}/../config/defaults/version-{{ version | default("small") }}.yml'
     - '{{ playbook_dir }}/../config/system.yml'
   tasks:
-    - name: Run the role selected
+    - name: Load common settings
+      include_role:
+        name: common-init
+        tasks_from: install/main.yml
       tags: always
+    - name: Run the uninstallation tasks for the selected roles
       include_role:
         name: '{{ role }}'
         tasks_from: uninstall/main.yml
       loop: '{{ roles_list }}'
       loop_control:
         loop_var: role
+      tags: always
 
 - name: Remove AppArmor unknown profiles
   hosts: homebox

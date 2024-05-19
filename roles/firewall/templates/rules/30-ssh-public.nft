@@ -1,0 +1,16 @@
+#!/usr/sbin/nft -f
+
+# This rule is added after other SSH rules, allowing public SSH access.
+# When the setting security.ssh.public is set to true
+
+table inet filter {
+
+    chain input {
+
+        # Allow ssh from anywhere
+        tcp dport ssh ct state new counter accept \
+        comment "Accept new ssh connections"
+
+    }
+
+}

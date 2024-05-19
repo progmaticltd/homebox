@@ -1,0 +1,17 @@
+---
+
+- name: Load facts like CA passphrase
+  ansible.builtin.include_tasks: base/facts.yml
+  tags: facts
+
+- name: Install the required module
+  ansible.builtin.include_tasks: install/packages.yml
+  tags: apt
+
+- name: Create the certificates for CA auth
+  ansible.builtin.include_tasks: install/cert-auth.yml
+  tags: ca
+
+- name: Configure SSH
+  ansible.builtin.include_tasks: install/config.yml
+  tags: config

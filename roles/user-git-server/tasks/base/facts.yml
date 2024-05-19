@@ -1,0 +1,26 @@
+---
+
+- name: Try to load CA key’s passphrase from the password store
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.set_fact:
+    cakey_passphrase: >-
+      {{ lookup(creds.store, creds.prefix
+      + "/ssh/ca-passphrase" + creds.opts.create) }}
+  tags: facts
+
+- name: Filter the list of users to install / check / etc
+  when: uids is defined
+  tags: facts
+  block:
+    - name: Parse and store the UIDs list
+      ansible.builtin.set_fact:
+        uids_list: '{{ uids | split(",") }}'
+    - name: Make the restricted list of users
+      ansible.builtin.set_fact:
+        ssh_users: '{{ users | selectattr("ssh", "defined") | selectattr("uid", "in", uids_list) }}'
+
+- name: Load and store the full list of users with SSH options defined
+  when: uids is not defined
+  ansible.builtin.set_fact:
+    ssh_users: '{{ users | selectattr("ssh", "defined") }}'
+  tags: facts

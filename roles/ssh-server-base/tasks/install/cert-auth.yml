@@ -1,0 +1,69 @@
+---
+
+- name: Create the local directory to store the SSH server CA
+  delegate_to: localhost
+  become: false
+  ansible.builtin.file:
+    path: '{{ backup_directory }}/ssh/ca'
+    state: directory
+    mode: '0700'
+  tags: ca
+
+- name: Fetch the ED25519 key to use as a Certificate authority key
+  ansible.builtin.fetch:
+    src: /etc/ssh/ssh_host_ed25519_key
+    dest: '{{ backup_directory }}/ssh/ca/ca.key'
+    flat: true
+    mode: '0600'
+  tags: ca
+
+- name: Fetch the ED25519 public key to use as a Certificate authority key
+  ansible.builtin.fetch:
+    src: /etc/ssh/ssh_host_ed25519_key.pub
+    dest: '{{ backup_directory }}/ssh/ca/ca.key.pub'
+    flat: true
+    mode: '0644'
+  tags: ca
+
+- name: Create the SSH authority certificate
+  delegate_to: localhost
+  become: false
+  community.crypto.openssh_cert:
+    type: host
+    signing_key: '{{ backup_directory }}/ssh/ca/ca.key'
+    public_key: '{{ backup_directory }}/ssh/ca/ca.key.pub'
+    path: '{{ backup_directory }}/ssh/ca/ca.crt'
+    valid_from: always
+    valid_to: forever
+    force: false
+    principals:
+      - '{{ network.hostname }}.{{ network.domain }}'
+      - '{{ network.domain }}'
+      - '*.{{ network.domain }}'
+  tags: ca
+
+- name: Create the certificate authority directory on the server
+  ansible.builtin.file:
+    path: /etc/ssh/ca
+    state: directory
+    mode: '0700'
+  tags: config
+
+- name: Copy the certificate on the server
+  ansible.builtin.copy:
+    src: '{{ backup_directory }}/ssh/ca/ca.crt'
+    dest: /etc/ssh/ca/{{ network.hostname }}.{{ network.domain }}-cert.pub
+    mode: '0644'
+  tags: ca
+
+- name: Encrypt the key locally
+  no_log: '{{ hide_secrets }}'
+  delegate_to: localhost
+  become: false
+  ansible.builtin.shell: >-
+      ssh-keygen -p
+      -P ''
+      -N '{{ cakey_passphrase }}'
+      -f '{{ backup_directory }}/ssh/ca/ca.key'
+  changed_when: true
+  tags: ca

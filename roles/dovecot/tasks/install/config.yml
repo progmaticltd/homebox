@@ -1,11 +1,17 @@
 ---
 
+- name: Initialise the thrusted IPs so Dovecot trust IPs given by SOGo
+  set_fact:
+    trusted_ips: >-
+      {{ [ '127.0.0.1', '::1' ] + external_ip_addresses }}
+  tags: config
+
 - name: Make sure loopback interface is “trusted”
   notify: Restart dovecot
   ansible.builtin.replace:
     path: /etc/dovecot/dovecot.conf
     regexp: '^#?\s?login_trusted_networks.*'
-    replace: 'login_trusted_networks = 127.0.0.1 ::1'
+    replace: 'login_trusted_networks = {{ trusted_ips | join(" ") }}'
   tags: config
 
 # Activate SSL on the imap server

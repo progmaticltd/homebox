@@ -1,0 +1,15 @@
+---
+
+- name: Check if users have SSH keys defined
+  set_fact:
+    user_ssh_access: '{{ users | selectattr("ssh", "defined") | length > 0 }}'
+  tags: config
+
+- name: Add custom settings for the  SSH server
+  notify:
+    - Check SSH config
+    - Restart SSH
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/homebox.conf
+    state: absent
+  tags: config

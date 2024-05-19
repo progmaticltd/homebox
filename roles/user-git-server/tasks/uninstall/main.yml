@@ -1,0 +1,29 @@
+---
+
+- name: Load the common facts
+  ansible.builtin.include_tasks:
+    file: base/facts.yml
+  tags: facts
+
+- name: Configure SSH settings for each user
+  ansible.builtin.include_tasks:
+    file: uninstall/user-cleanup.yml
+  loop: '{{ ssh_users }}'
+  loop_control:
+    loop_var: user
+  tags: users
+
+- name: Remove the git-users group
+  ansible.builtin.include_tasks:
+    file: uninstall/groups.yml
+  tags: groups
+
+- name: Remove the scripts
+  ansible.builtin.include_tasks:
+    file: uninstall/scripts.yml
+  tags: scripts
+
+- name: Delete dns records
+  ansible.builtin.include_tasks:
+    file: uninstall/dns.yml
+  tags: dns

@@ -1,0 +1,24 @@
+---
+
+- name: Load the facts
+  ansible.builtin.include_tasks:
+    file: base/facts.yml
+  tags: facts
+
+- name: Create the git-users group
+  ansible.builtin.include_tasks:
+    file: install/groups.yml
+  tags: groups
+
+- name: Copy the scripts
+  ansible.builtin.include_tasks:
+    file: install/scripts.yml
+  tags: scripts
+
+- name: Configure each user
+  ansible.builtin.include_tasks:
+    file: install/user-setup.yml
+  loop: '{{ ssh_users }}'
+  loop_control:
+    loop_var: user
+  tags: users, keys

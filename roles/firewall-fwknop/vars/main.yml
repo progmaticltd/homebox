@@ -1,0 +1,5 @@
+---
+
+packages:
+  - fwknop-apparmor-profile
+  - fwknop-server

@@ -1,0 +1,7 @@
+---
+
+- name: Remove the git-users group
+  ansible.builtin.group:
+    name: git-users
+    state: absent
+  tags: groups

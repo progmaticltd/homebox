@@ -1,0 +1,7 @@
+---
+
+- name: Create the git-users group
+  ansible.builtin.group:
+    name: git-users
+    state: present
+  tags: groups

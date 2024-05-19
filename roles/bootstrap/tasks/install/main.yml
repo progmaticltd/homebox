@@ -17,6 +17,7 @@
 
 - name: Initialise and update the packages repository
   ansible.builtin.include_tasks: install/apt.yml
+  tags: apt
 
 - name: Install the base required packages
   ansible.builtin.include_tasks: install/packages.yml
@@ -44,6 +45,10 @@
 - name: Configure automatic upgrades
   ansible.builtin.include_tasks: install/unattended-upgrades.yml
   tags: autoupdate
+
+- name: Lock the root account
+  ansible.builtin.include_tasks: install/lock-root.yml
+  tags: root
 
 # Ensure the environment variables are cleared
 - name: Reset the SSH connection

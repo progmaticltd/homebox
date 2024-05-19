@@ -1,0 +1,9 @@
+---
+
+- name: Try to load CA key’s passphrase from the password store
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.set_fact:
+    cakey_passphrase: >-
+      {{ lookup(creds.store, creds.prefix
+      + "/ssh/ca-passphrase" + creds.opts.create) }}
+  tags: facts

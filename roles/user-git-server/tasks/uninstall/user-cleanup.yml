@@ -1,0 +1,9 @@
+---
+
+- name: Remove user directory
+  delegate_to: localhost
+  become: false
+  ansible.builtin.file:
+    path: '{{ backup_directory }}/ssh/users/{{ user.uid }}'
+    state: absent
+  tags: users, keys

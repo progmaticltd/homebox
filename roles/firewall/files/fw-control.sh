@@ -5,9 +5,10 @@
 ##   fw-control <ban|unban|trust|untrust|clear|check> <ip> [ports] [timeout]
 ##   - ban:     Ban an IP address and close any active connection from this address.
 ##              Use the default timeout if not specified.
-##   - unban:   Unban an IP address.
+##   - unban:   Unban an IP address; use "all" to flush banned IPs.
 ##   - trust:   Trust an IP address with the timeout specified or the default value.
 ##   - untrust: Untrust an IP address and close any active connection from this address.
+##              Use "all" to flush trusted IPs
 ##   - clear:   Remove an IP address from all the tables
 ##   - check:   Check if an IP address is banned or trusted
 ##
@@ -26,6 +27,8 @@
 ##   - fw-control unban 112.34.19.78
 ##   - fw-control check 97.124.56.78
 ##   - fw-control clear 97.124.56.78
+##   - fw-control unban all
+##   - fw-control untrust all
 #
 
 # Exit codes
@@ -33,7 +36,7 @@ SUCCESS=0
 ARG_ERROR=10
 RUN_ERROR=10
 
-# Default ports to ban or unban: email services only
+# Default ports to ban or unban: email and jabber services only
 default_ban_ports="110 995 143 993 465 587 4190 5222 5223"
 
 # Default ports to check or clear: all the ports for public services
@@ -59,7 +62,9 @@ fi
 # Detect and validate IP address type
 ip_type=""
 
-if ipcalc-ng -s -4 -c "$ip"; then
+if [ "$ip" = "all" ]; then
+    action="${action}-all"
+elif ipcalc-ng -s -4 -c "$ip"; then
     ip_type="ipv4"
 elif ipcalc-ng -s -6 -c "$ip"; then
     ip_type="ipv6"
@@ -88,6 +93,16 @@ if [ -n "$timeout" ] && ! expr "$timeout" : "^[0-9]\+[smhd]$" >/dev/null 2>&1; t
     usage
     exit $ARG_ERROR
 fi
+
+# Update banned or trusted table with IP address, ports and timeout if specified
+flush_set() {
+
+    local table="$1"
+
+    nft flush set inet filter "${table}_ipv4"
+    nft flush set inet filter "${table}_ipv6"
+}
+
 
 # Update banned or trusted table with IP address, ports and timeout if specified
 update_set() {
@@ -222,6 +237,16 @@ case "$action" in
 
     unban)
         update_set banned delete "$ip" "$ip_type" "$ports"
+        break
+        ;;
+
+    unban-all)
+        flush_set banned
+        break
+        ;;
+
+    untrust-all)
+        flush_set trusted
         break
         ;;
 

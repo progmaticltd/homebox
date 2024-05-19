@@ -1,0 +1,8 @@
+---
+
+- name: Install python bcrypt module
+  delegate_to: localhost
+  apt:
+    name: python3-bcrypt
+    state: present
+  tags: apt

@@ -1,0 +1,10 @@
+---
+
+- name: Remove the CA directory on the server
+  notify:
+    - Check SSH config
+    - Restart SSH
+  ansible.builtin.file:
+    path: /etc/ssh/ca/
+    state: absent
+  tags: ca
