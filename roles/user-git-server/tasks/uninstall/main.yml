@@ -22,8 +22,3 @@
   ansible.builtin.include_tasks:
     file: uninstall/scripts.yml
   tags: scripts
-
-- name: Delete dns records
-  ansible.builtin.include_tasks:
-    file: uninstall/dns.yml
-  tags: dns
