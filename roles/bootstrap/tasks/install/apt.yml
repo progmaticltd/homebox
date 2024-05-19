@@ -55,7 +55,7 @@
   tags: apt
 
 - name: Remove packages from disk after installation
-  copy:
+  ansible.builtin.copy:
     content: 'DSELECT::Clean "always";'
     dest: /etc/apt/apt.conf.d/90clean
     mode: '0644'

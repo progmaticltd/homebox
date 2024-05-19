@@ -1,7 +1,7 @@
 ---
 
 - name: Initialise the thrusted IPs so Dovecot trust IPs given by SOGo
-  set_fact:
+  ansible.builtin.set_fact:
     trusted_ips: >-
       {{ [ '127.0.0.1', '::1' ] + external_ip_addresses }}
   tags: config

@@ -8,7 +8,7 @@
   changed_when: false
 
 - name: Check the certificate fields
-  assert:
+  ansible.builtin.assert:
     that:
       - '"Valid: forever" in server_cert.stdout'
       - '"{{ network.hostname }}.{{ network.domain }}" in server_cert.stdout'

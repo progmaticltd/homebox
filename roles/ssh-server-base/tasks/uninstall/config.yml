@@ -1,7 +1,7 @@
 ---
 
 - name: Check if users have SSH keys defined
-  set_fact:
+  ansible.builtin.set_fact:
     user_ssh_access: '{{ users | selectattr("ssh", "defined") | length > 0 }}'
   tags: config
 
