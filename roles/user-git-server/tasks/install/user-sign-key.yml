@@ -9,7 +9,7 @@
   tags: users, keys
 
 - name: Create a unique the key ID from the data
-  set_fact:
+  ansible.builtin.set_fact:
     key_id: '{{ (sshkey.data | replace(" ", "") | hash("sha1"))[0:8] }}'
   tags: users, facts
 
