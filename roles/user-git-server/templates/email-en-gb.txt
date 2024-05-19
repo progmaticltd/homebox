@@ -1,0 +1,30 @@
+SSH keys and configuration files for the user {{ user.uid }}
+
+This email contains the configuration for your all your SSH keys
+
+1. Copy all the files in your ~/.ssh folder
+
+  The files can be copied as is, they are public keys or configuration files,
+  and don’t need to be saved with restricted permissions.
+  For instance:
+
+  chmod 0644 ~/.ssh/*.pub  ~/.ssh/*.conf
+
+
+2. Save your private files using the file file name, in your ~/.ssh folder
+
+  For each public key file, use the same file name, without the ".pub" extension.
+
+  chmod 0600 ~/*.ssh/*.rsa ~/*.ssh/*.ecdsa
+
+
+3. Finally, add the following line in your ~/.ssh/config file:
+
+  Include ~/.ssh/git-*-ssh.conf
+
+
+4. You can now use the server for your personal git repositories, for instance:
+
+  git remote add personal git.{{ network.domain }}
+  git push --all personal
+  git push --tags personal

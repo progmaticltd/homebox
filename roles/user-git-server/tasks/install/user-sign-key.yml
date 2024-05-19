@@ -1,6 +1,6 @@
 ---
 
-- name: Create user directory
+- name: Create user directory locally to store ssh information and keys
   delegate_to: localhost
   become: false
   ansible.builtin.file:
@@ -10,12 +10,12 @@
 
 - name: Create a unique the key ID from the data
   set_fact:
-    key_id: '{{ key.data | replace(" ", "") | hash("sha1") }}'
+    key_id: '{{ (sshkey.data | replace(" ", "") | hash("sha1"))[0:8] }}'
   tags: users, facts
 
 - name: Create a unique file name for the key
   ansible.builtin.set_fact:
-    key_file_name: 'git-{{ key_id }}'
+    key_file_name: '{{ sshkey.filename | default("git-" + key_id) }}'
   tags: users, facts
 
 - name: Store the public key in a file locally
@@ -23,11 +23,11 @@
   become: false
   register: public_key
   ansible.builtin.copy:
-    content: '{{ key.type }} {{ key.data | replace(" ", "") }} {{ key.comment | default("") }}'
+    content: '{{ sshkey.type }} {{ sshkey.data | replace(" ", "") }} {{ sshkey.comment | default("") }}'
     dest: '{{ backup_directory }}/ssh/users/{{ user.uid }}/{{ key_file_name }}.pub'
   tags: users, keys
 
-- name: Temporary decrypt the CA key
+- name: Temporary decrypt the server CA key
   no_log: '{{ hide_secrets }}'
   delegate_to: localhost
   become: false
@@ -57,9 +57,17 @@
       - force-command=/usr/local/bin/git-only
     mode: '0600'
     valid_from: +0s
-    valid_to: '+{{ key.validity | default(git.ssh.validity) }}'
+    valid_to: '+{{ sshkey.validity | default(git.ssh.validity) }}'
     valid_at: +2w
     ignore_timestamps: true
+  tags: users, keys
+
+- name: Create user SSH configuration template for this key
+  delegate_to: localhost
+  become: false
+  ansible.builtin.template:
+    src: ssh-user.conf
+    dest: '{{ backup_directory }}/ssh/users/{{ user.uid }}/{{ key_file_name }}-ssh.conf'
   tags: users, keys
 
 - name: Re-encrypt the key
@@ -67,9 +75,9 @@
   delegate_to: localhost
   become: false
   ansible.builtin.shell: >-
-      ssh-keygen -p
-      -P ''
-      -N '{{ cakey_passphrase }}'
-      -f '{{ backup_directory }}/ssh/ca/ca.key'
+    ssh-keygen -p
+    -P ''
+    -N '{{ cakey_passphrase }}'
+    -f '{{ backup_directory }}/ssh/ca/ca.key'
   changed_when: true
   tags: ca, keys

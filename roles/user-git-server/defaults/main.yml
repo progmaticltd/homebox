@@ -4,3 +4,8 @@
 git:
   ssh:
     validity: 52w
+
+
+# Emails parameters
+emails:
+  lang: en-gb

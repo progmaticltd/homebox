@@ -26,5 +26,5 @@
     file: install/user-sign-key.yml
   loop: '{{ user.ssh | selectattr("usage", "equalto", "git") }}'
   loop_control:
-    loop_var: key
+    loop_var: sshkey
   tags: users, keys

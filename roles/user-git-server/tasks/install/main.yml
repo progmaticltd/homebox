@@ -22,3 +22,11 @@
   loop_control:
     loop_var: user
   tags: users, keys
+
+- name: Send user keys by email
+  ansible.builtin.include_tasks:
+    file: install/user-send-keys.yml
+  loop: '{{ ssh_users }}'
+  loop_control:
+    loop_var: user
+  tags: users, emails

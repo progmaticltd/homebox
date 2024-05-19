@@ -1,0 +1,91 @@
+---
+
+- name: Store the source directory
+  set_fact:
+    user_src_dir: '{{ backup_directory }}/ssh/users/{{ user.uid }}'
+  tags: emails
+
+- name: Set the temporary folder
+  set_fact:
+    tmp_folder: '/tmp/emails/{{ user.uid }}'
+  tags: emails
+
+- name: Create the temporary folder to prepare the email for this user
+  ansible.builtin.file:
+    path: '{{ tmp_folder }}'
+    state: directory
+    owner: postmaster
+    group: postmaster
+    mode: '0600'
+  tags: emails
+
+- name: Create the email text
+  template:
+    src: email-{{ lang | default(emails.lang) }}.txt
+    dest: '{{ tmp_folder }}/{{ user.uid }}.txt'
+    owner: postmaster
+    group: postmaster
+    mode: '0600'
+  tags: emails
+
+- name: Load the list of files to copy
+  set_fact:
+    ssh_files: '{{ lookup("ansible.builtin.fileglob", user_src_dir + "/*") | split(",") }}'
+  tags: emails
+
+- name: Copy all the files to send in the temporary folder
+  register: emails
+  copy:
+    src: '{{ file_name }}'
+    dest: '{{ tmp_folder }}/attachments/{{ file_name | basename }}'
+    owner: postmaster
+    group: postmaster
+    mode: '0600'
+  loop: '{{ ssh_files }}'
+  loop_control:
+    loop_var: file_name
+  tags: emails
+
+- name: Load the email body
+  register: email_body_slurp
+  slurp:
+    path: '{{ tmp_folder }}/{{ user.uid }}.txt'
+  tags: emails
+
+- name: Store the email body
+  set_fact:
+    email_body: '{{ email_body_slurp["content"] | b64decode }}'
+  tags: emails
+
+- name: Store the email subject
+  set_fact:
+    email_subject: "{{ email_body | split('\r') | first }}"
+  tags: emails
+
+- name: Initialise the list of remote ssh files
+  set_fact:
+    remote_ssh_files: [ ]
+  tags: emails
+
+- name: Populate the attachments list
+  set_fact:
+    remote_ssh_files: '{{ remote_ssh_files + [ tmp_folder + "/attachments/" + (ssh_file | basename ) ] }}'
+  loop: '{{ ssh_files }}'
+  loop_control:
+    loop_var: ssh_file
+  tags: emails
+
+- name: Send the email
+  community.general.mail:
+    sender: 'postmaster@{{ network.domain }}'
+    attach: '{{ remote_ssh_files }}'
+    to: '{{ user.uid }}@{{ network.domain }}'
+    subject: '{{ email_subject }}'
+    body: '{{ email_body }}'
+  tags: emails
+
+- name: Remove the temporary directory
+  file:
+    path: '{{ user_src_dir }}'
+    state: absent
+  tags: emails
