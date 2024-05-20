@@ -63,7 +63,7 @@
   ansible.builtin.shell: >-
       ssh-keygen -p
       -P ''
-      -N '{{ cakey_passphrase }}'
+      -N '{{ server_keys_passphrase }}'
       -f '{{ backup_directory }}/ssh/ca/ca.key'
   changed_when: true
   tags: ca

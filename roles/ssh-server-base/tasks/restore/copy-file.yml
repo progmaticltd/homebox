@@ -19,7 +19,7 @@
   no_log: '{{ hide_secrets }}'
   ansible.builtin.shell: >-
       ssh-keygen -p
-      -P '{{ cakey_passphrase }}'
+      -P '{{ server_keys_passphrase }}'
       -N ''
       -f '/etc/ssh/{{ file_name }}'
   changed_when: true
