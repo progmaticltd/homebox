@@ -1,0 +1,20 @@
+---
+
+- name: Load all the server’s keys
+  delegate_to: localhost
+  become: false
+  register: sshd_keys
+  ansible.builtin.find:
+    path: '{{ backup_directory }}/ssh/sshd'
+    pattern: ssh_host_*
+  tags: certs
+
+- name: Copy the key file on the server
+  ansible.builtin.copy:
+    src: '{{ file.path }}'
+    dest: '/etc/ssh/{{ file.path | basename }}'
+    mode: '{{ (".pub" in file.path) | ternary("0644", "0600") }}'
+  loop: '{{ sshd_keys.files }}'
+  loop_control:
+    loop_var: file
+  tags: certs
