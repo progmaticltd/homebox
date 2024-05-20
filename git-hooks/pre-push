@@ -8,6 +8,11 @@
 
 set -e
 
+# Only check for the origin, not personal
+if [ "$1" != "origin" ]; then
+    exit 0
+fi
+
 # Manually added options to skip to the command line.
 # ansible-lint seem to ignore them in the configuration file
 
