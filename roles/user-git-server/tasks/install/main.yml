@@ -30,8 +30,3 @@
   loop_control:
     loop_var: user
   tags: users, emails
-
-- name: Create the administration key
-  ansible.builtin.include_tasks:
-    file: install/admin.yml
-  tags: admin
