@@ -84,6 +84,10 @@ suggestions and support, and another one dedicated for development.
   and optional server to server communication.
 - Incremental backups, encrypted, on multiple destination (SFTP, S3, Samba share or USB drive), with email and Jabber
   reporting.
+- Wireguard VPN server, with QR code generation, multiple configuration per clients, and optional split tunnelling.
+- SSH certificates for users, with restricted commands and options and expiration date, with configuration files sent by
+  email automatically.
+- Small and secure git server per user, with automatic repository creation on the first push on the remote server.
 
 
 ### Development
