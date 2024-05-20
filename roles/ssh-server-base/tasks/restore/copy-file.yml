@@ -1,0 +1,25 @@
+---
+
+- name: Store the file name
+  ansible.builtin.set_fact:
+    file_name: '{{ file.path | basename }}'
+
+- name: Check if it is a private key
+  ansible.builtin.set_fact:
+    is_key: '{{ ".pub" not in file_name }}'
+
+- name: Copy the key file on the server
+  ansible.builtin.copy:
+    src: '{{ file.path }}'
+    dest: '/etc/ssh/{{ file_name }}'
+    mode: '{{ is_key | ternary("0600", "0644") }}'
+
+- name: Decrypt the key locally
+  when: is_key
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.shell: >-
+      ssh-keygen -p
+      -P '{{ cakey_passphrase }}'
+      -N ''
+      -f '/etc/ssh/{{ file_name }}'
+  changed_when: true

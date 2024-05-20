@@ -1,12 +1,5 @@
 ---
 
-- name: Load all the server’s keys
-  register: sshd_keys
-  ansible.builtin.find:
-    path: /etc/ssh/
-    pattern: ssh_host_*
-  tags: certs
-
 - name: Create local directory to save the keys
   delegate_to: localhost
   become: false
@@ -16,12 +9,20 @@
     mode: '0700'
   tags: certs
 
+- name: Load all the server’s keys
+  register: sshd_keys
+  ansible.builtin.find:
+    path: /etc/ssh/
+    pattern: ssh_host_*
+  tags: certs
+
+- name: Load private keys passphrase
+  ansible.builtin.include_tasks:
+    file: base/facts.yml
+
 - name: Load and save the key
-  ansible.builtin.fetch:
-    src: '{{ file.path }}'
-    dest: '{{ backup_directory }}/ssh/sshd/{{ file.path | basename }}'
-    flat: true
-    mode: '0600'
+  ansible.builtin.include_tasks:
+    file: backup/fetch-file.yml
   loop: '{{ sshd_keys.files }}'
   loop_control:
     loop_var: file

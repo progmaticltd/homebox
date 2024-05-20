@@ -1,5 +1,9 @@
 ---
 
+- name: Load private keys passphrase
+  ansible.builtin.include_tasks:
+    file: base/facts.yml
+
 - name: Load all the server’s keys
   delegate_to: localhost
   become: false
@@ -10,10 +14,8 @@
   tags: certs
 
 - name: Copy the key file on the server
-  ansible.builtin.copy:
-    src: '{{ file.path }}'
-    dest: '/etc/ssh/{{ file.path | basename }}'
-    mode: '{{ (".pub" in file.path) | ternary("0644", "0600") }}'
+  ansible.builtin.include_tasks:
+    file: restore/copy-file.yml
   loop: '{{ sshd_keys.files }}'
   loop_control:
     loop_var: file
