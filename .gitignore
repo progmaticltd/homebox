@@ -33,18 +33,6 @@ roles/*/sandbox/*
 backup/*
 !backup/readme.md
 
-# Allow to include modules excluded from the repository
-modules/*
-!modules/readme.md
-
-# Cloud specific sub-modules
-cloud/*
-!cloud/readme.md
-
-# Preseed
-##############################################################################
-
-# Everything in this folder will be decompressed on the target
-# before the first boot, at the same level
-!preseed/misc/readme.md
-preseed/misc/*
+# Ansible configuration file should be copied from the example
+common/ansible.cfg
+config/ansible.cfg
