@@ -6,9 +6,13 @@
 ## Valid repository names should start with a letter, followed
 ## by alphanumeric or hyphen, underscore and dot characters
 ## Repositories are stored in /home/archives by default.
+##
 ## Example of repository creation:
-## $ git remote add personal user@domain:repo-name.git
+## $ git remote add personal git.DOMAIN:repo-name.git
 ## $ git push --all --tags personal
+##
+## To list your repositories:
+## ssh git.DOMAIN list
 ## ---
 #
 
@@ -21,7 +25,8 @@ INVALID_NAME=40
 SYS_ERROR=50
 
 usage() {
-    sed -n 's/^## //p' "$0" 1>&2
+    domain=$(hostname -d)
+    sed -En 's/^## ?//p' "$0" | sed s/DOMAIN/$domain/ 1>&2
 }
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
