@@ -27,6 +27,7 @@ usage() {
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     usage
     exit
+
 fi
 
 if [ -n "$SSH_CONNECTION" ] && [ -z "$SSH_ORIGINAL_COMMAND" ]; then
@@ -57,6 +58,32 @@ git_repo_dir="$git_root_dir/repositories"
 
 if [ ! -d "$git_repo_dir" ]; then
     mkdir -p "$git_repo_dir"
+fi
+
+# Simple command to list the existing repositories
+if [ "$SSH_ORIGINAL_COMMAND" = "list" ]; then
+    repos=$(ls -1 "${git_repo_dir}")
+
+    if [ "$repos" = "" ]; then
+        echo "No repositories found" | colorize --attr=bold default -
+        exit
+    fi
+
+    headers="Repository,Size,Accessed,Modified"
+    summary="---|---|---|---"
+
+    for repo in $repos; do
+        du=$(du -sh "$git_repo_dir/$repo" | sed -E 's/\t.*//g')
+        accessed=$(stat -c "%x" "$git_repo_dir/$repo" | sed 's/\..*//g')
+        modified=$(stat -c "%y" "$git_repo_dir/$repo" | sed 's/\..*//g')
+        line="$repo|$du|$accessed|$modified"
+        summary="$summary\n$line\n"
+    done
+
+    echo "Repositories list\n" | colorize --attr=bold default -
+    echo "$summary" | column -s '|' -N "$headers" -t -o ' | ' | colorize --clean-all -
+
+    exit
 fi
 
 # Everything should run in this directory

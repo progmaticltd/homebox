@@ -10,6 +10,11 @@
     file: install/groups.yml
   tags: groups
 
+- name: Install the required packages
+  ansible.builtin.include_tasks:
+    file: install/packages.yml
+  tags: apt
+
 - name: Copy the scripts
   ansible.builtin.include_tasks:
     file: install/scripts.yml

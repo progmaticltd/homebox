@@ -1,0 +1,7 @@
+---
+
+- name: Install the required packages
+  ansible.builtin.apt:
+    name: colorize
+    state: present
+  tags: apt
