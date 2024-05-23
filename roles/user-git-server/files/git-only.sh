@@ -12,7 +12,7 @@
 ## $ git push --all --tags personal
 ##
 ## To list your repositories:
-## ssh git.DOMAIN list
+## ssh git.DOMAIN repo list
 ## ---
 #
 
@@ -26,13 +26,12 @@ SYS_ERROR=50
 
 usage() {
     domain=$(hostname -d)
-    sed -En 's/^## ?//p' "$0" | sed s/DOMAIN/$domain/ 1>&2
+    sed -En 's/^## ?//p' "$0" | sed "s/DOMAIN/$domain/" 1>&2
 }
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     usage
-    exit
-
+    exit $SUCCESS
 fi
 
 if [ -n "$SSH_CONNECTION" ] && [ -z "$SSH_ORIGINAL_COMMAND" ]; then
@@ -66,12 +65,12 @@ if [ ! -d "$git_repo_dir" ]; then
 fi
 
 # Simple command to list the existing repositories
-if [ "$SSH_ORIGINAL_COMMAND" = "list" ]; then
+if [ "$SSH_ORIGINAL_COMMAND" = "repo list" ]; then
     repos=$(ls -1 "${git_repo_dir}")
 
     if [ "$repos" = "" ]; then
         echo "No repositories found" | colorize --attr=bold default -
-        exit
+        exit $SUCCESS
     fi
 
     headers="Repository,Size,Accessed,Modified"
@@ -85,10 +84,10 @@ if [ "$SSH_ORIGINAL_COMMAND" = "list" ]; then
         summary="$summary\n$line\n"
     done
 
-    echo "Repositories list\n" | colorize --attr=bold default -
+    echo "Repositories list" | colorize --attr=bold default -
     echo "$summary" | column -s '|' -N "$headers" -t -o ' | ' | colorize --clean-all -
 
-    exit
+    exit $SUCCESS
 fi
 
 # Everything should run in this directory
@@ -103,13 +102,13 @@ if [ "$is_push" = "1" ]; then
     repo_path=$(echo "$SSH_ORIGINAL_COMMAND" | head -n 1 | cut -f 2 -d ' ' | tr -d "'")
 
     # Make sure we don't pass the home directory
-    if expr match "$repo_path" ".*~.*" >/dev/null; then
+    if expr "$repo_path" : ".*~.*" >/dev/null; then
         echo "Do not specify the user path for your git repository" 1>&2
         usage
         exit $NO_PATH
     fi
 
-    if expr match "$repo_path" ".*/.*" >/dev/null; then
+    if expr "$repo_path" : ".*/.*" >/dev/null; then
         echo "Do not specify any absolute path for your git repository" 1>&2
         usage
         exit $NO_PATH
