@@ -1,0 +1,26 @@
+---
+
+- name: Create the DNS entries for the main
+  vars:
+    dns_records:
+      - name: rspamd
+        type: '{{ external_ip_type }}'
+        value: '{{ external_ip }}'
+        create: true
+  ansible.builtin.include_role:
+    name: dns-record
+    tasks_from: install/main.yml
+  tags: dns
+
+- name: Create the DNS entries for the backup
+  when: backup_ip is defined
+  vars:
+    dns_records:
+      - name: rspamd
+        type: '{{ backup_ip_type }}'
+        value: '{{ backup_ip }}'
+        create: true
+  ansible.builtin.include_role:
+    name: dns-record
+    tasks_from: install/main.yml
+  tags: dns

@@ -10,6 +10,9 @@
 - name: Remove certificates
   ansible.builtin.include_tasks: uninstall/certs.yml
 
+- name: Remove DNS records
+  ansible.builtin.include_tasks: uninstall/dns.yml
+
 - name: Restart nginx now
   ansible.builtin.meta: flush_handlers
 

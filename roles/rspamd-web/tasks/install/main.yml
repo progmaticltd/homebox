@@ -8,5 +8,9 @@
   ansible.builtin.include_tasks: install/nginx.yml
   tags: nginx
 
+- name: Create DNS record
+  ansible.builtin.include_tasks: install/dns.yml
+  tags: dns
+
 - name: Configure AppArmor
   ansible.builtin.include_tasks: install/apparmor.yml
