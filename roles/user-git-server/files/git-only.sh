@@ -19,10 +19,10 @@
 # Error codes
 SUCCESS=0
 NO_CMD=10
-NO_PATH=20
-NO_ROOT=30
-INVALID_NAME=40
-SYS_ERROR=50
+NO_ROOT=20
+INVALID_NAME=30
+ACCESS_DENIED=40
+SYS_ERROR=100
 
 usage() {
     domain=$(hostname -d)
@@ -50,8 +50,16 @@ if [ "$calling_user" = "root" ]; then
     exit $NO_ROOT
 fi
 
+# The user should be part of git-users
+is_git_user=$(id -nG | grep -c "git-users")
+
+if [ "$is_git_user" != "1" ]; then
+    logger -t git-only "User '$calling_user' not in 'git-users' group."
+    exit $ACCESS_DENIED
+fi
+
 # Log the command run
-logger "Running $SSH_ORIGINAL_COMMAND for user '$calling_user' (from $SSH_CLIENT)"
+logger -t git-only "Received command \"$SSH_ORIGINAL_COMMAND\" for user '$calling_user' (from $SSH_CLIENT)"
 
 # Do not create world readable files and directories
 umask 077
@@ -64,13 +72,16 @@ if [ ! -d "$git_repo_dir" ]; then
     mkdir -p "$git_repo_dir"
 fi
 
-# Simple command to list the existing repositories
-if [ "$SSH_ORIGINAL_COMMAND" = "repo list" ]; then
-    repos=$(ls -1 "${git_repo_dir}")
+# Function to list the user repositories found
+repo_list() {
+
+    local path="$1"
+
+    repos=$(ls -1t "$path")
 
     if [ "$repos" = "" ]; then
         echo "No repositories found" | colorize --attr=bold default -
-        exit $SUCCESS
+        return
     fi
 
     headers="Repository,Size,Accessed,Modified"
@@ -86,50 +97,79 @@ if [ "$SSH_ORIGINAL_COMMAND" = "repo list" ]; then
 
     echo "Repositories list" | colorize --attr=bold default -
     echo "$summary" | column -s '|' -N "$headers" -t -o ' | ' | colorize --clean-all -
+}
 
-    exit $SUCCESS
-fi
+extract_repo_name() {
+
+    local ssh_command="$1"
+
+    # Store original and validated repo name
+    local orig_repo_name
+    local valid_repo_name
+
+    # Extract the original repository name
+    orig_repo_name=$(echo "$ssh_command" | head -n 1 | cut -f 2 -d ' ' | tr -d "'")
+
+    # Check if it is empty
+    if [ -z "$orig_repo_name" ]; then
+        echo "Empty repository name !" 1>&2
+        return
+    fi
+
+    # Make sure we don't pass the home directory
+    if expr "$orig_repo_name" : ".*~.*" >/dev/null; then
+        echo "Do not specify the user path for your git repository" 1>&2
+        return
+    fi
+
+    # Make sure we don't us an absolute directory
+    if expr "$orig_repo_name" : ".*/.*" >/dev/null; then
+        echo "Do not specify any absolute path for your git repository" 1>&2
+        return
+    fi
+
+    # Cleanup the repository name
+    valid_repo_name=$(echo "$orig_repo_name" | sed -E "s:[^a-zA-Z]*([a-zA-Z][a-zA-Z0-9_\.-]+).*:\1:")
+
+    # Make sure the repository name was clean
+    if [ "$orig_repo_name" != "$valid_repo_name" ]; then
+        echo "The name $orig_repo_name is not valid." 1>&2
+        echo "You can use '$valid_repo_name' instead." 1>&2
+        echo "Valid repository name should start by a letter, then alphanumeric or (-) (_) and (.)"  1>&2
+        return
+    fi
+
+    echo "$valid_repo_name"
+}
 
 # Everything should run in this directory
 cd "$git_repo_dir" || exit $SYS_ERROR
+
+# Simple command to list the existing repositories
+if [ "$SSH_ORIGINAL_COMMAND" = "repo list" ]; then
+    repo_list "$git_repo_dir"
+    exit $SUCCESS
+fi
 
 # This block automatically creates the git directory the first time we push
 is_push=$(echo "$SSH_ORIGINAL_COMMAND" | grep -E -c '^git-receive-pack.*')
 
 if [ "$is_push" = "1" ]; then
 
-    # Check if the folder exists
-    repo_path=$(echo "$SSH_ORIGINAL_COMMAND" | head -n 1 | cut -f 2 -d ' ' | tr -d "'")
+    # Validate and extract the repository name if valid
+    repo_name=$(extract_repo_name "$SSH_ORIGINAL_COMMAND")
 
-    # Make sure we don't pass the home directory
-    if expr "$repo_path" : ".*~.*" >/dev/null; then
-        echo "Do not specify the user path for your git repository" 1>&2
-        usage
-        exit $NO_PATH
-    fi
-
-    if expr "$repo_path" : ".*/.*" >/dev/null; then
-        echo "Do not specify any absolute path for your git repository" 1>&2
-        usage
-        exit $NO_PATH
-    fi
-
-    # Cleanup the repository name
-    repo_name=$(echo "$repo_path" | sed -E "s:[^a-zA-Z]*([a-zA-Z][a-zA-Z0-9_\.-]+).*:\1:")
-
-    # Make sure the repository name was clean
-    if [ "$repo_path" != "$repo_name" ]; then
-        echo "The name $repo_path is not valid, use '$repo_name' instead." 1>&2
-        echo "Valid repository name should start by a letter, then alphanumeric or (-) (_) and (.)"  1>&2
+    if [ -z "$repo_name" ]; then
         usage
         exit $INVALID_NAME
     fi
 
     if [ ! -d "$repo_name" ]; then
-        logger "Creating new repository '$repo_name'"
+        logger -t git-only "Creating new repository '$repo_name'"
         git init --bare "$repo_name" >/dev/null 2>&1
     fi
 
 fi
 
+# Finally, run the command via git-shell
 exec git-shell -c "$SSH_ORIGINAL_COMMAND"

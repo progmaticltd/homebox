@@ -18,3 +18,14 @@
     cmd: /usr/local/bin/git-only --help
   changed_when: false
   tags: scripts
+
+- name: Check for error in the git-only script
+  delegate_to: localhost
+  become: false
+  ansible.builtin.shell:
+    cmd: >-
+      shellcheck
+      --shell=dash
+      {{ role_path }}/files/git-only.sh
+  changed_when: false
+  tags: scripts
