@@ -50,7 +50,7 @@ suggestions and support, and another one dedicated for development.
 
 - Postfix configuration and installation, with LDAP lookups, internationalised email aliases,
   fully SSL compliant.
-- Generate DKIM keys, SPF and DMARC DNS records. The DKIM keys are generated every year.
+- Generate DKIM keys, SPF, DMARC and DANE DNS records. The DKIM keys are generated every year.
 - Automatic copy of sent emails into the sent folder.
 - Automatic creation of the postmaster account and special email addresses using
   [RFC 2142](https://tools.ietf.org/html/rfc2142) specifications.
@@ -61,7 +61,7 @@ suggestions and support, and another one dedicated for development.
 - Email addresses with recipient delimiter included, e.g. john.doe+lists@dbcooper.com.
 - Optional master user creation, e.g. for families with children or moderated communities.
 - Server side full text search inside emails, attached documents and files and
-  compressed archives, with better results than GMail.
+  compressed archives.
 - Modern and responsive web access to emails, calendars and address books.
 - Powerful and light antispam system with [rspamd](https://rspamd.com/) and optional access to the web interface.
 - Antivirus for inbound _and_ outbound emails with [clamav](https://www.clamav.net/).
@@ -85,9 +85,9 @@ suggestions and support, and another one dedicated for development.
 - Incremental backups, encrypted, on multiple destination (SFTP, S3, Samba share or USB drive), with email and Jabber
   reporting.
 - Wireguard VPN server, with QR code generation, multiple configuration per clients, and optional split tunnelling.
-- SSH certificates for users, with restricted commands and options and expiration date, with configuration files sent by
+- SSH certificates for users, with restricted commands, options and expiration date, with configuration files sent by
   email automatically.
-- Small and secure git server per user, with automatic repository creation on the first push on the remote server.
+- Small and secure git server per user, with automatic repository creation on the first push.
 
 
 ### Development

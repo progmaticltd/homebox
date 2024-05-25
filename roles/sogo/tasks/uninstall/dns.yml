@@ -1,11 +1,11 @@
 ---
 
-- name: Create the main DNS entries
+- name: Delete the main DNS entries
   vars:
     dns_records: '{{ dns_records_main }}'
   ansible.builtin.include_role:
     name: dns-record
-    tasks_from: ../uninstall/main.yml
+    tasks_from: uninstall/main.yml
 
 - name: Delete the backup DNS entries
   when: backup_ip is defined
@@ -13,4 +13,4 @@
     dns_records: '{{ dns_records_backup }}'
   ansible.builtin.include_role:
     name: dns-record
-    tasks_from: ../uninstall/main.yml
+    tasks_from: uninstall/main.yml

@@ -1,15 +1,18 @@
 ---
 
 - name: Add Grafana GPG key
-  ansible.builtin.apt_key:
-    url: https://apt.grafana.com/gpg.key
-    state: present
+  ansible.builtin.copy:
+    src: gpg-key.pub
+    dest: /etc/apt/trusted.gpg.d/grafana.asc
+    mode: '0644'
   tags: apt
 
 - name: Add Grafana repository
   ansible.builtin.apt_repository:
     repo: >-
-      deb https://apt.grafana.com stable main
+      deb
+      [signed-by=/etc/apt/trusted.gpg.d/grafana.asc]
+      https://apt.grafana.com stable main
     filename: grafana
   tags: apt
 

@@ -4,6 +4,7 @@
   ansible.builtin.systemd:
     name: grafana-server
     state: stopped
+  ignore_errors: true
   tags: apt
 
 - name: Remove grafana package

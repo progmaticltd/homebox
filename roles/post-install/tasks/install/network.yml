@@ -21,3 +21,11 @@
     path: /etc/dhcp/dhclient-exit-hooks.d/debug
     state: absent
   tags: network
+
+- name: Template and lock /etc/hosts
+  ansible.builtin.template:
+    src: hosts.conf
+    dest: /etc/hosts
+    attributes: +i
+    mode: '0644'
+  tags: network

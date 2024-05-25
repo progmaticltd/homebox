@@ -84,9 +84,9 @@
       or cert_check_issuer.failed }}
   tags: certs
 
-- name: Create the certificate
+- name: Create or re-create the certificate
   register: create_cert
-  when: renew_cert
+  when: renew_cert or force_renew_certs
   environment:
     PDNS_API_URL: http://{{ pdns_api.address }}:{{ pdns_api.port }}/
     PDNS_API_KEY: '{{ api_key }}'

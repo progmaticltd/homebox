@@ -1,0 +1,12 @@
+---
+
+- name: Delete all the certificate files
+  vars:
+    certificates:
+      - name: smtp
+  ansible.builtin.include_role:
+    name: certificates
+    tasks_from: uninstall/main.yml
+    apply:
+      tags: certs
+  tags: certs

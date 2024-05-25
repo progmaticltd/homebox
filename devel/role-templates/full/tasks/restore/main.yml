@@ -1,0 +1,4 @@
+---
+
+# This playbook contains the tasks to restore previously dynamically generated data
+# from the ansible host controller to the target system.

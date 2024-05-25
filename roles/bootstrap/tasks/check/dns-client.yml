@@ -18,7 +18,7 @@
 
 - name: Check that all the queries failed
   ansible.builtin.assert:
-    that: '{{ dns_lookup is failed }}'
+    that: dns_lookup is failed
   loop: '{{ broken_hosts_lookup.results }}'
   loop_control:
     loop_var: dns_lookup

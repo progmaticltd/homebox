@@ -11,7 +11,7 @@
         value: '{{ external_ip }}'
   ansible.builtin.include_role:
     name: dns-record
-    tasks_from: ../uninstall/main.yml
+    tasks_from: uninstall/main.yml
 
 - name: Delete the backup DNS entries
   when: backup_ip is defined
@@ -22,4 +22,4 @@
         value: '{{ backup_ip }}'
   ansible.builtin.include_role:
     name: dns-record
-    tasks_from: ../uninstall/main.yml
+    tasks_from: uninstall/main.yml

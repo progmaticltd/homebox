@@ -1,14 +1,33 @@
-#!/bin/sh
+#!/bin/sh -e
+#
+## Pre-commit git-hook to be installed
+## using the command
+#
 
-set -e
+# Status codes
+SUCCESS=0
+SYSTEM_ERROR=10
+LINT_ERROR=20
+
+# Default status
+lint_result=$SUCCESS
+
+# Run from the parent directory
+script_file=$(readlink -f "$0")
+script_dir=$(dirname "$script_file")
+root_dir="$script_dir/.."
+
+if ! ansible-lint --version >/dev/null 2>&1; then
+    echo "Please install ansible-lint"
+    exit $SYSTEM_ERROR
+fi
 
 # From .git/hooks/pre-commit.sample
-if git rev-parse --verify HEAD >/dev/null 2>&1
-then
-	against=HEAD
+if git rev-parse --verify HEAD >/dev/null 2>&1;then
+    against=HEAD
 else
-	# Initial commit: diff against an empty tree object
-	against=$(git hash-object -t tree /dev/null)
+    # Initial commit: diff against an empty tree object
+    against=$(git hash-object -t tree /dev/null)
 fi
 
 # If there are whitespace errors or leftover merge conflicts markers,
@@ -20,91 +39,63 @@ tmp_checklist=$(mktemp)
 
 # Write the list of modified ansible YAML files to be committed
 git diff-index --cached --name-only --diff-filter=ACMR -z "$against" -- \
-	"config/*.yml" \
-	"install/*.yml" \
-	"uninstall/*.yml" \
-	"tests/*.yml" \
-	"preseed/ansible/*.yml" \
-	"preseed/config/*.yml" \
-	"preseed/playbooks/*.yml" \
-	":(exclude)*/files/*.yml" \
-	":(exclude)*/templates/*.yml" \
-	> "$tmp_checklist"
+    "$root_dir/playbooks/*.yml" \
+    "$root_dir/roles/**/*.yml" \
+    ":(exclude)*/files/*.yml" \
+    ":(exclude)*/templates/*.yml" \
+    | tr '\0' '\n' >"$tmp_checklist"
 
-# If the checklist file is not empty, run ansible-lint
-if [ -s "$tmp_checklist" ]
-then
-	# Check if ansible is usable
-	ansible-lint --version >/dev/null || {
-		cat >&2 <<- EOF
-
-		Please make sure ansible-lint is installed and usable.
-
-		The git pre-push hook uses ansible-lint to validate ansible playbooks YAML
-		files on commits.
-
-		EOF
-		exit 1
-	}
-	echo "Let's check files with ansible-lint"
-
-	# Create a temporary directory
-	tmp_dir="$(mktemp -d)"
-
-	# Set the log file
-	log_file="$(git rev-parse --show-toplevel)/logs/ansible-lint-pre-commit.log"
-
-	# Checkout all the files in the index to the temporary directory
-	echo "Checking out all files in the index to $tmp_dir"
-	git checkout-index --prefix="$tmp_dir/" -a
-
-	# Use a subshell to get to the temporary directory, run ansible-lint
-	# with a different error handling, and remember the exit status of the
-	# xargs call if any error
-	lint_result=0
-	(
-		cd "$tmp_dir"
-
-		# Do not exit on error until the end of the subshell
-		set +e
-
-		echo "Running ansible-lint on modified ansible files"
-		echo "Full log is being written to $log_file"
-		# shellcheck disable=SC2016
-		xargs -0 -I{} \
-			sh -c 'PYTHONUNBUFFERED=1 ansible-lint "$1" 2>&1' -- "{}" \
-			< "$tmp_checklist" \
-			> "$log_file" 2>&1
-
-	# Back to: set -e
-	) || lint_result=$?
-
-	# Remove the temporary directory
-	rm -rf "$tmp_dir"
-
-	# Remove the temporary checklist file
-	rm -f "$tmp_checklist"
-
-	case "$lint_result" in
-		"0")
-			if grep --color=auto -h -e 'WARNING:' "$log_file" >&2
-			then
-				echo "Please address the ansible-lint warnings"
-				exit 1
-			fi
-			echo "Looks good for ansible-lint"
-			;;
-		"123")
-			grep --color=auto -h -A 11 -e 'Syntax Error' "$log_file" >&2 || true
-			grep --color=auto -h -e '\[E...]' "$log_file" >&2 || true
-			grep --color=auto -h -e 'WARNING:' "$log_file" >&2 || true
-			echo "Please fix the ansible-lint errors and warnings"
-			;;
-		*)
-			echo >&2 "Sorry, something wrong happened"
-			;;
-	esac
+# Exit if no files are staged
+if [ -z "$tmp_checklist" ]; then
+   echo "No files to check"
+   exit
 fi
 
-# Fail in case of error
-exit ${lint_result:-0}
+# Display the number of files to check
+nb_files=$(wc -w "$tmp_checklist" | cut -f 1 -d ' ')
+printf "Diff against revision '%s', %d files to check:\n" "$against" "$nb_files"
+
+# Restart from an empty file
+log_file="$root_dir/logs/ansible-lint-pre-commit.log"
+truncate --size 0 "$log_file"
+
+file_checked=0
+
+# I am aware that some staged files may not be staged to the last version,
+# but that the script will check the version on disk, i.e. the last one.
+# This is a I accept, for 1) the sake of simplicity of the script,
+# 2) because you are likely to commit the last version,
+# and 3) ansible-lint may need to recurse into the original hierarchy,
+# especially when using include_role
+
+while read -r file; do
+
+    file_checked=$((file_checked + 1))
+
+    printf "[%02d/%02d] Checking file '%s': " "$file_checked" "$nb_files" "$file"
+
+    status=$(ansible-lint --force-color "$file" 2>&1 | tee -a "$log_file")
+
+    if expr "$status" : ".*LINT_ERROR.*" >/dev/null; then
+
+        lint_result=$LINT_ERROR
+        echo "Error(s)"
+
+    elif expr "$status" : ".*WARNING.*" >/dev/null; then
+
+        lint_result=$LINT_ERROR
+        echo "Warning(s)"
+
+    else
+        echo "OK"
+    fi
+
+done < "$tmp_checklist"
+
+if [ "$lint_result" != "$SUCCESS" ]; then
+
+    echo "Errors found:"
+    cat "$log_file"
+fi
+
+exit "$lint_result"

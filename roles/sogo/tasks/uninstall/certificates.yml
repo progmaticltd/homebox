@@ -1,12 +1,12 @@
 ---
 
-- name: Remove the sogo certificates in the debian standard directory
-  ansible.builtin.file:
-    path: '{{ path }}'
-    state: absent
-  loop:
-    - /etc/ssl/certs/sogo.{{ network.domain }}.issuer.crt
-    - /etc/ssl/certs/sogo.{{ network.domain }}.crt
-    - /etc/ssl/private/sogo.{{ network.domain }}.key
-  loop_control:
-    loop_var: path
+- name: Delete all the certificate files
+  vars:
+    certificates:
+      - name: sogo
+  ansible.builtin.include_role:
+    name: certificates
+    tasks_from: uninstall/main.yml
+    apply:
+      tags: always
+  tags: certs

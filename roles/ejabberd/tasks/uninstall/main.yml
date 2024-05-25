@@ -13,5 +13,9 @@
   ansible.builtin.include_tasks: uninstall/prometheus.yml
   tags: prometheus
 
+- name: Remove Certificates
+  ansible.builtin.include_tasks: uninstall/certificates.yml
+  tags: certs
+
 - name: Remove DNS records
   ansible.builtin.include_tasks: uninstall/dns.yml

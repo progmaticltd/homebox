@@ -14,3 +14,6 @@ cert_recreate: false
 
 # The default duration for temporary certificates generated on first install
 tmp_duration: +4w
+
+# Set this vartiable to true on the command line to renew the certificates
+force_renew_certs: false

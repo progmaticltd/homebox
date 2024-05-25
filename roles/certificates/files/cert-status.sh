@@ -45,12 +45,12 @@ for ca_file in $cert_files; do
 
     dane_status=""
     for port in $dane_ports; do
-        valid=$(danetool --port $port --check "$subdomain.$domain" 2>&1 | grep -c 'Certificate matches')
+        valid=$(danetool --port "$port" --check "$subdomain.$domain" 2>&1 | grep -c 'Certificate matches')
         if [ "$valid" = "0" ]; then
-            dane_status="Error"
+            dane_status="$dane_status/$port:Error"
             break
         fi
-        dane_status="OK"
+        dane_status="$dane_status/$port:OK"
     done
 
     # Check modulus

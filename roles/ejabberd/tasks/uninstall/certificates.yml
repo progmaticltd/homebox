@@ -1,19 +1,17 @@
 ---
 
-- name: Remove the certificates from the debian standard directory
-  notify: Restart ejabberd
-  ansible.builtin.file:
-    path: /etc/ssl/certs/{{ cert_name }}.{{ network.domain }}.crt
-    state: absent
-  loop: '{{ std_cert_names }}'
-  loop_control:
-    loop_var: cert_name
-
-- name: Remove the private keys from the debian standard directory
-  notify: Restart ejabberd
-  ansible.builtin.file:
-    path: /etc/ssl/private/{{ cert_name }}.{{ network.domain }}.key
-    state: absent
-  loop: '{{ std_cert_names }}'
-  loop_control:
-    loop_var: cert_name
+- name: Delete all the certificate files
+  vars:
+    certificates:
+      - name: conference
+      - name: upload
+      - name: vjud
+      - name: pubsub
+      - name: proxy
+      - name: xmpp
+  ansible.builtin.include_role:
+    name: certificates
+    tasks_from: uninstall/main.yml
+    apply:
+      tags: always
+  tags: certs

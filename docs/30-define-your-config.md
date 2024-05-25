@@ -215,7 +215,18 @@ network:
   external_ip:      # first external IP address, IPv4 or IPv6
   backup_ip:        # if you have one, second external IP address, IPv4 or IPv6,
                     # otherwise, use '~', without the quotes.
+  bind_ip:          # If you are behind a NAT, the local IP address externally NAT'ed,
+                    # e.g. 192.168.1.10
 ```
+
+##### For the developers
+
+If your are testing on a local virtual machine and the system is not online, you can use any valid IPv4 or IPv6 address,
+as these IPs will only be used to populate the DNS server entries.
+
+Conversely, the `bind_ip` entry is necessary to ensure the DNS server can listen on a specific IP address instead of a
+non-existing one.
+
 
 #### List of users
 

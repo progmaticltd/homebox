@@ -9,9 +9,3 @@
     tasks_from: uninstall/main.yml
     apply: { tags: always }
   tags: certs
-
-- name: Remove the certificate update hook
-  ansible.builtin.file:
-    path: /etc/lego/hooks/grafana.{{ network.domain }}
-    state: absent
-  tags: certs

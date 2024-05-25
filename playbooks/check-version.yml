@@ -5,6 +5,7 @@
   vars:
     debug: '{{ system.debug }}'
     backup_directory: '{{ playbook_dir }}/../backup/{{ network.domain }}/'
+    hide_secrets: '{{ not system.devel }}'
   vars_files:
     - '{{ playbook_dir }}/../config/defaults/common-security.yml'
     - '{{ playbook_dir }}/../config/defaults/version-{{ version | default("small") }}.yml'

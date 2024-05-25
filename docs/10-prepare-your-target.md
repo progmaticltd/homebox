@@ -3,6 +3,8 @@
 This section describes the process from a freshly installed Debian distribution, without any user. You can go to the
 next section if your system already have a dedicated user with an SSH connection and root access.
 
+It is relevant whatever you are using a live system or a virtual machine for development.
+
 
 ## Create an installation user
 

@@ -1,0 +1,4 @@
+---
+
+# This playbook contains the tasks to backup the dynamically generated data
+# from the target system to the ansible host controller.

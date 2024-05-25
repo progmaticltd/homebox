@@ -14,17 +14,19 @@
     attributes: -i
   tags: network
 
+- name: Ensure sudo keeps working after changing hostname
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: >-
+      127.0.1.1
+      {{ network.hostname }}.{{ network.domain }}
+      {{ network.hostname }}
+    insertafter: '^127\.0\.1\.1.*'
+  tags: network
+
 - name: Set the hostname
   ansible.builtin.hostname:
     name: '{{ network.hostname }}'
-  tags: network
-
-- name: Template and lock /etc/hosts
-  ansible.builtin.template:
-    src: hosts.conf
-    dest: /etc/hosts
-    attributes: +i
-    mode: '0644'
   tags: network
 
 - name: Check if /etc/resolv.conf is a real file

@@ -15,6 +15,10 @@
 - name: Remove AppArmor configuration
   ansible.builtin.include_tasks: uninstall/apparmor.yml
 
+- name: Remove the certificates
+  ansible.builtin.include_tasks: uninstall/certificates.yml
+  tags: certs
+
 - name: Remove Prometheus alerts
   tags: prometheus
   ansible.builtin.include_tasks: uninstall/prometheus.yml

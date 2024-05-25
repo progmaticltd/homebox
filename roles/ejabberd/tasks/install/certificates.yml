@@ -4,7 +4,6 @@
   vars:
     certificates:
       - name: conference
-      - name: files
       - name: upload
       - name: vjud
       - name: pubsub

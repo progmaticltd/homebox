@@ -49,7 +49,7 @@ following block, for instance:
 ```plain
 Host homebox
     User hbinstall
-	HostName 192.168.33.95
+    HostName 192.168.33.95
 ```
 
 Yo can now establish the connection with _homebox_ more easily:

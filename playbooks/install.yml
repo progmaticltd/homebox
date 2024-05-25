@@ -10,14 +10,14 @@
   tags: always
   tasks:
     - name: Load the roles to run
-      set_fact:
+      ansible.builtin.set_fact:
         roles_list: '{{ lookup("env", "ROLE").split(",") }}'
 
 - name: Run the install tasks for each role
   hosts: homebox
   vars:
-    debug: '{{ debug | default(system.debug) }}'
-    hide_secrets: true
+    debug: '{{ system.debug }}'
+    hide_secrets: '{{ not system.devel }}'
     backup_directory: '{{ playbook_dir }}/../backup/{{ network.domain }}/'
   vars_files:
     - '{{ playbook_dir }}/../config/defaults/common-security.yml'
@@ -25,7 +25,7 @@
     - '{{ playbook_dir }}/../config/system.yml'
   tasks:
     - name: Run the role selected
-      include_role:
+      ansible.builtin.include_role:
         name: '{{ role }}'
         tasks_from: install/main.yml
       loop: '{{ [ "common-init" ] + roles_list }}'
