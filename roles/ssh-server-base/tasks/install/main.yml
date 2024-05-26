@@ -9,6 +9,7 @@
   tags: ca
 
 - name: Configure the administration account
+  when: system.admin.ssh_auth.public_key | default(false) | bool
   ansible.builtin.include_tasks: install/admin-account.yml
   tags: admin
 
