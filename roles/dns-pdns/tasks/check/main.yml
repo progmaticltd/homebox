@@ -8,4 +8,5 @@
   tags: dnssec
 
 - name: Check DNS propagation
+  when: not system.devel
   ansible.builtin.include_tasks: check/propagation.yml
