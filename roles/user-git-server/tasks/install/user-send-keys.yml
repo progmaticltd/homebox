@@ -33,6 +33,16 @@
     ssh_files: '{{ lookup("ansible.builtin.fileglob", user_src_dir + "/*") | split(",") }}'
   tags: emails
 
+- name: Create the attachments folder
+  register: emails
+  ansible.builtin.file:
+    path: '{{ tmp_folder }}/attachments'
+    state: directory
+    owner: postmaster
+    group: postmaster
+    mode: '0700'
+  tags: emails
+
 - name: Copy all the files to send in the temporary folder
   register: emails
   ansible.builtin.copy:

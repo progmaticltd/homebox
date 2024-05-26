@@ -5,7 +5,7 @@
   ansible.builtin.set_fact:
     cakey_passphrase: >-
       {{ lookup(creds.store, creds.prefix
-      + "/ssh/ca-passphrase" + creds.opts.create) }}
+      + "/ssh/server-keys-passphrase" + creds.opts.create) }}
   tags: facts
 
 - name: Filter the list of users to install / check / etc

@@ -64,15 +64,6 @@
     ignore_timestamps: true
   tags: users, keys
 
-- name: Create user SSH configuration template for this key
-  delegate_to: localhost
-  become: false
-  ansible.builtin.template:
-    src: ssh-user.conf
-    dest: '{{ backup_directory }}/ssh/users/{{ user.uid }}/{{ key_file_name }}-ssh.conf'
-    mode: '0644'
-  tags: users, keys
-
 - name: Re-encrypt the key
   no_log: '{{ hide_secrets }}'
   delegate_to: localhost
@@ -84,3 +75,12 @@
     -f '{{ backup_directory }}/ssh/ca/ca.key'
   changed_when: true
   tags: ca, keys
+
+- name: Create user SSH configuration template for this key
+  delegate_to: localhost
+  become: false
+  ansible.builtin.template:
+    src: ssh-user.conf
+    dest: '{{ backup_directory }}/ssh/users/{{ user.uid }}/{{ key_file_name }}-ssh.conf'
+    mode: '0644'
+  tags: users, keys
