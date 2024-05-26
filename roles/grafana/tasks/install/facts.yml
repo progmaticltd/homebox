@@ -17,7 +17,7 @@
   ansible.builtin.set_fact:
     grafana_db_password: >
       {{ lookup(creds.store,
-      creds.prefix + "postgres/grafana"
+      creds.prefix + "/postgres/grafana"
       + creds.opts.create + creds.opts.system) }}
   tags: facts
 
