@@ -58,7 +58,8 @@ system:
   release: bookworm
   devel: false
   debug: false
-
+  apt:
+    mirror: deb.debian.org
 
 ###############################################################################
 # If you are using Gandi, you can enter an API key here

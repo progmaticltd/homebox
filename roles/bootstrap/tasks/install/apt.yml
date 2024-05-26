@@ -7,6 +7,18 @@
     sections: '{{ system.apt.sections | join(" ") }}'
   tags: apt
 
+- name: Check if apt mirror is valid
+  register: mirror
+  ansible.builtin.uri:
+    url: http://{{ system.apt.mirror }}/debian/dists/{{ distribution_release }}/Release
+    return_content: true
+  loop:
+    - "{{ system.release }}"
+    - "{{ system.release }}-updates"
+    - "{{ system.release }}-backports"
+  loop_control:
+    loop_var: distribution_release
+
 - name: Initialise default repositories
   register: repositories
   ansible.builtin.template:

@@ -1,5 +1,17 @@
 ---
 
+- name: Check if apt mirror is valid
+  register: mirror
+  ansible.builtin.uri:
+    url: http://{{ system.apt.mirror }}/debian/dists/{{ distribution_release }}/Release
+    return_content: true
+  loop:
+    - "{{ system.release }}"
+    - "{{ system.release }}-updates"
+    - "{{ system.release }}-backports"
+  loop_control:
+    loop_var: distribution_release
+
 - name: Check if we can run apt update without error
   ansible.builtin.apt:
     update_cache: true

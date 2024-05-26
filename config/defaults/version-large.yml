@@ -194,6 +194,7 @@ system_default:
   reboot_timeout: 300      # wait 5 minutes max when rebooting the system
   apt:                     # The apt sections to use,
     sections: [ main ]     # contrib and non-free not activated by default
+    mirror: deb.debian.org # package mirror to use
 
   # Administration settings
   # the user below is automatically added to the sudo group, and can be configured
