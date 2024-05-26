@@ -63,6 +63,7 @@
     loop_var: user
 
 - name: Check that I can bind using SSL
+  when: not system.devel
   no_log: '{{ hide_secrets }}'
   ansible.builtin.shell: >-
     ldapsearch
