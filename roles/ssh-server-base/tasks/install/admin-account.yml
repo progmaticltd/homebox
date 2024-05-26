@@ -1,0 +1,137 @@
+---
+
+- name: Create user directory locally to store ssh information and keys
+  delegate_to: localhost
+  become: false
+  ansible.builtin.file:
+    path: '{{ backup_directory }}/ssh/users/{{ system.admin.name }}'
+    state: directory
+    mode: '0700'
+  tags: admin
+
+- name: Set the ssh key fact
+  set_fact:
+    sshkey: '{{ system.admin.ssh_auth.public_key }}'
+  tags: admin
+
+- name: Create a unique the key ID from the data
+  ansible.builtin.set_fact:
+    key_id: '{{ ( sshkey.data | replace(" ", "") | hash("sha1"))[0:8] }}'
+  tags: admin, facts
+
+- name: Create a unique file name for the key
+  ansible.builtin.set_fact:
+    key_file_name: '{{ sshkey.filename | default("admin-" + key_id) }}'
+  tags: admin, facts
+
+- name: Store the public key in a file locally
+  delegate_to: localhost
+  become: false
+  register: public_key
+  ansible.builtin.copy:
+    content: '{{ sshkey.type }} {{ sshkey.data | replace(" ", "") }} {{ sshkey.comment | default("") }}'
+    dest: '{{ backup_directory }}/ssh/users/{{ system.admin.name }}/{{ key_file_name }}.pub'
+    mode: '0644'
+  tags: admin
+
+- name: Temporary decrypt the server CA key
+  no_log: '{{ hide_secrets }}'
+  delegate_to: localhost
+  become: false
+  ansible.builtin.shell: >-
+    ssh-keygen -p
+    -P '{{ server_keys_passphrase }}'
+    -N ''
+    -f '{{ backup_directory }}/ssh/ca/ca.key'
+  changed_when: true
+  tags: admin
+
+- name: Sign the public key and store the public key certificate
+  register: ansible_openssh_cert_cmd
+  delegate_to: localhost
+  become: false
+  community.crypto.openssh_cert:
+    type: user
+    signing_key: '{{ backup_directory }}/ssh/ca/ca.key'
+    public_key: '{{ backup_directory }}/ssh/users/{{ system.admin.name }}/{{ key_file_name }}.pub'
+    path: '{{ backup_directory }}/ssh/users/{{ system.admin.name }}/{{ key_file_name }}-cert.pub'
+    identifier: '{{ system.admin.name }}-admin-{{ key_id }}'
+    state: present
+    force: '{{ public_key.changed }}'
+    principals:
+      - '{{ system.admin.name }}'
+    options:
+      - clear
+      - permit-pty
+      - permit-user-rc
+    mode: '0600'
+    valid_from: +0s
+    valid_to: '+{{ system.admin.ssh_auth.validity | default("52w") }}'
+    valid_at: +2w
+    ignore_timestamps: true
+  ignore_errors: true
+  tags: admin
+
+# See https://github.com/ansible-collections/community.crypto/issues/416
+- name: Create user SSH configuration template for this key
+  when: ansible_openssh_cert_cmd is failed
+  delegate_to: localhost
+  become: false
+  ansible.builtin.command:
+    cmd: >-
+      ssh-keygen -s '{{ backup_directory }}/ssh/ca/ca.key'
+      -n {{ system.admin.name }}
+      -I '{{ system.admin.name }}-admin-{{ key_id }}'
+      -V '+{{ system.admin.ssh_auth.validity | default("52w") }}'
+      -O clear
+      -O permit-pty
+      -O permit-user-rc
+      '{{ backup_directory }}/ssh/users/{{ system.admin.name }}/{{ key_file_name }}.pub'
+  tags: admin
+
+- name: Show information about the public key
+  delegate_to: localhost
+  become: false
+  ansible.builtin.command:
+    cmd: >-
+      ssh-keygen -L
+      -f '{{ backup_directory }}/ssh/users/{{ system.admin.name }}/{{ key_file_name }}-cert.pub'
+  changed_when: false
+  tags: admin
+
+- name: Re-encrypt the key
+  no_log: '{{ hide_secrets }}'
+  delegate_to: localhost
+  become: false
+  ansible.builtin.shell: >-
+    ssh-keygen -p
+    -P ''
+    -N '{{ server_keys_passphrase }}'
+    -f '{{ backup_directory }}/ssh/ca/ca.key'
+  changed_when: true
+  tags: admin
+
+- name: Create user SSH configuration template for this key
+  delegate_to: localhost
+  become: false
+  ansible.builtin.template:
+    src: ssh-user.conf
+    dest: '{{ backup_directory }}/ssh/users/{{ system.admin.name }}/{{ key_file_name }}-ssh.conf'
+    mode: '0644'
+  tags: admin
+
+- name: Copy everything in the ~/.ssh folder for the current user
+  delegate_to: localhost
+  become: false
+  ansible.builtin.copy:
+    src: '{{ file }}'
+    dest: '{{ lookup("env", "HOME")}}/.ssh/{{ file | basename }}'
+    remote_src: true
+    mode: '0600'
+  loop:
+    - '{{ backup_directory }}/ssh/users/{{ system.admin.name }}/{{ key_file_name }}-ssh.conf'
+    - '{{ backup_directory }}/ssh/users/{{ system.admin.name }}/{{ key_file_name }}.pub'
+    - '{{ backup_directory }}/ssh/users/{{ system.admin.name }}/{{ key_file_name }}-cert.pub'
+  loop_control:
+    loop_var: file
+  tags: admin

@@ -27,6 +27,25 @@
     user_ssh_access: '{{ users | selectattr("ssh", "defined") | length > 0 }}'
   tags: config
 
+- name: Initialise the list of groups authorised to login
+  ansible.builtin.set_fact:
+    authorised_groups:
+      - '{{ remote_user_group }}'
+      - '{{ system.admin.name | default("admin") }}'
+  tags: config
+
+- name: Initialise the list of groups authorised to login
+  when: user_ssh_access
+  ansible.builtin.set_fact:
+    authorised_groups: '{{ authorised_groups + [ "mail_users" ] }}'
+  tags: config
+
+- name: Allow root access or not
+  when: not security.ssh_disable_root_access
+  ansible.builtin.set_fact:
+    authorised_groups: '{{ authorised_groups + [ "root" ] }}'
+  tags: config
+
 - name: Add custom settings for the  SSH server
   notify:
     - Check SSH config

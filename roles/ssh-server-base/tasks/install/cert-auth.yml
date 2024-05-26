@@ -61,9 +61,9 @@
   delegate_to: localhost
   become: false
   ansible.builtin.shell: >-
-      ssh-keygen -p
-      -P ''
-      -N '{{ server_keys_passphrase }}'
-      -f '{{ backup_directory }}/ssh/ca/ca.key'
+    ssh-keygen -p
+    -P ''
+    -N '{{ server_keys_passphrase }}'
+    -f '{{ backup_directory }}/ssh/ca/ca.key'
   changed_when: true
   tags: ca

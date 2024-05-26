@@ -1,5 +1,28 @@
 ---
 
+- name: Get the local user group name
+  become: false
+  ansible.builtin.set_fact:
+    remote_user: '{{ ansible_ssh_user }}'
+  tags: facts
+
+- name: Get user details
+  ansible.builtin.getent:
+    database: passwd
+    key: '{{ remote_user }}'
+  tags: facts
+
+- name: Get group details
+  ansible.builtin.getent:
+    database: group
+    key: '{{ remote_user }}'
+  tags: facts
+
+- name: Store remote user and group name
+  ansible.builtin.set_fact:
+    remote_user_group: '{{ remote_user }}'
+  tags: facts
+
 - name: Try to load CA key’s passphrase from the password store
   no_log: '{{ hide_secrets }}'
   ansible.builtin.set_fact:

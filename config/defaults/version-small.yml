@@ -191,12 +191,19 @@ system_default:
     sections: [ main ]     # contrib and non-free not activated by default
 
   # Administration settings
-  # the user below is automatically added to the sudo group
+  # the user below is automatically added to the sudo group, and can be configured
+  # with SSH access, for common administration tasks. An SSH certificate will be created
+  # with a limited validity time and options restricted to the minimum required,
+  # no port-forwarding and pty access
   admin:
     name: admin            # Administrator’s account name
     group_name: admin      # Administrator’s group name
     uid_number: 2000
     gid_number: 2000
+    ssh_auth:
+      public_key: ~        # Public key details for SSH authentication.
+      password: false      # Allow password authentication or not
+      validity: +52w       # Validity time for the key
 
 
 ###############################################################################
