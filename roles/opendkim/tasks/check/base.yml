@@ -15,6 +15,7 @@
 # This need to check if it is still working
 # the first time we deploy a domain
 - name: Test opendkim configuration
+  when: not system.devel
   become: true
   become_method: sudo
   become_user: opendkim
