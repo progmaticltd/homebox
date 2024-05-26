@@ -1,0 +1,111 @@
+---
+
+- name: Create a unique ID
+  ansible.builtin.set_fact:
+    uuid: '{{ 1048576 | random | to_uuid }}'
+  tags: postfix
+
+- name: Create a unique subject for testing
+  ansible.builtin.set_fact:
+    test_subject: 'Testing with virus attachment {{ uuid }}'
+  tags: postfix
+
+- name: Create an email template
+  ansible.builtin.template:
+    src: check/testmsg-01.txt
+    dest: /tmp/testmsg-01.txt
+    mode: '0644'
+    owner: '{{ users[0].uid }}'
+    group: '{{ users[0].uid }}'
+  tags: postfix
+
+- name: Copy the message on the remote server
+  ansible.builtin.template:
+    src: check/testmsg-01.txt
+    dest: /tmp/testmsg-01.txt
+    mode: '0644'
+  tags: postfix
+
+- name: Copy the attachment on the remote server
+  ansible.builtin.copy:
+    src: check/eicar.txt
+    dest: /tmp/testmsg-01-attachment.txt
+    mode: '0644'
+  tags: postfix
+
+- name: Send an email with attachment
+  ansible.builtin.shell: >-
+    swaks
+    --from="{{ users[0].mail }}"
+    --to "{{ users[1].mail }}"
+    --h-Subject '{{ test_subject }}'
+    --attach-type 'text/plain'
+    --attach-name 'testmsg-01.txt'
+    --attach '/tmp/testmsg-01-attachment.txt'
+    --tls-verify
+    --auth
+    --auth-user="{{ user0_uid }}"
+    --auth-password="{{ user0_password }}"
+    --protocol SSMTP
+    --server smtp.{{ network.domain }}
+    --body /tmp/testmsg-01.txt
+  become: true
+  become_method: sudo
+  become_user: '{{ users[0].uid }}'
+  changed_when: false
+  tags: postfix
+
+# Search using doveadm and validate the search functionality
+- name: Clear and rebuid the fts index for user {{ users[0].uid }}
+  ansible.builtin.shell: >-
+    doveadm fts rescan -u "{{ users[0].uid }}" &&
+    doveadm index -u "{{ users[0].uid }}" 'INBOX'
+  changed_when: true
+  tags: postfix
+
+# Now, we do a search inside the emais using the uuid,
+# this should return one result
+- name: Search inside the emails for the rejected message
+  register: email_found
+  ansible.builtin.shell: >-
+    set -o pipefail ;
+    doveadm search -u "{{ users[0].uid }}"
+    new
+    from postmaster
+    body "virus detected"
+    subject "{{ uuid }}"
+  args:
+    executable: /bin/bash
+  changed_when: true
+  failed_when: >-
+    "1 results" not in email_found.stderr
+  retries: 12
+  delay: 5
+  until: email_found is not failed
+  tags: postfix
+
+- name: Store the email id
+  ansible.builtin.set_fact:
+    email_id: '{{ email_found.stdout_lines[0] | split(" ") | first }}'
+  tags: postfix
+
+- name: Fetch the returned messages
+  register: email_body
+  ansible.builtin.shell:
+    doveadm fetch -u "{{ users[0].uid }}"
+    body
+    mailbox-guid '{{ email_id }}'
+  failed_when: >-
+    "{{ uuid }}" not in email_body.stdout
+  tags: postfix
+
+- name: Cleanup, delete the attachment and the email template
+  ansible.builtin.file:
+    path: '{{ file }}'
+    state: absent
+  loop:
+    - /tmp/testmsg-01-attachment.txt
+    - /tmp/testmsg-01.txt
+  loop_control:
+    loop_var: file
+  tags: postfix

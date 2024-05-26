@@ -1,6 +1,11 @@
 ---
 
+- name: Check if the clamav services are up and running
+  ansible.builtin.service_facts:
+  tags: facts
+
 - name: Create user information from the first user
   ansible.builtin.set_fact:
     user0_uid: '{{ users[0].uid }}'
     user0_password: '{{ lookup(creds.store, creds.prefix + "/ldap/" + users[0].uid) }}'
+  tags: facts

@@ -4,7 +4,9 @@
   ansible.builtin.shell: dpkg -s clamav
   changed_when: false
 
-- name: Check if the clamav service is up and running
-  register: service_facts
-  ansible.builtin.shell: 'systemctl status clamav-daemon'
-  changed_when: false
+- name: Check if the databases are up to date
+  ansible.builtin.assert:
+    that:
+      - ansible_facts.services["clamav-daemon.service"].state == "running"
+      - ansible_facts.services["clamav-daemon.service"].status == "enabled"
+  tags: service
