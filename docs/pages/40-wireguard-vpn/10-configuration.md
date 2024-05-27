@@ -109,7 +109,7 @@ As usual, the deployment is using the same command:
 ROLE=vpn-wireguard apb uninstall.yml
 ```
 
-Once removed, you can still re-install, and redeploy the same keys previously backed-up, using the following command.```sh
+Once removed, you can still re-install, and redeploy the same keys previously backed-up, using the following command:
 
 ```sh
 ROLE=vpn-wireguard apb install.yml restore.yml
