@@ -42,7 +42,7 @@ Test if the final configuration is valid, and restart unbound:
 ```sh
 sudo unbound-checkconf
 unbound-checkconf: no errors in /etc/unbound/unbound.conf
-sudo
+sudo systemctl restart unbound
 ```
 
 Configure your system to use unbound
@@ -177,6 +177,6 @@ This is optional, but will let you open the sites from Mozilla Firefox.
 - Select the root certificate authority file.
 - Tick the box "This certificate can identify web sites".
 
-![Trusted cert](/img/dev/firefox-cert-trusted.png)
+![Trusted cert](../../img/dev/firefox-cert-trusted.png)
 
 You can use the procedure for Mozilla Thunderbird.
