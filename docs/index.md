@@ -5,7 +5,7 @@ The source code is on [GitHub](https://github.com/progmaticltd/homebox).
 
 The features list is visible on a [dedicated website](https://homebox.space).
 
-## Main components
+# Main components
 
 - Operating System: Debian Bookworm
 - Authentication: OpenLDAP
