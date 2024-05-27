@@ -12,3 +12,23 @@
     src: /var/lib/lego/certificates
     dest: '{{ backup_directory }}/'
     archive: true
+
+- name: Check if the temp CA exist
+  register: temp_ca
+  ansible.builtin.stat:
+    path: /usr/local/share/ca-certificates/homebox-temp-ca.crt
+  tags: ca
+
+- name: Create locally a CA folder and retrieve the temp CA
+  when: temp_ca.stat.exists
+  tags: ca
+  block:
+    - name: Create the local CA folder
+      ansible.builtin.file:
+        path: '{{ backup_directory }}/ca'
+        state: directory
+    - name: Fetch the temp CA
+      ansible.builtin.fetch:
+        src: /usr/local/share/ca-certificates/homebox-temp-ca.crt
+        dest: '{{ backup_directory }}/ca/temp-ca.crt'
+        flat: true
