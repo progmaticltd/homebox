@@ -1,0 +1,1 @@
+style "#{File.dirname(__FILE__)}/docs/md-style.rb"

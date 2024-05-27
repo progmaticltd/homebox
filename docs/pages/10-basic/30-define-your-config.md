@@ -45,6 +45,10 @@ There are four pre-configured settings you could use:
 | Web console access                      | ☐    | ☐     | ☐      | ☐     | optional component, nginx and cockpit |
 | Web key directory                       | ☐    | ☐     | ☐      | ☐     | optional component, nginx and GnuPG   |
 | Remote backup                           | ☐    | ☐     | ☐      | ☐     | optional component, borg-backup       |
+| Wireguard VPN server                    | ☐    | ☐     | ☐      | ☐     | optional component, wireguard VPN     |
+| SSH server using certificates           | ☐    | ☐     | ☐      | ☐     | optional for higher security          |
+| Simple Git server for users             | ☐    | ☐     | ☐      | ☐     | Small git server over SSH             |
+
 
 ### Requirements
 

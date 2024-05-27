@@ -1,0 +1,32 @@
+---
+
+- name: Set the ssh key fact
+  set_fact:
+    sshkey: '{{ system.admin.ssh_auth.public_key }}'
+  tags: admin, facts
+
+- name: Create a unique the key ID from the data
+  ansible.builtin.set_fact:
+    key_id: '{{ ( sshkey.data | replace(" ", "") | hash("sha1"))[0:8] }}'
+  tags: admin, facts
+
+- name: Create a unique file name for the key
+  ansible.builtin.set_fact:
+    key_file_name: '{{ sshkey.filename | default("admin-" + key_id) }}'
+  tags: admin, facts
+
+- name: Show information about the public key
+  register: key_cert_info_cmd
+  delegate_to: localhost
+  become: false
+  ansible.builtin.command:
+    cmd: >-
+      ssh-keygen -L
+      -f '{{ backup_directory }}/ssh/users/{{ system.admin.name }}/{{ key_file_name }}-cert.pub'
+  changed_when: false
+  tags: admin
+
+- name: Show the admin key settings
+  ansible.builtin.debug:
+    msg: '{{ key_cert_info_cmd.stdout }}'
+  tags: admin
