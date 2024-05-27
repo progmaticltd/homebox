@@ -1,4 +1,3 @@
-
 # Dedicated archives storage
 
 This optional step, for advanced users, allows you to use a dedicated storage for the user files, i.e.:
@@ -7,8 +6,7 @@ This optional step, for advanced users, allows you to use a dedicated storage fo
 - A slower but bigger and cheaper storage for the email archives, and other files not requiring fast access, in
   `/home/archives`.
 
-This page explains the installation of a dedicated _archive_ storage, i.e. the emails archives, and other user files not
-requiring fast access.
+This page explains the installation of a dedicated _live_ storage, i.e. the current emails received.
 
 This is specially useful for some cloud providers, offering SSD and HD block storage, but can be also relevant for a
 home server.
@@ -70,24 +68,36 @@ vdb    254:16   0    4G  0 disk
 vdc    254:32   0   20G  0 disk
 ```
 
+## Configure the "live" storage
 
-### Run the playbook to create the archive storage
+### Customise the storage settings
 
-You can now run the playbooks to initialise the storage. These playbooks are doing the following:
+You can customise the settings from the default ones, by copying this block to your configuration file `system.yml`:
 
-The playbook is doing the following:
+```yml
+storage_live:
+  device: /dev/vdb
+  fstype: btrfs
+  mkfs_opts:
+    - -R quota
+    - --checksum xxhash
+  mount_opts:
+    - noatime
+    - compress=lzo
+```
 
-- Create the partitions, and format them, using btrfs by default
-- Create the systemd services to automatically mount these partitions.
+The important value to check, if the storage you decide to dedicate to "live" emails, in this case, `/var/vdb`.
+
+### Run the playbook to create the live storage
 
 The syntax is fairly simple:
 
 ```sh
 cd homebox/playooks
-ROLE=home-archives-storage ansible-playbook install.yml
+ROLE=home-live-storage ansible-playbook install.yml
 ```
 
-Once run, you can see the storage using the same `lsblk` command:
+The playbook is doing the following:
 
 - Create the partitions, and format them, using btrfs by default
 - Create the systemd services to automatically mount these partitions.
@@ -95,6 +105,7 @@ Once run, you can see the storage using the same `lsblk` command:
 Once run, you can see the storage using the same `lsblk` command:
 
 ```plain
+root@debian:~# lsblk
 NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
 sr0     11:0    1 1024M  0 rom
 vda    254:0    0    8G  0 disk
@@ -104,25 +115,25 @@ vda    254:0    0    8G  0 disk
 vdb    254:16   0    4G  0 disk
 └─vdb1 254:17   0    4G  0 part /home/users
 vdc    254:32   0   20G  0 disk
-└─vdc1 254:33   0   20G  0 part /home/archives
 ```
 
 And check the systemd service:
 
 ```plain
-# /etc/systemd/system/home-archives.mount
+root@debian:~# systemctl cat home-users.mount
+# /etc/systemd/system/home-users.mount
 [Unit]
-Description=Users’ archive storage
+Description=Users’ live storage
 
 [Mount]
-What=LABEL=arda-world-home-archives
-Where=/home/archives
+What=LABEL=arda-world-home-users
+Where=/home/users
 Type=btrfs
-Options=noatime,compress=zstd
+Options=noatime,compress=lzo
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-Again, using a label for the source allows you to re-attach the live storage without changing a system settings in case
-of disaster recovery.
+Using a label for the source allows you to re-attach the live storage without changing a system settings in case of
+disaster recovery.

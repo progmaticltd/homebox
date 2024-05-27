@@ -1,4 +1,3 @@
-
 # Dedicated archives storage
 
 This optional step, for advanced users, allows you to use a dedicated storage for the user files, i.e.:
@@ -7,7 +6,8 @@ This optional step, for advanced users, allows you to use a dedicated storage fo
 - A slower but bigger and cheaper storage for the email archives, and other files not requiring fast access, in
   `/home/archives`.
 
-This page explains the installation of a dedicated _live_ storage, i.e. the current emails received.
+This page explains the installation of a dedicated _archive_ storage, i.e. the emails archives, and other user files not
+requiring fast access.
 
 This is specially useful for some cloud providers, offering SSD and HD block storage, but can be also relevant for a
 home server.
@@ -21,7 +21,7 @@ run these playbooks _before_ running the installation itself.
 
 The [extra modules repository](https://github.com/progmaticltd/homebox-extra-modules) is hosted on GitHub.
 
-You can clone at any place, but the repository roles should be accessible by the main Ansible project, for instance, if
+You can clone at any place, but the repository roles should be accessible by the main Ansible project, for instance, if xxxx
 you store everything in a folder called `homebox-all`:
 
 ```sh
@@ -69,36 +69,24 @@ vdb    254:16   0    4G  0 disk
 vdc    254:32   0   20G  0 disk
 ```
 
-## Configure the "live" storage
 
-### Customise the storage settings
+### Run the playbook to create the archive storage
 
-You can customise the settings from the default ones, by copying this block to your configuration file `system.yml`:
+You can now run the playbooks to initialise the storage. These playbooks are doing the following:
 
-```yml
-storage_live:
-  device: /dev/vdb
-  fstype: btrfs
-  mkfs_opts:
-    - -R quota
-    - --checksum xxhash
-  mount_opts:
-    - noatime
-    - compress=lzo
-```
+The playbook is doing the following:
 
-The important value to check, if the storage you decide to dedicate to "live" emails, in this case, `/var/vdb`.
-
-### Run the playbook to create the live storage
+- Create the partitions, and format them, using btrfs by default
+- Create the systemd services to automatically mount these partitions.
 
 The syntax is fairly simple:
 
 ```sh
 cd homebox/playooks
-ROLE=home-live-storage ansible-playbook install.yml
+ROLE=home-archives-storage ansible-playbook install.yml
 ```
 
-The playbook is doing the following:
+Once run, you can see the storage using the same `lsblk` command:
 
 - Create the partitions, and format them, using btrfs by default
 - Create the systemd services to automatically mount these partitions.
@@ -106,7 +94,6 @@ The playbook is doing the following:
 Once run, you can see the storage using the same `lsblk` command:
 
 ```plain
-root@debian:~# lsblk
 NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
 sr0     11:0    1 1024M  0 rom
 vda    254:0    0    8G  0 disk
@@ -114,23 +101,22 @@ vda    254:0    0    8G  0 disk
 ├─vda2 254:2    0    1K  0 part
 └─vda5 254:5    0  975M  0 part [SWAP]
 vdb    254:16   0    4G  0 disk
-└─vdb1 254:17   0    4G  0 part /home/users
 vdc    254:32   0   20G  0 disk
+└─vdc1 254:33   0   20G  0 part /home/archives
 ```
 
 And check the systemd service:
 
 ```plain
-root@debian:~# systemctl cat home-users.mount
-# /etc/systemd/system/home-users.mount
+# /etc/systemd/system/home-archives.mount
 [Unit]
-Description=Users’ live storage
+Description=Users’ archive storage
 
 [Mount]
-What=LABEL=arda-world-home-users
-Where=/home/users
+What=LABEL=arda-world-home-archives
+Where=/home/archives
 Type=btrfs
-Options=noatime,compress=lzo
+Options=noatime,compress=zstd
 
 [Install]
 WantedBy=multi-user.target

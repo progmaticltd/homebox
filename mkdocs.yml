@@ -27,9 +27,15 @@ nav:
       - Publish the domain automatically: pages/10-basic/70-publish-the-system-automatically.md
       - Publish the domain manually: pages/10-basic/80-publish-the-system-manually.md
       - Renew the certificates: pages/10-basic/90-renew-certificates.md
+  - Development:
+      - Repository overview: pages/20-development/00-repository-overview.md
+      - Development environment: pages/20-development/10-development-environment.md
+      - Running the playbooks: pages/20-development/20-running-playbooks.md
+      - First Role example: pages/20-development/30-basic-role-example.md
+      - The backup folder: pages/20-development/40-backup-folder.md
   - Advanced Storage:
-      - Dedicated archives storage: pages/20-storage/10-dedicated-archives-storage.md
-      - Dedicated live storage: pages/20-storage/20-dedicated-live-storage.md
+      - Dedicated archives storage: pages/30-storage/10-dedicated-archives-storage.md
+      - Dedicated live storage: pages/30-storage/20-dedicated-live-storage.md
   - Advanced SSH server usage:
       - Certificates authentication: pages/90-advanced-ssh-usage/10-ssh-certificates.md
       - User git server: pages/90-advanced-ssh-usage/20-user-git-server.md
