@@ -1,16 +1,24 @@
 #!/bin/sh -e
 #
-## Pre-commit git-hook to be installed
-## using the command
+## Pre-commit git-hook to be installed using the command:
+## ln -s git-hooks/pre-commit .git/hooks/pre-commit
 #
 
 # Status codes
 SUCCESS=0
 SYSTEM_ERROR=10
-LINT_ERROR=20
+ANSIBLE_LINT_ERROR=20
+MARKDOWN_LINT_ERROR=30
 
 # Default status
 lint_result=$SUCCESS
+
+# Convenience functions
+if ! tput -V >/dev/null 2>&1; then
+    tput() {
+        :
+    }
+fi
 
 # Run from the parent directory
 script_file=$(readlink -f "$0")
@@ -35,7 +43,8 @@ fi
 git diff-index --check --cached "$against" --
 
 # Create a temporary file to list ansible files to check
-tmp_checklist=$(mktemp)
+yaml_files=$(mktemp)
+markdown_files=$(mktemp)
 
 # Write the list of modified ansible YAML files to be committed
 git diff-index --cached --name-only --diff-filter=ACMR -z "$against" -- \
@@ -43,20 +52,25 @@ git diff-index --cached --name-only --diff-filter=ACMR -z "$against" -- \
     "$root_dir/roles/**/*.yml" \
     ":(exclude)*/files/*.yml" \
     ":(exclude)*/templates/*.yml" \
-    | tr '\0' '\n' >"$tmp_checklist"
+    | tr '\0' '\n' >"$yaml_files"
+
+# Write the list of modified ansible YAML files to be committed
+git diff-index --cached --name-only --diff-filter=ACMR -z "$against" -- \
+    "$root_dir/docs/**/*.md" \
+    | tr '\0' '\n' >"$markdown_files"
 
 # Exit if no files are staged
-if [ -z "$tmp_checklist" ]; then
+if [ ! -s "$yaml_files" ] && [ ! -s "$markdown_files" ]; then
    echo "No files to check"
    exit
 fi
 
 # Display the number of files to check
-nb_files=$(wc -w "$tmp_checklist" | cut -f 1 -d ' ')
-printf "Diff against revision '%s', %d files to check:\n" "$against" "$nb_files"
+nb_files=$(wc -w "$yaml_files" | cut -f 1 -d ' ')
+printf "Diff against revision '%s', %d YAML files to check:\n" "$against" "$nb_files"
 
 # Restart from an empty file
-log_file="$root_dir/logs/ansible-lint-pre-commit.log"
+log_file="$root_dir/logs/ansible-lint.log"
 truncate --size 0 "$log_file"
 
 file_checked=0
@@ -76,26 +90,61 @@ while read -r file; do
 
     status=$(ansible-lint --force-color "$file" 2>&1 | tee -a "$log_file")
 
-    if expr "$status" : ".*LINT_ERROR.*" >/dev/null; then
+    if expr "$status" : ".*ANSIBLE_LINT_ERROR.*" >/dev/null; then
 
-        lint_result=$LINT_ERROR
+        lint_result=$ANSIBLE_LINT_ERROR
         echo "Error(s)"
 
     elif expr "$status" : ".*WARNING.*" >/dev/null; then
 
-        lint_result=$LINT_ERROR
+        lint_result=$ANSIBLE_LINT_ERROR
         echo "Warning(s)"
 
     else
         echo "OK"
     fi
 
-done < "$tmp_checklist"
+done < "$yaml_files"
 
 if [ "$lint_result" != "$SUCCESS" ]; then
 
     echo "Errors found:"
     cat "$log_file"
+
+    exit "$ANSIBLE_LINT_ERROR"
 fi
 
-exit "$lint_result"
+# Display the number of files to check
+nb_files=$(wc -w "$markdown_files" | cut -f 1 -d ' ')
+printf "Diff against revision '%s', %d Markdown files to check:\n" "$against" "$nb_files"
+
+# Restart from an empty file
+log_file="$root_dir/logs/markdown-lint.log"
+truncate --size 0 "$log_file"
+
+file_checked=0
+
+
+while read -r path; do
+
+    file_checked=$((file_checked + 1))
+
+    tput bold
+    printf "[%02d/%02d] Checking file '%s': " "$file_checked" "$nb_files" "$path"
+    filename=$(basename "$path")
+
+    status=$(mdl "$path" 2>&1 | tee -a "$log_file")
+
+    if [ "$status" != "" ]; then
+        lint_result=$MARKDOWN_LINT_ERROR
+        echo "Fails"
+        tput sgr0
+        echo "$status" | sed -En "s/.*$filename:(.*)/  line \\1/p"
+        echo ""
+    else
+        echo "OK"
+    fi
+
+done < "$markdown_files"
+
+exit $lint_result
