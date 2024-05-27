@@ -35,6 +35,9 @@ nav:
       - The backup folder: pages/20-development/40-backup-folder.md
       - Local network setup: pages/20-development/50-local-network-setup.md
       - Diagnostics role: pages/20-development/60-diagnostics-role.md
+  - Wireguard VPN:
+      - Configuration: pages/40-wireguard-vpn/10-configuration.md
+      - Keys distribution: pages/40-wireguard-vpn/20-distributing-the-keys.md
   - Advanced Storage:
       - Dedicated archives storage: pages/30-storage/10-dedicated-archives-storage.md
       - Dedicated live storage: pages/30-storage/20-dedicated-live-storage.md
