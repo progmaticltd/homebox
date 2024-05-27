@@ -51,10 +51,10 @@ The standard roles are using, partially or fully, the following folders hierarch
 | handlers        | Ansible handlers                                          |
 | tasks           | Parent task folder                                        |
 | tasks/base      | Tasks that can be included by other tasks, e.g. facts     |
-| tasks/backup    | Tasks to be executed when backing-up server specific data |
+| tasks/backup    | Tasks to be executed when backing-up role specific data   |
 | tasks/check     | Tasks to be run when checking the role has been installed |
 | tasks/install   | Tasks to run on the installation                          |
-| tasks/restore   | Tasks to be executed when restoring server specific data  |
+| tasks/restore   | Tasks to be executed when restoring role specific data    |
 | tasks/uninstall | Tasks to run when removing a role from the server         |
 | vars            | Constant variables specific to the role                   |
 

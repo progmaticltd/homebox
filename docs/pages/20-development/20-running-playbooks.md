@@ -1,9 +1,9 @@
 # Running the playbooks
 
+## Roles selection playbooks
+
 The _roles selection playbooks_ let you install, check, backup, restore and uninstall, a selection of one or more
 roles. They are described below.
-
-## Roles selection playbooks
 
 ### Install the simple web site
 
@@ -43,10 +43,10 @@ ROLE=autoconfig,autodiscover ansible-playbook install.yml check.yml
 ```
 
 
-### Main playbooks
+### Full playbooks
 
-The main playbooks, `install-version.yml` and `check-version.yml` are respectively installing and checking the version
-you specify from the command line. For instance, to install and check the _small_ version:
+The full playbooks, `install-version.yml` and `check-version.yml` are respectively installing and checking the version
+you specify from the command line. For instance, to fully install and check the _small_ variant:
 
 ```sh
 ansible-playbook -e version=small install-version.yml checking-version.yml

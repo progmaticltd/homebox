@@ -31,8 +31,9 @@ nav:
       - Repository overview: pages/20-development/00-repository-overview.md
       - Development environment: pages/20-development/10-development-environment.md
       - Running the playbooks: pages/20-development/20-running-playbooks.md
-      - First Role example: pages/20-development/30-basic-role-example.md
+      - Basic role example: pages/20-development/30-basic-role-example.md
       - The backup folder: pages/20-development/40-backup-folder.md
+      - Local network setup: pages/20-development/50-local-network-setup.md
   - Advanced Storage:
       - Dedicated archives storage: pages/30-storage/10-dedicated-archives-storage.md
       - Dedicated live storage: pages/30-storage/20-dedicated-live-storage.md

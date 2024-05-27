@@ -15,6 +15,7 @@ cp -pr devel/role-templates/basic/ roles/ssh-email-alert
 Save the following script into `roles/ssh-email-alert/files/root-ssh-rc.sh`:
 
 ```sh
+#!/bin/sh
 client=$(echo "$SSH_CLIENT" -f 1 -d " ")
 subject="New SSH connection from $client"
 recipient=$(getent -s ldap passwd | head -n 1 | cut -f 1 -d ":")
@@ -48,6 +49,11 @@ Here an example for the uninstall tasks, to be saved into `roles/ssh-email-alert
     path: /root/.ssh/rc
     state: absent
 ```
+
+In our case, the uninstall tasks are very simple. In more complex cases, you need to remove log files, use the _purge_
+flag when removing a package, etc.
+
+Uninstall tasks are also useful when developing, to ensure a role can be re-installed from scratch.
 
 
 ## Write the self-check tasks
