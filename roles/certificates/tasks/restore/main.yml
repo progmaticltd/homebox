@@ -19,4 +19,4 @@
     archive: true
     owner: true
     rsync_opts:
-      - '--chown=root:root'
+      - '--chown=root:ssl-cert'

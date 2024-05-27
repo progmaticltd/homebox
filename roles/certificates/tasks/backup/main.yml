@@ -1,5 +1,11 @@
 ---
 
+- name: Install rsync if not already installed
+  ansible.builtin.apt:
+    name: rsync
+    state: present
+  tags: apt
+
 - name: Pull certificate files locally
   ansible.posix.synchronize:
     mode: pull
