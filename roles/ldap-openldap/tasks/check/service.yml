@@ -1,0 +1,5 @@
+---
+
+- name: Check if each service is running  # noqa command-instead-of-module
+  ansible.builtin.shell: systemctl status slapd
+  changed_when: false

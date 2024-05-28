@@ -1,0 +1,9 @@
+---
+
+- name: Check that ldap resolves to local host
+  ansible.builtin.shell: >-
+    set -o pipefail ;
+    ping -c 1 ldap.{{ network.domain }}
+  changed_when: false
+  args:
+    executable: /bin/bash

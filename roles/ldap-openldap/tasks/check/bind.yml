@@ -1,0 +1,59 @@
+---
+
+- name: Check that I can bind as readonly and get all uids
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.shell: >-
+    ldapsearch
+    -H ldapi:///
+    -D '{{ ldap.readonly.dn }}'
+    -w{{ readonly_password }}
+    'uid'
+  changed_when: false
+
+- name: Check that I can bind as the manager and get my details
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.shell: >-
+    ldapsearch
+    -H ldapi:///
+    -D '{{ ldap.manager.dn }}'
+    -w{{ manager_password }}
+    '(uid=manager)'
+  changed_when: false
+
+- name: Check that I can bind as the manager and get all uids
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.shell: >-
+    ldapsearch
+    -H ldapi:///
+    -D '{{ ldap.manager.dn }}'
+    -w{{ manager_password }}
+    'uid'
+  changed_when: false
+
+- name: Check that every user is in the database
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.shell: >-
+    set -o pipefail ;
+    ldapsearch
+    -H ldapi:///
+    -D '{{ ldap.readonly.dn }}'
+    -w{{ readonly_password }}
+    '(uid={{ user.uid }})'
+    | grep 'numEntries: 1'
+  changed_when: false
+  args:
+    executable: /bin/bash
+  with_items: '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Check that I can bind using SSL
+  when: not system.devel
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.shell: >-
+    ldapsearch
+    -H ldaps://ldap.{{ network.domain }}/
+    -D '{{ ldap.readonly.dn }}'
+    -w{{ readonly_password }}
+    'uid'
+  changed_when: false

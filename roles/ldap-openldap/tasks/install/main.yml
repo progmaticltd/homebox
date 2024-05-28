@@ -29,6 +29,7 @@
 
 - name: Configure the LDAP server settings
   ansible.builtin.include_tasks: install/db-accounts.yml
+  tags: groups
 
 - name: Create the special accounts
   ansible.builtin.include_tasks: install/special-accounts.yml
