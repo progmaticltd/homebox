@@ -1,0 +1,18 @@
+---
+
+- name: Get the locale information to build a default web site page.
+  ansible.builtin.set_fact:
+    website_language: '{{ website.locale | regex_replace("_.*", "") }}'
+    website_charset: '{{ website.locale | regex_replace(".*\.", "") }}'
+  tags: facts
+
+- name: Check if you have already uploaded a web page named 'index.html'
+  register: index_page
+  ansible.builtin.stat:
+    path: /var/www/www.{{ network.domain }}/index.html
+  tags: facts
+
+- name: Store the fact
+  ansible.builtin.set_fact:
+    website_customised: '{{ index_page.stat.exists }}'
+  tags: facts

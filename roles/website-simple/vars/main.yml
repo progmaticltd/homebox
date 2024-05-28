@@ -1,0 +1,7 @@
+---
+
+# Name of the pages that handle server errors
+error_pages:
+  - error
+  - notfound
+  - denied

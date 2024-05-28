@@ -4,7 +4,7 @@
 - name: Backup the site content on your local machine
   ansible.posix.synchronize:
     mode: pull
-    src: /var/www/www.{{ network.domain }}/*
+    src: /var/www/www.{{ network.domain }}/
     dest: '{{ backup_directory }}/website-simple/'
     perms: true
     archive: false
@@ -12,5 +12,4 @@
     rsync_opts:
       - '--no-motd'
       - '--update'
-      - '--exclude=*demo*'
   tags: sync

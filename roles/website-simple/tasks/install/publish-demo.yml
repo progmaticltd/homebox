@@ -1,0 +1,58 @@
+---
+
+- name: Create the website site root folder if needed
+  ansible.builtin.file:
+    path: '{{ path }}'
+    state: directory
+    owner: root
+    group: www-data
+    mode: '0750'
+  loop:
+    - /var/www/www.{{ network.domain }}
+    - /var/www/www.{{ network.domain }}/css
+    - /var/www/www.{{ network.domain }}/js
+  loop_control:
+    loop_var: path
+  tags: website
+
+- name: Create the include direcotory
+  when: website.ssi
+  ansible.builtin.file:
+    path: /var/www/www.{{ network.domain }}/.include/
+    state: directory
+    owner: root
+    group: www-data
+    mode: '0750'
+  tags: website
+
+# Create the real one, and name it index.html. it will not be overwritten if you redeploy
+# same for main.css and main.js
+- name: Create a very simple fallback page.
+  ansible.builtin.template:
+    src: 'site/{{ path.name }}'
+    dest: '/var/www/www.{{ network.domain }}/{{ path.dest | default("") }}/{{ path.name }}'
+    owner: root
+    group: www-data
+    mode: '0640'
+  loop:
+    - name: index-demo.html
+    - name: error-demo.html
+    - name: notfound-demo.html
+    - name: denied-demo.html
+    - name: demo.css
+      dest: css
+    - name: demo.js
+      dest: js
+  loop_control:
+    loop_var: path
+  tags: website
+
+- name: Create a default ssi page
+  when: website.ssi
+  ansible.builtin.template:
+    src: site/include-demo.html
+    dest: /var/www/www.{{ network.domain }}/.include/inc-demo.html
+    owner: root
+    group: www-data
+    mode: '0640'
+  tags: website

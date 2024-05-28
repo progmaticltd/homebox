@@ -24,5 +24,12 @@
         <span id="css-status-not-working">Not</span> working!
     </p>
 
+    {% if website.ssi %}
+    <h2>SSI status</h2>
+    <p>Current status of server side include on this page:
+      <!--# include file=".include/inc-demo.html" -->
+    </p>
+    {% endif %}
+
 </body>
 </html>

@@ -1,0 +1,45 @@
+---
+
+- name: Check if the standard error file exist
+  register: standard_page_files
+  ansible.builtin.stat:
+    path: '/var/www/www.{{ network.domain }}/{{ name }}-page.html'
+  loop: '{{ error_pages }}'
+  loop_control:
+    loop_var: name
+  tags: website
+
+- name: Remove the demo files
+  when: standard_page_files.results[index].stat.exists
+  ansible.builtin.file:
+    path: '/var/www/www.{{ network.domain }}/{{ name }}-demo.html'
+    state: absent
+  loop: '{{ error_pages }}'
+  loop_control:
+    loop_var: name
+    index_var: index
+  tags: website
+
+- name: Remove the demo index page
+  ansible.builtin.file:
+    path: '/var/www/www.{{ network.domain }}/index-demo.html'
+    state: absent
+  tags: website
+
+- name: Remove demo JS - only referenced in the index demo page
+  ansible.builtin.file:
+    path: '/var/www/www.{{ network.domain }}/js/demo.js'
+    state: absent
+  tags: website
+
+- name: Store the number of demo files left
+  ansible.builtin.set_fact:
+    nb_demo_files: '{{ standard_page_files.results | selectattr("stat.exists", "equalto", true) | list }}'
+  tags: website
+
+- name: Remove demo CSS when all the error pages have been created
+  when: nb_demo_files | length == error_pages | length
+  ansible.builtin.file:
+    path: '/var/www/www.{{ network.domain }}/css/demo.css'
+    state: absent
+  tags: website

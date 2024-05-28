@@ -54,3 +54,6 @@ fp_default:
     - id: vibrate
     - id: fullscreen
     - id: payment
+
+# Only publish the demo content if the web site is not already customised
+force_push_demo: false

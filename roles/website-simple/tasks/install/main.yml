@@ -1,7 +1,18 @@
 ---
 
+- name: Load the facts
+  ansible.builtin.include_tasks: install/facts.yml
+  tags: facts
+
 - name: Create default web site
-  ansible.builtin.include_tasks: install/default-content.yml
+  when: force_push_demo|bool or not website_customised
+  ansible.builtin.include_tasks: install/publish-demo.yml
+  tags: website
+
+- name: Remove default web site
+  when: website_customised and not force_push_demo|bool
+  ansible.builtin.include_tasks: install/remove-demo.yml
+  tags: website
 
 - name: Create the DNS record
   ansible.builtin.include_tasks: install/dns.yml
@@ -17,3 +28,4 @@
 
 - name: Configure apparmor
   ansible.builtin.include_tasks: install/apparmor.yml
+  tags: apparmor

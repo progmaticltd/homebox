@@ -22,6 +22,9 @@
     group: false
     perms: true
     rsync_opts:
-      - '--no-motd'
-      - '--update'
+      - --no-motd
+      - --perms
+      - --update
+      - --chown=root:www-data
+      - --chmod=D0750,F640
   tags: sync
