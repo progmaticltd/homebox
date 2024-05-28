@@ -21,6 +21,19 @@ The current options are:
 - Better port knocking, using fwknop "Single Packet Authentication".
 
 
+## BitTorrent client
+
+A BitTorrent client for each user, for instance using transmission service, and a secure web frontend, will allow to
+save torrent files more securely. When the WebDAV server is installed as well, this will give easy access to the files,
+using a computer or a phone.
+
+
+## Web console access
+
+Although there is already a role to install _cockpit_, a lot of features are not relevant or not used. There are simpler
+versions of a web terminal we can install, over a secure https link.
+
+
 ## Custom Debian repository
 
 Implement a personal Debian repository to publish your packages. Will handle GPG signing as well.

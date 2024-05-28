@@ -36,3 +36,8 @@ table tr:nth-child(odd) td {
 table tr:nth-child(odd) th {
     background-color: #e0e0e0;
 }
+
+p img {
+    border: 2px solid #7777;
+    padding: 4px;
+}
