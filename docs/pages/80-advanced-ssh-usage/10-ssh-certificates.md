@@ -30,11 +30,11 @@ system:
         comment: admin-key
         type: ecdsa-sha2-nistp256
         data: >-
-		  AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBInV8YG
-		  /UujelRuNkcytzcOj7mYfDzHq4Q+EcdUz9VsIyNC3dJ1oE3s49w/VPV/9pN
-		  ZZQWoFX+HLLYkM8RRizwU=
+          AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBInV8YG
+          /UujelRuNkcytzcOj7mYfDzHq4Q+EcdUz9VsIyNC3dJ1oE3s49w/VPV/9pN
+          ZZQWoFX+HLLYkM8RRizwU=
       password: false
-	  validity: +52w
+      validity: +52w
 ```
 
 - An SSH client configuration file will be generated and saved in the backup directory.

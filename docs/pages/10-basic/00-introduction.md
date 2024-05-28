@@ -1,7 +1,5 @@
 # Introduction
 
-_Do less, but do it well_
-
 HomeBox is a solution to transform a standard Linux Debian server into a fully configured system to store your personal
 information. These include emails and instant messages, calendars and contacts, as well as personal files. It is perfect
 for a family or a small to medium community, private or professional.
@@ -37,7 +35,7 @@ has pros and cons, described below.
 
 ## What you need
 
-1. A target system to install homebox, running Debian 12. It is better if the system is freshly installed, i.e. without
+1. A target system to install, running Debian _Bookworm_. It is better if the system is freshly installed, i.e. without
    any customisations. This could be a physical server, an online VPS server, or even a virtual machine for development.
 2. A workstation to run Ansible. The installation has been tested with Debian Bookworm as well, but you can use Ubuntu,
    RedHat, etc...
@@ -46,6 +44,7 @@ has pros and cons, described below.
 4. A budget. A server and an internet connection is not free, neither a custom domain. However, with time, you'll see
    the advantages of self-hosting are largely worth the cost. A minimal budget starts at 35 $/€/£ per year, domain
    included.
+
 
 ## What's next
 

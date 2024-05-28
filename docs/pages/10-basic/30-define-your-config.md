@@ -178,7 +178,7 @@ all:
       ansible_host: <replace with your IP address>
       ansible_user: hbinstall
       ansible_port: 22
-	  ansible_become: true
+      ansible_become: true
 ```
 
 !!! Note

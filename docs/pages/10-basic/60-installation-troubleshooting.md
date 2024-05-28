@@ -26,5 +26,5 @@ You probably forgot to add the user to the sudo group, see the [Prepare your tar
 Thanks to [Framasoft](https://framasoft.org/), two mailing lists have been created, one for general questions,
 suggestions and support, and another one dedicated for development.
 
-- General questions: https://framalistes.org/sympa/info/homebox-general
-- Development: https://framalistes.org/sympa/info/homebox-dev
+- General questions: [homebox-general](https://framalistes.org/sympa/info/homebox-general).
+- Development: [homebox-dev](https://framalistes.org/sympa/info/homebox-dev).

@@ -94,6 +94,16 @@ cp config/samples/hosts.yml config/hosts-arda.world.yml
 cp config/samples/system.yml config/system-arda.world.yml
 ```
 
+Review the system settings with an editor. One value to change, is probably the _devel_ flag, and maybe the _debug_ one,
+and set them to _true_:
+
+```yml
+system:
+  devel: true
+  debug: true
+```
+
+
 Now, activate the domain:
 
 ```plain

@@ -90,6 +90,7 @@ git checkout main
 git remote add personal 'git.arda.world:dotfiles.git'
 git push -u personal main
 ```
+
 And to list the repositories:
 
 ```sh

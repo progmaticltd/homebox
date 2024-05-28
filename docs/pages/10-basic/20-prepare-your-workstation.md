@@ -1,4 +1,3 @@
-
 # Prepare your workstation
 
 ## Configure SSH
@@ -6,7 +5,8 @@
 Ansible uses SSH to connect on the target server, so the best is to use public key authentication. We will not detail
 here the creation of your private key.
 
-** This is now happening on the workstation, here simply called _hamilton_ **.
+!!! Note
+    This is now happening on the workstation, here simply called _hamilton_.
 
 ### Copy your public key
 

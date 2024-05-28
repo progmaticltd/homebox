@@ -42,5 +42,7 @@ nav:
       - Dedicated archives storage: pages/30-storage/10-dedicated-archives-storage.md
       - Dedicated live storage: pages/30-storage/20-dedicated-live-storage.md
   - Advanced SSH server usage:
-      - Certificates authentication: pages/90-advanced-ssh-usage/10-ssh-certificates.md
-      - User git server: pages/90-advanced-ssh-usage/20-user-git-server.md
+      - Certificates authentication: pages/80-advanced-ssh-usage/10-ssh-certificates.md
+      - User git server: pages/80-advanced-ssh-usage/20-user-git-server.md
+  - Other notes:
+      - Roadmap: pages/90-other-notes/10-roadmap.md

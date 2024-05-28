@@ -8,7 +8,8 @@ It is relevant whatever you are using a live system or a virtual machine for dev
 
 ## Create an installation user
 
-**Everything described here happens on the remote server, here just called "debian"**
+!!! Note
+    Everything described here happens on the remote server, here just called "debian".
 
 This section creates a user dedicated for the installation, that will be removed later. You can skip it in the following
 cases:

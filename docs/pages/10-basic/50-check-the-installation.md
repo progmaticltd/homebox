@@ -57,7 +57,7 @@ server is live, you will be able to recreate all the certificates, with one comm
 
 For now, this is what you should see when typing the command `cert-status`:
 
-```
+```plain
 root@bochica:~# cert-status
 Domain      | Valid from                | Valid until               | Days left  | Issuer        | Full domains list                                 | Status
 sweethome   | Jan 14 17:33:53 2024 GMT  | Feb 11 17:33:53 2024 GMT  | 27         | Temporary CA  | DNS:sweethome.box                                 | OK
