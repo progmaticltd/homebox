@@ -21,7 +21,7 @@ temp_file=$(mktemp)
 trap cleanup 1 2 3 6
 cleanup()
 {
-    rm -rf "temp_file"
+    rm -rf "$temp_file"
 }
 
 # Create the summary table

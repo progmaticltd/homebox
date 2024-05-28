@@ -5,7 +5,6 @@
 # This is also useful for testing the role
 certificates:
   - name: default
-  - name: main
   - name: _
 
 # Do not recreate the certificates by default,
