@@ -1,0 +1,16 @@
+---
+
+- name: Remove the web site
+  ansible.builtin.include_tasks: uninstall/nginx.yml
+  tags: nginx
+
+- name: Remove AppArmor config
+  ansible.builtin.include_tasks: uninstall/apparmor.yml
+
+- name: Remove the GPG public keys
+  ansible.builtin.include_tasks: uninstall/delete-keys.yml
+  tags: keys
+
+- name: Remove the certificates
+  ansible.builtin.include_tasks: uninstall/certificates.yml
+  tags: certs

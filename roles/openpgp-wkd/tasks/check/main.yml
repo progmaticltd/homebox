@@ -2,3 +2,6 @@
 
 - name: Check nginx security grade
   ansible.builtin.include_tasks: check/grade.yml
+
+- name: Check that all the keys have been published
+  ansible.builtin.include_tasks: check/check-all.yml

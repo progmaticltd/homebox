@@ -1,0 +1,30 @@
+---
+
+- name: Store the UID hash
+  ansible.builtin.set_fact:
+    hash: '{{ key_info.uid | wkd_hash }}'
+  tags: download
+
+- name: Load the url using the advanced method
+  register: web_key
+  ansible.builtin.uri:
+    url: 'https://openpgpkey.{{ network.domain }}/.well-known/openpgpkey/{{ network.domain }}/hu/{{ hash }}?l={{ key_info.uid }}'
+    return_content: true
+  tags: download
+
+- name: Compare the key downloaded with the one in the config
+  ansible.builtin.assert:
+    that: web_key.content == key_info.public_key
+  tags: download
+
+- name: Load the url using the direct method
+  register: web_key
+  ansible.builtin.uri:
+    url: 'https://{{ network.domain }}/.well-known/openpgpkey/hu/{{ hash }}?l={{ key_info.uid }}'
+    return_content: true
+  tags: download
+
+- name: Compare the key downloaded with the one in the config
+  ansible.builtin.assert:
+    that: web_key.content == key_info.public_key
+  tags: download

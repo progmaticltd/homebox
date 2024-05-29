@@ -1,0 +1,12 @@
+---
+
+- name: Remove the certificate
+  vars:
+    certificates:
+      - name: openpgpkey
+  ansible.builtin.include_role:
+    name: certificates
+    tasks_from: uninstall/main.yml
+    apply:
+      tags: always
+  tags: certs

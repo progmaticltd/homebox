@@ -1,0 +1,7 @@
+---
+
+- name: Remove the direct method folder
+  ansible.builtin.file:
+    path: /var/www/default/.well-known/openpgpkey
+    state: absent
+  tags: keys

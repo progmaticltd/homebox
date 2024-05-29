@@ -1,0 +1,25 @@
+---
+
+- name: Remove the www directory
+  ansible.builtin.file:
+    dest: /var/www/openpgpkey
+    state: absent
+  tags: nginx
+
+- name: Remove the nginx template
+  notify:
+    - Check nginx config
+    - Restart nginx
+  ansible.builtin.file:
+    path: '/etc/nginx/sites-available/openpgpkey.{{ network.domain }}.conf'
+    state: absent
+  tags: nginx
+
+- name: Activate openpgpkey web site
+  notify:
+    - Check nginx config
+    - Restart nginx
+  ansible.builtin.file:
+    path: '/etc/nginx/sites-enabled/openpgpkey.{{ network.domain }}.conf'
+    state: absent
+  tags: nginx

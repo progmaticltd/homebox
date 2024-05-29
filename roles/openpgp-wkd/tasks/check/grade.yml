@@ -2,7 +2,8 @@
 
 - name: Load TLS ciphers used
   register: tls_ciphers_report
-  ansible.builtin.shell: sslscan --no-colour openpgpkey.{{ network.domain }}:443
+  ansible.builtin.shell: >-
+    sslscan --no-colour openpgpkey.{{ network.domain }}:443
   changed_when: false
 
 - name: Ensure authorised TLS cipher are used

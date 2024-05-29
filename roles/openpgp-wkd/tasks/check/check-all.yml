@@ -1,0 +1,8 @@
+---
+
+- name: Check all the keys
+  ansible.builtin.include_tasks: check/check-one.yml
+  loop: '{{ pgp_public_keys | default([]) }}'
+  loop_control:
+    loop_var: key_info
+  tags: publish

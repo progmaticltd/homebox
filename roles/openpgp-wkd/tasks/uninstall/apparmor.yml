@@ -1,0 +1,20 @@
+---
+
+- name: Install nginx AppArmor profile
+  notify:
+    - Activate AppArmor profile
+    - Restart AppArmor service
+    - Restart nginx
+  ansible.builtin.file:
+    path: /etc/apparmor.d/local/openpgpkey
+    state: absent
+
+- name: Remove AppArmor specific configuration
+  notify:
+    - Activate AppArmor profile
+    - Restart AppArmor service
+    - Restart nginx
+  ansible.builtin.lineinfile:
+    path: /etc/apparmor.d/usr.sbin.nginx
+    line: '  #include <local/openpgpkey>'
+    state: absent
