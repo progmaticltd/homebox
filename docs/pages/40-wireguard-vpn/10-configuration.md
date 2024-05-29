@@ -34,7 +34,7 @@ below:
 #### Basic configuration
 
 Basic configuration, only establish the connection, but does not enforce the traffic from the client to go through the
-vpn. This is useful, for instance to connect on a server that only accept SSH connections from a VPN IP address.
+VPN. This is useful, for instance to connect on a server that only accept SSH connections from a VPN IP address.
 
 #### Enforced traffic
 

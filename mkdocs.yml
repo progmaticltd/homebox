@@ -38,6 +38,9 @@ nav:
   - Advanced Storage:
       - Dedicated archives storage: pages/30-storage/10-dedicated-archives-storage.md
       - Dedicated live storage: pages/30-storage/20-dedicated-live-storage.md
+  - Wireguard VPN:
+      - Configuration: pages/40-wireguard-vpn/10-configuration.md
+      - Keys distribution: pages/40-wireguard-vpn/20-distributing-the-keys.md
   - WebDAV server:
       - Presentation: pages/50-webdav/10-presentation.md
   - Simple website:
@@ -46,9 +49,9 @@ nav:
       - Server side settings: pages/60-simple-website/30-server-settings.md
       - Server side includes: pages/60-simple-website/40-server-side-includes.md
       - Backup and restore: pages/60-simple-website/50-backup-and-restore.md
-  - Wireguard VPN:
-      - Configuration: pages/40-wireguard-vpn/10-configuration.md
-      - Keys distribution: pages/40-wireguard-vpn/20-distributing-the-keys.md
+  - Web keys directory:
+      - Presentation: pages/70-web-keys-directory/10-presentation.md
+      - Compatible clients: pages/70-web-keys-directory/20-compatible-clients.md
   - Advanced SSH server usage:
       - Certificates authentication: pages/80-advanced-ssh-usage/10-ssh-certificates.md
       - User git server: pages/80-advanced-ssh-usage/20-user-git-server.md
