@@ -17,15 +17,15 @@
     mode: '0644'
   tags: users
 
-- name: Load systemd user service
-  when: webdav_service.changed
-  ansible.builtin.systemd:
-    daemon_reload: true
-    name: webdav
-    scope: global
-    state: started
-    no_block: true
-  tags: users
+# - name: Load systemd user service
+#   when: webdav_service.changed
+#   ansible.builtin.systemd:
+#     daemon_reload: true
+#     name: webdav
+#     scope: global
+#     state: started
+#     no_block: true
+#   tags: users
 
 - name: Set-up services for each user
   ansible.builtin.include_tasks: install/user-setup-one.yml

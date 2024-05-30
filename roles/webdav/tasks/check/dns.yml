@@ -4,3 +4,4 @@
   ansible.builtin.getent:
     database: hosts
     key: 'webdav.{{ network.domain }}'
+  tags: dns

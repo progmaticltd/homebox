@@ -1,0 +1,28 @@
+---
+
+- name: Stop and remove the service for each user
+  ansible.builtin.include_tasks: uninstall/one-user.yml
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+  tags: users
+
+- name: Remove systemd user service template
+  ansible.builtin.file:
+    path: /etc/systemd/user/webdav.service
+    state: absent
+  tags: users
+
+- name: Reload systemd service
+  ansible.builtin.systemd:
+    daemon_reload: true
+  tags: users
+
+- name: Remove the webdav root directory for the users
+  ansible.builtin.file:
+    path: /var/tmp/webdav-user/
+    state: directory
+    owner: www-data
+    group: mail_users
+    mode: '0750'
+  tags: users

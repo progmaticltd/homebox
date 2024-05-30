@@ -7,3 +7,4 @@
     body: ''
     status_code: 401
     return_content: true
+  tags: nginx

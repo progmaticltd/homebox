@@ -1,13 +1,23 @@
 ---
 
-- name: Remove nginx config
-  ansible.builtin.include_tasks: uninstall/nginx.yml
+# NOTE: The user files are not removed.
 
-- name: Uninstall the packages
-  ansible.builtin.include_tasks: uninstall/packages.yml
-
-- name: Remove AppArmor config files
-  ansible.builtin.include_tasks: uninstall/apparmor.yml
+- name: Stop and remove all user services first
+  ansible.builtin.include_tasks: uninstall/all-users.yml
+  tags: users
 
 - name: Remove the certificates
   ansible.builtin.include_tasks: uninstall/certificates.yml
+  tags: certs
+
+- name: Remove nginx config
+  ansible.builtin.include_tasks: uninstall/nginx.yml
+  tags: nginx
+
+- name: Uninstall the packages
+  ansible.builtin.include_tasks: uninstall/packages.yml
+  tags: apt
+
+- name: Remove AppArmor config files
+  ansible.builtin.include_tasks: uninstall/apparmor.yml
+  tags: apparmor

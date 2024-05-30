@@ -4,6 +4,7 @@
   register: tls_ciphers_report
   ansible.builtin.shell: sslscan --no-colour webdav.{{ network.domain }}:443
   changed_when: false
+  tags: nginx
 
 - name: Ensure authorised TLS cipher are used
   ansible.builtin.assert:
@@ -16,6 +17,7 @@
   loop: '{{ security.tls.versions }}'
   loop_control:
     loop_var: tls_version
+  tags: nginx
 
 - name: Ensure no ‘unused’ TLS cipher is activated
   ansible.builtin.assert:
@@ -28,3 +30,4 @@
   loop: '{{ security.tls.unused_versions }}'
   loop_control:
     loop_var: tls_version
+  tags: nginx

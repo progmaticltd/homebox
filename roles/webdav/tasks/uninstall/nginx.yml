@@ -1,18 +1,37 @@
 ---
 
-- name: Remove the webdav site
+- name: Remove the webdav global site
   notify: Restart nginx
   ansible.builtin.file:
     path: /etc/nginx/sites-available/webdav.{{ network.domain }}.conf
     state: absent
+  tags: nginx
 
-- name: Removed enabled nginx site
+- name: Removed enabled nginx global site
   notify: Restart nginx
   ansible.builtin.file:
     path: '/etc/nginx/sites-enabled/webdav.{{ network.domain }}.conf'
     state: absent
+  tags: nginx
 
 - name: Remove the autoconfiguration directory
   ansible.builtin.file:
     path: /var/www/webdav/
     state: absent
+  tags: nginx
+
+- name: Find all the webdav log files
+  register: webdav_logs
+  ansible.builtin.find:
+    path: /var/log/nginx
+    pattern: webdav*
+  tags: nginx
+
+- name: Remove all the webdav log files
+  ansible.builtin.file:
+    path: '{{ file.path }}'
+    state: absent
+  loop: '{{ webdav_logs.files | default([]) }}'
+  loop_control:
+    loop_var: file
+  tags: nginx

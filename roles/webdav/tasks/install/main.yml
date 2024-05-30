@@ -1,29 +1,29 @@
 ---
 
-- name: Install packages
-  ansible.builtin.include_tasks: install/packages.yml
-  tags: apt
-
 - name: Load basic facts
   ansible.builtin.include_tasks: install/facts.yml
   tags: facts
 
-- name: Set-up user shares
-  ansible.builtin.include_tasks: install/user-setup.yml
-  tags: users
-
-- name: Deploy nginx config
-  ansible.builtin.include_tasks: install/nginx.yml
-  tags: nginx
+- name: Install packages
+  ansible.builtin.include_tasks: install/packages.yml
+  tags: apt
 
 - name: Configure AppArmor
   ansible.builtin.include_tasks: install/apparmor.yml
   tags: apparmor
 
-- name: Create the DNS record
-  ansible.builtin.include_tasks: install/dns.yml
-  tags: dns
-
 - name: Copy the certificates
   ansible.builtin.include_tasks: install/certificates.yml
   tags: certs, scripts
+
+- name: Deploy nginx config
+  ansible.builtin.include_tasks: install/nginx.yml
+  tags: nginx
+
+- name: Set-up user shares
+  ansible.builtin.include_tasks: install/user-setup.yml
+  tags: users
+
+- name: Create the DNS record
+  ansible.builtin.include_tasks: install/dns.yml
+  tags: dns

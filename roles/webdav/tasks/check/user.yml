@@ -1,0 +1,85 @@
+---
+
+- name: Check authenticated access
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.uri:
+    url: 'https://webdav.{{ network.domain }}/'
+    method: get
+    return_content: true
+    url_username: '{{ user0_uid }}'
+    url_password: '{{ user0_password }}'
+  tags: user
+
+- name: Create a random folder name
+  ansible.builtin.set_fact:
+    folder_name: '{{ lookup("password", "/dev/null chars=alpha length=8")}}'
+  tags: user
+
+- name: Create a folder
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.uri:
+    url: 'https://webdav.{{ network.domain }}/{{ folder_name }}'
+    method: mkcol
+    force_basic_auth: true
+    return_content: true
+    url_username: '{{ user0_uid }}'
+    url_password: '{{ user0_password }}'
+    status_code: 201
+  tags: user
+
+- name: Upload a file
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.uri:
+    url: 'https://webdav.{{ network.domain }}/{{ folder_name }}/text-file.txt'
+    src: check/text-file.txt
+    method: put
+    force_basic_auth: true
+    return_content: true
+    url_username: '{{ user0_uid }}'
+    url_password: '{{ user0_password }}'
+    status_code: 201
+  tags: user
+
+- name: Rename the folder
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.uri:
+    url: 'https://webdav.{{ network.domain }}/{{ folder_name }}'
+    method: move
+    force_basic_auth: true
+    return_content: true
+    url_username: '{{ user0_uid }}'
+    url_password: '{{ user0_password }}'
+    status_code: 201
+    headers:
+      destination: 'https://webdav.{{ network.domain }}/{{ folder_name }}-2'
+  tags: user
+
+- name: List the new folder content
+  register: xml_answer
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.uri:
+    url: 'https://webdav.{{ network.domain }}/{{ folder_name }}-2'
+    method: propfind
+    force_basic_auth: true
+    return_content: true
+    url_username: '{{ user0_uid }}'
+    url_password: '{{ user0_password }}'
+    status_code: 207
+    headers:
+      depth: 1
+  failed_when: >-
+    "<D:href>/{{ folder_name }}-2/text-file.txt</D:href>"
+    not in xml_answer.content
+  tags: user
+
+- name: Delete the folder
+  no_log: '{{ hide_secrets }}'
+  ansible.builtin.uri:
+    url: 'https://webdav.{{ network.domain }}/{{ folder_name }}-2'
+    method: delete
+    force_basic_auth: true
+    return_content: true
+    url_username: '{{ user0_uid }}'
+    url_password: '{{ user0_password }}'
+    status_code: 204
+  tags: user

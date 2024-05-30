@@ -1,0 +1,76 @@
+---
+
+- name: Get the user ID
+  register: id_cmd
+  ansible.builtin.getent:
+    key: '{{ user.uid }}'
+    database: passwd
+    service: ldap
+    split: ':'
+  changed_when: false
+  tags: users
+
+- name: Store the user ID
+  ansible.builtin.set_fact:
+    user_id: '{{ getent_passwd[user.uid][1] }}'
+  tags: users
+
+- name: Disable linger for the user
+  ansible.builtin.shell: >-
+    loginctl disable-linger {{ user.uid }}
+  changed_when: true
+  tags: users
+
+# - name: Show the service as a user     # noqa: command-instead-of-module
+#   become: true
+#   become_user: '{{ user.uid }}'
+#   become_method: sudo
+#   become_flags: '--preserve-env=XDG_RUNTIME_DIR,DBUS_SESSION_BUS_ADDRESS,SYSTEMD_LOG_LEVEL'
+#   ansible.builtin.shell: >-
+#     systemctl --user status webdav
+#   changed_when: true
+#   environment:
+#     XDG_RUNTIME_DIR: /run/user/{{ user_id }}
+#     DBUS_SESSION_BUS_ADDRESS: unix:path=/run/user/{{ user_id }}/bus
+#     SYSTEMD_LOG_LEVEL: '{{ (system.devel or system.debug) | ternary("debug", "warning")}}'
+#   tags: users
+
+# - name: Stop the service as a user     # noqa: command-instead-of-module
+#   become: true
+#   become_user: '{{ user.uid }}'
+#   become_method: sudo
+#   become_flags: '--preserve-env=XDG_RUNTIME_DIR,DBUS_SESSION_BUS_ADDRESS,SYSTEMD_LOG_LEVEL'
+#   ansible.builtin.shell: >-
+#     systemctl --user stop webdav
+#   changed_when: true
+#   environment:
+#     XDG_RUNTIME_DIR: /run/user/{{ user_id }}
+#     DBUS_SESSION_BUS_ADDRESS: unix:path=/run/user/{{ user_id }}/bus
+#     SYSTEMD_LOG_LEVEL: '{{ (system.devel or system.debug) | ternary("debug", "warning")}}'
+#   tags: users
+
+# - name: Disable the service as a user     # noqa: command-instead-of-module
+#   become: true
+#   become_user: '{{ user.uid }}'
+#   become_method: sudo
+#   become_flags: '--preserve-env=XDG_RUNTIME_DIR,DBUS_SESSION_BUS_ADDRESS,SYSTEMD_LOG_LEVEL'
+#   ansible.builtin.shell: >-
+#     systemctl --user disable webdav
+#   changed_when: true
+#   environment:
+#     XDG_RUNTIME_DIR: /run/user/{{ user_id }}
+#     DBUS_SESSION_BUS_ADDRESS: unix:path=/run/user/{{ user_id }}/bus
+#     SYSTEMD_LOG_LEVEL: '{{ (system.devel or system.debug) | ternary("debug", "warning")}}'
+#   tags: users
+
+- name: Remove file shares directory for the user
+  ansible.builtin.file:
+    path: /home/archives/{{ user.uid }}/webdav/
+    state: absent
+  tags: users
+
+- name: Remove config directory for the user
+  ansible.builtin.file:
+    path: /home/users/{{ user.uid }}/.config/webdav
+    state: absent
+  tags: users

@@ -32,3 +32,7 @@
     line: '  #include <local/nginx-webdav>'
     insertbefore: '# End of local includes for homebox'
   tags: apparmor
+
+- name: Restart handlers now
+  meta: flush_handlers
+  tags: apparmor
