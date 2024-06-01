@@ -38,6 +38,16 @@ nav:
   - Advanced Storage:
       - Dedicated archives storage: pages/30-storage/10-dedicated-archives-storage.md
       - Dedicated live storage: pages/30-storage/20-dedicated-live-storage.md
+  - Firewall:
+      - Presentation: pages/35-firewall/10-presentation.md
+      - Outbound traffic: pages/35-firewall/20-outbound-traffic.md
+      - Operating modes: pages/35-firewall/30-operating-modes.md
+      - Autoban mode: pages/35-firewall/40-autoban-mode.md
+      - Private mode: pages/35-firewall/50-private-mode.md
+      - Public mode: pages/35-firewall/60-public-mode.md
+      - Trusted networks: pages/35-firewall/70-trusted-networks.md
+      - Banned networks: pages/35-firewall/80-banned-networks.md
+      - Port knocking: pages/35-firewall/90-port-knocking.md
   - Wireguard VPN:
       - Configuration: pages/40-wireguard-vpn/10-configuration.md
       - Keys distribution: pages/40-wireguard-vpn/20-distributing-the-keys.md
