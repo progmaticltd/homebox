@@ -9,6 +9,9 @@
 - name: Uninstall the packages
   ansible.builtin.include_tasks: uninstall/packages.yml
 
+- name: Remove the firewall rules
+  ansible.builtin.include_tasks: uninstall/firewall.yml
+
 - name: Remove config
   ansible.builtin.include_tasks: uninstall/config.yml
 

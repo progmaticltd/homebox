@@ -22,9 +22,8 @@ delay_warning_time = 4h
 debug_peer_list = 127.0.0.1
 {% endif %}
 
-# See http://www.postfix.org/COMPATIBILITY_README.html -- default to 2 on
-# fresh installs.
-compatibility_level = 2
+# See http://www.postfix.org/COMPATIBILITY_README.html -- default was 2 on fresh installs.
+compatibility_level=3.6
 
 # TLS parameters
 smtpd_tls_cert_file=/etc/ssl/certs/smtp.{{ network.domain }}.crt
@@ -169,6 +168,9 @@ smtputf8_autodetect_classes = verify
 #     where; sleep 8640000) | gdb $daemon_directory/$process_name
 #     $process_id 2>&1
 #     >$config_directory/$process_name.$process_id.log & sleep 5
+
+# Bounces
+notify_classes = bounce, delay, policy, protocol, resource, software
 {% endif %}
 
 {% if mail.postfix.extra_settings is defined %}
