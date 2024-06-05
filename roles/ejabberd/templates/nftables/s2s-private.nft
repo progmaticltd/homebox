@@ -1,0 +1,39 @@
+#!/usr/sbin/nft -f
+
+# These rules are limiting server-to-server connections to trusted networks only.
+# This could be interesting to build a network of trust between a few pairs.
+
+table inet filter {
+
+    set trusted_networks_ipv4 {
+        typeof ip saddr
+        flags interval,timeout
+        auto-merge
+        timeout {{ security.trusted.period }}
+    }
+
+    set trusted_networks_ipv6 {
+        typeof ip6 saddr
+        flags interval,timeout
+        auto-merge
+        timeout {{ security.trusted.period }}
+    }
+
+    chain input {
+
+        # Accept connections from trusted networks only
+        tcp dport 5269 \
+        ip saddr @trusted_networks_ipv4 \
+        ct state new \
+        counter accept \
+        comment "Accept xmpp/xmpps connections on IPv4"
+
+        tcp dport 5269 \
+        ip6 saddr @trusted_networks_ipv6 \
+        ct state new \
+        counter accept \
+        comment "Accept xmpp/xmpps connections on IPv6"
+
+    }
+
+}

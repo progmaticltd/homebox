@@ -4,14 +4,15 @@ table inet filter {
 
     chain input {
 
-        # Accept voip calls
-        udp sport {{ ephemeral_ports }} udp dport 3478 accept
+        # For voip calls
+        udp sport {{ ephemeral_ports }} udp dport 3478 conter accept \
+        comment "Accept XMPP connections on the STUN server."
 
         tcp dport 5222 ct state new counter accept \
-        comment "Accept XMPP connections from clients (TLS only)"
+        comment "Accept XMPP connections from clients (StartTLS)"
 
         tcp dport 5223 ct state new counter accept \
-        comment "Accept XMPP connections from clients (TLS only)"
+        comment "Accept XMPP connections from clients (TLS)"
     }
 
 }

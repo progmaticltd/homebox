@@ -7,23 +7,23 @@ table inet filter {
     set banned_ipv4 {
         type ipv4_addr . inet_service
         flags dynamic,timeout
-        timeout {{ security.autoban.period }}
+        timeout {{ ejabberd.autoban.period }}
     }
 
     set banned_ipv6 {
         type ipv6_addr . inet_service
         flags dynamic,timeout
-        timeout {{ security.autoban.period }}
+        timeout {{ ejabberd.autoban.period }}
     }
 
     chain input {
 
         # Limit new xmpp-server connections ala fail2ban
         meta nfproto ipv4 tcp dport xmpp-server ct state new,untracked \
-        limit rate over {{ security.autoban.rate }} add @banned_ipv4 { ip saddr . xmpp-server }
+        limit rate over {{ ejabberd.autoban.rate }} add @banned_ipv4 { ip saddr . xmpp-server }
 
         meta nfproto ipv6 tcp dport xmpp-server ct state new,untracked \
-        limit rate over {{ security.autoban.rate }} add @banned_ipv6 { ip6 saddr . xmpp-server }
+        limit rate over {{ ejabberd.autoban.rate }} add @banned_ipv6 { ip6 saddr . xmpp-server }
 
         # Accept new connections by default
         tcp dport xmpp-server ct state new counter accept \
@@ -32,7 +32,7 @@ table inet filter {
 
     chain output {
         meta skuid ejabberd \
-        tcp dport 5269 \
+        tcp dport xmpp-server \
         ct state new counter accept \
         comment "XMPP Server to server communication"
     }

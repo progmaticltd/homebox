@@ -1,20 +1,10 @@
 ---
 
 - name: Deploy server access firewall rules using autoban
-  when: security.autoban.active and ejabberd.s2s
+  when: ejabberd.s2s | bool
   notify: Restart nftables
   ansible.builtin.template:
-    src: nftables/s2s-autoban.nft
-    dest: /etc/nftables/70-jabber-s2s.nft
-    validate: nft -c -f "%s"
-    mode: '0600'
-  tags: firewall
-
-- name: Deploy server access firewall rules (fully exposed)
-  when: not security.autoban.active and ejabberd.s2s
-  notify: Restart nftables
-  ansible.builtin.template:
-    src: nftables/s2s-public.nft
+    src: nftables/s2s-{{ ejabberd.protection.s2s }}.nft
     dest: /etc/nftables/70-jabber-s2s.nft
     validate: nft -c -f "%s"
     mode: '0600'
@@ -23,7 +13,7 @@
 - name: Deploy client access firewall rules
   notify: Restart nftables
   ansible.builtin.template:
-    src: nftables/c2s-public.nft
+    src: nftables/c2s-{{ ejabberd.protection.c2s }}.nft
     dest: /etc/nftables/70-jabber-c2s.nft
     validate: nft -c -f "%s"
     mode: '0600'

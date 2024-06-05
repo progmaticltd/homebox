@@ -30,11 +30,11 @@
   ansible.builtin.include_tasks: install/dns.yml
   tags: dns
 
+- name: Deply the firewall rules
+  ansible.builtin.include_tasks: install/firewall.yml
+  tags: firewall
+
 - name: Add Prometheus alerts
   when: prometheus.install
   ansible.builtin.include_tasks: install/prometheus.yml
   tags: prometheus
-
-- name: Deply the firewall rules
-  ansible.builtin.include_tasks: install/firewall.yml
-  tags: firewall

@@ -1,0 +1,48 @@
+#!/usr/sbin/nft -f
+
+# These rules are limiting new xmpp-client connections below a certain rate.
+# The jabber server already implements some basic
+
+define xmpp_starttls = 5222
+define xmpp_tls = 5223
+
+table inet filter {
+
+    set banned_ipv4 {
+        type ipv4_addr . inet_service
+        flags dynamic,timeout
+        timeout {{ ejabberd.autoban.period }}
+    }
+
+    set banned_ipv6 {
+        type ipv6_addr . inet_service
+        flags dynamic,timeout
+        timeout {{ ejabberd.autoban.period }}
+    }
+
+    chain input {
+
+        # For voip calls
+        udp sport {{ ephemeral_ports }} udp dport 3478 conter accept \
+        comment "Accept XMPP connections on the STUN server."
+
+        # Limit new xmpp-client connections ala fail2ban
+        meta nfproto ipv4 tcp dport xmpp-client ct state new,untracked \
+        limit rate over {{ ejabberd.autoban.rate }} add @banned_ipv4 { ip saddr . xmpp-client }
+
+        meta nfproto ipv6 tcp dport xmpp-client ct state new,untracked \
+        limit rate over {{ ejabberd.autoban.rate }} add @banned_ipv6 { ip6 saddr . xmpp-client }
+
+        # Same for TLS connections on a dedicated port
+        meta nfproto ipv4 tcp dport 5223 ct state new,untracked \
+        limit rate over {{ ejabberd.autoban.rate }} add @banned_ipv4 { ip saddr . 5223 }
+
+        meta nfproto ipv6 tcp dport 5223 ct state new,untracked \
+        limit rate over {{ ejabberd.autoban.rate }} add @banned_ipv6 { ip6 saddr . 5223 }
+
+        # Accept new connections by default
+        tcp dport { xmpp-client, 5223 } ct state new counter accept \
+        comment "Accept xmpp client connections"
+    }
+
+}
