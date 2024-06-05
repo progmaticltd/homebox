@@ -2,8 +2,8 @@
 
 ## Configuration files
 
-After the installation, the configuration files, the private and public keys, and QR codes are automatically saved in
-the user's archives folder, using the following structure:
+After the installation, the configuration files, the private and public keys, and QR codes
+are automatically saved in the user's archives folder, using the following structure:
 
 `/home/archives/<user>/files/vpn/<vpn-name>/<config-file>`
 
@@ -18,7 +18,8 @@ the user's archives folder, using the following structure:
 
 ### Using the WebDAV server
 
-If the webdav role is installed, this is the easiest solution, and does not require any administrative work.
+If the webdav role is installed, this is the easiest solution, and does not require any
+administrative work.
 
 In this case, the files can be copied on a desktop computer or a phone directly.
 

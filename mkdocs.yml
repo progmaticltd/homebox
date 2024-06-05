@@ -40,17 +40,17 @@ nav:
       - Dedicated live storage: pages/30-storage/20-dedicated-live-storage.md
   - Firewall:
       - Presentation: pages/35-firewall/10-presentation.md
-      - Outbound traffic: pages/35-firewall/20-outbound-traffic.md
-      - Operating modes: pages/35-firewall/30-operating-modes.md
-      - Autoban mode: pages/35-firewall/40-autoban-mode.md
-      - Private mode: pages/35-firewall/50-private-mode.md
-      - Public mode: pages/35-firewall/60-public-mode.md
-      - Trusted networks: pages/35-firewall/70-trusted-networks.md
-      - Banned networks: pages/35-firewall/80-banned-networks.md
-      - Port knocking: pages/35-firewall/90-port-knocking.md
+      - Inbound traffic: pages/35-firewall/20-inbound-traffic.md
+      - Outbound traffic: pages/35-firewall/30-outbound-traffic.md
+      - Forward traffic: pages/35-firewall/40-forward-traffic.md
+      - Trust and ban: pages/35-firewall/50-trust-and-ban.md
+      - SSH access: pages/35-firewall/70-ssh-access.md
+      - Email access: pages/35-firewall/80-email-access.md
+      - Helper scripts: pages/35-firewall/90-helper-scripts.md
   - Wireguard VPN:
       - Configuration: pages/40-wireguard-vpn/10-configuration.md
       - Keys distribution: pages/40-wireguard-vpn/20-distributing-the-keys.md
+      - Trusted networks update: pages/40-wireguard-vpn/30-trusted-networks-update.md
   - WebDAV server:
       - Presentation: pages/50-webdav/10-presentation.md
   - Simple website:
