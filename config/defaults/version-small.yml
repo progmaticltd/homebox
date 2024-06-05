@@ -152,6 +152,7 @@ mail_default:
   # Mail protection settings
   # - public: no protection, only use this if you know what you are doing.
   # - autoban: automatically ban offender IPs, ala fail2ban (default).
+  # - protected: Submission(s) ports opened after successful IMAP/POP3 authentication.
   # - private: authentication is only allowed from trusted networks.
   protection:
     type: autoban
