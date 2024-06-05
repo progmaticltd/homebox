@@ -28,5 +28,6 @@ cd playbooks
 ROLE=website-simple ansible-playbook -e force_push_demo=true -t facts,website install.yml
 ```
 
-!!! Note To quickly customise the web site content and test the publication, see the
+!!! Note
+    To quickly customise the web site content and test the publication, see the
     [backup and restore page](50-backup-and-restore.md).

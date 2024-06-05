@@ -43,7 +43,8 @@ system:
   directory
 - The keys and the configuration files will be saved in your `~/.ssh` folder as well.
 
-!!! Note If you set _password_ to true, this user will be allowed to authenticate on the
+!!! Note
+    If you set _password_ to true, this user will be allowed to authenticate on the
     server using a password as well. This is mostly useful to avoid being locked out of
     your server, with a degradation of security, though.
 
@@ -164,5 +165,6 @@ command:
 ROLE=ssh-server-base ansible-playbook uninstall.yml
 ```
 
-!!! warning Make sure you still have access to your server, i.e. you have root or admin
+!!! warning
+    Make sure you still have access to your server, i.e. you have root or admin
     access with a standard private key.

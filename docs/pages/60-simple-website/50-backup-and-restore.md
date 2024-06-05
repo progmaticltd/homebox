@@ -3,7 +3,8 @@
 The role supports backup and restore tasks, which can be useful to publish your site as
 well.
 
-!!! Note Like most backup and restore tasks, you will required _rsync_ is installed on
+!!! Note
+    Like most backup and restore tasks, you will required _rsync_ is installed on
     your local system.
 
 ## Backup the site content

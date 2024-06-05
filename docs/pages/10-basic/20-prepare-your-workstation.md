@@ -5,7 +5,8 @@
 Ansible uses SSH to connect on the target server, so the best is to use public key
 authentication. We will not detail here the creation of your private key.
 
-!!! Note This is now happening on the workstation, here simply called _hamilton_.
+!!! Note
+    This is now happening on the workstation, here simply called _hamilton_.
 
 ### Copy your public key
 
@@ -88,7 +89,8 @@ Receiving objects: 100% (26137/26137), 9.53 MiB | 3.72 MiB/s, done.
 Resolving deltas: 100% (15687/15687), done.
 ```
 
-!!! Note If you intend to clone multiple homebox repositories, it's a good idea to create
+!!! Note
+    If you intend to clone multiple homebox repositories, it's a good idea to create
     a dedicated folder, for instance, called `homebox-all`.
 
 There should be now a folder called ‘homebox’, and you'll have now to define your

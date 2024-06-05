@@ -42,5 +42,6 @@ Now, any page can include the header, using this code:
 
 ```
 
-!!! Note This folder starts with a `.`, and is automatically excluded by _nginx_, and
+!!! Note
+    This folder starts with a `.`, and is automatically excluded by _nginx_, and
     would return an error "403 Forbidden".

@@ -193,7 +193,8 @@ all:
       ansible_become: true
 ```
 
-!!! Note If you are connecting to your server with the root user, you can remove the
+!!! Note
+    If you are connecting to your server with the root user, you can remove the
     `ansible_become: true` line.
 
 Test your configuration with the following command

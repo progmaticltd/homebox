@@ -35,7 +35,8 @@ users:
         usage: git
 ```
 
-!!! Note Make sure to add _git_ the _usage_ for each key, to ensure the proper key
+!!! Note
+    Make sure to add _git_ the _usage_ for each key, to ensure the proper key
     generated.
 
 ```sh
@@ -151,6 +152,7 @@ command:
 ROLE=user-git-server ansible-playbook uninstall.yml
 ```
 
-!!! Note Only the server settings and the generated keys are deleted. For safety reasons,
+!!! Note
+    Only the server settings and the generated keys are deleted. For safety reasons,
     the repositories are left in place. If you want to delete them, this need to be done
     by the administration account, for now.

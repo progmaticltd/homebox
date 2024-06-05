@@ -29,7 +29,8 @@ This has the following advantages:
 - Other certificate lookup methods can be added later without changing the code.
 - You don't have to guess the prefix path to save the credential, it is automatically set.
 
-!!! Note When working on a development system `system.devel=true`, the hide_secrets is set
+!!! Note
+    When working on a development system `system.devel=true`, the hide_secrets is set
     to false, and the secrets are displayed in the console when created or retrieved.
 
 
