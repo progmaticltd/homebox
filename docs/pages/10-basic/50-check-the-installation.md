@@ -1,13 +1,14 @@
 # Check the installation
 
-Here a few steps to follow _before_ publishing the domain on internet. If any of this step fails, jump directly to the
-next section, installation troubleshooting.
+Here a few steps to follow _before_ publishing the domain on internet. If any of this step
+fails, jump directly to the next section, installation troubleshooting.
 
 All the checking are now done on the target server.
 
 ## Users list
 
-Once the installation is finished, you should now see the users list, by running the command `getent passwd -s ldap`:
+Once the installation is finished, you should now see the users list, by running the
+command `getent passwd -s ldap`:
 
 ```plain
 root@bochica:~# getent passwd -s ldap
@@ -20,8 +21,9 @@ postmaster:x:2000:2000:postmaster account:/home/users/postmaster:/bin/dash
 
 ## DNS status
 
-At this time, your DNS contains all the information needed, but it is not yet "plugged" on the big wide internet...We'll
-see on the next page the command to run to "plug" your system on internet.
+At this time, your DNS contains all the information needed, but it is not yet "plugged" on
+the big wide internet...We'll see on the next page the command to run to "plug" your
+system on internet.
 
 The status of your DNS server can be seen using the `dns-status` command:
 
@@ -52,8 +54,9 @@ weethome.box                  KSK  Act Pub 256     ECDSAP256SHA256 2    cryptoke
 
 ## Certificates status
 
-Since your server is not live yet, all your certificates are signed with a temporary root certificate. Once your DNS
-server is live, you will be able to recreate all the certificates, with one command.
+Since your server is not live yet, all your certificates are signed with a temporary root
+certificate. Once your DNS server is live, you will be able to recreate all the
+certificates, with one command.
 
 For now, this is what you should see when typing the command `cert-status`:
 
@@ -78,8 +81,8 @@ Now that your server is ready to use, you can publish the DNS server on internet
 
 ## The backup folder
 
-The credentials created from the installation, should be stored in a folder named from the domain name, in the _backup_
-folder. This folder is excluded from git as well:
+The credentials created from the installation, should be stored in a folder named from the
+domain name, in the _backup_ folder. This folder is excluded from git as well:
 
 ```plain
 ls -lR backup

@@ -2,9 +2,11 @@
 
 The default server settings are defined in the role and can be overridden:
 
+
 ## Security headers
 
-The default security cannot be changed for the web site only, they are displayed here as information:
+The default security cannot be changed for the web site only, they are displayed here as
+information:
 
 ```yml
 nginx_sec_headers:
@@ -17,6 +19,7 @@ nginx_sec_headers:
   - id: X-Frame-Options
     value: sameorigin
 ```
+
 
 ## Content Security Policies
 
@@ -64,7 +67,6 @@ website:
     - id: base-uri
       value: "https: 'self'"
 ```
-
 
 
 ## Features policies

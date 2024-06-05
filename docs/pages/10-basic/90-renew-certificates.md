@@ -1,13 +1,15 @@
 # Renew the certificates
 
-Once your DNS server is live, it's to to built the real certificates, using a simple command.
+Once your DNS server is live, it's to to built the real certificates, using a simple
+command.
 
 ```sh
 root@bochica ~# cert-renew
 ```
 
-The first time it is run, this command should takes some significant time, and will create all the certificates using
-LetsEncrypt certificate authority. Once run, the `cert-status` command should give you something like this:
+The first time it is run, this command should takes some significant time, and will create
+all the certificates using LetsEncrypt certificate authority. Once run, the `cert-status`
+command should give you something like this:
 
 ```plain
 root@bochica ~# cert-status

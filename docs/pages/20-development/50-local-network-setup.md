@@ -1,15 +1,17 @@
 # Local network setup
 
-This step is not absolutely required, but it is sometimes convenient to test the system with real applications, for
-instance desktop email clients.
+This step is not absolutely required, but it is sometimes convenient to test the system
+with real applications, for instance desktop email clients.
 
-Once finished, you will be able to test email access, browse the site, test the Jabber server, etc, from your
-workstation. It has only be tested on Debian Linux, but this can be adapted easily.
+Once finished, you will be able to test email access, browse the site, test the Jabber
+server, etc, from your workstation. It has only be tested on Debian Linux, but this can be
+adapted easily.
 
 ## DNS delegation
 
-Any other caching DNS server may work, but unbound has the advantage of being very modular. With just one configuration
-file, you will be able to transparently query the temporary DNS server on the virtual machine.
+Any other caching DNS server may work, but unbound has the advantage of being very
+modular. With just one configuration file, you will be able to transparently query the
+temporary DNS server on the virtual machine.
 
 Create this configuration file in `/etc/unbound/unbound.conf.d/network.conf`:
 
@@ -59,8 +61,9 @@ search .
 
 ## Route to the public IP
 
-Finally, as root, add the route to the system, using thepublic IP address, the the virtualiser network interface. For
-instance, when using KVM on Linux and an IP address like `12.33.44.55`, the following command need to be entered:
+Finally, as root, add the route to the system, using thepublic IP address, the the
+virtualiser network interface. For instance, when using KVM on Linux and an IP address
+like `12.33.44.55`, the following command need to be entered:
 
 ```sh
 sudo ip route add 12.33.44.55 dev virbr0
@@ -83,8 +86,9 @@ rtt min/avg/max/mdev = 0.204/0.404/0.488/0.117 ms
 
 ## Trusting the CA
 
-Even if you are able to access the VM, you cannot yet access its web page without a certificate not trusted error. This
-step will retrieve the temporary certificate authority locally, and install it as a _trusted CA_.
+Even if you are able to access the VM, you cannot yet access its web page without a
+certificate not trusted error. This step will retrieve the temporary certificate authority
+locally, and install it as a _trusted CA_.
 
 First, run the certificate backup playbook, with the CA tag:
 
@@ -164,6 +168,7 @@ curl -v https://middle-earth.arda.world/
 </html>
 * Connection #0 to host middle-earth.arda.world left intact
 ```
+
 
 ## Mozilla Firefox
 

@@ -4,8 +4,8 @@ This role creates the skeleton to host a simple _static_ web site, in HTML
 
 The role deploys the minimum required:
 
-- The certificates for the default site `www.your-domain.com`, `your-domain.com` and the the certificate renewal
-  procedure.
+- The certificates for the default site `www.your-domain.com`, `your-domain.com` and the
+  the certificate renewal procedure.
 - The nginx configuration for both `www.your-domain.com` and `your-domain.com`.
 - Automatic redirection from _http_ to _https_.
 - AppArmor profiles to restrict nginx access rights.
@@ -31,7 +31,8 @@ website_default:
 ```
 
 - locale: Define the default locale to use in the nginx HTTP header.
-- ssi: activate _nginx_ _Server Side Includes_. See the [dedicated documentation](40-server-side-includes.md) or the
+- ssi: activate _nginx_ _Server Side Includes_. See the
+  [dedicated documentation](40-server-side-includes.md) or the
   [official nginx documentation](https://nginx.org/en/docs/http/ngx_http_ssi_module.html).
 
 

@@ -1,7 +1,7 @@
 # Retrieving public keys
 
-The keys can be retrieved by compatible clients, for instance, using emails clients like Mozilla Thunderbird or
-Microsoft Outlook. Here an example with the `gpg` command line:
+The keys can be retrieved by compatible clients, for instance, using emails clients like
+Mozilla Thunderbird or Microsoft Outlook. Here an example with the `gpg` command line:
 
 ```plain
 samwise@middle-earth:~# gpg -v --locate-external-keys frodo@baggins.me
@@ -20,4 +20,5 @@ sub   cv25519 2024-11-12 [E] [expires: 2026-11-12]
 sub   ed25519 2024-11-12 [A] [expires: 2026-11-12]
 ```
 
-We can see the import from they key directory, from the line `automatically retrieved 'frodo@baggins.me' via WKD`.
+We can see the import from they key directory, from the line `automatically retrieved
+'frodo@baggins.me' via WKD`.

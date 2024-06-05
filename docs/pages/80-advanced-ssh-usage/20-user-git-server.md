@@ -1,8 +1,8 @@
 # User git server
 
-Because not every git project has to be hosted on the big cloud providers, you can create a personal git
-server for each user. This is very useful for small personal projects, dot files (e.g. .bashrc, etc.) or
-text files backups.
+Because not every git project has to be hosted on the big cloud providers, you can create
+a personal git server for each user. This is very useful for small personal projects, dot
+files (e.g. .bashrc, etc.) or text files backups.
 
 - Repositories are accessed over SSH only, no web front-end.
 - Git repositories are automatically created on first push.
@@ -14,7 +14,7 @@ text files backups.
 
 ## Configuration
 
-Specify each users’ ssh  keys information, like this:
+Specify each users’ ssh keys information, like this:
 
 ```yml
 users:
@@ -35,8 +35,8 @@ users:
         usage: git
 ```
 
-!!! Note
-    Make sure to add _git_ the _usage_ for each key, to ensure the proper key generated.
+!!! Note Make sure to add _git_ the _usage_ for each key, to ensure the proper key
+    generated.
 
 ```sh
 ROLE=user-git-server ansible-playbook install.yml
@@ -45,14 +45,17 @@ ROLE=user-git-server ansible-playbook install.yml
 Once installed, the following will be set:
 
 - A new group called _git-users_ will be created.
-- Each user accounts with an SSH key, with the usage set to `git` will be added to the _git-users_ group.
+- Each user accounts with an SSH key, with the usage set to `git` will be added to the
+  _git-users_ group.
 
 Finally, for each user in the _git-users_ group:
 
 - A repository directory will be created, in `/home/archives/<uid>/git/repositories/`.
 - The public key specified will be signed and a certificate will be created.
-- The certificate will restrict the ssh key to one command only, `/usr/local/bin/git-only`.
-- All the keys, certificates and ssh configuration files will be stored in the backup directory,
+- The certificate will restrict the ssh key to one command only,
+  `/usr/local/bin/git-only`.
+- All the keys, certificates and ssh configuration files will be stored in the backup
+  directory,
 - The same files will be sent by email for each user.
 
 Without any parameter, the git-command will be run with a small help:
@@ -82,8 +85,8 @@ Connection to middle-earth.arda.world closed.
 
 ## Simple usage
 
-To use the git server, the users will be able to add another remote. For instance, for a repository called "dot-files,
-for a domain "arda.world" :
+To use the git server, the users will be able to add another remote. For instance, for a
+repository called "dot-files, for a domain "arda.world" :
 
 ```sh
 git checkout main
@@ -110,14 +113,16 @@ homebox-site.git   | 8.4M | 2024-05-06 14:48:53 | 2024-05-06 14:48:53
 
 ## Checking the installation
 
-Once installed, you can check if the installation has been successful with the command below.
+Once installed, you can check if the installation has been successful with the command
+below.
 
 
 ```sh
 ROLE=user-git-server ansible-playbook check.yml
 ```
 
-It will display the server certificate and the administration key, if you chose to use one:
+It will display the server certificate and the administration key, if you chose to use
+one:
 
 ```plain
 [...]
@@ -139,13 +144,13 @@ ok: [homebox] => changed=false
 
 ## Uninstalling
 
-Like any other role, you can uninstall the user git functionality, using the following command:
-
+Like any other role, you can uninstall the user git functionality, using the following
+command:
 
 ```sh
 ROLE=user-git-server ansible-playbook uninstall.yml
 ```
 
-!!! Note
-    Only the server settings and the generated keys are deleted. For safety reasons, the repositories are left in
-    place. If you want to delete them, this need to be done by the administration account, for now.
+!!! Note Only the server settings and the generated keys are deleted. For safety reasons,
+    the repositories are left in place. If you want to delete them, this need to be done
+    by the administration account, for now.

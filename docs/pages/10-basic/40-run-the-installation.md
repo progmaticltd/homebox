@@ -4,8 +4,8 @@ Now, the serious things starts.
 
 ## Default installation
 
-The first - and hopefully only needed task is too run the playbook for the version you chose. This can be done with the
-following command:
+The first - and hopefully only needed task is too run the playbook for the version you
+chose. This can be done with the following command:
 
 ```sh
 cd playbooks

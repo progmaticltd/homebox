@@ -1,27 +1,31 @@
 # Dedicated archives storage
 
-This optional step, for advanced users, allows you to use a dedicated storage for the user files, i.e.:
+This optional step, for advanced users, allows you to use a dedicated storage for the user
+files, i.e.:
 
-- One fast but smaller and more expensive storage device, for instance for the daily emails, in `/home/users`.
-- A slower but bigger and cheaper storage for the email archives, and other files not requiring fast access, in
-  `/home/archives`.
+- One fast but smaller and more expensive storage device, for instance for the daily
+  emails, in `/home/users`.
+- A slower but bigger and cheaper storage for the email archives, and other files not
+  requiring fast access, in `/home/archives`.
 
-This page explains the installation of a dedicated _live_ storage, i.e. the current emails received.
+This page explains the installation of a dedicated _live_ storage, i.e. the current emails
+received.
 
-This is specially useful for some cloud providers, offering SSD and HD block storage, but can be also relevant for a
-home server.
+This is specially useful for some cloud providers, offering SSD and HD block storage, but
+can be also relevant for a home server.
 
-Because when installing homebox, files and directories are created in these folders, it is an absolute requirements to
-run these playbooks _before_ running the installation itself.
+Because when installing homebox, files and directories are created in these folders, it is
+an absolute requirements to run these playbooks _before_ running the installation itself.
 
 ## Pre-requisites
 
 ### Clone the homebox-extra-modules
 
-The [extra modules repository](https://github.com/progmaticltd/homebox-extra-modules) is hosted on GitHub.
+The [extra modules repository](https://github.com/progmaticltd/homebox-extra-modules) is
+hosted on GitHub.
 
-You can clone at any place, but the repository roles should be accessible by the main Ansible project, for instance, if
-you store everything in a folder called `homebox-all`:
+You can clone at any place, but the repository roles should be accessible by the main
+Ansible project, for instance, if you store everything in a folder called `homebox-all`:
 
 ```sh
 cd ~/Projects/homebox-all
@@ -72,7 +76,8 @@ vdc    254:32   0   20G  0 disk
 
 ### Customise the storage settings
 
-You can customise the settings from the default ones, by copying this block to your configuration file `system.yml`:
+You can customise the settings from the default ones, by copying this block to your
+configuration file `system.yml`:
 
 ```yml
 storage_live:
@@ -86,7 +91,8 @@ storage_live:
     - compress=lzo
 ```
 
-The important value to check, if the storage you decide to dedicate to "live" emails, in this case, `/var/vdb`.
+The important value to check, if the storage you decide to dedicate to "live" emails, in
+this case, `/var/vdb`.
 
 ### Run the playbook to create the live storage
 
@@ -135,5 +141,5 @@ Options=noatime,compress=lzo
 WantedBy=multi-user.target
 ```
 
-Using a label for the source allows you to re-attach the live storage without changing a system settings in case of
-disaster recovery.
+Using a label for the source allows you to re-attach the live storage without changing a
+system settings in case of disaster recovery.

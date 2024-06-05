@@ -1,7 +1,7 @@
 # Repository overview
 
-Once set-up, it is extremely easy to work on full a development environment, using a virtual machine, a cloud server or
-a physical system.
+Once set-up, it is extremely easy to work on full a development environment, using a
+virtual machine, a cloud server or a physical system.
 
 
 ## Folders list
@@ -58,5 +58,5 @@ The standard roles are using, partially or fully, the following folders hierarch
 | tasks/uninstall | Tasks to run when removing a role from the server         |
 | vars            | Constant variables specific to the role                   |
 
-You will see later how to create a simple role, and how to use the playbooks to install, check, backup, restore and
-uninstall, a selection of roles.
+You will see later how to create a simple role, and how to use the playbooks to install,
+check, backup, restore and uninstall, a selection of roles.

@@ -1,6 +1,7 @@
 # Development environment
 
-This section will help you to set-up a full development environment, from the Ansible host to the target system.
+This section will help you to set-up a full development environment, from the Ansible host
+to the target system.
 
 ## Packages to install
 
@@ -21,8 +22,8 @@ You can also use these extra packages:
 | markdownlint | Ensure the documentation files are using the same standards.              |
 | aspell       | Spell checker for the markdown documentation, written in British English. |
 
-It is also recommended to use a text editor that highlighting errors and warning on the fly, for convenience and to
-avoid pushing erroneous code.
+It is also recommended to use a text editor that highlighting errors and warning on the
+fly, for convenience and to avoid pushing erroneous code.
 
 
 ## Ansible configuration file
@@ -30,7 +31,8 @@ avoid pushing erroneous code.
 
 ### Basic version
 
-A sample configuration file is included in the `common` folder, just copy it to `ansible.cfg`:
+A sample configuration file is included in the `common` folder, just copy it to
+`ansible.cfg`:
 
 ```ini
 [defaults]
@@ -67,35 +69,38 @@ remote_tmp = /tmp/
 inventory=../config/hosts.yml
 ```
 
-The connection plugins contains only one plugin to use [fwknow](https://www.cipherdyne.org/fwknop/) with ssh.
+The connection plugins contains only one plugin to use
+[fwknow](https://www.cipherdyne.org/fwknop/) with ssh.
 
 
 ## Target system
 
-The target system will be used for development, and need to be a full _Debian_ environment, like:
+The target system will be used for development, and need to be a full _Debian_
+environment, like:
 
 - A virtual machine using KVM or any other virtualisation environment.
 - A cloud server, for instance on Vultr, Linode, etc...
 - A physical system attached to your network.
 
-You cannot use containerisation like Docker, as this doesn't support systemd services, for one reason. There is no plan
-to support containers at this time, and probably there won't be.
+You cannot use containerisation like Docker, as this doesn't support systemd services, for
+one reason. There is no plan to support containers at this time, and probably there won't
+be.
 
 ## Copy the sample configuration
 
-First, choose a domain name. You can use a real one, even you are not (yet) the owner, and you will see later how to
-test it.
+First, choose a domain name. You can use a real one, even you are not (yet) the owner, and
+you will see later how to test it.
 
-There is a sample configuration in the `config/samples` folder. In this example, we will use the domain name
-`arda.world` and the hostname `middle-earth`:
+There is a sample configuration in the `config/samples` folder. In this example, we will
+use the domain name `arda.world` and the hostname `middle-earth`:
 
 ```sh
 cp config/samples/hosts.yml config/hosts-arda.world.yml
 cp config/samples/system.yml config/system-arda.world.yml
 ```
 
-Review the system settings with an editor. One value to change, is probably the _devel_ flag, and maybe the _debug_ one,
-and set them to _true_:
+Review the system settings with an editor. One value to change, is probably the _devel_
+flag, and maybe the _debug_ one, and set them to _true_:
 
 ```yml
 system:
@@ -113,12 +118,13 @@ External IP address: ~
 Backup IP address: ~
 ```
 
-This will create the symbolic links `hosts.yml` and `system.yml`, so you can work with multiple domains easily.
+This will create the symbolic links `hosts.yml` and `system.yml`, so you can work with
+multiple domains easily.
 
 ## About the IP addresses
 
-You can set any external IP addresses, both for the backup and the main one, this doesn't matter yet, but you shouldn't
-use private IP addresses.
+You can set any external IP addresses, both for the backup and the main one, this doesn't
+matter yet, but you shouldn't use private IP addresses.
 
 ```yml
 network:
@@ -129,17 +135,18 @@ network:
   bind_ip: 172.20.1.81       # If you are behind a NAT, the local IP address externally NAT'ed,
 ```
 
-When developing, or when your server is behind _NAT'ed_, it is necessary to specify the local IP address some services,
-like the DNS server will use to "bind".
+When developing, or when your server is behind _NAT'ed_, it is necessary to specify the
+local IP address some services, like the DNS server will use to "bind".
 
 ## About the certificates
 
-On the first installation, whatever the system is a real or a development one, the certificates are self-signed, for two
-reasons:
+On the first installation, whatever the system is a real or a development one, the
+certificates are self-signed, for two reasons:
 
-- The system is not yet online, and the certificates are created using the
+- The system is not "published" online yet, and the certificates need to be created using the
   [DNS challenge method](https://letsencrypt.org/docs/challenge-types/#dns-01-challenge).
 - Most of the services need a certificate to run (e.g. openldap, dovecot, postfix, etc.)
 
-Still, all the certificates are created using the same certificate authority, which is registered and trusted by the
-system. Once a system is installed, you can see the certificates status using the `cert-status` command.
+Still, all the certificates are created using the same certificate authority, which is
+registered and trusted by the system. Once a system is installed, you can see the
+certificates status using the `cert-status` command.

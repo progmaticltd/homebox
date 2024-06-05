@@ -1,11 +1,13 @@
 # Presentation
 
-The web keys directory allows you to publish your [GPG keys](https://wiki.gnupg.org/WKD "Gnu Privacy Guard") public key
-automatically, making the key easily reachable by anyone wanting to contact you.
+The web keys directory allows you to publish your [GPG keys](https://wiki.gnupg.org/WKD
+"Gnu Privacy Guard") public key automatically, making the key easily reachable by anyone
+wanting to contact you.
 
 ## Keys definition
 
-At this time, keys are defined in the `system.yml` file, in a list called `pgp_public_keys`, using this syntax:
+At this time, keys are defined in the `system.yml` file, in a list called
+`pgp_public_keys`, using this syntax:
 
 ```yaml
 pgp_public_keys:
@@ -36,8 +38,8 @@ pgp_public_keys:
       -----END PGP PUBLIC KEY BLOCK-----
 
   - uid: mariadoc
-	public_key: |-
-	  […]
+    public_key: |-
+      […]
 ```
 
 ## Running the playbook

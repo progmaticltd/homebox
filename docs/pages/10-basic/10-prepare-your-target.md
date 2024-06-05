@@ -1,24 +1,25 @@
 # Prepare the target system
 
-This section describes the process from a freshly installed Debian distribution, without any user. You can go to the
-next section if your system already have a dedicated user with an SSH connection and root access.
+This section describes the process from a freshly installed Debian distribution, without
+any user. You can go to the next section if your system already have a dedicated user with
+an SSH connection and root access.
 
 It is relevant whatever you are using a live system or a virtual machine for development.
 
 
 ## Create an installation user
 
-!!! Note
-    Everything described here happens on the remote server, here just called "debian".
+!!! Note Everything described here happens on the remote server, here just called
+    "debian".
 
-This section creates a user dedicated for the installation, that will be removed later. You can skip it in the following
-cases:
+This section creates a user dedicated for the installation, that will be removed
+later. You can skip it in the following cases:
 
 1. You already have a user with sudo access, allowed to connect over SSH, or
 2. You want to use the root account to connect on your server over SSH.
 
-In our case, we'll create a temporary user, called for instance `hbinstall`, for HomeBox install, and give them a random
-password:
+In our case, we'll create a temporary user, called for instance `hbinstall`, for HomeBox
+install, and give them a random password:
 
 ```plain
 root@debian:~# adduser hbinstall
@@ -82,10 +83,11 @@ Finally, we need to grant the `hbinstall` user to run any command without using 
 echo 'hbinstall ALL=(ALL) NOPASSWD: ALL' >/etc/sudoers.d/hbinstall
 ```
 
-Now, the user hbinstall has administrative access on the system. The next step will let the user connect over ssh
-without interaction.
+Now, the user hbinstall has administrative access on the system. The next step will let
+the user connect over ssh without interaction.
 
-In order for the system to run ansible commands, two packages need to be installed, if not already installed:
+In order for the system to run ansible commands, two packages need to be installed, if not
+already installed:
 
 ```sh
 apt install python3 python3-apt

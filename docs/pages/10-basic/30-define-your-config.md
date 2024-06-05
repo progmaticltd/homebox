@@ -1,17 +1,21 @@
 # Define your system configuration
 
-The configuration is stored into _Yaml_ files, a lightweight markup language often used by Ansible.
+The configuration is stored into _Yaml_ files, a lightweight markup language often used by
+Ansible.
 
-- The important notion to keep in mind is _the indentation is important_, and _do not use tabs_.
-- All the commands below should be run in the `homebox` folder, unless specified otherwise.
+- The important notion to keep in mind is _the indentation is important_, and _do not use
+  tabs_.
+- All the commands below should be run in the `homebox` folder, unless specified
+  otherwise.
 
 ## 1. Choose your flavour
 
-Initially, you'll have to choose a flavour to install, according to your system resources and your tastes. A _flavour_
-is a predefined set of features, or "components".
+Initially, you'll have to choose a flavour to install, according to your system resources
+and your tastes. A _flavour_ is a predefined set of features, or "components".
 
-Note that it is possible to start with a small flavour, and dynamically add or remove components later.
-Some features are not included in any flavour, but can still be installed or uninstalled.
+Note that it is possible to start with a small flavour, and dynamically add or remove
+components later.  Some features are not included in any flavour, but can still be
+installed or uninstalled.
 
 There are four pre-configured settings you could use:
 
@@ -52,7 +56,8 @@ There are four pre-configured settings you could use:
 
 ### Requirements
 
-Here some requirements _estimations_, which could vary depending of the traffic, the number of users, etc:
+Here some requirements _estimations_, which could vary depending of the traffic, the
+number of users, etc:
 
 | Flavour | Minimal memory | Recommended memory |
 |---------|----------------|--------------------|
@@ -61,15 +66,17 @@ Here some requirements _estimations_, which could vary depending of the traffic,
 | Medium  | 2GB            | 4GB                |
 | Large   | 4GB            | 4GB or more        |
 
-Even for a small or mini flavour, you can still add components that don't require big amounts of memory, and see how the
-system reacts, depending on the traffic, the swap usage, etc. Some services, like grafana or rspamd, requires more
-memory. Other services, like the _Simple web site_ don't requires a lot of CPU nor memory.
+Even for a small or mini flavour, you can still add components that don't require big
+amounts of memory, and see how the system reacts, depending on the traffic, the swap
+usage, etc. Some services, like grafana or rspamd, requires more memory. Other services,
+like the _Simple web site_ don't requires a lot of CPU nor memory.
 
 ### Copy the sample configurations
 
 If you are planning to work with multiple domains, jump to the next section directly.
 
-Once you have chosen your flavour, you need to copy the configuration sample, to create yours:
+Once you have chosen your flavour, you need to copy the configuration sample, to create
+yours:
 
 ```sh
 cp config/samples/system-minimal.yml config/system.yml
@@ -140,36 +147,41 @@ You will have to specify:
 
 If you already have one, you can skip this section.
 
-With certain limitations, HomeBox allows you to test the solution before buying a domain name. Just specify the domain
-name you are planning to buy, and you can buy later when your system is built.
+With certain limitations, HomeBox allows you to test the solution before buying a domain
+name. Just specify the domain name you are planning to buy, and you can buy later when
+your system is built.
 
-Once you are ready to buy the domain, you need to choose a provider. Make sure both extension, aka _Top Level Domain_
-and the provider you choose supports DNSSEC. You can check the provider documentation or support. You can also check the
-Wikipedia page [list of Top level domains](https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains) for the
-extensions supporting DNSSEC.
+Once you are ready to buy the domain, you need to choose a provider. Make sure both
+extension, aka _Top Level Domain_ and the provider you choose supports DNSSEC. You can
+check the provider documentation or support. You can also check the Wikipedia page [list
+of Top level domains](https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains)
+for the extensions supporting DNSSEC.
 
 This tutorial will use [Gandi](https://gandi.net), but you can use any provider you like.
 
-For this example, we'll use the domain name `sweethome.box`, as `box` supports `DNSSEC` extensions.
+For this example, we'll use the domain name `sweethome.box`, as `box` supports `DNSSEC`
+extensions.
 
 ### Choose a host name
 
-If it's not done, perhaps you can choose a hostname for your system. This is important, because it will be published
-online, to advertise the services.
+If it's not done, perhaps you can choose a hostname for your system. This is important,
+because it will be published online, to advertise the services.
 
-I recommend to use something without any technical signification. You can take a word you like, for instance, but do not
-use names like _mail_, _smtp_ etc...
+I recommend to use something without any technical signification. You can take a word you
+like, for instance, but do not use names like _mail_, _smtp_ etc...
 
-For the purpose of this example, we'll simply use _bochica_, the messenger of knowledge of the Muisca mythology.
-You can see more cool names on the [knowledge deities page](https://en.wikipedia.org/wiki/List_of_knowledge_deities) on
-Wikipedia.
+For the purpose of this example, we'll simply use _bochica_, the messenger of knowledge of
+the Muisca mythology.  You can see more cool names on the [knowledge deities
+page](https://en.wikipedia.org/wiki/List_of_knowledge_deities) on Wikipedia.
 
 ### Create the inventory
 
-Open the file config/hosts.yml, and modify the values according to your target IP addresses.
+Open the file config/hosts.yml, and modify the values according to your target IP
+addresses.
 
-The IP address need to be the one you use for connecting over SSH. If your system is hosted online, this is probably the
-public IP address as well. If you work on a LAN, this could be the local IP address.
+The IP address need to be the one you use for connecting over SSH. If your system is
+hosted online, this is probably the public IP address as well. If you work on a LAN, this
+could be the local IP address.
 
 ```yml
 all:
@@ -181,8 +193,8 @@ all:
       ansible_become: true
 ```
 
-!!! Note
-    If you are connecting to your server with the root user, you can remove the `ansible_become: true` line.
+!!! Note If you are connecting to your server with the root user, you can remove the
+    `ansible_become: true` line.
 
 Test your configuration with the following command
 
@@ -225,16 +237,18 @@ network:
 
 ##### For the developers
 
-If your are testing on a local virtual machine and the system is not online, you can use any valid IPv4 or IPv6 address,
-as these IPs will only be used to populate the DNS server entries.
+If your are testing on a local virtual machine and the system is not online, you can use
+any valid IPv4 or IPv6 address, as these IPs will only be used to populate the DNS server
+entries.
 
-Conversely, the `bind_ip` entry is necessary to ensure the DNS server can listen on a specific IP address instead of a
-non-existing one.
+Conversely, the `bind_ip` entry is necessary to ensure the DNS server can listen on a
+specific IP address instead of a non-existing one.
 
 
 #### List of users
 
-Modify the list of users, unless you want to host _Frodo's emails_, or you just want to test for development.
+Modify the list of users, unless you want to host _Frodo's emails_, or you just want to
+test for development.
 
 ```yml
 users:
@@ -284,16 +298,18 @@ system:
 
 #### DNS provider
 
-This section is only needed when you will publish the DNS settings online. Although HomeBox comes with an integrated DNS
-server, this server IP address still need to be published on internet, otherwise, your system would be totally isolated.
+This section is only needed when you will publish the DNS settings online. Although
+HomeBox comes with an integrated DNS server, this server IP address still need to be
+published on internet, otherwise, your system would be totally isolated.
 
-There is code present to facilitate the publication of information if you are using _Gandi_, but you can use any DNS
-provider.
+There is code present to facilitate the publication of information if you are using
+_Gandi_, but you can use any DNS provider.
 
 ##### Gandi
 
-If you are using the Gandi DNS provider, you will need to create a personal access token, as described on the
-[Gandi page](https://docs.gandi.net/en/managing_an_organization/organizations/personal_access_token.html).
+If you are using the Gandi DNS provider, you will need to create a personal access token,
+as described on the [Gandi
+page](https://docs.gandi.net/en/managing_an_organization/organizations/personal_access_token.html).
 
 ```yml
 dns:
@@ -308,8 +324,9 @@ At the end of the process, you should have your handle and a token:
 
 #### Optional: Credentials store for _pass_
 
-If you have previously set-up _pass_ on your workstation, you need to ensure credentials are stored into your password
-database, by adding the following block in your configuration file:
+If you have previously set-up _pass_ on your workstation, you need to ensure credentials
+are stored into your password database, by adding the following block in your
+configuration file:
 
 ```yml
 creds_default:
@@ -321,6 +338,7 @@ creds_default:
     overwrite: ' overwrite=True'
 ```
 
-Otherwise, your passwords will be stored in plain text files, albeit only readable from you.
+Otherwise, your passwords will be stored in plain text files, albeit only readable from
+you.
 
 it should be possible to add another password store fairly easily.

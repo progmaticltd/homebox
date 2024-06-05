@@ -2,11 +2,10 @@
 
 ## Configure SSH
 
-Ansible uses SSH to connect on the target server, so the best is to use public key authentication. We will not detail
-here the creation of your private key.
+Ansible uses SSH to connect on the target server, so the best is to use public key
+authentication. We will not detail here the creation of your private key.
 
-!!! Note
-    This is now happening on the workstation, here simply called _hamilton_.
+!!! Note This is now happening on the workstation, here simply called _hamilton_.
 
 ### Copy your public key
 
@@ -42,9 +41,9 @@ hbinstall@debian:~$
 
 ### Optional: Create connection settings in ssh
 
-This is optional, but it will be more convenient to add ssh settings to connect on the server, instead of typing a user
-name and an IP address. So, on the workstation, in your ssh configuration file `~/.ssh/config`, you can add the
-following block, for instance:
+This is optional, but it will be more convenient to add ssh settings to connect on the
+server, instead of typing a user name and an IP address. So, on the workstation, in your
+ssh configuration file `~/.ssh/config`, you can add the following block, for instance:
 
 ```plain
 Host homebox
@@ -89,16 +88,18 @@ Receiving objects: 100% (26137/26137), 9.53 MiB | 3.72 MiB/s, done.
 Resolving deltas: 100% (15687/15687), done.
 ```
 
-!!! Note
-    If you intend to clone multiple homebox repositories, it's a good idea to create a dedicated folder, for instance,
-    called `homebox-all`.
+!!! Note If you intend to clone multiple homebox repositories, it's a good idea to create
+    a dedicated folder, for instance, called `homebox-all`.
 
-There should be now a folder called ‘homebox’, and you'll have now to define your configuration.
+There should be now a folder called ‘homebox’, and you'll have now to define your
+configuration.
 
 ## Optional: Set-up _pass_
 
-HomeBox dynamically generate credentials, and store them on your workstation. The credentials can be stored into plain
-text files, or stored using a utility called [password store](https://www.passwordstore.org/). This allows you to store
-the passwords encrypted using GPG, which is more secure.
+HomeBox dynamically generate credentials, and store them on your workstation. The
+credentials can be stored into plain text files, or stored using a utility called
+[password store](https://www.passwordstore.org/). This allows you to store the passwords
+encrypted using GPG, which is more secure.
 
-For the setup of pass on the workstation, you can follow tutorial on the page above, which is out of scope.
+For the setup of pass on the workstation, you can follow tutorial on the page above, which
+is out of scope.
