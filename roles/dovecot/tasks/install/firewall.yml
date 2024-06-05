@@ -1,19 +1,19 @@
 ---
 
-- name: Deploy IMAP public access firewall rules
+- name: Deploy IMAP automatic ban firewall rules
   notify: Restart nftables
   ansible.builtin.template:
-    src: nftables/imap-public.nft
-    dest: /etc/nftables/70-imap.nft
+    src: nftables/imap-{{ mail.protection.type }}.nft
+    dest: /etc/nftables/30-imap.nft
     mode: '0600'
   tags: firewall
 
-- name: Deploy POP3 public access firewall rules
+- name: Deploy POP3 automatic ban firewall rules
   when: mail.pop3
   notify: Restart nftables
   ansible.builtin.template:
-    src: nftables/pop3-public.nft
-    dest: /etc/nftables/70-pop3.nft
+    src: nftables/pop3-{{ mail.protection.type }}.nft
+    dest: /etc/nftables/30-pop3.nft
     mode: '0600'
   tags: firewall
 
