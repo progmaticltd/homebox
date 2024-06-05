@@ -25,10 +25,6 @@
   ansible.builtin.include_tasks: install/scripts.yml
   tags: scripts
 
-- name: Add or remove the rules for LAN networks
-  ansible.builtin.include_tasks: install/lan-access.yml
-  tags: rules
-
 - name: Deploy private or public final SSH access rules
   ansible.builtin.include_tasks: install/ssh-rules.yml
   tags: ssh, rules
