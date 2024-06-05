@@ -1,9 +1,22 @@
 ---
 
-- name: Deploy the firewall rules
+# In protected mode, authenticating is only accepted from trusted IPs,
+# which are filled after imaap or smtp authentication.
+
+- name: Set template name for protected type
+  when: mail.protection.type == 'protected'
   notify: Restart firewall
   ansible.builtin.template:
-    src: nftables/firewall-{{ mail.protection.type }}.nft
+    src: nftables/firewall-private.nft
+    dest: /etc/nftables/60-postfix.nft
+    mode: '0600'
+  tags: firewall
+
+- name: Set template name for basic types
+  when: mail.protection.type != 'protected'
+  notify: Restart firewall
+  ansible.builtin.template:
+    src: nftables/firewall-{{ fw_template }}.nft
     dest: /etc/nftables/60-postfix.nft
     mode: '0600'
   tags: firewall
