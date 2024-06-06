@@ -30,7 +30,7 @@
   ansible.builtin.include_tasks: install/dns.yml
   tags: dns
 
-- name: Deply the firewall rules
+- name: Deploy the firewall rules
   ansible.builtin.include_tasks: install/firewall.yml
   tags: firewall
 

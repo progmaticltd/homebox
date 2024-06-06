@@ -44,8 +44,9 @@ nav:
       - Outbound traffic: pages/35-firewall/30-outbound-traffic.md
       - Forward traffic: pages/35-firewall/40-forward-traffic.md
       - Trust and ban: pages/35-firewall/50-trust-and-ban.md
-      - SSH access: pages/35-firewall/70-ssh-access.md
-      - Email access: pages/35-firewall/80-email-access.md
+      - SSH access: pages/35-firewall/60-ssh-access.md
+      - Email access: pages/35-firewall/70-email-access.md
+      - Jabber access: pages/35-firewall/80-jabber-access.md
       - Helper scripts: pages/35-firewall/90-helper-scripts.md
   - Wireguard VPN:
       - Configuration: pages/40-wireguard-vpn/10-configuration.md

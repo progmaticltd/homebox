@@ -20,10 +20,12 @@ table inet filter {
 
         # Limit new xmpp-server connections ala fail2ban
         meta nfproto ipv4 tcp dport xmpp-server ct state new,untracked \
-        limit rate over {{ ejabberd.autoban.rate }} add @banned_ipv4 { ip saddr . xmpp-server }
+        limit rate over {{ ejabberd.autoban.rate }} add @banned_ipv4 \
+        { ip saddr . xmpp-server timeout {{ ejabberd.autoban.period }} }
 
         meta nfproto ipv6 tcp dport xmpp-server ct state new,untracked \
-        limit rate over {{ ejabberd.autoban.rate }} add @banned_ipv6 { ip6 saddr . xmpp-server }
+        limit rate over {{ ejabberd.autoban.rate }} add @banned_ipv6 \
+        { ip6 saddr . xmpp-server timeout {{ ejabberd.autoban.period }} }
 
         # Accept new connections by default
         tcp dport xmpp-server ct state new counter accept \

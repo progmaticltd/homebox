@@ -299,8 +299,8 @@ ejabberd_default:
     s2s: autoban
 
   autoban:
-    rate: 10/minute     # above this rate, connections are dropped
-    period: 1h          # period for banning IPs
+    rate: 5/hour        # above this rate, connections are dropped
+    period: 4h          # period for banning IPs
 
 
 # Default posix groups
