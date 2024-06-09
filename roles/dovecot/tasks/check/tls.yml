@@ -2,10 +2,11 @@
 
 - name: Load TLS ciphers used
   register: tls_ciphers_report
-  ansible.builtin.shell: sslscan --no-colour smtp.{{ network.domain }}:993
+  ansible.builtin.shell: >-
+    sslscan --no-colour smtp.{{ network.domain }}:993
   changed_when: false
 
-- name: Ensure authorised TLS cipher are used
+- name: Ensure authorised TLS versions are used
   ansible.builtin.assert:
     that: >-
       {{ tls_ciphers_report.stdout_lines
@@ -13,6 +14,7 @@
       | select("match", ".*enabled.*")
       | length > 0
       }}
+    fail_msg: 'The cipher {{ tls_version }} not found.'
   loop: '{{ security.tls.versions }}'
   loop_control:
     loop_var: tls_version
@@ -25,6 +27,7 @@
       | select("match", ".*disabled.*")
       | length > 0
       }}
+    fail_msg: 'The cipher {{ tls_version }} should not be used.'
   loop: '{{ security.tls.unused_versions }}'
   loop_control:
     loop_var: tls_version

@@ -53,6 +53,8 @@ dovecot:
     - unrtf
     - unzip
     - xlsx2csv
+  fts_check_packages:
+    - swaks
   settings:
     mail_max_userip_connections: 64
     lda_mailbox_autocreate: false

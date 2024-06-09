@@ -176,9 +176,9 @@ attachments:
     extension: epub
     mime: application/epub+zip
     description: Generic ePub document
-    smtp_test: true
+    smtp_test: false
     script_test: true
-    search: backlight_quickstep_ravage_outdated_audible_supermom
+    search: ef859c70-4fda-11e8-bc3b-9383a175cbed
 
   # Archives
   # For encrypted archive, just list the file names.

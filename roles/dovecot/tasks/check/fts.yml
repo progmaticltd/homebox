@@ -1,5 +1,11 @@
 ---
 
+- name: Install the required packages
+  ansible.builtin.apt:
+    name: '{{ dovecot.fts_check_packages }}'
+    state: present
+  tags: apt
+
 # Test the script only, call grep to check for the uuid
 # These tests are sending and receiving emails
 # They need to be done on development servers only
