@@ -308,8 +308,6 @@ modules:
     max_connections: 5
     access: proxy65_access
     shaper: proxy65_shaper
-    # Use the right certificate for this service
-    certfile: '/etc/ssl/certs/proxy.{{ network.domain }}.crt'
 
   ### Publish-Subscribe Service (XEP-0060)
   mod_pubsub:
@@ -322,8 +320,6 @@ modules:
     plugins:
       - flat
       - pep
-    # Use the right certificate for this service
-    certfile: '/etc/ssl/certs/pubsub.{{ network.domain }}.crt'
 
 
   mod_push: { }
