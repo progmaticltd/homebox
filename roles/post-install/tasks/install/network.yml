@@ -32,8 +32,10 @@
 
 - name: Add external IPs on the loopback interface
   when: network.bind_ip is defined
-  ansible.builtin.command:
-    cmd: ip address add {{ address }} dev lo
+  ansible.builtin.shell: >-
+    ip address show dev lo
+    | grep {{ address | regex_escape | quote }}
+    || ip address add {{ address }} dev lo
   changed_when: true
   loop: '{{ external_ip_addresses }}'
   loop_control:

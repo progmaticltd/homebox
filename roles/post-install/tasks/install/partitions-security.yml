@@ -6,8 +6,6 @@
   ansible.builtin.shell: mountpoint -q /tmp/
   ignore_errors: true
   changed_when: false
-  args:
-    warn: false
 
 - name: Mount /tmp as no exec by default
   when: tmp_mountpoint_cmd is not failed
@@ -22,8 +20,6 @@
   ansible.builtin.shell: >-
     mount -o remount /tmp
   changed_when: true
-  args:
-    warn: false
 
 - name: Install apt hook to remount /tmp
   when: fstab_file.changed
@@ -39,8 +35,6 @@
   changed_when: false
   failed_when: false
   ignore_errors: true
-  args:
-    warn: false
 
 - name: Mount /boot as read only by default
   when: boot_mountpoint_cmd is not failed
@@ -55,8 +49,6 @@
   ansible.builtin.shell: >-
     mount -o remount /boot
   changed_when: true
-  args:
-    warn: false
 
 - name: Install apt hook to remount /boot
   when: fstab_file.changed
@@ -71,8 +63,6 @@
   ansible.builtin.shell: mountpoint -q /home/
   failed_when: false
   changed_when: false
-  args:
-    warn: false
 
 - name: Mount /home as no exec by default
   when: home_mountpoint_cmd.rc | default(1) == 0
@@ -87,5 +77,3 @@
   ansible.builtin.shell: >-
     mount -o remount /home
   changed_when: true
-  args:
-    warn: false
