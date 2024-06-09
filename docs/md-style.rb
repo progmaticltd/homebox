@@ -7,5 +7,8 @@ exclude_rule 'MD012'
 # This rule doesn't seem to work
 rule 'MD029', :style => 'ordered'
 
+# What is wrong with question marks in tite ?
+rule 'MD026', :punctuation => ".,;:!。，；：！"
+
 # Longer lines, like the initial setup
 rule 'MD013', :line_length => 90, :ignore_code_blocks => true, :tables => false

@@ -169,6 +169,10 @@ root@debian:~# ip address show dev lo
        valid_lft forever preferred_lft forever
 ```
 
+!!! Warning
+    Now, don't forget to restart any service that is supposed to listen on external
+    interfaces, especially _unbound_.
+
 ## About the certificates
 
 On the first installation, whatever the system is a real or a development one, the
