@@ -16,7 +16,7 @@
   when: mail.protection.type != 'protected'
   notify: Restart firewall
   ansible.builtin.template:
-    src: nftables/firewall-{{ fw_template }}.nft
+    src: nftables/firewall-{{ mail.protection.type }}.nft
     dest: /etc/nftables/60-postfix.nft
     mode: '0600'
   tags: firewall
