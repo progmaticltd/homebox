@@ -38,6 +38,8 @@ banned_submission_ipv4=$(echo "$banned_ipv4" | jq '[.[] | select(.elem.val.conca
 banned_submission_ipv6=$(echo "$banned_ipv6" | jq '[.[] | select(.elem.val.concat[1] == 587)]')
 banned_submissions_ipv4=$(echo "$banned_ipv4" | jq '[.[] | select(.elem.val.concat[1] == 465)]')
 banned_submissions_ipv6=$(echo "$banned_ipv6" | jq '[.[] | select(.elem.val.concat[1] == 465)]')
+banned_xmpp_client_ipv4=$(echo "$banned_ipv4" | jq '[.[] | select(.elem.val.concat[1] == 5222)]')
+banned_xmpp_client_ipv6=$(echo "$banned_ipv6" | jq '[.[] | select(.elem.val.concat[1] == 5222)]')
 banned_xmpp_server_ipv4=$(echo "$banned_ipv4" | jq '[.[] | select(.elem.val.concat[1] == 5269)]')
 banned_xmpp_server_ipv6=$(echo "$banned_ipv6" | jq '[.[] | select(.elem.val.concat[1] == 5269)]')
 
@@ -58,6 +60,8 @@ banned_submissions_ipv4_count=$(echo "$banned_submissions_ipv4" | jq '. | length
 banned_submissions_ipv6_count=$(echo "$banned_submissions_ipv6" | jq '. | length')
 banned_xmpp_server_ipv4_count=$(echo "$banned_xmpp_server_ipv4" | jq '. | length')
 banned_xmpp_server_ipv6_count=$(echo "$banned_xmpp_server_ipv6" | jq '. | length')
+banned_xmpp_client_ipv4_count=$(echo "$banned_xmpp_client_ipv4" | jq '. | length')
+banned_xmpp_client_ipv6_count=$(echo "$banned_xmpp_client_ipv6" | jq '. | length')
 
 
 # List the details of bannip IP addresses
@@ -71,6 +75,7 @@ printf 'Banned IP addresses:\n\n' | colorize default --attr=bold
     printf 'POP3S | %3d | %3d \n' "$banned_pop3s_ipv4_count" "$banned_pop3s_ipv6_count"
     printf 'Submission | %3d | %3d \n' "$banned_submission_ipv4_count" "$banned_submission_ipv6_count"
     printf 'Submissions | %3d | %3d \n' "$banned_submissions_ipv4_count" "$banned_submissions_ipv6_count"
+    printf 'XMPP (c2s) | %3d | %3d \n' "$banned_xmpp_client_ipv4_count" "$banned_xmpp_client_ipv6_count"
     printf 'XMPP (s2s) | %3d | %3d \n' "$banned_xmpp_server_ipv4_count" "$banned_xmpp_server_ipv6_count"
     echo '------------- | ----- | -----'
     printf 'Total | %3d | %3d \n' "$banned_ipv4_count" "$banned_ipv6_count"
@@ -85,3 +90,26 @@ printf '\n\nTrusted IPs\n\n' | colorize default --attr=bold
         printf '%s|%s\n' "$ip" "$descr"
     done
 } | column -t -s '|' -o ' | ' -N 'IP address,Whois details'
+
+
+# List banned XMPP servers
+banned_xmpp_servers=$((banned_xmpp_server_ipv4_count + banned_xmpp_server_ipv6_count))
+
+if [ "$banned_xmpp_servers" -gt 0 ]; then
+
+    banned_xmpp_server_ipv4_list=$(echo "$banned_xmpp_server_ipv4" | jq '[.[].elem.val.concat[0]] | unique | .[]')
+    banned_xmpp_server_ipv4_list=$(echo "$banned_xmpp_server_ipv4_list" | sed -E 's/"([^"]+)"/\1/g')
+
+    banned_xmpp_server_ipv6_list=$(echo "$banned_xmpp_server_ipv6" | jq '[.[].elem.val.concat[0]] | unique | .[]')
+    banned_xmpp_server_ipv6_list=$(echo "$banned_xmpp_server_ipv6_list" | sed -E 's/"([^"]+)"/\1/g')
+
+    printf '\n\nBanned XMPP serverss\n\n' | colorize default --attr=bold
+    {
+	echo '-- | --'
+	for ip in $banned_xmpp_server_ipv4_list $banned_xmpp_server_ipv6_list; do
+            descr=$(whois "$ip" | sed -En 's/Organization:\s*(.*)/\1/p' | head -n 1)
+            printf '%s|%s\n' "$ip" "$descr"
+	done
+    } | column -t -s '|' -o ' | ' -N 'IP address,Whois details'
+
+fi
