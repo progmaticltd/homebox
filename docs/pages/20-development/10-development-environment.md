@@ -138,6 +138,37 @@ network:
 When developing, or when your server is behind _NAT'ed_, it is necessary to specify the
 local IP address some services, like the DNS server will use to "bind".
 
+However, when you are building a virtual machine with a like-to-like network
+configuration, you will need to add the external IP addresses to the _loopback_ interface,
+using the following command, for each external IP address:
+
+```sh
+ip address add <address> dev lo
+```
+
+For instance:
+
+```sh
+ip address add 13.47.99.133 dev lo
+ip address add 13.47.88.133 dev lo
+```
+
+And the result should be something like this:
+
+```sh
+root@debian:~# ip address show dev lo
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet 13.47.99.133/32 scope global lo
+       valid_lft forever preferred_lft forever
+    inet 13.47.88.133/32 scope global lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host noprefixroute
+       valid_lft forever preferred_lft forever
+```
+
 ## About the certificates
 
 On the first installation, whatever the system is a real or a development one, the
