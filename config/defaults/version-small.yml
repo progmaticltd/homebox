@@ -11,10 +11,10 @@ roles_list:
   - ldap-openldap
   - user-setup
   - nginx
-  - opendkim
-  - opendmarc
   - mta-sts
   - postfix
+  - opendkim
+  - opendmarc
   - dovecot
   - sogo
   - autoconfig
