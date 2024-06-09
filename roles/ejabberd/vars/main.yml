@@ -56,3 +56,20 @@ dns_records_backup:
     type: '{{ backup_ip_type }}'
     value: '{{ backup_ip }}'
     create: true
+
+
+default_certs:
+  - sub: conference
+    script: renew-xmpp-cert
+  - sub: files
+    script: renew-xmpp-cert
+  - sub: proxy
+    script: renew-xmpp-cert
+  - sub: upload
+    script: renew-xmpp-cert
+  - sub: vjud
+    script: renew-xmpp-cert
+  - sub: pubsub
+    script: renew-xmpp-cert
+  - sub: xmpp
+    script: renew-nginx-cert

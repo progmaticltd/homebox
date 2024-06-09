@@ -42,26 +42,22 @@
   changed_when: updated_certs | default([]) | length > 0
   tags: certs
 
+- name: Create the certificates hooks folder
+  ansible.builtin.file:
+    path: '/etc/lego/hooks/{{ hook.sub }}.{{ network.domain }}'
+    state: directory
+    mode: '0700'
+  loop: '{{ default_certs }}'
+  loop_control:
+    loop_var: hook
+  tags: certs, scripts
+
 - name: Deploy the hooks for each certificate update
   ansible.builtin.copy:
     src: '{{ hook.script }}.sh'
     dest: '/etc/lego/hooks/{{ hook.sub }}.{{ network.domain }}/renew-cert.sh'
     mode: '0700'
-  loop:
-    - sub: conference
-      script: renew-xmpp-cert
-    - sub: files
-      script: renew-xmpp-cert
-    - sub: proxy
-      script: renew-xmpp-cert
-    - sub: upload
-      script: renew-xmpp-cert
-    - sub: vjud
-      script: renew-xmpp-cert
-    - sub: pubsub
-      script: renew-xmpp-cert
-    - sub: xmpp
-      script: renew-nginx-cert
+  loop: '{{ default_certs }}'
   loop_control:
     loop_var: hook
   tags: certs, scripts
