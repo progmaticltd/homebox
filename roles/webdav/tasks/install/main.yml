@@ -24,6 +24,10 @@
   ansible.builtin.include_tasks: install/user-setup.yml
   tags: users
 
+- name: Set-up linger to start on boot for each user
+  ansible.builtin.include_tasks: install/linger.yml
+  tags: linger
+
 - name: Create the DNS record
   ansible.builtin.include_tasks: install/dns.yml
   tags: dns

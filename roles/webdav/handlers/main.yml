@@ -14,3 +14,14 @@
 
 - name: Activate AppArmor profile
   ansible.builtin.command: 'aa-enforce usr.sbin.nginx'
+
+- name: Enable linger start-all service
+  ansible.builtin.systemd:
+    name: users-linger-autostart
+    enabled: true
+    no_block: true
+    daemon_reload: true
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true

@@ -1,0 +1,20 @@
+---
+
+- name: Copy the linger start all script
+  ansible.builtin.copy:
+    src: start-all.sh
+    dest: /usr/local/sbin/linger-start-all
+    mode: '0755'
+    owner: root
+    group: root
+  tags: linger
+
+- name: Create the systemd service
+  notify: Enable linger start-all service
+  ansible.builtin.template:
+    src: users-linger-autostart.service
+    dest: /etc/systemd/system/users-linger-autostart.service
+    mode: '0644'
+    owner: root
+    group: root
+  tags: linger

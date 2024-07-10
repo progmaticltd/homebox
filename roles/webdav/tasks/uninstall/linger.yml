@@ -1,0 +1,14 @@
+---
+
+- name: Remove the systemd service
+  notify: Reload systemd daemon
+  ansible.builtin.file:
+    path: /etc/systemd/system/users-linger-autostart.service
+    state: absent
+  tags: linger
+
+- name: Remove the linger start all script
+  ansible.builtin.file:
+    path: /usr/local/sbin/linger-start-all
+    state: absent
+  tags: linger

@@ -1,0 +1,11 @@
+[Unit]
+Description=Start user lingers service on boot
+After=remote-fs.target nss-user-lookup.target
+Requires=slapd.service nslcd.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/linger-start-all
+
+[Install]
+WantedBy=multi-user.target

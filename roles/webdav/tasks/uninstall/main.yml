@@ -6,6 +6,10 @@
   ansible.builtin.include_tasks: uninstall/all-users.yml
   tags: users
 
+- name: Stop and remove custom linger
+  ansible.builtin.include_tasks: uninstall/linger.yml
+  tags: linger
+
 - name: Remove the certificates
   ansible.builtin.include_tasks: uninstall/certificates.yml
   tags: certs
