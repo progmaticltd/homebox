@@ -12,14 +12,13 @@
     query: '{{ network.domain }}'
   tags: dns
 
-- name: Check if the record exists with dig
+- name: Check if the record exists with pdnsutil
   register: check_record
   ansible.builtin.shell: >-
     set -o pipefail ;
-    dig +nocomments +noall +answer
-    -q {{ query }}
-    -t {{ record.type | upper }}
-    @{{ pdns.ip }}
+    pdnsutil list-zone
+    | grep '^{{ query | regex_escape }} '
+    | grep ' {{ record.type | upper }} '
     | grep -c '{{ record.search | default(record.value) | regex_escape }}'
   args:
     executable: /usr/bin/bash
