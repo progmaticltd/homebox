@@ -1,0 +1,26 @@
+---
+
+- name: Create backup dir
+  ansible.builtin.file:
+    path: /var/backups/sogo
+    state: directory
+    mode: '0700'
+    owner: root
+    group: root
+
+- name: Remove previous backup data
+  ansible.builtin.file:
+    path: /var/backups/sogo/{{ user.uid }}
+    state: absent
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Backup all user data
+  ansible.builtin.shell: >-
+    sogo-tool backup /var/backups/sogo {{ user.uid }}
+  args:
+    creates: /var/backups/sogo/{{ user.uid }}
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user

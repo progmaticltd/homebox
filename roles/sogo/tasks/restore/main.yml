@@ -1,0 +1,15 @@
+---
+
+- name: Restore calendars and contacts
+  ansible.builtin.shell: >-
+    sogo-tool restore -F ALL /var/backups/sogo {{ user.uid }}
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user
+
+- name: Restore preferences
+  ansible.builtin.shell: >-
+    sogo-tool restore -p /var/backups/sogo {{ user.uid }}
+  loop: '{{ users }}'
+  loop_control:
+    loop_var: user

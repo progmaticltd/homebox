@@ -7,6 +7,10 @@
 - name: Install the packages
   ansible.builtin.include_tasks: install/packages.yml
 
+- name: Create DNS records
+  ansible.builtin.include_tasks: install/dns.yml
+  tags: dns
+
 - name: Configure the certificates
   ansible.builtin.include_tasks: install/certificates.yml
   tags: certs, scripts
@@ -25,10 +29,6 @@
 - name: Configure AppArmor
   ansible.builtin.include_tasks: install/apparmor.yml
   tags: apparmor
-
-- name: Create DNS records
-  ansible.builtin.include_tasks: install/dns.yml
-  tags: dns
 
 - name: Add Prometheus alerts
   when: prometheus.install
